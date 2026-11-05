@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -150,9 +150,28 @@ REQUIRE_COVERAGE ?= 0
 VERIFY_PYTHON ?= $(CURDIR)/.venv/bin/python
 COVERAGE_FLAGS := --coverage-json $(COVERAGE_REPORT) $(if $(filter 1,$(REQUIRE_COVERAGE)),--require-coverage,)
 
+# Verify also writes each recorded statement's translation outcome to TRANSLATION_STATEMENTS, which
+# `syntax-coverage results` links to catalogue forms (decision D139). It fails unless
+# coverage/translation/results-baseline.json holds the measure exactly, and on any regression
+# against the baseline at RESULTS_BASE, the target branch.
+TRANSLATION_STATEMENTS ?= target/translation-statements.json
+TRANSLATION_REPORT ?= target/translation-results.json
+RESULTS_BASE ?= $(EVIDENCE_BASE)
+RESULTS_BASE_FILE := target/translation-results-base.json
+
 verify-recorded:
 	mkdir -p $(dir $(COVERAGE_REPORT))
-	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON)
+	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	  --translation-statements $(TRANSLATION_STATEMENTS)
+	$(MAKE) translation-results
+
+# The result-matching measure over the statements verify wrote; see verify-recorded.
+translation-results:
+	@if git show $(RESULTS_BASE):coverage/translation/results-baseline.json > $(RESULTS_BASE_FILE) 2>/dev/null; \
+	  then against="--against $(RESULTS_BASE_FILE)"; \
+	  else echo "translation-results: $(RESULTS_BASE) has no baseline; checking the committed one only"; against=; fi; \
+	  cargo run --locked -q -p sqlquack-syntax-coverage --bin syntax-coverage -- results \
+	    $(TRANSLATION_STATEMENTS) --report $(TRANSLATION_REPORT) $$against
 
 # Compiles DuckShop and DuckShop 10K at SQLBUILD_REF with sqlbuild SQLBUILD_VERSION, as CI does.
 # Skipped when DUCKSHOP_DIR already holds that revision.

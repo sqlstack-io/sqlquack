@@ -248,3 +248,14 @@ pub(crate) struct CompareTestCase {
     pub(crate) arrow_sha256: Option<&'static str>,
     pub(crate) expected_outcome: &'static str,
 }
+
+/// A recorded case and what `verify --translation-statements` must write for it.
+pub(crate) struct TranslationStatementTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) id: &'static str,
+    pub(crate) expected_outcome: &'static str,
+    pub(crate) expected_codes: &'static [&'static str],
+    pub(crate) expected_refused: &'static [&'static str],
+    /// One construct its statement must list as used.
+    pub(crate) expected_use: &'static str,
+}

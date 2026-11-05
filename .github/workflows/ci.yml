@@ -52,7 +52,12 @@ jobs:
       - name: Run tests
         run: make test
       - name: Replay recorded cases on DuckDB
-        run: cargo run --locked -p sqlquack -- verify --require-verified
+        run: >-
+          cargo run --locked -p sqlquack -- verify --require-verified --python .venv/bin/python
+          --translation-statements target/translation-statements.json
+      - name: Check the result-matching measure against its baselines
+        run: >-
+          make translation-results RESULTS_BASE="$EVIDENCE_BASE"
 
   polyglot-check:
     name: Exact parser check on DuckShop

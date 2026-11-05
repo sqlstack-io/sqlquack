@@ -6,4 +6,5 @@ pub mod check;
 pub mod cli;
 pub mod formats;
 pub mod report;
+pub mod results;
 pub mod translation;

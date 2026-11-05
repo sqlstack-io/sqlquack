@@ -1,0 +1,185 @@
+//! Statements linked to forms, each form's result, and the report built from them.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use crate::formats::models::SyntaxCoverage;
+use crate::results::_helpers::files::{group_sha256, signed, subjects};
+use crate::results::_helpers::forms::{family_tallies, form_result, statement_tally};
+use crate::results::_helpers::links::{FunctionIndex, link_statement};
+use crate::results::_helpers::worklist::worklist;
+use crate::results::constants::{NOT_TRANSLATABLE_SUBJECT, QUEUE_ORDER};
+use crate::results::models::{
+    FormResult, RecordedStatement, ResultState, ResultsFiles, ResultsReport, StatementOutcome,
+};
+use crate::translation::main::catalogued_forms::catalogued_forms;
+
+/// Each statement reference and the forms it counts for.
+pub(crate) type Links<'a> = BTreeMap<&'a str, BTreeSet<String>>;
+
+/// The forms of every current not-translatable sign-off.
+fn listed_forms(files: &ResultsFiles) -> BTreeSet<&str> {
+    let mut listed: BTreeSet<&str> = BTreeSet::new();
+    for group in &files.not_translatable.groups {
+        let subject = format!("{NOT_TRANSLATABLE_SUBJECT}{}", group.id);
+        if signed(&files.review, &subject, &group_sha256(group)) {
+            listed.extend(group.forms.iter().map(String::as_str));
+        }
+    }
+    listed
+}
+
+/// The problem naming an unmapped construct and the statements using it.
+fn unmapped(construct: &str, references: &[&str]) -> String {
+    format!(
+        "unmapped construct {construct} in {} statements, such as {}: link it to forms or list it \
+         under no_form",
+        references.len(),
+        references.first().copied().unwrap_or_default()
+    )
+}
+
+/// The forms each statement counts for: a refused one only for the forms its refusal names.
+pub(crate) fn link_all<'a>(
+    statements: &'a [RecordedStatement],
+    functions: &FunctionIndex,
+    files: &ResultsFiles,
+) -> Result<Links<'a>, Vec<String>> {
+    let mut links: Links = BTreeMap::new();
+    let mut unaccounted: BTreeMap<String, Vec<&str>> = BTreeMap::new();
+    for statement in statements {
+        let linked = link_statement(statement, functions, &files.links);
+        for construct in linked.unaccounted {
+            unaccounted
+                .entry(construct)
+                .or_default()
+                .push(&statement.reference);
+        }
+        let forms = match statement.outcome.refused() {
+            true => linked.refused_forms,
+            false => linked.forms,
+        };
+        if links.insert(&statement.reference, forms).is_some() {
+            return Err(vec![format!(
+                "statement {} listed twice",
+                statement.reference
+            )]);
+        }
+    }
+    let problems: Vec<String> = unaccounted
+        .iter()
+        .map(|(construct, references)| unmapped(construct, references))
+        .collect();
+    match problems.is_empty() {
+        true => Ok(links),
+        false => Err(problems),
+    }
+}
+
+/// Every catalogued form's result, or each signed-off not-translatable form a statement matches.
+pub(crate) fn form_results(
+    coverage: &SyntaxCoverage,
+    files: &ResultsFiles,
+    (statements, links): (&[RecordedStatement], &Links),
+) -> Result<Vec<FormResult>, Vec<String>> {
+    let mut linked: BTreeMap<&str, Vec<&RecordedStatement>> = BTreeMap::new();
+    for statement in statements {
+        let forms = links.get(statement.reference.as_str());
+        for form in forms.into_iter().flatten() {
+            linked.entry(form).or_default().push(statement);
+        }
+    }
+    let listed = listed_forms(files);
+    let mut problems: Vec<String> = Vec::new();
+    let mut results: Vec<FormResult> = Vec::new();
+    for (id, family) in catalogued_forms(coverage, None) {
+        let statements: &[&RecordedStatement] = linked.get(id).map_or(&[], Vec::as_slice);
+        let is_listed = listed.contains(id);
+        let matching = statements
+            .iter()
+            .find(|statement| statement.outcome.matches());
+        if let Some(matching) = matching.filter(|_| is_listed) {
+            problems.push(format!(
+                "{id} is listed as not translatable, but {} translates with matching results",
+                matching.reference
+            ));
+        }
+        results.push(form_result((id, family), is_listed, statements));
+    }
+    match problems.is_empty() {
+        true => Ok(results),
+        false => Err(problems),
+    }
+}
+
+/// The translatable forms a capture would measure first: unmeasured or syntax-only, by family.
+fn capture_forms(forms: &[FormResult]) -> Vec<String> {
+    let rank = |family: &str| QUEUE_ORDER.iter().position(|name| *name == family);
+    let mut queue: Vec<&FormResult> = forms
+        .iter()
+        .filter(|form| {
+            matches!(
+                form.state,
+                ResultState::Unmeasured | ResultState::SyntaxOnly
+            )
+        })
+        .collect();
+    queue.sort_by_key(|form| (rank(&form.family), form.id.as_str()));
+    queue.into_iter().map(|form| form.id.clone()).collect()
+}
+
+/// The references of `statements` that pass `keep`.
+fn references(
+    statements: &[RecordedStatement],
+    keep: impl Fn(&RecordedStatement) -> bool,
+) -> Vec<String> {
+    statements
+        .iter()
+        .filter(|statement| keep(statement))
+        .map(|statement| statement.reference.clone())
+        .collect()
+}
+
+/// The report over the linked statements and the forms' results.
+pub(crate) fn assemble(
+    files: &ResultsFiles,
+    functions: FunctionIndex,
+    (statements, links): (&[RecordedStatement], &Links),
+    form_results: Vec<FormResult>,
+) -> ResultsReport {
+    let with_forms: BTreeSet<&str> = links
+        .iter()
+        .filter(|(_, forms)| !forms.is_empty())
+        .map(|(reference, _)| *reference)
+        .collect();
+    let subjects: Vec<(String, bool)> = subjects(files, &functions.sha256);
+    let named = |current: bool| -> Vec<String> {
+        subjects
+            .iter()
+            .filter(|(_, signed)| *signed == current)
+            .map(|(subject, _)| subject.clone())
+            .collect()
+    };
+    let (forms, families) = family_tallies(&form_results);
+    ResultsReport {
+        forms,
+        families,
+        statements: statement_tally(statements, &with_forms),
+        signed_off: named(true),
+        unsigned: named(false),
+        not_translatable: files.not_translatable.groups.clone(),
+        worklist: worklist(statements, links, &form_results),
+        capture_forms: capture_forms(&form_results),
+        capture_statements: references(statements, |statement| {
+            statement.outcome == StatementOutcome::UnrecordedTranslates
+        }),
+        unlinked_statements: references(statements, |statement| {
+            statement.outcome.recorded() && !with_forms.contains(statement.reference.as_str())
+        }),
+        function_links_sha256: functions.sha256,
+        statement_outcomes: statements
+            .iter()
+            .map(|statement| (statement.reference.clone(), statement.outcome))
+            .collect(),
+        form_results,
+    }
+}

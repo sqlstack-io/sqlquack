@@ -107,6 +107,22 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
+    /// Recorded statements linked to forms, the result-matching measure; fails on any change (D139).
+    Results {
+        /// The file `sqlquack verify --translation-statements` writes.
+        statements: PathBuf,
+        /// Record the measure as the new baseline instead of comparing with it.
+        #[arg(long)]
+        write_baseline: bool,
+        /// Write the full report, with the worklist and capture queue, as JSON to this file.
+        #[arg(long)]
+        report: Option<PathBuf>,
+        /// The target branch's baseline: print the diff against it and fail on any regression.
+        #[arg(long)]
+        against: Option<PathBuf>,
+        #[command(flatten)]
+        common: Common,
+    },
     /// A snapshot against a later one or the current tree; fails on any regression.
     Diff {
         base: PathBuf,
