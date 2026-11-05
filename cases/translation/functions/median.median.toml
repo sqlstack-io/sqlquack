@@ -70,3 +70,17 @@ rows = [
 query = "SELECT MEDIAN(x) AS r FROM input WHERE ordinal < 0"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "t006_distinct"
+compile_error = true
+description = "DISTINCT, which the page says is not supported. Catches: DISTINCT accepted (DuckDB accepts median(DISTINCT x))"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["1"],
+  ["5"],
+]
+query = "SELECT MEDIAN(DISTINCT x) AS r FROM input"
+order = "ordered"
+tags = ["error"]

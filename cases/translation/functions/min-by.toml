@@ -47,7 +47,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_null_col_containing"
-description = "NULL in the compared column, which the page says is ignored; a group with only NULL. Catches: NULL treated as the largest or smallest value (d returned)"
+description = "NULL in the compared column, which the page says is ignored; a group with only NULL. Catches: NULL treated as the largest or smallest value (a returned)"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "name", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
 rows = [
   ["'p'", "'a'", "NULL"],

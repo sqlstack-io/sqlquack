@@ -4,13 +4,13 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_float"
-description = "Element-wise per group, where each element's winner comes from a different row. Catches: a whole-vector comparison or a scalar result"
+description = "Element-wise averages per group, exact in binary ([1, 2, 0.5] for p). Catches: a scalar or whole-input average, or a non-element-wise result"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
 rows = [
   ["'p'", "'[1,-4,2.5]'"],
   ["'q'", "'[0,0,1]'"],
   ["'p'", "'[-2,6,0.5]'"],
-  ["'p'", "'[3,1,-1]'"],
+  ["'p'", "'[4,4,-1.5]'"],
 ]
 query = "SELECT g, VECTOR_AVG(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3))) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"

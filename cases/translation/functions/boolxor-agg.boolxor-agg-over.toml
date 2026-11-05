@@ -23,7 +23,7 @@ description = "An empty OVER clause. Catches: a running value"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [
   ["'p'", "TRUE"],
-  ["'p'", "FALSE"],
+  ["'p'", "TRUE"],
 ]
 query = "SELECT BOOLXOR_AGG(b) OVER () AS r FROM input ORDER BY ordinal"
 order = "ordered"

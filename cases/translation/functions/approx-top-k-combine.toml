@@ -20,7 +20,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_counters"
-description = "An explicit number of counters. Catches: counters read as k"
+description = "An explicit number of counters. Catches: the explicit counters argument rejected, or the states not merged"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
 rows = [
   ["'p'", "'a'"],

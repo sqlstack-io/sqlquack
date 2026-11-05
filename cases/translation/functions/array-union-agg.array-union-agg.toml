@@ -30,7 +30,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_column"
-description = "A NULL array and a NULL element, both ignored. Catches: NULL kept as an element, or the result NULL"
+description = "A NULL array and a JSON null element ([1,null]). Catches: the NULL array making the result NULL, or the JSON null element treated the opposite way to Snowflake"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
 rows = [
   ["'p'", "NULL"],

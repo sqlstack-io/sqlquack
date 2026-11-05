@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_state"
-description = "A state per group, read with APPROX_TOP_K_ESTIMATE. Catches: counters read as k"
+description = "A state per group, read with APPROX_TOP_K_ESTIMATE. Catches: the whole input's state, or the top-2 read ignored"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
 rows = [
   ["'p'", "'a'"],

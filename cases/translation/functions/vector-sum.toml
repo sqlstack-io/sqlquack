@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_float"
-description = "Element-wise per group, where each element's winner comes from a different row. Catches: a whole-vector comparison or a scalar result"
+description = "Element-wise sums per group. Catches: a scalar total or a non-element-wise result"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
 rows = [
   ["'p'", "'[1,-4,2.5]'"],

@@ -4,13 +4,15 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_number"
-description = "Integer groups whose average is not whole. Catches: a narrower integer type wrapping"
+description = "Integer groups, one summing past 2^63 within NUMBER(38,0). Catches: a 64-bit integer accumulator wrapping or overflowing"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'p'", "1"],
   ["'q'", "7"],
   ["'p'", "2"],
   ["'p'", "2"],
+  ["'r'", "9000000000000000000"],
+  ["'r'", "9000000000000000000"],
 ]
 query = "SELECT g, SUM(x) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -31,12 +33,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_float"
-description = "Binary fractions that do not add exactly. Catches: a decimal summation (exactly 0.6)"
+description = "Three FLOAT 0.1 values, whose sum is 0.30000000000000004 in every order. Catches: a decimal summation (exactly 0.3)"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["0.1"],
-  ["0.2"],
-  ["0.3"],
+  ["0.1"],
+  ["0.1"],
 ]
 query = "SELECT SUM(x) AS r FROM input"
 order = "ordered"

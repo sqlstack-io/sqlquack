@@ -35,7 +35,7 @@ description = "Halves, rounded to the nearest integer (half away from zero) befo
 columns = [{ name = "x", type = "NUMBER(10,1)" }]
 rows = [
   ["2.5"],
-  ["5.5"],
+  ["4.5"],
 ]
 query = "SELECT BITOR_AGG(x) AS r FROM input"
 order = "ordered"
@@ -47,7 +47,7 @@ description = "FLOAT values just below and above a half. Catches: truncation ins
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["6.7"],
-  ["1.2"],
+  ["2.2"],
 ]
 query = "SELECT BITOR_AGG(x) AS r FROM input"
 order = "ordered"
@@ -55,14 +55,15 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_varchar"
-description = "Numeric text and text that cannot be cast, which the page says is treated as NULL. Catches: an error for the text x, or text read as 0"
-columns = [{ name = "x", type = "VARCHAR" }]
+description = "Numeric text, and text that cannot be cast, alone in group q. The page says such text is treated as NULL, while its example raises an error; the recording decides. Catches: uncastable text treated the opposite way to Snowflake (NULL against an error), or read as 0 (q giving 0 instead of NULL)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
 rows = [
-  ["'6.6'"],
-  ["'x'"],
-  ["'3'"],
+  ["'p'", "'6.6'"],
+  ["'q'", "'x'"],
+  ["'p'", "'x'"],
+  ["'p'", "'3'"],
 ]
-query = "SELECT BITOR_AGG(x) AS r FROM input"
+query = "SELECT g, BITOR_AGG(x) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["type-combination"]
 
