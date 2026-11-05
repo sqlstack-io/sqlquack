@@ -59,6 +59,7 @@ pub const CODES: &[CodeEntry] = &[
             parser's message. Check the SQL at that point against Snowflake's grammar; if \
             Snowflake accepts the statement, SQLQuack's parser is missing the syntax and the \
             statement should be reported with the label.",
+        example: r#"echo "SELECT a, FROM orders WHERE (b = 1" | sqlquack check"#,
     },
     CodeEntry {
         code: MISSING_RULE,
@@ -71,6 +72,7 @@ pub const CODES: &[CodeEntry] = &[
             the statement is refused rather than converted to SQL that might mean something \
             else in DuckDB. Rewrite the statement without the construct, or wait for a rule; \
             `sqlquack census` shows which constructs a body of SQL needs.",
+        example: r#"echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: TYPE_CONDITION,
@@ -85,6 +87,7 @@ pub const CODES: &[CodeEntry] = &[
             determine. Declaring the relation's columns and types in the schema often lets the \
             types resolve; an explicit cast to a covered type also works when it keeps the \
             statement's meaning.",
+        example: r#"echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: UNRESOLVED_NAME,
@@ -98,6 +101,7 @@ pub const CODES: &[CodeEntry] = &[
             name refers to and what type it has. The name at the span is unknown, or resolves to \
             more than one column. Add the relation and its columns to the schema file, or \
             qualify an ambiguous column with its relation.",
+        example: r#"echo "SELECT a FROM orders" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: NOT_EXPRESSIBLE,
@@ -108,6 +112,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "The construct at the span has a Snowflake meaning DuckDB has no way to \
             reproduce, for the reason in the label. No future rule will convert it as written. \
             Rewrite the statement so it does not depend on that behaviour.",
+        example: "no construct is declared inexpressible yet; one would be refused with the reason as its label",
     },
     CodeEntry {
         code: CONVERSION_BUDGET,
@@ -119,6 +124,7 @@ pub const CODES: &[CodeEntry] = &[
             the conversion budget allows. The budget keeps a pathological input from stalling a \
             caller. Splitting the statement, for example into common table expressions or \
             separate statements, usually brings it under the budget.",
+        example: "a statement whose conversion runs past the time budget or emits more DuckDB SQL than it allows",
     },
     CodeEntry {
         code: SESSION_PARAMETERS,
@@ -130,6 +136,7 @@ pub const CODES: &[CodeEntry] = &[
             session parameters given match none of them, so no conversion is proven for that \
             session. The label names the parameters; unset parameters take Snowflake's \
             documented defaults.",
+        example: r#"echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=1"#,
     },
     CodeEntry {
         code: DIVERGENCE_REFUSED,
@@ -147,6 +154,7 @@ pub const CODES: &[CodeEntry] = &[
             the statement is refused. Allow it in the policy file, use a mode that allows it, \
             or confirm the assumption it rests on; otherwise rewrite the statement without the \
             construct.",
+        example: r#"echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: "SQ0101",
@@ -156,6 +164,7 @@ pub const CODES: &[CodeEntry] = &[
         help: Some("split the input into smaller files"),
         explanation: "The parser refuses inputs beyond a fixed size so that one input cannot \
             exhaust memory. Split the SQL into several inputs and convert each.",
+        example: r#"python3 -c "print('SELECT 1;' * 2000000)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0102",
@@ -165,6 +174,7 @@ pub const CODES: &[CodeEntry] = &[
         help: Some("split the input into smaller statements or files"),
         explanation: "The parser refuses inputs with more tokens than its budget so that \
             parsing time stays bounded. Split the SQL into several statements or inputs.",
+        example: r#"python3 -c "print('SELECT 1;' * 400000)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0103",
@@ -178,6 +188,7 @@ pub const CODES: &[CodeEntry] = &[
             parser's limit. The limit keeps parsing from exhausting the stack. Redundant \
             parentheses can be removed; deeply nested subqueries can usually become common \
             table expressions.",
+        example: r#"python3 -c "print('SELECT ' + '(' * 600 + '1' + ')' * 600)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0104",
@@ -188,6 +199,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "The parser's recursion reached its depth limit at the span. The limit \
             keeps parsing from exhausting the stack. Restructure the deepest part of the \
             statement, for example with common table expressions.",
+        example: r#"python3 -c "print('SELECT ' + 'NOT ' * 2000 + 'TRUE')" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0105",
@@ -198,6 +210,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "The statement parsed, but its tree nests deeper than the limit SQLQuack \
             places on later analysis, which keeps conversion from exhausting the stack. \
             Restructure the deepest part of the statement.",
+        example: r#"python3 -c "print('SELECT 1' + ' + 1' * 1000)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0106",
@@ -207,6 +220,7 @@ pub const CODES: &[CodeEntry] = &[
         help: Some("split the statement into smaller statements"),
         explanation: "The statement parsed into more tree nodes than SQLQuack's budget, which \
             keeps conversion time and memory bounded. Split it into smaller statements.",
+        example: "a statement that parses into more than a million tree nodes",
     },
     CodeEntry {
         code: "SQ0107",
@@ -217,6 +231,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "Function calls nest inside each other deeper than SQLQuack's limit at \
             the span. Compute the innermost calls in a common table expression or a subquery \
             and refer to their results.",
+        example: r#"python3 -c "print('SELECT ' + 'ABS(' * 300 + '1' + ')' * 300)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0201",
@@ -229,6 +244,7 @@ pub const CODES: &[CodeEntry] = &[
             no Snowflake meaning to convert. Without ALL the \
             operators compare distinct rows; keeping duplicates needs a rewrite, for example \
             numbering each row with ROW_NUMBER() over all columns and comparing those pairs.",
+        example: r#"echo "SELECT id FROM orders INTERSECT ALL SELECT id FROM returns" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0202",
@@ -239,6 +255,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "FOR UPDATE WAIT n parses, but Snowflake rejects it as an unsupported \
             feature, so the statement never runs there. Remove the WAIT clause; Snowflake's \
             lock timeout comes from the LOCK_TIMEOUT session parameter instead.",
+        example: r#"echo "SELECT order_id FROM orders FOR UPDATE WAIT 7" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0203",
@@ -253,6 +270,7 @@ pub const CODES: &[CodeEntry] = &[
             function (Snowflake error 992). A window function the QUALIFY condition reaches \
             through a SELECT-list alias counts. A condition on plain columns belongs in WHERE, \
             and one on aggregates in HAVING.",
+        example: r#"echo "SELECT 1 QUALIFY TRUE" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0204",
@@ -264,5 +282,6 @@ pub const CODES: &[CodeEntry] = &[
             the pattern first, ignoring case, and rejects a REPLACE or RENAME of a column the \
             pattern did not keep (Snowflake error 1431). A name that fails the pattern ignoring \
             case fails it whatever the table holds, so no schema is needed to see it.",
+        example: r#"echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check"#,
     },
 ];

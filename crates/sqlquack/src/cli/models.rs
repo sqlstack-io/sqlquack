@@ -51,6 +51,15 @@ pub enum Command {
     Check(CheckArguments),
     /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
     Compare(CompareArguments),
+    /// Explain a diagnostic code, such as `SQ0203`, with its help and an example.
+    Explain(ExplainArguments),
+}
+
+/// Arguments of `sqlquack explain`.
+#[derive(Debug, Args)]
+pub struct ExplainArguments {
+    /// The code, its snake_case name, or a guard's former `E_GUARD_*` name.
+    pub code: String,
 }
 
 /// Arguments of `sqlquack compare`.

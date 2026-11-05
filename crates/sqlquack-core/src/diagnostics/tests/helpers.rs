@@ -73,6 +73,7 @@ pub(crate) fn registry_mismatches(lock: &str, whole_registry: bool) -> Vec<Strin
                 || !entry.code[2..].chars().all(|digit| digit.is_ascii_digit())
                 || entry.title.trim().is_empty()
                 || entry.explanation.trim().is_empty()
+                || entry.example.trim().is_empty()
         })
         .map(|entry| format!("registry {} {}", entry.code, entry.name));
     let keys: Vec<String> = CODES
