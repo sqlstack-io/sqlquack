@@ -395,7 +395,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -424,7 +424,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -446,7 +446,7 @@ impl Parser {
             self.skip();
             self.skip();
             let pattern = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -479,7 +479,7 @@ impl Parser {
             self.skip();
             self.skip();
             let pattern = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -496,7 +496,7 @@ impl Parser {
     fn parse_not_like_comparison(&mut self, left: Expression) -> Result<Expression> {
         Ok({
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -517,7 +517,7 @@ impl Parser {
     fn parse_not_ilike_comparison(&mut self, left: Expression) -> Result<Expression> {
         Ok({
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -720,7 +720,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -750,7 +750,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None

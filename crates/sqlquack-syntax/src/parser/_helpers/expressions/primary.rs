@@ -1672,6 +1672,10 @@ impl Parser {
             } else if self.check(TokenType::Number) || self.peek().token_type.is_keyword() {
                 let token = self.advance()?;
                 (token.text, false, false)
+            } else if self.is_snowflake()
+                && (self.check(TokenType::Comma) || self.check(TokenType::RParen))
+            {
+                return Ok(Expression::column("@"));
             } else {
                 return Err(self.parse_error("Expected variable name after @"));
             };
@@ -1700,7 +1704,14 @@ impl Parser {
             }
             return Err(self.parse_error(format!("Invalid colon parameter: :{}", num_token.text)));
         }
-        if self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
+        let snowflake = self.is_snowflake();
+        if snowflake && self.check(TokenType::QuotedIdentifier) {
+            return Err(self.parse_error("Expected an unquoted bind variable name after :"));
+        }
+        if self.is_identifier_token()
+            || self.is_safe_keyword_as_identifier()
+            || (snowflake && self.peek().token_type.is_keyword())
+        {
             let name = self.advance_text()?;
             Ok(Expression::Parameter(Box::new(Parameter {
                 name: Some(name),

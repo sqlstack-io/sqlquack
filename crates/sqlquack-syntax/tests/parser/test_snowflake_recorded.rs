@@ -260,6 +260,42 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "a trailing ESCAPE is an alias (recorded semantic error)",
+            sql: "SELECT v1 LIKE ANY ( 'm' ) ESCAPE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ESCAPE takes a string (recorded success)",
+            sql: "SELECT v1 ILIKE 'm' ESCAPE '!' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a lambda needs a parameter (recorded errno 1003)",
+            sql: "SELECT ACCUMULATE ( 1 , ( ) -> 0 , ( s , x ) -> s + x , ( s1 , s2 ) -> s1 + s2 , s -> s ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bind variable is no quoted name (recorded errno 1003)",
+            sql: "SELECT :\"v1 Q\" ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bind variable may be a keyword (recorded semantic error)",
+            sql: "SELECT :SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a bare @ is a stage argument (recorded semantic error)",
+            sql: "SELECT GET_STAGE_LOCATION ( @) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {

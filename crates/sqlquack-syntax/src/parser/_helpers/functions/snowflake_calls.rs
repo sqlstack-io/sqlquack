@@ -10,6 +10,31 @@ use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// Consumes a pattern's `ESCAPE`, which Snowflake reads as an alias when nothing follows it.
+    pub(crate) fn match_like_escape(&mut self) -> bool {
+        let alias = self.is_snowflake()
+            && matches!(
+                self.peek_nth(1).map(|token| token.token_type),
+                None | Some(
+                    TokenType::Eof
+                        | TokenType::Semicolon
+                        | TokenType::Comma
+                        | TokenType::RParen
+                        | TokenType::From
+                        | TokenType::Where
+                        | TokenType::Group
+                        | TokenType::GroupBy
+                        | TokenType::Order
+                        | TokenType::OrderBy
+                        | TokenType::Having
+                        | TokenType::Qualify
+                        | TokenType::Limit
+                        | TokenType::Union
+                )
+            );
+        self.check(TokenType::Escape) && !alias && self.match_token(TokenType::Escape)
+    }
+
     /// A qualified Snowflake call's lone query argument, as in `SNOWFLAKE.CORE.NULL_COUNT(SELECT c FROM t)`.
     pub(crate) fn parse_snowflake_query_argument(&mut self) -> Result<Option<Expression>> {
         let query_start = self.check(TokenType::Select) || self.check(TokenType::With);

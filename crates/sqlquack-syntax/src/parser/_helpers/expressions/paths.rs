@@ -647,6 +647,9 @@ impl Parser {
 
     fn parse_empty_parentheses(&mut self) -> Result<Expression> {
         self.skip();
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+            return Err(self.parse_error("Expected an expression in the parentheses"));
+        }
         if self.config.dialect != Some(crate::tokens::models::DialectType::DuckDB)
             && (self.match_token(TokenType::Arrow) || self.match_token(TokenType::FArrow))
         {
@@ -657,9 +660,6 @@ impl Parser {
                 colon: false,
                 parameter_types: Vec::new(),
             })));
-        }
-        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
-            return Err(self.parse_error("Expected an expression in the parentheses"));
         }
         self.maybe_parse_subscript(Expression::Tuple(Box::new(Tuple {
             expressions: Vec::new(),

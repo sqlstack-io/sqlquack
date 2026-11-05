@@ -1130,3 +1130,17 @@ id = "snowflake_scripting_block"
 marker = "BEGIN"
 sqlquack_node = "scripting_block"
 note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"
+
+[[rejection]]
+id = "snowflake_stage_reserved_name"
+sql = "SELECT @select"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake reads @ as a stage reference and refuses a bare reserved word as the stage name (recorded syntax_error)"
+
+[[rejection]]
+id = "snowflake_stage_quoted_blank_name"
+sql = "SELECT @`a b`"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake refuses a stage reference whose quoted name holds a blank (recorded syntax_error); backticks are no Snowflake quote either"
