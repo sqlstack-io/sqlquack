@@ -43,6 +43,8 @@ pub(crate) struct Emitted {
     pub(crate) not_null: bool,
     /// Whether the value depends on an array order Snowflake leaves undefined.
     pub(crate) unordered: bool,
+    /// Whether the value is SYSTEM$TYPEOF text whose plan-dependent storage suffix is still on.
+    pub(crate) suffixed: bool,
 }
 
 /// What a VARIANT-held value's root is known to be, which decides how it is written as text.
@@ -81,6 +83,7 @@ impl Emitted {
             sourced: false,
             not_null: false,
             unordered: false,
+            suffixed: false,
         }
     }
 
@@ -120,6 +123,7 @@ pub(crate) fn resolve(
             declared: column.declared_offsets.clone(),
             not_null: column.not_null,
             unordered: column.unordered,
+            suffixed: column.suffixed,
             ..Emitted::new(
                 format!(
                     "{}.{}",

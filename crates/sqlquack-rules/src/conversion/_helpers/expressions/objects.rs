@@ -28,6 +28,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
     OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, SESSION_TIMEZONE_UTC,
+    TYPE_SUFFIX_UNREMOVED,
 };
 
 /// OBJECT_DELETE of a VARIANT and literal text keys.
@@ -114,7 +115,7 @@ pub(crate) fn object_construct(
     if let [argument] = arguments
         && let Some(("star", payload)) = node_kind(argument)
     {
-        let columns = star(payload, site, true)?;
+        let columns = star(payload, site)?;
         let mut keys: Vec<String> = Vec::new();
         let mut values: Vec<Emitted> = Vec::new();
         for (column, value) in columns {
@@ -125,6 +126,9 @@ pub(crate) fn object_construct(
                     construct,
                     &format!("the star reads `{column}` more than once"),
                 ));
+            }
+            if value.suffixed {
+                return Err(refused(construct, TYPE_SUFFIX_UNREMOVED));
             }
             keys.push(column);
             values.push(value);

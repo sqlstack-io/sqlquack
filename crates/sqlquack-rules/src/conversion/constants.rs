@@ -1206,6 +1206,9 @@ pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_
 /// The array builders ARRAY_SIZE reads through, counting a SQL NULL element as Snowflake does.
 pub(crate) const COUNTED_ARRAY_FUNCTIONS: [&str; 3] =
     ["ARRAY_APPEND", "ARRAY_CAT", "ARRAY_CONSTRUCT"];
+/// Why SYSTEM$TYPEOF text refuses where its storage suffix would be read.
+pub(crate) const TYPE_SUFFIX_UNREMOVED: &str = "SYSTEM$TYPEOF text read before \
+    REGEXP_REPLACE(..., '\\[.*\\]$', '') removes its storage suffix, which depends on Snowflake's plan";
 /// Why a construct that reads VARIANTs only as JSON refuses a VARIANT built from a FLOAT.
 pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, which this construct \
                                                reads only as JSON, where the FLOAT's type is lost";

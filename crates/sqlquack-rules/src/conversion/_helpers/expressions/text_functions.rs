@@ -19,11 +19,11 @@ use crate::conversion::_helpers::expressions::result_types::result_type;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, flag, function_construct, list, node_construct, node_kind, payload_object,
-    require_understood,
+    field, flag, function_construct, identifier_name, list, node_construct, node_kind,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::{
     COMPUTED_SUBSTR_LENGTH, FUNCTION_KIND, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE,
@@ -920,15 +920,13 @@ pub(crate) fn system_typeof_call(node: &Value) -> Option<&Value> {
     (kind == FUNCTION_KIND && call_name(payload) == SYSTEM_TYPEOF_NAME).then_some(payload)
 }
 
-/// REGEXP_REPLACE(SYSTEM$TYPEOF(x), '\\[.*\\]$', ''): x's Snowflake type, as SYSTEM$TYPEOF names it.
+/// REGEXP_REPLACE(t, '\\[.*\\]$', '') of SYSTEM$TYPEOF text: the type name without its suffix.
 pub(crate) fn stripped_type_name(
     (typed, pattern, replacement): (&Value, &Value, &Value),
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let log = site.context.log;
-    let _rule = log.rule(SYSTEM_TYPE_NAME);
+    let _rule = site.context.log.rule(SYSTEM_TYPE_NAME);
     let construct = function_construct(SYSTEM_TYPEOF_NAME);
-    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let literal = |node: &Value| -> Result<Option<String>, Refusal> {
         Ok(match convert_expression(node, site)?.literal {
             Some(Literal::Text(text)) => Some(text),
@@ -938,17 +936,68 @@ pub(crate) fn stripped_type_name(
     if literal(pattern)?.as_deref() != Some(STORAGE_SUFFIX_PATTERN)
         || literal(replacement)?.as_deref() != Some("")
     {
-        return Err(refuse(format!(
-            "SYSTEM$TYPEOF other than with its storage suffix removed by REGEXP_REPLACE(...,              '{STORAGE_SUFFIX_PATTERN}', '')"
-        )));
+        return Err(outside_conditions(
+            construct,
+            format!(
+                "SYSTEM$TYPEOF other than with its storage suffix removed by REGEXP_REPLACE(..., \
+                 '{STORAGE_SUFFIX_PATTERN}', '')"
+            ),
+        ));
     }
-    let call = system_typeof_call(typed)
-        .ok_or_else(|| refuse("REGEXP_REPLACE of a value other than SYSTEM$TYPEOF".to_owned()))?;
-    let payload = payload_object(call, &construct)?;
-    require_understood(payload, &["name", "args"], &construct)?;
-    let [operand] = list(payload, "args") else {
-        return Err(refuse("SYSTEM$TYPEOF with these arguments".to_owned()));
+    let named = match system_typeof_call(typed) {
+        Some(call) => {
+            let payload = payload_object(call, &construct)?;
+            require_understood(payload, &["name", "args"], &construct)?;
+            let [operand] = list(payload, "args") else {
+                return Err(outside_conditions(
+                    construct,
+                    "SYSTEM$TYPEOF with these arguments".to_owned(),
+                ));
+            };
+            type_name(operand, site)?
+        }
+        None => convert_expression(typed, site.suffix_free(true))?,
     };
+    Ok(Emitted {
+        suffixed: false,
+        ..named
+    })
+}
+
+/// Whether `node` reads a column of SYSTEM$TYPEOF text whose storage suffix is still on.
+pub(crate) fn suffixed_column(node: &Value, site: Site<'_>) -> bool {
+    let Some(("column", column)) = node_kind(node) else {
+        return false;
+    };
+    let qualifier = column.get("table").and_then(identifier_name);
+    let log = site.context.log;
+    let _muted = log.muted();
+    column
+        .get("name")
+        .and_then(identifier_name)
+        .is_some_and(|name| {
+            resolve(site.scope, qualifier.as_deref(), &name, log).is_ok_and(|read| read.suffixed)
+        })
+}
+
+/// Whether `node` is `x ILIKE NULL`, the predicate with a NULL operand Snowflake was recorded typing.
+fn null_pattern(node: &Value) -> bool {
+    node_kind(node).is_some_and(|(kind, payload)| {
+        kind == ILIKE_KIND
+            && payload.get("quantifier").is_none_or(Value::is_null)
+            && payload
+                .get("right")
+                .and_then(node_kind)
+                .is_some_and(|(right, _)| right == NULL_KIND)
+    })
+}
+
+/// SYSTEM$TYPEOF(operand): the type name without its plan-decided suffix, marked as suffixed.
+pub(crate) fn type_name(operand: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(SYSTEM_TYPE_NAME);
+    let construct = function_construct(SYSTEM_TYPEOF_NAME);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let data_type = match convert_expression(operand, site) {
         Ok(converted) => converted.data_type,
         Err(refusal) => result_type(operand).ok_or(refusal)?,
@@ -963,22 +1012,30 @@ pub(crate) fn stripped_type_name(
                 .values()
                 .any(|child| node_kind(child).is_some_and(|(kind, _)| kind == NULL_KIND))
         });
-    match data_type {
-        SnowflakeType::Varchar | SnowflakeType::SemiStructured => Err(refuse(format!(
-            "SYSTEM$TYPEOF of {data_type}, whose length or kind is not tracked"
-        ))),
-        _ if widened => Err(refuse(format!(
-            "SYSTEM$TYPEOF of DATEADD of a {data_type}, which Snowflake was recorded widening to \
-             nanoseconds"
-        ))),
-        SnowflakeType::Boolean if null_operand => Err(refuse(
-            "SYSTEM$TYPEOF of a predicate with a NULL operand, which Snowflake was recorded typing \
-             NULL"
-                .to_owned(),
-        )),
-        _ => Ok(Emitted::new(
-            string_literal(&data_type.to_string(), log),
-            SnowflakeType::Varchar,
-        )),
-    }
+    let name = match data_type {
+        SnowflakeType::Varchar | SnowflakeType::SemiStructured => {
+            return Err(refuse(format!(
+                "SYSTEM$TYPEOF of {data_type}, whose length or kind is not tracked"
+            )));
+        }
+        _ if widened => {
+            return Err(refuse(format!(
+                "SYSTEM$TYPEOF of DATEADD of a {data_type}, which Snowflake was recorded widening \
+                 to nanoseconds"
+            )));
+        }
+        SnowflakeType::Boolean if null_pattern(operand) => SnowflakeType::Null.to_string(),
+        SnowflakeType::Boolean if null_operand => {
+            return Err(refuse(
+                "SYSTEM$TYPEOF of a predicate other than ILIKE with a NULL operand, which \
+                 Snowflake was recorded typing NULL for ILIKE"
+                    .to_owned(),
+            ));
+        }
+        _ => data_type.to_string(),
+    };
+    Ok(Emitted {
+        suffixed: true,
+        ..Emitted::new(string_literal(&name, log), SnowflakeType::Varchar)
+    })
 }

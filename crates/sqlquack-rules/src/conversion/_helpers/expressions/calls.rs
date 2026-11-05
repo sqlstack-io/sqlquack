@@ -54,7 +54,8 @@ use crate::conversion::_helpers::expressions::temporal_functions::{
     to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
-    left_right, pad, regexp, replace, split_part, stripped_type_name, system_typeof_call, translate,
+    left_right, pad, regexp, replace, split_part, stripped_type_name, suffixed_column,
+    system_typeof_call, translate, type_name,
 };
 use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
@@ -226,15 +227,14 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
         ("REGEXP_REPLACE", [typed, pattern, replacement])
-            if system_typeof_call(typed).is_some() =>
+            if system_typeof_call(typed).is_some() || suffixed_column(typed, site) =>
         {
             stripped_type_name((typed, pattern, replacement), site)
         }
+        ("SYSTEM$TYPEOF", [operand]) => type_name(operand, site),
         ("SYSTEM$TYPEOF", _) => Err(outside_conditions(
             construct,
-            "SYSTEM$TYPEOF other than with its storage suffix removed by \
-             REGEXP_REPLACE(..., '\\[.*\\]$', ''), since the suffix depends on Snowflake's plan"
-                .to_owned(),
+            "SYSTEM$TYPEOF with these arguments".to_owned(),
         )),
         (
             "REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL"
