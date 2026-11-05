@@ -43,18 +43,6 @@ scope = "full"
 reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
-subject = "form-links"
-sha256 = "0af1c11b31d23993a85ba472ccac8b97a1e4265153994f3b99e3c3ff8dacf24c"
-scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
-
-[[signoff]]
-subject = "function-links"
-sha256 = "fe3e0ad559aa8953c4e24f3382118954e1d04d6ca13583e4ed96ae7a13480ac7"
-scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
-
-[[signoff]]
 subject = "not-translatable:stages-and-files"
 sha256 = "b9199df8df3891cd07949257523db030589d2461b1eb71e0047a2d901d278824"
 scope = "full"
@@ -101,3 +89,21 @@ subject = "not-translatable:data-metrics-evaluated-at-a-time"
 sha256 = "b96dd82d2f2e1b0bcf7b95cd26e572e744629e3ba86cbd9c637ed12d7959b856"
 scope = "full"
 reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-metrics-approximate-or-parser-defined"
+sha256 = "7da5bbabf8f258ab46bda0d9e87c5fe05d06d626be31980d869e2e9aabef0940"
+scope = "full"
+reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "form-links"
+sha256 = "9cd40d659205bd52ec8e63bd6dc44c426ab0fe4f51862e915d0498c0d0e80c15"
+scope = "full"
+reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "function-links"
+sha256 = "dec5f7f2b0b775bca605e1a5913294263df46ec07df5c6ee4e6db8566ab13da7"
+scope = "full"
+reviewed_utc = "2026-11-05T15:59:28Z"
