@@ -11200,6 +11200,32 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "sf.ddl.experiment.show-run-metrics-in"
+family = "ddl"
+source = "doc.sql.experiment"
+anchor = "Reading results / SHOW RUN METRICS / SHOW RUN PARAMETERS"
+kind = "statement"
+grammar = [
+  "SHOW RUN METRICS [ LIKE '<pattern>' ] IN EXPERIMENT <name> [ RUN <run_name> ] [ LIMIT <n> ]",
+]
+grammar_sha256 = "99b8a2229c1985597c1be8cc063498bcd38ee53fde3577256dccae7015578b2e"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "sf.ddl.experiment.show-run-parameters-in"
+family = "ddl"
+source = "doc.sql.experiment"
+anchor = "Reading results / SHOW RUN METRICS / SHOW RUN PARAMETERS"
+kind = "statement"
+grammar = [
+  "SHOW RUN PARAMETERS [ LIKE '<pattern>' ] IN EXPERIMENT <name> [ RUN <run_name> ] [ LIMIT <n> ]",
+]
+grammar_sha256 = "8478fd614a7681e350660bc2e6f6b9bcf2c3a13348e45018358cc5d88057bff9"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "sf.ddl.experiment.show-runs-in-experiment"
 family = "ddl"
 source = "doc.sql.experiment"

@@ -133988,6 +133988,22 @@ anchor = "doc.sql.show-grants / Syntax"
 note = "omit <role_name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.show-grants.grants-of-application-role.o036"
+kind = "operand_type_class"
+required = true
+target = "<app_role_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "app_name.app_role, the qualified application role name, unquoted and double-quoted"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-of-application-role.o037"
+kind = "operand_type_class"
+required = true
+target = "<app_role_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "app_name.app_role, the qualified application role name, double-quoted parts"
+
+[[obligation]]
 id = "sf.security_admin.show-grants.grants-of-share.o001"
 kind = "positive"
 required = true

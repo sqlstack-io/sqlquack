@@ -27331,6 +27331,34 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o055"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the column list between the optional ( and )"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o056"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the parenthesized column list without its )"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o057"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the parenthesized column list without its ("
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.tablecolumncommentaction.o058"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the column list continued past the second column, [ , ... ]; no documented bound"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.unset.o001"
 kind = "positive"
 required = true
@@ -88535,6 +88563,34 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-table / Syntax"
 note = "an unquoted identifier in place of '<collation_specification>' (COLLATE m1), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o257"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-table / Syntax"
+note = "the column list between the optional ( and ), as the page's examples write it"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o258"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-table / Syntax"
+note = "the parenthesized column list without its )"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o259"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-table / Syntax"
+note = "the parenthesized column list without its ("
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o260"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-table / Syntax"
+note = "the column list continued past the second column, [ , ... ]; no documented bound"
 
 [[obligation]]
 id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o001"
@@ -278938,6 +278994,382 @@ id = "sf.ddl.experiment.show-experiments.o020"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o002"
+kind = "option_present"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o003"
+kind = "option_absent"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o004"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o005"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o006"
+kind = "negative_neighbour"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "an unquoted identifier in place of '<pattern>'"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o007"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o008"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o009"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o010"
+kind = "option_present"
+required = true
+target = "[ RUN <run_name> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o011"
+kind = "option_absent"
+required = true
+target = "[ RUN <run_name> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o012"
+kind = "required_operand_missing"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "omit <run_name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o013"
+kind = "operand_type_class"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o014"
+kind = "negative_neighbour"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "a string literal in place of <run_name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o015"
+kind = "option_present"
+required = true
+target = "[ LIMIT <n> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o016"
+kind = "option_absent"
+required = true
+target = "[ LIMIT <n> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o017"
+kind = "required_operand_missing"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "omit <n>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o018"
+kind = "operand_type_class"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o019"
+kind = "negative_neighbour"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "a string literal in place of <n>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RUN"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required METRICS"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXPERIMENT"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o025"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o026"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o027"
+kind = "identifier_class"
+required = true
+target = "<run_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-metrics-in.o028"
+kind = "identifier_class"
+required = true
+target = "<run_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o002"
+kind = "option_present"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o003"
+kind = "option_absent"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o004"
+kind = "required_operand_missing"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "omit '<pattern>'"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o005"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o006"
+kind = "negative_neighbour"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "an unquoted identifier in place of '<pattern>'"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o007"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o008"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o009"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o010"
+kind = "option_present"
+required = true
+target = "[ RUN <run_name> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o011"
+kind = "option_absent"
+required = true
+target = "[ RUN <run_name> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o012"
+kind = "required_operand_missing"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "omit <run_name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o013"
+kind = "operand_type_class"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o014"
+kind = "negative_neighbour"
+required = true
+target = "<run_name> in [ RUN <run_name> ]"
+note = "a string literal in place of <run_name>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o015"
+kind = "option_present"
+required = true
+target = "[ LIMIT <n> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o016"
+kind = "option_absent"
+required = true
+target = "[ LIMIT <n> ]"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o017"
+kind = "required_operand_missing"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "omit <n>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o018"
+kind = "operand_type_class"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o019"
+kind = "negative_neighbour"
+required = true
+target = "<n> in [ LIMIT <n> ]"
+note = "a string literal in place of <n>"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RUN"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PARAMETERS"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o022"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IN"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required EXPERIMENT"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o024"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o025"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o026"
+kind = "identifier_class"
+required = true
+target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o027"
+kind = "identifier_class"
+required = true
+target = "<run_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.experiment.show-run-parameters-in.o028"
+kind = "identifier_class"
+required = true
+target = "<run_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.ddl.experiment.show-runs-in-experiment.o001"

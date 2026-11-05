@@ -396,6 +396,134 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.query.at-before.iceberg-version.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o002"
+kind = "alternative"
+required = true
+target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_… → VERSION_TAG => '<tag_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o003"
+kind = "alternative"
+required = true
+target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <sna… → VERSION_REF => '<reference_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o004"
+kind = "alternative"
+required = true
+target = "{ VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_id>… → VERSION => <snapshot_id>"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o005"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_name>'"
+note = "omit '<tag_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o006"
+kind = "operand_type_class"
+required = true
+target = "'<tag_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o007"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_name>'"
+note = "an unquoted identifier in place of '<tag_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o008"
+kind = "required_operand_missing"
+required = true
+target = "'<reference_name>'"
+note = "omit '<reference_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o009"
+kind = "operand_type_class"
+required = true
+target = "'<reference_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o010"
+kind = "negative_neighbour"
+required = true
+target = "'<reference_name>'"
+note = "an unquoted identifier in place of '<reference_name>'"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o011"
+kind = "required_operand_missing"
+required = true
+target = "<snapshot_id>"
+note = "omit <snapshot_id>"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o012"
+kind = "operand_type_class"
+required = true
+target = "<snapshot_id>"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AT"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION_TAG after ("
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION_REF after ("
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION after ("
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_id> }"
+
+[[obligation]]
+id = "sf.query.at-before.iceberg-version.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
 id = "sf.query.changes.o001"
 kind = "positive"
 required = true

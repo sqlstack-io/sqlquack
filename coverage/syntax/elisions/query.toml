@@ -41,6 +41,37 @@ defers_to = [
 reason = "further clauses of the SELECT statement"
 
 [[elision]]
+form = "sf.query.at-before.iceberg-version"
+production = 0
+after = "SELECT"
+fill = "1"
+defers_to = [
+  "sf.query.select.select",
+  "sf.query.select.select.selecting-specific-columns",
+]
+reason = "the select list"
+
+[[elision]]
+form = "sf.query.at-before.iceberg-version"
+production = 0
+after = "FROM"
+fill = "t1"
+defers_to = [
+  "sf.query.from",
+]
+reason = "the FROM source"
+
+[[elision]]
+form = "sf.query.at-before.iceberg-version"
+production = 0
+after = "[ ... ]"
+fill = ""
+defers_to = [
+  "sf.query.constructs",
+]
+reason = "further clauses of the SELECT statement"
+
+[[elision]]
 form = "sf.query.changes"
 production = 0
 after = "SELECT"

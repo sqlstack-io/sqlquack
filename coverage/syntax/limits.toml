@@ -11580,7 +11580,7 @@ reason = "page definitions inlined: storageLifecyclePolicyAction; a definition t
 form = "sf.ddl.alter-dynamic-table.tablecolumncommentaction"
 grammar_sha256 = "ef878e6279748c145fecf5eb70573e41b34111fec759f5acf68ad4f82fd0481f"
 grammar = ["ALTER DYNAMIC TABLE [ IF EXISTS ] <name> { { ALTER | MODIFY } [ COLUMN ] <col1_name> { COMMENT '<string>' | UNSET COMMENT } [ , [ COLUMN ] <col2_name> { COMMENT '<string>' | UNSET COMMENT } ] }"]
-reason = "page definitions inlined: tableColumnCommentAction; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; tableCommentAction: the page writes `{ ALTER | MODIFY [ ( ] [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , ... ] [ ) ] }`; read as `{ ALTER | MODIFY } [ COLUMN ] <col1_name> { COMMENT '<string>' | UNSET COMMENT }` with an optional second column; the page names `tableColumnCommentAction` but defines it as `tableCommentAction`"
+reason = "page definitions inlined: tableColumnCommentAction; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; tableCommentAction: the page writes `{ ALTER | MODIFY [ ( ] [ COLUMN ] <col1_name> COMMENT '<string>' , [ COLUMN ] <col1_name> UNSET COMMENT [ , ... ] [ ) ] }`; read as `{ ALTER | MODIFY } [ COLUMN ] <col1_name> { COMMENT '<string>' | UNSET COMMENT }` with an optional second column; `[ , ... ]` continues the list without a documented bound and the `[ ( ]` and `[ ) ]` are one optional pair around it: this form's hand rows cover a third column and the parenthesized list; the page names `tableColumnCommentAction` but defines it as `tableCommentAction`"
 
 [[reading]]
 form = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams"
@@ -11724,7 +11724,7 @@ reason = "page definitions inlined: searchOptimizationAction; a definition the p
 form = "sf.ddl.alter-table.tablecolumnaction"
 grammar_sha256 = "69ab566c4e47f6cbd1cce193a946bbd9f9c50cb4ac9a4b70c8a3e052b56f3fc5"
 grammar = ["ALTER TABLE [ IF EXISTS ] <name> { ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ [ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL ] ] [ { DEFAULT <default_value> | { AUTOINCREMENT | IDENTITY } [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ] [ { ORDER | NOORDER } ] } ] [ [ NOT NULL ] [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } [ <constraint_properties> ] ] [ COLLATE '<collation_specification>' ] | RENAME COLUMN <col_name> TO <new_col_name> | { ALTER | MODIFY } [ COLUMN ] <col1_name> { DROP DEFAULT | SET DEFAULT <seq_name> .NEXTVAL | { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT } [ , [ COLUMN ] <col2_name> { DROP DEFAULT | SET DEFAULT <seq_name> .NEXTVAL | { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET DATA ] TYPE ] <type> | COMMENT '<string>' | UNSET COMMENT } ] | DROP [ COLUMN ] [ IF EXISTS ] <col1_name> [ , <col2_name> ... ] }"]
-reason = "page definitions inlined: tableColumnAction; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; tableColumnAction: the page writes `ALTER | MODIFY [ ( ] [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT ... [ ) ]` unbraced, listing the column actions comma-separated; read as `{ ALTER | MODIFY } [ COLUMN ] <col1_name> { <one action> }` with an optional second column, as the page's examples write it; a hand row observes the parenthesized list"
+reason = "page definitions inlined: tableColumnAction; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; tableColumnAction: the page writes `ALTER | MODIFY [ ( ] [ COLUMN ] <col1_name> DROP DEFAULT , [ COLUMN ] <col1_name> SET DEFAULT ... [ ) ]` unbraced, listing the column actions comma-separated; read as `{ ALTER | MODIFY } [ COLUMN ] <col1_name> { <one action> }` with an optional second column, as the page's examples write it; `[ , [ COLUMN ] <col2_name> ... ] [ , ... ]` continues the list without a documented bound, and the `[ ( ]` and `[ ) ]` are one optional pair around it (the examples write the list with and without parentheses): this form's hand rows cover a third column and the parenthesized list"
 
 [[reading]]
 form = "sf.ddl.alter-view.datagovnpolicytagaction"
@@ -82723,3 +82723,99 @@ form = "sf.security_admin.create-security-integration-saml2"
 grammar_sha256 = "1d8e52f53dba26003d516cafaedbafe7958187d3a8d37d8b5784682c0cd03e8d"
 grammar = ["CREATE [ OR REPLACE ] SECURITY INTEGRATION [ IF NOT EXISTS ] <name> TYPE = SAML2 ENABLED = { TRUE | FALSE } { METADATA_URL = '<string_literal>' | { SAML2_ISSUER = '<string_literal>' SAML2_SSO_URL = '<string_literal>' SAML2_PROVIDER = '<string_literal>' SAML2_X509_CERT = '<string_literal>' } } [ ALLOWED_USER_DOMAINS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ] [ ALLOWED_EMAIL_PATTERNS = ( '<string_literal>' [ , '<string_literal>' , ... ] ) ] [ SAML2_SP_INITIATED_LOGIN_PAGE_LABEL = '<string_literal>' ] [ SAML2_ENABLE_SP_INITIATED = TRUE | FALSE ] [ SAML2_SNOWFLAKE_X509_CERT = '<string_literal>' ] [ SAML2_SIGN_REQUEST = TRUE | FALSE ] [ SAML2_REQUESTED_NAMEID_FORMAT = '<string_literal>' ] [ SAML2_POST_LOGOUT_REDIRECT_URL = '<string_literal>' ] [ SAML2_FORCE_AUTHN = TRUE | FALSE ] [ SAML2_SNOWFLAKE_ISSUER_URL = '<string_literal>' ] [ SAML2_SNOWFLAKE_ACS_URL = '<string_literal>' ] [ COMMENT = '<string_literal>' ]"]
 reason = "the page's idp_parameters are the four named IdP properties SAML2_ISSUER, SAML2_SSO_URL, SAML2_PROVIDER and SAML2_X509_CERT, used together in place of METADATA_URL (Parameters); expanded so each gets its own rows (D118 round 4)"
+
+# Round 5 (D118 on cbe394ec): the page's OF APPLICATION ROLE prose names the role [ app_name. ]app_role.
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-of-application-role"
+kind = "operand_type_class"
+target = "<app_role_name>"
+note = "app_name.app_role, the qualified application role name, unquoted and double-quoted"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS OF APPLICATION ROLE a1.r1 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-of-application-role"
+kind = "operand_type_class"
+target = "<app_role_name>"
+note = "app_name.app_role, the qualified application role name, double-quoted parts"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS OF APPLICATION ROLE \"a 1\".\"r 1\" ;"
+expect = "accept"
+context = "raw"
+
+# Round 5: the optional ( ... ) pair around the ALTER | MODIFY column list, one pair (both or neither).
+
+[[limit]]
+form = "sf.ddl.alter-table.tablecolumnaction"
+kind = "positive"
+note = "the column list between the optional ( and ), as the page's examples write it"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET NOT NULL , v1 COMMENT 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the parenthesized column list without its )"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET NOT NULL , v1 COMMENT 'm' ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-table.tablecolumnaction"
+kind = "negative_neighbour"
+note = "the parenthesized column list without its ("
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 SET NOT NULL ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.tablecolumncommentaction"
+kind = "positive"
+note = "the column list between the optional ( and )"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 ALTER ( v1 COMMENT 'm' , v1 UNSET COMMENT , v1 COMMENT 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.tablecolumncommentaction"
+kind = "negative_neighbour"
+note = "the parenthesized column list without its )"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 ALTER ( v1 COMMENT 'm' , v1 UNSET COMMENT ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.tablecolumncommentaction"
+kind = "negative_neighbour"
+note = "the parenthesized column list without its ("
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 ALTER v1 COMMENT 'm' , v1 UNSET COMMENT ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-table.tablecolumnaction"
+kind = "positive"
+note = "the column list continued past the second column, [ , ... ]; no documented bound"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 MODIFY v1 DROP DEFAULT , COLUMN v1 SET NOT NULL , v1 UNSET COMMENT ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.tablecolumncommentaction"
+kind = "positive"
+note = "the column list continued past the second column, [ , ... ]; no documented bound"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 MODIFY v1 COMMENT 'm' , COLUMN v1 UNSET COMMENT , v1 COMMENT 'm' ;"
+expect = "accept"
+context = "raw"
