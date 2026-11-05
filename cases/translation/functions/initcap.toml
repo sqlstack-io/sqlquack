@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.initcap"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "INITCAP with mixed case and default delimiters. Catches: the rest of each word not lower-cased, or a delimiter set without _ @ - (Ab_cd instead of Ab_Cd)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'hello wORLD-foo'"],
+  ["'ab_cd@ef.gh'"],
+  ["'o''neil 3rd \u00e9lan'"],
+]
+query = "SELECT INITCAP(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_delimiters"
+description = "Given delimiters that replace the defaults. Catches: given delimiters added to the defaults instead of replacing them"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["'ab-cd ef'", "' '"],
+  ["'ab-cd ef'", "'-'"],
+]
+query = "SELECT INITCAP(a, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'ab'"],
+]
+query = "SELECT INITCAP(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_delimiters"
+description = "NULL delimiters. Catches: NULL read as the defaults"
+columns = [{ name = "d", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["' '"],
+]
+query = "SELECT INITCAP('ab cd', d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty_delimiters"
+description = "An empty delimiter string, which makes one word. Catches: the empty string read as the defaults"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'hELLO wORLD'"],
+]
+query = "SELECT INITCAP(a, '') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -1,0 +1,28 @@
+category = "translation"
+construct = "sf.functions.soundex-p123"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "The page's examples and a name where both functions agree. Catches: plain SOUNDEX (P236, L300)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Pfister'"],
+  ["'Lloyd'"],
+  ["'Robert'"],
+]
+query = "SELECT SOUNDEX_P123(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_varchar_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'Ann'"],
+]
+query = "SELECT SOUNDEX_P123(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
