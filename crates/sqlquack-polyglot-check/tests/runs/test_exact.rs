@@ -64,6 +64,21 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("snowflake_grant_without_role_keyword_list".to_owned(), 1),
                     ("snowflake_grant_without_role_keyword_users".to_owned(), 1),
                     ("snowflake_grant_without_role_keyword_strings".to_owned(), 1),
+                    (
+                        "snowflake_grant_without_role_keyword_after_select".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_grant_without_role_keyword_no_semicolon".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_revoke_without_role_keyword".to_owned(), 1),
+                    (
+                        "snowflake_revoke_without_role_keyword_admin_option".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_revoke_without_role_keyword_list".to_owned(), 1),
+                    ("snowflake_show_grants_for".to_owned(), 1),
                 ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),

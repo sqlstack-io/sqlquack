@@ -1289,3 +1289,45 @@ sql = "GRANT 'role1', 'role2' TO 'user1'@'localhost', 'user2'@'localhost';"
 dialects = ["Snowflake"]
 sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
 note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_after_select"
+sql = "SELECT set_config('session_authorization', 'abluva', false); GRANT abluva TO \"kk8529p@abluva.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_no_semicolon"
+sql = "GRANT abluva TO \"kk8529p@abluva.com\""
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's"
+
+[[rejection]]
+id = "snowflake_revoke_without_role_keyword"
+sql = "REVOKE developer_role FROM john;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake revokes a role as REVOKE ROLE <name> FROM ...; this keywordless role revocation is PostgreSQL's"
+
+[[rejection]]
+id = "snowflake_revoke_without_role_keyword_admin_option"
+sql = "REVOKE ADMIN OPTION FOR developer_role FROM john CASCADE;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake revokes a role as REVOKE ROLE <name> FROM ...; this keywordless role revocation is PostgreSQL's"
+
+[[rejection]]
+id = "snowflake_revoke_without_role_keyword_list"
+sql = "REVOKE role1, role2 FROM user1, \"user2@example.com\" RESTRICT;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake revokes a role as REVOKE ROLE <name> FROM ...; this keywordless role revocation is PostgreSQL's"
+
+[[rejection]]
+id = "snowflake_show_grants_for"
+sql = "SHOW GRANTS FOR foo"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "SHOW GRANTS FOR <user> is MySQL's; Snowflake's SHOW GRANTS takes ON, TO, OF or IN, so FOR is refused"
