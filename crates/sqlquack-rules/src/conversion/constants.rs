@@ -357,6 +357,12 @@ pub const PARSE_JSON_RULE: &str = "rule.parse_json";
 pub const VARIANT_PATH: &str = "rule.variant_path";
 /// TYPEOF of a VARIANT.
 pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
+/// SYSTEM$TYPEOF with its storage suffix removed by REGEXP_REPLACE.
+pub const SYSTEM_TYPE_NAME: &str = "rule.system_typeof";
+/// SYSTEM$TYPEOF, the static type of an expression with a storage suffix such as `[SB1]`.
+pub const SYSTEM_TYPEOF_NAME: &str = "SYSTEM$TYPEOF";
+/// The REGEXP_REPLACE pattern that removes SYSTEM$TYPEOF's storage suffix.
+pub const STORAGE_SUFFIX_PATTERN: &str = r"\[.*\]$";
 /// IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.

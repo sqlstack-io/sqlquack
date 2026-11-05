@@ -187,7 +187,11 @@ pub(crate) fn rounding(
             let half_to_even = match convert_expression(mode, site)?.literal {
                 Some(Literal::Text(mode)) if mode == "HALF_TO_EVEN" => true,
                 Some(Literal::Text(mode)) if mode == "HALF_AWAY_FROM_ZERO" => false,
-                _ => return Err(refuse("ROUND with a rounding mode no recording shows".to_owned())),
+                _ => {
+                    return Err(refuse(
+                        "ROUND with a rounding mode no recording shows".to_owned(),
+                    ));
+                }
             };
             (value, places_of(places)?, half_to_even)
         }

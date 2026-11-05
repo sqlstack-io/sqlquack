@@ -15,20 +15,23 @@ use sqlquack_duckdb::text::main::folded_text::folded_text;
 use sqlquack_duckdb::text::main::guarded_pattern::guarded_pattern;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::result_types::result_type;
+use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::strings::text_operand;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    field, flag, node_construct, node_kind, payload_object, require_understood,
+    field, flag, function_construct, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::{
     COMPUTED_SUBSTR_LENGTH, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS,
     NEGATED_FACET, NO_QUANTIFIER, POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP,
     REGEXP_COLUMN_PATTERN, REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING,
     REGEXP_EXTRACTING_FUNCTIONS, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS,
-    TEXT_PAD, TEXT_POSITION, TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
+    STORAGE_SUFFIX_PATTERN, SYSTEM_TYPE_NAME, SYSTEM_TYPEOF_NAME, TEXT_PAD, TEXT_POSITION,
+    TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -908,5 +911,55 @@ fn escape_kept(pattern: &str, escape: Option<char>, construct: &Construct) -> Re
                 .to_owned(),
         )),
         false => Ok(()),
+    }
+}
+
+/// The SYSTEM$TYPEOF call `node` reads, if it is one.
+pub(crate) fn system_typeof_call(node: &Value) -> Option<&Value> {
+    let (kind, payload) = node_kind(node)?;
+    (kind == "function" && call_name(payload) == SYSTEM_TYPEOF_NAME).then_some(payload)
+}
+
+/// REGEXP_REPLACE(SYSTEM$TYPEOF(x), '\\[.*\\]$', ''): x's Snowflake type, as SYSTEM$TYPEOF names it.
+pub(crate) fn stripped_type_name(
+    (typed, pattern, replacement): (&Value, &Value, &Value),
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(SYSTEM_TYPE_NAME);
+    let construct = function_construct(SYSTEM_TYPEOF_NAME);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let literal = |node: &Value| -> Result<Option<String>, Refusal> {
+        Ok(match convert_expression(node, site)?.literal {
+            Some(Literal::Text(text)) => Some(text),
+            _ => None,
+        })
+    };
+    if literal(pattern)?.as_deref() != Some(STORAGE_SUFFIX_PATTERN)
+        || literal(replacement)?.as_deref() != Some("")
+    {
+        return Err(refuse(format!(
+            "SYSTEM$TYPEOF other than with its storage suffix removed by REGEXP_REPLACE(...,              '{STORAGE_SUFFIX_PATTERN}', '')"
+        )));
+    }
+    let call = system_typeof_call(typed)
+        .ok_or_else(|| refuse("REGEXP_REPLACE of a value other than SYSTEM$TYPEOF".to_owned()))?;
+    let payload = payload_object(call, &construct)?;
+    require_understood(payload, &["name", "args"], &construct)?;
+    let [operand] = list(payload, "args") else {
+        return Err(refuse("SYSTEM$TYPEOF with these arguments".to_owned()));
+    };
+    let data_type = match convert_expression(operand, site) {
+        Ok(converted) => converted.data_type,
+        Err(refusal) => result_type(operand).ok_or(refusal)?,
+    };
+    match data_type {
+        SnowflakeType::Varchar | SnowflakeType::SemiStructured => Err(refuse(format!(
+            "SYSTEM$TYPEOF of {data_type}, whose length or kind is not tracked"
+        ))),
+        _ => Ok(Emitted::new(
+            string_literal(&data_type.to_string(), log),
+            SnowflakeType::Varchar,
+        )),
     }
 }

@@ -53,7 +53,7 @@ use crate::conversion::_helpers::expressions::temporal_functions::{
     to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
-    left_right, pad, regexp, replace, split_part, translate,
+    left_right, pad, regexp, replace, split_part, stripped_type_name, system_typeof_call, translate,
 };
 use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
@@ -224,6 +224,17 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
+        ("REGEXP_REPLACE", [typed, pattern, replacement])
+            if system_typeof_call(typed).is_some() =>
+        {
+            stripped_type_name((typed, pattern, replacement), site)
+        }
+        ("SYSTEM$TYPEOF", _) => Err(outside_conditions(
+            construct,
+            "SYSTEM$TYPEOF other than with its storage suffix removed by \
+             REGEXP_REPLACE(..., '\\[.*\\]$', ''), since the suffix depends on Snowflake's plan"
+                .to_owned(),
+        )),
         (
             "REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL"
             | "REGEXP_COUNT" | "REGEXP_INSTR",
@@ -484,9 +495,12 @@ impl AggregateCall<'_> {
             log,
         )
         .map_err(refuse)?;
-        let total_sql =
-            cast(&format!("sum({distinct}{}){}", argument.sql, self.over), total, log)
-                .map_err(refuse)?;
+        let total_sql = cast(
+            &format!("sum({distinct}{}){}", argument.sql, self.over),
+            total,
+            log,
+        )
+        .map_err(refuse)?;
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),

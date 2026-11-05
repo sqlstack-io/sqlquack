@@ -41,8 +41,8 @@ use crate::conversion::constants::{
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
     REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS,
     REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE,
-    SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX, TEXT_BRANCHES,
-    TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
+    SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, SYSTEM_TYPE_NAME, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX,
+    TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
     TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPEAT, TEXT_REPLACE,
     TEXT_SEARCH_POSITION, TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
     TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
@@ -521,6 +521,12 @@ pub const RULES: &[RuleSpec] = &[
             "fn:GET_IGNORE_CASE",
         ],
         conditions: "A VARIANT and a literal path of keys and whole-number indexes, keys without quotes or backslashes; a missing step is SQL NULL. GET_IGNORE_CASE prefers the exact key, else the one ASCII-case match; several matches or non-ASCII keys raise, relying on json_fidelity.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: SYSTEM_TYPE_NAME,
+        constructs: &["fn:SYSTEM$TYPEOF"],
+        conditions: "SYSTEM$TYPEOF(x) only as the subject of REGEXP_REPLACE(..., '\\\\[.*\\\\]$', ''), which removes the storage suffix Snowflake's plan decides: x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked.",
         failures: &[],
     },
     RuleSpec {
