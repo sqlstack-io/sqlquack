@@ -79,6 +79,7 @@
 						<textarea id="pg-sql" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
 					</div>
 					<p class="pg-note">Hover an underline for its diagnostic.</p>
+					<p class="pg-note pg-caption" id="pg-caption" hidden></p>
 					<details open>
 						<summary>Schema: the relations your SQL reads</summary>
 						<textarea class="pg-small" id="pg-schema" spellcheck="false" aria-label="Schema JSON"></textarea>
@@ -99,6 +100,7 @@
 					</details>
 				</div>
 				<div class="pg-stages" aria-live="polite">
+					<p class="pg-verdict" id="pg-verdict" hidden></p>
 					<section class="pg-stage" id="stage-parse">
 						<header><span class="pg-num">1</span><h2>Parse as Snowflake</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
 						<div class="pg-body"></div>
