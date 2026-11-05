@@ -28,6 +28,7 @@ from scripts.syntax_obligations.constants import (
     KIND_PROSE,
     LATER_ERROR_STAGES,
     LEXICAL_WRONG,
+    OBSERVED_NEIGHBOUR_REASON,
     PAIR_SIZE,
     REJECTING,
     STATUS_CATALOGUED,
@@ -35,10 +36,6 @@ from scripts.syntax_obligations.constants import (
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, Node, Rendered, Spec
 from scripts.syntax_obligations.types import Row
-
-OBSERVED_NEIGHBOUR_REASON: str = (
-    "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
-)
 
 
 def limit_drafts(*, path: Path, family: str, forms: set[str]) -> list[Draft]:

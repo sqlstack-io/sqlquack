@@ -8,15 +8,13 @@ from pathlib import Path
 
 from scripts.syntax_obligations._helpers.cases import (
     held_cases,
-    jsonl_text,
     packet_text,
     receipt_phases,
     receipt_settlements,
     recorded_receipts,
     run_database_setups,
-    settled_cases,
+    write_family,
 )
-from scripts.syntax_obligations.constants import MARKS_DIR
 from scripts.syntax_obligations.models import ReceiptView
 from scripts.syntax_obligations.types import Row
 
@@ -24,8 +22,7 @@ from scripts.syntax_obligations.types import Row
 def run_cases(argv: list[str] | None = None) -> int:
     """Regenerate the cases of the named families and list those that need a capture."""
     arguments: argparse.Namespace = _parse_args(argv)
-    root: Path = arguments.root
-    receipts = ReceiptView(
+    receipts: ReceiptView = ReceiptView(
         phases=receipt_phases(arguments.receipts),
         settlements=receipt_settlements(arguments.receipts),
     )
@@ -35,28 +32,9 @@ def run_cases(argv: list[str] | None = None) -> int:
     held: frozenset[str] = held_cases(arguments.held)
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases, arity, marked = settled_cases(
-            root=root,
-            family=family,
-            receipts=receipts,
-            setups=setups,
-            held=held,
+        cases, arity = write_family(
+            root=arguments.root, family=family, receipts=receipts, setups=setups, held=held
         )
-        marked_path: Path = root / MARKS_DIR / f"{family}.jsonl"
-        if marked:
-            marked_path.parent.mkdir(parents=True, exist_ok=True)
-            marked_path.write_text(jsonl_text(marked))
-        elif marked_path.exists():
-            marked_path.unlink()
-        path: Path = root / "cases" / f"{family}.jsonl"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(jsonl_text(cases))
-        arity_path: Path = root / "arity" / f"{family}.jsonl"
-        if arity:
-            arity_path.parent.mkdir(parents=True, exist_ok=True)
-            arity_path.write_text(jsonl_text(arity))
-        elif arity_path.exists():
-            arity_path.unlink()
         to_capture += [c for c in cases + arity if (c["case_id"], c["sql_sha256"]) not in recorded]
         print(
             json.dumps(

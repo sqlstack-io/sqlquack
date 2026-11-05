@@ -32,11 +32,13 @@ from scripts.syntax_obligations.constants import (
     DEFINE_REFERENCE_ITEM,
     DEFINE_SECRETS_CLAUSE,
     DOLLAR_QUOTE,
+    DOT_TOKEN,
     DOUBLE_QUOTE,
     DOUBLED_STAGE_SIGIL,
     EMPTY_CLAUSE,
     EMPTY_LIST,
     EMPTY_PROPERTY_LIST,
+    EQUALS_TOKEN,
     EXPECT_ACCEPT,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
@@ -407,7 +409,7 @@ class _Renderer:
             item: list[str] = before[start + 1 :]
             separator: int = _separator_start(before=before)
             if cut_by_keyword and (
-                item[:1] == ["="]
+                item[:1] == [EQUALS_TOKEN]
                 or (
                     closes
                     and separator >= 0
@@ -608,7 +610,8 @@ def _separator_start(*, before: list[str]) -> int:
 def _keywords_only(branch: tuple[Node, ...]) -> bool:
     """Whether a branch is fixed words: keywords, dotted ones such as SNOWFLAKE.ML.FORECAST too."""
     return all(
-        token.token_kind == TOKEN_KEYWORD or (token.token_kind == TOKEN_PUNCT and token.text == ".")
+        token.token_kind == TOKEN_KEYWORD
+        or (token.token_kind == TOKEN_PUNCT and token.text == DOT_TOKEN)
         for token in _tokens(branch)
     )
 

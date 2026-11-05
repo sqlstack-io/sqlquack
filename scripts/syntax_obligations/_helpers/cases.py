@@ -29,6 +29,7 @@ from scripts.syntax_obligations.constants import (
     KIND_EXTREME,
     KIND_POSITIVE,
     LANE_A_BLOCK_SESSION,
+    MARKS_DIR,
     MEASURE_KEY,
     PACKET_KEYS,
     RUN_DATABASE_SETUPS,
@@ -332,13 +333,13 @@ def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tupl
     for sha, r in lines:
         if sha in gone:
             continue
-        key = (
+        key: tuple[str, str, str, str] = (
             str(r["case_id"]),
             str(r["sql_sha256"]),
             str(r.get("setup_sha256", "")),
             str(r.get("session_sha256", "")),
         )
-        errno = r.get("errno")
+        errno: object = r.get("errno")
         answers.setdefault(key, set()).add((str(r["phase"]), "" if errno is None else str(errno)))
     settled: dict[tuple[str, str, str, str], tuple[str, str]] = {}
     for key, found in answers.items():
@@ -490,3 +491,34 @@ def _packet_row(case: Row) -> Row:
 def packet_text(cases: list[Row]) -> str:
     """The capture packet lines of the cases: only the fields a capture needs."""
     return jsonl_text([_packet_row(case) for case in cases])
+
+
+def write_family(
+    *,
+    root: Path,
+    family: str,
+    receipts: ReceiptView,
+    setups: dict[tuple[str, str], list[str]],
+    held: frozenset[str],
+) -> tuple[list[Row], list[Row]]:
+    """Write one family's cases, arity cases and settled marks; return the cases and arity cases."""
+    cases, arity, marked = settled_cases(
+        root=root,
+        family=family,
+        receipts=receipts,
+        setups=setups,
+        held=held,
+    )
+    _write_rows(path=root / MARKS_DIR / f"{family}.jsonl", rows=marked, keep_empty=False)
+    _write_rows(path=root / "cases" / f"{family}.jsonl", rows=cases, keep_empty=True)
+    _write_rows(path=root / "arity" / f"{family}.jsonl", rows=arity, keep_empty=False)
+    return cases, arity
+
+
+def _write_rows(*, path: Path, rows: list[Row], keep_empty: bool) -> None:
+    """Write rows as JSON lines; an empty list removes the file unless it is kept empty."""
+    if rows or keep_empty:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(jsonl_text(rows))
+    elif path.exists():
+        path.unlink()

@@ -316,8 +316,6 @@ PAIR_SIZE: int = 2
 DIGEST_WIDTH: int = 12
 MEASURE_KEY: str = "measure"
 STAGE_KEY: str = "stage"
-# D133 (D97b, amended by D133a): an observed, undocumented, non-extreme case settles from its
-# receipts when every current receipt for its SQL, setup and session agrees on phase and errno.
 D133_REJECT_ERRNOS: frozenset[str] = frozenset({"921"})
 D133_NEVER_ACCEPT_ERRNO: str = "1003"
 D133_ACCEPT_STAGES: dict[str, str] = {
@@ -421,13 +419,11 @@ ELISION_START: str = "^"
 PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
 OPENED: int = -2
-# An all-optional property list after SET renders one property: Snowflake rejects `SET ;` (D118).
 SET_KEYWORDS: frozenset[str] = frozenset({"SET"})
 SET_ANCHOR_PREFERENCE: tuple[str, ...] = ("COMMENT", "ENABLED")
 LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST", "DEFAULT"}
 )
-# A documented `@` before a stage fill that carries its own `@` renders one (D118).
 DOUBLED_STAGE_SIGIL: re.Pattern[str] = re.compile(r"(?<![^ ])@ (?=@[^ @])")
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?![a-z]+:/)(?=[^ =])")
 STAGE_TOKEN: str = r'(@(?:"[^"]*"|[^\s"])*'
@@ -1607,7 +1603,6 @@ DEFINE_QUALIFIED_NAMES: dict[str, tuple[str, str]] = {
     "sf.security_admin.create-role.define-role": ("", ""),
     "sf.security_admin.create-share.define-share": ("", ""),
 }
-# A DEFINE TASK predecessor named like the task itself is a cycle DCM refuses (errno 1629).
 DEFINE_FORM_FILLS: dict[str, dict[str, str]] = {
     "sf.ddl.create-task.define-task": {"task_name": "p1"}
 }
@@ -1623,3 +1618,8 @@ DEFINE_SECRETS_CLAUSE: str = "SECRETS = ("
 DEFINE_REFERENCE_ITEM: str = (
     r"(?:'[^']*'|(?:[A-Za-z_][A-Za-z0-9_$]*\.)*(?:\"[^\"]*\"|[A-Za-z_][A-Za-z0-9_$]*))"
 )
+OBSERVED_NEIGHBOUR_REASON: str = (
+    "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+)
+EQUALS_TOKEN: str = "="
+DOT_TOKEN: str = "."
