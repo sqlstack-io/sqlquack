@@ -5460,8 +5460,8 @@ reason = "absoluteFilePath ::= @[ <namespace>. ]<stage_name>/<path>/<filename> a
 [[reading]]
 form = "sf.utility.execute-notebook-project"
 grammar_sha256 = "478c7c451cf60ee2fa563cb396269dd201a632185a674446d0ef1bff485152fb"
-grammar = ["EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name> MAIN_FILE = 'notebook.ipynb' COMPUTE_POOL = '<compute_pool_name>' QUERY_WAREHOUSE = '<warehouse_name>' RUNTIME = '<runtime_version>' [ ARGUMENTS = '<notebook_args>' ] [ REQUIREMENTS_FILE = '<path/to/requirements.txt>' ] [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ SECRETS = ( <database_name>.<schema_name>.<secret_name> [ , ... ] ) ];"]
-reason = "ARGUMENTS is one string literal holding blank-separated arguments (the brackets inside the quotes describe its content, not SQL)"
+grammar = ["EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name> MAIN_FILE = '<notebook_file_name>' COMPUTE_POOL = '<compute_pool_name>' QUERY_WAREHOUSE = '<warehouse_name>' RUNTIME = '<runtime_version>' [ ARGUMENTS = '<notebook_args>' ] [ REQUIREMENTS_FILE = '<path/to/requirements.txt>' ] [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ SECRETS = ( <database_name>.<schema_name>.<secret_name> [ , ... ] ) ];"]
+reason = "ARGUMENTS is one string literal holding blank-separated arguments (the brackets inside the quotes describe its content, not SQL); the block's MAIN_FILE = 'notebook.ipynb' is an example value: the parameter is documented as MAIN_FILE = '<notebook_file_name>.ipynb', the notebook file to run, so the reading writes one string operand '<notebook_file_name>' (filled as 'notebook.ipynb')"
 
 # Utility: page-order and page-text rows the readings depart from, observed.
 
@@ -82819,3 +82819,37 @@ anchor = "doc.sql.alter-dynamic-table / Syntax"
 sql = "ALTER DYNAMIC TABLE v1 MODIFY v1 COMMENT 'm' , COLUMN v1 UNSET COMMENT , v1 COMMENT 'm' ;"
 expect = "accept"
 context = "raw"
+
+
+# Round 6 (D118 on 58b33313): DESC TRANSACTION's id "must be a literal, not a session variable".
+
+[[limit]]
+form = "sf.ddl.desc-transaction"
+kind = "negative_neighbour"
+target = "<transaction_id>"
+note = "a session variable in place of <transaction_id>, which the page says must be a literal"
+anchor = "doc.sql.desc-transaction / Parameters"
+sql = "DESC TRANSACTION $v1 ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.desc-transaction"
+kind = "negative_neighbour"
+target = "<transaction_id>"
+note = "a string literal in place of the numeric <transaction_id>, observed (DESC TRANSACTION alone parses as a DESC of an object named TRANSACTION)"
+anchor = "doc.sql.desc-transaction / Parameters"
+sql = "DESC TRANSACTION 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.desc-transaction"
+kind = "negative_neighbour"
+target = "<transaction_id>"
+note = "a reserved word in place of <transaction_id>, observed"
+anchor = "doc.sql.desc-transaction / Parameters"
+sql = "DESC TRANSACTION SELECT ;"
+expect = "observe"
+context = "raw"
+

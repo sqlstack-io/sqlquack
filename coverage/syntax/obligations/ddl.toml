@@ -273695,6 +273695,30 @@ anchor = "doc.sql.desc-transaction / Syntax"
 note = "omit <transaction_id>, observed"
 
 [[obligation]]
+id = "sf.ddl.desc-transaction.o024"
+kind = "negative_neighbour"
+required = true
+target = "<transaction_id>"
+anchor = "doc.sql.desc-transaction / Parameters"
+note = "a session variable in place of <transaction_id>, which the page says must be a literal"
+
+[[obligation]]
+id = "sf.ddl.desc-transaction.o025"
+kind = "negative_neighbour"
+required = true
+target = "<transaction_id>"
+anchor = "doc.sql.desc-transaction / Parameters"
+note = "a string literal in place of the numeric <transaction_id>, observed (DESC TRANSACTION alone parses as a DESC of an object named TRANSACTION)"
+
+[[obligation]]
+id = "sf.ddl.desc-transaction.o026"
+kind = "negative_neighbour"
+required = true
+target = "<transaction_id>"
+anchor = "doc.sql.desc-transaction / Parameters"
+note = "a reserved word in place of <transaction_id>, observed"
+
+[[obligation]]
 id = "sf.ddl.desc-type.o001"
 kind = "positive"
 required = true

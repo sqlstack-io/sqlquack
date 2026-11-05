@@ -1123,6 +1123,7 @@ UTILITY_FILLS: dict[str, str] = {
     "filename": "f1.sql",
     "yaml_spec_text": "$$ m $$",
     "system_function": "SYSTEM$DBT_GET_LAST_RUN_TARGET ( 'p1' )",
+    "notebook_file_name": "'notebook.ipynb'",
 }
 UTILITY_LITERAL_FILLS: dict[str, str] = {
     "'com.snowflake:snowpark:<version>'": "'com.snowflake:snowpark:1.14.0'",
