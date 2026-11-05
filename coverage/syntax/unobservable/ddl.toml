@@ -52395,3 +52395,783 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o002"
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+construct = "option_present: ALTER APPLICATION SERVICE IF EXISTS v1 UNSET AUTO_RESUME , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.k7c6ebe07ae43", sql_sha256 = "7c6ebe07ae43185dc516d8c7bb43f3a3632772ad826ada0cdfa4b4e3391f1f24" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o014"
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+construct = "the list continued at least once: ALTER APPLICATION SERVICE IF EXISTS v1 UNSET AUTO_RESUME , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.k7c6ebe07ae43", sql_sha256 = "7c6ebe07ae43185dc516d8c7bb43f3a3632772ad826ada0cdfa4b4e3391f1f24" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.o024"
+form = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations"
+construct = "every independent option of one production together: ALTER APPLICATION SERVICE IF EXISTS v1 UNSET AUTO_RESUME , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations.k7c6ebe07ae43", sql_sha256 = "7c6ebe07ae43185dc516d8c7bb43f3a3632772ad826ada0cdfa4b4e3391f1f24" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.o002"
+form = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group"
+construct = "option_present: ALTER COMPUTE POOL IF EXISTS v1 UNSET AUTO_SUSPEND_SECS , AUTO_RESUME ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.k974515ee33a8", sql_sha256 = "974515ee33a8a454c9b4ea6b773c37261006fc6244659778cf0e89d7ce86e7a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.o012"
+form = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group"
+construct = "the list continued at least once: ALTER COMPUTE POOL IF EXISTS v1 UNSET AUTO_SUSPEND_SECS , AUTO_RESUME ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.k974515ee33a8", sql_sha256 = "974515ee33a8a454c9b4ea6b773c37261006fc6244659778cf0e89d7ce86e7a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.o021"
+form = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group"
+construct = "every independent option of one production together: ALTER COMPUTE POOL IF EXISTS v1 UNSET AUTO_SUSPEND_SECS , AUTO_RESUME ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.unset-auto-suspend-secs-auto-resume-placement-group.k974515ee33a8", sql_sha256 = "974515ee33a8a454c9b4ea6b773c37261006fc6244659778cf0e89d7ce86e7a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o002"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "option_present: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , EMAIL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.ke42dc31817d3", sql_sha256 = "e42dc31817d31f4d4cb446a870a194a81fca34757313cfabb60ccb6a11970bb4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o015"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "every independent option of one production together: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , EMAIL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.ke42dc31817d3", sql_sha256 = "e42dc31817d31f4d4cb446a870a194a81fca34757313cfabb60ccb6a11970bb4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-external-consumer.unset.o020"
+form = "sf.ddl.alter-external-consumer.unset"
+construct = "the list continued at least once: ALTER EXTERNAL CONSUMER IF EXISTS v1 UNSET COMMENT , EMAIL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: listing or external sharing"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-external-consumer.unset.ke42dc31817d3", sql_sha256 = "e42dc31817d31f4d4cb446a870a194a81fca34757313cfabb60ccb6a11970bb4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o002"
+form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
+construct = "option_present: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k429dce389701", sql_sha256 = "429dce389701b9a4d4778fc105217592151299faa7848b2b9aa7ecb6bdcd86b4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o010"
+form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
+construct = "the list continued at least once: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k429dce389701", sql_sha256 = "429dce389701b9a4d4778fc105217592151299faa7848b2b9aa7ecb6bdcd86b4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.o020"
+form = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table"
+construct = "every independent option of one production together: ALTER OPENFLOW DEPLOYMENT IF EXISTS v1 UNSET DISPLAY_NAME , COMMENT ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table.k429dce389701", sql_sha256 = "429dce389701b9a4d4778fc105217592151299faa7848b2b9aa7ecb6bdcd86b4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o002"
+form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
+construct = "option_present: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k313800b8a94b", sql_sha256 = "313800b8a94b6ed1ec0c968b4b5a860e0f0ca757fdd5c7433958924f421377ba" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o010"
+form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
+construct = "the list continued at least once: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k313800b8a94b", sql_sha256 = "313800b8a94b6ed1ec0c968b4b5a860e0f0ca757fdd5c7433958924f421377ba" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.o019"
+form = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment"
+construct = "every independent option of one production together: ALTER OPENFLOW RUNTIME IF EXISTS v1 UNSET DISPLAY_NAME , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment.k313800b8a94b", sql_sha256 = "313800b8a94b6ed1ec0c968b4b5a860e0f0ca757fdd5c7433958924f421377ba" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o002"
+form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
+construct = "option_present: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , POSTGRES_SETTINGS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.kbf34ca203a98", sql_sha256 = "bf34ca203a983d54e950364e0a82a23d34da289e9992a2bcb6540d5db1b40fd2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o012"
+form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
+construct = "the list continued at least once: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , POSTGRES_SETTINGS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.kbf34ca203a98", sql_sha256 = "bf34ca203a983d54e950364e0a82a23d34da289e9992a2bcb6540d5db1b40fd2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.o021"
+form = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy"
+construct = "every independent option of one production together: ALTER POSTGRES INSTANCE IF EXISTS v1 UNSET COMMENT , POSTGRES_SETTINGS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-postgres-instance.unset-comment-postgres-settings-network-policy.kbf34ca203a98", sql_sha256 = "bf34ca203a983d54e950364e0a82a23d34da289e9992a2bcb6540d5db1b40fd2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.o002"
+form = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances"
+construct = "option_present: ALTER SERVICE IF EXISTS v1 UNSET MIN_INSTANCES , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.k2c841c7cdc3e", sql_sha256 = "2c841c7cdc3e38b0ca1fcc40961efaac2c824f01b47ab7a4ee48d0ab8174428a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.o016"
+form = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances"
+construct = "the list continued at least once: ALTER SERVICE IF EXISTS v1 UNSET MIN_INSTANCES , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.k2c841c7cdc3e", sql_sha256 = "2c841c7cdc3e38b0ca1fcc40961efaac2c824f01b47ab7a4ee48d0ab8174428a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.o024"
+form = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances"
+construct = "every independent option of one production together: ALTER SERVICE IF EXISTS v1 UNSET MIN_INSTANCES , AUTO_SUSPEND_SECS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): billable or out-of-account: compute pool or service"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.unset-min-instances-auto-suspend-secs-max-instances.k2c841c7cdc3e", sql_sha256 = "2c841c7cdc3e38b0ca1fcc40961efaac2c824f01b47ab7a4ee48d0ab8174428a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o002"
+form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
+construct = "option_present: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k263ea907d059", sql_sha256 = "263ea907d059da4879ec8449b2ac0cddc62c0ead72f00208f1fabe929e200a1b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o012"
+form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
+construct = "the list continued at least once: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k263ea907d059", sql_sha256 = "263ea907d059da4879ec8449b2ac0cddc62c0ead72f00208f1fabe929e200a1b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.o020"
+form = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse"
+construct = "every independent option of one production together: ALTER STREAMLIT IF EXISTS v1 UNSET SECRETS , EXTERNAL_ACCESS_INTEGRATIONS ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-streamlit.unset-secrets-external-access-integrations-query-warehouse.k263ea907d059", sql_sha256 = "263ea907d059da4879ec8449b2ac0cddc62c0ead72f00208f1fabe929e200a1b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o002"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o009"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o017"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o019"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kfcb98d86b48c", sql_sha256 = "fcb98d86b48c757f41335d6ec397c732451d44c3d774da5910d6b22a01aac088" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o021"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kcf9d16529178", sql_sha256 = "cf9d16529178d846f7a469271ef7fc04d574f549d689a61740c493cb438bfb2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o022"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "option_present: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o027"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "the list continued at least once: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o032"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid identifier: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o035"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid identifier: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o041"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "a valid operand: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k000371d26933", sql_sha256 = "000371d26933cefd00a038f99d2ae932cc907cc14596bb365ef918cd92f29808" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o042"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "the list continued at least once: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.k000371d26933", sql_sha256 = "000371d26933cefd00a038f99d2ae932cc907cc14596bb365ef918cd92f29808" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o066"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table"
+construct = "every independent option of one production together: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.kda6cfe915325", sql_sha256 = "da6cfe915325174413f8a8e230e072fab3765ae792a61b12a6e227139b357c9b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o246"
+form = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table"
+construct = "every independent option of one production together: CREATE OR REPLACE DYNAMIC ICEBERG TABLE v1 ( v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.k56bec6e3bc7d", sql_sha256 = "56bec6e3bc7d9aa9666b986dda3f0ccd3b6cbd5b5c47d7677a5c228c26386d48" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o002"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o004"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o011"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o019"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o021"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.k632c3cabc9b6", sql_sha256 = "632c3cabc9b6b28416519f8ef337acd4a3e00a2b65772cd1db06ba6504b397af" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o023"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kf2becc724067", sql_sha256 = "f2becc7240672865ff16aed364f78d158eb69cda7e6b20d608bf65ea303d3188" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o024"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "option_present: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o029"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "the list continued at least once: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o034"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid identifier: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o037"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid identifier: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o043"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "a valid operand: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka5c1b72c0c9d", sql_sha256 = "a5c1b72c0c9d7410a6aab48ccc32aa51c7a7c0468b44e08f2f525acbbb7f41ab" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o044"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "the list continued at least once: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.ka5c1b72c0c9d", sql_sha256 = "a5c1b72c0c9d7410a6aab48ccc32aa51c7a7c0468b44e08f2f525acbbb7f41ab" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o068"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+construct = "every independent option of one production together: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.kbe2779b1c532", sql_sha256 = "be2779b1c53208d638556dfbadd0ac1874eccd30bd34dba4cba4cae1c926ca61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o300"
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag"
+construct = "every independent option of one production together: CREATE OR REPLACE TRANSIENT DYNAMIC TABLE IF NOT EXISTS v1 ( v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) , v1 INT ) TARGET_LAG = '1 minute' SCHEDULER = DISABLE WAREHOUSE = v1 INITIALIZATION_WAREHOUSE = v1 REFRESH_MODE = AUTO INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) REQUIRE USER FROZEN WHERE ( 1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) BACKFILL FROM v1 START AT ( STREAM => 'm' ) EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE AS SELECT 1 ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): changes session context"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k8e98166b10f9", sql_sha256 = "8e98166b10f90db32cf84888ed5b490fc80f528ae46e4857a0c44c3c95cbaf01" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o002"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o004"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o010"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o014"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o016"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE TEMPORARY READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.k1532408074af", sql_sha256 = "1532408074af216c58f4ea7ef57a459e3a984c13edc9b3418a822c6799c89673" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o023"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o031"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o033"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.k5ddd00d9bdab", sql_sha256 = "5ddd00d9bdab04ea4f003147195b29fd01b367fd3271a2a79d813602a4b11590" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o035"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "a valid operand: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.k6a784c01ddd7", sql_sha256 = "6a784c01ddd7a5c6a7e3c18d0e226a88de7e82e501f0d3b5205df65f22afb598" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o036"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o038"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o040"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "option_present: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o045"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "the list continued at least once: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-table.create-table-clone.o060"
+form = "sf.ddl.create-table.create-table-clone"
+construct = "every independent option of one production together: CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (ddl_sweep): CREATE of an account-level or unvetted kind (READ ONLY TABLE)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-table.create-table-clone.kf01b7ca52253", sql_sha256 = "f01b7ca52253430a82e2859b5d7507b80f7a60793469dc1765ee9eb1914d63f0" },
+]
+runs = []
+probes = []

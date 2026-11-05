@@ -7990,3 +7990,75 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.o002"
+form = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh"
+construct = "option_present: ALTER FAILOVER GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.k8708ac104871", sql_sha256 = "8708ac104871f56e7d7eaf3e95e09635a20c640aa830e539d3d97910e3cd3e1d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.o013"
+form = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh"
+construct = "the list continued at least once: ALTER FAILOVER GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.k8708ac104871", sql_sha256 = "8708ac104871f56e7d7eaf3e95e09635a20c640aa830e539d3d97910e3cd3e1d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.o022"
+form = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh"
+construct = "every independent option of one production together: ALTER FAILOVER GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh.k8708ac104871", sql_sha256 = "8708ac104871f56e7d7eaf3e95e09635a20c640aa830e539d3d97910e3cd3e1d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.o002"
+form = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration"
+construct = "option_present: ALTER REPLICATION GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.k1458a42e5b2c", sql_sha256 = "1458a42e5b2c78b514fc7ca8142e0b9734be5eafef532f4472c86e1704fc2334" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.o010"
+form = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration"
+construct = "the list continued at least once: ALTER REPLICATION GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.k1458a42e5b2c", sql_sha256 = "1458a42e5b2c78b514fc7ca8142e0b9734be5eafef532f4472c86e1704fc2334" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.o019"
+form = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration"
+construct = "every independent option of one production together: ALTER REPLICATION GROUP IF EXISTS v1 UNSET COMMENT , REPLICATION_SCHEDULE ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (relaxed_sweep): billable or out-of-account: replication or failover"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration.k1458a42e5b2c", sql_sha256 = "1458a42e5b2c78b514fc7ca8142e0b9734be5eafef532f4472c86e1704fc2334" },
+]
+runs = []
+probes = []
