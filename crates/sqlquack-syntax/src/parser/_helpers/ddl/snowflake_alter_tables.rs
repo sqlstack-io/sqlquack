@@ -174,7 +174,7 @@ impl Parser {
         Ok(Some(alter_object(kind, head, action, parts)))
     }
 
-    /// Parse ALTER SHARE: UNSET COMMENT typed; ADD, REMOVE, SET and UNSET TAG are left to the fallback.
+    /// Parse ALTER SHARE: UNSET COMMENT typed; ADD, REMOVE, SET and other UNSETs are left to the fallback.
     fn parse_alter_share(&mut self) -> Result<Option<Expression>> {
         let start = self.current - 1;
         let head = self.parse_alter_object_head()?;
@@ -186,8 +186,10 @@ impl Parser {
             self.text_at(0).unwrap_or_default().as_str(),
             self.text_at(1).as_deref(),
         ) {
-            ("UNSET", Some("TAG")) | ("ADD" | "REMOVE" | "SET", _) => {}
-            ("UNSET", _) => return Err(self.parse_error("Expected COMMENT or TAG after UNSET")),
+            ("UNSET", None | Some(";")) => {
+                return Err(self.parse_error("Expected a property after UNSET"))
+            }
+            ("ADD" | "REMOVE" | "SET" | "UNSET", _) => {}
             _ => return Err(self.parse_error("Expected ADD, REMOVE, SET or UNSET")),
         }
         self.current = start;
