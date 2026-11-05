@@ -25931,16 +25931,10 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-organization-user.set.o007"
-kind = "option_present"
+id = "sf.security_admin.alter-organization-user.set.o051"
+kind = "alternative"
 required = true
-target = "[ [ EMAIL = '<string>' ] [ DISPLAY_NAME = '<string>' ] [ FIRST_NAME = '<string>' ] [ MIDDLE_NAME = '<string>' ] [ LAST_…"
-
-[[obligation]]
-id = "sf.security_admin.alter-organization-user.set.o008"
-kind = "option_absent"
-required = true
-target = "[ [ EMAIL = '<string>' ] [ DISPLAY_NAME = '<string>' ] [ FIRST_NAME = '<string>' ] [ MIDDLE_NAME = '<string>' ] [ LAST_…"
+target = "{ [ EMAIL = '<string>' ] [ DISPLAY_NAME = '<string>' ] [ FI… → [ EMAIL = '<string>' ] [ DISPLAY_NAME = '<string>' ] [ FIRST_NAME = '<string>' ] [ MIDDLE_NAME = '<string>' ] [ LAST_NAME = '<string>' ] [ TYPE = { PERSON | SERVICE } ] [ COMMENT = '<string>' ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.set.o009"
@@ -26193,6 +26187,12 @@ id = "sf.security_admin.alter-organization-user.set.o047"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { PERSON | SERVICE } in [ TYPE = { PERSON | SERVICE } ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-organization-user.set.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ EMAIL = '<string>' ] [ DISPLAY_NAME = '<string>' ] [ FIRST_NAME = '<string>' ] [ MIDDLE_NAME = '<string>' ] [ LAST_NAME = '<string>' ] [ TYPE = { PERSON | SERVICE } ] [ COMMENT = '<string>' ] }"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.set.o048"
@@ -44885,6 +44885,18 @@ required = true
 target = "{ ADD | REMOVE } → REMOVE"
 
 [[obligation]]
+id = "sf.security_admin.alter-share.add-remove-accounts.o027"
+kind = "alternative"
+required = true
+target = "{ ACCOUNTS | ACCOUNT } → ACCOUNTS"
+
+[[obligation]]
+id = "sf.security_admin.alter-share.add-remove-accounts.o028"
+kind = "alternative"
+required = true
+target = "{ ACCOUNTS | ACCOUNT } → ACCOUNT"
+
+[[obligation]]
 id = "sf.security_admin.alter-share.add-remove-accounts.o009"
 kind = "required_operand_missing"
 required = true
@@ -44948,10 +44960,10 @@ required = true
 note = "the form without its required { ADD | REMOVE }"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.add-remove-accounts.o020"
+id = "sf.security_admin.alter-share.add-remove-accounts.o029"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ACCOUNTS"
+note = "the form without its required { ACCOUNTS | ACCOUNT }"
 
 [[obligation]]
 id = "sf.security_admin.alter-share.add-remove-accounts.o021"
@@ -45036,35 +45048,47 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o007"
+id = "sf.security_admin.alter-share.set.o026"
 kind = "alternative"
 required = true
-target = "{ [ ACCOUNTS = <consumer_account> [ , <consumer_account> ..… → [ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ] [ COMMENT = '<string_literal>' ]"
+target = "{ [ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consum… → [ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ] [ COMMENT = '<string_literal>' ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o008"
+id = "sf.security_admin.alter-share.set.o027"
 kind = "option_present"
 required = true
-target = "[ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ]"
+target = "[ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o009"
+id = "sf.security_admin.alter-share.set.o028"
 kind = "option_absent"
 required = true
-target = "[ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ]"
+target = "[ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o010"
+id = "sf.security_admin.alter-share.set.o029"
+kind = "alternative"
+required = true
+target = "{ ACCOUNTS | ACCOUNT } → ACCOUNTS"
+
+[[obligation]]
+id = "sf.security_admin.alter-share.set.o030"
+kind = "alternative"
+required = true
+target = "{ ACCOUNTS | ACCOUNT } → ACCOUNT"
+
+[[obligation]]
+id = "sf.security_admin.alter-share.set.o031"
 kind = "required_operand_missing"
 required = true
-target = "<consumer_account> in [ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ]"
+target = "<consumer_account> in [ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ]"
 note = "omit <consumer_account>"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o011"
+id = "sf.security_admin.alter-share.set.o032"
 kind = "operand_type_class"
 required = true
-target = "<consumer_account> in [ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ]"
+target = "<consumer_account> in [ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -45132,10 +45156,10 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.security_admin.alter-share.set.o022"
+id = "sf.security_admin.alter-share.set.o033"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { [ ACCOUNTS = <consumer_account> [ , <consumer_account> ... ] ] [ COMMENT = '<string_literal>' ] }"
+note = "the form without its required { [ { ACCOUNTS | ACCOUNT } = <consumer_account> [ , <consumer_account> ... ] ] [ COMMENT = '<string_literal>' ] }"
 
 [[obligation]]
 id = "sf.security_admin.alter-share.set.o025"
