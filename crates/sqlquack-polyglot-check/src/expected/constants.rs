@@ -6,7 +6,7 @@ pub const ERROR_PREFIX: &str = "err:";
 pub const OK_PREFIX: &str = "ok:";
 /// How a rendered tree of one opaque command begins after the prefix.
 pub const COMMAND_TREE: &str = "[{\"command\":";
-/// How a rendered tree of one opaque raw statement begins after the prefix.
+/// How a rendered tree of one statement polyglot keeps as raw SQL begins after the prefix.
 pub const RAW_TREE: &str = "[{\"raw\":";
 /// The field naming an identifier in a serialised tree.
 pub const NAME_KEY: &str = "name";

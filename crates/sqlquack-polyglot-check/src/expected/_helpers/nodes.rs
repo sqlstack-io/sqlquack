@@ -2,7 +2,7 @@
 
 use serde_json::Value;
 
-use crate::expected::constants::{OK_PREFIX, THIS_KEY};
+use crate::expected::constants::{COMMAND_TREE, OK_PREFIX, RAW_TREE, THIS_KEY};
 
 /// Whether both rendered parses are trees that are equal once SQLQuack's `node` wrappers go.
 pub(crate) fn differ_only_by_kept_node(polyglot: &str, sqlquack: &str, node: &str) -> bool {
@@ -90,4 +90,11 @@ fn without_field(value: Value, field: &str) -> Value {
         ),
         other => other,
     }
+}
+
+/// Whether polyglot's rendered tree is one opaque command or one statement kept as raw SQL.
+pub(crate) fn is_opaque(polyglot: &str) -> bool {
+    [COMMAND_TREE, RAW_TREE]
+        .iter()
+        .any(|opaque| polyglot.starts_with(&format!("{OK_PREFIX}{opaque}")))
 }

@@ -289,6 +289,9 @@ impl Parser {
     pub(crate) fn parse_grant(&mut self) -> Result<Expression> {
         let statement_start = self.current;
         self.expect_token(TokenType::Grant)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_grant(false);
+        }
 
         let saved_pos = self.current;
         let mut depth = 0i32;
@@ -316,9 +319,6 @@ impl Parser {
         }
         if found_to && on_count == 0 {
             self.current = saved_pos;
-            if let Some(grant) = self.parse_snowflake_role_grant(false)? {
-                return Ok(grant);
-            }
             return self.fallback_to_command(statement_start);
         }
 
@@ -368,6 +368,7 @@ impl Parser {
             principals,
             grant_option,
             as_principal,
+            current_grants: None,
         })))
     }
 
@@ -375,6 +376,9 @@ impl Parser {
     pub(crate) fn parse_revoke(&mut self) -> Result<Expression> {
         let statement_start = self.current;
         self.expect_token(TokenType::Revoke)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_grant(true);
+        }
 
         let saved_pos = self.current;
         let mut depth = 0i32;
@@ -402,9 +406,6 @@ impl Parser {
         }
         if found_from && on_count == 0 {
             self.current = saved_pos;
-            if let Some(revoke) = self.parse_snowflake_role_grant(true)? {
-                return Ok(revoke);
-            }
             return self.fallback_to_command(statement_start);
         }
 
