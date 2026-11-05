@@ -497,15 +497,6 @@ valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account al
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.grant-service-role"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required SERVICE"
-sql = "GRANT ROLE v1 TO ROLE v1 ;"
-valid_as = "sf.security_admin.grant-role.role positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.revoke-application-role.role"
 kind = "negative_neighbour"
 target = ""
@@ -620,15 +611,6 @@ target = ""
 note = "the form without its required SET"
 sql = "REVOKE CREATE SNAPSHOT ON SCHEMA v1 FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.revoke-service-role"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required SERVICE"
-sql = "REVOKE ROLE v1 FROM ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-role.role positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

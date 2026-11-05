@@ -1304,6 +1304,33 @@ grammar = ["<budget_name>!REMOVE_TAG( { '<tag_reference>' | <reference_statement
 reason = "the Arguments section documents 'tag_value' as an argument (the value of the tag/value combination), not a fixed literal"
 
 [[reading]]
+form = "sf.security_admin.grant-service-role"
+grammar_sha256 = "8a149335e0fc304e77d52cf708fc6ee9c0694b9dac2aa25b79fa4295513ec6fe"
+grammar = ["GRANT SERVICE ROLE <service_name>!<service_role_name> TO { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> }"]
+reason = "the Parameters section says to specify the service role name as service-name!service-role-name, so <name> is read as <service_name>!<service_role_name> (auditor review be74a40f)"
+
+[[reading]]
+form = "sf.security_admin.revoke-service-role"
+grammar_sha256 = "7d49ee75bfdfaf97594fc542ed402832e21fdce4d898e5b0917e644e9ed62a55"
+grammar = ["REVOKE SERVICE ROLE <service_name>!<service_role_name> FROM { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> }"]
+reason = "the Parameters section says to specify the service role name as service-name!service-role-name, so <name> is read as <service_name>!<service_role_name> (auditor review be74a40f)"
+
+[[reading]]
+form = "sf.functions.functions-window-syntax"
+grammar_sha256 = "0eb526f642214b0de91ab0c1e3da00ac84b4dd4955f92c450010d850749e5a29"
+grammar = ["<function> ( [ <arguments> ] ) OVER ( [ [ PARTITION BY <expr1> [ , ... ] ] [ ORDER BY <expr2> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ] [ { { ROWS | RANGE } UNBOUNDED PRECEDING | { ROWS | RANGE } <n> PRECEDING | { ROWS | RANGE } CURRENT ROW | { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW | { ROWS | RANGE } BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING | { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING | { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND <n> { PRECEDING | FOLLOWING } | { ROWS | RANGE } BETWEEN UNBOUNDED PRECEDING AND <n> { PRECEDING | FOLLOWING } | { ROWS | RANGE } BETWEEN <n> { PRECEDING | FOLLOWING } AND UNBOUNDED FOLLOWING } ] ] )"]
+reason = "page definitions inlined: windowDefinition and its windowFrameClause, so PARTITION BY, ORDER BY with its direction and NULLS order, and each ROWS | RANGE frame branch are obligated (auditor D118 c1a92dfe)"
+
+[[limit]]
+form = "sf.ddl.create-hybrid-table.table-as"
+kind = "option_absent"
+target = "[ <col_type> ]"
+note = "a column list of names without types"
+anchor = "doc.sql.create-hybrid-table / Syntax"
+sql = "CREATE HYBRID TABLE v1 ( v1 , v2 ) AS SELECT 1 , 2 ;"
+context = "raw"
+
+[[reading]]
 form = "sf.ddl.alter-external-table.set"
 grammar_sha256 = "62de9f758a7e6943989174d25476b02701f185710fa6746e7dc36fa5b81734c6"
 grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> SET AUTO_REFRESH = { TRUE | FALSE }"]
@@ -10541,32 +10568,28 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-expect = "observe"
-documented = true
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+expect = "accept"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-expect = "observe"
-documented = true
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+expect = "accept"
 context = "raw"
 
 [[limit]]
@@ -10575,32 +10598,28 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "observe"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-expect = "observe"
-documented = true
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+expect = "accept"
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-expect = "observe"
-documented = true
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+expect = "accept"
 context = "raw"
 
 [[limit]]
@@ -15703,7 +15722,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
@@ -15713,7 +15732,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -15723,7 +15742,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -30263,8 +30282,8 @@ reason = "D113 [page misreading]: TARGET_FILE_SIZE is written both ways on this 
 [[reading]]
 form = "sf.ddl.create-external-table.using-template"
 grammar_sha256 = "e486623581c841915b008e51d47adbda12a8ef775a4fdd6835a4009c089c1c5e"
-grammar = ["CREATE [ OR REPLACE ] EXTERNAL TABLE <table_name> USING TEMPLATE { ( <query> ) | '<string_literal>' } [ ... ] [ COPY GRANTS ] [ COPY = ( GRANTS ) ]"]
-reason = "D113 [page misreading]: USING TEMPLATE takes a subquery or a string: the page says it 'specifies the subquery that calls the INFER_SCHEMA function' (examples write `USING TEMPLATE ( SELECT ... )`) and that it 'accepts the INFER_SCHEMA output as a string literal or variable'."
+grammar = ["CREATE [ OR REPLACE ] EXTERNAL TABLE <table_name> USING TEMPLATE { ( <query> ) | '<string_literal>' | $<variable_name> } [ ... ] [ COPY GRANTS ] [ COPY = ( GRANTS ) ]"]
+reason = "D113 [page misreading]: USING TEMPLATE takes a subquery or a string: the page says it 'specifies the subquery that calls the INFER_SCHEMA function' (examples write `USING TEMPLATE ( SELECT ... )`) and that it 'accepts the INFER_SCHEMA output as a string literal or variable', so the variable branch is a session variable reference (auditor D118 c1a92dfe)."
 
 [[reading]]
 form = "sf.ddl.create-iceberg-table.table-catalog-table-name"
@@ -30287,8 +30306,8 @@ reason = "D113 [page misreading]: AUTO_INGEST takes a value: the parameter reads
 [[reading]]
 form = "sf.ddl.create-table.create-table-using-template"
 grammar_sha256 = "f0b0471d3593739d1569d6dc298373527b4ab99daa5c529c06352b84c0886807"
-grammar = ["CREATE [ OR REPLACE ] TABLE <table_name> [ COPY GRANTS ] USING TEMPLATE { ( <query> ) | '<string_literal>' } [ ... ]"]
-reason = "D113 [page misreading]: USING TEMPLATE takes a subquery or a string: the page says it 'specifies the subquery that calls the INFER_SCHEMA function' (examples write `USING TEMPLATE ( SELECT ... )`) and that it 'accepts the INFER_SCHEMA output as a string literal or variable'."
+grammar = ["CREATE [ OR REPLACE ] TABLE <table_name> [ COPY GRANTS ] USING TEMPLATE { ( <query> ) | '<string_literal>' | $<variable_name> } [ ... ]"]
+reason = "D113 [page misreading]: USING TEMPLATE takes a subquery or a string: the page says it 'specifies the subquery that calls the INFER_SCHEMA function' (examples write `USING TEMPLATE ( SELECT ... )`) and that it 'accepts the INFER_SCHEMA output as a string literal or variable', so the variable branch is a session variable reference (auditor D118 c1a92dfe)."
 
 [[reading]]
 form = "sf.ddl.create-task.create-or-alter-task"
@@ -70896,301 +70915,6 @@ expect = "observe"
 context = "raw"
 
 [[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE \"v1 Q\" TO ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<database_role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<database_role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE \"SELECT\" TO ROLE v1 ;"
-expect = "observe"
-documented = true
-also_sql = "GRANT SERVICE ROLE SELECT TO ROLE v1 ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<application_role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "operand_type_class"
-target = "<application_role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.grant-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.grant-service-role / Syntax"
-sql = "GRANT SERVICE ROLE v1 TO ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "GRANT SERVICE ROLE v1 TO ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
 form = "sf.security_admin.revoke-application-role.application-role-application-user"
 kind = "required_operand_missing"
 target = "<application_role>"
@@ -72264,301 +71988,6 @@ note = "the form without its required SPECIFICATIONS, observed"
 anchor = "doc.sql.revoke-privilege / Syntax"
 sql = "REVOKE MANAGE APPLICATION ON ACCOUNT FROM v1 ;"
 expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE \"SELECT\" FROM ROLE v1 ;"
-expect = "observe"
-documented = true
-also_sql = "REVOKE SERVICE ROLE SELECT FROM ROLE v1 ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "positive"
-note = "the documented form with every required part and no optional part"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "positive"
-note = "the documented form with every required part and no optional part, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "REVOKE SERVICE ROLE v1 FROM ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<application_role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<application_role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "alternative"
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<database_role_name>"
-note = "a valid identifier"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "operand_type_class"
-target = "<database_role_name>"
-note = "a valid identifier, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE v1 ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<database_role_name>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE \"SELECT\" ;"
-expect = "observe"
-documented = true
-also_sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE SELECT ;"
-also_expect = "observe"
-also_documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<application_role_name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE \"v1 Q\" ;"
-expect = "observe"
-documented = true
-context = "raw"
-
-[[suppress]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
-
-[[limit]]
-form = "sf.security_admin.revoke-service-role"
-kind = "identifier_class"
-target = "<name>"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-anchor = "doc.sql.revoke-service-role / Syntax"
-sql = "REVOKE SERVICE ROLE \"v1 Q\" FROM ROLE v1 ;"
-expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]

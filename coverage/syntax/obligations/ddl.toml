@@ -137442,16 +137442,22 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.using-template.o026"
+id = "sf.ddl.create-external-table.using-template.o032"
 kind = "alternative"
 required = true
-target = "{ ( <query> ) | '<string_literal>' } → ( <query> )"
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → ( <query> )"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.using-template.o027"
+id = "sf.ddl.create-external-table.using-template.o033"
 kind = "alternative"
 required = true
-target = "{ ( <query> ) | '<string_literal>' } → '<string_literal>'"
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o034"
+kind = "alternative"
+required = true
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → $ <variable_name>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.using-template.o007"
@@ -137487,6 +137493,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>'"
 note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o035"
+kind = "required_operand_missing"
+required = true
+target = "<variable_name>"
+note = "omit <variable_name>"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o036"
+kind = "operand_type_class"
+required = true
+target = "<variable_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o037"
+kind = "negative_neighbour"
+required = true
+target = "<variable_name>"
+note = "a string literal in place of <variable_name>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.using-template.o010"
@@ -137543,10 +137570,10 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.using-template.o031"
+id = "sf.ddl.create-external-table.using-template.o038"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ( <query> ) | '<string_literal>' }"
+note = "the form without its required { ( <query> ) | '<string_literal>' | $ <variable_name> }"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.using-template.o018"
@@ -137591,6 +137618,22 @@ id = "sf.ddl.create-external-table.using-template.o024"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o039"
+kind = "identifier_class"
+required = true
+target = "<variable_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.using-template.o040"
+kind = "identifier_class"
+required = true
+target = "<variable_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -159595,6 +159638,14 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.ddl.create-hybrid-table.table-as.o019"
+kind = "option_absent"
+required = true
+target = "[ <col_type> ]"
+anchor = "doc.sql.create-hybrid-table / Syntax"
+note = "a column list of names without types"
 
 [[obligation]]
 id = "sf.ddl.create-hybrid-table.table-like.o001"
@@ -201476,20 +201527,20 @@ anchor = "doc.sql.create-semantic-view / Parameters"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o516"
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o519"
 kind = "boundary_at"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 120 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o517"
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o520"
 kind = "boundary_above"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 121 against the documented minimum of 120"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o497"
@@ -204682,20 +204733,20 @@ anchor = "doc.sql.create-semantic-view / Parameters"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o539"
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o542"
 kind = "boundary_at"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 120 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o540"
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o543"
 kind = "boundary_above"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
+note = "MAX_STALENESS = 121 against the documented minimum of 120"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o520"
@@ -248647,16 +248698,22 @@ required = true
 target = "[ COPY GRANTS ]"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table-using-template.o021"
+id = "sf.ddl.create-table.create-table-using-template.o027"
 kind = "alternative"
 required = true
-target = "{ ( <query> ) | '<string_literal>' } → ( <query> )"
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → ( <query> )"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table-using-template.o022"
+id = "sf.ddl.create-table.create-table-using-template.o028"
 kind = "alternative"
 required = true
-target = "{ ( <query> ) | '<string_literal>' } → '<string_literal>'"
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o029"
+kind = "alternative"
+required = true
+target = "{ ( <query> ) | '<string_literal>' | $ <variable_name> } → $ <variable_name>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-using-template.o009"
@@ -248692,6 +248749,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>'"
 note = "an unquoted identifier in place of '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o030"
+kind = "required_operand_missing"
+required = true
+target = "<variable_name>"
+note = "omit <variable_name>"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o031"
+kind = "operand_type_class"
+required = true
+target = "<variable_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o032"
+kind = "negative_neighbour"
+required = true
+target = "<variable_name>"
+note = "a string literal in place of <variable_name>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-using-template.o012"
@@ -248730,10 +248808,10 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table-using-template.o026"
+id = "sf.ddl.create-table.create-table-using-template.o033"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ( <query> ) | '<string_literal>' }"
+note = "the form without its required { ( <query> ) | '<string_literal>' | $ <variable_name> }"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-using-template.o017"
@@ -248754,6 +248832,22 @@ id = "sf.ddl.create-table.create-table-using-template.o019"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o034"
+kind = "identifier_class"
+required = true
+target = "<variable_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-using-template.o035"
+kind = "identifier_class"
+required = true
+target = "<variable_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 

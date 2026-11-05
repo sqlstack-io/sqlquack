@@ -110215,18 +110215,70 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o002"
-kind = "required_operand_missing"
+id = "sf.security_admin.grant-service-role.o044"
+kind = "positive"
 required = true
-target = "<name>"
-note = "omit <name>"
+note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o004"
+id = "sf.security_admin.grant-service-role.o045"
+kind = "required_operand_missing"
+required = true
+target = "<service_name>"
+note = "omit <service_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o046"
+kind = "operand_type_class"
+required = true
+target = "<service_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o047"
 kind = "negative_neighbour"
 required = true
-target = "<name>"
-note = "a string literal in place of <name>"
+target = "<service_name>"
+note = "a string literal in place of <service_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o048"
+kind = "required_operand_missing"
+required = true
+target = "<service_role_name>"
+note = "omit <service_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o049"
+kind = "operand_type_class"
+required = true
+target = "<service_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o050"
+kind = "negative_neighbour"
+required = true
+target = "<service_role_name>"
+note = "a string literal in place of <service_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o051"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o052"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o053"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
 
 [[obligation]]
 id = "sf.security_admin.grant-service-role.o008"
@@ -110234,6 +110286,13 @@ kind = "required_operand_missing"
 required = true
 target = "<role_name>"
 note = "omit <role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o054"
+kind = "operand_type_class"
+required = true
+target = "<role_name>"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.security_admin.grant-service-role.o010"
@@ -110250,6 +110309,13 @@ target = "<application_role_name>"
 note = "omit <application_role_name>"
 
 [[obligation]]
+id = "sf.security_admin.grant-service-role.o055"
+kind = "operand_type_class"
+required = true
+target = "<application_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.security_admin.grant-service-role.o013"
 kind = "negative_neighbour"
 required = true
@@ -110264,11 +110330,24 @@ target = "<database_role_name>"
 note = "omit <database_role_name>"
 
 [[obligation]]
+id = "sf.security_admin.grant-service-role.o056"
+kind = "operand_type_class"
+required = true
+target = "<database_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.security_admin.grant-service-role.o016"
 kind = "negative_neighbour"
 required = true
 target = "<database_role_name>"
 note = "a string literal in place of <database_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o057"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SERVICE"
 
 [[obligation]]
 id = "sf.security_admin.grant-service-role.o017"
@@ -110289,131 +110368,84 @@ required = true
 note = "the form without its required { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o028"
+id = "sf.security_admin.grant-service-role.o058"
 kind = "identifier_class"
 required = true
-target = "<database_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+target = "<service_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o029"
-kind = "positive"
-required = true
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "the documented form with every required part and no optional part, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o030"
-kind = "operand_type_class"
-required = true
-target = "<name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o031"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o032"
-kind = "operand_type_class"
-required = true
-target = "<role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o033"
+id = "sf.security_admin.grant-service-role.o059"
 kind = "identifier_class"
 required = true
-target = "<name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+target = "<service_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o034"
+id = "sf.security_admin.grant-service-role.o060"
 kind = "identifier_class"
 required = true
-target = "<application_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+target = "<service_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o035"
+id = "sf.security_admin.grant-service-role.o061"
+kind = "identifier_class"
+required = true
+target = "<service_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o062"
 kind = "identifier_class"
 required = true
 target = "<role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o036"
-kind = "identifier_class"
-required = true
-target = "<database_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o037"
-kind = "identifier_class"
-required = true
-target = "<application_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o038"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o039"
-kind = "operand_type_class"
-required = true
-target = "<database_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o040"
-kind = "identifier_class"
-required = true
-target = "<name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o041"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o042"
-kind = "operand_type_class"
-required = true
-target = "<application_role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o043"
+id = "sf.security_admin.grant-service-role.o063"
 kind = "identifier_class"
 required = true
 target = "<role_name>"
-anchor = "doc.sql.grant-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o064"
+kind = "identifier_class"
+required = true
+target = "<application_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o065"
+kind = "identifier_class"
+required = true
+target = "<application_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o066"
+kind = "identifier_class"
+required = true
+target = "<database_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o067"
+kind = "identifier_class"
+required = true
+target = "<database_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.security_admin.revoke-application-role.application-role-application-user.o001"
@@ -122907,18 +122939,70 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o002"
-kind = "required_operand_missing"
+id = "sf.security_admin.revoke-service-role.o044"
+kind = "positive"
 required = true
-target = "<name>"
-note = "omit <name>"
+note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o004"
+id = "sf.security_admin.revoke-service-role.o045"
+kind = "required_operand_missing"
+required = true
+target = "<service_name>"
+note = "omit <service_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o046"
+kind = "operand_type_class"
+required = true
+target = "<service_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o047"
 kind = "negative_neighbour"
 required = true
-target = "<name>"
-note = "a string literal in place of <name>"
+target = "<service_name>"
+note = "a string literal in place of <service_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o048"
+kind = "required_operand_missing"
+required = true
+target = "<service_role_name>"
+note = "omit <service_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o049"
+kind = "operand_type_class"
+required = true
+target = "<service_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o050"
+kind = "negative_neighbour"
+required = true
+target = "<service_role_name>"
+note = "a string literal in place of <service_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o051"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o052"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o053"
+kind = "alternative"
+required = true
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
 
 [[obligation]]
 id = "sf.security_admin.revoke-service-role.o008"
@@ -122926,6 +123010,13 @@ kind = "required_operand_missing"
 required = true
 target = "<role_name>"
 note = "omit <role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o054"
+kind = "operand_type_class"
+required = true
+target = "<role_name>"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.security_admin.revoke-service-role.o010"
@@ -122942,6 +123033,13 @@ target = "<application_role_name>"
 note = "omit <application_role_name>"
 
 [[obligation]]
+id = "sf.security_admin.revoke-service-role.o055"
+kind = "operand_type_class"
+required = true
+target = "<application_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.security_admin.revoke-service-role.o013"
 kind = "negative_neighbour"
 required = true
@@ -122956,11 +123054,24 @@ target = "<database_role_name>"
 note = "omit <database_role_name>"
 
 [[obligation]]
+id = "sf.security_admin.revoke-service-role.o056"
+kind = "operand_type_class"
+required = true
+target = "<database_role_name>"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.security_admin.revoke-service-role.o016"
 kind = "negative_neighbour"
 required = true
 target = "<database_role_name>"
 note = "a string literal in place of <database_role_name>"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o057"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SERVICE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-service-role.o017"
@@ -122981,131 +123092,84 @@ required = true
 note = "the form without its required { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> }"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o028"
+id = "sf.security_admin.revoke-service-role.o058"
 kind = "identifier_class"
 required = true
-target = "<application_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+target = "<service_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o029"
+id = "sf.security_admin.revoke-service-role.o059"
 kind = "identifier_class"
 required = true
-target = "<database_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+target = "<service_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o030"
+id = "sf.security_admin.revoke-service-role.o060"
 kind = "identifier_class"
 required = true
-target = "<role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+target = "<service_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o031"
+id = "sf.security_admin.revoke-service-role.o061"
 kind = "identifier_class"
 required = true
-target = "<name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+target = "<service_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o032"
-kind = "positive"
-required = true
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "the documented form with every required part and no optional part, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o033"
-kind = "operand_type_class"
-required = true
-target = "<name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o034"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o035"
-kind = "operand_type_class"
-required = true
-target = "<role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o036"
+id = "sf.security_admin.revoke-service-role.o062"
 kind = "identifier_class"
 required = true
 target = "<role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o037"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o038"
-kind = "operand_type_class"
-required = true
-target = "<application_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o039"
-kind = "alternative"
-required = true
-target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o040"
-kind = "operand_type_class"
-required = true
-target = "<database_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o041"
+id = "sf.security_admin.revoke-service-role.o063"
 kind = "identifier_class"
 required = true
-target = "<database_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+target = "<role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o042"
+id = "sf.security_admin.revoke-service-role.o064"
 kind = "identifier_class"
 required = true
 target = "<application_role_name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o043"
+id = "sf.security_admin.revoke-service-role.o065"
 kind = "identifier_class"
 required = true
-target = "<name>"
-anchor = "doc.sql.revoke-service-role / Syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+target = "<application_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o066"
+kind = "identifier_class"
+required = true
+target = "<database_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o067"
+kind = "identifier_class"
+required = true
+target = "<database_role_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.security_admin.show-accounts.o001"
