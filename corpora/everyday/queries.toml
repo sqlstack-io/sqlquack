@@ -3,7 +3,9 @@
 # offers as "strict": "translated", "parse <code>", "check <code>" or "refused <code> <construct>".
 # `expect_repository` is the outcome under the repository's sqlquack.toml with a UTC session, the
 # playground's default. The test fails when an outcome changes; update the expectation when a
-# change is intended. `uncertain` marks a query whose Snowflake validity is not yet recorded.
+# change is intended. `snowflake` is Snowflake's own verdict where one was recorded, "compiles" or
+# "rejects <errno>", from snowflake-receipts.json; it decides whether a query counts as valid SQL in
+# the translation rates, over its category.
 
 [[query]]
 category = "literals"
@@ -310,7 +312,7 @@ category = "select_star"
 sql = '''SELECT * FROM orders TOP 5'''
 expect = "parse SQ0001"
 expect_repository = "parse SQ0001"
-uncertain = true
+snowflake = "rejects 1003"
 
 [[query]]
 category = "select_star"
@@ -371,7 +373,7 @@ category = "columns"
 sql = '''SELECT order_id id, total amount FROM orders'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "columns"
@@ -552,7 +554,7 @@ category = "columns"
 sql = '''SELECT order_id FROM orders FETCH FIRST 10 ROWS ONLY'''
 expect = "refused SQ0002 node:select"
 expect_repository = "refused SQ0002 node:select"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "columns"
@@ -751,7 +753,7 @@ category = "aggregates"
 sql = '''SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders'''
 expect = "refused SQ0002 fn:COUNT"
 expect_repository = "refused SQ0002 fn:COUNT"
-uncertain = true
+snowflake = "rejects 1003"
 
 [[query]]
 category = "aggregates"
@@ -1058,7 +1060,7 @@ category = "joins"
 sql = '''SELECT o.order_id FROM orders o ASOF JOIN payments p MATCH_CONDITION (o.ordered_at >= p.paid_at) ON o.order_id = p.order_id'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "ctes"
@@ -1323,7 +1325,7 @@ category = "dates"
 sql = '''SELECT DATE_TRUNC(month, ordered_at) AS month FROM orders'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dates"
@@ -1414,7 +1416,7 @@ category = "dates"
 sql = '''SELECT DATE_PART('dow', ordered_at) AS dow FROM orders'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dates"
@@ -1703,7 +1705,7 @@ category = "conditionals"
 sql = '''SELECT order_id, discount IS DISTINCT FROM 0 AS has_discount FROM orders'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "conditionals"
@@ -1962,7 +1964,7 @@ category = "strings"
 sql = '''SELECT COLLATE(email, 'en-ci') AS e FROM customers'''
 expect = "refused SQ0002 fn:COLLATE"
 expect_repository = "refused SQ0002 fn:COLLATE"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "strings"
@@ -2251,7 +2253,7 @@ category = "semi_structured"
 sql = '''SELECT ARRAY_CONTAINS('urgent'::VARIANT, tags) AS urgent FROM tickets'''
 expect = "refused SQ0008 node:column"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "semi_structured"
@@ -2641,7 +2643,7 @@ category = "set_operations"
 sql = '''SELECT customer_id, email FROM customers UNION ALL BY NAME SELECT email, customer_id FROM customers'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "misc"
@@ -2692,7 +2694,7 @@ category = "misc"
 sql = '''SELECT order_id FROM orders WHERE (customer_id, status) IN (SELECT customer_id, 'shipped' FROM customers)'''
 expect = "refused SQ0002 node:tuple"
 expect_repository = "refused SQ0002 node:tuple"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "misc"
@@ -2759,7 +2761,7 @@ category = "misc"
 sql = '''SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p'''
 expect = "refused SQ0003 node:pivot"
 expect_repository = "refused SQ0003 node:pivot"
-uncertain = true
+snowflake = "rejects 904"
 
 [[query]]
 category = "misc"
@@ -2772,7 +2774,7 @@ category = "misc"
 sql = '''SELECT order_id, HASH_AGG(*) AS h FROM orders GROUP BY order_id'''
 expect = "refused SQ0002 fn:HASH_AGG"
 expect_repository = "refused SQ0002 fn:HASH_AGG"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "misc"
@@ -2905,6 +2907,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id, FROM orders'''
 expect = "translated"
 expect_repository = "translated"
+snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
@@ -2953,6 +2956,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders LIMIT'''
 expect = "refused SQ0003 node:limit"
 expect_repository = "refused SQ0003 node:limit"
+snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
@@ -2971,6 +2975,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders o JOIN customers c'''
 expect = "refused SQ0002 join:inner"
 expect_repository = "refused SQ0002 join:inner"
+snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
@@ -2983,6 +2988,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status == 'shipped''''
 expect = "translated"
 expect_repository = "translated"
+snowflake = "rejects 2139"
 
 [[query]]
 category = "invalid_syntax"
@@ -3013,6 +3019,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status IN 'shipped''''
 expect = "refused SQ0002 node:in"
 expect_repository = "refused SQ0002 node:in"
+snowflake = "rejects 1003"
 
 [[query]]
 category = "invalid_syntax"
@@ -3073,6 +3080,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders;;'''
 expect = "translated"
 expect_repository = "translated"
+snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
@@ -3085,6 +3093,7 @@ category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE total >> 10'''
 expect = "refused SQ0002 node:bitwise_right_shift"
 expect_repository = "refused SQ0002 node:bitwise_right_shift"
+snowflake = "rejects 1003"
 
 [[query]]
 category = "invalid_syntax"
@@ -3211,7 +3220,7 @@ category = "invalid_semantics"
 sql = '''SELECT order_id, total + 'abc' AS x FROM orders'''
 expect = "refused SQ0003 node:add"
 expect_repository = "refused SQ0003 node:add"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "invalid_semantics"
@@ -3224,14 +3233,14 @@ category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders WHERE ordered_at > 5'''
 expect = "refused SQ0003 node:gt"
 expect_repository = "refused SQ0003 node:gt"
-uncertain = true
+snowflake = "rejects 1038"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT LENGTH(order_id, 2) AS x FROM orders'''
 expect = "refused SQ0002 fn:LENGTH"
 expect_repository = "refused SQ0002 fn:LENGTH"
-uncertain = true
+snowflake = "rejects 939"
 
 [[query]]
 category = "invalid_semantics"
@@ -3262,4 +3271,4 @@ category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders o, orders o'''
 expect = "refused SQ0004 statement"
 expect_repository = "refused SQ0004 statement"
-uncertain = true
+snowflake = "rejects 2027"

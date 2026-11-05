@@ -824,7 +824,12 @@ pub(crate) fn everyday_translation_rates() -> String {
         .query
         .iter()
         .filter(|query| !EVERYDAY_NOT_TRANSLATABLE.contains(&query.category.as_str()))
-        .filter(|query| !query.category.starts_with(EVERYDAY_INVALID_PREFIX))
+        .filter(|query| {
+            query.snowflake.as_deref().map_or_else(
+                || !query.category.starts_with(EVERYDAY_INVALID_PREFIX),
+                |verdict| verdict == SNOWFLAKE_COMPILES,
+            )
+        })
         .collect();
     let strict = valid
         .iter()
@@ -839,6 +844,52 @@ pub(crate) fn everyday_translation_rates() -> String {
         valid.len(),
         valid.len()
     )
+}
+
+/// Queries Snowflake rejects that pass SQLQuack's parse and checks, once every receipt matches.
+pub(crate) fn everyday_snowflake_rejections_not_caught() -> Vec<String> {
+    let (root, corpus) = everyday_corpus();
+    let text =
+        std::fs::read_to_string(root.join("snowflake-receipts.json")).expect("receipts read");
+    let receipts: serde_json::Value = serde_json::from_str(&text).expect("receipts parse");
+    let results = receipts["results"]
+        .as_array()
+        .expect("receipts hold results");
+    for receipt in results {
+        let sql = receipt["sql"]
+            .as_str()
+            .expect("a receipt names its SQL")
+            .trim();
+        let verdict = receipt["compiles"]
+            .as_bool()
+            .filter(|compiles| *compiles)
+            .map_or_else(
+                || format!("rejects {}", receipt["errno"]),
+                |_| SNOWFLAKE_COMPILES.to_owned(),
+            );
+        let query = corpus.query.iter().find(|query| query.sql.trim() == sql);
+        assert_eq!(
+            query.and_then(|query| query.snowflake.clone()),
+            Some(verdict),
+            "{sql}"
+        );
+    }
+    let strict = everyday_arguments(&root, true);
+    corpus
+        .query
+        .iter()
+        .filter(|query| {
+            query
+                .snowflake
+                .as_deref()
+                .is_some_and(|verdict| verdict != SNOWFLAKE_COMPILES)
+        })
+        .filter(|query| {
+            let outcome = everyday_outcome(&query.sql, &strict);
+            !outcome.starts_with("parse ") && !outcome.starts_with("check ")
+        })
+        .map(|query| query.sql.clone())
+        .collect()
 }
 
 /// The everyday corpus directory and its queries.
@@ -904,6 +955,9 @@ const EVERYDAY_NOT_TRANSLATABLE: [&str; 1] = ["ddl_dml"];
 
 /// The prefix of corpus categories of SQL Snowflake rejects.
 const EVERYDAY_INVALID_PREFIX: &str = "invalid";
+
+/// Snowflake's verdict on a query it compiles.
+const SNOWFLAKE_COMPILES: &str = "compiles";
 
 /// The outcome of a query that converts.
 const TRANSLATED: &str = "translated";

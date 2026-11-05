@@ -215,6 +215,7 @@ pub(crate) struct EverydayCorpusTestCase {
     pub(crate) description: &'static str,
     pub(crate) expected_mismatches: Vec<String>,
     pub(crate) expected_rates: &'static str,
+    pub(crate) expected_rejections_not_caught: Vec<&'static str>,
 }
 
 /// The everyday corpus file.
@@ -230,4 +231,7 @@ pub(crate) struct EverydayQuery {
     pub(crate) sql: String,
     pub(crate) expect: String,
     pub(crate) expect_repository: String,
+    /// Snowflake's recorded verdict, `compiles` or `rejects <errno>`, where one was recorded.
+    #[serde(default)]
+    pub(crate) snowflake: Option<String>,
 }
