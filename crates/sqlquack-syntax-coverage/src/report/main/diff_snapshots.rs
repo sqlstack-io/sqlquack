@@ -20,6 +20,11 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
     let forms: BTreeSet<&String> = base.forms.keys().chain(head.forms.keys()).collect();
     let in_base = |id: &String| base.forms.get(id);
     let in_head = |id: &String| head.forms.get(id);
+    let flipped: Vec<String> = base
+        .syntax_error_cases_rejected
+        .intersection(&head.syntax_error_cases_accepted)
+        .cloned()
+        .collect();
     SnapshotDiff {
         catalogue_files_changed: paths
             .into_iter()
@@ -59,10 +64,14 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
             .intersection(&head.refused_cases)
             .cloned()
             .collect(),
-        syntax_error_cases_accepted: base
-            .syntax_error_cases_rejected
-            .intersection(&head.syntax_error_cases_accepted)
+        syntax_error_cases_accepted: flipped
+            .iter()
+            .filter(|id| !head.documented_cases.contains(*id))
             .cloned()
+            .collect(),
+        documented_cases_accepted: flipped
+            .into_iter()
+            .filter(|id| head.documented_cases.contains(id))
             .collect(),
     }
 }

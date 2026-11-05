@@ -291,6 +291,28 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
 fn given_a_format_fault_when_loading_then_the_problem_is_named() {
     let test_cases = [
         FormatFaultTestCase {
+            description: "a mark whose SQL hash is not its case's",
+            mutate: |root| {
+                write(
+                    root,
+                    "marks/query.jsonl",
+                    "{\"case_id\":\"select-from\",\"sql_sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"obligations\":[\"sf.query.select.o002\"],\"mark\":\"documented (D113)\"}\n",
+                )
+            },
+            expected_problem: "mark select-from: matches no case's SQL and obligations",
+        },
+        FormatFaultTestCase {
+            description: "a mark the catalogue does not define",
+            mutate: |root| {
+                write(
+                    root,
+                    "marks/query.jsonl",
+                    "{\"case_id\":\"select-from\",\"sql_sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"obligations\":[],\"mark\":\"documented\"}\n",
+                )
+            },
+            expected_problem: "mark select-from: unknown mark \"documented\"",
+        },
+        FormatFaultTestCase {
             description: "a deleted family catalogue",
             mutate: |root| std::fs::remove_file(root.join("catalogue/dml.toml")).expect("remove"),
             expected_problem: "catalogue/dml.toml: missing",

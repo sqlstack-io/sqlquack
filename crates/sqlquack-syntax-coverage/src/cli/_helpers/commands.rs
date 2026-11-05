@@ -314,7 +314,7 @@ pub(crate) fn snapshot_command(
         say("FAILED, a snapshot of a tree with problems claims nothing");
         return Err(ExitCode::FAILURE);
     }
-    print(true, &snapshot(&check, &coverage.file_hashes, &commit), &[]);
+    print(true, &snapshot(&check, &coverage, &commit), &[]);
     Ok(ExitCode::SUCCESS)
 }
 
@@ -339,7 +339,7 @@ fn read_snapshot(path: &Path) -> Result<Snapshot, ExitCode> {
 
 /// Lines naming each non-empty list of the diff.
 fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
-    let lists: [(&str, &Vec<String>); 9] = [
+    let lists: [(&str, &Vec<String>); 10] = [
         ("REGRESSION forms lost", &diff.forms_lost),
         ("REGRESSION obligations lost", &diff.obligations_lost),
         (
@@ -349,6 +349,10 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
         (
             "REGRESSION Snowflake syntax errors the parser now accepts",
             &diff.syntax_error_cases_accepted,
+        ),
+        (
+            "DOCUMENTED (D113) Snowflake syntax errors the parser now accepts, for the auditor",
+            &diff.documented_cases_accepted,
         ),
         ("CATALOGUE files changed", &diff.catalogue_files_changed),
         ("CATALOGUE forms added", &diff.forms_added),
@@ -378,7 +382,7 @@ pub(crate) fn diff(
             if !check.problems.is_empty() {
                 return Err(ExitCode::FAILURE);
             }
-            snapshot(&check, &coverage.file_hashes, &base.catalogue_commit)
+            snapshot(&check, &coverage, &base.catalogue_commit)
         }
     };
     let diff: SnapshotDiff = diff_snapshots(&base, &head);
