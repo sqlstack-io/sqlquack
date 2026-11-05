@@ -988,3 +988,44 @@ pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
         serde_json::from_slice(&output.stdout).expect("outcomes are JSON");
     format!("{} {}", outcomes[0]["id"], outcomes[0]["outcome"])
 }
+
+/// Each statement `verify --translation-statements` writes for the batch-2 aggregates and fidelity.
+pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let root = repository_root();
+    std::fs::copy(
+        root.join("sqlquack.toml"),
+        directory.path().join("sqlquack.toml"),
+    )
+    .expect("policy copied");
+    copy_files(
+        &root.join("cases/fidelity"),
+        &directory.path().join("cases/fidelity"),
+    );
+    let cases = directory.path().join("cases/aggregate");
+    std::fs::create_dir_all(&cases).expect("cases directory");
+    std::fs::copy(
+        root.join("cases/aggregate/aggregates_batch2.toml"),
+        cases.join("aggregates_batch2.toml"),
+    )
+    .expect("case copied");
+    copy_files(
+        &root.join("evidence/results"),
+        &directory.path().join("evidence/results"),
+    );
+    let status = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["verify", "--translation-statements", "statements.json"])
+        .current_dir(directory.path())
+        .status()
+        .expect("sqlquack runs");
+    assert!(status.success(), "verify fails: {status}");
+    let written: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(directory.path().join("statements.json")).expect("written"),
+    )
+    .expect("statements parse");
+    assert_eq!(written["format"], "sqlquack-translation-statements/1");
+    written["statements"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+}

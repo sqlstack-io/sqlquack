@@ -40,6 +40,7 @@ use crate::cli::_helpers::evidence::{Evidence, load_evidence};
 use crate::cli::models::{
     CompareArguments, Comparison, CoverageArguments, EvidencePaths, VerifyArguments,
 };
+use crate::statements::main::write_translation_statements::write_translation_statements;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 pub(crate) fn verify_command(
@@ -85,7 +86,28 @@ pub(crate) fn verify_command(
     for line in report_coverage(&arguments.coverage, coverage.as_ref()) {
         let _ = writeln!(stderr, "sqlquack verify: {line}");
     }
-    let blocked = failed > 0
+    let unwritten = match &arguments.translation_statements {
+        Some(path) => {
+            let converter = python_converter(&evidence.policy, arguments.python.as_deref());
+            match write_translation_statements(path, &evidence.cases, &report, &converter) {
+                Ok(count) => {
+                    let _ = writeln!(
+                        stderr,
+                        "sqlquack verify: wrote {count} statements to {}",
+                        path.display()
+                    );
+                    false
+                }
+                Err(error) => {
+                    let _ = writeln!(stderr, "sqlquack verify: translation statements: {error}");
+                    true
+                }
+            }
+        }
+        None => false,
+    };
+    let blocked = unwritten
+        || failed > 0
         || (arguments.require_verified && (unverified > 0 || report.unproven_sessions > 0))
         || (arguments.strict_errors && error_findings > 0)
         || coverage_blocked;
