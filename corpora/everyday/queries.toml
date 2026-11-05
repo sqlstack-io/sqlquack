@@ -2954,8 +2954,8 @@ expect_repository = "parse SQ0001"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders LIMIT'''
-expect = "refused SQ0003 node:limit"
-expect_repository = "refused SQ0003 node:limit"
+expect = "translated"
+expect_repository = "translated"
 snowflake = "compiles"
 
 [[query]]

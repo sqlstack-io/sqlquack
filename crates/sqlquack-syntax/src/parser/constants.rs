@@ -1274,3 +1274,18 @@ pub(crate) const SNOWFLAKE_BODY_POLICY_KINDS: &[&str] = &[
     "ROW ACCESS POLICY",
     "STORAGE LIFECYCLE POLICY",
 ];
+
+/// The tokens after which Snowflake reads a bare LIMIT as an alias (receipted in import 163); end of input too.
+pub(crate) const SNOWFLAKE_LIMIT_ALIAS_FOLLOWERS: [crate::tokens::models::TokenType; 5] = [
+    crate::tokens::models::TokenType::Semicolon,
+    crate::tokens::models::TokenType::RParen,
+    crate::tokens::models::TokenType::Where,
+    crate::tokens::models::TokenType::Order,
+    crate::tokens::models::TokenType::Limit,
+];
+
+/// The tokens after which Snowflake reads a bare OFFSET as an alias (receipted in import 163); end of input too.
+pub(crate) const SNOWFLAKE_OFFSET_ALIAS_FOLLOWERS: [crate::tokens::models::TokenType; 2] = [
+    crate::tokens::models::TokenType::Semicolon,
+    crate::tokens::models::TokenType::RParen,
+];

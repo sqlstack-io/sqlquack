@@ -263,6 +263,7 @@ impl Parser {
             || self.check(TokenType::Pivot) && !self.check_next(TokenType::LParen)
             || self.check(TokenType::Unpivot) && !self.is_unpivot_clause_start()
             || self.check(TokenType::Partition)
+            || self.limit_as_snowflake_alias()
             || self.check(TokenType::Window) && {
                 let next_pos = self.current + 1;
                 next_pos >= self.tokens.len()
@@ -308,6 +309,27 @@ impl Parser {
             && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
                 .iter()
                 .any(|keyword| self.peek().text.eq_ignore_ascii_case(keyword))
+    }
+
+    /// Whether a bare Snowflake LIMIT or OFFSET with no row count after it is an alias, as Snowflake reads it.
+    pub(crate) fn limit_as_snowflake_alias(&self) -> bool {
+        let followers: &[TokenType] = match self.peek().token_type {
+            TokenType::Limit => &crate::parser::constants::SNOWFLAKE_LIMIT_ALIAS_FOLLOWERS,
+            TokenType::Offset => &crate::parser::constants::SNOWFLAKE_OFFSET_ALIAS_FOLLOWERS,
+            _ => &[],
+        };
+        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && !followers.is_empty()
+            && self.tokens.get(self.current + 1).is_none_or(|next| {
+                next.token_type == TokenType::Eof || followers.contains(&next.token_type)
+            })
+    }
+
+    /// Whether a Snowflake LIMIT qualifies a column, as `LIMIT.a` does after `FROM ... LIMIT`.
+    pub(crate) fn snowflake_limit_qualifier(&self) -> bool {
+        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::Limit)
+            && self.check_next(TokenType::Dot)
     }
 
     /// Whether a keyword may be a table alias; LEFT, RIGHT, OUTER and FULL may.

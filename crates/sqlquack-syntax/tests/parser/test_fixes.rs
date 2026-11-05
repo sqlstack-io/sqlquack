@@ -1753,3 +1753,60 @@ fn given_a_time_travel_clause_when_parsing_snowflake_then_its_parentheses_close(
         );
     }
 }
+
+#[test]
+fn given_a_bare_snowflake_limit_or_offset_when_parsing_then_it_is_an_alias() {
+    let test_cases = [
+        StatementTestCase {
+            description: "a bare LIMIT names the column before it (recorded: the column is LIMIT)",
+            sql: "SELECT 1 LIMIT ;",
+            pointer: "/0/select/expressions/0/alias/alias/name",
+            expected_value: json!("LIMIT"),
+        },
+        StatementTestCase {
+            description: "a bare LIMIT names the FROM item, which LIMIT.a reads (recorded as accepted)",
+            sql: "SELECT LIMIT.a FROM ( SELECT 1 AS a ) LIMIT ;",
+            pointer: "/0/select/expressions/0/column/table/name",
+            expected_value: json!("LIMIT"),
+        },
+        StatementTestCase {
+            description: "LIMIT before WHERE is an alias (recorded as accepted)",
+            sql: "SELECT a FROM ( SELECT 1 AS a ) LIMIT WHERE a = 1 ;",
+            pointer: "/0/select/from/expressions/0/subquery/alias/name",
+            expected_value: json!("LIMIT"),
+        },
+        StatementTestCase {
+            description: "LIMIT before ORDER BY is an alias (recorded as accepted)",
+            sql: "SELECT a FROM ( SELECT 1 AS a ) LIMIT ORDER BY a ;",
+            pointer: "/0/select/from/expressions/0/subquery/alias/name",
+            expected_value: json!("LIMIT"),
+        },
+        StatementTestCase {
+            description: "LIMIT LIMIT 1 is an alias, then a row limit (recorded as accepted)",
+            sql: "SELECT a FROM ( SELECT 1 AS a ) LIMIT LIMIT 1 ;",
+            pointer: "/0/select/limit/this/literal/value",
+            expected_value: json!("1"),
+        },
+        StatementTestCase {
+            description: "a bare OFFSET is an alias too (recorded as accepted)",
+            sql: "SELECT a FROM ( SELECT 1 AS a ) OFFSET ;",
+            pointer: "/0/select/from/expressions/0/subquery/alias/name",
+            expected_value: json!("OFFSET"),
+        },
+        StatementTestCase {
+            description: "LIMIT with a row count stays a row limit",
+            sql: "SELECT a FROM ( SELECT 1 AS a ) LIMIT 5 ;",
+            pointer: "/0/select/from/expressions/0/subquery/alias",
+            expected_value: json!(null),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

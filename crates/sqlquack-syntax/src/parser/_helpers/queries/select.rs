@@ -43,7 +43,7 @@ impl Parser {
                 || self.check(TokenType::Intersect)
                 || self.check(TokenType::Except)
                 || self.check(TokenType::Order)
-                || self.check(TokenType::Limit)
+                || self.check(TokenType::Limit) && !self.snowflake_limit_qualifier()
                 || self.check(TokenType::Qualify)
                 || self.check(TokenType::Semicolon)
                 || self.check_text_seq(&["BULK", "COLLECT", "INTO"])
@@ -76,24 +76,25 @@ impl Parser {
                     self.parse_select_item_colon_alias(expr, pre_alias_comments)?
                 } else if self.match_token(TokenType::As) {
                     self.parse_select_item_as_alias(expr, leading_comments, pre_alias_comments)?
-                } else if ((self.check(TokenType::Var) && !self.check_keyword()
-                    || self.check(TokenType::QuotedIdentifier)
-                    || self.check(TokenType::String) && self.supports_string_aliases(false)
-                    || self.can_be_alias_keyword()
-                    || self.is_command_keyword_as_alias()
-                    || self.check(TokenType::Overlaps))
-                    && !self.check_text_seq(&["BULK", "COLLECT", "INTO"]))
-                    && !(self.check(TokenType::Fetch)
-                        || self.check(TokenType::Limit)
-                        || self.check(TokenType::Offset))
-                    && !self.check_text_seq(&["GROUP", "BY"])
-                    && !self.check_text_seq(&["ORDER", "BY"])
-                    && !self.check(TokenType::Qualify)
-                    && !self.is_snowflake_reserved_keyword()
-                    && !(self.check(TokenType::Window)
-                        && self.peek_nth(1).is_some_and(|token| {
-                            matches!(token.token_type, TokenType::Var | TokenType::Identifier)
-                        }))
+                } else if self.limit_as_snowflake_alias()
+                    || (((self.check(TokenType::Var) && !self.check_keyword()
+                        || self.check(TokenType::QuotedIdentifier)
+                        || self.check(TokenType::String) && self.supports_string_aliases(false)
+                        || self.can_be_alias_keyword()
+                        || self.is_command_keyword_as_alias()
+                        || self.check(TokenType::Overlaps))
+                        && !self.check_text_seq(&["BULK", "COLLECT", "INTO"]))
+                        && !(self.check(TokenType::Fetch)
+                            || self.check(TokenType::Limit)
+                            || self.check(TokenType::Offset))
+                        && !self.check_text_seq(&["GROUP", "BY"])
+                        && !self.check_text_seq(&["ORDER", "BY"])
+                        && !self.check(TokenType::Qualify)
+                        && !self.is_snowflake_reserved_keyword()
+                        && !(self.check(TokenType::Window)
+                            && self.peek_nth(1).is_some_and(|token| {
+                                matches!(token.token_type, TokenType::Var | TokenType::Identifier)
+                            })))
                 {
                     let alias = self.parse_projection_alias_identifier(false)?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();

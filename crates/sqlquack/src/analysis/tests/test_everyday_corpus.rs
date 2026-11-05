@@ -9,7 +9,7 @@ fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_i
     let test_cases = [EverydayCorpusTestCase {
         description: "every corpora/everyday query parses, checks, converts or refuses as recorded, under the strict built-in policy and the repository policy",
         expected_mismatches: Vec::new(),
-        expected_rates: "287 of 436 strict, 356 of 436 repository",
+        expected_rates: "288 of 436 strict, 357 of 436 repository",
         // SQL Snowflake rejects (snowflake-receipts.json) that SQLQuack neither fails to parse nor
         // flags in its checks; each should become a parse or check error.
         expected_rejections_not_caught: vec![
