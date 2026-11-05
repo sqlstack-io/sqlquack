@@ -42,6 +42,7 @@ class Draft:
     pair: tuple[str, str] | tuple[()] = ()
     required: bool = True
     spec: Spec | None = field(default=None, compare=False)
+    arity: bool = False
 
 
 @dataclass(frozen=True)
@@ -54,8 +55,14 @@ class FormStyle:
     clauses: dict[str, str] = field(default_factory=dict)
     uses: dict[str, str] = field(default_factory=dict)
     opens: str = ""
+    elisions: dict[str, str] = field(default_factory=dict)
+    literal_fills: dict[str, str] = field(default_factory=dict)
     default_label: str = "l0"
     terminate: bool = True
+    embedded: bool = False
+    observe_empty_properties: bool = False
+    qualify: dict[str, str] = field(default_factory=dict)
+    qualify_references: bool = False
 
 
 @dataclass(frozen=True)
@@ -65,3 +72,12 @@ class Rendered:
     sql: str
     expect: str
     stage: str = ""
+    documented: bool = False
+
+
+@dataclass(frozen=True)
+class ReceiptView:
+    """Receipt phases by (case_id, sql_sha256) and D133 settlements by case, sql, setup, session."""
+
+    phases: dict[tuple[str, str], str]
+    settlements: dict[tuple[str, str, str, str], tuple[str, str]]

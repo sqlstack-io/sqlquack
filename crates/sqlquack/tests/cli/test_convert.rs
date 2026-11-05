@@ -1304,6 +1304,19 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_json: ("SQ0203", "qualify_without_window", 1, 10),
         },
         ConvertDiagnosticTestCase {
+            description: "an unaliased item has its own code, its own span and an alias as help",
+            sql: "SELECT 'a' AS a, UPPER('b')",
+            flags: &[],
+            expected_text: concat!(
+                "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
+                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('b')\n",
+                "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
+                "  |\n  = help: add an alias, e.g. `AS one`\n",
+                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+            ),
+            expected_json: ("SQ0009", "unaliased_output_name", 1, 18),
+        },
+        ConvertDiagnosticTestCase {
             description: "a divergence the policy refuses has its own code and help naming the policy",
             sql: "SELECT HASH(1) AS h",
             flags: &[],

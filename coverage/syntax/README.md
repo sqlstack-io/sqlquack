@@ -24,6 +24,12 @@ translation-equivalence measure.
   removed as a fragment (not a form) has no alias.
 - `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
   (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
+- `census/<family>.jsonl` (D107c): for each counted case that `sqlquack convert` refuses only
+  with `unresolved name`, the smallest schema that resolves its names, one line per case sorted
+  by case id: `{"case_id", "relations": [{"name", "columns": [{"name", "type"}]}]}`. Names are
+  spelled as the case SQL spells them (unquoted, or with their double or single quotes); types
+  are Snowflake type names. Cases that no schema resolves (a column with no relation in scope,
+  `CONNECT BY PRIOR`) have no line. The checker does not read this directory.
 
 Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utility`, `scripting`,
 `functions`, `expressions`, `classes`.
@@ -72,7 +78,26 @@ obligations, not forms.
    named arguments `=>`, keyword arguments) is a separate `special` form per signature; `DISTINCT`
    and `ALL` inside the parentheses are options of the plain call.
 8. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
-   ALTER variants) is a `prose` form with an empty grammar. Its grammar is added by hand.
+   ALTER variants) is a `prose` form with an empty grammar. Its grammar is a `[[reading]]` in
+   `limits.toml` derived from the page's substitution rule (decision D104): CREATE OR ALTER X takes
+   the CREATE X grammar with OR ALTER, DEFINE X takes the CREATE OR ALTER X grammar with DEFINE in
+   its place, and each reading quotes the page. DEFINE cases are captured from a DCM project
+   definition file (`capture = "dcm_definition_file"`), never by executing them. DCM refuses
+   unqualified schema-level names before it reports parse errors (errno 1540), so DEFINE cases
+   name the defined object, and the schema-level objects it references, as `d1.s1.<name>`
+   (`d1.<name>` for schemas and database roles); account-level names stay unqualified. References
+   after AFTER, FINALIZE, ROOTS, FINALIZER, CORTEX SEARCH SERVICE, REFRESH USING ( DELETE FROM and
+   the secret objects in SECRETS = ( ... ) are qualified the same way. Other ddl, security_admin
+   and classes cases are executed in a run database (`capture = "execute_ddl_in_run_database"`), and each carries the
+   exact setup its receipts were recorded under (D110), so the checker binds receipts strictly:
+   the setup of the case's latest receipt from an imported or reconciled run, skipping
+   measure-only receipts and shared-schema setups (whose outcome depends on run order). A case
+   whose receipts disagree on syntax_error across setups is listed for review. A case without
+   such a receipt carries its family's sweep setup with a per-case schema (the ddl sweep for
+   ddl, the d103 sweep for security_admin and classes), which future captures use. Cases of
+   other families on a held list (`--held`, the import's held-case file) run later under the
+   d103 runner and carry its setup too, unless they already have such a receipt, whose setup
+   they then carry like a ddl case.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
@@ -92,8 +117,24 @@ collision the heading is appended, then a number.
 ## Recorded ambiguity and known gaps
 
 - Every page where a rule above changed the form count lists that rule in `decisions`.
-- `prose` forms (31): prose-only variants; the DCM `DEFINE` variants are valid only inside DCM
-  project files, not as standalone SQL.
+- `prose` forms (30, after CREATE OR ALTER WAREHOUSE was catalogued from its syntax block):
+  prose-only variants, each read from its page's substitution rule (rule 8). DEFINE STAGE needs
+  obligation numbers above 999, which the checker accepts as `o1000` onwards, unpadded. The DCM
+  `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
+- An unquoted identifier in place of a string literal is an observed neighbour, not a scored
+  rejection (D106): Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,
+  IMPORTS, FROM LISTING), so a receipt decides it. An observed neighbour still settles as a
+  rejection when its receipt is a syntax error, unless Snowflake refuses every documented positive
+  of its form: then the form's receipts say nothing about its negatives, which all stay observed.
+- A rejection that only empties a list (`= ( )`) is observed, not scored: Snowflake parses
+  `ENCRYPTION = ( )` and accepts `BLOCKED_NETWORK_RULE_LIST = ( )`, and pages document empty
+  lists such as `BLOCKED_OBJECT_TYPES_FOR_CREATION = ()`.
+- `classes` methods are called as `CALL <instance>!<METHOD>( ... )`, as the SQL classes page
+  says, except DESCRIBE and LIST, whose pages call them only with SELECT. Reference, object and
+  array arguments are filled from each page's examples (`SYSTEM$REFERENCE( ... )`,
+  `OBJECT_CONSTRUCT( ... )`). Method and constructor arguments are expressions, as function
+  arguments are: a wrong-class whole argument is withdrawn by class and an omitted one is an arity
+  case, as in `functions`.
 - Data types: each documented type heading is one form whose synonyms are alternatives
   (`{ DECIMAL | DEC | NUMERIC }`); a heading that names several types with different semantics
   (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.
