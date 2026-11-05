@@ -8,6 +8,7 @@ use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
 use sqlquack_duckdb::semi_structured::main::json_array_to_string::json_array_to_string;
 use sqlquack_duckdb::semi_structured::models::PickedKeys;
+use sqlquack_duckdb::text::main::json_parse_url::json_parse_url;
 use sqlquack_duckdb::variants::main::json_array_cat::json_array_cat;
 use sqlquack_duckdb::variants::main::json_array_compact::json_array_compact;
 use sqlquack_duckdb::variants::main::json_array_construct::json_array_construct;
@@ -20,7 +21,6 @@ use sqlquack_duckdb::variants::main::json_is_kind::json_is_kind;
 use sqlquack_duckdb::variants::main::json_is_typed::json_is_typed;
 use sqlquack_duckdb::variants::main::json_object_keys::json_object_keys;
 use sqlquack_duckdb::variants::main::json_object_pick::json_object_pick;
-use sqlquack_duckdb::variants::main::json_parse_url::json_parse_url;
 use sqlquack_duckdb::variants::main::json_split::json_split;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 

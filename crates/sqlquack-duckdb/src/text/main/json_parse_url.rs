@@ -2,14 +2,14 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::semi_structured::constants::{
+use crate::raises::main::raised::raised;
+use crate::semi_structured::constants::JSON_FIDELITY;
+use crate::text::constants::{
     JSON_PARSE_URL, PARSED_URL_NONE, PARSED_URL_PAIR_PATTERN, PARSED_URL_PATTERN,
     PARSED_URL_UNSCHEMED,
 };
-use crate::variants::_helpers::objects::{bound, fidelity_error};
 
-/// The parts of the URL `text` as PARSE_URL(text, 1) writes them, as recorded: the error object
-/// for text without a `:`, every part NULL for empty text, and a raise for other shapes.
+/// PARSE_URL(`text`, 1)'s object for a recorded URL shape, raising for any other shape.
 pub fn json_parse_url(text: &str, log: &ProvenanceLog) -> String {
     log.building_block(JSON_PARSE_URL);
     let part = |group: u8| format!("regexp_extract(u, '{PARSED_URL_PATTERN}', {group})");
@@ -27,7 +27,7 @@ pub fn json_parse_url(text: &str, log: &ProvenanceLog) -> String {
          lambda p: CASE WHEN contains(p, '=') THEN substr(p, strpos(p, '=') + 1) END)[-1]) \
          AS VARCHAR), 'null')), ',') || '}}' END)[1] END",
         query_part = part(5),
-        unread_query = fidelity_error("a URL query no recording shows"),
+        unread_query = raised(&format!("{JSON_FIDELITY}: a URL query no recording shows")),
     );
     let path = format!(
         "CASE WHEN {0} = '' THEN NULL ELSE substr({0}, 2) END",
@@ -44,7 +44,9 @@ pub fn json_parse_url(text: &str, log: &ProvenanceLog) -> String {
          || {query_json} || ',\"scheme\":' || {scheme} || '}}' END",
         query_part = part(5),
         fragment_part = part(6),
-        unread = fidelity_error("a URL in a shape no recording shows"),
+        unread = raised(&format!(
+            "{JSON_FIDELITY}: a URL in a shape no recording shows"
+        )),
         fragment = json(&marked(6)),
         host = json(&part(2)),
         path = json(&path),
@@ -52,5 +54,5 @@ pub fn json_parse_url(text: &str, log: &ProvenanceLog) -> String {
         query_json = json(&query_value),
         scheme = json(&part(1)),
     );
-    format!("CAST({} AS JSON)", bound(text, "u", &body))
+    format!("CAST(list_transform([{text}], lambda u: {body})[1] AS JSON)")
 }

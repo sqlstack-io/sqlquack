@@ -3,8 +3,7 @@
 use crate::semi_structured::_helpers::guards::fidelity_error;
 use crate::semi_structured::constants::{BRACKETED_KEY, PLAIN_KEY_PATTERN};
 
-/// The path step of the decoded key `key`: `.key` for a plain name, `['key']` with `'` escaped
-/// for other printable ASCII, and a raise for any other key.
+/// The path step of the decoded key `key`: `.key`, `['key']` with `'` escaped, or a raise.
 pub(crate) fn key_step(key: &str) -> String {
     format!(
         "CASE WHEN regexp_full_match({key}, '{PLAIN_KEY_PATTERN}') THEN '.' || {key} \

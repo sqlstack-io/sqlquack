@@ -1216,10 +1216,9 @@ fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_va
         },
         BuiltFirstValueTestCase {
             description: "a negative average truncates toward zero",
-            sql: format!(
-                "SELECT TO_VARCHAR(AVG(x) OVER (ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)) \
-                 AS v FROM (VALUES (1, -2), (2, 0), (3, 0)) AS t(n, x) QUALIFY n = 3"
-            ),
+            sql: "SELECT TO_VARCHAR(AVG(x) OVER (ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)) \
+                  AS v FROM (VALUES (1, -2), (2, 0), (3, 0)) AS t(n, x) QUALIFY n = 3"
+                .to_owned(),
             expected_outcome: Ok("-0.666"),
         },
         BuiltFirstValueTestCase {

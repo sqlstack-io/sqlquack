@@ -12,8 +12,7 @@ use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::text::{bound, digitless};
 use crate::temporal::models::{TimestampField, TimestampFormat};
 
-/// `value` in `format`: misspelled raises, but is NULL for the TRY_ forms of YY and MON formats,
-/// as recorded; empty or impossible is NULL if `trying`, else raises.
+/// `value` in `format`: misspelled raises (TRY_ YY/MON: NULL); empty or impossible NULL if `trying`.
 pub fn formatted_text_to_timestamp(
     value: &str,
     (format, trying): (&TimestampFormat, bool),

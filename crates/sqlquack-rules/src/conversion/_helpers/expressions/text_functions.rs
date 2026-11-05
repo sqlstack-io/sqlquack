@@ -26,12 +26,12 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{
-    COMPUTED_SUBSTR_LENGTH, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE, LIKE_WILDCARDS,
-    NEGATED_FACET, NO_QUANTIFIER, POSIX_SPACE_CLASS, QUANTIFIER_FACET, REGEXP,
-    REGEXP_COLUMN_PATTERN, REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING,
+    COMPUTED_SUBSTR_LENGTH, FUNCTION_KIND, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE,
+    LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER, NULL_KIND, POSIX_SPACE_CLASS, QUANTIFIER_FACET,
+    REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING,
     REGEXP_EXTRACTING_FUNCTIONS, REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, REGEXP_SHORTHANDS,
     STORAGE_SUFFIX_PATTERN, SYSTEM_TYPE_NAME, SYSTEM_TYPEOF_NAME, TEXT_PAD, TEXT_POSITION,
-    TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE,
+    TEXT_POSITION_LIMIT, TEXT_REPLACE, TEXT_TRANSLATE, WIDENING_DATE_ADDS,
 };
 
 /// The quantifier LIKE ANY is written with.
@@ -917,7 +917,7 @@ fn escape_kept(pattern: &str, escape: Option<char>, construct: &Construct) -> Re
 /// The SYSTEM$TYPEOF call `node` reads, if it is one.
 pub(crate) fn system_typeof_call(node: &Value) -> Option<&Value> {
     let (kind, payload) = node_kind(node)?;
-    (kind == "function" && call_name(payload) == SYSTEM_TYPEOF_NAME).then_some(payload)
+    (kind == FUNCTION_KIND && call_name(payload) == SYSTEM_TYPEOF_NAME).then_some(payload)
 }
 
 /// REGEXP_REPLACE(SYSTEM$TYPEOF(x), '\\[.*\\]$', ''): x's Snowflake type, as SYSTEM$TYPEOF names it.
@@ -954,15 +954,14 @@ pub(crate) fn stripped_type_name(
         Err(refusal) => result_type(operand).ok_or(refusal)?,
     };
     let widened = node_kind(operand).is_some_and(|(kind, call)| {
-        kind == "function"
-            && ["DATEADD", "TIMEADD", "TIMESTAMPADD"].contains(&call_name(call).as_str())
+        kind == FUNCTION_KIND && WIDENING_DATE_ADDS.contains(&call_name(call).as_str())
     }) && matches!(data_type, SnowflakeType::TimestampNtz { precision } | SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision } if precision < 9);
     let null_operand = node_kind(operand)
         .and_then(|(_, payload)| payload.as_object())
         .is_some_and(|payload| {
             payload
                 .values()
-                .any(|child| node_kind(child).is_some_and(|(kind, _)| kind == "null"))
+                .any(|child| node_kind(child).is_some_and(|(kind, _)| kind == NULL_KIND))
         });
     match data_type {
         SnowflakeType::Varchar | SnowflakeType::SemiStructured => Err(refuse(format!(

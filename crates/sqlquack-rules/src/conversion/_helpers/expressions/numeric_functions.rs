@@ -20,8 +20,9 @@ use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    BITWISE, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, NUMERIC_RANGE, POWER_BASE, POWER_RULE,
-    ROUND_FUNCTION, ROUNDING, SIGN_RULE, SQRT_NAME,
+    BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION,
+    NUMERIC_RANGE, POWER_BASE, POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING,
+    SIGN_RULE, SQRT_NAME,
 };
 
 /// ABS of a NUMBER or FLOAT, of the operand's type.
@@ -185,8 +186,8 @@ pub(crate) fn rounding(
         ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (value, places_of(places)?, false),
         ("ROUND", [value, places, mode]) => {
             let half_to_even = match convert_expression(mode, site)?.literal {
-                Some(Literal::Text(mode)) if mode == "HALF_TO_EVEN" => true,
-                Some(Literal::Text(mode)) if mode == "HALF_AWAY_FROM_ZERO" => false,
+                Some(Literal::Text(mode)) if mode == HALF_TO_EVEN => true,
+                Some(Literal::Text(mode)) if mode == HALF_AWAY_FROM_ZERO => false,
                 _ => {
                     return Err(refuse(
                         "ROUND with a rounding mode no recording shows".to_owned(),
@@ -204,7 +205,7 @@ pub(crate) fn rounding(
         (_, false) => name.to_ascii_lowercase(),
     };
     match operand.data_type {
-        SnowflakeType::Float if arguments.len() == 3 => Err(refuse(
+        SnowflakeType::Float if arguments.len() == ROUND_WITH_MODE_ARGUMENTS => Err(refuse(
             "ROUND of a FLOAT with a rounding mode, which no recording shows".to_owned(),
         )),
         SnowflakeType::Float if name == ROUND_FUNCTION && places != 0 => Ok(Emitted::new(

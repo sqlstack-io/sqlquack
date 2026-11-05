@@ -9,8 +9,7 @@ use crate::blocks::constants::{EXACT_DECIMAL_DIVIDE, MAX_DECIMAL_PRECISION};
 use crate::blocks::main::cast::cast;
 use crate::raises::main::raised::raised;
 
-/// Exact division rounding half away from zero, or toward zero if `truncated`, and whether it
-/// raises beyond 128-bit intermediates.
+/// Exact division, rounded half away from zero or `truncated`, and whether it may raise for range.
 pub fn exact_decimal_divide(
     left: (&str, u8, u8),
     right: (&str, u8, u8),
