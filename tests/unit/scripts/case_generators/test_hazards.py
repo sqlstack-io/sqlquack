@@ -121,6 +121,11 @@ def test_given_declared_divergences_when_generating_hazards_then_cases_expect_th
             "node_within_group_0_text_hazards",
             (("'g001'", "''", "1"), ("'g002'", "'$.a'", "2"), ("'g003'", "'/a'", "3")),
         ),
+        HazardTestCase(
+            "two arguments of one family never hold the same value in a row",
+            "fn_contains_combination_0_text_text",
+            (("'a'", "'b'"), ("'b'", "'a'")),
+        ),
     ),
     ids=lambda case: case.description,
 )

@@ -10,8 +10,8 @@ id = "fn_object_insert_combination_0_variant_text_literal_variant"
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "OBJECT_INSERT(x0, 'k', x2)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -470,8 +470,8 @@ id = "fn_object_insert_1_combination_0_boolean_literal_variant_text_literal_vari
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
 tags = ["null", "json-null", "missing-key", "invalid"]

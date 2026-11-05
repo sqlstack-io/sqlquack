@@ -10,8 +10,8 @@ id = "node_between_combination_0_integer_integer_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "1"],
-  ["2", "2", "2"],
+  ["1", "2", "1"],
+  ["2", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -22,8 +22,8 @@ id = "node_between_combination_0_integer_integer_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "1.5"],
-  ["2", "2", "2.25"],
+  ["1", "2", "1.5"],
+  ["2", "1", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -34,8 +34,8 @@ id = "node_between_combination_0_integer_decimal_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1.5", "1"],
-  ["2", "2.25", "2"],
+  ["1", "1.5", "2"],
+  ["2", "2.25", "1"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -46,8 +46,8 @@ id = "node_between_combination_0_integer_decimal_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1.5", "1.5"],
-  ["2", "2.25", "2.25"],
+  ["1", "1.5", "2.25"],
+  ["2", "2.25", "1.5"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -58,8 +58,8 @@ id = "node_between_combination_0_decimal_integer_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1", "1"],
-  ["2.25", "2", "2"],
+  ["1.5", "1", "2"],
+  ["2.25", "2", "1"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -70,8 +70,8 @@ id = "node_between_combination_0_decimal_integer_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1", "1.5"],
-  ["2.25", "2", "2.25"],
+  ["1.5", "1", "2.25"],
+  ["2.25", "2", "1.5"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -82,8 +82,8 @@ id = "node_between_combination_0_decimal_decimal_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1.5", "1"],
-  ["2.25", "2.25", "2"],
+  ["1.5", "2.25", "1"],
+  ["2.25", "1.5", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -94,8 +94,8 @@ id = "node_between_combination_0_decimal_decimal_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -313,8 +313,8 @@ id = "node_between_1_combination_0_float_float_float"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -478,8 +478,8 @@ id = "node_between_2_combination_0_text_text_text"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "'a'"],
-  ["'b'", "'b'", "'b'"],
+  ["'a'", "'b'", "'a'"],
+  ["'b'", "'a'", "'b'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -625,8 +625,8 @@ id = "node_between_3_combination_0_date_date_date"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'", "'2024-01-15'"],
+  ["'2024-05-17'", "'2024-01-15'", "'2024-05-17'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -715,8 +715,8 @@ id = "node_between_4_combination_0_timestamp_ntz_timestamp_ntz_timestamp_ntz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -832,8 +832,8 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_tz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -844,8 +844,8 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_tz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -856,8 +856,8 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_ltz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -868,8 +868,8 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_ltz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -880,8 +880,8 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_tz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -892,8 +892,8 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_tz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -904,8 +904,8 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_ltz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -916,8 +916,8 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_ltz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]

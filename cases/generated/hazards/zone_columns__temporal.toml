@@ -11,7 +11,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'America/New_York'", "'Europe/London'", "'2024-01-15 10:00:00'"],
-  ["'America/New_York'", "'Europe/London'", "'2024-01-16 11:30:00'"],
+  ["'America/New_York'", "'Europe/London'", "'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -148,7 +148,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'Europe/London'", "'2024-01-15 10:00:00'"],
-  ["'Europe/London'", "'2024-01-16 11:30:00'"],
+  ["'Europe/London'", "'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE(x0, x1)"
 tags = ["null", "boundary"]
@@ -160,7 +160,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'Europe/London'", "'2024-01-15 10:00:00'"],
-  ["'Europe/London'", "'2024-01-16 11:30:00'"],
+  ["'Europe/London'", "'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE(x0, x1)"
 tags = ["null", "boundary"]
@@ -172,7 +172,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'Europe/London'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'Europe/London'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'Europe/London'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "CONVERT_TIMEZONE(x0, x1)"
 tags = ["null", "boundary"]

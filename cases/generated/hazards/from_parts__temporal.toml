@@ -10,8 +10,8 @@ id = "fn_date_from_parts_combination_0_integer_integer_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "1"],
-  ["2", "2", "2"],
+  ["1", "2", "1"],
+  ["2", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -22,8 +22,8 @@ id = "fn_date_from_parts_combination_0_integer_integer_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "1.5"],
-  ["2", "2", "2.25"],
+  ["1", "2", "1.5"],
+  ["2", "1", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -34,8 +34,8 @@ id = "fn_date_from_parts_combination_0_integer_integer_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1", "1", "1.5"],
-  ["2", "2", "2.25"],
+  ["1", "2", "1.5"],
+  ["2", "1", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -46,8 +46,8 @@ id = "fn_date_from_parts_combination_0_integer_decimal_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1.5", "1"],
-  ["2", "2.25", "2"],
+  ["1", "1.5", "2"],
+  ["2", "2.25", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -58,8 +58,8 @@ id = "fn_date_from_parts_combination_0_integer_decimal_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1.5", "1.5"],
-  ["2", "2.25", "2.25"],
+  ["1", "1.5", "2.25"],
+  ["2", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -82,8 +82,8 @@ id = "fn_date_from_parts_combination_0_integer_float_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1.5", "1"],
-  ["2", "2.25", "2"],
+  ["1", "1.5", "2"],
+  ["2", "2.25", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -106,8 +106,8 @@ id = "fn_date_from_parts_combination_0_integer_float_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1", "1.5", "1.5"],
-  ["2", "2.25", "2.25"],
+  ["1", "1.5", "2.25"],
+  ["2", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -118,8 +118,8 @@ id = "fn_date_from_parts_combination_0_decimal_integer_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1", "1"],
-  ["2.25", "2", "2"],
+  ["1.5", "1", "2"],
+  ["2.25", "2", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -130,8 +130,8 @@ id = "fn_date_from_parts_combination_0_decimal_integer_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1", "1.5"],
-  ["2.25", "2", "2.25"],
+  ["1.5", "1", "2.25"],
+  ["2.25", "2", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -154,8 +154,8 @@ id = "fn_date_from_parts_combination_0_decimal_decimal_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1.5", "1"],
-  ["2.25", "2.25", "2"],
+  ["1.5", "2.25", "1"],
+  ["2.25", "1.5", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -166,8 +166,8 @@ id = "fn_date_from_parts_combination_0_decimal_decimal_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -178,8 +178,8 @@ id = "fn_date_from_parts_combination_0_decimal_decimal_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -202,8 +202,8 @@ id = "fn_date_from_parts_combination_0_decimal_float_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "1.5", "2.25"],
+  ["2.25", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -214,8 +214,8 @@ id = "fn_date_from_parts_combination_0_decimal_float_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "1.5", "2.25"],
+  ["2.25", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -226,8 +226,8 @@ id = "fn_date_from_parts_combination_0_float_integer_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1", "1"],
-  ["2.25", "2", "2"],
+  ["1.5", "1", "2"],
+  ["2.25", "2", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -250,8 +250,8 @@ id = "fn_date_from_parts_combination_0_float_integer_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1", "1.5"],
-  ["2.25", "2", "2.25"],
+  ["1.5", "1", "2.25"],
+  ["2.25", "2", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -274,8 +274,8 @@ id = "fn_date_from_parts_combination_0_float_decimal_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "1.5", "2.25"],
+  ["2.25", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -286,8 +286,8 @@ id = "fn_date_from_parts_combination_0_float_decimal_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "1.5", "2.25"],
+  ["2.25", "2.25", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -298,8 +298,8 @@ id = "fn_date_from_parts_combination_0_float_float_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1.5", "1.5", "1"],
-  ["2.25", "2.25", "2"],
+  ["1.5", "2.25", "1"],
+  ["2.25", "1.5", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -310,8 +310,8 @@ id = "fn_date_from_parts_combination_0_float_float_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -322,8 +322,8 @@ id = "fn_date_from_parts_combination_0_float_float_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
+  ["1.5", "2.25", "1.5"],
+  ["2.25", "1.5", "2.25"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -695,7 +695,7 @@ description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared a
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'2024-01-15'", "'10:00:00'"],
-  ["'2024-01-16'", "'11:30:00'"],
+  ["'2024-05-17'", "'11:30:00'"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1)"
 tags = ["null", "boundary"]
@@ -748,8 +748,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "2", "2", "2", "2", "2"],
+  ["2024", "2", "1", "2", "1", "2"],
+  ["2024", "1", "2", "1", "2", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -760,8 +760,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_decimal_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "2", "2", "2", "2", "2"],
+  ["2024", "1", "2", "1", "2", "1"],
+  ["2024", "2", "1", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -772,8 +772,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_float_integer_integer_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "2", "2", "2", "2", "2"],
+  ["2024", "1", "2", "1", "2", "1"],
+  ["2024", "2", "1", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -784,8 +784,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_decimal_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1.5", "1", "1", "1", "1"],
-  ["2024", "2.25", "2", "2", "2", "2"],
+  ["2024", "1.5", "2", "1", "2", "1"],
+  ["2024", "2.25", "1", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -796,8 +796,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_float_integer_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1.5", "1", "1", "1", "1"],
-  ["2024", "2.25", "2", "2", "2", "2"],
+  ["2024", "1.5", "2", "1", "2", "1"],
+  ["2024", "2.25", "1", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -808,8 +808,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_decimal_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1.5", "1", "1", "1"],
-  ["2024", "2", "2.25", "2", "2", "2"],
+  ["2024", "2", "1.5", "1", "2", "1"],
+  ["2024", "1", "2.25", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -820,8 +820,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_float_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1.5", "1", "1", "1"],
-  ["2024", "2", "2.25", "2", "2", "2"],
+  ["2024", "2", "1.5", "1", "2", "1"],
+  ["2024", "1", "2.25", "2", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -832,8 +832,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_decima
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,10)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1.5", "1", "1"],
-  ["2024", "2", "2", "2.25", "2", "2"],
+  ["2024", "2", "1", "1.5", "2", "1"],
+  ["2024", "1", "2", "2.25", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -844,8 +844,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_float_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1.5", "1", "1"],
-  ["2024", "2", "2", "2.25", "2", "2"],
+  ["2024", "2", "1", "1.5", "2", "1"],
+  ["2024", "1", "2", "2.25", "1", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -856,8 +856,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,10)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1.5", "1"],
-  ["2024", "2", "2", "2", "2.25", "2"],
+  ["2024", "2", "1", "2", "1.5", "1"],
+  ["2024", "1", "2", "1", "2.25", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -868,8 +868,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "FLOAT" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1.5", "1"],
-  ["2024", "2", "2", "2", "2.25", "2"],
+  ["2024", "2", "1", "2", "1.5", "1"],
+  ["2024", "1", "2", "1", "2.25", "2"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -880,8 +880,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,10)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "1.5"],
-  ["2024", "2", "2", "2", "2", "2.25"],
+  ["2024", "2", "1", "2", "1", "1.5"],
+  ["2024", "1", "2", "1", "2", "2.25"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -892,8 +892,8 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "FLOAT" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "1.5"],
-  ["2024", "2", "2", "2", "2", "2.25"],
+  ["2024", "2", "1", "2", "1", "1.5"],
+  ["2024", "1", "2", "1", "2", "2.25"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]

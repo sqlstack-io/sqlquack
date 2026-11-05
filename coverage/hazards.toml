@@ -212,7 +212,7 @@ cells = ["NULL"]
 [families.date]
 sql_type = "DATE"
 benign = "'2024-01-15'"
-other = "'2024-01-16'"
+other = "'2024-05-17'"
 
 [[families.date.hazard]]
 id = "null"
@@ -258,7 +258,7 @@ cells = ["'10:00:00.0005'", "'10:00:00.9996'"]
 [families.timestamp_ntz]
 sql_type = "TIMESTAMP_NTZ(9)"
 benign = "'2024-01-15 10:00:00'"
-other = "'2024-01-16 11:30:00'"
+other = "'2024-05-17 11:30:00'"
 
 [[families.timestamp_ntz.hazard]]
 id = "null"
@@ -311,7 +311,7 @@ unrecordable = "The recording connector cannot convert a nanosecond timestamp pa
 [families.timestamp_ltz]
 sql_type = "TIMESTAMP_LTZ(9)"
 benign = "'2024-01-15 10:00:00'"
-other = "'2024-01-16 11:30:00'"
+other = "'2024-05-17 11:30:00'"
 
 [[families.timestamp_ltz.hazard]]
 id = "null"
@@ -354,7 +354,7 @@ unrecordable = "The recording connector cannot convert a nanosecond timestamp pa
 [families.timestamp_tz]
 sql_type = "TIMESTAMP_TZ(9)"
 benign = "'2024-01-15 10:00:00 +00:00'"
-other = "'2024-01-16 11:30:00 +00:00'"
+other = "'2024-05-17 11:30:00 +00:00'"
 
 [[families.timestamp_tz.hazard]]
 id = "null"

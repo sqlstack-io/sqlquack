@@ -371,8 +371,8 @@ id = "fn_array_construct_2_combination_0_float_float"
 description = "fn:ARRAY_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "ARRAY_CONSTRUCT(x0, x1)"
 tags = ["null", "duplicates", "empty", "invalid"]

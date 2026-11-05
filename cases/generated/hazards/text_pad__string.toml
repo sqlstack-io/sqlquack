@@ -118,8 +118,8 @@ id = "fn_lpad_1_combination_0_text_integer_text"
 description = "fn:LPAD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "3", "'a'"],
-  ["'b'", "3", "'b'"],
+  ["'a'", "3", "'b'"],
+  ["'b'", "3", "'a'"],
 ]
 expression = "RPAD(x0, x1, x2)"
 tags = ["null", "empty", "whitespace", "unicode"]

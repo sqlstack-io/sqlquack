@@ -220,6 +220,7 @@ def _arguments(
     arguments: list[str] = []
     overrides: dict[str, str] = form.get("benign", {})
     types: dict[str, str] = form.get("sql_types", {})
+    seen: dict[str, int] = {}
     for index, (family, literal) in enumerate(positions):
         if family == NULL_FAMILY:
             arguments.append("NULL")
@@ -235,8 +236,11 @@ def _arguments(
         name: str = f"{HAZARD_ARGUMENT_PREFIX}{index}"
         arguments.append(name)
         columns.append(Column(name, types.get(str(index), declared["sql_type"])))
-        first_row.append(benign)
-        second_row.append(benign if str(index) in overrides else declared["other"])
+        other: str = benign if str(index) in overrides else declared["other"]
+        swapped: bool = seen.get(family, 0) % 2 == 1
+        seen[family] = seen.get(family, 0) + 1
+        first_row.append(other if swapped else benign)
+        second_row.append(benign if swapped else other)
     return columns, first_row, second_row, arguments
 
 

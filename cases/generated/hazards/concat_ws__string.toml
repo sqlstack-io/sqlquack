@@ -10,8 +10,8 @@ id = "fn_concat_ws_combination_0_text_text"
 description = "fn:CONCAT_WS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "CONCAT_WS(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -59,7 +59,7 @@ description = "fn:CONCAT_WS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15'", "'a'"],
-  ["'2024-01-16'", "'b'"],
+  ["'2024-05-17'", "'b'"],
 ]
 expression = "CONCAT_WS(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -119,7 +119,7 @@ description = "fn:CONCAT_WS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'b'", "'2024-01-16'"],
+  ["'b'", "'2024-05-17'"],
 ]
 expression = "CONCAT_WS(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]

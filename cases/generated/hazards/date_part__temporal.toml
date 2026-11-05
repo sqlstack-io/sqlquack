@@ -11,7 +11,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "DATE_PART(dayofweek, x0)"
 tags = ["null", "boundary"]
@@ -23,7 +23,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "DATE_PART(dayofweek, x0)"
 tags = ["null", "boundary"]
@@ -96,7 +96,7 @@ description = "node:extract over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "EXTRACT(year FROM x0)"
 tags = ["null", "boundary"]
@@ -108,7 +108,7 @@ description = "node:extract over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "EXTRACT(year FROM x0)"
 tags = ["null", "boundary"]
@@ -181,7 +181,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "YEAR(x0)"
 tags = ["null", "boundary"]
@@ -193,7 +193,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "YEAR(x0)"
 tags = ["null", "boundary"]
@@ -205,7 +205,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "QUARTER(x0)"
 tags = ["null", "boundary"]
@@ -217,7 +217,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "QUARTER(x0)"
 tags = ["null", "boundary"]
@@ -229,7 +229,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "MONTH(x0)"
 tags = ["null", "boundary"]
@@ -241,7 +241,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "MONTH(x0)"
 tags = ["null", "boundary"]
@@ -253,7 +253,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "DAY(x0)"
 tags = ["null", "boundary"]
@@ -265,7 +265,7 @@ description = "node:year over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "DAY(x0)"
 tags = ["null", "boundary"]
@@ -338,7 +338,7 @@ description = "node:hour over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "HOUR(x0)"
 tags = ["null", "boundary"]
@@ -350,7 +350,7 @@ description = "node:hour over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "MINUTE(x0)"
 tags = ["null", "boundary"]
@@ -362,7 +362,7 @@ description = "node:hour over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "SECOND(x0)"
 tags = ["null", "boundary"]

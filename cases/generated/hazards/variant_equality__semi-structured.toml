@@ -34,8 +34,8 @@ id = "node_eq_combination_0_variant_variant"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "x0 = x1"
 tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]
@@ -70,8 +70,8 @@ id = "node_eq_combination_1_variant_variant"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]

@@ -88,8 +88,8 @@ id = "fn_datediff_1_combination_0_time_time"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "DATEDIFF(second, x0, x1)"
 tags = ["null", "boundary"]

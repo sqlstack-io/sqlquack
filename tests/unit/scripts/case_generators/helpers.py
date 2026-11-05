@@ -62,6 +62,15 @@ query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
 row_groups = true
+
+[[rule]]
+id = "rule.text_pair"
+
+[[rule.form]]
+construct = "fn:CONTAINS"
+arguments = [{ families = ["text"], kinds = ["value"] }, { families = ["text"], kinds = ["value"] }]
+template = "CONTAINS({0}, {1})"
+category = "semi-structured"
 """
 
 HAZARD_CATALOGUE: str = """version = 1

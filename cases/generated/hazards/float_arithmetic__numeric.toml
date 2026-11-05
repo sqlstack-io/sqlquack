@@ -34,8 +34,8 @@ id = "node_add_combination_0_float_float"
 description = "node:add over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 + x1"
 tags = ["null", "zero", "negative", "boundary"]
@@ -70,8 +70,8 @@ id = "node_add_combination_1_float_float"
 description = "node:add over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 - x1"
 tags = ["null", "zero", "negative", "boundary"]
@@ -106,8 +106,8 @@ id = "node_add_combination_2_float_float"
 description = "node:add over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 * x1"
 tags = ["null", "zero", "negative", "boundary"]
@@ -142,8 +142,8 @@ id = "node_add_combination_3_float_float"
 description = "node:add over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 / x1"
 tags = ["null", "zero", "negative", "boundary"]

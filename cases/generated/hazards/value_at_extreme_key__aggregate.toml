@@ -10,8 +10,8 @@ id = "fn_max_by_combination_0_integer_integer"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'g001'", "1", "1"],
-  ["'g002'", "2", "2"],
+  ["'g001'", "1", "2"],
+  ["'g002'", "2", "1"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -63,7 +63,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1", "'2024-01-15'"],
-  ["'g002'", "2", "'2024-01-16'"],
+  ["'g002'", "2", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -76,7 +76,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -101,8 +101,8 @@ id = "fn_max_by_combination_0_decimal_decimal"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'g001'", "1.5", "1.5"],
-  ["'g002'", "2.25", "2.25"],
+  ["'g001'", "1.5", "2.25"],
+  ["'g002'", "2.25", "1.5"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -141,7 +141,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15'"],
-  ["'g002'", "2.25", "'2024-01-16'"],
+  ["'g002'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -154,7 +154,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -192,8 +192,8 @@ id = "fn_max_by_combination_0_float_float"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'g001'", "1.5", "1.5"],
-  ["'g002'", "2.25", "2.25"],
+  ["'g001'", "1.5", "2.25"],
+  ["'g002'", "2.25", "1.5"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -219,7 +219,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15'"],
-  ["'g002'", "2.25", "'2024-01-16'"],
+  ["'g002'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -232,7 +232,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -283,8 +283,8 @@ id = "fn_max_by_combination_0_text_text"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'g001'", "'a'", "'a'"],
-  ["'g002'", "'b'", "'b'"],
+  ["'g001'", "'a'", "'b'"],
+  ["'g002'", "'b'", "'a'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -297,7 +297,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "'a'", "'2024-01-15'"],
-  ["'g002'", "'b'", "'2024-01-16'"],
+  ["'g002'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -310,7 +310,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'a'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'b'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'b'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -375,7 +375,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "TRUE", "'2024-01-15'"],
-  ["'g002'", "FALSE", "'2024-01-16'"],
+  ["'g002'", "FALSE", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -388,7 +388,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "TRUE", "'2024-01-15 10:00:00'"],
-  ["'g002'", "FALSE", "'2024-01-16 11:30:00'"],
+  ["'g002'", "FALSE", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -401,7 +401,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1"],
-  ["'g002'", "'2024-01-16'", "2"],
+  ["'g002'", "'2024-05-17'", "2"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -414,7 +414,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1.5"],
-  ["'g002'", "'2024-01-16'", "2.25"],
+  ["'g002'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -427,7 +427,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1.5"],
-  ["'g002'", "'2024-01-16'", "2.25"],
+  ["'g002'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -440,7 +440,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'g001'", "'2024-01-15'", "'a'"],
-  ["'g002'", "'2024-01-16'", "'b'"],
+  ["'g002'", "'2024-05-17'", "'b'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -452,8 +452,8 @@ id = "fn_max_by_combination_0_date_date"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'g001'", "'2024-01-15'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16'", "'2024-01-16'"],
+  ["'g001'", "'2024-01-15'", "'2024-05-17'"],
+  ["'g002'", "'2024-05-17'", "'2024-01-15'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -466,7 +466,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -479,7 +479,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -492,7 +492,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -505,7 +505,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -518,7 +518,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "'a'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'b'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'b'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -531,7 +531,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -543,8 +543,8 @@ id = "fn_max_by_combination_0_timestamp_ntz_timestamp_ntz"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'g001'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'g001'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -609,7 +609,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15'"],
-  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16'"],
+  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -622,7 +622,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15 10:00:00'"],
-  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16 11:30:00'"],
+  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -634,8 +634,8 @@ id = "fn_max_by_combination_1_integer_integer"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'g001'", "1", "1"],
-  ["'g002'", "2", "2"],
+  ["'g001'", "1", "2"],
+  ["'g002'", "2", "1"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -687,7 +687,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1", "'2024-01-15'"],
-  ["'g002'", "2", "'2024-01-16'"],
+  ["'g002'", "2", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -700,7 +700,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -725,8 +725,8 @@ id = "fn_max_by_combination_1_decimal_decimal"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'g001'", "1.5", "1.5"],
-  ["'g002'", "2.25", "2.25"],
+  ["'g001'", "1.5", "2.25"],
+  ["'g002'", "2.25", "1.5"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -765,7 +765,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15'"],
-  ["'g002'", "2.25", "'2024-01-16'"],
+  ["'g002'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -778,7 +778,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -816,8 +816,8 @@ id = "fn_max_by_combination_1_float_float"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'g001'", "1.5", "1.5"],
-  ["'g002'", "2.25", "2.25"],
+  ["'g001'", "1.5", "2.25"],
+  ["'g002'", "2.25", "1.5"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -843,7 +843,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15'"],
-  ["'g002'", "2.25", "'2024-01-16'"],
+  ["'g002'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -856,7 +856,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'g002'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'g002'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -907,8 +907,8 @@ id = "fn_max_by_combination_1_text_text"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'g001'", "'a'", "'a'"],
-  ["'g002'", "'b'", "'b'"],
+  ["'g001'", "'a'", "'b'"],
+  ["'g002'", "'b'", "'a'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -921,7 +921,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "'a'", "'2024-01-15'"],
-  ["'g002'", "'b'", "'2024-01-16'"],
+  ["'g002'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -934,7 +934,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'a'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'b'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'b'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -999,7 +999,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "TRUE", "'2024-01-15'"],
-  ["'g002'", "FALSE", "'2024-01-16'"],
+  ["'g002'", "FALSE", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1012,7 +1012,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "TRUE", "'2024-01-15 10:00:00'"],
-  ["'g002'", "FALSE", "'2024-01-16 11:30:00'"],
+  ["'g002'", "FALSE", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1025,7 +1025,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1"],
-  ["'g002'", "'2024-01-16'", "2"],
+  ["'g002'", "'2024-05-17'", "2"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1038,7 +1038,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1.5"],
-  ["'g002'", "'2024-01-16'", "2.25"],
+  ["'g002'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1051,7 +1051,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'g001'", "'2024-01-15'", "1.5"],
-  ["'g002'", "'2024-01-16'", "2.25"],
+  ["'g002'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1064,7 +1064,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'g001'", "'2024-01-15'", "'a'"],
-  ["'g002'", "'2024-01-16'", "'b'"],
+  ["'g002'", "'2024-05-17'", "'b'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1076,8 +1076,8 @@ id = "fn_max_by_combination_1_date_date"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'g001'", "'2024-01-15'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16'", "'2024-01-16'"],
+  ["'g001'", "'2024-01-15'", "'2024-05-17'"],
+  ["'g002'", "'2024-05-17'", "'2024-01-15'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1090,7 +1090,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1103,7 +1103,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1116,7 +1116,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1129,7 +1129,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'g002'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'g002'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1142,7 +1142,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "'a'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'b'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'b'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1155,7 +1155,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1167,8 +1167,8 @@ id = "fn_max_by_combination_1_timestamp_ntz_timestamp_ntz"
 description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'g001'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'g001'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'g002'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1233,7 +1233,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'g001'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15'"],
-  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16'"],
+  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1246,7 +1246,7 @@ description = "fn:MAX_BY over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15 10:00:00'"],
-  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16 11:30:00'"],
+  ["'g002'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN_BY(x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"

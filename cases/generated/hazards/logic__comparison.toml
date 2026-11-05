@@ -10,8 +10,8 @@ id = "node_and_combination_0_boolean_boolean"
 description = "node:and over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 AND x1"
 tags = ["null", "ties", "mixed-types"]
@@ -22,8 +22,8 @@ id = "node_and_combination_1_boolean_boolean"
 description = "node:and over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 OR x1"
 tags = ["null", "ties", "mixed-types"]

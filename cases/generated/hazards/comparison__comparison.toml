@@ -10,8 +10,8 @@ id = "node_eq_combination_0_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -58,8 +58,8 @@ id = "node_eq_combination_0_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -106,8 +106,8 @@ id = "node_eq_combination_0_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -118,8 +118,8 @@ id = "node_eq_combination_1_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -166,8 +166,8 @@ id = "node_eq_combination_1_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -214,8 +214,8 @@ id = "node_eq_combination_1_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -226,8 +226,8 @@ id = "node_eq_combination_2_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -274,8 +274,8 @@ id = "node_eq_combination_2_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -322,8 +322,8 @@ id = "node_eq_combination_2_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -334,8 +334,8 @@ id = "node_eq_combination_3_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -382,8 +382,8 @@ id = "node_eq_combination_3_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -430,8 +430,8 @@ id = "node_eq_combination_3_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -442,8 +442,8 @@ id = "node_eq_combination_4_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -490,8 +490,8 @@ id = "node_eq_combination_4_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -538,8 +538,8 @@ id = "node_eq_combination_4_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -550,8 +550,8 @@ id = "node_eq_combination_5_integer_integer"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1"],
-  ["2", "2"],
+  ["1", "2"],
+  ["2", "1"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -598,8 +598,8 @@ id = "node_eq_combination_5_decimal_decimal"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -646,8 +646,8 @@ id = "node_eq_combination_5_float_float"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5"],
-  ["2.25", "2.25"],
+  ["1.5", "2.25"],
+  ["2.25", "1.5"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -898,8 +898,8 @@ id = "node_eq_1_combination_0_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -910,8 +910,8 @@ id = "node_eq_1_combination_1_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -922,8 +922,8 @@ id = "node_eq_1_combination_2_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -934,8 +934,8 @@ id = "node_eq_1_combination_3_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -946,8 +946,8 @@ id = "node_eq_1_combination_4_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -958,8 +958,8 @@ id = "node_eq_1_combination_5_text_text"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'"],
-  ["'b'", "'b'"],
+  ["'a'", "'b'"],
+  ["'b'", "'a'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1060,8 +1060,8 @@ id = "node_eq_2_combination_0_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1072,8 +1072,8 @@ id = "node_eq_2_combination_1_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1084,8 +1084,8 @@ id = "node_eq_2_combination_2_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1096,8 +1096,8 @@ id = "node_eq_2_combination_3_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1108,8 +1108,8 @@ id = "node_eq_2_combination_4_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1120,8 +1120,8 @@ id = "node_eq_2_combination_5_boolean_boolean"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1154,8 +1154,8 @@ id = "node_eq_3_combination_0_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1166,8 +1166,8 @@ id = "node_eq_3_combination_1_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1178,8 +1178,8 @@ id = "node_eq_3_combination_2_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1190,8 +1190,8 @@ id = "node_eq_3_combination_3_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1202,8 +1202,8 @@ id = "node_eq_3_combination_4_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1214,8 +1214,8 @@ id = "node_eq_3_combination_5_date_date"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2024-01-15'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1278,8 +1278,8 @@ id = "node_eq_4_combination_0_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1290,8 +1290,8 @@ id = "node_eq_4_combination_1_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1302,8 +1302,8 @@ id = "node_eq_4_combination_2_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1314,8 +1314,8 @@ id = "node_eq_4_combination_3_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1326,8 +1326,8 @@ id = "node_eq_4_combination_4_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1338,8 +1338,8 @@ id = "node_eq_4_combination_5_timestamp_ntz_timestamp_ntz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1420,8 +1420,8 @@ id = "node_eq_5_combination_0_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1433,7 +1433,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1445,7 +1445,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1456,8 +1456,8 @@ id = "node_eq_5_combination_0_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1468,8 +1468,8 @@ id = "node_eq_5_combination_1_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1481,7 +1481,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1493,7 +1493,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1504,8 +1504,8 @@ id = "node_eq_5_combination_1_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1516,8 +1516,8 @@ id = "node_eq_5_combination_2_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1529,7 +1529,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1541,7 +1541,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1552,8 +1552,8 @@ id = "node_eq_5_combination_2_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1564,8 +1564,8 @@ id = "node_eq_5_combination_3_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1577,7 +1577,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1589,7 +1589,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1600,8 +1600,8 @@ id = "node_eq_5_combination_3_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1612,8 +1612,8 @@ id = "node_eq_5_combination_4_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1625,7 +1625,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1637,7 +1637,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1648,8 +1648,8 @@ id = "node_eq_5_combination_4_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1660,8 +1660,8 @@ id = "node_eq_5_combination_5_timestamp_tz_timestamp_tz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1673,7 +1673,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1685,7 +1685,7 @@ description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1696,8 +1696,8 @@ id = "node_eq_5_combination_5_timestamp_ltz_timestamp_ltz"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1868,8 +1868,8 @@ id = "node_eq_probe_0_combination_0_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 = x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1880,8 +1880,8 @@ id = "node_eq_probe_0_combination_1_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 <> x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1892,8 +1892,8 @@ id = "node_eq_probe_0_combination_2_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 < x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1904,8 +1904,8 @@ id = "node_eq_probe_0_combination_3_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 <= x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1916,8 +1916,8 @@ id = "node_eq_probe_0_combination_4_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 > x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1928,8 +1928,8 @@ id = "node_eq_probe_0_combination_5_time_time"
 description = "node:eq over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'10:00:00'", "'10:00:00'"],
-  ["'11:30:00'", "'11:30:00'"],
+  ["'10:00:00'", "'11:30:00'"],
+  ["'11:30:00'", "'10:00:00'"],
 ]
 expression = "x0 >= x1"
 tags = ["null", "ties", "mixed-types"]
