@@ -52,14 +52,14 @@ tags = ["null"]
 
 [[case]]
 id = "t005_empty"
-description = "Unary plus on an empty string. Catches: the empty string read as 0 when Snowflake errors, or the reverse"
+description = "Unary plus on an empty string.: Snowflake raises error 100038 on every row (captured at e8691b63). Catches: NaN, NULL or a value where Snowflake raises an error"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["''"],
 ]
 query = "SELECT +a AS r FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["boundary"]
+tags = ["error"]
 
 [[case]]
 id = "t006_bad_text"

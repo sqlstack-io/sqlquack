@@ -65,7 +65,7 @@ tags = ["null"]
 
 [[case]]
 id = "t006_zeros"
-description = "Signed zeros on the negative x axis. Catches: the sign of zero lost (pi vs -pi)"
+description = "Zeros on the negative x axis; Snowflake gives +pi for both signs of zero y (captured at e8691b63). Catches: IEEE signed-zero atan2 (-pi for the -0 row) where Snowflake returns +pi"
 columns = [{ name = "y", type = "FLOAT" }, { name = "x", type = "FLOAT" }]
 rows = [
   ["0", "0"],

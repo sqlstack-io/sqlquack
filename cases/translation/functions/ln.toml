@@ -29,13 +29,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_decfloat"
-description = "LN of DECFLOAT, which returns DECFLOAT. Catches: a DECFLOAT argument computed and returned as FLOAT"
+description = "LN of DECFLOAT, which returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: a DECFLOAT argument computed and returned as FLOAT"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["10"],
   ["0.5"],
 ]
-query = "SELECT LN(x) AS r FROM input ORDER BY ordinal"
+query = "SELECT CAST(LN(x) AS VARCHAR) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

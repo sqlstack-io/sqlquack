@@ -40,13 +40,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_decfloat"
-description = "SQUARE of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT"
+description = "SQUARE of DECFLOAT returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: computed in FLOAT"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["1.1"],
   ["-3"],
 ]
-query = "SELECT SQUARE(x) AS r FROM input ORDER BY ordinal"
+query = "SELECT CAST(SQUARE(x) AS VARCHAR) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

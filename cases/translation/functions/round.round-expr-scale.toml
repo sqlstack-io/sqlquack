@@ -44,13 +44,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_decfloat"
-description = "ROUND of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
+description = "ROUND of DECFLOAT returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["1.005"],
   ["-2.5"],
 ]
-query = "SELECT ROUND(EXPR => x, SCALE => 2) AS r FROM input ORDER BY ordinal"
+query = "SELECT CAST(ROUND(EXPR => x, SCALE => 2) AS VARCHAR) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

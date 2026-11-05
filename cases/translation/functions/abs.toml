@@ -30,7 +30,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_float"
-description = "ABS of FLOAT. Catches: negative zero and tiny negatives"
+description = "ABS of FLOAT. Catches: a tiny negative flushed to zero or kept negative (1e-300)"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["-0e0"],

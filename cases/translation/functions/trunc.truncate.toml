@@ -44,7 +44,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_decfloat"
-description = "TRUNCATE of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
+description = "TRUNCATE of DECFLOAT returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["2.25"],
@@ -52,7 +52,7 @@ rows = [
   ["0.29"],
   ["12345678901234567890.25"],
 ]
-query = "SELECT TRUNCATE(x, 1) AS r, TRUNCATE(x, 2) AS s FROM input ORDER BY ordinal"
+query = "SELECT CAST(TRUNCATE(x, 1) AS VARCHAR) AS r, CAST(TRUNCATE(x, 2) AS VARCHAR) AS s FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

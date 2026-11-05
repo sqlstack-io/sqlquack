@@ -53,7 +53,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t005_outside"
-description = "ACOS at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, Infinity, NULL or an error differing from Snowflake"
+description = "ACOS at or outside its domain: Snowflake raises error 100044 on every row (captured at e8691b63). Catches: NaN, NULL or a value where Snowflake raises an error"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["1.5"],
@@ -61,4 +61,4 @@ rows = [
 ]
 query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["boundary"]
+tags = ["error"]

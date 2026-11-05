@@ -44,7 +44,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_decfloat"
-description = "CEIL of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.28 at scale 2 rounded up to 0.29"
+description = "CEIL of DECFLOAT returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.28 at scale 2 rounded up to 0.29"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["2.25"],
@@ -53,7 +53,7 @@ rows = [
   ["12345678901234567890.25"],
   ["0.28"],
 ]
-query = "SELECT CEIL(x, 1) AS r, CEIL(x, 2) AS s FROM input ORDER BY ordinal"
+query = "SELECT CAST(CEIL(x, 1) AS VARCHAR) AS r, CAST(CEIL(x, 2) AS VARCHAR) AS s FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

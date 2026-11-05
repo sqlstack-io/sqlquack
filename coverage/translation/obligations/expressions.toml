@@ -719,11 +719,10 @@ required = true
 [[obligation]]
 id = "sf.expressions.operators-arithmetic.unary-plus.t005"
 form = "sf.expressions.operators-arithmetic.unary-plus"
-kind = "boundary"
-subkind = "empty_string"
-target = "empty_string"
-note = "Unary plus on an empty string."
-catches = "the empty string read as 0 when Snowflake errors, or the reverse"
+kind = "error_parity"
+target = "error"
+note = "Unary plus on an empty string.: Snowflake raises error 100038 on every row (captured at e8691b63)."
+catches = "NaN, NULL or a value where Snowflake raises an error"
 reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
 cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t005_empty"]
 required = true
