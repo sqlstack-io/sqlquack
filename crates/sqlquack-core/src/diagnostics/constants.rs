@@ -210,7 +210,7 @@ pub const CODES: &[CodeEntry] = &[
         explanation: "The statement parsed, but its tree nests deeper than the limit SQLQuack \
             places on later analysis, which keeps conversion from exhausting the stack. \
             Restructure the deepest part of the statement.",
-        example: r#"python3 -c "print('SELECT 1' + ' + 1' * 1000)" | sqlquack check"#,
+        example: r#"python3 -c "print('SELECT ' + 'CASE WHEN TRUE THEN ' * 600 + '1' + ' END' * 600)" | sqlquack check"#,
     },
     CodeEntry {
         code: "SQ0106",
