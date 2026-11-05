@@ -2384,6 +2384,18 @@ fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_val
         ("an option without a value", "CREATE FILE FORMAT v1 TYPE = JSON FILE_EXTENSION = ;"),
         ("a reserved name", "CREATE FILE FORMAT SELECT ;"),
         (
+            "a column without a type and no query",
+            "CREATE OR REPLACE TEMPORARY TABLE t1 ( c1 ) ;",
+        ),
+        (
+            "a time-travel clause without AT",
+            "SELECT 1 FROM t1 ( TIMESTAMP => TO_TIMESTAMP_LTZ ( '2026-01-01' ) ) ;",
+        ),
+        (
+            "a query as the table body",
+            "CREATE TABLE t1 ( SELECT 1 ) ;",
+        ),
+        (
             "a string PIVOT column",
             "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR 'v1' IN ( 1 ) ) ;",
         ),
@@ -2423,6 +2435,7 @@ fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_val
         "DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
         "CREATE FILE FORMAT v1 TYPE = JSON NULL_IF = ( m1 ) ;",
         "CREATE STAGE \"SELECT\" CLONE v1 ;",
+        "CREATE TABLE t1 ( c1 , c2 ) AS SELECT 1 , 2 ;",
     ];
     for sql in kept {
         assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
