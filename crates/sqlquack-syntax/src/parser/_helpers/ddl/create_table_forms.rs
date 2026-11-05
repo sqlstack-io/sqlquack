@@ -802,6 +802,9 @@ impl Parser {
         suffix: CreateTableNameSuffix,
         leading: CreateTableLeadingOptions,
     ) -> Result<Expression> {
+        if self.is_snowflake() {
+            return Err(self.parse_error("Expected column definitions or AS before the query"));
+        }
         let CreateTableHead {
             name,
             if_not_exists,

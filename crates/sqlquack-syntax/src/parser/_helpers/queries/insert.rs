@@ -529,6 +529,23 @@ impl Parser {
                 } else if self.check(TokenType::Table) {
                     (Vec::new(), None)
                 } else {
+                    if self.is_snowflake() && self.check(TokenType::LParen) {
+                        let mut offset = 1;
+                        while self
+                            .peek_nth(offset)
+                            .is_some_and(|token| token.token_type == TokenType::LParen)
+                        {
+                            offset += 1;
+                        }
+                        if !self.peek_nth(offset).is_some_and(|token| {
+                            matches!(
+                                token.token_type,
+                                TokenType::Select | TokenType::With | TokenType::Values
+                            )
+                        }) {
+                            return Err(self.parse_error("Expected a query in parentheses"));
+                        }
+                    }
                     (Vec::new(), Some(self.parse_statement()?))
                 }
             }

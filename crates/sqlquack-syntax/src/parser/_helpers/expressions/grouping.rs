@@ -12,15 +12,12 @@ use crate::expressions::names::models::Column;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Literal;
 use crate::expressions::names::models::Null;
-use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::Alias;
 use crate::expressions::operators::models::BinaryOp;
-use crate::expressions::operators::models::ConditionalInsert;
 use crate::expressions::operators::models::DotAccess;
 use crate::expressions::operators::models::Group;
 use crate::expressions::operators::models::IndexParameters;
 use crate::expressions::operators::models::LambdaExpr;
-use crate::expressions::operators::models::MultitableInserts;
 use crate::expressions::operators::models::Parameter;
 use crate::expressions::operators::models::ParameterStyle;
 use crate::expressions::operators::models::Placeholder;
@@ -31,7 +28,6 @@ use crate::expressions::queries::models::OrderBy;
 use crate::expressions::queries::models::Ordered;
 use crate::expressions::queries::models::Subquery;
 use crate::expressions::statements::models::HistoricalData;
-use crate::expressions::statements::models::Insert;
 use crate::expressions::statements::models::Merge;
 use crate::expressions::statements::models::NextValueFor;
 use crate::expressions::statements::models::Paren;
@@ -50,6 +46,7 @@ use crate::expressions::types::models::IntervalUnit;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::BINARY_ARITY;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
+use crate::parser::constants::RIGHT_PAREN;
 use crate::parser::constants::TERNARY_ARITY;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
@@ -848,13 +845,21 @@ impl Parser {
             })));
         }
 
-        if whens.is_empty() {
+        if whens.is_empty() && self.is_snowflake() {
+            Err(self.parse_error("Expected a WHEN clause in MERGE"))
+        } else if whens.is_empty() {
             Ok(None)
         } else {
             Ok(Some(Expression::Whens(Box::new(Whens {
                 expressions: whens,
             }))))
         }
+    }
+
+    /// In a Snowflake parse, whether a MERGE action stops here, before its required clause.
+    fn merge_action_ends(&self) -> bool {
+        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && (self.is_at_end() || self.check(TokenType::Semicolon) || self.check(TokenType::When))
     }
 
     fn parse_merge_when_insert(&mut self) -> Result<Expression> {
@@ -876,6 +881,12 @@ impl Parser {
             } else if self.match_token(TokenType::LParen) {
                 let mut columns: Vec<Expression> = Vec::new();
                 loop {
+                    if self.check(TokenType::String)
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected a column name, not a string"));
+                    }
                     if let Some(col) = self.parse_id_var()? {
                         let col = if self.match_token(TokenType::Dot) {
                             if let Expression::Identifier(table_ident) = col {
@@ -911,7 +922,12 @@ impl Parser {
                         break;
                     }
                 }
-                self.match_token(TokenType::RParen);
+                let closed = self.match_token(TokenType::RParen);
+                if (columns.is_empty() || !closed)
+                    && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                {
+                    return Err(self.parse_error("Expected a closed column list in MERGE INSERT"));
+                }
                 if !columns.is_empty() {
                     elements.push(Expression::Tuple(Box::new(Tuple {
                         expressions: columns,
@@ -921,8 +937,20 @@ impl Parser {
 
             if self.match_text_seq(&["VALUES"]) {
                 if let Some(values) = self.parse_value()? {
+                    let empty = matches!(&values, Expression::Tuple(t) if t.expressions.is_empty());
+                    if (empty || self.previous_text() != RIGHT_PAREN)
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected a closed, non-empty VALUES list"));
+                    }
                     elements.push(values);
+                } else if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                {
+                    return Err(self.parse_error("Expected a value list after VALUES"));
                 }
+            } else if self.merge_action_ends() {
+                return Err(self.parse_error("Expected VALUES in MERGE INSERT"));
             } else if self.match_text_seq(&["ROW"]) {
                 elements.push(Expression::Var(Box::new(Var {
                     this: "ROW".to_string(),
@@ -963,6 +991,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     span: None,
                 }));
+            } else if self.merge_action_ends() {
+                return Err(self.parse_error("Expected SET in MERGE UPDATE"));
             } else if self.match_token(TokenType::Set) {
                 if self.match_token(TokenType::Star) {
                     elements.push(Expression::Star(crate::expressions::names::models::Star {
@@ -977,6 +1007,12 @@ impl Parser {
                 } else {
                     let mut assignments: Vec<Expression> = Vec::new();
                     loop {
+                        if self.check(TokenType::String)
+                            && self.config.dialect
+                                == Some(crate::tokens::models::DialectType::Snowflake)
+                        {
+                            return Err(self.parse_error("Expected a column name, not a string"));
+                        }
                         if let Some(col) = self.parse_id_var()? {
                             let col = if self.match_token(TokenType::Dot) {
                                 if let Expression::Identifier(table_ident) = col {
@@ -1022,6 +1058,12 @@ impl Parser {
                             break;
                         }
                     }
+                    if assignments.is_empty()
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected an assignment after SET"));
+                    }
                     if !assignments.is_empty() {
                         elements.push(Expression::Tuple(Box::new(Tuple {
                             expressions: assignments,
@@ -1046,114 +1088,6 @@ impl Parser {
                 }))
             }
         })
-    }
-
-    /// Parses Oracle INSERT ALL|FIRST [WHEN cond THEN] INTO table ... multi-table inserts.
-    pub(crate) fn parse_multitable_inserts(
-        &mut self,
-        leading_comments: Vec<String>,
-        overwrite: bool,
-    ) -> Result<Option<Expression>> {
-        let kind = self.previous_text().to_ascii_uppercase();
-
-        let mut expressions: Vec<Expression> = Vec::new();
-
-        loop {
-            let condition = if self.match_token(TokenType::When) {
-                let cond = self.parse_or()?;
-                self.match_token(TokenType::Then);
-                Some(cond)
-            } else {
-                None
-            };
-
-            let is_else = self.match_token(TokenType::Else);
-
-            if !self.match_token(TokenType::Into) {
-                break;
-            }
-
-            let table_expr = self.parse_table_parts()?;
-
-            let table_ref = if let Some(Expression::Table(t)) = table_expr {
-                *t
-            } else {
-                TableRef::new("")
-            };
-
-            let columns = if self.match_token(TokenType::LParen) {
-                let cols = self.parse_identifier_list()?;
-                self.expect_token(TokenType::RParen)?;
-                cols
-            } else {
-                Vec::new()
-            };
-
-            let values = if self.match_token(TokenType::Values) {
-                self.expect_token(TokenType::LParen)?;
-                let row = self.parse_expression_list()?;
-                self.expect_token(TokenType::RParen)?;
-                vec![row]
-            } else {
-                Vec::new()
-            };
-
-            let insert_expr = Expression::Insert(Box::new(Insert {
-                table: table_ref,
-                columns,
-                values,
-                query: None,
-                overwrite: false,
-                partition: Vec::new(),
-                directory: None,
-                returning: Vec::new(),
-                output: None,
-                on_conflict: None,
-                leading_comments: Vec::new(),
-                if_exists: false,
-                with: None,
-                ignore: false,
-                source_alias: None,
-                alias: None,
-                alias_explicit_as: false,
-                default_values: false,
-                by_name: false,
-                conflict_action: None,
-                is_replace: false,
-                replace_where: None,
-                source: None,
-                hint: None,
-                function_target: None,
-                partition_by: None,
-                settings: Vec::new(),
-            }));
-
-            let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {
-                this: Box::new(insert_expr),
-                expression: condition.map(Box::new),
-                else_: if is_else {
-                    Some(Box::new(Expression::Boolean(BooleanLiteral {
-                        value: true,
-                    })))
-                } else {
-                    None
-                },
-            }));
-
-            expressions.push(conditional_insert);
-        }
-
-        let source = self.parse_statement()?;
-
-        Ok(Some(Expression::MultitableInserts(Box::new(
-            MultitableInserts {
-                kind,
-                expressions,
-                source: Some(Box::new(source)),
-                leading_comments,
-                overwrite,
-            },
-        ))))
     }
 
     /// Parses NEXT VALUE FOR sequence.

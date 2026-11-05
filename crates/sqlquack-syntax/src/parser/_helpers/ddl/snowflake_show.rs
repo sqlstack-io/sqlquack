@@ -3,6 +3,9 @@
 use crate::expressions::queries::models::Limit;
 use crate::expressions::statements::models::Show;
 use crate::expressions::tree::models::Expression;
+use crate::parser::constants::ACCOUNT;
+use crate::parser::constants::ON_ACCOUNT;
+use crate::parser::constants::USER;
 use crate::parser::constants::{
     SHARED_SHOW_KINDS, SNOWFLAKE_SHOW_CONTAINERS, SNOWFLAKE_SHOW_EXTRA_CONTAINERS,
     SNOWFLAKE_SHOW_GENERAL_CONTAINERS, SNOWFLAKE_SHOW_KINDS, SNOWFLAKE_SHOW_REQUIRED_CONTAINERS,
@@ -14,6 +17,13 @@ use crate::tokens::types::Result;
 impl Parser {
     /// A Snowflake SHOW after SHOW and TERSE; None leaves the kinds the shared SHOW reads to it.
     pub(crate) fn parse_snowflake_show(&mut self, terse: bool) -> Result<Option<Expression>> {
+        if self.check_identifier("FUTURE") || self.check_identifier("GRANTS") {
+            let future = self.match_identifier("FUTURE");
+            if !self.match_identifier("GRANTS") {
+                return Err(self.parse_error("Expected GRANTS after FUTURE"));
+            }
+            return self.parse_snowflake_show_grants(future).map(Some);
+        }
         let shared = SHARED_SHOW_KINDS
             .iter()
             .any(|kind| self.check_text_seq(kind))
@@ -40,6 +50,21 @@ impl Parser {
         {
             show.scope_kind = Some("OWNED BY APPLICATION".to_owned());
             show.scope = Some(self.parse_show_name()?);
+            return Ok(Some(Expression::Show(Box::new(show))));
+        }
+        let on_targets: &[&[&str]] = match kind.as_str() {
+            "FEATURE POLICIES" | "MAINTENANCE POLICIES" => {
+                &[&["ACCOUNT"], &["APPLICATION"], &["DATABASE"]]
+            }
+            "MULTI PARTY APPROVAL POLICIES" => &[&["ACCOUNT"]],
+            _ => &[],
+        };
+        if !on_targets.is_empty() && self.match_token(TokenType::On) {
+            let on = self.expect_alter_words(on_targets)?;
+            if on != ACCOUNT {
+                show.scope = Some(self.parse_show_name()?);
+            }
+            show.scope_kind = Some(format!("ON {on}"));
             return Ok(Some(Expression::Show(Box::new(show))));
         }
         if self.match_token(TokenType::Like) {
@@ -93,9 +118,19 @@ impl Parser {
         if self.match_token(TokenType::With) {
             show = self.parse_show_with(&kind, show)?;
         }
-        if matches!(kind.as_str(), "MFA METHODS") && self.match_token(TokenType::For) {
-            if !self.match_identifier("USER") {
-                return Err(self.parse_error("Expected USER after FOR"));
+        let for_targets: &[&[&str]] = match kind.as_str() {
+            "MFA METHODS" | "USER KEY PAIRS" | "USER WORKLOAD IDENTITY AUTHENTICATION METHODS" => {
+                &[&["USER"]]
+            }
+            "USER PATS" | "USER PROGRAMMATIC ACCESS TOKENS" => {
+                &[&["USER"], &["EXTERNAL", "CONSUMER"]]
+            }
+            _ => &[],
+        };
+        if !for_targets.is_empty() && self.match_token(TokenType::For) {
+            let target = self.expect_alter_words(for_targets)?;
+            if target != USER {
+                show.scope_kind = Some(format!("FOR {target}"));
             }
             show.for_target = Some(self.parse_show_name()?);
         }
@@ -190,5 +225,124 @@ impl Parser {
                 return Ok(show);
             }
         }
+    }
+
+    /// SHOW [ FUTURE ] GRANTS after GRANTS: its one ON, TO, OF or IN clause, then LIMIT.
+    fn parse_snowflake_show_grants(&mut self, future: bool) -> Result<Expression> {
+        let show = Show::new(if future { "FUTURE GRANTS" } else { "GRANTS" }.to_owned());
+        let (clause, mut show) = if future {
+            let words = self.expect_alter_words(&[
+                &["IN", "DATABASE"],
+                &["IN", "SCHEMA"],
+                &["IN", "DCM", "PROJECT"],
+                &["TO", "ROLE"],
+                &["TO", "DATABASE", "ROLE"],
+            ])?;
+            (Some(words), show)
+        } else if self.match_token(TokenType::On) {
+            let (clause, show) = self.parse_show_grants_on(show)?;
+            (Some(clause), show)
+        } else if self.match_token(TokenType::To) {
+            let (clause, show) = self.parse_show_grants_to(show)?;
+            (Some(clause), show)
+        } else if self.match_text_seq(&["OF"]) {
+            let words = self.expect_alter_words(&[
+                &["APPLICATION", "ROLE"],
+                &["SERVICE", "ROLE"],
+                &["DATABASE", "ROLE"],
+                &["ROLE"],
+                &["SHARE"],
+            ])?;
+            (Some(format!("OF {words}")), show)
+        } else if self.match_token(TokenType::In) {
+            self.expect_alter_words(&[&["DCM", "PROJECT"]])?;
+            (Some("IN DCM PROJECT".to_owned()), show)
+        } else {
+            (None, show)
+        };
+        if let Some(clause) = clause {
+            if show.scope.is_none() && clause != ON_ACCOUNT {
+                show.scope = Some(match clause.ends_with("SERVICE ROLE") {
+                    true => self.parse_show_instance_role()?,
+                    false => self.parse_show_name()?,
+                });
+            }
+            show.scope_kind = Some(clause);
+        }
+        if show.scope_kind.as_deref() == Some("TO SHARE") && self.match_token(TokenType::In) {
+            self.expect_alter_words(&[&["APPLICATION", "PACKAGE"]])?;
+            show.target = Some(self.parse_show_name()?);
+        }
+        if self.match_token(TokenType::Limit) {
+            if !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected a row count after LIMIT"));
+            }
+            show.limit = Some(Box::new(Limit {
+                this: self.parse_primary()?,
+                percent: false,
+                comments: Vec::new(),
+            }));
+        }
+        Ok(Expression::Show(Box::new(show)))
+    }
+
+    /// The clause after SHOW GRANTS ON: ACCOUNT, or an object kind of one or more words and the object's name.
+    fn parse_show_grants_on(&mut self, mut show: Show) -> Result<(String, Show)> {
+        if self.match_identifier(ACCOUNT) {
+            return Ok((ON_ACCOUNT.to_owned(), show));
+        }
+        let mut kind: Vec<String> = Vec::new();
+        while (self.is_identifier_token() || self.check_keyword())
+            && !self.check(TokenType::QuotedIdentifier)
+            && self.peek_nth(1).is_some_and(|next| {
+                (matches!(
+                    next.token_type,
+                    TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
+                ) || next.token_type.is_keyword())
+                    && !next.text.eq_ignore_ascii_case("LIMIT")
+            })
+        {
+            kind.push(self.advance_text()?.to_ascii_uppercase());
+        }
+        if kind.is_empty() {
+            return Err(self.parse_error("Expected an object kind after ON"));
+        }
+        show.scope = Some(self.parse_show_name()?);
+        if self.check(TokenType::LParen) {
+            show.privileges = self.parse_function_param_types()?;
+        }
+        Ok((format!("ON {}", kind.join(" ")), show))
+    }
+
+    /// The grantee after SHOW GRANTS TO; a class instance role names its class as the target.
+    fn parse_show_grants_to(&mut self, mut show: Show) -> Result<(String, Show)> {
+        const GRANTEES: &[&[&str]] = &[
+            &["APPLICATION", "ROLE"],
+            &["APPLICATION"],
+            &["SERVICE", "ROLE"],
+            &["DATABASE", "ROLE"],
+            &["ROLE"],
+            &["SHARE"],
+            &["USER"],
+        ];
+        if let Some(words) = GRANTEES.iter().find(|words| self.match_text_seq(words)) {
+            return Ok((format!("TO {}", words.join(" ")), show));
+        }
+        show.target = Some(self.parse_show_name()?);
+        self.expect_alter_words(&[&["ROLE"]])?;
+        show.scope = Some(self.parse_show_instance_role()?);
+        Ok(("TO INSTANCE ROLE".to_owned(), show))
+    }
+
+    /// `<instance_name>!<role_name>`, as a pair.
+    fn parse_show_instance_role(&mut self) -> Result<Expression> {
+        let instance = self.parse_show_name()?;
+        self.expect_token(TokenType::Exclamation)?;
+        let role = Expression::Identifier(self.parse_simple_name()?);
+        Ok(Expression::Tuple(Box::new(
+            crate::expressions::types::models::Tuple {
+                expressions: vec![instance, role],
+            },
+        )))
     }
 }

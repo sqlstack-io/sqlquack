@@ -80,3 +80,9 @@ pub(crate) struct ScriptingWalkTestCase {
     pub(crate) expected_literals: Vec<&'static str>,
     pub(crate) expected_columns: Vec<&'static str>,
 }
+
+pub(crate) struct SnowflakeVerdictTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_kind: Option<&'static str>,
+}

@@ -649,6 +649,9 @@ impl Parser {
     }
 
     fn parse_int_data_type(&mut self, name: String) -> Result<DataType> {
+        if self.is_snowflake() && self.check(TokenType::LParen) {
+            return Err(self.parse_error("Snowflake's INT and INTEGER take no precision"));
+        }
         let length = if self.match_token(TokenType::LParen) {
             if self.check(TokenType::RParen) {
                 self.skip();
@@ -1464,6 +1467,8 @@ impl Parser {
         let collation_start = self.current;
         if self.check(TokenType::String) {
             self.skip();
+        } else if self.is_snowflake() {
+            return Err(self.parse_error("Expected a collation string after COLLATE"));
         } else {
             self.expect_identifier_or_keyword()?;
             while self.match_token(TokenType::Dot) {

@@ -654,6 +654,16 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 self.parse_table_qualified_source(first_ident, first_name)?
             } else if self.match_token(TokenType::LParen) {
+                if self.is_snowflake()
+                    && self.check_next(TokenType::FArrow)
+                    && ["TIMESTAMP", "OFFSET", "STATEMENT", "STREAM", "INFORMATION"]
+                        .iter()
+                        .any(|word| self.peek().text.eq_ignore_ascii_case(word))
+                {
+                    return Err(
+                        self.parse_error("Expected AT, BEFORE or CHANGES before the clause")
+                    );
+                }
                 self.parse_table_function_source(first_name)?
             } else {
                 let table_name = first_ident;

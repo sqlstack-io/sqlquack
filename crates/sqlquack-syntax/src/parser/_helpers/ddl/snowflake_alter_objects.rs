@@ -62,6 +62,12 @@ impl Parser {
         if self.match_text_seq(&["STREAMLIT"]) {
             return self.parse_alter_streamlit().map(Some);
         }
+        if self.match_text_seq(&["DYNAMIC", "TABLE"]) {
+            return self.parse_alter_dynamic_table().map(Some);
+        }
+        if self.check_identifier("DYNAMIC") && !self.check_next_identifier("ICEBERG") {
+            return Err(self.parse_error("Snowflake has ALTER DYNAMIC TABLE"));
+        }
         if self.check_text_seq(&["CORTEX"])
             || self.check_text_seq(&["SEMANTIC"])
             || self.check_text_seq(&["BACKUP"]) && !self.check_text_seq(&["BACKUP", "POLICY"])
@@ -864,6 +870,6 @@ impl Parser {
 }
 
 /// A parenthesized list of expressions.
-fn tuple(expressions: Vec<Expression>) -> Expression {
+pub(super) fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
 }

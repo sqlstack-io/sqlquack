@@ -1,0 +1,303 @@
+//! Snowflake ALTER DYNAMIC TABLE.
+
+use crate::expressions::names::models::Identifier;
+use crate::expressions::schema_objects::models::ObjectProperty;
+use crate::expressions::tree::models::Expression;
+use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter_objects::tuple;
+use crate::parser::constants::DROP_ROW_ACCESS_POLICY;
+use crate::parser::constants::SET;
+use crate::parser::constants::SET_MASKING_POLICY;
+use crate::parser::constants::SET_TAG;
+use crate::parser::models::Parser;
+use crate::tokens::models::TokenType;
+use crate::tokens::types::Result;
+
+/// The operands and properties of one ALTER action.
+type Parts = (Vec<Expression>, Vec<ObjectProperty>);
+
+/// The actions of an ALTER DYNAMIC TABLE, as their leading words; longer sequences come first.
+const ACTIONS: &[&[&str]] = &[
+    &["REFRESH", "COPY", "SESSION"],
+    &["REFRESH"],
+    &["RENAME", "TO"],
+    &["SWAP", "WITH"],
+    &["SUSPEND", "RECLUSTER"],
+    &["RESUME", "RECLUSTER"],
+    &["SUSPEND", "SEARCH", "OPTIMIZATION"],
+    &["RESUME", "SEARCH", "OPTIMIZATION"],
+    &["SUSPEND"],
+    &["RESUME"],
+    &["CLUSTER", "BY"],
+    &["DROP", "CLUSTERING", "KEY"],
+    &["ADD", "SEARCH", "OPTIMIZATION"],
+    &["DROP", "SEARCH", "OPTIMIZATION"],
+    &["ADD", "STORAGE", "LIFECYCLE", "POLICY"],
+    &["DROP", "STORAGE", "LIFECYCLE", "POLICY"],
+    &["ADD", "ROW", "ACCESS", "POLICY"],
+    &["DROP", "ALL", "ROW", "ACCESS", "POLICIES"],
+    &["DROP", "ROW", "ACCESS", "POLICY"],
+    &["SET", "AGGREGATION", "POLICY"],
+    &["UNSET", "AGGREGATION", "POLICY"],
+    &["SET", "TAG"],
+    &["UNSET", "TAG"],
+    &["SET"],
+    &["UNSET"],
+    &["ALTER"],
+    &["MODIFY"],
+];
+
+impl Parser {
+    /// Parse ALTER DYNAMIC TABLE after its kind.
+    pub(super) fn parse_alter_dynamic_table(&mut self) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let mut names: Vec<Expression> = Vec::new();
+        while self.match_token(TokenType::Comma) {
+            names.push(Expression::Table(Box::new(self.parse_object_name()?)));
+        }
+        let action = self.expect_alter_words(if names.is_empty() {
+            ACTIONS
+        } else {
+            &[&["REFRESH", "COPY", "SESSION"], &["REFRESH"]]
+        })?;
+        let (operands, properties) = self.parse_dynamic_table_action(&action)?;
+        names.extend(operands);
+        Ok(alter_object(
+            "DYNAMIC TABLE",
+            head,
+            action,
+            (names, properties),
+        ))
+    }
+
+    /// Parse what follows the words of an ALTER DYNAMIC TABLE action.
+    fn parse_dynamic_table_action(&mut self, action: &str) -> Result<Parts> {
+        Ok(match action {
+            "RENAME TO" | "SWAP WITH" | "DROP ROW ACCESS POLICY" => {
+                let name = self.policy_operand()?;
+                if action == DROP_ROW_ACCESS_POLICY && self.match_token(TokenType::Comma) {
+                    self.expect_alter_words(&[&["ADD", "ROW", "ACCESS", "POLICY"]])?;
+                    let added = self.policy_operand()?;
+                    self.expect_token(TokenType::On)?;
+                    return Ok((vec![name, added, self.column_list_operand()?], vec![]));
+                }
+                (vec![name], vec![])
+            }
+            "CLUSTER BY" => {
+                self.expect_token(TokenType::LParen)?;
+                let mut keys = vec![self.parse_expression()?];
+                while self.match_token(TokenType::Comma) {
+                    keys.push(self.parse_expression()?);
+                }
+                self.expect_token(TokenType::RParen)?;
+                (vec![tuple(keys)], vec![])
+            }
+            "ADD SEARCH OPTIMIZATION"
+            | "DROP SEARCH OPTIMIZATION"
+            | "SUSPEND SEARCH OPTIMIZATION"
+            | "RESUME SEARCH OPTIMIZATION" => {
+                let mut targets: Vec<Expression> = Vec::new();
+                if self.match_token(TokenType::On) {
+                    loop {
+                        targets.push(self.search_target(action.starts_with("ADD"))?);
+                        if !self.match_token(TokenType::Comma) {
+                            break;
+                        }
+                    }
+                }
+                (targets, vec![])
+            }
+            "ADD STORAGE LIFECYCLE POLICY" | "ADD ROW ACCESS POLICY" => {
+                let policy = self.policy_operand()?;
+                self.expect_token(TokenType::On)?;
+                (vec![policy, self.column_list_operand()?], vec![])
+            }
+            "SET AGGREGATION POLICY" => {
+                let policy = self.policy_operand()?;
+                let mut properties: Vec<ObjectProperty> = Vec::new();
+                if self.match_text_seq(&["ENTITY"]) {
+                    self.expect_alter_words(&[&["KEY"]])?;
+                    properties.push(property(
+                        "ENTITY KEY",
+                        None,
+                        Some(self.column_list_operand()?),
+                    ));
+                }
+                if self.match_text_seq(&["FORCE"]) {
+                    properties.push(property("FORCE", None, None));
+                }
+                (vec![policy], properties)
+            }
+            "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == SET_TAG)?),
+            "SET" | "UNSET" => (vec![], self.parse_dynamic_table_properties(action == SET)?),
+            "ALTER" | "MODIFY" => (self.parse_dynamic_column_actions()?, vec![]),
+            _ => (vec![], vec![]),
+        })
+    }
+
+    /// Parse a policy, table or tag name operand.
+    fn policy_operand(&mut self) -> Result<Expression> {
+        Ok(Expression::Table(Box::new(self.parse_object_name()?)))
+    }
+
+    /// Parse `( <col_name> [ , ... ] )`.
+    fn column_list_operand(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::LParen)?;
+        let mut columns = vec![Expression::Identifier(self.parse_simple_name()?)];
+        while self.match_token(TokenType::Comma) {
+            columns.push(Expression::Identifier(self.parse_simple_name()?));
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(tuple(columns))
+    }
+
+    /// Parse one search optimization target: `<method> ( <target> )`, or, unless `add`, a column name or an expression ID.
+    fn search_target(&mut self, add: bool) -> Result<Expression> {
+        if !add && self.check(TokenType::Number) {
+            return self.parse_primary();
+        }
+        let name = self.parse_simple_name()?;
+        if add || self.check(TokenType::LParen) {
+            return Ok(tuple(vec![
+                Expression::Identifier(name),
+                self.column_list_operand()?,
+            ]));
+        }
+        Ok(Expression::Identifier(name))
+    }
+
+    /// Parse `<tag_name> = '<tag_value>' [ , ... ]` when `set`, else `<tag_name> [ , ... ]`, stopping before a comma that starts another column.
+    pub(super) fn parse_tag_list(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
+        let mut tags: Vec<ObjectProperty> = Vec::new();
+        loop {
+            let name = self.parse_simple_qualified_name()?;
+            let value = if set {
+                self.expect_token(TokenType::Eq)?;
+                Some(self.parse_object_value()?)
+            } else {
+                None
+            };
+            tags.push(property("TAG", Some(name), value));
+            let next_is_tag = self.check(TokenType::Comma)
+                && self.tokens.get(self.current + 2).is_none_or(|token| {
+                    if set {
+                        matches!(token.token_type, TokenType::Eq | TokenType::Dot)
+                    } else {
+                        matches!(
+                            token.token_type,
+                            TokenType::Comma | TokenType::Semicolon | TokenType::Dot
+                        )
+                    }
+                });
+            if !next_is_tag {
+                return Ok(tags);
+            }
+            self.skip();
+        }
+    }
+
+    /// Parse the properties of a SET (`set`) or UNSET action.
+    fn parse_dynamic_table_properties(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        loop {
+            if self.match_text_seq(&["FROZEN", "WHERE"]) {
+                let value = if set {
+                    self.expect_token(TokenType::LParen)?;
+                    let condition = self.parse_expression()?;
+                    self.expect_token(TokenType::RParen)?;
+                    Some(condition)
+                } else {
+                    None
+                };
+                properties.push(property("FROZEN WHERE", None, value));
+            } else if self.match_text_seq(&["EXECUTE"]) {
+                self.expect_alter_words(&[&["AS", "USER"]])?;
+                let value = if set {
+                    Some(self.policy_operand()?)
+                } else {
+                    None
+                };
+                properties.push(property("EXECUTE AS USER", None, value));
+            } else if set && self.check_identifier("CONTACT") && self.check_next(TokenType::LParen)
+            {
+                self.current += 2;
+                loop {
+                    let purpose = self.parse_simple_name()?;
+                    self.expect_token(TokenType::Eq)?;
+                    let contact = self.policy_operand()?;
+                    properties.push(property("CONTACT", Some(purpose), Some(contact)));
+                    if !self.match_token(TokenType::Comma) {
+                        break;
+                    }
+                }
+                self.expect_token(TokenType::RParen)?;
+            } else {
+                let name = self.parse_simple_name()?;
+                let value = if set {
+                    self.expect_token(TokenType::Eq)?;
+                    Some(self.parse_object_value()?)
+                } else {
+                    None
+                };
+                properties.push(property(&name.name.to_ascii_uppercase(), None, value));
+            }
+            let comma = self.match_token(TokenType::Comma);
+            if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
+                return Ok(properties);
+            }
+        }
+    }
+
+    /// Parse the column actions of `{ ALTER | MODIFY } [ ( ] [ COLUMN ] <col> <action> [ , ... ] [ ) ]`, each as one operand.
+    fn parse_dynamic_column_actions(&mut self) -> Result<Vec<Expression>> {
+        let parenthesized = self.match_token(TokenType::LParen);
+        let mut columns: Vec<Expression> = Vec::new();
+        loop {
+            self.match_token(TokenType::Column);
+            let column = Expression::Identifier(self.parse_simple_name()?);
+            let action = self.expect_alter_words(&[
+                &["COMMENT"],
+                &["UNSET", "COMMENT"],
+                &["SET", "MASKING", "POLICY"],
+                &["UNSET", "MASKING", "POLICY"],
+                &["SET", "PROJECTION", "POLICY"],
+                &["UNSET", "PROJECTION", "POLICY"],
+                &["SET", "TAG"],
+                &["UNSET", "TAG"],
+            ])?;
+            let mut properties: Vec<ObjectProperty> = Vec::new();
+            match action.as_str() {
+                "COMMENT" => {
+                    properties.push(property("COMMENT", None, Some(self.parse_string_value()?)));
+                }
+                "SET MASKING POLICY" | "SET PROJECTION POLICY" => {
+                    properties.push(property(&action, None, Some(self.policy_operand()?)));
+                    if action == SET_MASKING_POLICY && self.match_token(TokenType::Using) {
+                        properties.push(property("USING", None, Some(self.column_list_operand()?)));
+                    }
+                    if self.match_text_seq(&["FORCE"]) {
+                        properties.push(property("FORCE", None, None));
+                    }
+                }
+                "SET TAG" | "UNSET TAG" => {
+                    properties = self.parse_tag_list(action == SET_TAG)?;
+                }
+                _ => properties.push(property(&action, None, None)),
+            }
+            let mut items = vec![column, Expression::Identifier(Identifier::new(action))];
+            for item in properties {
+                items.extend(item.name.map(Expression::Identifier));
+                items.extend(item.value);
+            }
+            columns.push(tuple(items));
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        if parenthesized {
+            self.expect_token(TokenType::RParen)?;
+        }
+        Ok(columns)
+    }
+}
