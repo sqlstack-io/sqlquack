@@ -41,3 +41,63 @@ subject = "not-translatable:ai-and-ml-functions"
 sha256 = "9bb46908426611b1cfbf42bdbf253274f70c61583f00e857ce675d1876f5188d"
 scope = "full"
 reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "form-links"
+sha256 = "0af1c11b31d23993a85ba472ccac8b97a1e4265153994f3b99e3c3ff8dacf24c"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "function-links"
+sha256 = "fe3e0ad559aa8953c4e24f3382118954e1d04d6ca13583e4ed96ae7a13480ac7"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:stages-and-files"
+sha256 = "b9199df8df3891cd07949257523db030589d2461b1eb71e0047a2d901d278824"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:time-travel-and-change-tracking"
+sha256 = "bd6472179059d00e19c165ec9f331b3fb0ea14f0fe859784483735877411603b"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:snowflake-object-kinds"
+sha256 = "d423d5cde3cad9d35a5404006d72a1e7cfa7ff4d72449a4e628eb8cd2ba29aa2"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:metadata-listings"
+sha256 = "803d5ab344a459c6652c4e07c140f37428274889993ffccbeab073035e223bd5"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:account-context-functions"
+sha256 = "ce6decea1a0001e022e334aaa2ae6c9f8922d65f3ff6a966efbb9a4cd582a408"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:account-usage-table-functions"
+sha256 = "89a70f7484fe9f052c8eba222a0b6328c13edd376c763932f6a4474ac76060cf"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-quality-services-and-privacy"
+sha256 = "07e1c2c4ef4c20eeb82403450b2d5c99d96e0ff6fbcfd379a60305c8f06644e6"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-metrics-evaluated-at-a-time"
+sha256 = "b96dd82d2f2e1b0bcf7b95cd26e572e744629e3ba86cbd9c637ed12d7959b856"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"

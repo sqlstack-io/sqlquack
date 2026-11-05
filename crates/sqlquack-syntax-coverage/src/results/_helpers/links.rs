@@ -52,8 +52,7 @@ fn call_shape(grammar: &str) -> Option<(String, &'static str)> {
         return None;
     }
     let upper = grammar.to_ascii_uppercase();
-    let arguments = upper.split(" OVER ").next().unwrap_or_default();
-    if arguments.contains(" FROM ") || arguments.contains(" IN ") {
+    if keyword_arguments(&upper[grammar.len() - rest.len()..]) {
         return None;
     }
     let shape =
@@ -65,6 +64,25 @@ fn call_shape(grammar: &str) -> Option<(String, &'static str)> {
             CALL
         };
     Some((name.to_ascii_uppercase(), shape))
+}
+
+/// Whether the parenthesised arguments that `call` starts with are joined by FROM or IN.
+fn keyword_arguments(call: &str) -> bool {
+    let mut depth: usize = 0;
+    let mut end = call.len();
+    for (position, character) in call.char_indices() {
+        match character {
+            '(' => depth += 1,
+            ')' => depth = depth.saturating_sub(1),
+            _ => continue,
+        }
+        if depth == 0 {
+            end = position;
+            break;
+        }
+    }
+    let arguments = &call[..end];
+    arguments.contains(" FROM ") || arguments.contains(" IN ")
 }
 
 /// Every catalogued function form under the name its grammar calls, its reading's where one parses.

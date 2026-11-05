@@ -1,9 +1,10 @@
 # How a recorded statement's constructs link to catalogue forms, for the result-matching measure
 # (decision D139). Function calls link by name to the function forms whose grammar calls that name
 # in the same shape: a plain call, a call over a window, a call with named arguments, or a bare name
-# without parentheses. Each call's own shape decides, not the statement's. Two limits remain: TRUNC
-# credits both its numeric and its date form, and GENERATOR with ROWCOUNT credits both GENERATOR
-# forms, because the call shape does not tell their arguments apart. A `spelling:` key separates
+# without parentheses. Each call's own shape decides, not the statement's. Some forms share a name and
+# a shape, so one call credits each of them: TRUNC's numeric and date forms, both GENERATOR forms
+# for a ROWCOUNT call, and the window forms that appear twice (APPROX_COUNT_DISTINCT, HASH_AGG,
+# HLL and HLL_ACCUMULATE OVER with and without `*`, and the two MINHASH OVER forms). A `spelling:` key separates
 # what one construct merges, such as `<>` and `!=`, or a simple and a searched CASE. This file links
 # everything else. A [[link]] applies when the statement uses every one of its
 # constructs. A [[no_form]] construct is part of other forms' grammar and names no form itself.
@@ -459,6 +460,10 @@ forms = ["sf.expressions.session-variables"]
 
 [[link]]
 constructs = ["node:parameter", "spelling:bind_variable"]
+forms = ["sf.expressions.bind-variables"]
+
+[[link]]
+constructs = ["node:placeholder"]
 forms = ["sf.expressions.bind-variables"]
 
 [[link]]

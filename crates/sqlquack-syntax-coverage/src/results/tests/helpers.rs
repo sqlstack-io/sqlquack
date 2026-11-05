@@ -30,7 +30,7 @@ fn call_form(id: &str, grammar: &str) -> String {
 }
 
 /// Call shapes the fixture catalogue tells apart: plain, windowed, keyword and bare forms.
-pub(crate) const SHAPE_FORMS: [(&str, &str); 7] = [
+pub(crate) const SHAPE_FORMS: [(&str, &str); 8] = [
     ("sf.functions.sum", "SUM( <x> )"),
     (
         "sf.functions.sum-over",
@@ -42,6 +42,10 @@ pub(crate) const SHAPE_FORMS: [(&str, &str); 7] = [
     ),
     ("sf.functions.extract", "EXTRACT( <part> , <expr> )"),
     ("sf.functions.extract-from", "EXTRACT( <part> FROM <expr> )"),
+    (
+        "sf.functions.nth-value",
+        "NTH_VALUE( <expr> , <n> ) [ FROM { FIRST | LAST } ] OVER ( ORDER BY <o> )",
+    ),
     ("sf.functions.current-date", "CURRENT_DATE()"),
     ("sf.functions.current-date.syntax", "CURRENT_DATE"),
 ];

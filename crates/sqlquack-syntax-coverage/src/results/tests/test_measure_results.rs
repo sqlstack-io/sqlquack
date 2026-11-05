@@ -20,7 +20,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Matching,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "refused for one recorded type: not matching (D139a)",
@@ -32,7 +32,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Refused,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "a guard raised where Snowflake returned rows",
@@ -43,7 +43,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Refused,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "types only beside a match: the match decides",
@@ -51,7 +51,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Matching,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "only a matching error: no rows compared, so not matching",
@@ -59,7 +59,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "types only: syntax only, never matching",
@@ -67,7 +67,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "converts but nothing recorded",
@@ -75,7 +75,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "a differing replay outranks a refusal",
@@ -87,7 +87,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Differs,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "no recorded statement",
@@ -95,7 +95,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Unmeasured,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
         FormStateTestCase {
             description: "listed and signed off: out of the denominator",
@@ -103,7 +103,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list,
             review: list_signoff,
             expected_state: ResultState::NotTranslatable,
-            expected_translatable: 10,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "listed without a sign-off: still counted",
@@ -111,7 +111,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list,
             review: nothing,
             expected_state: ResultState::Unmeasured,
-            expected_translatable: 11,
+            expected_translatable: 12,
         },
     ];
     for test_case in test_cases {
@@ -405,6 +405,11 @@ fn given_call_shapes_when_measuring_then_each_call_credits_only_its_own_form() {
             description: "a comma EXTRACT call never credits the FROM form",
             constructs: &["fn:EXTRACT"],
             expected_forms: &["sf.functions.extract"],
+        },
+        CallShapeTestCase {
+            description: "FROM after the arguments does not make a keyword form",
+            constructs: &["fn:NTH_VALUE", "call_over:NTH_VALUE"],
+            expected_forms: &["sf.functions.nth-value"],
         },
         CallShapeTestCase {
             description: "a bare CURRENT_DATE credits the bare form only",
