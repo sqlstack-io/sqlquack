@@ -30,7 +30,7 @@ use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
-    AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus,
+    AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus, EverydayQuery,
 };
 use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
@@ -783,13 +783,76 @@ const PARSED_TREE: &str = r#"{"error":false"#;
 /// The start of DuckDB's source-offset fields, `query_location` and `query_location_length`.
 const LOCATION_FIELD: &str = r#""query_location"#;
 
-/// Each everyday corpus query whose outcome differs from its recorded `expect`, with both.
+/// Each everyday corpus query whose outcome under either policy differs from the recorded one.
 pub(crate) fn everyday_outcome_mismatches() -> Vec<String> {
+    let (root, corpus) = everyday_corpus();
+    let strict = everyday_arguments(&root, true);
+    let repository = everyday_arguments(&root, false);
+    corpus
+        .query
+        .iter()
+        .flat_map(|query| {
+            [
+                (
+                    "strict",
+                    &query.expect,
+                    everyday_outcome(&query.sql, &strict),
+                ),
+                (
+                    "repository",
+                    &query.expect_repository,
+                    everyday_outcome(&query.sql, &repository),
+                ),
+            ]
+            .into_iter()
+            .filter(|(_, expected, outcome)| outcome != *expected)
+            .map(|(policy, expected, outcome)| {
+                format!(
+                    "{} under {policy}: expected {expected}, got {outcome}",
+                    query.sql
+                )
+            })
+            .collect::<Vec<String>>()
+        })
+        .collect()
+}
+
+/// How many valid queries, not DDL, are recorded as translated: strict, and repository policy.
+pub(crate) fn everyday_translation_rates() -> String {
+    let (_, corpus) = everyday_corpus();
+    let valid: Vec<&EverydayQuery> = corpus
+        .query
+        .iter()
+        .filter(|query| !EVERYDAY_NOT_TRANSLATABLE.contains(&query.category.as_str()))
+        .filter(|query| !query.category.starts_with(EVERYDAY_INVALID_PREFIX))
+        .collect();
+    let strict = valid
+        .iter()
+        .filter(|query| query.expect == TRANSLATED)
+        .count();
+    let repository = valid
+        .iter()
+        .filter(|query| query.expect_repository == TRANSLATED)
+        .count();
+    format!(
+        "{strict} of {} strict, {repository} of {} repository",
+        valid.len(),
+        valid.len()
+    )
+}
+
+/// The everyday corpus directory and its queries.
+fn everyday_corpus() -> (std::path::PathBuf, EverydayCorpus) {
     let root = repository_root().join(EVERYDAY_CORPUS);
     let text = std::fs::read_to_string(root.join("queries.toml")).expect("the corpus reads");
     let corpus: EverydayCorpus = toml::from_str(&text).expect("the corpus parses");
     assert!(corpus.query.len() > 400, "{} queries", corpus.query.len());
-    let arguments = ConvertArguments {
+    (root, corpus)
+}
+
+/// `convert`'s arguments: the built-in policy, or the repository's under a UTC session.
+fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertArguments {
+    ConvertArguments {
         path: None,
         schema: Some(root.join("schema.json")),
         overrides: None,
@@ -801,22 +864,15 @@ pub(crate) fn everyday_outcome_mismatches() -> Vec<String> {
             json: false,
         },
         conversion: PolicyArguments {
-            policy: POLICY_FILE_NAME.into(),
-            builtin_policy: true,
+            policy: repository_root().join(POLICY_FILE_NAME),
+            builtin_policy,
             strict: false,
-            utc_session: false,
+            utc_session: !builtin_policy,
             confirm_declared_offsets: false,
             python_runtime: false,
             loud_divergences_only: false,
         },
-    };
-    corpus
-        .query
-        .iter()
-        .map(|query| (query, everyday_outcome(&query.sql, &arguments)))
-        .filter(|(query, outcome)| *outcome != query.expect)
-        .map(|(query, outcome)| format!("{}: expected {}, got {outcome}", query.sql, query.expect))
-        .collect()
+    }
 }
 
 /// What SQLQuack does with `sql`: its first check diagnostic, first refusal, or `translated`.
@@ -842,6 +898,12 @@ fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> String {
 
 /// The corpus directory, under the repository root.
 const EVERYDAY_CORPUS: &str = "corpora/everyday";
+
+/// Corpus categories of statements no rule translates: DDL and DML.
+const EVERYDAY_NOT_TRANSLATABLE: [&str; 1] = ["ddl_dml"];
+
+/// The prefix of corpus categories of SQL Snowflake rejects.
+const EVERYDAY_INVALID_PREFIX: &str = "invalid";
 
 /// The outcome of a query that converts.
 const TRANSLATED: &str = "translated";

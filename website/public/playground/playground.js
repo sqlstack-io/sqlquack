@@ -34,6 +34,28 @@ const strictBox = $('#pg-strict');
 const utcBox = $('#pg-utc');
 const settings = () =>
 	JSON.stringify({ policy: policyBox.value, session: sessionBox.value, strict: strictBox.checked, utc_session: utcBox.checked });
+const modeButton = $('#pg-policy-mode');
+// The repository's sqlquack.toml, which the playground starts with, under a UTC session.
+let repositoryPolicy = '';
+const policyMode = () => {
+	const plain = !strictBox.checked && !sessionBox.value.trim();
+	if (plain && utcBox.checked && policyBox.value === repositoryPolicy) return 'repository';
+	if (plain && !utcBox.checked && !policyBox.value.trim()) return 'strict';
+	return 'custom';
+};
+const POLICY_LABELS = { repository: 'policy: sqlquack.toml · UTC session', strict: 'policy: strict (built-in)' };
+function showPolicy() {
+	const mode = policyMode();
+	$('#stage-translate .pg-sub').textContent = POLICY_LABELS[mode] ?? 'policy: custom';
+	modeButton.textContent = mode === 'repository' ? 'Use strict' : 'Use sqlquack.toml';
+	modeButton.title = mode === 'repository' ? 'Switch to the built-in policy, which refuses every known divergence' : 'Switch to the repository policy under a UTC session';
+}
+function usePolicy(mode) {
+	policyBox.value = mode === 'repository' ? repositoryPolicy : '';
+	utcBox.checked = mode === 'repository';
+	strictBox.checked = false;
+	sessionBox.value = '';
+}
 const caption = $('#pg-caption');
 const verdict = $('#pg-verdict');
 const marks = $('#pg-marks');
@@ -70,6 +92,7 @@ let current = 0;
 async function run() {
 	const ticket = ++current;
 	const sql = sqlBox.value;
+	showPolicy();
 	const reply = await engine('analyze', { sql, schema: schemaBox.value, settings: settings() });
 	// A newer edit has already been sent; its reply will render instead.
 	if (ticket !== current) return;
@@ -129,7 +152,8 @@ async function run() {
 		if (sql) body = `<div class="pg-sql">${terminal(escape(sql))}<button class="copy" type="button" data-copy-sql>Copy</button></div>`;
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
-	const policy = translate.profile ? `policy: ${translate.profile}` : '';
+	const mode = policyMode();
+	const policy = POLICY_LABELS[mode] ?? `policy: custom${translate.profile ? ` · ${translate.profile}` : ''}`;
 	if (refused) {
 		const reason = translate.diagnostics?.[0]?.message ?? 'no supported conversion';
 		verdict.innerHTML = `<strong>Valid Snowflake SQL.</strong> Not translated to DuckDB: ${escape(reason)}`;
@@ -219,9 +243,13 @@ sqlBox.addEventListener('input', () => {
 });
 schemaBox.addEventListener('input', schedule);
 for (const box of [policyBox, sessionBox, strictBox, utcBox]) box.addEventListener('input', schedule);
-$('#pg-load-policy').addEventListener('click', async () => {
-	policyBox.value = await (await fetch(new URL('./sqlquack.toml', import.meta.url))).text();
+$('#pg-load-policy').addEventListener('click', () => {
+	policyBox.value = repositoryPolicy;
 	schedule();
+});
+modeButton.addEventListener('click', () => {
+	usePolicy(policyMode() === 'repository' ? 'strict' : 'repository');
+	run();
 });
 rowsBox.addEventListener('input', () => latest && duckdb && schedule());
 sqlBox.addEventListener('scroll', () => (marks.scrollTop = sqlBox.scrollTop));
@@ -256,6 +284,8 @@ if (!params.get('sql')) showCaption(params.get('example'));
 schemaBox.value = SCHEMA;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine');
+repositoryPolicy = await (await fetch(new URL('./sqlquack.toml', import.meta.url))).text();
+usePolicy(params.get('policy') === 'strict' ? 'strict' : 'repository');
 await engineReady;
 await run();
 if (params.has('run')) execute();

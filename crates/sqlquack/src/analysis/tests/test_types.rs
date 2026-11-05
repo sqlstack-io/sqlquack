@@ -214,6 +214,7 @@ pub(crate) struct OverrideCallsTestCase {
 pub(crate) struct EverydayCorpusTestCase {
     pub(crate) description: &'static str,
     pub(crate) expected_mismatches: Vec<String>,
+    pub(crate) expected_rates: &'static str,
 }
 
 /// The everyday corpus file.
@@ -225,6 +226,8 @@ pub(crate) struct EverydayCorpus {
 /// One everyday query and the outcome recorded for it.
 #[derive(serde::Deserialize)]
 pub(crate) struct EverydayQuery {
+    pub(crate) category: String,
     pub(crate) sql: String,
     pub(crate) expect: String,
+    pub(crate) expect_repository: String,
 }

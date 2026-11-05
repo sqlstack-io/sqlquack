@@ -90,7 +90,7 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 	assert.match(report.translate.diagnostics[0].label, /beyond the budget of 0 ms/);
 });
 
-test('every example stops at the stage it is meant to, and the default translates cleanly', async () => {
+test('every example stops at the stage it is meant to, under the default policy and strict', async () => {
 	const { EXAMPLES, CAPTIONS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
 	const expected = {
 		valid: ['pass', 'pass', 'pass'],
@@ -101,12 +101,18 @@ test('every example stops at the stage it is meant to, and the default translate
 		refused: ['pass', 'pass', 'fail'],
 	};
 	assert.deepEqual(Object.keys(EXAMPLES).sort(), Object.keys(expected).sort());
-	for (const [name, sql] of Object.entries(EXAMPLES)) {
-		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
-		assert.deepEqual(['parse', 'checks', 'translate'].map((stage) => report[stage].status), expected[name], name);
+	// The page starts on the repository's policy under a UTC session; its switch turns to strict.
+	const policy = readFileSync(new URL('../public/playground/sqlquack.toml', import.meta.url), 'utf8');
+	const modes = { repository: JSON.stringify({ policy, utc_session: true }), strict: undefined };
+	for (const [mode, settings] of Object.entries(modes)) {
+		for (const [name, sql] of Object.entries(EXAMPLES)) {
+			const report = JSON.parse(analyze(sql, PAGE_SCHEMA, settings));
+			const stages = ['parse', 'checks', 'translate'].map((stage) => report[stage].status);
+			assert.deepEqual(stages, expected[name], `${name} under ${mode}`);
+		}
+		// The one deliberate refusal is a known divergence, explained by its caption, under both.
+		const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA, settings)).translate;
+		assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008'], mode);
 	}
-	// The one deliberate refusal is a known divergence, explained by its caption.
-	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
-	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
 });
