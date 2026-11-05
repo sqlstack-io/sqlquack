@@ -2,7 +2,7 @@
 
 use crate::expected::_helpers::nodes::{differ_only_by_kept_field, differ_only_by_kept_node};
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
-use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX};
+use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX, RAW_TREE};
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
@@ -216,7 +216,7 @@ impl ExpectedDifferences {
         })
     }
 
-    /// The entry explaining where SQLQuack structures a statement polyglot keeps as a command.
+    /// The entry explaining where SQLQuack structures a statement polyglot keeps as a command or raw text.
     pub fn structured_for(
         &self,
         sql: &str,
@@ -225,7 +225,8 @@ impl ExpectedDifferences {
     ) -> Option<&StructuredStatement> {
         let compact = compact(sql);
         self.structured.iter().find(|entry| {
-            polyglot.starts_with(&format!("{OK_PREFIX}{COMMAND_TREE}"))
+            (polyglot.starts_with(&format!("{OK_PREFIX}{COMMAND_TREE}"))
+                || polyglot.starts_with(&format!("{OK_PREFIX}{RAW_TREE}")))
                 && sqlquack.starts_with(&format!("{OK_PREFIX}[{{\"{}\":", entry.sqlquack_node))
                 && compact.contains(&entry.marker.to_ascii_uppercase())
         })

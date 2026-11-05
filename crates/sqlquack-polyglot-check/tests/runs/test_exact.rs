@@ -127,6 +127,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("snowflake_bare_interval_type_cast_window".to_owned(), 1),
                     ("snowflake_bare_interval_type_cast_string".to_owned(), 1),
                     ("snowflake_int_precision_default_uuid".to_owned(), 1),
+                    ("snowflake_view_without_query_columns".to_owned(), 1),
+                    ("snowflake_view_without_query_column_comments".to_owned(), 1),
+                    ("snowflake_merge_insert_star".to_owned(), 1),
+                    ("snowflake_view_row_access_policy_without_on".to_owned(), 1),
                     ("snowflake_int_precision_default_null_comment".to_owned(), 1),
                     ("snowflake_int_precision_not_null_default".to_owned(), 1),
                     (

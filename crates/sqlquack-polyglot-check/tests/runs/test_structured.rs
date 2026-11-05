@@ -1,4 +1,4 @@
-//! Reviewed structured entries cover only a polyglot command SQLQuack parses into the listed node.
+//! Reviewed structured entries cover only a polyglot command or raw statement SQLQuack parses into the listed node.
 
 use sqlquack_polyglot_check::expected::models::{ExpectedDifferences, StructuredStatement};
 
@@ -13,6 +13,13 @@ fn given_a_command_polyglot_keeps_when_compared_then_only_the_listed_structure_i
             description: "a command SQLQuack parses into the listed node is matched",
             sql: block,
             polyglot: r#"ok:[{"command":{"this":"BEGIN RETURN 1; END"}}]"#,
+            sqlquack: structured,
+            expected_match: true,
+        },
+        StructuredTestCase {
+            description: "raw text SQLQuack parses into the listed node is matched",
+            sql: block,
+            polyglot: r#"ok:[{"raw":{"sql":"BEGIN RETURN 1; END"}}]"#,
             sqlquack: structured,
             expected_match: true,
         },

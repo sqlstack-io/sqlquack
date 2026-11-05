@@ -758,6 +758,12 @@ polyglot_errors = ["Expected RParen, got LParen ('(')"]
 note = "x::MAP(VARCHAR, OBJECT(k INT)) nests a structured OBJECT as the CAST form does"
 
 [[fix]]
+id = "negative_autoincrement_step"
+marker = "INCREMENT-"
+polyglot_errors = ["Unexpected token: Dash"]
+note = "AUTOINCREMENT START <num> INCREMENT <num> takes a negative step, which counts down; polyglot's INCREMENT reads only an unsigned number"
+
+[[fix]]
 id = "parenthesized_typed_lambda"
 marker = "varchar)->"
 polyglot_errors = ["Expected RParen, got Var ('VARCHAR')"]
@@ -1143,6 +1149,18 @@ marker = "BEGIN"
 sqlquack_node = "scripting_block"
 note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"
 
+[[structured]]
+id = "snowflake_create_stage"
+marker = "STAGE"
+sqlquack_node = "create_object"
+note = "a Snowflake CREATE STAGE parses into a STAGE object with its properties, such as FILE_FORMAT = ( FORMAT_NAME = ... ); polyglot keeps it as raw text; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+[[structured]]
+id = "snowflake_create_file_format"
+marker = "FILEFORMAT"
+sqlquack_node = "create_object"
+note = "a Snowflake CREATE FILE FORMAT parses into a FILE FORMAT object with its modifier and options; polyglot keeps it as raw text; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
 [[rejection]]
 id = "snowflake_stage_reserved_name"
 sql = "SELECT @select"
@@ -1366,3 +1384,31 @@ sql = "CREATE TABLE z (a INT(11) NOT NULL COLLATE utf8_bin AUTO_INCREMENT)"
 dialects = ["Snowflake"]
 sqlquack_error = "Snowflake's INT and INTEGER take no precision"
 note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_view_without_query_columns"
+sql = "CREATE VIEW z (a, b)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS and the view's query"
+note = "a Snowflake view needs AS and its query; this is a column list with no query"
+
+[[rejection]]
+id = "snowflake_view_without_query_column_comments"
+sql = "CREATE VIEW z (a, b COMMENT 'b', c COMMENT 'c')"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS and the view's query"
+note = "a Snowflake view needs AS and its query; this is a commented column list with no query"
+
+[[rejection]]
+id = "snowflake_merge_insert_star"
+sql = "\n            MERGE INTO target USING source ON target.id = source.id\n                WHEN MATCHED THEN UPDATE *\n                WHEN NOT MATCHED THEN INSERT *\n            "
+dialects = ["Snowflake"]
+sqlquack_error = "Expected VALUES in MERGE INSERT"
+note = "Snowflake's MERGE INSERT takes VALUES ( ... ) and refuses an INSERT without VALUES with syntax error 1003; INSERT * is Databricks'"
+
+[[rejection]]
+id = "snowflake_view_row_access_policy_without_on"
+sql = "CREATE VIEW v WITH ROW ACCESS POLICY #unknown_policy AS SELECT 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected On"
+note = "a Snowflake view's ROW ACCESS POLICY reads <name> ON ( <column> , ... ); this one has no ON list and names the policy with sqlglot's #unknown placeholder"
