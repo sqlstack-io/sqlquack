@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "TRY_BASE64_DECODE_BINARY of valid Base64. Catches: wrong bytes or Latin-1 text for multi-byte input"
+description = "TRY_BASE64_DECODE_BINARY of valid Base64. Catches: wrong bytes, the URL-safe alphabet, or padding mishandled"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'+/8='"],

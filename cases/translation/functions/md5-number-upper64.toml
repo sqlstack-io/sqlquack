@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "MD5_NUMBER_UPPER64 of ASCII and multi-byte text. Catches: another digest, upper-case hex, or Latin-1 bytes for \u00e9"
+description = "MD5_NUMBER_UPPER64 of ASCII and multi-byte text. Catches: another digest, the lower 64 bits, or Latin-1 bytes for \u00e9"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'Snowflake'"],
@@ -29,7 +29,7 @@ tags = ["null"]
 
 [[case]]
 id = "t003_high_bit"
-description = "Messages whose 64-bit half has the top bit set (the empty string and 'Snowflake'). Catches: a signed 64-bit result (negative) or the other half of the digest"
+description = "Messages whose upper 64 bits all have the top bit set ('', 'Snowflake' and 'x'). Catches: a signed 64-bit result (negative) or the other half of the digest"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["''"],

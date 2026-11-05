@@ -26,12 +26,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_binary"
-description = "Binary separator and values. Catches: hex text concatenated as VARCHAR"
+description = "Binary separator and values. Catches: hex text concatenated as VARCHAR (the length column tells 3 bytes from 6 hex characters even when both render as hex)"
 columns = [{ name = "d", type = "BINARY" }, { name = "a", type = "BINARY" }, { name = "b", type = "BINARY" }]
 rows = [
   ["'FF'", "'00'", "'01'"],
 ]
-query = "SELECT CONCAT_WS(d, a, b) AS r FROM input ORDER BY ordinal"
+query = "SELECT CONCAT_WS(d, a, b) AS r, OCTET_LENGTH(CONCAT_WS(d, a, b)) AS l FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

@@ -4,12 +4,13 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "BASE64_DECODE_BINARY of standard Base64 with zero, one and two padding characters. Catches: a byte-order or sign error in the decoded bytes, a dropped final group, or UTF-8 text read as Latin-1"
+description = "BASE64_DECODE_BINARY of standard Base64 with zero, one and two padding characters. Catches: a byte-order or sign error in the decoded bytes, or a dropped final group"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'+/8='"],
   ["'AEhp'"],
   ["'w6kA'"],
+  ["'YQ=='"],
 ]
 query = "SELECT BASE64_DECODE_BINARY(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"

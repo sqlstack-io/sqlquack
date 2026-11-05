@@ -98,3 +98,15 @@ rows = [
 query = "SELECT POSITION(a, b, p) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t009_start_zero_negative"
+description = "Start positions 0 and -1: records what Snowflake returns. Catches: 0 read other than as Snowflake does (as 1, as an error, or as no match), or a negative start counted from the end"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'aba'", "0"],
+  ["'a'", "'aba'", "-1"],
+]
+query = "SELECT POSITION(a, b, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

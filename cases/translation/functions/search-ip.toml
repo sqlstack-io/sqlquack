@@ -49,3 +49,15 @@ rows = [
 query = "SELECT SEARCH_IP(a, '10.0.0.1') AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t005_ipv6"
+description = "An IPv6 address written in two forms. Catches: an IPv4-only search, or IPv6 compared as text (leading zeros)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'addr 2001:db8::1 up'"],
+  ["'2001:db8::2'"],
+]
+query = "SELECT SEARCH_IP(a, '2001:0db8::0001') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

@@ -49,9 +49,8 @@ columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "k", type = "NUMBER(3
 rows = [
   ["NULL", "1"],
   ["4", "1"],
-  ["NULL", "2"],
 ]
-query = "SELECT HASH_AGG(a) AS r, HASH_AGG(a) = HASH_AGG(CASE WHEN a IS NOT NULL THEN a END) AS same FROM input"
+query = "SELECT HASH_AGG(a) AS r, HASH_AGG(a) = (SELECT HASH_AGG(a) FROM input WHERE a IS NOT NULL) AS same FROM input"
 order = "ordered"
 tags = ["null"]
 

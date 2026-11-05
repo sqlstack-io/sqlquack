@@ -8,7 +8,7 @@ description = "HEX_DECODE_STRING of upper- and lower-case hex digits. Catches: l
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'48C3A96C6C6F'"],
-  ["'E282AC'"],
+  ["'e282ac'"],
 ]
 query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"

@@ -38,12 +38,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_position_occurrence"
-description = "Position and a single occurrence. Catches: occurrence ignored (all replaced) or counted from the string start instead of the position"
+description = "Position and a single occurrence. Catches: occurrence ignored (all replaced) or counted from the string start instead of the position, or a byte offset for the position after \u00e9"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
 rows = [
   ["'aXaXaXa'", "1", "2"],
   ["'aXaXaXa'", "3", "2"],
   ["'aXaXaXa'", "2", "0"],
+  ["'\u00e9a\u00e9a'", "3", "1"],
 ]
 query = "SELECT REGEXP_REPLACE(a, 'a', '-', n, o) AS r FROM input ORDER BY ordinal"
 order = "ordered"

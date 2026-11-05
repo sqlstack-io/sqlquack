@@ -70,3 +70,14 @@ rows = [
 query = "SELECT DECOMPRESS_BINARY(a, 'LZ4') AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["error"]
+
+[[case]]
+id = "t007_other_methods"
+description = "Round trips through each non-Snappy method. Catches: only SNAPPY supported, or COMPRESS and DECOMPRESS disagreeing on the framing of another method"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake Snowflake Snowflake'"],
+]
+query = "SELECT DECOMPRESS_BINARY(COMPRESS(a, 'ZLIB'), 'ZLIB') AS z, DECOMPRESS_BINARY(COMPRESS(a, 'ZSTD'), 'ZSTD') AS d, DECOMPRESS_BINARY(COMPRESS(a, 'BZ2'), 'BZ2') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

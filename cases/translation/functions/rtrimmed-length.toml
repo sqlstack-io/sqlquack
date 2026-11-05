@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "RTRIMMED_LENGTH with trailing and leading blanks and a trailing tab. Catches: LENGTH semantics (trailing blanks counted), leading blanks removed, or tabs treated as blanks"
+description = "RTRIMMED_LENGTH with trailing and leading blanks and a trailing tab. Catches: LENGTH semantics (trailing whitespace counted), leading blanks removed, or only blanks trimmed (a trailing tab kept)"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'ab  '"],

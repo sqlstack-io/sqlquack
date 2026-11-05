@@ -16,11 +16,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_locale_order"
-description = "Ordering under a locale collation. Catches: binary order kept ('a' < 'B' is FALSE in byte order, TRUE in en)"
+description = "Ordering under a locale collation. Catches: binary order kept ('a' < 'B' is FALSE in byte order, TRUE in en), or a case-insensitive comparison standing in for 'en' (a < A)"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
 rows = [
   ["'a'", "'B'"],
   ["'b'", "'A'"],
+  ["'a'", "'A'"],
 ]
 query = "SELECT (COLLATE(a, 'en')) < b AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -48,3 +49,15 @@ rows = [
 query = "SELECT (COLLATE(a, 'en-ci')) = b AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t005_rtrim_compare"
+description = "Equality under an rtrim collation, beside the same comparison without rtrim. Catches: the rtrim specifier dropped in comparisons (FALSE for 'ab  ' = 'AB')"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'ab  '", "'AB'"],
+  ["'ab'", "'AB '"],
+]
+query = "SELECT (COLLATE(a, 'en-ci-rtrim')) = b AS r, (COLLATE(a, 'en-ci')) = b AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

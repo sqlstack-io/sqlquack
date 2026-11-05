@@ -11,6 +11,7 @@ rows = [
   ["'abz'", "'a%'", "'%z'"],
   ["'xbc'", "'a%'", "'%z'"],
   ["'b'", "'a%'", "'%b%'"],
+  ["'xay'", "'a%'", "'%z'"],
 ]
 query = "SELECT a LIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
 order = "ordered"

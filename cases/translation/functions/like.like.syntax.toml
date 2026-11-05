@@ -20,7 +20,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_case"
-description = "Letters in another case, including non-ASCII. Catches: case-insensitive matching for LIKE or case-sensitive for ILIKE"
+description = "Letters in another case, including non-ASCII. Catches: case-insensitive matching (TRUE for ABC against abc, or \u00c9t\u00e9 against \u00e9t\u00e9)"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
 rows = [
   ["'ABC'", "'abc'"],

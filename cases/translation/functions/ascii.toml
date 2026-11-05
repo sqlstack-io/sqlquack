@@ -4,12 +4,13 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "ASCII of strings whose first and last characters differ. Catches: the code of the last character, or the string length, instead of the first character's code"
+description = "ASCII of strings whose first and last characters differ. Catches: the code of the last character, or the string length, instead of the first character's code, or the first UTF-8 byte (195 for \u00e9) instead of the code point (records what Snowflake returns)"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'abc'"],
   ["'Zed'"],
   ["'7x'"],
+  ["'\u00e9lan'"],
 ]
 query = "SELECT ASCII(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"

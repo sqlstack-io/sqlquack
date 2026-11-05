@@ -20,7 +20,7 @@ id = "t002_cidr"
 description = "CIDR in lower case. Catches: the type name compared case-sensitively"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
-  ["'10.1.2.3/8'"],
+  ["'10.0.0.0/8'"],
 ]
 query = "SELECT PARSE_IP(a, 'cidr') AS r FROM input ORDER BY ordinal"
 order = "ordered"

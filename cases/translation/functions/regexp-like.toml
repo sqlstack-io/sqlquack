@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_anchored"
-description = "Patterns that match inside but not across the whole subject. Catches: an unanchored search (TRUE for abc against b) or a LIKE reading of the pattern"
+description = "Patterns that match inside but not across the whole subject. Catches: an unanchored search (TRUE for abc against b) or a LIKE reading of the pattern, or anchors wrapped around an alternation without grouping ('^a|bc$')"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
 rows = [
   ["'abc'", "'b'"],
@@ -12,6 +12,8 @@ rows = [
   ["'abc'", "'a[b-d]+'"],
   ["'a.c'", "'a.c'"],
   ["'abc'", "'ab'"],
+  ["'xbc'", "'a|bc'"],
+  ["'ab'", "'a|b'"],
 ]
 query = "SELECT REGEXP_LIKE(a, p) AS r FROM input ORDER BY ordinal"
 order = "ordered"

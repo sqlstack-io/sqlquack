@@ -7,7 +7,7 @@ id = "t001_varchar"
 description = "RIGHT of multi-byte text. Catches: a byte count (cutting \u00e9 in half) or the other end of the string"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
 rows = [
-  ["'h\u00e9llo'", "2"],
+  ["'h\u00e9llo'", "4"],
   ["'abcdef'", "3"],
   ["'ab'", "9"],
 ]

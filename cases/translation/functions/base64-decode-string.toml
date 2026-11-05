@@ -10,6 +10,8 @@ rows = [
   ["'SMOpbGxvIHfDtnJsZA=='"],
   ["'fn5+Pw=='"],
   ["'YQ=='"],
+  ["'YWI='"],
+  ["'YWJj'"],
 ]
 query = "SELECT BASE64_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"

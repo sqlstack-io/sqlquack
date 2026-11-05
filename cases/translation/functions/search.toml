@@ -18,11 +18,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_modes"
-description = "AND, PHRASE and EXACT modes on the same data. Catches: SEARCH_MODE ignored (all three equal to OR)"
+description = "AND, PHRASE and EXACT modes on the same data. Catches: SEARCH_MODE ignored, AND read as OR, or EXACT read as PHRASE"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'fox the quick'"],
   ["'the quick fox'"],
+  ["'the quick dog'"],
+  ["'the Quick fox'"],
 ]
 query = "SELECT SEARCH(a, 'quick fox', SEARCH_MODE => 'AND') AS r_and, SEARCH(a, 'quick fox', SEARCH_MODE => 'PHRASE') AS r_phrase, SEARCH(a, 'quick fox', SEARCH_MODE => 'EXACT') AS r_exact FROM input ORDER BY ordinal"
 order = "ordered"

@@ -9,7 +9,7 @@ columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, {
 rows = [
   ["'abc'", "'a%'", "'%z'"],
   ["'abz'", "'a%'", "'%z'"],
-  ["'xbc'", "'a%'", "'%z'"],
+  ["'xaz'", "'a%'", "'%z'"],
   ["'b'", "'a%'", "'%b%'"],
 ]
 query = "SELECT a LIKE ALL (p, r) AS r FROM input ORDER BY ordinal"
@@ -33,8 +33,8 @@ id = "t003_escape"
 description = "An escape character before %. Catches: the escape ignored (50 matches 5!%)"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
 rows = [
-  ["'5%'", "'5!%'", "'x'"],
-  ["'50'", "'5!%'", "'x'"],
+  ["'5%'", "'5!%'", "'%'"],
+  ["'50'", "'5!%'", "'%'"],
 ]
 query = "SELECT a LIKE ALL (p, r) ESCAPE '!' AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -42,7 +42,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_null_subject"
-description = "NULL subject. Catches: NULL read as an empty string (TRUE against %)"
+description = "NULL subject. Catches: NULL read as an empty string (FALSE instead of NULL)"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
 rows = [
   ["NULL", "'%'", "'x'"],

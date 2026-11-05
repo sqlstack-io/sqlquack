@@ -4,12 +4,12 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "Overlapping candidates and a replacement that recreates the pattern. Catches: overlapping replacement ('bb' for aaa), a re-scan of the result, or only the first occurrence"
+description = "Overlapping candidates and a replacement that recreates the pattern. Catches: overlapping replacement ('bb' for aaa), a re-scan of the result, or only the first occurrence, or the pattern read as a regular expression ('---' for '.')"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
 rows = [
   ["'aaa'", "'aa'", "'b'"],
   ["'abab'", "'ab'", "'aab'"],
-  ["'\u00e9.\u00e9'", "'\u00e9'", "'e'"],
+  ["'\u00e9.\u00e9'", "'.'", "'-'"],
 ]
 query = "SELECT REPLACE(a, p, r) AS r FROM input ORDER BY ordinal"
 order = "ordered"
