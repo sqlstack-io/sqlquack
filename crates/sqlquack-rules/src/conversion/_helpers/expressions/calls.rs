@@ -375,8 +375,8 @@ fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     ))
 }
 
-/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause, and whether it has an explicit frame,
-/// when used as a window function.
+/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause, and whether it is other than a
+/// running window, when used as a window function.
 pub(crate) fn convert_aggregate(
     kind: &str,
     payload: &Value,
@@ -408,7 +408,7 @@ struct AggregateCall<'a> {
     payload: &'a Payload,
     site: Site<'a>,
     over: String,
-    /// Whether the OVER clause has an explicit ROWS or RANGE frame.
+    /// Whether the OVER clause has an explicit frame or no order, rather than a running frame.
     framed: bool,
 }
 

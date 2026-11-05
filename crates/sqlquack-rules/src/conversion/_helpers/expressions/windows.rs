@@ -511,7 +511,7 @@ fn aggregate_window(
         function,
         payload,
         site,
-        Some((&clause, over.frame.is_some())),
+        Some((&clause, over.frame.is_some() || over.order.is_empty())),
     )
 }
 

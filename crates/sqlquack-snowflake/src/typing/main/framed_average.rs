@@ -8,8 +8,8 @@ use crate::typing::constants::{
 };
 use crate::typing::models::SnowflakeType;
 
-/// AVG of a NUMBER over a ROWS or RANGE frame: 3 more decimal places and 12 more leading digits,
-/// as recorded; AVG of FLOAT is FLOAT.
+/// AVG of a NUMBER over a ROWS or RANGE frame or a whole unordered partition: 3 more decimal places
+/// and 12 more leading digits, as recorded; AVG of FLOAT is FLOAT.
 pub fn framed_average(
     argument: SnowflakeType,
     log: &ProvenanceLog,
