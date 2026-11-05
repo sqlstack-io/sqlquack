@@ -57,7 +57,7 @@ impl Parser {
                 if self.match_token(TokenType::Eq) {
                     self.expect_token(TokenType::LParen)?;
                     let mut kinds: Vec<Expression> = Vec::new();
-                    loop {
+                    while !self.check(TokenType::RParen) || !kinds.is_empty() {
                         let kind =
                             self.expect_alter_words(&[&["COMMENTS"], &["TAGS"], &["GRANTS"]])?;
                         kinds.push(Expression::Identifier(Identifier::new(kind)));
@@ -234,7 +234,8 @@ impl Parser {
             None if !temporary && self.match_text_seq(&["FILE", "FORMAT"]) => {
                 ("FILE FORMAT", CloneOptions::Bare)
             }
-            None if !temporary && self.match_text_seq(&["DATABASE", "ROLE"]) => {
+            None if !temporary && self.names_a_database_role() => {
+                self.match_text_seq(&["DATABASE", "ROLE"]);
                 ("DATABASE ROLE", CloneOptions::Bare)
             }
             _ => {
@@ -291,6 +292,14 @@ impl Parser {
             operands,
             properties,
         }))))
+    }
+
+    /// Whether DATABASE ROLE starts a role; alone or before CLONE, ROLE names a database.
+    fn names_a_database_role(&self) -> bool {
+        self.check_text_seq(&["DATABASE", "ROLE"])
+            && self.tokens.get(self.current + 2).is_some_and(|t| {
+                t.token_type != TokenType::Semicolon && !t.text.eq_ignore_ascii_case("CLONE")
+            })
     }
 
     /// Whether the rest of the statement contains REPLICA or AS OF, which make it a replica.

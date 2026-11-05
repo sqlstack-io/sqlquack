@@ -43,7 +43,7 @@ use crate::conversion::constants::{
     VARIANT_HELD_UNREAD, VARIANT_INSPECT, VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 use crate::conversion::constants::{
-    IS_INTEGER_NAME, OBJECT_TYPE_NAME, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
+    IS_INTEGER_NAME, KIND_CAST_TARGETS, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
 };
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
@@ -355,9 +355,12 @@ pub(crate) fn held_cast(
     if type_name == VARIANT_NAME {
         return Ok(operand);
     }
-    if type_name == OBJECT_TYPE_NAME {
+    if let Some((_, kind)) = KIND_CAST_TARGETS
+        .iter()
+        .find(|(name, _)| *name == type_name)
+    {
         let _kind = log.rule(VARIANT_KIND_CAST);
-        let checked = json_kind_cast(&variant_json(&operand.sql, log), OBJECT_TYPE_NAME, log);
+        let checked = json_kind_cast(&variant_json(&operand.sql, log), kind, log);
         return Ok(Emitted {
             sql: format!(
                 "(CASE WHEN {checked} IS NULL THEN NULL ELSE {} END)",
@@ -382,9 +385,14 @@ pub(crate) fn held_cast(
             diverge(context, JSON_FIDELITY, construct)?;
             variant_double(&operand.sql, log)
         }
-        (SnowflakeType::Date, _) => {
+        (
+            to @ (SnowflakeType::Date
+            | SnowflakeType::Boolean
+            | SnowflakeType::Number { scale: 0, .. }),
+            _,
+        ) => {
             diverge(context, JSON_FIDELITY, construct)?;
-            json_scalar(&variant_json(&operand.sql, log), SnowflakeType::Date, log)
+            json_scalar(&variant_json(&operand.sql, log), to, log)
                 .map_err(|reason| refuse(&reason))?
         }
         (other, _) => {

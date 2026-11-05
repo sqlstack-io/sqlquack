@@ -1,0 +1,80 @@
+# Casts of VARIANTs built from a FLOAT: a member read as INTEGER or BOOLEAN, an ARRAY cast and an element cast to OBJECT.
+category = "semi-structured-typed"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "held_float_member_integer"
+description = "A FLOAT member of OBJECT_CONSTRUCT read as INTEGER and NUMBER(38,0): halves, negatives, a double just below a half and a missing member."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["2.5"],
+  ["-2.5"],
+  ["0.49999999999999994"],
+  ["123456.789"],
+  ["1e15"],
+  ["0"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT('r', x):r::INTEGER AS i, OBJECT_CONSTRUCT('r', x):r::NUMBER(38,0) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "negative", "zero"]
+
+[[case]]
+id = "held_float_object_boolean_member"
+description = "A BOOLEAN member of an object that also holds a FLOAT, read as BOOLEAN, with a missing member when the FLOAT is NULL."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-0.25"],
+  ["0"],
+  ["NULL"],
+]
+query = "SELECT OBJECT_CONSTRUCT('r', x, 'is_positive', x > 0):is_positive::BOOLEAN AS p FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "held_float_array_cast"
+description = "ARRAY_CONSTRUCT of a FLOAT cast to ARRAY, read by ARRAY_SIZE and TO_JSON, with a NULL element kept as undefined."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["0.1"],
+  ["-1e-7"],
+  ["1e300"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_SIZE(CAST(ARRAY_CONSTRUCT(x) AS ARRAY))::NUMBER(38,0) AS n, TO_JSON(CAST(ARRAY_CONSTRUCT(x) AS ARRAY)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "held_float_array_cast_defined"
+description = "ARRAY_CONSTRUCT of a non-NULL FLOAT cast to ARRAY, read by ARRAY_SIZE and TO_JSON."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["0.1"],
+  ["-1e-7"],
+  ["1e300"],
+]
+query = "SELECT ARRAY_SIZE(CAST(ARRAY_CONSTRUCT(x) AS ARRAY))::NUMBER(38,0) AS n, TO_JSON(CAST(ARRAY_CONSTRUCT(x) AS ARRAY)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "negative"]
+
+[[case]]
+id = "held_float_element_object_insert"
+description = "An element of an array of FLOAT-holding objects cast to OBJECT and extended by OBJECT_INSERT, written by TO_JSON."
+columns = [{ name = "x", type = "FLOAT" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["1.5", "'a'"],
+  ["0.1", "'b'"],
+  ["NULL", "'c'"],
+  ["2.5", "NULL"],
+]
+query = "SELECT TO_JSON(OBJECT_INSERT(ARRAY_CONSTRUCT(OBJECT_CONSTRUCT('r', x))[0]::OBJECT, 'check', c)) AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null"]
