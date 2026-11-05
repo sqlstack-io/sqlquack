@@ -27,11 +27,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_carry"
-description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end"
+description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end, or zero and negative parts clamped instead of carrying backwards"
 columns = [{ name = "h", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["24", "0"],
   ["23", "3600"],
+  ["0", "-1"],
 ]
 query = "SELECT TIMESTAMP_TZ_FROM_PARTS(2024, 12, 31, h, 0, x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -135,13 +136,13 @@ tags = ["boundary"]
 
 [[case]]
 id = "t012_time_zone"
-description = "An explicit time zone. Catches: the zone ignored (UTC offset), or the wall clock shifted instead of the offset set"
+description = "An explicit time zone. Catches: the zone ignored (UTC offset), or the wall clock shifted instead of the offset set (the wall column shows the offset, which the instant comparison ignores)"
 columns = [{ name = "z", type = "VARCHAR" }]
 rows = [
   ["'America/Los_Angeles'"],
   ["'Asia/Kolkata'"],
 ]
-query = "SELECT TIMESTAMP_TZ_FROM_PARTS(2024, 7, 1, 9, 30, 0, 0, z) AS r FROM input ORDER BY ordinal"
+query = "SELECT TIMESTAMP_TZ_FROM_PARTS(2024, 7, 1, 9, 30, 0, 0, z) AS r, CAST(TIMESTAMP_TZ_FROM_PARTS(2024, 7, 1, 9, 30, 0, 0, z) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -159,12 +160,12 @@ tags = ["null"]
 
 [[case]]
 id = "t014_dst"
-description = "Wall clocks inside the spring gap and the autumn overlap. Catches: a gap time kept as is, or the overlap resolved to the other offset"
+description = "Wall clocks inside the spring gap and the autumn overlap. Catches: a gap time kept as is, or the overlap resolved to the other offset (the wall column shows the offset, which the instant comparison ignores)"
 columns = [{ name = "d", type = "NUMBER(38,0)" }, { name = "h", type = "NUMBER(38,0)" }, { name = "mo", type = "NUMBER(38,0)" }]
 rows = [
   ["10", "2", "3"],
   ["3", "1", "11"],
 ]
-query = "SELECT TIMESTAMP_TZ_FROM_PARTS(2024, mo, d, h, 30, 0, 0, 'America/New_York') AS r FROM input ORDER BY ordinal"
+query = "SELECT TIMESTAMP_TZ_FROM_PARTS(2024, mo, d, h, 30, 0, 0, 'America/New_York') AS r, CAST(TIMESTAMP_TZ_FROM_PARTS(2024, mo, d, h, 30, 0, 0, 'America/New_York') AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]

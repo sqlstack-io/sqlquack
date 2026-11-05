@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_date"
-description = "The page's pairs: equal days, two month ends, and a fraction. Catches: a DATEDIFF-style integer, a fraction from real month lengths, or the month-end rule missed (0.9 for 31 Mar / 28 Feb)"
+description = "The page's pairs: equal days, two month ends, and a fraction. Catches: a DATEDIFF-style integer, a fraction from real month lengths, or the month-end rule missed (1.097 for 31 Mar / 28 Feb)"
 columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
 rows = [
   ["'2019-03-15'", "'2019-02-15'"],

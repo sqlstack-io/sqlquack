@@ -27,11 +27,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_carry"
-description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end"
+description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end, or zero and negative parts clamped instead of carrying backwards"
 columns = [{ name = "h", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["24", "0"],
   ["23", "3600"],
+  ["0", "-1"],
 ]
 query = "SELECT TIMESTAMP_LTZ_FROM_PARTS(2024, 12, 31, h, 0, x) AS r FROM input ORDER BY ordinal"
 order = "ordered"

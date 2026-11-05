@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_date"
-description = "DAYOFYEAR of dates at year, ISO-week and leap boundaries. Catches: a 0-based day, 365 on the last day of a leap year, or the UTC instant's day"
+description = "DAYOFYEAR of dates at year, ISO-week and leap boundaries. Catches: a 0-based day, or 365 on the last day of a leap year"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-12-30'"],
@@ -12,6 +12,7 @@ rows = [
   ["'2023-01-01'"],
   ["'2024-02-29'"],
   ["'2026-12-31'"],
+  ["'2024-12-31'"],
 ]
 query = "SELECT DAYOFYEAR(d) AS r FROM input ORDER BY ordinal"
 order = "ordered"

@@ -16,7 +16,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_format"
-description = "An explicit day-first format. Catches: the format ignored (an error or 2024-12-01)"
+description = "An explicit day-first format. Catches: the format ignored (2024-01-12, or an error on 31/01/2024)"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'01/12/2024'"],

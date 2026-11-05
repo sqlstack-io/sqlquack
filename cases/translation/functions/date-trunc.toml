@@ -27,12 +27,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_tz"
-description = "A TIMESTAMP_TZ truncated in its own offset. Catches: truncation in UTC (2025-01-01) instead of the wall clock (2024-12-31 00:00 -0800), or the offset dropped"
+description = "A TIMESTAMP_TZ truncated in its own offset. Catches: truncation in UTC (2025-01-01) instead of the wall clock (2024-12-31 00:00 -0800), or the offset dropped (the wall columns show the offset, which the instant comparison ignores)"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-31 23:30:00.250 -0800'"],
 ]
-query = "SELECT DATE_TRUNC('day', t) AS day, DATE_TRUNC('month', t) AS month, DATE_TRUNC('year', t) AS year FROM input ORDER BY ordinal"
+query = "SELECT DATE_TRUNC('day', t) AS day, CAST(DATE_TRUNC('day', t) AS TIMESTAMP_NTZ) AS day_wall, DATE_TRUNC('month', t) AS month, CAST(DATE_TRUNC('month', t) AS TIMESTAMP_NTZ) AS month_wall, DATE_TRUNC('year', t) AS year, CAST(DATE_TRUNC('year', t) AS TIMESTAMP_NTZ) AS year_wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -61,13 +61,13 @@ tags = ["null"]
 
 [[case]]
 id = "t006_dst"
-description = "TIMESTAMP_TZ values on both sides of a DST change. Catches: the offset re-derived from a zone rule (or UTC) instead of kept"
+description = "TIMESTAMP_TZ values on both sides of a DST change. Catches: the offset re-derived from a zone rule (or UTC) instead of kept (the wall columns show the offset, which the instant comparison ignores)"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-03-10 03:30:00 -0400'"],
   ["'2024-11-03 01:30:00 -0500'"],
 ]
-query = "SELECT DATE_TRUNC('hour', t) AS hour, DATE_TRUNC('day', t) AS day FROM input ORDER BY ordinal"
+query = "SELECT DATE_TRUNC('hour', t) AS hour, CAST(DATE_TRUNC('hour', t) AS TIMESTAMP_NTZ) AS hour_wall, DATE_TRUNC('day', t) AS day, CAST(DATE_TRUNC('day', t) AS TIMESTAMP_NTZ) AS day_wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 

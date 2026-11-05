@@ -27,12 +27,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_ntz"
-description = "Sub-second and minute parts on a timestamp. Catches: milliseconds read as microseconds, or minutes as months (mm)"
+description = "The part aliases ms, mi and mm on a timestamp. Catches: mm read as minutes (Snowflake: months), mi as months, or ms as microseconds"
 columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
 rows = [
   ["'2024-12-31 23:59:59.999'"],
 ]
-query = "SELECT TIMESTAMPADD(millisecond, 2, t) AS ms, TIMESTAMPADD(minute, 1, t) AS mi, TIMESTAMPADD(quarter, 1, t) AS q FROM input ORDER BY ordinal"
+query = "SELECT TIMESTAMPADD(ms, 2, t) AS ms, TIMESTAMPADD(mi, 1, t) AS mi, TIMESTAMPADD(mm, 1, t) AS mm FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -49,12 +49,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_timestamp_tz"
-description = "A day added to a TIMESTAMP_TZ. Catches: the offset dropped or converted to UTC"
+description = "A day added to a TIMESTAMP_TZ. Catches: the offset dropped or converted to UTC (the wall column shows the offset, which the instant comparison ignores)"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-31 23:30:00.250 -0800'"],
 ]
-query = "SELECT TIMESTAMPADD(day, 1, t) AS r FROM input ORDER BY ordinal"
+query = "SELECT TIMESTAMPADD(day, 1, t) AS r, CAST(TIMESTAMPADD(day, 1, t) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -109,13 +109,13 @@ tags = ["boundary"]
 
 [[case]]
 id = "t010_dst"
-description = "Hours added across a DST change, in a TIMESTAMP_TZ and through CONVERT_TIMEZONE. Catches: wall-clock arithmetic (02:30, which does not exist) instead of elapsed time"
+description = "An hour added at 01:30 New York time on both DST change days, through the two-argument CONVERT_TIMEZONE of a UTC timestamp. Catches: wall-clock arithmetic in the zone (07:30Z instead of the elapsed 06:30Z on the autumn row) (the wall column shows the offset, which the instant comparison ignores)"
 columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
 rows = [
-  ["'2024-03-10 01:30:00'"],
-  ["'2024-11-03 00:30:00'"],
+  ["'2024-03-10 06:30:00'"],
+  ["'2024-11-03 05:30:00'"],
 ]
-query = "SELECT TIMESTAMPADD(hour, 1, CONVERT_TIMEZONE('America/New_York', t)) AS r FROM input ORDER BY ordinal"
+query = "SELECT TIMESTAMPADD(hour, 1, CONVERT_TIMEZONE('America/New_York', t)) AS r, CAST(TIMESTAMPADD(hour, 1, CONVERT_TIMEZONE('America/New_York', t)) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 

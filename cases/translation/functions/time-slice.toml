@@ -16,13 +16,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_timestamp"
-description = "The page's 8-hour slices and a 15-minute slice. Catches: slices aligned to the day start for minutes, or the fraction kept"
+description = "Slices of 5 hours and 7 minutes, which do not divide a day. Catches: slices aligned to the day start for minutes, or the fraction kept"
 columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
 rows = [
   ["'2019-02-28 01:23:45.678'"],
   ["'2019-02-28 12:34:56.789'"],
 ]
-query = "SELECT TIME_SLICE(t, 8, 'HOUR') AS h8, TIME_SLICE(t, 15, 'minute') AS m15 FROM input ORDER BY ordinal"
+query = "SELECT TIME_SLICE(t, 5, 'HOUR') AS h5, TIME_SLICE(t, 7, 'minute') AS m7 FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

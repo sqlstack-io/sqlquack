@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_date"
-description = "QUARTER of dates at year, ISO-week and leap boundaries. Catches: the quarter of the UTC instant (1) instead of 4, or month/3 rounded"
+description = "QUARTER of dates at year, ISO-week and leap boundaries. Catches: month/3 rounded (0 for January) instead of the quarter"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-12-30'"],
@@ -31,10 +31,11 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_tz"
-description = "QUARTER of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the quarter of the UTC instant (1) instead of 4, or month/3 rounded"
+description = "QUARTER of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the quarter of the UTC instant (1 for the December row, 2 for the March row) instead of the wall clock"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-03-31 23:30:00 -0800'"],
 ]
 query = "SELECT QUARTER(t) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -54,7 +55,7 @@ tags = ["null"]
 
 [[case]]
 id = "t005_leap"
-description = "Days around 29 February in a leap and a common year. Catches: a fixed 365-day year or a non-leap 2024"
+description = "Days around 29 February in a leap and a common year. Catches: quarters by day-of-year thresholds of a 365-day year (Q2 for 2024-03-31)"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-02-29'"],
@@ -62,6 +63,7 @@ rows = [
   ["'2023-03-01'"],
   ["'2000-12-31'"],
   ["'1900-03-01'"],
+  ["'2024-03-31'"],
 ]
 query = "SELECT QUARTER(d) AS r FROM input ORDER BY ordinal"
 order = "ordered"

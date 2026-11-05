@@ -7,7 +7,7 @@ id = "t001_time"
 description = "HOUR of times with fractional seconds. Catches: fractional seconds rounded up, or a 12-hour clock"
 columns = [{ name = "t", type = "TIME" }]
 rows = [
-  ["'23:58:56.999'"],
+  ["'22:59:59.999'"],
   ["'00:00:01'"],
   ["'13:07:30.5'"],
 ]

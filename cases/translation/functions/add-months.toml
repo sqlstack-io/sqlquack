@@ -27,12 +27,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_tz"
-description = "A TIMESTAMP_TZ keeps its offset. Catches: the offset dropped or the month of the UTC instant used"
+description = "A TIMESTAMP_TZ keeps its offset. Catches: the month end of the UTC instant (2024-02-29 04:00Z instead of 2024-03-01 04:00Z), or the offset dropped (the wall column shows the offset, which the instant comparison ignores)"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
-  ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-01-30 20:00:00 -0800'"],
 ]
-query = "SELECT ADD_MONTHS(t, 2) AS r FROM input ORDER BY ordinal"
+query = "SELECT ADD_MONTHS(t, 1) AS r, CAST(ADD_MONTHS(t, 1) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

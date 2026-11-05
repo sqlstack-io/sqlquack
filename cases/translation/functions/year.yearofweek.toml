@@ -22,7 +22,7 @@ id = "t002_timestamp_ntz"
 description = "YEAROFWEEK of a timestamp just before midnight on 31 December. Catches: the timestamp rounded to the next day"
 columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
 rows = [
-  ["'2024-12-31 23:59:59.999'"],
+  ["'2024-12-29 23:59:59.999'"],
   ["'2024-03-01 00:00:00'"],
 ]
 query = "SELECT YEAROFWEEK(t) AS r FROM input ORDER BY ordinal"
@@ -34,7 +34,7 @@ id = "t003_timestamp_tz"
 description = "YEAROFWEEK of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the part taken from the UTC instant instead of the wall clock"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
-  ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-12-29 23:30:00.250 -0800'"],
 ]
 query = "SELECT YEAROFWEEK(t) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -54,7 +54,7 @@ tags = ["null"]
 
 [[case]]
 id = "t005_leap"
-description = "Days around 29 February in a leap and a common year. Catches: a fixed 365-day year or a non-leap 2024"
+description = "Days around 29 February in a leap and a common year. Catches: leap dates rejected or moved; YEAROFWEEK itself is unchanged by them (t001 covers the ISO year edges)"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-02-29'"],

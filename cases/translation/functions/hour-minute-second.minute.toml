@@ -4,10 +4,10 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_time"
-description = "MINUTE of times with fractional seconds. Catches: fractional seconds rounded up, or a 12-hour clock"
+description = "MINUTE of times with fractional seconds. Catches: fractional seconds rounded up (59 instead of 58)"
 columns = [{ name = "t", type = "TIME" }]
 rows = [
-  ["'23:58:56.999'"],
+  ["'23:58:59.999'"],
   ["'00:00:01'"],
   ["'13:07:30.5'"],
 ]
@@ -40,7 +40,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_interval"
-description = "MINUTE of a day-time interval. Catches: an error, or the days folded into hours"
+description = "MINUTE of a day-time interval. Catches: an error, or total minutes (1563) instead of the minute field (3)"
 columns = [{ name = "k", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],
