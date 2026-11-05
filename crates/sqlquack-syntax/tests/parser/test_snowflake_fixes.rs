@@ -1105,3 +1105,151 @@ fn given_a_snowflake_table_or_view_when_parsing_then_its_clauses_are_complete() 
         );
     }
 }
+
+#[test]
+fn given_snowflake_security_admin_show_drop_and_describe_when_parsing_then_the_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a policy list is scoped to a user after LIKE (recorded parse)",
+            sql: "SHOW AUTHENTICATION POLICIES LIKE 'm' ON USER v1 STARTS WITH 'm' LIMIT 1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "IN after FROM (recorded errno 1003)",
+            sql: "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IN APPLICATION without a name (recorded parse)",
+            sql: "SHOW TABLES IN APPLICATION ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "database roles in a bare name (recorded parse)",
+            sql: "SHOW DATABASE ROLES IN v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "versions in an organization profile (recorded parse)",
+            sql: "SHOW VERSIONS IN ORGANIZATION v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "LIMIT ending the statement names the account (recorded parse)",
+            sql: "SHOW BACKUP POLICIES IN ACCOUNT LIMIT ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "LIMIT names the account of SHOW GRANTS ON ACCOUNT (recorded parse)",
+            sql: "SHOW GRANTS ON ACCOUNT LIMIT ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "shares in a failover group without its name (recorded parse)",
+            sql: "SHOW SHARES IN FAILOVER GROUP ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "listings need the failover group's name (recorded errno 1003)",
+            sql: "SHOW LISTINGS IN FAILOVER GROUP ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "roles in a class without its name (recorded parse)",
+            sql: "SHOW ROLES IN CLASS ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "service containers need the service's name (recorded errno 1003)",
+            sql: "SHOW SERVICE CONTAINERS IN SERVICE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "Openflow data plane integrations take no LIMIT (recorded errno 1003)",
+            sql: "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIMIT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "caller grants ON need an object (recorded errno 1003)",
+            sql: "SHOW CALLER GRANTS ON ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word is no package name (recorded errno 1003)",
+            sql: "SHOW USER FUNCTIONS IN APPLICATION PACKAGE SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted database role is dropped (recorded parse)",
+            sql: "DROP DATABASE ROLE \"v1 Q\" ;",
+            expected_kind: Some("drop_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "PROFILE names an organization (recorded parse)",
+            sql: "DROP ORGANIZATION PROFILE ;",
+            expected_kind: Some("drop_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted snapshot policy is dropped (recorded parse)",
+            sql: "DROP SNAPSHOT POLICY \"SELECT\" ;",
+            expected_kind: Some("drop_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "PROFILE names an organization to describe (recorded parse)",
+            sql: "DESC ORGANIZATION PROFILE ;",
+            expected_kind: Some("describe"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "GRAPH names a task to describe (recorded parse)",
+            sql: "DESC TASK GRAPH ;",
+            expected_kind: Some("describe"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an organization is renamed (recorded parse)",
+            sql: "ALTER ORGANIZATION v1 RENAME TO v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "PROFILE names an organization to rename (recorded parse)",
+            sql: "ALTER ORGANIZATION PROFILE RENAME TO v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_then_the_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase { description: "a secret sets a property (recorded parse)", sql: "ALTER SECRET v1 SET SECRET_STRING = 'm' ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a quoted reserved word names a secret (recorded parse)", sql: "ALTER SECRET \"SELECT\" SET COMMENT = 'm' ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a string is no secret name (recorded errno 1003)", sql: "ALTER SECRET 'v1' SET COMMENT = 'm' ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "a secret's property needs SET (recorded errno 1003)", sql: "ALTER SECRET v1 COMMENT = 'm' ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "a resource monitor sets its quota (recorded parse)", sql: "ALTER RESOURCE MONITOR v1 SET CREDIT_QUOTA = 1 ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a resource monitor sets properties and triggers (recorded parse)", sql: "ALTER RESOURCE MONITOR IF EXISTS v1 SET CREDIT_QUOTA = 1 FREQUENCY = MONTHLY TRIGGERS ON 80 PERCENT DO SUSPEND ON 90 PERCENT DO NOTIFY ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a trigger needs PERCENT", sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 80 DO SUSPEND ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "SET needs a property", sql: "ALTER RESOURCE MONITOR v1 SET ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "an integration refreshes one secret (recorded parse)", sql: "ALTER INTEGRATION v1 REFRESH OAUTH_CLIENT_SECRET_2 ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "REFRESH names what it refreshes (recorded errno 1003)", sql: "ALTER INTEGRATION \"v1 Q\" REFRESH ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "REFRESH names one key (recorded errno 1003)", sql: "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;", expected_kind: None },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

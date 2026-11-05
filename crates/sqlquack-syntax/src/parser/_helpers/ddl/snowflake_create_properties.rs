@@ -195,7 +195,7 @@ impl Parser {
     }
 
     /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
-    fn parse_create_property_item(&mut self) -> Result<Vec<ObjectProperty>> {
+    pub(super) fn parse_create_property_item(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.check_identifier("TAG") && self.check_next(TokenType::LParen) {
             self.skip();
             self.skip();

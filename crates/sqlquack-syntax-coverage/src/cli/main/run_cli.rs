@@ -8,6 +8,7 @@ use crate::cli::_helpers::commands::{
     boundaries, diff, family, missing, pages, parse_worker, snapshot_command, stale, summary,
     translation, validate,
 };
+use crate::cli::_helpers::results_command::results;
 use crate::cli::models::{Arguments, Command};
 
 /// Runs one subcommand; progress and problems go to stderr, results to stdout.
@@ -28,6 +29,17 @@ pub fn run_cli() -> ExitCode {
             common,
         } => snapshot_command(&catalogue_commit, &common),
         Command::Translation { arguments, common } => translation(&arguments, &common),
+        Command::Results {
+            statements,
+            write_baseline,
+            report,
+            against,
+            common,
+        } => results(
+            &statements,
+            (write_baseline, report.as_deref(), against.as_deref()),
+            &common,
+        ),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
         Command::ParseWorker => parse_worker(),
     };
