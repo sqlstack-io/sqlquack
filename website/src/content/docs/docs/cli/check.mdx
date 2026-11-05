@@ -1,0 +1,61 @@
+---
+title: "sqlquack check"
+description: "Check that Snowflake SQL parses and holds nothing Snowflake rejects, without converting it."
+sidebar:
+  label: "check"
+---
+
+`sqlquack check` parses Snowflake SQL and reports what Snowflake would reject. It needs no schema
+and no policy, and it converts nothing.
+
+## Usage
+
+```bash
+sqlquack check [OPTIONS] [PATH]
+```
+
+```bash
+sqlquack check query.sql
+echo "SELECT 1 QUALIFY TRUE" | sqlquack check --json
+```
+
+`PATH` is a SQL file. Without one, or with `-`, `check` reads standard input.
+
+```console
+$ sqlquack check query.sql
+error[SQ0201]: Snowflake does not support INTERSECT, EXCEPT or MINUS with ALL
+ --> query.sql:1:29
+  |
+1 | SELECT order_id FROM orders INTERSECT ALL SELECT order_id FROM orders
+  |                             ^^^^^^^^^^^^^ Snowflake does not support INTERSECT with ALL
+  |
+  = help: drop ALL to compare distinct rows; only UNION accepts ALL in Snowflake
+sqlquack check: found 1 problem
+```
+
+## What it reports
+
+- SQL that does not parse: [`SQ0001`](/docs/diagnostics/reference/#sq0001), with the span where
+  the parser stopped.
+- Input beyond the parser's limits: the `SQ01xx` codes.
+- SQL that parses but that Snowflake rejects, such as `INTERSECT ALL`, `FOR UPDATE WAIT`,
+  `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of a column the
+  pattern removes: the `SQ02xx` codes.
+
+## Options
+
+| Option | Meaning |
+|--------|---------|
+| `--format text\|json` | Print the report as text for people or JSON for programs. Default `text`. |
+| `--json` | The same as `--format json`. |
+
+With `--json`, `check` prints `{"ok": …, "diagnostics": [...]}`. See
+[JSON output](/docs/diagnostics/overview/#json-output).
+
+## Exit status
+
+| Code | Meaning |
+|------|---------|
+| `0` | No problem found. |
+| `1` | At least one problem found. |
+| `2` | The input holds no SQL, or can't be read. |

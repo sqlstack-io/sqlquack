@@ -1,0 +1,41 @@
+---
+title: "Coverage"
+description: "What SQLQuack's measured figures cover, and how they are measured."
+---
+
+import { figures } from '../../../figures.mjs';
+
+Syntax and translation are separate claims, measured separately. Each figure says what it counts.
+None of them means every input is proven: a figure says what was checked, under which conditions.
+
+| Measure | Figure | Basis |
+|---------|--------|-------|
+| Snowflake statements that translate | {figures.TRANSLATION_PCT} | {figures.TRANSLATION_BASIS} |
+| Documented Snowflake syntax forms verified | {figures.SYNTAX_PCT} of 3,348 | {figures.SYNTAX_BASIS} |
+
+## Translation
+
+The translation figure is the share of actual Snowflake statements that SQLQuack converts into
+DuckDB SQL. A statement counts only when it converts in full; a statement with any refusal does
+not. Converting is not the same as comparing results: a converted statement's rules are checked
+against results recorded on Snowflake, not every possible input.
+
+## Syntax
+
+The syntax figure is the share of documented Snowflake syntax forms that meet every obligation
+declared for them. The catalogue holds 3,348 forms, one per documented syntax block or variant.
+A form counts as verified only when it has at least one required obligation, every required
+obligation is satisfied by a case recorded on Snowflake, and an approved review of its family is
+current. Anything missing, ambiguous or stale counts as not verified.
+
+Reproduce it from a checkout:
+
+```bash
+cargo run --release -p sqlquack-syntax-coverage -- summary
+```
+
+## Rules
+
+Every rule converts only the shapes that cases recorded on Snowflake and replayed on DuckDB cover.
+`sqlquack verify` replays every recorded case and reports any shape a rule accepts that no passing
+case covers.

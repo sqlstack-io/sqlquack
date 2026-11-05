@@ -1,0 +1,69 @@
+---
+title: "Reading diagnostics"
+description: "What a SQLQuack diagnostic says, and the two kinds of problem it reports."
+sidebar:
+  label: "Overview"
+---
+
+Every problem SQLQuack reports is a coded diagnostic, underlined in the source as rustc does:
+
+```text
+error[SQ0004]: a name does not resolve
+ --> query.sql:1:15
+  |
+1 | SELECT a FROM orders
+  |               ^^^^^^ relation `ORDERS` has no known columns
+  |
+  = help: declare the relation and its columns in the schema (`--schema` on the command line)
+```
+
+The first line has the code and the message. The arrow gives the file, line and column. The caret
+line underlines the exact span and carries a label for this occurrence. `= note:` and `= help:`
+lines follow when the code has them.
+
+## Two kinds of problem
+
+| Kind | Codes | What to do |
+|------|-------|------------|
+| The SQL is not valid Snowflake | `SQ0001`, `SQ01xx`, `SQ02xx` | Fix the SQL. `sqlquack check` finds these without a schema. |
+| Valid SQL that can't be translated safely | `SQ0002` to `SQ0008` | Declare the schema, change the policy, or rewrite the construct. |
+
+`sqlquack check` reports only the first kind. `sqlquack convert` reports both: a statement that
+does not parse, or that Snowflake rejects, is refused before conversion is tried.
+
+## JSON output
+
+With `--json`, each diagnostic is an object:
+
+```json
+{
+  "severity": "error",
+  "code": "SQ0203",
+  "name": "qualify_without_window",
+  "alias": null,
+  "message": "QUALIFY needs a window function",
+  "span": { "start": 9, "end": 16, "line": 1, "column": 10, "end_line": 1, "end_column": 17 },
+  "label": "QUALIFY is used without a window function in the SELECT list or QUALIFY",
+  "notes": [],
+  "help": "move the condition to WHERE or HAVING, or filter on a window function's result"
+}
+```
+
+| Field | Meaning |
+|-------|---------|
+| `code` | `SQ` and four digits. Never reused or renumbered. |
+| `name` | The code's stable name, such as `unresolved_name`. |
+| `alias` | A parser guard's former `E_GUARD_*` name, or `null`. |
+| `message` | The code's title, sometimes with the construct. |
+| `span` | Character `start` and `end`, then one-based `line`, `column`, `end_line` and `end_column`. Absent only for problems outside the SQL, such as session parameters. |
+| `label` | What is wrong at this span. |
+| `notes`, `help` | Context, and what to change. |
+
+Every code is listed in the [diagnostic reference](/docs/diagnostics/reference/). To read one in the terminal, by code or by name:
+
+```sh
+sqlquack explain SQ0203
+sqlquack explain qualify_without_window
+```
+
+It prints the code's title, explanation, help and an example that draws it, and exits 2 for an unknown code.
