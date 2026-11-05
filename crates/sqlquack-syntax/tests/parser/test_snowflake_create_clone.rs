@@ -39,6 +39,30 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_ar
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a database role is created by name (recorded success)",
+            sql: "CREATE DATABASE ROLE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database role takes OR REPLACE, IF NOT EXISTS and a comment (recorded success)",
+            sql: "CREATE OR REPLACE DATABASE ROLE IF NOT EXISTS v1 COMMENT = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database role takes no second name (recorded errno 1003)",
+            sql: "CREATE DATABASE ROLE v1 v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a database role comment needs a value (recorded errno 1003)",
+            sql: "CREATE DATABASE ROLE v1 COMMENT = ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "a database named ROLE clones (recorded errno 2003, after parsing)",
             sql: "CREATE DATABASE ROLE CLONE v1 ;",
             dialect: Dialect::Snowflake,

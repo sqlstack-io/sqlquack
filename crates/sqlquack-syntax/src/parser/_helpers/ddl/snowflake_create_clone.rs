@@ -260,6 +260,33 @@ impl Parser {
             return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
         let name = self.parse_object_name()?;
+        if matches!(kind, "DATABASE ROLE") && !self.check_identifier("CLONE") {
+            let mut properties: Vec<ObjectProperty> = Vec::new();
+            if self.match_token(TokenType::Comment) {
+                self.expect_token(TokenType::Eq)?;
+                let comment = if self.is_identifier_token() && !self.check_keyword() {
+                    self.parse_primary()?
+                } else {
+                    self.parse_string_value()?
+                };
+                properties.push(property("COMMENT", None, Some(comment)));
+            }
+            if !self.is_at_end() && !self.check(TokenType::Semicolon) {
+                return Err(
+                    self.parse_error("Expected CLONE or COMMENT after CREATE DATABASE ROLE <name>")
+                );
+            }
+            return Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+                kind: kind.to_owned(),
+                modifier,
+                or_replace,
+                if_not_exists,
+                name,
+                source: String::new(),
+                operands: Vec::new(),
+                properties,
+            }))));
+        }
         if !self.match_identifier("CLONE") {
             let lone_word = self.is_identifier_token()
                 && !self.check_keyword()
@@ -295,7 +322,7 @@ impl Parser {
     }
 
     /// Whether DATABASE ROLE starts a role; alone or before CLONE, ROLE names a database.
-    fn names_a_database_role(&self) -> bool {
+    pub(crate) fn names_a_database_role(&self) -> bool {
         self.check_text_seq(&["DATABASE", "ROLE"])
             && self.tokens.get(self.current + 2).is_some_and(|t| {
                 t.token_type != TokenType::Semicolon && !t.text.eq_ignore_ascii_case("CLONE")
