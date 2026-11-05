@@ -7,7 +7,7 @@ id = "t001_partition"
 description = "Partitions with one and with three TRUE values. Catches: the whole input aggregated"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [
-  ["'p'", "TRUE"],
+  ["'p'", "FALSE"],
   ["'q'", "TRUE"],
   ["'p'", "FALSE"],
   ["'q'", "TRUE"],
@@ -22,8 +22,8 @@ id = "t002_empty_over"
 description = "An empty OVER clause. Catches: a running value"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [
-  ["'p'", "TRUE"],
   ["'p'", "FALSE"],
+  ["'p'", "TRUE"],
 ]
 query = "SELECT BOOLOR_AGG(b) OVER () AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -49,7 +49,7 @@ columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [
   ["NULL", "TRUE"],
   ["'p'", "FALSE"],
-  ["NULL", "TRUE"],
+  ["NULL", "FALSE"],
 ]
 query = "SELECT BOOLOR_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"

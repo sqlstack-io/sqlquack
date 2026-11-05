@@ -46,7 +46,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t003_varchar"
-description = "Numeric text, which the page says is cast to FLOAT. Catches: text rejected or read as NUMBER"
+description = "Numeric text, which the page says is cast to FLOAT. Catches: text rejected, or cast to an integer type (2.5 rounded)"
 columns = [{ name = "x", type = "VARCHAR" }]
 rows = [
   ["'1'"],

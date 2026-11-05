@@ -4,12 +4,12 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_positions"
-description = "Set positions of a bitmap. Catches: positions unsorted or one-based"
+description = "Set positions of bitmaps built from rows in descending order within a bucket. Catches: relative zero-based positions instead of bucket-1 absolute positions, or the reverse, or positions in input order"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
-  ["'p'", "1"],
-  ["'q'", "5"],
   ["'p'", "5"],
+  ["'q'", "5"],
+  ["'p'", "1"],
   ["'q'", "9"],
   ["'p'", "5"],
   ["'p'", "32769"],

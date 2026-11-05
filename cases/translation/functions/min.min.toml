@@ -55,12 +55,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_null_expr"
-description = "NULL rows beside values, and a group of only NULL. Catches: NULL taken as the smallest or largest value"
+description = "NULL rows beside values, and a group of only NULL. Catches: NULL taken as the smallest value, or read as 0"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'p'", "NULL"],
   ["'q'", "NULL"],
-  ["'p'", "-5"],
+  ["'p'", "5"],
   ["'p'", "4"],
 ]
 query = "SELECT g, MIN(x) AS r FROM input GROUP BY g ORDER BY g"

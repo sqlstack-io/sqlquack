@@ -35,13 +35,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_expr2"
-description = "NULL partition keys. Catches: NULL-keyed rows split or dropped"
+description = "A partition key outside the * columns, NULL for the two x rows, so the NULL-keyed rows form one partition of two distinct rows. Catches: NULL-keyed rows each in their own partition (1 instead of 2) or dropped"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
 rows = [
-  ["NULL", "1", "'x'"],
   ["'p'", "1", "'x'"],
-  ["NULL", "2", "'x'"],
+  ["'p'", "2", "'x'"],
+  ["'p'", "3", "'y'"],
 ]
-query = "SELECT g, a, APPROX_COUNT_DISTINCT(*) OVER (PARTITION BY g) AS r FROM (SELECT g, a FROM input) ORDER BY g, a"
+query = "SELECT a, b, APPROX_COUNT_DISTINCT(*) OVER (PARTITION BY NULLIF(b, 'x')) AS r FROM (SELECT a, b FROM input) ORDER BY a"
 order = "ordered"
 tags = ["null"]

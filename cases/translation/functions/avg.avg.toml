@@ -31,7 +31,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_float"
-description = "Binary fractions that do not add exactly. Catches: a decimal summation (exactly 0.6)"
+description = "Binary fractions that do not add exactly. Catches: a summation that differs from Snowflake's on these values (naive left-to-right gives 0.20000000000000004, exact or compensated 0.19999999999999998)"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["0.1"],

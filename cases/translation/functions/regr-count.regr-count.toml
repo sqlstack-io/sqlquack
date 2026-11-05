@@ -48,7 +48,7 @@ tags = ["null"]
 
 [[case]]
 id = "t004_null_x"
-description = "NULL x in one pair of three. Catches: the pair kept with x read as 0"
+description = "NULL x in one pair of four. Catches: the pair kept with x read as 0"
 columns = [{ name = "y", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["2", "NULL"],
@@ -62,7 +62,7 @@ tags = ["null"]
 
 [[case]]
 id = "t005_empty_input"
-description = "No rows. Catches: an error or 0 instead of the empty-input result"
+description = "No rows. Catches: NULL or an error instead of 0"
 columns = [{ name = "y", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "1"],

@@ -60,3 +60,14 @@ rows = [
 query = "SELECT DATASKETCHES_HLL_ESTIMATE(DATASKETCHES_HLL_ACCUMULATE(x)) AS r FROM input"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t005_empty_input"
+description = "No rows. Catches: a NULL sketch (a NULL estimate) or an error instead of 0.0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT DATASKETCHES_HLL_ESTIMATE(DATASKETCHES_HLL_ACCUMULATE(x)) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

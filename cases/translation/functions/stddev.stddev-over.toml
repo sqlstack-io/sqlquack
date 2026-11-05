@@ -89,6 +89,7 @@ rows = [
   ["'p'", "2", "6"],
   ["'q'", "1", "NULL"],
   ["'p'", "3", "2"],
+  ["'q'", "2", "NULL"],
 ]
 query = "SELECT STDDEV(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"

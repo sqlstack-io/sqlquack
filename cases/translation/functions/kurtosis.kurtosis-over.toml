@@ -43,6 +43,8 @@ rows = [
   ["'p'", "2", "6"],
   ["'q'", "1", "NULL"],
   ["'p'", "3", "2"],
+  ["'p'", "4", "1"],
+  ["'p'", "5", "9"],
 ]
 query = "SELECT KURTOSIS(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -56,6 +58,8 @@ rows = [
   ["NULL", "1", "4"],
   ["'p'", "1", "9"],
   ["NULL", "2", "2"],
+  ["NULL", "3", "1"],
+  ["NULL", "4", "9"],
 ]
 query = "SELECT KURTOSIS(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"

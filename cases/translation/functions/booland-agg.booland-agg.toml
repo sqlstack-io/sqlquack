@@ -41,7 +41,7 @@ description = "A small non-zero FLOAT. Catches: the value rounded to 0 first (as
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
   ["0.2"],
-  ["0"],
+  ["1"],
 ]
 query = "SELECT BOOLAND_AGG(x) AS r FROM input"
 order = "ordered"
