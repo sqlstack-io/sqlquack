@@ -1,7 +1,8 @@
 //! Queries: SELECT with its projection and clauses, and WITH.
 
 use serde_json::{Map, Value, json};
-use sqlquack_core::classification::models::Construct;
+use sqlquack_core::classification::models::{Construct, ConstructFamily};
+use sqlquack_core::diagnostics::constants::UNALIASED_OUTPUT_NAME_CONSTRUCT;
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::main::missing::missing;
@@ -622,10 +623,11 @@ fn convert_projection(
         Some((kind, _)) => {
             let emitted = convert_held(item, site)?;
             if named {
-                return Err(outside_conditions(
-                    node_construct(kind),
-                    "an unaliased expression gets a Snowflake-generated column name".to_owned(),
-                ));
+                let refusal = missing(
+                    Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
+                    format!("Snowflake names this `{kind}` column after its text"),
+                );
+                return Err(site.context.locator.placed(refusal, item));
             }
             Ok(vec![(None, emitted)])
         }
