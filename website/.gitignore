@@ -3,3 +3,5 @@ dist/
 .astro/
 public/playground/engine/
 wasm/target/
+public/playground/duckdb/
+public/playground/sqlquack.toml

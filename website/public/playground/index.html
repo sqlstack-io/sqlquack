@@ -89,6 +89,14 @@
 						<textarea class="pg-small" id="pg-rows" spellcheck="false" aria-label="Fixture rows as DuckDB SQL"></textarea>
 						<p class="pg-note">DuckDB SQL run after the schema's tables are created, before the translated query.</p>
 					</details>
+					<details>
+						<summary>Policy and session</summary>
+						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known divergence"></textarea>
+						<p class="pg-note">A policy file, as for <code>--policy</code>. <button class="pg-link" type="button" id="pg-load-policy">Load the repository's sqlquack.toml</button></p>
+						<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Session parameters" placeholder="TIMEZONE=UTC"></textarea>
+						<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>
+						<p class="pg-note"><label><input type="checkbox" id="pg-strict" /> <code>--strict</code></label> <label><input type="checkbox" id="pg-utc" /> <code>--utc-session</code></label></p>
+					</details>
 				</div>
 				<div class="pg-stages" aria-live="polite">
 					<section class="pg-stage" id="stage-parse">
@@ -100,12 +108,13 @@
 						<div class="pg-body"></div>
 					</section>
 					<section class="pg-stage" id="stage-translate">
-						<header><span class="pg-num">3</span><h2>Translate to DuckDB</h2><span class="pg-sub">built-in policy</span><span class="pg-status">…</span></header>
+						<header><span class="pg-num">3</span><h2>Translate to DuckDB</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
 						<div class="pg-body"></div>
 					</section>
 					<section class="pg-stage" id="stage-run">
 						<header><span class="pg-num">4</span><h2>Run in DuckDB-WASM</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
 						<div class="pg-body"></div>
+						<p class="pg-note pg-stage-note">Runs DuckDB-WASM in your browser, a preview build. SQLQuack's checks rest on native DuckDB 2.0; this run is a demonstration, not that check.</p>
 					</section>
 				</div>
 			</div>

@@ -1,8 +1,19 @@
 name: Website
 
-# Builds the site and checks its links and branding. Manual only, and it never deploys: the site is
-# not public yet. Add push and pull_request triggers, and a deploy job, once publishing is approved.
+# Builds the playground engine and the site, and checks them. It runs on pull requests that touch
+# them and on demand, never on push to main, and it never deploys: the site is not public yet.
+# Add a deploy job only once publishing is approved.
 on:
+  pull_request:
+    paths:
+      - website/**
+      - crates/sqlquack-core/**
+      - crates/sqlquack-duckdb/**
+      - crates/sqlquack-rules/**
+      - crates/sqlquack-semantics/**
+      - crates/sqlquack-snowflake/**
+      - crates/sqlquack-syntax/**
+      - .github/workflows/website.yml
   workflow_dispatch:
 
 permissions:
@@ -14,7 +25,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build the website
+    name: Build the engine and the website
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -28,11 +39,37 @@ jobs:
           cache: npm
           cache-dependency-path: website/package-lock.json
 
+      - name: Install the pinned Rust toolchain with the wasm32 target
+        working-directory: .
+        run: |
+          rustup toolchain install
+          rustup target add wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: website/wasm
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@0.2.130
+
       - name: Check the diagnostics reference matches the registry
         run: python3 scripts/generate_diagnostics.py --check
 
+      - name: Lint the engine
+        working-directory: website/wasm
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --target wasm32-unknown-unknown --release -- -D warnings
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Build the engine
+        run: ./scripts/build_engine.sh
+
+      - name: Test the engine and its spans
+        run: npm run -s test:engine
 
       - name: Build
         run: npm run build
