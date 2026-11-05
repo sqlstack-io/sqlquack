@@ -17,6 +17,7 @@ pub mod json_object_delete;
 pub mod json_object_insert;
 pub mod json_object_keys;
 pub mod json_object_pick;
+pub mod json_parse_url;
 pub mod json_split;
 pub mod json_type_name;
 pub mod json_typed_text;

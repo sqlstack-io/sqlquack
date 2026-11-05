@@ -1272,3 +1272,58 @@ fn given_system_typeof_with_its_suffix_removed_when_converting_then_the_static_t
         );
     }
 }
+
+#[test]
+fn given_urls_when_converting_parse_url_then_parts_and_parameters_are_read_as_recorded() {
+    let read = |url: &str, path: &str| {
+        format!("SELECT COALESCE(PARSE_URL('{url}', 1){path}::VARCHAR, 'null') AS v")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "the host keeps its case",
+            sql: read("https://Shop.Example.com:8443/a/b?x=1#top", "['host']"),
+            expected_outcome: Ok("Shop.Example.com"),
+        },
+        BuiltFirstValueTestCase {
+            description: "the last of a repeated parameter is kept, undecoded",
+            sql: read("https://example.com/p?s=a&s=b%20c", "['parameters']['s']"),
+            expected_outcome: Ok("b%20c"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a query after the fragment mark belongs to the fragment",
+            sql: read("https://example.com/p#frag?x=1", "['fragment']"),
+            expected_outcome: Ok("frag?x=1"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a trailing slash is an empty path",
+            sql: read("https://example.com/", "['path']"),
+            expected_outcome: Ok(""),
+        },
+        BuiltFirstValueTestCase {
+            description: "text without a scheme is the error object",
+            sql: read("example.com/landing", "['error']"),
+            expected_outcome: Ok("scheme not specified"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a URL with user information raises",
+            sql: read("https://user@example.com/", "['host']"),
+            expected_outcome: Err("a URL in a shape no recording shows"),
+        },
+        BuiltFirstValueTestCase {
+            description: "the strict mode refuses",
+            sql: "SELECT PARSE_URL('https://example.com/')::VARCHAR AS v".to_owned(),
+            expected_outcome: Err("permissive mode 1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

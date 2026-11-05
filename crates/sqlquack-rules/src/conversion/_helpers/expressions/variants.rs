@@ -20,10 +20,12 @@ use sqlquack_duckdb::variants::main::json_is_kind::json_is_kind;
 use sqlquack_duckdb::variants::main::json_is_typed::json_is_typed;
 use sqlquack_duckdb::variants::main::json_object_keys::json_object_keys;
 use sqlquack_duckdb::variants::main::json_object_pick::json_object_pick;
+use sqlquack_duckdb::variants::main::json_parse_url::json_parse_url;
 use sqlquack_duckdb::variants::main::json_split::json_split;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
+use crate::conversion::_helpers::expressions::casts::number_literal_text;
 use crate::conversion::_helpers::expressions::held::{built, leaves, read_json};
 use crate::conversion::_helpers::expressions::objects::{
     free_variant, refused, semi_structured, text_literal, variant,
@@ -48,8 +50,8 @@ use crate::conversion::constants::{
     ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_NAME, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE,
     ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE,
     ARRAY_TO_STRING_RULE, COUNTED_ARRAY_FUNCTIONS, FUNCTION_KIND, OBJECT_KEYS_RULE,
-    OBJECT_PICK_RULE, PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE, TO_VARIANT_RULE,
-    TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
+    OBJECT_PICK_RULE, PARSE_URL_RULE, PICKED_ARRAY_FUNCTIONS, SORTED_ARRAY_FUNCTION, SPLIT_RULE,
+    TO_VARIANT_RULE, TYPED_CHECKS, VARIANT_KIND_RULE, VARIANT_KINDS, VARIANT_TYPED_CHECK,
 };
 
 /// A VARIANT operand, or a NULL literal as a NULL VARIANT.
@@ -238,6 +240,18 @@ pub(crate) fn variant_function(
             let text = text_operand(text, construct, site)?;
             let separator = text_operand(separator, construct, site)?;
             Ok(semi_structured(json_split((&text, &separator), log)))
+        }
+        ("PARSE_URL", [text, mode @ ..]) if mode.len() <= 1 => {
+            let _rule = log.rule(PARSE_URL_RULE);
+            if mode.first().and_then(number_literal_text).as_deref() != Some("1") {
+                return Err(refused(
+                    construct,
+                    "PARSE_URL other than in permissive mode 1, which no recording shows",
+                ));
+            }
+            diverge(site.context, JSON_FIDELITY, construct)?;
+            let text = text_operand(text, construct, site)?;
+            Ok(semi_structured(json_parse_url(&text, log)))
         }
         ("TO_VARIANT", [value]) => {
             let _rule = log.rule(TO_VARIANT_RULE);

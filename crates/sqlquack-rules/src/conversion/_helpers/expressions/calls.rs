@@ -288,6 +288,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             | "ARRAY_CONSTRUCT_COMPACT"
             | "ARRAY_TO_STRING"
             | "SPLIT"
+            | "PARSE_URL"
             | "TO_VARIANT"
             | "IS_OBJECT"
             | "IS_ARRAY"

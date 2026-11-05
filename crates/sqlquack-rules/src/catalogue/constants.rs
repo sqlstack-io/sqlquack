@@ -37,7 +37,7 @@ use crate::conversion::constants::{
     NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
     NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
     OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
-    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PERCENTILE_RULE, PIVOT_RULE,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
     REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS,
     REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE,
@@ -620,6 +620,12 @@ pub const RULES: &[RuleSpec] = &[
                 snowflake: &[NOT_AN_ARRAY_ARGUMENT],
             },
         ],
+    },
+    RuleSpec {
+        id: PARSE_URL_RULE,
+        constructs: &["fn:PARSE_URL"],
+        conditions: "PARSE_URL(text, 1) of VARCHAR, relying on json_fidelity: an OBJECT of fragment, host, parameters, path, port, query and scheme, as recorded, for a URL of printable ASCII without spaces written scheme://host[:port][/path][?query][#fragment], each part text or NULL where absent, the path without its leading slash, and parameters an OBJECT of the query's key=value and bare key pairs, the last of a repeated key kept and a bare key null, values not decoded; every part NULL for empty text, and {'error': 'scheme not specified'} for text without a colon; NULL text is NULL. Other URLs raise json_fidelity, and other modes refuse.",
+        failures: &[],
     },
     RuleSpec {
         id: SPLIT_RULE,

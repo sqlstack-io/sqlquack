@@ -411,6 +411,8 @@ pub const ARRAY_CONSTRUCT_COMPACT_RULE: &str = "rule.array_construct_compact";
 pub const ARRAY_TO_STRING_RULE: &str = "rule.array_to_string";
 /// SPLIT.
 pub const SPLIT_RULE: &str = "rule.split";
+/// PARSE_URL in permissive mode.
+pub const PARSE_URL_RULE: &str = "rule.parse_url";
 /// ARRAY_EXCEPT.
 pub const ARRAY_EXCEPT_RULE: &str = "rule.array_except";
 /// TO_VARIANT, and casts of text, booleans and whole numbers to VARIANT.
