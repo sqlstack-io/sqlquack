@@ -1364,6 +1364,13 @@ impl Parser {
             return self.parse_drop_table_with_iceberg(leading_comments, true);
         }
 
+        let snowflake = matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        );
+        if snowflake && self.match_text_seq(&["DATABASE", "ROLE"]) {
+            return self.parse_drop_snowflake_object("DATABASE ROLE".to_owned());
+        }
         match self.peek().token_type {
             TokenType::Table => self.parse_drop_table_with_iceberg(leading_comments, false),
             TokenType::View => self.parse_drop_view(false),
@@ -1420,6 +1427,14 @@ impl Parser {
                         .iter()
                         .find(|kind| self.match_text_seq(kind))
                     {
+                        let shorter = &kind[..kind.len() - 1];
+                        let kind_word_named = kind.len() > 1
+                            && self.is_statement_end_at(0)
+                            && SNOWFLAKE_DROP_KINDS.contains(&shorter);
+                        if kind_word_named {
+                            self.current -= 1;
+                            return self.parse_drop_snowflake_object(shorter.join(" "));
+                        }
                         return self.parse_drop_snowflake_object(kind.join(" "));
                     }
                 }

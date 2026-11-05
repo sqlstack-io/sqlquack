@@ -92,7 +92,17 @@ impl Parser {
         let Some(kind) = SNOWFLAKE_DESCRIBE_KINDS
             .iter()
             .find(|kind| self.match_text_seq(kind))
-            .map(|kind| kind.join(" "))
+            .map(|kind| {
+                let shorter = &kind[..kind.len() - 1];
+                let kind_word_named = kind.len() > 1
+                    && self.is_statement_end_at(0)
+                    && SNOWFLAKE_DESCRIBE_KINDS.contains(&shorter);
+                if kind_word_named {
+                    self.current -= 1;
+                    return shorter.join(" ");
+                }
+                kind.join(" ")
+            })
         else {
             let shared = SHARED_DESCRIBE_KINDS
                 .iter()

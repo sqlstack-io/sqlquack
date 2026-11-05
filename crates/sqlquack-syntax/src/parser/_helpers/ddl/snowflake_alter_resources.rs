@@ -14,6 +14,7 @@ use crate::tokens::types::Result;
 /// The object kinds this module parses, as the words that follow ALTER.
 const RESOURCE_KINDS: &[&[&str]] = &[
     &["MULTI", "PARTY", "APPROVAL", "POLICY"],
+    &["ROW", "ACCESS", "POLICY"],
     &["STORAGE", "LIFECYCLE", "POLICY"],
     &["DATA", "MOVEMENT", "POLICY"],
     &["AGGREGATION", "POLICY"],
@@ -28,6 +29,8 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["NETWORK", "RULE"],
     &["PACKAGES", "POLICY"],
     &["PASSWORD", "POLICY"],
+    &["PRIVACY", "POLICY"],
+    &["PROJECTION", "POLICY"],
     &["SESSION", "POLICY"],
     &["SNAPSHOT", "POLICY"],
     &["RESTRICTED", "SESSION", "SCOPE"],
@@ -242,7 +245,7 @@ impl Parser {
                 "COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT" | "ARTIFACT"
                 | "MATERIALIZED" | "RESTRICTED" | "VOLUME" | "AGGREGATION" | "AUTHENTICATION"
                 | "BACKUP" | "DATA" | "INGRESS" | "JOIN" | "MAINTENANCE" | "MASKING" | "MULTI"
-                | "NETWORK" | "PACKAGES" | "PASSWORD",
+                | "NETWORK" | "PACKAGES" | "PASSWORD" | "PRIVACY" | "PROJECTION" | "ROW",
                 _,
             ) => false,
             _ => return None,
