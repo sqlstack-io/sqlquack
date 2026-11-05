@@ -783,7 +783,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ROUNDING,
         constructs: &["fn:ROUND", "fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"],
-        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
+        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero, or for a NUMBER with the rounding mode 'HALF_TO_EVEN', half to even, as recorded, 'HALF_AWAY_FROM_ZERO' as without a mode; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1305,12 +1305,13 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "fn:COUNT",
             "fn:SUM",
+            "fn:AVG",
             "fn:MIN",
             "fn:MAX",
             "fn:RATIO_TO_REPORT",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
+        conditions: "The aggregate's own conditions, AVG as SUM divided by COUNT over the same frame, NULL for a frame without values; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

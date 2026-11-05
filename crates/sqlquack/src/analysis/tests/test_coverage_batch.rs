@@ -1117,3 +1117,104 @@ fn given_misspelled_text_when_trying_a_month_name_format_then_it_is_null_and_spa
         );
     }
 }
+
+#[test]
+fn given_a_rounding_mode_when_converting_round_then_half_to_even_rounds_ties_to_even_digits() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "HALF_TO_EVEN rounds a tie down to an even digit",
+            sql: "SELECT ROUND(2.25, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("2.2"),
+        },
+        FirstValueTestCase {
+            description: "HALF_TO_EVEN rounds a tie up to an even digit, also below zero",
+            sql: "SELECT ROUND(-2.35, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("-2.4"),
+        },
+        FirstValueTestCase {
+            description: "a value past the tie rounds to the nearest",
+            sql: "SELECT ROUND(2.2501, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("2.3"),
+        },
+        FirstValueTestCase {
+            description: "negative places round a tie of tens to even",
+            sql: "SELECT ROUND(25, -1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Ok("20"),
+        },
+        FirstValueTestCase {
+            description: "HALF_AWAY_FROM_ZERO is ROUND without a mode",
+            sql: "SELECT ROUND(2.25, 1, 'HALF_AWAY_FROM_ZERO') AS v",
+            expected_outcome: Ok("2.3"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT with a mode refuses",
+            sql: "SELECT ROUND(2.25::FLOAT, 1, 'HALF_TO_EVEN') AS v",
+            expected_outcome: Err("FLOAT with a rounding mode"),
+        },
+        FirstValueTestCase {
+            description: "a mode spelled otherwise refuses",
+            sql: "SELECT ROUND(2.25, 1, 'half_to_even') AS v",
+            expected_outcome: Err("rounding mode no recording shows"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_values_exactly() {
+    let rows = "(VALUES (1, 'a', 1), (2, 'a', NULL), (3, 'a', 2), (4, 'a', 2), (5, 'b', NULL)) AS t(n, g, x)";
+    let averaged = |over: &str, n: u8| {
+        format!(
+            "SELECT COALESCE(TO_VARCHAR(a), 'null') AS v FROM (SELECT n, AVG(x) OVER ({over}) AS a \
+             FROM {rows}) WHERE n = {n}"
+        )
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "a ROWS frame skips NULLs and keeps six more decimal places",
+            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW", 3),
+            expected_outcome: Ok("1.500000"),
+        },
+        BuiltFirstValueTestCase {
+            description: "the sixth place is rounded half up",
+            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 3 PRECEDING AND CURRENT ROW", 4),
+            expected_outcome: Ok("1.666667"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a frame without values is NULL",
+            sql: averaged("PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING", 1),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a partition of NULLs is NULL over the whole partition",
+            sql: averaged("PARTITION BY g", 5),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "an ordered window without a frame runs to the current row",
+            sql: averaged("PARTITION BY g ORDER BY n", 2),
+            expected_outcome: Ok("1.000000"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

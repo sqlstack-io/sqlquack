@@ -384,7 +384,7 @@ pub(crate) fn convert_aggregate(
     match kind {
         "count" => call.count(),
         "sum" => call.sum(),
-        "avg" => call.average(window.is_some()),
+        "avg" => call.average(),
         _ => call.min_max(kind),
     }
 }
@@ -464,13 +464,10 @@ impl AggregateCall<'_> {
         Ok(Emitted::new(sql, data_type))
     }
 
-    fn average(&self, windowed: bool) -> Result<Emitted, Refusal> {
+    fn average(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
-        if windowed {
-            return Err(refuse("AVG over a window".to_owned()));
-        }
         let argument = self.argument("avg")?;
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
         let data_type = average(argument.data_type, log).map_err(refuse)?;
@@ -482,13 +479,14 @@ impl AggregateCall<'_> {
         };
         let distinct = self.distinct();
         let counted = cast(
-            &format!("count({distinct}{})", argument.sql),
+            &format!("count({distinct}{}){}", argument.sql, self.over),
             count(log),
             log,
         )
         .map_err(refuse)?;
         let total_sql =
-            cast(&format!("sum({distinct}{})", argument.sql), total, log).map_err(refuse)?;
+            cast(&format!("sum({distinct}{}){}", argument.sql, self.over), total, log)
+                .map_err(refuse)?;
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),

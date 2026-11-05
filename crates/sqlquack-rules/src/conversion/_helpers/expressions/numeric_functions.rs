@@ -173,24 +173,36 @@ pub(crate) fn rounding(
 ) -> Result<Emitted, Refusal> {
     let _rule = site.context.log.rule(ROUNDING);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    let (value, places) = match (name, arguments) {
-        (_, [value]) => (value, 0_i32),
+    let places_of = |places: &Value| {
+        literal_places(places)
+            .ok_or_else(|| refuse(format!("{name} to places other than a literal integer")))
+    };
+    let (value, places, half_to_even) = match (name, arguments) {
+        (_, [value]) => (value, 0_i32, false),
         ("TRUNC" | "TRUNCATE", [value, unit]) if text_literal(unit, site)? => {
             return date_trunc(unit, value, construct, site);
         }
-        ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (
-            value,
-            literal_places(places)
-                .ok_or_else(|| refuse(format!("{name} to places other than a literal integer")))?,
-        ),
+        ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (value, places_of(places)?, false),
+        ("ROUND", [value, places, mode]) => {
+            let half_to_even = match convert_expression(mode, site)?.literal {
+                Some(Literal::Text(mode)) if mode == "HALF_TO_EVEN" => true,
+                Some(Literal::Text(mode)) if mode == "HALF_AWAY_FROM_ZERO" => false,
+                _ => return Err(refuse("ROUND with a rounding mode no recording shows".to_owned())),
+            };
+            (value, places_of(places)?, half_to_even)
+        }
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
     let operand = convert_expression(value, site)?;
-    let function = match name {
-        "TRUNCATE" => "trunc".to_owned(),
-        _ => name.to_ascii_lowercase(),
+    let function = match (name, half_to_even) {
+        (_, true) => "round_even".to_owned(),
+        ("TRUNCATE", false) => "trunc".to_owned(),
+        (_, false) => name.to_ascii_lowercase(),
     };
     match operand.data_type {
+        SnowflakeType::Float if arguments.len() == 3 => Err(refuse(
+            "ROUND of a FLOAT with a rounding mode, which no recording shows".to_owned(),
+        )),
         SnowflakeType::Float if name == ROUND_FUNCTION && places != 0 => Ok(Emitted::new(
             format!(
                 "(round(CAST({} AS DOUBLE) * CAST(1e{places} AS DOUBLE)) / CAST(1e{places} AS DOUBLE) \
