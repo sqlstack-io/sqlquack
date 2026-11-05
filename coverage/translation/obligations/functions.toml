@@ -21638,7 +21638,7 @@ kind = "type_combination"
 target = "VARIANT holding OBJECT"
 note = "Objects, nested and empty."
 catches = "an empty object returned as NULL, or nested objects flattened"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t001_object"]
 required = true
 
@@ -21649,7 +21649,7 @@ kind = "error_parity"
 target = "error"
 note = "An array, for which the page says any input other than an OBJECT reports an error."
 catches = "the array converted to an object, instead of the error"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t002_array"]
 required = true
 
@@ -21660,18 +21660,18 @@ kind = "null_argument"
 target = "expr"
 note = "A SQL NULL."
 catches = "an empty object returned"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t003_null_expr"]
 required = true
 
 [[obligation]]
 id = "sf.functions.to-object.t004"
 form = "sf.functions.to-object"
-kind = "error_parity"
-target = "error"
-note = "A string holding object text, for which the page says any input other than an OBJECT reports an error."
-catches = "the string parsed, instead of the error"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+kind = "type_combination"
+target = "VARIANT holding VARCHAR"
+note = "A VARIANT holding the text {}. The page says any input other than an OBJECT reports an error, but the recording shows Snowflake parsing the string into the empty object."
+catches = "the error the page describes raised, or the string returned unchanged"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t004_string"]
 required = true
 
