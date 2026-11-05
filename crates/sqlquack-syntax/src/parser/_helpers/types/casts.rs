@@ -232,9 +232,50 @@ impl Parser {
         name.eq_ignore_ascii_case("INT128") || name.eq_ignore_ascii_case("HUGEINT")
     }
 
-    /// Vertica interval qualifiers may carry a seconds precision: `SECOND(3)`.
+    /// Reads Snowflake's `( n )` after an interval field; Vertica's `SECOND(3)` is read elsewhere.
     pub(crate) fn parse_interval_field_precision(&mut self, unit: String) -> Result<String> {
-        Ok(unit)
+        use crate::parser::constants::{
+            SECOND_PREVIOUS_OFFSET, SNOWFLAKE_INTERVAL_FRACTION, SNOWFLAKE_INTERVAL_LEADING,
+            SNOWFLAKE_INTERVAL_SECOND,
+        };
+        if !self.is_snowflake() || !self.check(TokenType::LParen) {
+            return Ok(unit);
+        }
+        let after_to = self.current >= SECOND_PREVIOUS_OFFSET
+            && self.tokens[self.current - SECOND_PREVIOUS_OFFSET].token_type == TokenType::To;
+        let range = match after_to && unit == SNOWFLAKE_INTERVAL_SECOND {
+            true => SNOWFLAKE_INTERVAL_FRACTION,
+            false => SNOWFLAKE_INTERVAL_LEADING,
+        };
+        self.skip();
+        let number = self.check(TokenType::Number);
+        match self.peek_text().parse::<u8>() {
+            Ok(digits) if number && range.contains(&digits) => {
+                self.skip();
+                self.expect_token(TokenType::RParen)?;
+                Ok(format!("{unit}({digits})"))
+            }
+            _ => Err(self.parse_error(format!(
+                "Expected an interval precision from {} to {}",
+                range.start(),
+                range.end()
+            ))),
+        }
+    }
+
+    /// Refuses Snowflake's INTERVAL type without a field, or with TO and no field after it.
+    pub(crate) fn refuse_snowflake_bare_interval(
+        &self,
+        unit: &Option<String>,
+        to: &Option<String>,
+    ) -> Result<()> {
+        let dangling_to = to.is_none() && self.previous().token_type == TokenType::To;
+        match self.is_snowflake() && (unit.is_none() || dangling_to) {
+            true => {
+                Err(self.parse_error("Expected an interval field such as DAY or YEAR TO MONTH"))
+            }
+            false => Ok(()),
+        }
     }
 
     /// Parse a data type.
@@ -867,6 +908,7 @@ impl Parser {
         } else {
             None
         };
+        self.refuse_snowflake_bare_interval(&unit, &to)?;
         Ok(DataType::Interval { unit, to })
     }
 

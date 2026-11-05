@@ -140,6 +140,126 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a data metric function takes a bare query (recorded semantic error)",
+            sql: "SELECT SNOWFLAKE . CORE . NULL_COUNT ( SELECT c1 FROM t1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an unqualified call takes no bare query",
+            sql: "SELECT COUNT ( SELECT 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a model method needs a name before ! (recorded errno 1003)",
+            sql: "SELECT ( m1 )!predict ( * ) FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "MODEL( ) takes names, not strings (recorded errno 1003)",
+            sql: "SELECT MODEL ( 'v1' )!predict ( 1 ) FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a method call needs a method after ! (recorded errno 1003)",
+            sql: "SELECT svc1! ( v1 , v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "MODEL( )!method parses (recorded success)",
+            sql: "SELECT MODEL ( m1 , v1 )!predict ( 1 ) FROM t1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a stage reference is no string (recorded errno 1003)",
+            sql: "SELECT GET_STAGE_LOCATION ( @'v1' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a quoted stage name has no blanks (recorded errno 1003)",
+            sql: "SELECT GET_STAGE_LOCATION ( @\"v1 Q\" ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a stage name is no reserved word (recorded errno 1003)",
+            sql: "SELECT GET_STAGE_LOCATION ( @SELECT ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a quoted reserved stage name parses (recorded semantic error)",
+            sql: "SELECT GET_STAGE_LOCATION ( @\"SELECT\" ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an interval type takes a precision (recorded success)",
+            sql: "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 3 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an interval leading precision is 1 to 9 (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS INTERVAL YEAR ( 0 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "seconds after TO take precision 0 (recorded success)",
+            sql: "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 0 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an interval type needs a field (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS INTERVAL ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TO needs a field after it (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS INTERVAL DAY TO ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a block declares a nested procedure (recorded success)",
+            sql: "DECLARE p1 PROCEDURE ( v1 INT ) RETURNS TABLE ( c1 INT ) AS BEGIN RETURN 1 ; END ; BEGIN RETURN 1 ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a reserved word is no later name part (recorded errno 1003)",
+            sql: "SELECT SYSTEM$GET_SERVICE_STATUS ( v1 . SELECT . svc1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a function call may leave out the schema (recorded semantic error)",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a name without a call keeps its schema (recorded errno 1003)",
+            sql: "SELECT SYSTEM$GET_SERVICE_STATUS ( v1 . . svc1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "BEGIN WORK NAME names the transaction (recorded success)",
+            sql: "BEGIN WORK NAME v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
@@ -172,6 +292,36 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "SELECT SUM ( ) OVER ( )",
             pointer: "/0/select/expressions/0/window_function/this/function/args",
             expected_value: json!([]),
+        },
+        ProjectionTestCase {
+            description: "BEGIN WORK NAME keeps the name",
+            sql: "BEGIN WORK NAME \"v1 Q\"",
+            pointer: "/0/transaction/this/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an interval type keeps its precision",
+            sql: "SELECT CAST ( NULL AS INTERVAL DAY TO SECOND ( 3 ) )",
+            pointer: "/0/select/expressions/0/cast/to/to",
+            expected_value: json!("SECOND(3)"),
+        },
+        ProjectionTestCase {
+            description: "a nested procedure keeps its return columns",
+            sql: "DECLARE p1 PROCEDURE ( ) RETURNS TABLE ( c1 INT ) AS BEGIN RETURN 1 ; END ; BEGIN RETURN 1 ; END ;",
+            pointer: "/0/scripting_block/declarations/0/procedure/returns_table/0/name",
+            expected_value: json!("c1"),
+        },
+        ProjectionTestCase {
+            description: "a call without a schema keeps the empty part",
+            sql: "SELECT d1 . . f1 ( 1 )",
+            pointer: "/0/select/expressions/0/method_call/this/column/name/name",
+            expected_value: json!(""),
+        },
+        ProjectionTestCase {
+            description: "a data metric function keeps its query argument",
+            sql: "SELECT SNOWFLAKE . CORE . NULL_COUNT ( SELECT c1 FROM t1 )",
+            pointer: "/0/select/expressions/0/method_call/args/0/subquery/this/select/from/expressions/0/table/name/name",
+            expected_value: json!("t1"),
         },
     ];
 

@@ -1547,6 +1547,12 @@ impl Parser {
         }
 
         if self.match_token(TokenType::Dot) {
+            if let Some(call) = self.parse_snowflake_default_schema_call(
+                Identifier::new(name.clone()).with_span(token.span),
+            )? {
+                return self.maybe_parse_subscript(call);
+            }
+            self.refuse_snowflake_reserved_part()?;
             if self.match_token(TokenType::Star) {
                 let ident = Identifier::new(name).with_span(token.span);
                 let star = self.parse_star_modifiers(Some(ident))?;

@@ -1935,7 +1935,9 @@ impl Parser {
             }
         }
 
-        while self.match_token(TokenType::Exclamation) {
+        while self.check(TokenType::Exclamation) {
+            self.refuse_snowflake_bang_call(&expr)?;
+            self.skip();
             let attr = self.parse_primary()?;
             expr = Expression::ModelAttribute(Box::new(ModelAttribute {
                 this: Box::new(expr),

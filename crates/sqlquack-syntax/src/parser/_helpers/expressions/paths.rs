@@ -1088,6 +1088,10 @@ impl Parser {
         }
 
         if self.match_token(TokenType::Dot) {
+            if let Some(call) = self.parse_snowflake_default_schema_call(ident.clone())? {
+                return self.maybe_parse_subscript(call);
+            }
+            self.refuse_snowflake_reserved_part()?;
             if self.match_token(TokenType::Star) {
                 let star = self.parse_star_modifiers(Some(ident))?;
                 let star_expr = Expression::Star(star);
@@ -1220,6 +1224,7 @@ impl Parser {
         if self.tokens.is_empty() {
             return Err(self.end_of_input_error());
         }
+        self.refuse_snowflake_stage_reference()?;
 
         if self.check(TokenType::If)
             && !self.if_expr_ruled_out.contains(&self.current)

@@ -210,6 +210,22 @@ impl Parser {
             || self.check_identifier("IMMEDIATE")
             || self.check_identifier("EXCLUSIVE");
 
+        let kind_then_name = (self.check(TokenType::Transaction) || self.check_identifier("WORK"))
+            && self
+                .peek_nth(1)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("NAME"));
+        if self.is_snowflake() && kind_then_name {
+            self.skip();
+            self.skip();
+            let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
+            return Ok(Expression::Transaction(Box::new(Transaction {
+                this: Some(Box::new(Expression::Identifier(name))),
+                modes: None,
+                mark: Some(Box::new(Expression::Identifier(Identifier::new(
+                    "TRANSACTION".to_string(),
+                )))),
+            })));
+        }
         if self.is_snowflake() && self.check_identifier("NAME") {
             self.refuse_snowflake_nameless_transaction()?;
             self.skip();

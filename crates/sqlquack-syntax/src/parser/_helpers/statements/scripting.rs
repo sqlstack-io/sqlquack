@@ -8,9 +8,9 @@ use crate::expressions::statements::models::{
     ScriptingExceptionHandler, ScriptingFetch, ScriptingFor, ScriptingForIteration,
     ScriptingHandledExceptions, ScriptingHandlerAction, ScriptingIf, ScriptingJump,
     ScriptingJumpKeyword, ScriptingLet, ScriptingLoop, ScriptingLoopKeyword, ScriptingName,
-    ScriptingNull, ScriptingOpen, ScriptingRaise, ScriptingRange, ScriptingRepeat,
-    ScriptingResultset, ScriptingResultsetDefault, ScriptingReturn, ScriptingReturnValue,
-    ScriptingSql, ScriptingStatement, ScriptingVariable, ScriptingWhile,
+    ScriptingNull, ScriptingOpen, ScriptingProcedure, ScriptingRaise, ScriptingRange,
+    ScriptingRepeat, ScriptingResultset, ScriptingResultsetDefault, ScriptingReturn,
+    ScriptingReturnValue, ScriptingSql, ScriptingStatement, ScriptingVariable, ScriptingWhile,
 };
 use crate::expressions::tree::models::Expression;
 use crate::parser::models::Parser;
@@ -204,10 +204,24 @@ impl Parser {
         if !is_let && self.match_text_seq(&["EXCEPTION"]) {
             return self.parse_scripting_exception(start, name);
         }
+        if !is_let && self.match_text_seq(&["PROCEDURE"]) {
+            let parameters = self.parse_anonymous_procedure_parameters()?;
+            let (return_type, returns_table) = self.parse_procedure_returns()?;
+            self.expect_token(TokenType::As)?;
+            let body = self.with_parser_depth(Self::parse_scripting_block_members)?;
+            return Ok(ScriptingDeclaration::Procedure(Box::new(
+                ScriptingProcedure {
+                    span: self.source_range(start),
+                    name,
+                    parameters,
+                    return_type,
+                    returns_table,
+                    body,
+                },
+            )));
+        }
         if self.check_text_seq(&["PROCEDURE"]) {
-            return Err(self.parse_error(
-                "SCRIPTING_PENDING: nested procedure declarations are not parsed yet",
-            ));
+            return Err(self.parse_error("Expected DECLARE before a nested procedure"));
         }
         let data_type = if self.check(TokenType::ColonEq)
             || self.check_text_seq(&["DEFAULT"])

@@ -437,6 +437,9 @@ impl Parser {
     }
 
     pub(crate) fn parse_method_arguments_for(&mut self, method: &str) -> Result<Vec<Expression>> {
+        if let Some(query) = self.parse_snowflake_query_argument()? {
+            return Ok(vec![query]);
+        }
         self.parse_function_arguments_in_context(Some(method), true)
     }
 

@@ -875,3 +875,12 @@ pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
         ],
     ),
 ];
+
+/// The interval field whose precision after TO counts fractional digits.
+pub(crate) const SNOWFLAKE_INTERVAL_SECOND: &str = "SECOND";
+
+/// Snowflake's recorded leading-field interval precisions, as in `INTERVAL YEAR ( 9 )`.
+pub(crate) const SNOWFLAKE_INTERVAL_LEADING: std::ops::RangeInclusive<u8> = 1..=9;
+
+/// Snowflake's recorded fractional-second precisions after TO, as in `DAY TO SECOND ( 0 )`.
+pub(crate) const SNOWFLAKE_INTERVAL_FRACTION: std::ops::RangeInclusive<u8> = 0..=9;
