@@ -17,13 +17,13 @@ use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 
 use crate::analysis::main::analyze_function::analyze_function;
-use crate::analysis::main::parse_session::parse_session;
-use crate::analysis::main::session_conversion_options::session_conversion_options;
 use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
+use sqlquack_rules::session::main::parse_session::parse_session;
+use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";

@@ -4,11 +4,14 @@
 //! `sqlquack convert` does, and returns the result as JSON for the page.
 
 use std::collections::BTreeMap;
+use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlquack_core::classification::main::classify::classify;
+use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::parsing::main::node_location::node_location;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
@@ -20,23 +23,29 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::column_type::column_type;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
+use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
+use sqlquack_rules::conversion::main::within_budget::within_budget;
 use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_rules::session::main::parse_session::parse_session;
+use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
+use sqlquack_semantics::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::types::models::Schema;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-/// Every stage's result for `sql` over the relations `schema` declares, as JSON.
+/// Every stage's result for `sql` over the relations `schema` declares, as JSON. `settings` is
+/// JSON `{"policy": TOML, "session": "NAME=VALUE" lines, "strict": bool, "utc_session": bool}`;
+/// an empty policy is the built-in default, as `sqlquack convert --builtin-policy`.
 #[wasm_bindgen]
-pub fn analyze(sql: &str, schema: &str) -> String {
-    report(sql, schema).to_string()
+pub fn analyze(sql: &str, schema: &str, settings: Option<String>) -> String {
+    report(sql, schema, settings.as_deref().unwrap_or_default()).to_string()
 }
 
 /// `CREATE TABLE` for each relation in `schema`, in the DuckDB types converted SQL reads them as,
@@ -72,28 +81,6 @@ pub fn fixture_tables(schema: &str) -> String {
     json!({ "tables": tables }).to_string()
 }
 
-/// The relations of a schema file: `{"ORDERS": [["ORDER_ID", "NUMBER(38,0)"], …]}`, or the same
-/// under `"relations"`. Columns may also be `{"name": …, "type": …}` objects.
-#[derive(Deserialize)]
-#[serde(untagged)]
-enum RawSchema {
-    Sections {
-        relations: BTreeMap<String, Vec<RawColumn>>,
-    },
-    Relations(BTreeMap<String, Vec<RawColumn>>),
-}
-
-#[derive(Deserialize)]
-#[serde(untagged)]
-enum RawColumn {
-    Pair(String, String),
-    Described {
-        name: String,
-        #[serde(rename = "type")]
-        type_name: String,
-    },
-}
-
 /// The schema's relations as conversion types them, and as name checks resolve them.
 #[derive(Debug, Default)]
 struct Catalog {
@@ -107,38 +94,68 @@ impl LineageSchema for Catalog {
     }
 }
 
+/// The schema file `text`, read by the same parser as `sqlquack convert --schema`.
 fn catalog(text: &str) -> Result<Catalog, String> {
     if text.trim().is_empty() {
         return Ok(Catalog::default());
     }
-    let relations = match serde_json::from_str(text).map_err(|error| error.to_string())? {
-        RawSchema::Sections { relations } | RawSchema::Relations(relations) => relations,
+    let schema = parse_schema(text).map_err(|error| error.to_string())?;
+    let columns = schema
+        .relations
+        .iter()
+        .map(|(relation, columns)| {
+            let named = columns
+                .iter()
+                .map(|column| SchemaColumn {
+                    name: column.name.clone(),
+                    quoted: false,
+                    data_type: Some(column.data_type.to_string()),
+                    nullability: Nullability::Unknown,
+                })
+                .collect();
+            (relation.clone(), named)
+        })
+        .collect();
+    Ok(Catalog { schema, columns })
+}
+
+/// The playground's policy and session settings.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+struct Settings {
+    policy: String,
+    session: String,
+    strict: bool,
+    utc_session: bool,
+}
+
+/// Conversion options for `settings` as `sqlquack convert` chooses them, and the matched profile;
+/// a session no recorded profile covers is a refusal, as on the command line.
+fn chosen_options(settings: &str) -> Result<Result<(ConversionOptions, String), String>, String> {
+    let settings: Settings = match settings.trim() {
+        "" => Settings::default(),
+        text => serde_json::from_str(text).map_err(|error| error.to_string())?,
     };
-    let log = ProvenanceLog::default();
-    let mut catalog = Catalog::default();
-    for (relation, raw) in relations {
-        let mut typed = Vec::with_capacity(raw.len());
-        let mut named = Vec::with_capacity(raw.len());
-        for column in raw {
-            let (name, type_name) = match column {
-                RawColumn::Pair(name, type_name) | RawColumn::Described { name, type_name } => {
-                    (name, type_name)
-                }
-            };
-            let target = cast_target(&type_name, &log)
-                .map_err(|error| format!("{relation}.{name}: {error}"))?;
-            named.push(SchemaColumn {
-                name: name.clone(),
-                quoted: false,
-                data_type: Some(type_name),
-                nullability: Nullability::Unknown,
-            });
-            typed.push(ColumnSpec::new(name, target.data_type));
-        }
-        catalog.columns.insert(relation.clone(), named);
-        catalog.schema.relations.insert(relation, typed);
-    }
-    Ok(catalog)
+    let policy = match settings.policy.trim() {
+        "" => None,
+        text => Some(
+            text.parse::<Policy>()
+                .map_err(|error| format!("policy: {error}"))?,
+        ),
+    };
+    let lines: Vec<String> = settings
+        .session
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .map(str::to_owned)
+        .collect();
+    let parameters = parse_session(&lines)?;
+    Ok(session_conversion_options(
+        policy.as_ref(),
+        (settings.strict, settings.utc_session),
+        &parameters,
+    ))
 }
 
 /// A stage's verdict and what it found.
@@ -186,10 +203,14 @@ fn placed(mut refusal: Refusal, statement: &Expression, lines: &SourceLines) -> 
     refusal
 }
 
-fn report(sql: &str, schema: &str) -> Value {
+fn report(sql: &str, schema: &str, settings: &str) -> Value {
     let catalog = match catalog(schema) {
         Ok(catalog) => catalog,
         Err(error) => return json!({ "schema_error": error }),
+    };
+    let session = match chosen_options(settings) {
+        Ok(session) => session,
+        Err(error) => return json!({ "settings_error": error }),
     };
     let lines = SourceLines::new(sql);
 
@@ -249,11 +270,20 @@ fn report(sql: &str, schema: &str) -> Value {
         return json!({ "parse": parse, "checks": checks, "translate": Stage::skipped() });
     }
 
-    // 3. Convert each statement, or refuse it, as `sqlquack convert --builtin-policy` does.
+    // 3. Convert each statement, or refuse it, as `sqlquack convert` does under the same policy.
     let policy = builtin_catalogue();
+    let (options, profile) = match session {
+        Ok(chosen) => chosen,
+        Err(reason) => {
+            let refused = unplaced_diagnostic(SESSION_PARAMETERS, reason)
+                .and_then(|diagnostic| serde_json::to_value(diagnostic).ok());
+            let translate = Stage::new(false, refused.into_iter().collect());
+            return json!({ "parse": parse, "checks": checks, "translate": translate });
+        }
+    };
     let options = ConversionOptions {
         quoted_exclusions: quoted_exclusions(sql),
-        ..ConversionOptions::default()
+        ..options
     };
     let mut refusals = Vec::new();
     let mut converted = Vec::new();
@@ -267,11 +297,14 @@ fn report(sql: &str, schema: &str) -> Value {
             refusals.extend(declared);
             continue;
         }
-        match convert_statement(
+        let started = now_ms();
+        let done = convert_statement(
             statement,
             (&catalog.schema, &options, &lines),
             ProvenanceLog::default(),
-        ) {
+        );
+        let elapsed = Duration::from_secs_f64((now_ms() - started).max(0.0) / 1000.0);
+        match done.and_then(|done| within_budget(done, (sql, elapsed), &options)) {
             Ok(done) => converted.push(json!({
                 "sql": done.sql,
                 "columns": done.columns.iter().map(|column| json!({
@@ -284,5 +317,26 @@ fn report(sql: &str, schema: &str) -> Value {
     }
     let mut translate = Stage::new(refusals.is_empty(), diagnostics(&refusals, sql));
     translate.extra.insert("statements", json!(converted));
+    translate.extra.insert("profile", json!(profile));
     json!({ "parse": parse, "checks": checks, "translate": translate })
+}
+
+/// Milliseconds on a monotonic clock: `performance.now()` in the browser, where `Instant` panics.
+#[cfg(target_arch = "wasm32")]
+fn now_ms() -> f64 {
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_namespace = performance, js_name = now)]
+        fn performance_now() -> f64;
+    }
+    performance_now()
+}
+
+/// Milliseconds on a monotonic clock, for native builds of this crate.
+#[cfg(not(target_arch = "wasm32"))]
+fn now_ms() -> f64 {
+    use std::sync::OnceLock;
+    use std::time::Instant;
+    static START: OnceLock<Instant> = OnceLock::new();
+    START.get_or_init(Instant::now).elapsed().as_secs_f64() * 1000.0
 }

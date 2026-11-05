@@ -35,13 +35,13 @@ use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
-use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::evidence::{Evidence, load_evidence};
 use crate::cli::models::{
     CompareArguments, Comparison, CoverageArguments, EvidencePaths, VerifyArguments,
 };
 use crate::statements::main::write_translation_statements::write_translation_statements;
+use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 pub(crate) fn verify_command(
     arguments: &VerifyArguments,

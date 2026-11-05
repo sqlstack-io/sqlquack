@@ -3,16 +3,17 @@
 use sqlquack_core::classification::main::classify::classify;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::Expression;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_core::refusals::types::ConstructPolicy;
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_core::refusals::models::Refusal;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
+use sqlquack_rules::conversion::main::within_budget::within_budget;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_semantics::types::models::Schema;
 
@@ -88,40 +89,4 @@ fn convert_within_budget(
     );
     let elapsed = started.elapsed();
     converted.and_then(|converted| within_budget(converted, (sql, elapsed), options))
-}
-
-/// `converted`, or a refusal when converting it outran the time or size budget.
-fn within_budget(
-    converted: Converted,
-    (source, elapsed): (&str, Duration),
-    options: &ConversionOptions,
-) -> Result<Converted, Refusal> {
-    let budget = options.budget;
-    let emitted = converted.sql.len() as u64;
-    let allowed = budget
-        .minimum_bytes
-        .max((source.len() as u64).saturating_mul(budget.size_ratio));
-    let reason = if elapsed > Duration::from_millis(budget.milliseconds) {
-        format!(
-            "converting the statement took {} ms, beyond the budget of {} ms",
-            elapsed.as_millis(),
-            budget.milliseconds
-        )
-    } else if emitted > allowed {
-        format!(
-            "the DuckDB SQL is {emitted} bytes for {} bytes of source, beyond the budget of \
-             {allowed} bytes ({} times the source, at least {})",
-            source.len(),
-            budget.size_ratio,
-            budget.minimum_bytes
-        )
-    } else {
-        return Ok(converted);
-    };
-    Err(Refusal {
-        construct: None,
-        location: None,
-        category: RefusalCategory::ConversionBudget,
-        reason,
-    })
 }

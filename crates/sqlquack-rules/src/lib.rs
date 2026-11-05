@@ -4,3 +4,4 @@
 
 pub mod catalogue;
 pub mod conversion;
+pub mod session;

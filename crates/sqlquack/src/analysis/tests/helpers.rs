@@ -24,13 +24,13 @@ use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
-use crate::analysis::main::confirm_utc_session::confirm_utc_session;
-use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
     AnalysisSummary, CollectedSummary, DivergenceModeOutcome,
 };
+use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
+use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 fn shop_schema() -> Schema {
     let mut schema = shop_relations();

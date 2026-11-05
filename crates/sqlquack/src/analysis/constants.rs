@@ -9,12 +9,6 @@ pub const SCALAR_RESULT_COLUMN: &str = "RESULT";
 /// Settings every DuckDB session running converted SQL must have: the proofs hold only in UTC.
 pub const REQUIRED_DUCKDB_SETTINGS: &[(&str, &str)] = &[("TimeZone", "UTC")];
 
-/// The profile name reported when the built-in default stands in for a policy.
-pub const BUILTIN_PROFILE: &str = "the built-in default";
-
-/// The offsets a schema may declare for a TIMESTAMP_TZ source column, all meaning +00:00.
-pub const DECLARABLE_OFFSETS: &[&str] = &["+00:00", "UTC"];
-
 /// How a Python function's scalar values cross: VARCHAR, NUMBER, FLOAT and BOOLEAN as recorded.
 pub const SCALAR_ABI: &str = "scalar-v1";
 /// How a Python function's VARIANT result crosses: JSON text written by SQLQuack's runtime.

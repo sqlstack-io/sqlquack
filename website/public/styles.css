@@ -1216,6 +1216,26 @@ footer a {
 	font-size: 12px;
 }
 
+.pg-note label {
+	margin-right: 16px;
+	cursor: pointer;
+}
+
+.pg-small.pg-short {
+	min-height: 56px;
+	margin-top: 12px;
+}
+
+.pg-link {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--primary);
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 .pg-stages {
 	display: grid;
 	gap: 12px;

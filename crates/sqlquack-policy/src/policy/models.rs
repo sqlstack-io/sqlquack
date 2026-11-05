@@ -1,8 +1,12 @@
 //! The policy schema. Every struct rejects unknown keys.
 
 use std::collections::BTreeMap;
+use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
+
+use crate::policy::_helpers::parsing::parse_policy;
+use crate::policy::errors::PolicyError;
 
 /// The whole policy file.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -215,4 +219,13 @@ pub enum PatternArgument {
     Literal(i64),
     /// A lower-case name bound by the first match.
     Variable(String),
+}
+
+/// A policy file's text, validated as `load_policy` validates a file; for callers without files.
+impl FromStr for Policy {
+    type Err = PolicyError;
+
+    fn from_str(text: &str) -> Result<Self, Self::Err> {
+        parse_policy(text)
+    }
 }
