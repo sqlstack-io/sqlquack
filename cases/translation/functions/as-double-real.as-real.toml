@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_match"
-description = "Numbers written with an exponent and a negative zero fraction. Catches: the exponent misread, or the sign lost"
+description = "Numbers written with an exponent, one negative and one large. Catches: the exponent misread, or the sign lost"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'1.5e0'"],

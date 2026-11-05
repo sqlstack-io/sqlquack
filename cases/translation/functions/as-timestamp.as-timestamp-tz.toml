@@ -33,7 +33,7 @@ columns = [{ name = "n", type = "TIMESTAMP_NTZ" }, { name = "z", type = "TIMESTA
 rows = [
   ["'2024-02-29 13:14:15.123'", "'2024-02-29 13:14:15.123 -08:00'", "'2024-02-29 13:14:15.123'"],
 ]
-query = "SELECT TO_VARCHAR(AS_TIMESTAMP_TZ(n::VARIANT), 'YYYY-MM-DD HH24:MI:SS.FF9') AS n, TO_VARCHAR(AS_TIMESTAMP_TZ(l::VARIANT), 'YYYY-MM-DD HH24:MI:SS.FF9 TZH:TZM') AS l FROM input"
+query = "SELECT TO_VARCHAR(AS_TIMESTAMP_TZ(n::VARIANT), 'YYYY-MM-DD HH24:MI:SS.FF9 TZH:TZM') AS n, TO_VARCHAR(AS_TIMESTAMP_TZ(l::VARIANT), 'YYYY-MM-DD HH24:MI:SS.FF9 TZH:TZM') AS l FROM input"
 order = "ordered"
 tags = ["type-combination"]
 

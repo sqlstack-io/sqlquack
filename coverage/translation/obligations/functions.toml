@@ -2858,7 +2858,7 @@ id = "sf.functions.as-double-real.as-double.t001"
 form = "sf.functions.as-double-real.as-double"
 kind = "type_combination"
 target = "VARIANT holding a floating-point value"
-note = "Numbers written with an exponent and a negative zero fraction."
+note = "Numbers written with an exponent, one negative and one large."
 catches = "the exponent misread, or the sign lost"
 reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
 cases = ["cases/translation/functions/as-double-real.as-double.toml#t001_match"]
@@ -2902,7 +2902,7 @@ id = "sf.functions.as-double-real.as-real.t001"
 form = "sf.functions.as-double-real.as-real"
 kind = "type_combination"
 target = "VARIANT holding a floating-point value"
-note = "Numbers written with an exponent and a negative zero fraction."
+note = "Numbers written with an exponent, one negative and one large."
 catches = "the exponent misread, or the sign lost"
 reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
 cases = ["cases/translation/functions/as-double-real.as-real.toml#t001_match"]
@@ -21638,19 +21638,19 @@ kind = "type_combination"
 target = "VARIANT holding OBJECT"
 note = "Objects, nested and empty."
 catches = "an empty object returned as NULL, or nested objects flattened"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
 cases = ["cases/translation/functions/to-object.toml#t001_object"]
 required = true
 
 [[obligation]]
 id = "sf.functions.to-object.t002"
 form = "sf.functions.to-object"
-kind = "type_combination"
-target = "VARIANT holding another type"
-note = "An array and a string; the page requires an OBJECT and does not say what other types give; the recording decides."
-catches = "an array converted to an object keyed by position, or the string parsed"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT"
-cases = ["cases/translation/functions/to-object.toml#t002_not_object"]
+kind = "error_parity"
+target = "error"
+note = "An array, for which the page says any input other than an OBJECT reports an error."
+catches = "the array converted to an object, instead of the error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t002_array"]
 required = true
 
 [[obligation]]
@@ -21660,8 +21660,19 @@ kind = "null_argument"
 target = "expr"
 note = "A SQL NULL."
 catches = "an empty object returned"
-reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
 cases = ["cases/translation/functions/to-object.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-object.t004"
+form = "sf.functions.to-object"
+kind = "error_parity"
+target = "error"
+note = "A string holding object text, for which the page says any input other than an OBJECT reports an error."
+catches = "the string parsed, instead of the error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t004_string"]
 required = true
 
 [[obligation]]
