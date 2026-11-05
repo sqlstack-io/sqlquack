@@ -144,7 +144,7 @@ impl Parser {
     }
 
     /// Parse a parenthesized list of string literals.
-    fn parse_string_list(&mut self) -> Result<Expression> {
+    pub(super) fn parse_string_list(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut items = vec![self.parse_string_value()?];
         while self.match_token(TokenType::Comma) {

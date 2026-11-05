@@ -1419,33 +1419,6 @@ impl Parser {
                     {
                         return self.parse_drop_snowflake_object(kind.join(" "));
                     }
-                    let text_upper = self.peek_text().to_ascii_uppercase();
-                    let is_snowflake_drop =
-                        matches!(text_upper.as_str(), "INTEGRATION" | "NETWORK" | "SHARE");
-                    if is_snowflake_drop {
-                        self.skip();
-                        let mut tokens: Vec<(String, TokenType)> = vec![
-                            ("DROP".to_string(), TokenType::Var),
-                            (
-                                self.previous_text().to_ascii_uppercase(),
-                                self.previous().token_type,
-                            ),
-                        ];
-                        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                            let token = self.advance()?;
-                            let text = if token.token_type == TokenType::QuotedIdentifier {
-                                format!("\"{}\"", token.text)
-                            } else if token.token_type == TokenType::String {
-                                format!("'{}'", token.text)
-                            } else {
-                                token.text.to_string()
-                            };
-                            tokens.push((text, token.token_type));
-                        }
-                        return Ok(Expression::Command(Box::new(Command {
-                            this: self.join_command_tokens(tokens),
-                        })));
-                    }
                 }
                 Err(self.parse_error(format!(
                     "Expected TABLE, VIEW, INDEX, SCHEMA, DATABASE, FUNCTION, PROCEDURE, SEQUENCE, TRIGGER, TYPE, or NAMESPACE after DROP, got {:?}",
@@ -1581,6 +1554,16 @@ impl Parser {
         } else {
             None
         };
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            if let Some(expr) =
+                self.parse_alter_snowflake_table_action(alter_table_modifier.is_some())?
+            {
+                return Ok(expr);
+            }
+        }
 
         match self.peek().token_type {
             TokenType::Table => self.parse_alter_table(alter_table_modifier),

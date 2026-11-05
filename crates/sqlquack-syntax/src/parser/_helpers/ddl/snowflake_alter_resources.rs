@@ -281,7 +281,7 @@ impl Parser {
                 (vec![manifest], self.parse_resource_properties()?)
             }
             (_, "FROM SPECIFICATION") => (vec![self.parse_object_value()?], vec![]),
-            (_, "ADD FILES" | "REMOVE FILES") => (vec![self.parse_value_list()?], vec![]),
+            (_, "ADD FILES" | "REMOVE FILES") => (vec![self.parse_string_list()?], vec![]),
             (_, "ADD TARGETS" | "REMOVE TARGETS") => (vec![self.parse_resource_value()?], vec![]),
             ("STAGE" | "PIPE", "REFRESH") => (vec![], self.parse_resource_properties()?),
             ("NETWORK POLICY" | "DATA MOVEMENT POLICY", "ADD" | "REMOVE") => {
