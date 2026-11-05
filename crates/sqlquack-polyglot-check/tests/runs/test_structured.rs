@@ -17,6 +17,13 @@ fn given_a_command_polyglot_keeps_when_compared_then_only_the_listed_structure_i
             expected_match: true,
         },
         StructuredTestCase {
+            description: "raw SQL polyglot keeps, which SQLQuack parses into the listed node, is matched",
+            sql: block,
+            polyglot: r#"ok:[{"raw":{"sql":"BEGIN RETURN 1; END"}}]"#,
+            sqlquack: structured,
+            expected_match: true,
+        },
+        StructuredTestCase {
             description: "a structured polyglot tree is not matched",
             sql: block,
             polyglot: r#"ok:[{"select":{}}]"#,

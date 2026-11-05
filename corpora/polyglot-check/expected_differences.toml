@@ -913,6 +913,83 @@ sqlquack_error = "Snowflake set operations take no LEFT, RIGHT, FULL, INNER or O
 note = "INNER UNION ... BY NAME is BigQuery's; Snowflake rejects a join side before a set operation (recorded errno 1003)"
 
 [[rejection]]
+id = "snowflake_role_grant_without_role"
+sql = "GRANT developer_role TO john;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_quoted_user"
+sql = "GRANT abluva TO \"kk8529p@abluva.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_admin_option"
+sql = "GRANT admin_role TO mary WITH ADMIN OPTION;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_lists"
+sql = "GRANT role1, role2 TO user1, \"user2@example.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_user_list"
+sql = "GRANT purchases_reader_role TO george, maria;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_quoted_roles"
+sql = "GRANT 'role1', 'role2' TO 'user1'@'localhost', 'user2'@'localhost';"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "MySQL grants quoted roles to user@host accounts; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name>, with identifiers, not strings"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_after_select"
+sql = "SELECT set_config('session_authorization', 'abluva', false); GRANT abluva TO \"kk8529p@abluva.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_grant_without_role_unterminated"
+sql = "GRANT abluva TO \"kk8529p@abluva.com\""
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres grants role membership without ROLE; Snowflake writes GRANT ROLE <name> TO { ROLE | USER } <name> and refuses GRANT v1 TO USER v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_revoke_without_role"
+sql = "REVOKE developer_role FROM john;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres revokes role membership without ROLE; Snowflake writes REVOKE ROLE <name> FROM { ROLE | USER } <name>, as GRANT ROLE, which refuses the form without ROLE with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_revoke_admin_option_without_role"
+sql = "REVOKE ADMIN OPTION FOR developer_role FROM john CASCADE;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres revokes role membership without ROLE; Snowflake writes REVOKE ROLE <name> FROM { ROLE | USER } <name>, as GRANT ROLE, which refuses the form without ROLE with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_role_revoke_without_role_lists"
+sql = "REVOKE role1, role2 FROM user1, \"user2@example.com\" RESTRICT;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a privilege"
+note = "Postgres revokes role membership without ROLE; Snowflake writes REVOKE ROLE <name> FROM { ROLE | USER } <name>, as GRANT ROLE, which refuses the form without ROLE with syntax error 1003"
+
+[[rejection]]
 id = "snowflake_describe_bare_name"
 sql = "DESCRIBE x"
 dialects = ["Snowflake"]
@@ -1136,6 +1213,12 @@ note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> )
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
 # with `sqlquack_node`, and the statement, without whitespace and ignoring case, contains `marker`.
+
+[[structured]]
+id = "snowflake_storage_integration_properties"
+marker = "CREATESTORAGEINTEGRATION"
+sqlquack_node = "create_object"
+note = "a Snowflake CREATE STORAGE INTEGRATION parses into its name and its property list, each property's kind and value; polyglot keeps the statement as raw SQL; crates/sqlquack-syntax/tests/parser/test_snowflake_create_properties.rs pins the tree"
 
 [[structured]]
 id = "snowflake_scripting_block"

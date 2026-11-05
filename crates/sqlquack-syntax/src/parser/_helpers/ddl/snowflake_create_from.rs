@@ -78,6 +78,7 @@ impl Parser {
             kind: kind.to_owned(),
             modifier: modifier.filter(|_| !dynamic).map(str::to_owned),
             or_replace,
+            or_alter: false,
             if_not_exists,
             name,
             source: source.to_owned(),

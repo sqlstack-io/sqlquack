@@ -647,6 +647,9 @@ pub struct GrantPrincipal {
     /// Whether prefixed with SHARE keyword (Snowflake)
     #[serde(default)]
     pub is_share: bool,
+    /// Snowflake: the grantee kind, such as ROLE, DATABASE ROLE, APPLICATION or USER
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<String>,
 }
 
 /// GRANT statement
@@ -668,6 +671,9 @@ pub struct Grant {
     /// TSQL: AS principal (the grantor role)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub as_principal: Option<Identifier>,
+    /// Snowflake GRANT OWNERSHIP: COPY or REVOKE CURRENT GRANTS
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_grants: Option<String>,
 }
 
 /// REVOKE statement
