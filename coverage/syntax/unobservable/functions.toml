@@ -494,3 +494,15 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.functions.dmf-referential-integrity-count.table.syntax.o035"
+form = "sf.functions.dmf-referential-integrity-count.table.syntax"
+construct = "the list continued at least once: a third source and reference column: ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . REFERENTIAL_INTEGRITY_COUNT ON ( v1 , v2 , v3 , TABLE ( v1 ( v1 , v2 , v3 ) ) ) ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): not a SELECT, refused by the execute capture"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.dmf-referential-integrity-count.table.syntax.k7478daff983e", sql_sha256 = "7478daff983eeca2a3bcd564ad1b2dc430e4147043d6d5eb990af23b2a859c28" },
+]
+runs = []
+probes = []

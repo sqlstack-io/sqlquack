@@ -7660,13 +7660,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-authentication-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-authentication-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -8180,6 +8173,14 @@ required = true
 target = "<client_type> in [ CLIENT_POLICY = ( <client_type> = ( MINIMUM_VERSION = '<version>' ) [ , ... ] ) ]"
 anchor = "doc.sql.alter-authentication-policy / Syntax"
 note = "a string literal in place of <client_type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-authentication-policy.set.o086"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-authentication-policy.unset.o001"
@@ -11886,13 +11887,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-external-access-integration.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-external-access-integration.set.o005"
 kind = "operand_type_class"
 required = true
@@ -12438,6 +12432,14 @@ required = true
 target = "all in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> ... ] ) | all | none } ]"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-external-access-integration.set.o106"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o001"
@@ -16764,13 +16766,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-feature-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-feature-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -16952,6 +16947,14 @@ required = true
 target = "<type> in [ <type> [ , <type> ... ] ]"
 anchor = "doc.sql.alter-feature-policy / Syntax"
 note = "a string literal in place of <type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-feature-policy.set.o051"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-feature-policy.set-tag.o001"
@@ -18772,13 +18775,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-maintenance-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-maintenance-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -18903,6 +18899,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-maintenance-policy.set.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-maintenance-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-maintenance-policy.unset.o001"
@@ -20379,13 +20383,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-network-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-network-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -20731,6 +20728,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-network-policy.set.o059"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-network-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-network-policy.set-tag.o001"
@@ -26302,13 +26307,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-packages-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-packages-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -26589,6 +26587,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-packages-policy.set.o049"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-packages-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-packages-policy.unset.o001"
@@ -26893,13 +26899,6 @@ id = "sf.security_admin.alter-password-policy.set.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o005"
@@ -27783,6 +27782,14 @@ required = true
 target = "PASSWORD_HISTORY = <integer>"
 anchor = "doc.sql.alter-password-policy / Optional parameters"
 note = "PASSWORD_HISTORY = 25 against the documented maximum of 24"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o126"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-password-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set-tag.o001"
@@ -35869,13 +35876,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.o003"
 kind = "operand_type_class"
 required = true
@@ -36053,17 +36053,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / AWS Secrets Manager"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o003"
@@ -36276,17 +36277,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o036"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / Azure Key Vault"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o003"
@@ -36499,17 +36501,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o036"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / Google Cloud Secret Manager"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o003"
@@ -36848,17 +36851,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o056"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: Client credentials"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o003"
@@ -37198,17 +37202,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o056"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: Authorization code grant flow"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o003"
@@ -37579,6 +37584,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o061"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: JWT bearer flow"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-aws-iam.set.o001"
@@ -43444,13 +43457,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-session-policy.set.o005"
 kind = "operand_type_class"
 required = true
@@ -44075,6 +44081,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.set.o147"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-session-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.set-tag.o001"
@@ -45438,13 +45452,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.alter-snapshot-policy.set.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-snapshot-policy.set.o003"
 kind = "operand_type_class"
 required = true
@@ -45536,12 +45543,6 @@ required = true
 note = "the form without its required SNAPSHOT"
 
 [[obligation]]
-id = "sf.security_admin.alter-snapshot-policy.set.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.security_admin.alter-snapshot-policy.set.o018"
 kind = "negative_neighbour"
 required = true
@@ -45616,6 +45617,21 @@ required = true
 target = "EXPIRE_AFTER_DAYS = <days_integer>"
 anchor = "doc.sql.alter-snapshot-policy / Parameters"
 note = "EXPIRE_AFTER_DAYS = 3,654 against the documented range 1 to 3,653 without SCHEDULE"
+
+[[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+note = "the form without its required POLICY, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o029"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-snapshot-policy.set-tag.o001"
@@ -47025,13 +47041,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o008"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o009"
 kind = "operand_type_class"
 required = true
@@ -47351,6 +47360,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool.o090"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o001"
@@ -48862,12 +48879,6 @@ required = true
 note = "the form without its required USER"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-key-pair.set.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-user-modify-key-pair.set.o022"
 kind = "negative_neighbour"
 required = true
@@ -48934,6 +48945,13 @@ required = true
 target = "<key_pair_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-key-pair.set.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-user-modify-key-pair / Syntax"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-key-pair.unset.o001"
@@ -49504,12 +49522,6 @@ required = true
 note = "the form without its required USER"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o030"
 kind = "negative_neighbour"
 required = true
@@ -49636,6 +49648,13 @@ required = true
 target = "MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer>"
 anchor = "doc.sql.alter-user-modify-programmatic-access-token / Optional parameters"
 note = "MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = 1,441 against the documented range 1 to 1,440"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o048"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-user-modify-programmatic-access-token / Syntax"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-programmatic-access-token.unset.o001"
@@ -50162,12 +50181,6 @@ required = true
 note = "the form without its required USER"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.set.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.set.o022"
 kind = "negative_neighbour"
 required = true
@@ -50234,6 +50247,13 @@ required = true
 target = "<workload_identity_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.set.o032"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o001"

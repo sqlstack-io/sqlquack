@@ -53463,3 +53463,740 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o001"
+form = "sf.ddl.alter-application-service.set"
+construct = "the documented form with every required part and no optional part: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o003"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o004"
+form = "sf.ddl.alter-application-service.set"
+construct = "omit <name>: ALTER APPLICATION SERVICE SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.k4a18bf69e446", sql_sha256 = "4a18bf69e4466bf68d9ceca46f292b9348073ae3eb5c77980ca2677b4a411b25" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o005"
+form = "sf.ddl.alter-application-service.set"
+construct = "a valid identifier: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o006"
+form = "sf.ddl.alter-application-service.set"
+construct = "a string literal in place of <name>: ALTER APPLICATION SERVICE 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.k289535fd6d89", sql_sha256 = "289535fd6d89f4125bd6ad2ee2dd658290d08ad6745c3783bbf76a57ade1b88e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o008"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o012"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o017"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o024"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o029"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o034"
+form = "sf.ddl.alter-application-service.set"
+construct = "option_absent: ALTER APPLICATION SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kcd092baf5d14", sql_sha256 = "cd092baf5d14265681e53fb16f7f7bb34958583d6073f2e110eafe7e50cd005f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o043"
+form = "sf.ddl.alter-application-service.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER APPLICATION SERVICE IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kf9094b980aa8", sql_sha256 = "f9094b980aa8fb9ecdecbd389ea17d6372e49f89ed6857c27f37b01288f94ec5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o044"
+form = "sf.ddl.alter-application-service.set"
+construct = "the form without its required SET: ALTER APPLICATION SERVICE v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.k024a7e9107a3", sql_sha256 = "024a7e9107a31cc4cc6030a46337088e2da36ec23a1f105e5b4ca6eac8ee4dd5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o049"
+form = "sf.ddl.alter-application-service.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER APPLICATION SERVICE \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.kf04fe96a006a", sql_sha256 = "f04fe96a006a9e8af41d9c97f82463729c1bd89171fc07fa74eac3db2c5fd90b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.set.o050"
+form = "sf.ddl.alter-application-service.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER APPLICATION SERVICE SELECT SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.set.k04ba5784d37c", sql_sha256 = "04ba5784d37c2fcb6b793d13274a0f3322159e22a811c1bea2a8f08d0cd8ad46" },
+  { case_id = "sf.ddl.alter-application-service.set.k6412cc8ff677", sql_sha256 = "6412cc8ff67790b0d565c8d09b47961b65da4293816ca670238fef60bb1cfe2c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.suspend-resume.o011"
+form = "sf.ddl.alter-application-service.suspend-resume"
+construct = "the form without its required { SUSPEND | RESUME }: ALTER APPLICATION SERVICE v1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.suspend-resume.k10690c81649f", sql_sha256 = "10690c81649faecd0a5076dbdf7b3aa080cd1b1b15eb5da04324ca002daac121" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-application-service.upgrade.o014"
+form = "sf.ddl.alter-application-service.upgrade"
+construct = "the form without its required UPGRADE: ALTER APPLICATION SERVICE v1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-application-service.suspend-resume.k10690c81649f", sql_sha256 = "10690c81649faecd0a5076dbdf7b3aa080cd1b1b15eb5da04324ca002daac121" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o004"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "omit <name>: ALTER COMPUTE POOL SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.k861b06e19a92", sql_sha256 = "861b06e19a92e4f79377cb24242233df6d49fa06f477f15bbd8f88346f11bd5e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o006"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "a string literal in place of <name>: ALTER COMPUTE POOL 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.ka5d3edb2dda2", sql_sha256 = "a5d3edb2dda2ba877aed818a68398d795bbd8ae439c052ef31502293f09621b0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o060"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER COMPUTE POOL IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.k82174e17584e", sql_sha256 = "82174e17584e97909b2209c4b2976a760be86745a72ca9c8bf3225277ff79c95" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o061"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "the form without its required SET: ALTER COMPUTE POOL v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.k44308d2b98a4", sql_sha256 = "44308d2b98a48ec7a466f3962be60e25950ec34e409c44d5deb14879eac3df65" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o066"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER COMPUTE POOL \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.k4bd02c950d67", sql_sha256 = "4bd02c950d671f333c75c0f9593e16d9ed607123589a4c340b5eec2cddbcfc36" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o067"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER COMPUTE POOL \"SELECT\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.k0baa91a09f24", sql_sha256 = "0baa91a09f24fa42d932551b755ad20c146eef30004f2a4282c126d6ca543050" },
+  { case_id = "sf.ddl.alter-compute-pool.set.ka4950d5d29c6", sql_sha256 = "a4950d5d29c6ff88826373d7efec89833b580136aedac9ce498e8be887305acf" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.set.o098"
+form = "sf.ddl.alter-compute-pool.set"
+construct = "option_present: ALTER COMPUTE POOL IF EXISTS v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.set.kef87fa6ec5e1", sql_sha256 = "ef87fa6ec5e180f0855615eba52c8e82b6b014d290ccaece4d42b6757901b2df" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-compute-pool.suspend-resume.o012"
+form = "sf.ddl.alter-compute-pool.suspend-resume"
+construct = "the form without its required { SUSPEND | RESUME }: ALTER COMPUTE POOL v1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): compute pool change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-compute-pool.suspend-resume.k6d20fc08eb0f", sql_sha256 = "6d20fc08eb0f96f9ababddc3b4a24d63cf84d3a26f0fabcb2d597e3b90532d86" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-cortex-search.set.o045"
+form = "sf.ddl.alter-cortex-search.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER CORTEX SEARCH SERVICE IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-cortex-search.set.ka58759e1df04", sql_sha256 = "a58759e1df0446e0f9a7fe62a9a7929a7239f4549c89f583bb6d8024b2d5c599" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-cortex-search.set.o046"
+form = "sf.ddl.alter-cortex-search.set"
+construct = "the form without its required SET: ALTER CORTEX SEARCH SERVICE v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-cortex-search.set.k68415508ff14", sql_sha256 = "68415508ff1470257cb965f56fd8fdcc3f0f32ff3c693bdd95057ea2db5e4715" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o001"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "the documented form with every required part and no optional part: ALTER RESTRICTED SESSION SCOPE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k8cc8487d73b4", sql_sha256 = "8cc8487d73b467f75567a6ad7d1193b8dc1cfa3698a01e954f77d67f1c50756d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o002"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "alternative: ALTER RESTRICTED SESSION SCOPE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k8cc8487d73b4", sql_sha256 = "8cc8487d73b467f75567a6ad7d1193b8dc1cfa3698a01e954f77d67f1c50756d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o005"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "option_absent: ALTER RESTRICTED SESSION SCOPE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k8cc8487d73b4", sql_sha256 = "8cc8487d73b467f75567a6ad7d1193b8dc1cfa3698a01e954f77d67f1c50756d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o006"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "omit <name>: ALTER RESTRICTED SESSION SCOPE SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.kf591a2c77aaf", sql_sha256 = "f591a2c77aafb839106b2ba278dafa792a06edf01d18b4a442f167ef849b311b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o007"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "a valid identifier: ALTER RESTRICTED SESSION SCOPE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k8cc8487d73b4", sql_sha256 = "8cc8487d73b467f75567a6ad7d1193b8dc1cfa3698a01e954f77d67f1c50756d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o008"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "a string literal in place of <name>: ALTER RESTRICTED SESSION SCOPE 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k08beed6f0410", sql_sha256 = "08beed6f0410881ba45b7e192efd9eb0526556cbc4e242a5d5eb28158400af83" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o017"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER RESTRICTED SESSION SCOPE IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k7c8e6c689f02", sql_sha256 = "7c8e6c689f02332b248b63a43364770613ead9e3fabdefc1cbd2535e2023b54e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o018"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "the form without its required SET: ALTER RESTRICTED SESSION SCOPE v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k5f71f15487d6", sql_sha256 = "5f71f15487d6dc5321d030a40ee880ed3d7314927e4a88fa8a163884124899e9" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o020"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER RESTRICTED SESSION SCOPE \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k36ba84b8702b", sql_sha256 = "36ba84b8702bd6f6dccceae1f1edfa66a609a1bb6b72bd6a38c1ada59b85602e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-restricted-session-scope.set.o021"
+form = "sf.ddl.alter-restricted-session-scope.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER RESTRICTED SESSION SCOPE SELECT SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): RESTRICTED SESSION SCOPE names not listed"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k1a330177590b", sql_sha256 = "1a330177590bcc466d49bf54d9f273e7db9eb886cd3e2f5234ceae0addcc8a6e" },
+  { case_id = "sf.ddl.alter-restricted-session-scope.set.k36b810867652", sql_sha256 = "36b810867652311428f8f8914ad9839c98dfaed151a20d93a591b2cd789b7636" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o001"
+form = "sf.ddl.alter-service.set"
+construct = "the documented form with every required part and no optional part: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o003"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o004"
+form = "sf.ddl.alter-service.set"
+construct = "omit <name>: ALTER SERVICE SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k276a5c6c9492", sql_sha256 = "276a5c6c94920c737c848a98a26fe1938b5841a70bebfdee37cdb1a0d280ec09" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o005"
+form = "sf.ddl.alter-service.set"
+construct = "a valid identifier: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o006"
+form = "sf.ddl.alter-service.set"
+construct = "a string literal in place of <name>: ALTER SERVICE 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k6ff9f8b34d8c", sql_sha256 = "6ff9f8b34d8c49923d00fe8769bf2571327bb4fb4872e27aecaf8acea619d6a6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o008"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o013"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o018"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o023"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o028"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o033"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o038"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o042"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k485e1a79f99c", sql_sha256 = "485e1a79f99cf3c1504096c6792966323156d7270563f298b4d0f4488748b032" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o049"
+form = "sf.ddl.alter-service.set"
+construct = "option_absent: ALTER SERVICE v1 SET MIN_INSTANCES = 1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k051ea37df78f", sql_sha256 = "051ea37df78f9244f3fdc9a684bee4294a022df094c326922057a58a7ba13003" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o054"
+form = "sf.ddl.alter-service.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER SERVICE IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k9d8d9e389d4d", sql_sha256 = "9d8d9e389d4d0b244357348bc2fa6701e76862875231545918d3f6f54704d727" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o055"
+form = "sf.ddl.alter-service.set"
+construct = "the form without its required SET: ALTER SERVICE v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.kbc9d65c5cb2c", sql_sha256 = "bc9d65c5cb2c5598ff551ad77a6bbe5be17868bb21ba9f2ef384588fbd683fea" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o060"
+form = "sf.ddl.alter-service.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER SERVICE \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k696a82f582c6", sql_sha256 = "696a82f582c6220e0d68ab5e13ff2494f5dd73eeedee16b5a9a2bea474024e3b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.o061"
+form = "sf.ddl.alter-service.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER SERVICE SELECT SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.k2efe46a20804", sql_sha256 = "2efe46a208042ffe5d238a4e30ef644b7b59289480116213ae9d226d34bb8521" },
+  { case_id = "sf.ddl.alter-service.set.k34c9785219af", sql_sha256 = "34c9785219aff2601212717406e9100520f605db9bf636c29ca3e53382ea6de3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o004"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "omit <name>: ALTER SERVICE SET TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.kf51fad5521b4", sql_sha256 = "f51fad5521b4319f55031f7fdbbe97ffee397d0ef036c83b0668a2308c1fe5a6" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o006"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "a string literal in place of <name>: ALTER SERVICE 'v1' SET TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.k7a0bdd044e93", sql_sha256 = "7a0bdd044e93d48a3a486779ff444f33da8dbbdb52a2e2a42ea409d1f03de749" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o018"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER SERVICE IF v1 SET TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.k07ee7071c1f8", sql_sha256 = "07ee7071c1f8900be2bbfbba27cd6d8062d1edda1569c226bc64315e7fbb721c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o019"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "the form without its required SET: ALTER SERVICE v1 TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.k98fa3fb97a37", sql_sha256 = "98fa3fb97a3792c86a0a02c9c37ecbdfd350b05eaffdafc388d5ca08689e5836" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o021"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER SERVICE \"v1 Q\" SET TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.k84ff6956f04a", sql_sha256 = "84ff6956f04aeebc549b672af70345158bb3850dd5d585174e50997803cb3166" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-service.set.syntax.o022"
+form = "sf.ddl.alter-service.set.syntax"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER SERVICE \"SELECT\" SET TAG v1 = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): service change"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-service.set.syntax.k18d0b1aa16a5", sql_sha256 = "18d0b1aa16a5401b3ca7803be71f36fb12e81a8711279273eea3c8057eb02aa6" },
+  { case_id = "sf.ddl.alter-service.set.syntax.k7515d0c96d32", sql_sha256 = "7515d0c96d32dc0bc7186cbabbf276c4c348b4dd09c50df06bcd52c86da2398f" },
+]
+runs = []
+probes = []

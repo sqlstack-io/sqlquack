@@ -6391,23 +6391,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set.o068"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.set.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.ddl.alter-application-package.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set.o005"
@@ -6707,6 +6694,22 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-application-package / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set.o082"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = ", observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set.o083"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-application-package / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set-tag.o001"
@@ -15471,13 +15474,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-cortex-search.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-cortex-search.set.o005"
 kind = "operand_type_class"
 required = true
@@ -15861,6 +15857,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-cortex-search / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set.o093"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-cortex-search.set-attributes.o001"
@@ -17369,13 +17373,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.set.o005"
 kind = "operand_type_class"
 required = true
@@ -17671,6 +17668,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-database-catalog-linked / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.set.o078"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.suspend-discovery.o001"
@@ -19686,13 +19691,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set.o005"
 kind = "operand_type_class"
 required = true
@@ -20824,6 +20822,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-database / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o293"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-database / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set-feature-policy.o001"
@@ -25444,13 +25450,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o005"
 kind = "operand_type_class"
 required = true
@@ -25864,12 +25863,6 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set.o101"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DYNAMIC"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o075"
 kind = "negative_neighbour"
 required = true
@@ -26113,6 +26106,21 @@ required = true
 target = "[ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o120"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the form without its required DYNAMIC, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o121"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set-unset-comment.o001"
@@ -32020,13 +32028,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-file-format.set.o005"
 kind = "operand_type_class"
 required = true
@@ -33417,6 +33418,14 @@ required = true
 target = "RECORD_DELIMITER = '<string>'"
 anchor = "doc.sql.alter-file-format / Format type options"
 note = "a RECORD_DELIMITER of 21 characters against the documented maximum of 20"
+
+[[obligation]]
+id = "sf.ddl.alter-file-format.set.o249"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-file-format / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function-dmf.rename-to.o001"
@@ -45076,12 +45085,6 @@ required = true
 target = "{ 'SNOWFLAKE_METADATA' | 'ICEBERG_METADATA' } → 'ICEBERG_METADATA'"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.set.o106"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ICEBERG"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.set.o083"
 kind = "negative_neighbour"
 required = true
@@ -45306,6 +45309,13 @@ required = true
 target = "{ AUTO | 16MB | 32MB | 64MB | 128MB | 'AUTO' | '16MB' | '32MB' | '64MB' | '128MB' } → 128MB"
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "alternative { AUTO | 16MB | 32MB | 64MB | 128MB | 'AUTO' | '16MB' | '32MB' | '64MB' | '128MB' } → 128MB, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.set.o148"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required ICEBERG, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.tablecolumnaction.o001"
@@ -49221,13 +49231,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-model-monitor.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<monitor_name>"
-note = "omit <monitor_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-model-monitor.set.o005"
 kind = "operand_type_class"
 required = true
@@ -49419,6 +49422,14 @@ required = true
 target = "REFRESH_INTERVAL = '<refresh_interval>'"
 anchor = "doc.sql.alter-model-monitor / Parameters"
 note = "REFRESH_INTERVAL = '61 seconds' against the documented minimum of 60 seconds"
+
+[[obligation]]
+id = "sf.ddl.alter-model-monitor.set.o034"
+kind = "required_operand_missing"
+required = true
+target = "<monitor_name>"
+anchor = "doc.sql.alter-model-monitor / Syntax / All monitor types"
+note = "omit <monitor_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-model-monitor.set-baseline.o001"
@@ -51593,13 +51604,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-online-feature-table.table-set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-online-feature-table.table-set.o005"
 kind = "operand_type_class"
 required = true
@@ -51725,6 +51729,14 @@ required = true
 target = "<warehouse_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-online-feature-table.table-set.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-online-feature-table / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-online-feature-table.table-set-comment.o001"
@@ -53550,12 +53562,6 @@ required = true
 target = "{ '<database>.<schema>.<tablename>' | NONE } → NONE"
 
 [[obligation]]
-id = "sf.ddl.alter-openflow-deployment.set.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OPENFLOW"
-
-[[obligation]]
 id = "sf.ddl.alter-openflow-deployment.set.o022"
 kind = "negative_neighbour"
 required = true
@@ -53600,6 +53606,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-deployment.set.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-openflow-deployment / Syntax"
+note = "the form without its required OPENFLOW, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-deployment.terminate.o001"
@@ -59692,13 +59705,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.set.o005"
 kind = "operand_type_class"
 required = true
@@ -60692,6 +60698,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-schema / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o263"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o001"
@@ -96948,13 +96962,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-view.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-view.set.o005"
 kind = "operand_type_class"
 required = true
@@ -97167,6 +97174,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-view / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-view.set.o058"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-view / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-view.unset.o001"

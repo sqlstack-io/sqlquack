@@ -8074,3 +8074,910 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o004"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "omit <name>: ALTER FAILOVER GROUP SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k61db8eabc3d4", sql_sha256 = "61db8eabc3d4637c2cd873a4bce3056d5d4fc0e49a961f5ee2f08d7d5a713a73" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o006"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "a string literal in place of <name>: ALTER FAILOVER GROUP 'v1' SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k00caa757c06b", sql_sha256 = "00caa757c06b8bc11391a75fc060951e2821cccde739db2de634af4f2fbf9bec" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o037"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER FAILOVER GROUP IF v1 SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k7fd8216220ad", sql_sha256 = "7fd8216220ad0a08360232873b87f7c5eacebaa942a7b9a203fb670c3499d30d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o038"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "the form without its required SET: ALTER FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.kd38151819d4e", sql_sha256 = "d38151819d4efcd57dfd6118ad468e60d0f9b91c8edd9dab9ba50bbfb6338d69" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o040"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER FAILOVER GROUP \"v1 Q\" SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k47350ba4b7a6", sql_sha256 = "47350ba4b7a631c32afc50df68638128f4d60725ef6ecadfb43249ef70b81d21" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-failover-group.set.o041"
+form = "sf.security_admin.alter-failover-group.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER FAILOVER GROUP SELECT SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-failover-group.set.k7c50d5ecf3a4", sql_sha256 = "7c50d5ecf3a4de9d3c1862e3d7b9decbbb4670fae801ecf1f04effaf196ee9b5" },
+  { case_id = "sf.security_admin.alter-failover-group.set.ka81b48150ef5", sql_sha256 = "a81b48150ef578c0a32fd8aaf1620528c19d73fc235bf5cb120b562b7d47e367" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o001"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the documented form with every required part and no optional part: ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k85617acc86b9", sql_sha256 = "85617acc86b95cd95520442e0d689360182483d54e2e8283dd40fb2007d3fc47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o002"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "omit <name>: ALTER ORGANIZATION PROFILE ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kdd3ea8e94cae", sql_sha256 = "dd3ea8e94caeb564ffc4ff9230c4d0602838076fa0234c14ed8206144040530e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o003"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "a valid identifier: ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k85617acc86b9", sql_sha256 = "85617acc86b95cd95520442e0d689360182483d54e2e8283dd40fb2007d3fc47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o004"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "a string literal in place of <name>: ALTER ORGANIZATION PROFILE 'v1' ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kb363c7e9c4ce", sql_sha256 = "b363c7e9c4ce73e669e715b3f19f6cd6d7c56085bf1adab89295ca9dc926af19" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o005"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "option_present: ALTER ORGANIZATION PROFILE v1 ADD VERSION IF NOT EXISTS v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kbedea376ebe8", sql_sha256 = "bedea376ebe835b7022dad563915dcf37d2fd8ad850cff52f5162ec2c5e7eb2b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o006"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "option_absent: ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k85617acc86b9", sql_sha256 = "85617acc86b95cd95520442e0d689360182483d54e2e8283dd40fb2007d3fc47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o007"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "option_present: ALTER ORGANIZATION PROFILE v1 ADD VERSION IF NOT EXISTS v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kbedea376ebe8", sql_sha256 = "bedea376ebe835b7022dad563915dcf37d2fd8ad850cff52f5162ec2c5e7eb2b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o008"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "option_absent: ALTER ORGANIZATION PROFILE v1 ADD VERSION v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k65ed923f9dc9", sql_sha256 = "65ed923f9dc93c89ef360857ad6f6c2a3038b30f83572c68c59a258660a10358" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o009"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "a valid identifier: ALTER ORGANIZATION PROFILE v1 ADD VERSION IF NOT EXISTS v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kbedea376ebe8", sql_sha256 = "bedea376ebe835b7022dad563915dcf37d2fd8ad850cff52f5162ec2c5e7eb2b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o010"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "a string literal in place of <version_alias_name>: ALTER ORGANIZATION PROFILE v1 ADD VERSION 'v1' FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k4242c8e785a5", sql_sha256 = "4242c8e785a5b255645a45c7ac49108f879823aad8867f7244f9ccd4ef3dc39b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o012"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "a valid operand: ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k85617acc86b9", sql_sha256 = "85617acc86b95cd95520442e0d689360182483d54e2e8283dd40fb2007d3fc47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o014"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required PROFILE: ALTER ORGANIZATION v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k385355cf3854", sql_sha256 = "385355cf3854cfd013ad4c31cd4e061153221edece6e971d8e097b2f8a98cf48" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o015"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required ADD: ALTER ORGANIZATION PROFILE v1 VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k5b2f4c2be33d", sql_sha256 = "5b2f4c2be33dc4169aa03b0b76943043f08b3f8a27fa8b73ce4c450e18e4a06d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o016"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required VERSION: ALTER ORGANIZATION PROFILE v1 ADD FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k6266014df6b4", sql_sha256 = "6266014df6b45174eacb71632ee8e0429e7b88dfa368e676c3066c8fd61cdeb3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o017"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required NOT in [ IF NOT EXISTS ]: ALTER ORGANIZATION PROFILE v1 ADD VERSION IF EXISTS v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.kc36911d8dfde", sql_sha256 = "c36911d8dfde75026528151ba46b72612d26b2fa3ceab236b685922c35181089" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o018"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required EXISTS in [ IF NOT EXISTS ]: ALTER ORGANIZATION PROFILE v1 ADD VERSION IF NOT v1 FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k324c9e27f402", sql_sha256 = "324c9e27f4025ac61f1df4e6ce0c9bb508c3bd155d0666cf1166c10ffab1f1d9" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o019"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "the form without its required FROM: ALTER ORGANIZATION PROFILE v1 ADD VERSION @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k971edcd0179b", sql_sha256 = "971edcd0179b1ccfbd0b1d814e6b387c0e90a08367e4e2ac1a0aa7ad7fa61569" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o020"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER ORGANIZATION PROFILE \"v1 Q\" ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k1f1a6bbfa400", sql_sha256 = "1f1a6bbfa400e79860938dac81c08c845ee01993ea0d3f3cc6943cbb94a3b736" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o021"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER ORGANIZATION PROFILE SELECT ADD VERSION FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k2ba3a5e49e2c", sql_sha256 = "2ba3a5e49e2c3320c876120bf2b4fc6c9e4213b5b28fb72665983cfa914e2377" },
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k86b7e8924111", sql_sha256 = "86b7e89241113952221c22a236090f541aa08ed378647687460d3eec39194888" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o022"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER ORGANIZATION PROFILE v1 ADD VERSION \"v1 Q\" FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k1b61e3853ae5", sql_sha256 = "1b61e3853ae597aa9a49747b334abf2c27266e91c5af01dcb0af8394db512897" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-profile.add-version-from.o023"
+form = "sf.security_admin.alter-organization-profile.add-version-from"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER ORGANIZATION PROFILE v1 ADD VERSION \"SELECT\" FROM @d1.s1.st1/p1 ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k751b2dd299f6", sql_sha256 = "751b2dd299f6712d5e00f2cff6a70d5d57c13ce5be3d0686c7ac6416cfd61a60" },
+  { case_id = "sf.security_admin.alter-organization-profile.add-version-from.k97f50de7ce72", sql_sha256 = "97f50de7ce72a42b80e92d996f51db8c8a8cfe3054aef77aa8f277bae8895432" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o004"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "omit <name>: ALTER REPLICATION GROUP SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.k33ec43f26305", sql_sha256 = "33ec43f263050d137d3bae03323a0b542699bbc47e0e6474d6e5e0752ea7088a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o006"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "a string literal in place of <name>: ALTER REPLICATION GROUP 'v1' SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.k0de92dd97d10", sql_sha256 = "0de92dd97d10d24b31f27e46679e62d7c62913f6eec8b056c1798bceddf1739d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o037"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER REPLICATION GROUP IF v1 SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.kb995b7baacb6", sql_sha256 = "b995b7baacb6985fe94929b0f8d5f702b3412dc60990a8a43c10f072549f9615" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o038"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "the form without its required SET: ALTER REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.kc61fcd4b9daa", sql_sha256 = "c61fcd4b9daaee462b4ff2f9b9dd87b31d048e46c10655f2cb0227e20d0bfcf8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o040"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER REPLICATION GROUP \"v1 Q\" SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.k4d137eed975a", sql_sha256 = "4d137eed975a7a749408280c9452e43c18ab655f7725eec874cb542a08bb0386" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-replication-group.set.o041"
+form = "sf.security_admin.alter-replication-group.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER REPLICATION GROUP SELECT SET OBJECT_TYPES = DATABASES ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): replication or failover group"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-replication-group.set.k1a1d0f06ccbb", sql_sha256 = "1a1d0f06ccbbddebee2236dfcce83b883ca2022642da9f373cf3963256d01b31" },
+  { case_id = "sf.security_admin.alter-replication-group.set.kb32bb917090c", sql_sha256 = "b32bb917090cfad4a24538aa2e376f33642cf295802192fc1156cedf450ef7b5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o001"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k7e8f9fcc6101", sql_sha256 = "7e8f9fcc610158b63a47cbb47bbc03f4f1384336e65efe99b1ca92e0caa9339f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o003"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k7e8f9fcc6101", sql_sha256 = "7e8f9fcc610158b63a47cbb47bbc03f4f1384336e65efe99b1ca92e0caa9339f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o005"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k7e8f9fcc6101", sql_sha256 = "7e8f9fcc610158b63a47cbb47bbc03f4f1384336e65efe99b1ca92e0caa9339f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o008"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "omit <key_pair_name>: ALTER USER MODIFY KEY PAIR SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k4c26855f8e4d", sql_sha256 = "4c26855f8e4d410c54e231a0f9844f13eb1c635a4b80a6b7ffa721febcae84d4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o009"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "a valid identifier: ALTER USER MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k7e8f9fcc6101", sql_sha256 = "7e8f9fcc610158b63a47cbb47bbc03f4f1384336e65efe99b1ca92e0caa9339f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o010"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "a string literal in place of <key_pair_name>: ALTER USER MODIFY KEY PAIR 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.kec7acc1dc87b", sql_sha256 = "ec7acc1dc87b1f92e8156d5ba8d9370c3802beab550e1a2e7b206ea81069418c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o012"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "option_absent: ALTER USER MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k7e8f9fcc6101", sql_sha256 = "7e8f9fcc610158b63a47cbb47bbc03f4f1384336e65efe99b1ca92e0caa9339f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o023"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "the form without its required KEY: ALTER USER MODIFY PAIR v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k66a1c793a4d3", sql_sha256 = "66a1c793a4d304434bee09f5d0a32728c8fd60d456f5093fef855b0871b127b8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o024"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "the form without its required PAIR: ALTER USER MODIFY KEY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k07d787ae9515", sql_sha256 = "07d787ae9515e95874639e77ab567d8e667fbd96a58625d7321b195820b8b1ed" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o025"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "the form without its required SET: ALTER USER MODIFY KEY PAIR v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k46e9e2cafbcd", sql_sha256 = "46e9e2cafbcd96fa95244eb7052f033232074ab4b681688c61b959537041fefd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o030"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY KEY PAIR \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k9a18fa44539a", sql_sha256 = "9a18fa44539ad8cd194f7e1e9bb213b185c5c8b04e959e7b3ec1f430bfbbd6d0" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-key-pair.set.o031"
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY KEY PAIR SELECT SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k3cdc488cbb44", sql_sha256 = "3cdc488cbb44cd8bdffe9ebe6a877f921ec0a27ab7eca4857a0436a26280005f" },
+  { case_id = "sf.security_admin.alter-user-modify-key-pair.set.k3f1666ea6f34", sql_sha256 = "3f1666ea6f3414f171e721ca774ea2784fb00959e2efb3c73e05d71a588810b2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o001"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o003"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o005"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o008"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "alternative: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o009"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "alternative: ALTER USER MODIFY PAT v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.ke2797134854e", sql_sha256 = "e2797134854e4bff00b8d9bdad0df29338baab8abe3bda8bc13758f0d6d2fd51" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o011"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o012"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "omit <token_name>: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k503c1ade4a7d", sql_sha256 = "503c1ade4a7d4ddc4be9faac94035193b9de85edc18a60e1723511e02d3f8c62" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o013"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "a valid identifier: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o014"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "a string literal in place of <token_name>: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k054996a63126", sql_sha256 = "054996a63126b899202ea10c3e88e05b1a3fe1d53f8b98b561225a026d504623" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o016"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o020"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "option_absent: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k975e7f5e8b35", sql_sha256 = "975e7f5e8b35e408b372825d98336f9ed6c744e606423d4b3ef13d8fffeccd2f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o031"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the form without its required ACCESS: ALTER USER MODIFY PROGRAMMATIC TOKEN v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k36e3e2887bf9", sql_sha256 = "36e3e2887bf906e781f9de1e1b7a7dfb072e9aa526cbb101fae88d0598368f46" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o032"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the form without its required TOKEN: ALTER USER MODIFY PROGRAMMATIC ACCESS v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.ka06228bd2b4a", sql_sha256 = "a06228bd2b4aeb4865ba42267a93201ada03eeebcf5f4e20452893fff265089c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o033"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the form without its required { PROGRAMMATIC ACCESS TOKEN | PAT }: ALTER USER MODIFY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.kad5eb87a2ea2", sql_sha256 = "ad5eb87a2ea27480d0bda04575d04aea553793d52d1afb75399610d9acee8dae" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o034"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ] #2: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN IF v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.ka1838ad6e2c4", sql_sha256 = "a1838ad6e2c4bb131fe2401fc6c7f8270bd456fb308b22c983c838eb5b0720b2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o035"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "the form without its required SET: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k610ede5d1720", sql_sha256 = "610ede5d1720058f991e58a780fbb47287274147c96bc21c3fd4f695ff5c770c" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o040"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k5d0ec2bb5e0c", sql_sha256 = "5d0ec2bb5e0c798de745a8f7cc19078158b00156ad08f7b0b43a61f07b54b486" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o041"
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY PROGRAMMATIC ACCESS TOKEN SELECT SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.k2417c0e82cbe", sql_sha256 = "2417c0e82cbec49af53fadd72e00d64a1a61212ef592b2c0f7e67af0fb153b28" },
+  { case_id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.kfa3b7ae74a62", sql_sha256 = "fa3b7ae74a625094965cc54a8f96223859a683faa8f4605464994ed8ca01e637" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o001"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "the documented form with every required part and no optional part: ALTER USER MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka703b6998179", sql_sha256 = "a703b69981799a5cdb2d42ddd909df3ec62beb03211e8883ce814bc41132f34b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o003"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka703b6998179", sql_sha256 = "a703b69981799a5cdb2d42ddd909df3ec62beb03211e8883ce814bc41132f34b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o005"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka703b6998179", sql_sha256 = "a703b69981799a5cdb2d42ddd909df3ec62beb03211e8883ce814bc41132f34b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o008"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "omit <workload_identity_name>: ALTER USER MODIFY WORKLOAD IDENTITY SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.kbb6cea785184", sql_sha256 = "bb6cea785184dcd45c25bd41837d50d53c036dd460de8bae8292d4d2de730060" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o009"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "a valid identifier: ALTER USER MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka703b6998179", sql_sha256 = "a703b69981799a5cdb2d42ddd909df3ec62beb03211e8883ce814bc41132f34b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o010"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "a string literal in place of <workload_identity_name>: ALTER USER MODIFY WORKLOAD IDENTITY 'v1' SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.k1e490aed3a5b", sql_sha256 = "1e490aed3a5b2d9905cc758615ed4d859b67dad415bbcd32fea6419adaa64f04" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o012"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "option_absent: ALTER USER MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka703b6998179", sql_sha256 = "a703b69981799a5cdb2d42ddd909df3ec62beb03211e8883ce814bc41132f34b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o023"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "the form without its required WORKLOAD: ALTER USER MODIFY IDENTITY v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.kf54bef4ffbe3", sql_sha256 = "f54bef4ffbe3ff8b321d4689adbd3fef001bf4c684a08d11a6d8e85f062df26d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o024"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "the form without its required IDENTITY: ALTER USER MODIFY WORKLOAD v1 SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.kfc0a3e654505", sql_sha256 = "fc0a3e65450542fed578a006ac9b94615a7bab7230356af7da930d6a613337e9" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o025"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "the form without its required SET: ALTER USER MODIFY WORKLOAD IDENTITY v1 COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.kb61753b328c5", sql_sha256 = "b61753b328c5381aab7418f1d85ff7b28aee360f4eba1d646495c60f992eb5eb" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o030"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER USER MODIFY WORKLOAD IDENTITY \"v1 Q\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.k37526d1859df", sql_sha256 = "37526d1859df2e9683415ea541a91c6026f2c8f72cfac90a95d234842df2287a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-user-modify-workload-identity.set.o031"
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER USER MODIFY WORKLOAD IDENTITY \"SELECT\" SET COMMENT = 'm' ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): alters the current user"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.k2760cda82915", sql_sha256 = "2760cda829151687c1c77effe8d4e48761a1b4b39d3e95070259c328c1f5e14e" },
+  { case_id = "sf.security_admin.alter-user-modify-workload-identity.set.ka2b93fc51bc4", sql_sha256 = "a2b93fc51bc4a94292c04a4cc17234c38fcaf8689f8c6ab34fcc5d8c49e7d0d4" },
+]
+runs = []
+probes = []

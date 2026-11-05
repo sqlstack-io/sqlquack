@@ -81581,3 +81581,570 @@ form = "sf.functions.get-job-history"
 grammar_sha256 = "64b87bab980d30e0d1f81c129f8bd4491d09fcfe402c7d560d981985ccb38975"
 grammar = ["SNOWFLAKE.SPCS.GET_JOB_HISTORY( [ CREATED_TIME_START => <constant_expr> ], [ CREATED_TIME_END => <constant_expr> ], [ RESULT_LIMIT => <integer> ])"]
 reason = "Arguments documents RESULT_LIMIT => integer, a named argument like the others; the Syntax line's `=` would read as a comparison (D118)"
+
+# D118 cat-d118 receipts (import 155): rows Snowflake answers otherwise, observed.
+[[suppress]]
+form = "sf.ddl.alter-application-package.set"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = ""
+reason = "D113 [documented but Snowflake disagrees]: observed by the hand row below"
+
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-155); observed, not flipped to reject
+[[limit]]
+form = "sf.ddl.alter-application-package.set"
+kind = "option_present"
+target = "[ IF EXISTS ]"
+note = ", observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE IF EXISTS v1 SET COMMENT = 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-package.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-package.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-application-package / Syntax"
+sql = "ALTER APPLICATION PACKAGE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-cortex-search.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-cortex-search.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-cortex-search / Syntax"
+sql = "ALTER CORTEX SEARCH SERVICE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake accepts this SQL (phase accepted, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+sql = "ALTER DATABASE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake accepts this SQL (phase accepted, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "negative_neighbour"
+note = "the form without its required DYNAMIC"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "negative_neighbour"
+note = "the form without its required DYNAMIC, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER TABLE v1 SET TARGET_LAG = '1 minute' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 926 SQLSTATE 42601, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE SET TARGET_LAG = '1 minute' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-file-format.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-file-format.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-file-format / Syntax"
+sql = "ALTER FILE FORMAT SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table.set"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.set"
+kind = "negative_neighbour"
+note = "the form without its required ICEBERG, observed"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER TABLE v1 SET REPLACE_INVALID_CHARACTERS = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-model-monitor.set"
+kind = "required_operand_missing"
+target = "<monitor_name>"
+note = "omit <monitor_name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-model-monitor.set"
+kind = "required_operand_missing"
+target = "<monitor_name>"
+note = "omit <monitor_name>, observed"
+anchor = "doc.sql.alter-model-monitor / Syntax / All monitor types"
+sql = "ALTER MODEL MONITOR SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-online-feature-table.table-set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 926 SQLSTATE 42601, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-online-feature-table.table-set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-online-feature-table / Syntax"
+sql = "ALTER ONLINE FEATURE TABLE SET TARGET_LAG = '1 minute' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-openflow-deployment.set"
+kind = "negative_neighbour"
+note = "the form without its required OPENFLOW"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-openflow-deployment.set"
+kind = "negative_neighbour"
+note = "the form without its required OPENFLOW, observed"
+anchor = "doc.sql.alter-openflow-deployment / Syntax"
+sql = "ALTER DEPLOYMENT v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake accepts this SQL (phase accepted, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-view.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-view.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-authentication-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-authentication-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-authentication-policy / Syntax"
+sql = "ALTER AUTHENTICATION POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-external-access-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+sql = "ALTER EXTERNAL ACCESS INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-feature-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-feature-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-feature-policy / Syntax"
+sql = "ALTER FEATURE POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-maintenance-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-maintenance-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-maintenance-policy / Syntax"
+sql = "ALTER MAINTENANCE POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-network-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-network-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-network-policy / Syntax"
+sql = "ALTER NETWORK POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-packages-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-packages-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-packages-policy / Syntax"
+sql = "ALTER PACKAGES POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-password-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-password-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-password-policy / Syntax"
+sql = "ALTER PASSWORD POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / Azure Key Vault"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / Google Cloud Secret Manager"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth-external-secret-provider / Syntax / AWS Secrets Manager"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: Client credentials"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: Authorization code grant flow"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-api-auth / Syntax / OAuth: JWT bearer flow"
+sql = "ALTER SECURITY INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-session-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-session-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-session-policy / Syntax"
+sql = "ALTER SESSION POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.set"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.set"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-snapshot-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-snapshot-policy.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-snapshot-policy / Syntax"
+sql = "ALTER SNAPSHOT POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.set-body-archive-tier-cool"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-key-pair.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-key-pair / Syntax"
+sql = "ALTER USER IF MODIFY KEY PAIR v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-programmatic-access-token / Syntax"
+sql = "ALTER USER IF MODIFY PROGRAMMATIC ACCESS TOKEN v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-155), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-workload-identity.set"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
+sql = "ALTER USER IF MODIFY WORKLOAD IDENTITY v1 SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
