@@ -374,6 +374,36 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "CALL needs its argument list closed (recorded errno 1003)",
+            sql: "CALL SET_SYS_CONTEXT ( 'm' , 'm' , 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CALL takes no empty argument (recorded errno 1003)",
+            sql: "CALL SET_SYS_CONTEXT ( 'm' , , 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a frame bound is not a string (recorded errno 1003)",
+            sql: "SELECT SUM ( ) OVER ( ROWS 'x' PRECEDING ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE USING POLICY_CONTEXT runs a query (recorded runtime error)",
+            sql: "EXECUTE USING POLICY_CONTEXT ( v1 => 'm' ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "POLICY_CONTEXT ( ... ) AS needs a query (recorded errno 1003)",
+            sql: "EXECUTE USING POLICY_CONTEXT ( v1 => 'm' ) AS 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {

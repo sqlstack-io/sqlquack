@@ -25,6 +25,7 @@ use crate::expressions::statements::models::Comment;
 use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteParameter;
 use crate::expressions::statements::models::ExecuteStatement;
+use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Grant;
 use crate::expressions::statements::models::GrantPrincipal;
 use crate::expressions::statements::models::Kill;
@@ -93,6 +94,9 @@ impl Parser {
         if let Some(call) = self.parse_snowflake_method_call()? {
             return Ok(call);
         }
+        if self.applies_snowflake_context_rules() {
+            return self.parse_call_target(None);
+        }
 
         let mut tokens = vec![("CALL".to_string(), call_token.token_type)];
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -159,6 +163,30 @@ impl Parser {
         )
     }
 
+    /// The rest of Snowflake `EXECUTE USING POLICY_CONTEXT ( <name> => <value> , ... ) AS <query>`.
+    fn parse_execute_using_policy_context(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::LParen)?;
+        let arguments = self.parse_function_arguments()?;
+        if arguments
+            .iter()
+            .any(|argument| !matches!(argument, Expression::NamedArgument(_)))
+        {
+            return Err(self.parse_error("POLICY_CONTEXT takes only named arguments"));
+        }
+        self.expect_token(TokenType::RParen)?;
+        self.expect_token(TokenType::As)?;
+        if !(self.check(TokenType::Select)
+            || self.check(TokenType::With)
+            || self.check(TokenType::LParen))
+        {
+            return Err(self.parse_error("Expected a query after POLICY_CONTEXT ( ... ) AS"));
+        }
+        let query = self.parse_statement()?;
+        Ok(Expression::ExecuteUsingPolicyContext(Box::new(
+            ExecuteUsingPolicyContext { arguments, query },
+        )))
+    }
+
     /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
     fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
         let start = self.current;
@@ -220,6 +248,9 @@ impl Parser {
         ) {
             if let Some(statement) = self.parse_snowflake_execute_object()? {
                 return Ok(statement);
+            }
+            if self.match_text_seq(&["USING", "POLICY_CONTEXT"]) {
+                return self.parse_execute_using_policy_context();
             }
             if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
                 return Err(self.parse_error("Expected an object kind and name after EXECUTE"));

@@ -206,12 +206,17 @@ impl Parser {
         Ok(FunctionBody::Statements(statements))
     }
 
-    /// `CALL <name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after a WITH clause.
+    /// `CALL <name> ( ... ) [INTO :<variable>]` after a WITH clause.
     pub(crate) fn parse_call_with(&mut self, with: With) -> Result<Expression> {
         if !self.check_identifier("CALL") {
             return Err(self.parse_error("Expected CALL after an anonymous procedure"));
         }
         self.skip();
+        self.parse_call_target(Some(with))
+    }
+
+    /// `<name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after CALL.
+    pub(crate) fn parse_call_target(&mut self, with: Option<With>) -> Result<Expression> {
         let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
         while self.match_token(TokenType::Dot) {
             name.push(self.expect_identifier_or_keyword_with_quoted()?);
@@ -241,7 +246,7 @@ impl Parser {
             arguments,
             asynchronous: false,
             hints: Vec::new(),
-            with: Some(with),
+            with,
             into,
         })))
     }

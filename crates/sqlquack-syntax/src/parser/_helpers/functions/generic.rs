@@ -1496,6 +1496,11 @@ impl Parser {
             }
         } else {
             let expr = self.parse_addition()?;
+            if self.applies_snowflake_context_rules()
+                && matches!(&expr, Expression::Literal(literal) if matches!(**literal, Literal::String(_)))
+            {
+                return Err(self.parse_error("A Snowflake frame bound value is not a string"));
+            }
             if self.match_token(TokenType::Preceding) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Preceding(Box::new(expr)), Some(text)))

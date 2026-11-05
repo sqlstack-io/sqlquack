@@ -352,6 +352,14 @@ pub struct ExecuteStatement {
     pub suffix: Option<String>,
 }
 
+/// Snowflake `EXECUTE USING POLICY_CONTEXT ( <name> => <value> , ... ) AS <query>`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteUsingPolicyContext {
+    /// The named arguments of POLICY_CONTEXT.
+    pub arguments: Vec<Expression>,
+    pub query: Expression,
+}
+
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteObject {

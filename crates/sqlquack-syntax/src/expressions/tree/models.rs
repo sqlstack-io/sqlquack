@@ -387,6 +387,7 @@ use crate::expressions::statements::models::Detach;
 use crate::expressions::statements::models::DropPartition;
 use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteStatement;
+use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
 use crate::expressions::statements::models::Grant;
 use crate::expressions::statements::models::GrantPrincipal;
@@ -1222,6 +1223,7 @@ pub enum Expression {
     /// EXEC/EXECUTE statement (TSQL stored procedure call)
     Execute(Box<ExecuteStatement>),
     ExecuteObject(Box<ExecuteObject>),
+    ExecuteUsingPolicyContext(Box<ExecuteUsingPolicyContext>),
 
     /// Snowflake CREATE TASK statement
     CreateTask(Box<CreateTask>),

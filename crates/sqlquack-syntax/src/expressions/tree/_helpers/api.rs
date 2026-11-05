@@ -446,6 +446,7 @@ impl Expression {
             Expression::Prepare(_) => "prepare",
             Expression::Execute(_) => "execute",
             Expression::ExecuteObject(_) => "execute_object",
+            Expression::ExecuteUsingPolicyContext(_) => "execute_using_policy_context",
             Expression::Raw(_) => "raw",
             Expression::CreateTask(_) => "create_task",
             Expression::Paren(_) => "paren",
