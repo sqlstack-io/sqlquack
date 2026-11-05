@@ -1119,6 +1119,1015 @@ cases = ["cases/translation/functions/array-agg.array-agg-over.toml#t008_distinc
 required = true
 
 [[obligation]]
+id = "sf.functions.array-append.t001"
+form = "sf.functions.array-append"
+kind = "type_combination"
+target = "ARRAY, NUMBER(10,1)"
+note = "A decimal appended to an array of a number and text."
+catches = "the element added at the front, or the decimal converted to text or an integer"
+reading = "the page: appends one element of almost any type to a semi-structured array; the element type may differ from the existing elements; NULL array gives NULL"
+cases = ["cases/translation/functions/array-append.toml#t001_mixed_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-append.t002"
+form = "sf.functions.array-append"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "An array appended as one element."
+catches = "the two arrays concatenated (ARRAY_CAT) instead of nested"
+reading = "the page: appends one element of almost any type to a semi-structured array; the element type may differ from the existing elements; NULL array gives NULL"
+cases = ["cases/translation/functions/array-append.toml#t002_nested_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-append.t003"
+form = "sf.functions.array-append"
+kind = "null_argument"
+target = "array"
+note = "A NULL array, and a NULL element appended to an array."
+catches = "a NULL array read as empty ([1]), or the NULL element dropped (the array unchanged)"
+reading = "the page: appends one element of almost any type to a semi-structured array; the element type may differ from the existing elements; NULL array gives NULL"
+cases = ["cases/translation/functions/array-append.toml#t003_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-cat.t001"
+form = "sf.functions.array-cat"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Arrays with a value in both, in an order that shows which comes first."
+catches = "array2 placed first, or the shared value de-duplicated"
+reading = "the page: array2 appended after array1; both ARRAY or VARIANT holding an array; NULL either side gives NULL"
+cases = ["cases/translation/functions/array-cat.toml#t001_order_duplicates"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-cat.t002"
+form = "sf.functions.array-cat"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Arrays whose elements are arrays."
+catches = "one level of nesting flattened"
+reading = "the page: array2 appended after array1; both ARRAY or VARIANT holding an array; NULL either side gives NULL"
+cases = ["cases/translation/functions/array-cat.toml#t002_nested"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-cat.t003"
+form = "sf.functions.array-cat"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "An empty array on either side."
+catches = "NULL returned for an empty array"
+reading = "the page: array2 appended after array1; both ARRAY or VARIANT holding an array; NULL either side gives NULL"
+cases = ["cases/translation/functions/array-cat.toml#t003_empty_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-cat.t004"
+form = "sf.functions.array-cat"
+kind = "null_argument"
+target = "array1"
+note = "A NULL array on either side."
+catches = "NULL read as an empty array (the other array returned)"
+reading = "the page: array2 appended after array1; both ARRAY or VARIANT holding an array; NULL either side gives NULL"
+cases = ["cases/translation/functions/array-cat.toml#t004_null_array1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-cat.t005"
+form = "sf.functions.array-cat"
+kind = "error_parity"
+target = "error"
+note = "An OBJECT where an array is needed."
+catches = "the object treated as a one-element array"
+reading = "the page: array2 appended after array1; both ARRAY or VARIANT holding an array; NULL either side gives NULL"
+cases = ["cases/translation/functions/array-cat.toml#t005_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-compact.t001"
+form = "sf.functions.array-compact"
+kind = "type_combination"
+target = "ARRAY"
+note = "JSON null beside an empty array, an empty object, 0, false and an empty string."
+catches = "the empty containers, 0, false or the empty string removed as well, or the JSON null kept"
+reading = "the page: removes JSON null and SQL NULL elements; argument is an ARRAY or a VARIANT holding one; NULL gives NULL"
+cases = ["cases/translation/functions/array-compact.toml#t001_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-compact.t002"
+form = "sf.functions.array-compact"
+kind = "type_combination"
+target = "ARRAY"
+note = "An undefined element (a SQL NULL passed to ARRAY_CONSTRUCT) between values."
+catches = "the undefined element kept"
+reading = "the page: removes JSON null and SQL NULL elements; argument is an ARRAY or a VARIANT holding one; NULL gives NULL"
+cases = ["cases/translation/functions/array-compact.toml#t002_sql_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-compact.t003"
+form = "sf.functions.array-compact"
+kind = "null_argument"
+target = "array1"
+note = "A NULL argument."
+catches = "an empty array returned"
+reading = "the page: removes JSON null and SQL NULL elements; argument is an ARRAY or a VARIANT holding one; NULL gives NULL"
+cases = ["cases/translation/functions/array-compact.toml#t003_null_array1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct.t001"
+form = "sf.functions.array-construct"
+kind = "type_combination"
+target = "NUMBER(10,2), VARCHAR, BOOLEAN, DATE"
+note = "Arguments of four types in one array."
+catches = "every element converted to text, or the order changed"
+reading = "the page: an ARRAY of N elements for N arguments of any types; SQL NULL and JSON null may both be elements"
+cases = ["cases/translation/functions/array-construct.toml#t001_mixed_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct.t002"
+form = "sf.functions.array-construct"
+kind = "type_combination"
+target = "no arguments"
+note = "No arguments."
+catches = "NULL returned instead of an empty array"
+reading = "the page: an ARRAY of N elements for N arguments of any types; SQL NULL and JSON null may both be elements"
+cases = ["cases/translation/functions/array-construct.toml#t002_no_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct.t003"
+form = "sf.functions.array-construct"
+kind = "null_argument"
+target = "expr1"
+note = "A SQL NULL argument, which stays an undefined element, beside a JSON null."
+catches = "the SQL NULL dropped (size 2) or the two nulls made the same element"
+reading = "the page: an ARRAY of N elements for N arguments of any types; SQL NULL and JSON null may both be elements"
+cases = ["cases/translation/functions/array-construct.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-compact.t001"
+form = "sf.functions.array-construct-compact"
+kind = "type_combination"
+target = "NUMBER, VARCHAR"
+note = "A number and text in one array."
+catches = "the number converted to text"
+reading = "the page: like ARRAY_CONSTRUCT, but SQL NULL arguments are skipped, giving a dense array; types may differ"
+cases = ["cases/translation/functions/array-construct-compact.toml#t001_mixed_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-compact.t002"
+form = "sf.functions.array-construct-compact"
+kind = "null_argument"
+target = "expr1"
+note = "SQL NULL arguments around values, and only SQL NULL arguments."
+catches = "the NULL kept as an undefined element (size 3), or NULL returned for the all-NULL call"
+reading = "the page: like ARRAY_CONSTRUCT, but SQL NULL arguments are skipped, giving a dense array; types may differ"
+cases = ["cases/translation/functions/array-construct-compact.toml#t002_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-compact.t003"
+form = "sf.functions.array-construct-compact"
+kind = "type_combination"
+target = "VARIANT"
+note = "A JSON null argument. The page says SQL NULL values are skipped, so a JSON null is not."
+catches = "the JSON null skipped like a SQL NULL"
+reading = "the page: like ARRAY_CONSTRUCT, but SQL NULL arguments are skipped, giving a dense array; types may differ"
+cases = ["cases/translation/functions/array-construct-compact.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-compact.t004"
+form = "sf.functions.array-construct-compact"
+kind = "type_combination"
+target = "no arguments"
+note = "No arguments."
+catches = "NULL returned instead of an empty array"
+reading = "the page: like ARRAY_CONSTRUCT, but SQL NULL arguments are skipped, giving a dense array; types may differ"
+cases = ["cases/translation/functions/array-construct-compact.toml#t004_no_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-structured.t001"
+form = "sf.functions.array-construct-structured"
+kind = "type_combination"
+target = "NUMBER, NUMBER(10,1)"
+note = "An integer and a decimal, cast to one element type."
+catches = "the integer kept as an integer type beside the decimal, or the decimal truncated"
+reading = "the page: a structured ARRAY whose element type is the common type of the arguments; NULL inputs are kept; every argument an untyped NULL is an error; at least one argument"
+cases = ["cases/translation/functions/array-construct-structured.toml#t001_common_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-structured.t002"
+form = "sf.functions.array-construct-structured"
+kind = "null_argument"
+target = "expr1"
+note = "A typed NULL argument beside a value, which the page says stays an element."
+catches = "the NULL dropped (one element)"
+reading = "the page: a structured ARRAY whose element type is the common type of the arguments; NULL inputs are kept; every argument an untyped NULL is an error; at least one argument"
+cases = ["cases/translation/functions/array-construct-structured.toml#t002_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-construct-structured.t003"
+form = "sf.functions.array-construct-structured"
+kind = "error_parity"
+target = "error"
+note = "Every argument an untyped NULL, which the page says is an error."
+catches = "an array of NULLs returned instead of the error"
+reading = "the page: a structured ARRAY whose element type is the common type of the arguments; NULL inputs are kept; every argument an untyped NULL is an error; at least one argument"
+cases = ["cases/translation/functions/array-construct-structured.toml#t003_untyped_nulls"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-contains.t001"
+form = "sf.functions.array-contains"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "A present and an absent value."
+catches = "TRUE for the absent value, or a position returned"
+reading = "the page: TRUE when value_expr (a VARIANT) is in the array, including a NULL value with a SQL NULL element and a JSON null with a JSON null element; FALSE otherwise"
+cases = ["cases/translation/functions/array-contains.toml#t001_found"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-contains.t002"
+form = "sf.functions.array-contains"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "The text \"1\" against an array holding the number 1, and the reverse."
+catches = "values compared as text (TRUE)"
+reading = "the page: TRUE when value_expr (a VARIANT) is in the array, including a NULL value with a SQL NULL element and a JSON null with a JSON null element; FALSE otherwise"
+cases = ["cases/translation/functions/array-contains.toml#t002_number_vs_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-contains.t003"
+form = "sf.functions.array-contains"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "A JSON null searched in arrays with and without a JSON null."
+catches = "JSON null never matched, or matched everywhere"
+reading = "the page: TRUE when value_expr (a VARIANT) is in the array, including a NULL value with a SQL NULL element and a JSON null with a JSON null element; FALSE otherwise"
+cases = ["cases/translation/functions/array-contains.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-contains.t004"
+form = "sf.functions.array-contains"
+kind = "null_argument"
+target = "value-expr"
+note = "A NULL value searched in an array with a SQL NULL element and in one without."
+catches = "NULL returned where the page gives TRUE for the array holding a SQL NULL"
+reading = "the page: TRUE when value_expr (a VARIANT) is in the array, including a NULL value with a SQL NULL element and a JSON null with a JSON null element; FALSE otherwise"
+cases = ["cases/translation/functions/array-contains.toml#t004_null_value_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-distinct.t001"
+form = "sf.functions.array-distinct"
+kind = "type_combination"
+target = "ARRAY"
+note = "Repeated numbers beside the same digits as text."
+catches = "the number 1 and the text \"1\" merged (2 left), or duplicates kept (5)"
+reading = "the page: the elements without duplicates, in unspecified order; objects must be identical to be duplicates; NULL is a known value; NULL argument gives NULL"
+cases = ["cases/translation/functions/array-distinct.toml#t001_number_vs_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-distinct.t002"
+form = "sf.functions.array-distinct"
+kind = "type_combination"
+target = "ARRAY"
+note = "Identical objects and one with an extra key."
+catches = "objects matched on a shared key (1 left) or never matched (3)"
+reading = "the page: the elements without duplicates, in unspecified order; objects must be identical to be duplicates; NULL is a known value; NULL argument gives NULL"
+cases = ["cases/translation/functions/array-distinct.toml#t002_objects"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-distinct.t003"
+form = "sf.functions.array-distinct"
+kind = "type_combination"
+target = "ARRAY"
+note = "Two undefined elements beside a value; the page treats NULL as a known value."
+catches = "the undefined elements dropped (1 left) or kept apart (3)"
+reading = "the page: the elements without duplicates, in unspecified order; objects must be identical to be duplicates; NULL is a known value; NULL argument gives NULL"
+cases = ["cases/translation/functions/array-distinct.toml#t003_sql_null_elements"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-distinct.t004"
+form = "sf.functions.array-distinct"
+kind = "null_argument"
+target = "array"
+note = "A NULL argument."
+catches = "an empty array returned"
+reading = "the page: the elements without duplicates, in unspecified order; objects must be identical to be duplicates; NULL is a known value; NULL argument gives NULL"
+cases = ["cases/translation/functions/array-distinct.toml#t004_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-except.t001"
+form = "sf.functions.array-except"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Three copies of 1 less two, and one copy less two."
+catches = "set semantics (every 1 removed), or the excess exclusion going negative"
+reading = "the page: source elements not in the exclusion array, with bag semantics (N - M copies, at least 0); objects must be identical; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-except.toml#t001_bag"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-except.t002"
+form = "sf.functions.array-except"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Objects excluded only when identical."
+catches = "an object excluded on a shared key"
+reading = "the page: source elements not in the exclusion array, with bag semantics (N - M copies, at least 0); objects must be identical; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-except.toml#t002_objects"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-except.t003"
+form = "sf.functions.array-except"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Every element excluded."
+catches = "NULL returned instead of an empty array"
+reading = "the page: source elements not in the exclusion array, with bag semantics (N - M copies, at least 0); objects must be identical; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-except.toml#t003_all_excluded"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-except.t004"
+form = "sf.functions.array-except"
+kind = "null_argument"
+target = "source-array"
+note = "A NULL array on either side."
+catches = "NULL read as an empty array"
+reading = "the page: source elements not in the exclusion array, with bag semantics (N - M copies, at least 0); objects must be identical; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-except.toml#t004_null_source_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-flatten.t001"
+form = "sf.functions.array-flatten"
+kind = "type_combination"
+target = "ARRAY"
+note = "Three levels of nesting."
+catches = "every level flattened"
+reading = "the page: concatenates the arrays in an array of arrays, removing one level; a non-array element is an error; NULL argument or a NULL element gives NULL"
+cases = ["cases/translation/functions/array-flatten.toml#t001_one_level"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-flatten.t002"
+form = "sf.functions.array-flatten"
+kind = "error_parity"
+target = "error"
+note = "An element that is not an array."
+catches = "the scalar kept as is"
+reading = "the page: concatenates the arrays in an array of arrays, removing one level; a non-array element is an error; NULL argument or a NULL element gives NULL"
+cases = ["cases/translation/functions/array-flatten.toml#t002_non_array_element"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-flatten.t003"
+form = "sf.functions.array-flatten"
+kind = "null_argument"
+target = "array"
+note = "A NULL argument, and an array holding a SQL NULL element."
+catches = "the NULL element skipped instead of NULL returned"
+reading = "the page: concatenates the arrays in an array of arrays, removing one level; a non-array element is an error; NULL argument or a NULL element gives NULL"
+cases = ["cases/translation/functions/array-flatten.toml#t003_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-generate-range.t001"
+form = "sf.functions.array-generate-range"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The default step, and a step that does not reach stop exactly."
+catches = "stop included, or the step ignored"
+reading = "the page: integers from start up to but not including stop, by step (default 1, not 0, may be negative); empty when start = stop or the step points away; any NULL gives NULL"
+cases = ["cases/translation/functions/array-generate-range.toml#t001_default_step"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-generate-range.t002"
+form = "sf.functions.array-generate-range"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A negative step."
+catches = "an empty array, or the sign of the step dropped"
+reading = "the page: integers from start up to but not including stop, by step (default 1, not 0, may be negative); empty when start = stop or the step points away; any NULL gives NULL"
+cases = ["cases/translation/functions/array-generate-range.toml#t002_negative_step"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-generate-range.t003"
+form = "sf.functions.array-generate-range"
+kind = "type_combination"
+target = "INTEGER, INTEGER, INTEGER"
+note = "start = stop, and steps that point away from stop."
+catches = "a one-element array, or the range walked the other way"
+reading = "the page: integers from start up to but not including stop, by step (default 1, not 0, may be negative); empty when start = stop or the step points away; any NULL gives NULL"
+cases = ["cases/translation/functions/array-generate-range.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-generate-range.t004"
+form = "sf.functions.array-generate-range"
+kind = "null_argument"
+target = "start"
+note = "NULL in each argument."
+catches = "NULL read as 0, or the default step used for a NULL step"
+reading = "the page: integers from start up to but not including stop, by step (default 1, not 0, may be negative); empty when start = stop or the step points away; any NULL gives NULL"
+cases = ["cases/translation/functions/array-generate-range.toml#t004_null_start"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-generate-range.t005"
+form = "sf.functions.array-generate-range"
+kind = "error_parity"
+target = "error"
+note = "A step of 0, which the page says cannot be given."
+catches = "an empty array or an endless loop"
+reading = "the page: integers from start up to but not including stop, by step (default 1, not 0, may be negative); empty when start = stop or the step points away; any NULL gives NULL"
+cases = ["cases/translation/functions/array-generate-range.toml#t005_zero_step"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-insert.t001"
+form = "sf.functions.array-insert"
+kind = "type_combination"
+target = "ARRAY, INTEGER, VARIANT"
+note = "Positions 0, 1 and the end."
+catches = "1-based positions, or the element replacing the one at the position"
+reading = "the page: inserts at a 0-based position, shifting later elements; a negative position counts from the end (-1 inserts before the last); a position past the end pads with undefined elements"
+cases = ["cases/translation/functions/array-insert.toml#t001_positions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-insert.t002"
+form = "sf.functions.array-insert"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Positions -1 and -3 counted from the end."
+catches = "the element appended after the last for -1, or the negative position read as 0"
+reading = "the page: inserts at a 0-based position, shifting later elements; a negative position counts from the end (-1 inserts before the last); a position past the end pads with undefined elements"
+cases = ["cases/translation/functions/array-insert.toml#t002_negative_position"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-insert.t003"
+form = "sf.functions.array-insert"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "A position two past the end, which pads with undefined elements."
+catches = "the element appended without padding (size 4 instead of 6), or an error"
+reading = "the page: inserts at a 0-based position, shifting later elements; a negative position counts from the end (-1 inserts before the last); a position past the end pads with undefined elements"
+cases = ["cases/translation/functions/array-insert.toml#t003_past_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-insert.t004"
+form = "sf.functions.array-insert"
+kind = "null_argument"
+target = "pos"
+note = "A NULL position and a NULL array; the page does not say; the recording decides."
+catches = "a NULL position read as 0 (the element inserted first)"
+reading = "the page: inserts at a 0-based position, shifting later elements; a negative position counts from the end (-1 inserts before the last); a position past the end pads with undefined elements"
+cases = ["cases/translation/functions/array-insert.toml#t004_null_pos"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-intersection.t001"
+form = "sf.functions.array-intersection"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Three copies of 1 against two."
+catches = "set semantics (one 1), or every copy of the first array kept"
+reading = "the page: elements in both arrays with bag semantics (min(N, M) copies); empty when nothing overlaps; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-intersection.toml#t001_bag"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-intersection.t002"
+form = "sf.functions.array-intersection"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "The number 1 against the text \"1\"."
+catches = "values compared as text"
+reading = "the page: elements in both arrays with bag semantics (min(N, M) copies); empty when nothing overlaps; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-intersection.toml#t002_number_vs_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-intersection.t003"
+form = "sf.functions.array-intersection"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "No common element."
+catches = "NULL returned instead of an empty array"
+reading = "the page: elements in both arrays with bag semantics (min(N, M) copies); empty when nothing overlaps; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-intersection.toml#t003_disjoint"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-intersection.t004"
+form = "sf.functions.array-intersection"
+kind = "null_argument"
+target = "array1"
+note = "A NULL array on either side."
+catches = "NULL read as an empty array (an empty array returned)"
+reading = "the page: elements in both arrays with bag semantics (min(N, M) copies); empty when nothing overlaps; NULL either side gives NULL; order unspecified"
+cases = ["cases/translation/functions/array-intersection.toml#t004_null_array1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-max.t001"
+form = "sf.functions.array-max"
+kind = "type_combination"
+target = "ARRAY"
+note = "Integers beside a decimal and a negative number."
+catches = "elements compared as text (2.5 against 10), or the first element returned"
+reading = "the page: a VARIANT holding the highest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-max.toml#t001_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-max.t002"
+form = "sf.functions.array-max"
+kind = "type_combination"
+target = "ARRAY"
+note = "Text elements."
+catches = "the first or last element returned instead of the ordered one"
+reading = "the page: a VARIANT holding the highest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-max.toml#t002_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-max.t003"
+form = "sf.functions.array-max"
+kind = "type_combination"
+target = "ARRAY"
+note = "A JSON null beside numbers. The page example shows an array holding a JSON null returning the JSON null; how it orders against numbers the page does not say, so the recording decides."
+catches = "the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
+reading = "the page: a VARIANT holding the highest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-max.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-max.t004"
+form = "sf.functions.array-max"
+kind = "type_combination"
+target = "ARRAY"
+note = "An empty array."
+catches = "an error or a JSON null instead of NULL"
+reading = "the page: a VARIANT holding the highest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-max.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-max.t005"
+form = "sf.functions.array-max"
+kind = "null_argument"
+target = "array"
+note = "A NULL array, and SQL NULL elements beside a value and alone."
+catches = "a SQL NULL element returned as the result, or the NULL array read as empty"
+reading = "the page: a VARIANT holding the highest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-max.toml#t005_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-min.t001"
+form = "sf.functions.array-min"
+kind = "type_combination"
+target = "ARRAY"
+note = "Integers beside a decimal and a negative number."
+catches = "elements compared as text (2.5 against 10), or the first element returned"
+reading = "the page: a VARIANT holding the lowest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-min.toml#t001_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-min.t002"
+form = "sf.functions.array-min"
+kind = "type_combination"
+target = "ARRAY"
+note = "Text elements."
+catches = "the first or last element returned instead of the ordered one"
+reading = "the page: a VARIANT holding the lowest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-min.toml#t002_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-min.t003"
+form = "sf.functions.array-min"
+kind = "type_combination"
+target = "ARRAY"
+note = "A JSON null beside numbers. The page says explicit nulls are considered; how they order against numbers it does not say; the recording decides."
+catches = "the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
+reading = "the page: a VARIANT holding the lowest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-min.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-min.t004"
+form = "sf.functions.array-min"
+kind = "type_combination"
+target = "ARRAY"
+note = "An empty array."
+catches = "an error or a JSON null instead of NULL"
+reading = "the page: a VARIANT holding the lowest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-min.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-min.t005"
+form = "sf.functions.array-min"
+kind = "null_argument"
+target = "array"
+note = "A NULL array, and SQL NULL elements beside a value and alone."
+catches = "a SQL NULL element returned as the result, or the NULL array read as empty"
+reading = "the page: a VARIANT holding the lowest element that is not a SQL NULL; NULL for a NULL, empty or all-NULL array; JSON null elements are considered; NUMBER and FLOAT compare with each other"
+cases = ["cases/translation/functions/array-min.toml#t005_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-position.t001"
+form = "sf.functions.array-position"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "A value present twice, and one at position 0."
+catches = "1-based positions, or the last match returned"
+reading = "the page: the 0-based position of the first match; NULL when absent; a NULL value finds the first NULL in the array"
+cases = ["cases/translation/functions/array-position.toml#t001_first_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-position.t002"
+form = "sf.functions.array-position"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "An absent value, and the text \"2\" against the number 2."
+catches = "-1 or 0 for an absent value, or values compared as text"
+reading = "the page: the 0-based position of the first match; NULL when absent; a NULL value finds the first NULL in the array"
+cases = ["cases/translation/functions/array-position.toml#t002_absent"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-position.t003"
+form = "sf.functions.array-position"
+kind = "type_combination"
+target = "VARIANT, ARRAY"
+note = "A JSON null searched in an array holding one."
+catches = "JSON null never found"
+reading = "the page: the 0-based position of the first match; NULL when absent; a NULL value finds the first NULL in the array"
+cases = ["cases/translation/functions/array-position.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-position.t004"
+form = "sf.functions.array-position"
+kind = "null_argument"
+target = "value-expr"
+note = "A NULL value, which the page says finds the first SQL NULL element."
+catches = "NULL returned instead of the position of the undefined element"
+reading = "the page: the 0-based position of the first match; NULL when absent; a NULL value finds the first NULL in the array"
+cases = ["cases/translation/functions/array-position.toml#t004_null_value_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-prepend.t001"
+form = "sf.functions.array-prepend"
+kind = "type_combination"
+target = "ARRAY, NUMBER"
+note = "An element prepended to a two-element array and to an empty one."
+catches = "the element appended at the end"
+reading = "the page: the array with the new element first"
+cases = ["cases/translation/functions/array-prepend.toml#t001_front"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-prepend.t002"
+form = "sf.functions.array-prepend"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "An array prepended as one element."
+catches = "the arrays concatenated"
+reading = "the page: the array with the new element first"
+cases = ["cases/translation/functions/array-prepend.toml#t002_nested_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-prepend.t003"
+form = "sf.functions.array-prepend"
+kind = "null_argument"
+target = "array"
+note = "A NULL array, and a NULL element; the page does not say; the recording decides for the NULL array."
+catches = "the NULL element dropped (the array unchanged)"
+reading = "the page: the array with the new element first"
+cases = ["cases/translation/functions/array-prepend.toml#t003_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove.t001"
+form = "sf.functions.array-remove"
+kind = "type_combination"
+target = "ARRAY, VARIANT"
+note = "A value present twice, and a value removing every element."
+catches = "only the first copy removed, or NULL for the emptied array"
+reading = "the page: removes every element equal to the VARIANT value; an empty array when all are removed; a NULL value gives NULL"
+cases = ["cases/translation/functions/array-remove.toml#t001_every_copy"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove.t002"
+form = "sf.functions.array-remove"
+kind = "type_combination"
+target = "ARRAY, VARIANT"
+note = "The number 1 removed from an array holding 1 and \"1\"."
+catches = "the text \"1\" removed as well"
+reading = "the page: removes every element equal to the VARIANT value; an empty array when all are removed; a NULL value gives NULL"
+cases = ["cases/translation/functions/array-remove.toml#t002_number_vs_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove.t003"
+form = "sf.functions.array-remove"
+kind = "null_argument"
+target = "value-of-elements-to-remove"
+note = "A NULL value to remove."
+catches = "the array returned unchanged instead of NULL"
+reading = "the page: removes every element equal to the VARIANT value; an empty array when all are removed; a NULL value gives NULL"
+cases = ["cases/translation/functions/array-remove.toml#t003_null_value_of_elements_to_remove"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove-at.t001"
+form = "sf.functions.array-remove-at"
+kind = "type_combination"
+target = "ARRAY, INTEGER"
+note = "Positions 0 and 1."
+catches = "1-based positions"
+reading = "the page: removes the element at a 0-based position; negative counts from the end (-1 is the last); a position beyond the array leaves it unchanged; NULL position gives NULL"
+cases = ["cases/translation/functions/array-remove-at.toml#t001_position"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove-at.t002"
+form = "sf.functions.array-remove-at"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Positions -1 and -3."
+catches = "the negative position read as 0, or -1 removing the second-last"
+reading = "the page: removes the element at a 0-based position; negative counts from the end (-1 is the last); a position beyond the array leaves it unchanged; NULL position gives NULL"
+cases = ["cases/translation/functions/array-remove-at.toml#t002_negative_position"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove-at.t003"
+form = "sf.functions.array-remove-at"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Positions 3 and -4, just beyond each end."
+catches = "an error, or the last or first element removed"
+reading = "the page: removes the element at a 0-based position; negative counts from the end (-1 is the last); a position beyond the array leaves it unchanged; NULL position gives NULL"
+cases = ["cases/translation/functions/array-remove-at.toml#t003_beyond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-remove-at.t004"
+form = "sf.functions.array-remove-at"
+kind = "null_argument"
+target = "position"
+note = "A NULL position."
+catches = "NULL read as 0 (the first element removed)"
+reading = "the page: removes the element at a 0-based position; negative counts from the end (-1 is the last); a position beyond the array leaves it unchanged; NULL position gives NULL"
+cases = ["cases/translation/functions/array-remove-at.toml#t004_null_position"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-repeat.t001"
+form = "sf.functions.array-repeat"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "Text, a number and an array repeated three times."
+catches = "text repeated as one concatenated string, or the array flattened"
+reading = "the page: an ARRAY of count copies of element (converted to VARIANT); count 0 or negative gives an empty array; NULL count gives NULL; a NULL element gives count NULL elements"
+cases = ["cases/translation/functions/array-repeat.toml#t001_element_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-repeat.t002"
+form = "sf.functions.array-repeat"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Counts 0 and -2."
+catches = "an error or NULL instead of an empty array"
+reading = "the page: an ARRAY of count copies of element (converted to VARIANT); count 0 or negative gives an empty array; NULL count gives NULL; a NULL element gives count NULL elements"
+cases = ["cases/translation/functions/array-repeat.toml#t002_non_positive_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-repeat.t003"
+form = "sf.functions.array-repeat"
+kind = "null_argument"
+target = "count"
+note = "A NULL count, and a NULL element repeated twice."
+catches = "NULL returned for the NULL element, or the count read as 0"
+reading = "the page: an ARRAY of count copies of element (converted to VARIANT); count 0 or negative gives an empty array; NULL count gives NULL; a NULL element gives count NULL elements"
+cases = ["cases/translation/functions/array-repeat.toml#t003_null_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-reverse.t001"
+form = "sf.functions.array-reverse"
+kind = "type_combination"
+target = "ARRAY"
+note = "Elements of different types, including a nested array."
+catches = "the nested array reversed too"
+reading = "the page: the elements in reverse order; NULL gives NULL"
+cases = ["cases/translation/functions/array-reverse.toml#t001_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-reverse.t002"
+form = "sf.functions.array-reverse"
+kind = "null_argument"
+target = "array"
+note = "A NULL argument."
+catches = "an empty array returned"
+reading = "the page: the elements in reverse order; NULL gives NULL"
+cases = ["cases/translation/functions/array-reverse.toml#t002_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-size.t001"
+form = "sf.functions.array-size"
+kind = "type_combination"
+target = "ARRAY"
+note = "A nested array counts as one element; an empty array."
+catches = "nested elements counted, or NULL for []"
+reading = "the page: the size of the array, the largest index + 1, so a sparse array counts its undefined elements; NULL gives NULL"
+cases = ["cases/translation/functions/array-size.toml#t001_nested"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-size.t002"
+form = "sf.functions.array-size"
+kind = "type_combination"
+target = "ARRAY"
+note = "An array padded with undefined elements by ARRAY_INSERT past its end."
+catches = "only the defined elements counted (2 instead of 4)"
+reading = "the page: the size of the array, the largest index + 1, so a sparse array counts its undefined elements; NULL gives NULL"
+cases = ["cases/translation/functions/array-size.toml#t002_sparse"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-size.t003"
+form = "sf.functions.array-size"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT holding an object and one holding a number; the page says a VARIANT that does not hold an array returns NULL."
+catches = "the object's key count returned, or 1 for the number"
+reading = "the page: the size of the array, the largest index + 1, so a sparse array counts its undefined elements; NULL gives NULL"
+cases = ["cases/translation/functions/array-size.toml#t003_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-size.t004"
+form = "sf.functions.array-size"
+kind = "null_argument"
+target = "array"
+note = "A NULL argument."
+catches = "0 returned"
+reading = "the page: the size of the array, the largest index + 1, so a sparse array counts its undefined elements; NULL gives NULL"
+cases = ["cases/translation/functions/array-size.toml#t004_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-slice.t001"
+form = "sf.functions.array-slice"
+kind = "type_combination"
+target = "ARRAY, INTEGER, INTEGER"
+note = "A slice inside the array."
+catches = "the to position included, or 1-based positions"
+reading = "the page: elements from position from (0-based) up to but not including to; negative positions count from the end; both beyond one end gives an empty array; any NULL gives NULL"
+cases = ["cases/translation/functions/array-slice.toml#t001_half_open"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-slice.t002"
+form = "sf.functions.array-slice"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative positions counted from the end."
+catches = "negative positions read as 0"
+reading = "the page: elements from position from (0-based) up to but not including to; negative positions count from the end; both beyond one end gives an empty array; any NULL gives NULL"
+cases = ["cases/translation/functions/array-slice.toml#t002_negative_positions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-slice.t003"
+form = "sf.functions.array-slice"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Both positions beyond the upper end, both beyond the lower end, and from after to."
+catches = "an error, or the positions clamped to give the last or first element"
+reading = "the page: elements from position from (0-based) up to but not including to; negative positions count from the end; both beyond one end gives an empty array; any NULL gives NULL"
+cases = ["cases/translation/functions/array-slice.toml#t003_beyond_ends"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-slice.t004"
+form = "sf.functions.array-slice"
+kind = "null_argument"
+target = "from"
+note = "NULL in each argument."
+catches = "a NULL position read as 0 or as the end"
+reading = "the page: elements from position from (0-based) up to but not including to; negative positions count from the end; both beyond one end gives an empty array; any NULL gives NULL"
+cases = ["cases/translation/functions/array-slice.toml#t004_null_from"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-sort.t001"
+form = "sf.functions.array-sort"
+kind = "type_combination"
+target = "ARRAY"
+note = "Ascending with the default NULL placement (last)."
+catches = "SQL NULL elements first, or the input order kept"
+reading = "the page: elements sorted ascending by default; SQL NULL elements last when ascending and first when descending unless nulls_first says otherwise; nulls_first does not move JSON null; any NULL argument gives NULL"
+cases = ["cases/translation/functions/array-sort.toml#t001_defaults"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-sort.t002"
+form = "sf.functions.array-sort"
+kind = "type_combination"
+target = "ARRAY, BOOLEAN"
+note = "Descending, where the default puts SQL NULL elements first."
+catches = "SQL NULL elements left last when descending"
+reading = "the page: elements sorted ascending by default; SQL NULL elements last when ascending and first when descending unless nulls_first says otherwise; nulls_first does not move JSON null; any NULL argument gives NULL"
+cases = ["cases/translation/functions/array-sort.toml#t002_descending"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-sort.t003"
+form = "sf.functions.array-sort"
+kind = "type_combination"
+target = "ARRAY, BOOLEAN, BOOLEAN"
+note = "Ascending with nulls_first TRUE, and descending with FALSE."
+catches = "nulls_first ignored"
+reading = "the page: elements sorted ascending by default; SQL NULL elements last when ascending and first when descending unless nulls_first says otherwise; nulls_first does not move JSON null; any NULL argument gives NULL"
+cases = ["cases/translation/functions/array-sort.toml#t003_nulls_first"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-sort.t004"
+form = "sf.functions.array-sort"
+kind = "type_combination"
+target = "ARRAY, BOOLEAN, BOOLEAN"
+note = "A JSON null sorted with nulls_first TRUE and FALSE; the page says the flag only moves SQL NULL elements."
+catches = "the JSON null moved by nulls_first (the two results differ)"
+reading = "the page: elements sorted ascending by default; SQL NULL elements last when ascending and first when descending unless nulls_first says otherwise; nulls_first does not move JSON null; any NULL argument gives NULL"
+cases = ["cases/translation/functions/array-sort.toml#t004_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-sort.t005"
+form = "sf.functions.array-sort"
+kind = "null_argument"
+target = "array"
+note = "A NULL array and a NULL sort_ascending."
+catches = "the default order used for a NULL flag"
+reading = "the page: elements sorted ascending by default; SQL NULL elements last when ascending and first when descending unless nulls_first says otherwise; nulls_first does not move JSON null; any NULL argument gives NULL"
+cases = ["cases/translation/functions/array-sort.toml#t005_null_array"]
+required = true
+
+[[obligation]]
 id = "sf.functions.array-sum.t001"
 form = "sf.functions.array-sum"
 kind = "type_combination"
@@ -1160,6 +2169,61 @@ note = "No rows."
 catches = "an empty array instead of NULL"
 reading = "the page: element-wise sums of structured ARRAY(FLOAT) values of equal length; a NULL array is ignored and a NULL element contributes nothing, so a position NULL in every array is NULL; different lengths are an error; an empty or all-NULL group gives NULL"
 cases = ["cases/translation/functions/array-sum.toml#t004_empty_input"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-to-string.t001"
+form = "sf.functions.array-to-string"
+kind = "type_combination"
+target = "ARRAY, VARCHAR"
+note = "Numbers, text, a boolean and a nested array joined with \", \"."
+catches = "text written with JSON quotes, or the nested array dropped"
+reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
+cases = ["cases/translation/functions/array-to-string.toml#t001_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-to-string.t002"
+form = "sf.functions.array-to-string"
+kind = "type_combination"
+target = "ARRAY, VARCHAR"
+note = "A SQL NULL element between two values."
+catches = "the NULL element skipped (one separator) or written as \"null\""
+reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
+cases = ["cases/translation/functions/array-to-string.toml#t002_sql_null_element"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-to-string.t003"
+form = "sf.functions.array-to-string"
+kind = "type_combination"
+target = "ARRAY, VARCHAR"
+note = "A JSON null element; the page does not say; the recording decides whether it gives \"null\" or an empty string."
+catches = "the JSON null converted the other way than in Snowflake"
+reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
+cases = ["cases/translation/functions/array-to-string.toml#t003_json_null_element"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-to-string.t004"
+form = "sf.functions.array-to-string"
+kind = "type_combination"
+target = "ARRAY, VARCHAR"
+note = "An empty array."
+catches = "NULL instead of an empty string"
+reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
+cases = ["cases/translation/functions/array-to-string.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.array-to-string.t005"
+form = "sf.functions.array-to-string"
+kind = "null_argument"
+target = "array"
+note = "A NULL array and a NULL separator."
+catches = "the NULL separator read as an empty string"
+reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
+cases = ["cases/translation/functions/array-to-string.toml#t005_null_array"]
 required = true
 
 [[obligation]]
@@ -1336,6 +2400,138 @@ note = "NULL partition keys."
 catches = "NULL-keyed rows split or dropped"
 reading = "the page: an array of the distinct non-NULL values in no particular order (sorted here with ARRAY_SORT); an empty or all-NULL input gives an empty array; no explicit frames as a window function"
 cases = ["cases/translation/functions/array-unique-agg.array-unique-agg-over.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-overlap.t001"
+form = "sf.functions.arrays-overlap"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Arrays sharing one element, and disjoint arrays."
+catches = "TRUE for the disjoint pair"
+reading = "the page: TRUE when the arrays share an element; objects must be identical"
+cases = ["cases/translation/functions/arrays-overlap.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-overlap.t002"
+form = "sf.functions.arrays-overlap"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "An object against an identical one and against a superset."
+catches = "objects matched on a shared key"
+reading = "the page: TRUE when the arrays share an element; objects must be identical"
+cases = ["cases/translation/functions/arrays-overlap.toml#t002_objects"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-overlap.t003"
+form = "sf.functions.arrays-overlap"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "The number 1 against the text \"1\"."
+catches = "values compared as text"
+reading = "the page: TRUE when the arrays share an element; objects must be identical"
+cases = ["cases/translation/functions/arrays-overlap.toml#t003_number_vs_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-overlap.t004"
+form = "sf.functions.arrays-overlap"
+kind = "null_argument"
+target = "array1"
+note = "A NULL array, and SQL NULL elements on both sides. The page calls the function NULL-safe, and its example with SQL NULL elements on both sides gives TRUE; it does not cover a NULL array, so the recording decides that row."
+catches = "a NULL array read as empty (FALSE), or SQL NULL elements not matched"
+reading = "the page: TRUE when the arrays share an element; objects must be identical"
+cases = ["cases/translation/functions/arrays-overlap.toml#t004_null_array1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-to-object.t001"
+form = "sf.functions.arrays-to-object"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Keys paired with values of mixed types."
+catches = "keys and values swapped, or pairs shifted"
+reading = "the page: an OBJECT from a key array of VARCHAR and a value array of equal length; a NULL key drops its pair; a NULL value keeps the key; a non-string key or unequal lengths is an error"
+cases = ["cases/translation/functions/arrays-to-object.toml#t001_pairs"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-to-object.t002"
+form = "sf.functions.arrays-to-object"
+kind = "null_argument"
+target = "key-array"
+note = "A NULL key, and a NULL value beside a non-NULL key."
+catches = "the NULL-keyed pair kept, or the key with a NULL value dropped"
+reading = "the page: an OBJECT from a key array of VARCHAR and a value array of equal length; a NULL key drops its pair; a NULL value keeps the key; a non-string key or unequal lengths is an error"
+cases = ["cases/translation/functions/arrays-to-object.toml#t002_null_key_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-to-object.t003"
+form = "sf.functions.arrays-to-object"
+kind = "error_parity"
+target = "error"
+note = "Arrays of different lengths, which the page says is error 215001."
+catches = "the extra key dropped or given NULL"
+reading = "the page: an OBJECT from a key array of VARCHAR and a value array of equal length; a NULL key drops its pair; a NULL value keeps the key; a non-string key or unequal lengths is an error"
+cases = ["cases/translation/functions/arrays-to-object.toml#t003_unequal_lengths"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-to-object.t004"
+form = "sf.functions.arrays-to-object"
+kind = "error_parity"
+target = "error"
+note = "A number as a key, which the page says is error 215002."
+catches = "the key converted to text"
+reading = "the page: an OBJECT from a key array of VARCHAR and a value array of equal length; a NULL key drops its pair; a NULL value keeps the key; a non-string key or unequal lengths is an error"
+cases = ["cases/translation/functions/arrays-to-object.toml#t004_non_string_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-zip.t001"
+form = "sf.functions.arrays-zip"
+kind = "type_combination"
+target = "ARRAY, ARRAY, ARRAY"
+note = "Three arrays of equal length."
+catches = "keys numbered from 0, or the arrays transposed"
+reading = "the page: an array of objects whose keys $1, $2 \u2026 hold the nth element of each input; as long as the longest input, shorter inputs padded with JSON null; a NULL element gives JSON null; a NULL array gives NULL"
+cases = ["cases/translation/functions/arrays-zip.toml#t001_three_arrays"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-zip.t002"
+form = "sf.functions.arrays-zip"
+kind = "type_combination"
+target = "ARRAY, ARRAY"
+note = "Arrays of different lengths."
+catches = "the result cut to the shorter array, or padded with SQL NULL"
+reading = "the page: an array of objects whose keys $1, $2 \u2026 hold the nth element of each input; as long as the longest input, shorter inputs padded with JSON null; a NULL element gives JSON null; a NULL array gives NULL"
+cases = ["cases/translation/functions/arrays-zip.toml#t002_lengths"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-zip.t003"
+form = "sf.functions.arrays-zip"
+kind = "type_combination"
+target = "ARRAY"
+note = "A single array."
+catches = "the array returned as it is"
+reading = "the page: an array of objects whose keys $1, $2 \u2026 hold the nth element of each input; as long as the longest input, shorter inputs padded with JSON null; a NULL element gives JSON null; a NULL array gives NULL"
+cases = ["cases/translation/functions/arrays-zip.toml#t003_one_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.arrays-zip.t004"
+form = "sf.functions.arrays-zip"
+kind = "null_argument"
+target = "array"
+note = "A NULL array, and a SQL NULL element."
+catches = "the NULL array read as empty, or the NULL element dropped"
+reading = "the page: an array of objects whose keys $1, $2 \u2026 hold the nth element of each input; as long as the longest input, shorter inputs padded with JSON null; a NULL element gives JSON null; a NULL array gives NULL"
+cases = ["cases/translation/functions/arrays-zip.toml#t004_null_array"]
 required = true
 
 [[obligation]]
@@ -6902,6 +8098,39 @@ note = "A result past 38 digits."
 catches = "FLOAT or wrapping instead of the error"
 reading = "the page names only <integer_expr>; the examples use 0 to 10"
 cases = ["cases/translation/functions/factorial.toml#t006_too_big"]
+required = true
+
+[[obligation]]
+id = "sf.functions.filter.t001"
+form = "sf.functions.filter"
+kind = "type_combination"
+target = "ARRAY, lambda"
+note = "A condition true for a non-contiguous subset."
+catches = "the order changed, or the elements failing the condition kept"
+reading = "the page: the elements for which the lambda returns TRUE, in order; a NULL condition filters the element out; a NULL argument gives NULL"
+cases = ["cases/translation/functions/filter.toml#t001_keeps_order"]
+required = true
+
+[[obligation]]
+id = "sf.functions.filter.t002"
+form = "sf.functions.filter"
+kind = "type_combination"
+target = "ARRAY, lambda"
+note = "A JSON null element, for which the condition is NULL."
+catches = "the element kept when the condition is NULL"
+reading = "the page: the elements for which the lambda returns TRUE, in order; a NULL condition filters the element out; a NULL argument gives NULL"
+cases = ["cases/translation/functions/filter.toml#t002_null_condition"]
+required = true
+
+[[obligation]]
+id = "sf.functions.filter.t003"
+form = "sf.functions.filter"
+kind = "null_argument"
+target = "array"
+note = "A NULL array."
+catches = "an empty array returned"
+reading = "the page: the elements for which the lambda returns TRUE, in order; a NULL condition filters the element out; a NULL argument gives NULL"
+cases = ["cases/translation/functions/filter.toml#t003_null_array"]
 required = true
 
 [[obligation]]
@@ -12727,6 +13956,50 @@ note = "Large degree values."
 catches = "x*pi computed before dividing by 180, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/radians.toml#t004_large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.reduce.t001"
+form = "sf.functions.reduce"
+kind = "type_combination"
+target = "ARRAY, NUMBER, lambda"
+note = "A fold that depends on the order of the elements."
+catches = "the elements folded from the end (321 instead of 123)"
+reading = "the page: folds the array from the first element with the lambda (acc, value); an empty array gives init; NULL array, NULL init, or a NULL lambda result gives NULL"
+cases = ["cases/translation/functions/reduce.toml#t001_order"]
+required = true
+
+[[obligation]]
+id = "sf.functions.reduce.t002"
+form = "sf.functions.reduce"
+kind = "type_combination"
+target = "ARRAY, NUMBER, lambda"
+note = "An empty array gives the initial value."
+catches = "NULL or 0 instead of the initial value"
+reading = "the page: folds the array from the first element with the lambda (acc, value); an empty array gives init; NULL array, NULL init, or a NULL lambda result gives NULL"
+cases = ["cases/translation/functions/reduce.toml#t002_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.reduce.t003"
+form = "sf.functions.reduce"
+kind = "type_combination"
+target = "ARRAY, NUMBER, lambda"
+note = "A JSON null element, which makes the lambda return NULL."
+catches = "the null element skipped (4 instead of NULL)"
+reading = "the page: folds the array from the first element with the lambda (acc, value); an empty array gives init; NULL array, NULL init, or a NULL lambda result gives NULL"
+cases = ["cases/translation/functions/reduce.toml#t003_null_element"]
+required = true
+
+[[obligation]]
+id = "sf.functions.reduce.t004"
+form = "sf.functions.reduce"
+kind = "null_argument"
+target = "init"
+note = "A NULL initial value and a NULL array."
+catches = "a NULL initial value read as 0"
+reading = "the page: folds the array from the first element with the lambda (acc, value); an empty array gives init; NULL array, NULL init, or a NULL lambda result gives NULL"
+cases = ["cases/translation/functions/reduce.toml#t004_null_init"]
 required = true
 
 [[obligation]]
@@ -19313,6 +20586,39 @@ note = "Strings with fractional seconds, an explicit format and an integer strin
 catches = "the fraction dropped, the format ignored, or an integer string read as a date"
 reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
 cases = ["cases/translation/functions/to-timestamp.toml#t009_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.transform.t001"
+form = "sf.functions.transform"
+kind = "type_combination"
+target = "ARRAY, lambda"
+note = "Integers and a decimal doubled."
+catches = "the decimal truncated, or the order changed"
+reading = "the page: the lambda applied to each element; with no declared type a semi-structured element is a VARIANT; a declared type coerces the element first; a NULL argument gives NULL"
+cases = ["cases/translation/functions/transform.toml#t001_elements"]
+required = true
+
+[[obligation]]
+id = "sf.functions.transform.t002"
+form = "sf.functions.transform"
+kind = "type_combination"
+target = "ARRAY, lambda"
+note = "A lambda argument declared VARCHAR, applied to a number and text."
+catches = "the number written with JSON quotes, or the declared type ignored (an error)"
+reading = "the page: the lambda applied to each element; with no declared type a semi-structured element is a VARIANT; a declared type coerces the element first; a NULL argument gives NULL"
+cases = ["cases/translation/functions/transform.toml#t002_declared_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.transform.t003"
+form = "sf.functions.transform"
+kind = "null_argument"
+target = "array"
+note = "A NULL array."
+catches = "an empty array returned"
+reading = "the page: the lambda applied to each element; with no declared type a semi-structured element is a VARIANT; a declared type coerces the element first; a NULL argument gives NULL"
+cases = ["cases/translation/functions/transform.toml#t003_null_array"]
 required = true
 
 [[obligation]]

@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.arrays-to-object"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_pairs"
+description = "Keys paired with values of mixed types. Catches: keys and values swapped, or pairs shifted"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[\"a\",\"b\"]'", "'[1,\"x\"]'"],
+]
+query = "SELECT ARRAYS_TO_OBJECT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_key_array"
+description = "A NULL key, and a NULL value beside a non-NULL key. Catches: the NULL-keyed pair kept, or the key with a NULL value dropped"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ARRAYS_TO_OBJECT(ARRAY_CONSTRUCT('a', x, 'c'), ARRAY_CONSTRUCT(1, 2, x)) AS r, ARRAY_SIZE(OBJECT_KEYS(ARRAYS_TO_OBJECT(ARRAY_CONSTRUCT('a', x, 'c'), ARRAY_CONSTRUCT(1, 2, x)))) AS n FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_unequal_lengths"
+description = "Arrays of different lengths, which the page says is error 215001. Catches: the extra key dropped or given NULL"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[\"a\",\"b\"]'", "'[1]'"],
+]
+query = "SELECT ARRAYS_TO_OBJECT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_non_string_key"
+description = "A number as a key, which the page says is error 215002. Catches: the key converted to text"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1]'", "'[2]'"],
+]
+query = "SELECT ARRAYS_TO_OBJECT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
