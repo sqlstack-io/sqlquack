@@ -1,0 +1,28 @@
+category = "translation"
+construct = "sf.functions.is-null"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_values"
+description = "Empty string, NaN and zero, which are not NULL. Catches: '' or NaN treated as NULL"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "f", type = "FLOAT" }]
+rows = [
+  ["''", "'NaN'"],
+  ["NULL", "NULL"],
+  ["'0'", "0"],
+]
+query = "SELECT a IS NULL AS a_null, f IS NULL AS f_null, a IS NOT NULL AS a_set FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr"
+description = "NULL of a typed column. Catches: NULL instead of TRUE"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT a IS NULL AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

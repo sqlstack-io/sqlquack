@@ -814,6 +814,83 @@ cases = ["cases/translation/functions/base64-encode.toml#t008_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.between.t001"
+form = "sf.functions.between"
+kind = "type_combination"
+target = "NUMBER BETWEEN NUMBER AND NUMBER"
+note = "Values on, inside and outside the bounds, and reversed bounds."
+catches = "exclusive bounds, or symmetric BETWEEN (TRUE for 5 BETWEEN 10 AND 1)"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t002"
+form = "sf.functions.between"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings compared in binary order."
+catches = "case-insensitive or locale order (b BETWEEN A AND Z is FALSE)"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t003"
+form = "sf.functions.between"
+kind = "type_combination"
+target = "TIMESTAMP BETWEEN DATE AND DATE"
+note = "The page's case: DATE bounds cast to midnight."
+catches = "the upper DATE read as end of day (TRUE for noon)"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t003_timestamp_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t004"
+form = "sf.functions.between"
+kind = "type_combination"
+target = "NOT BETWEEN"
+note = "NOT BETWEEN on and off the bounds."
+catches = "NOT applied to one comparison only"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t004_not"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t005"
+form = "sf.functions.between"
+kind = "null_argument"
+target = "expr"
+note = "NULL value."
+catches = "FALSE instead of NULL"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t006"
+form = "sf.functions.between"
+kind = "null_argument"
+target = "lower_bound"
+note = "NULL lower bound where the upper bound already decides."
+catches = "NULL for 9 BETWEEN NULL AND 3 (which is FALSE: NULL AND FALSE), or TRUE"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t006_null_lower_bound"]
+required = true
+
+[[obligation]]
+id = "sf.functions.between.t007"
+form = "sf.functions.between"
+kind = "null_argument"
+target = "upper_bound"
+note = "NULL upper bound where the lower bound already decides."
+catches = "NULL instead of FALSE for 0 BETWEEN 1 AND NULL"
+reading = "the page: expr BETWEEN lo AND hi is expr >= lo AND expr <= hi; DATE bounds against a TIMESTAMP are cast to midnight"
+cases = ["cases/translation/functions/between.toml#t007_null_upper_bound"]
+required = true
+
+[[obligation]]
 id = "sf.functions.bit-length.t001"
 form = "sf.functions.bit-length"
 kind = "type_combination"
@@ -856,6 +933,292 @@ note = "The empty string."
 catches = "NULL for an empty string"
 reading = "the page: <string_or_binary> is a string or binary; the length in bits"
 cases = ["cases/translation/functions/bit-length.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.booland.t001"
+form = "sf.functions.booland"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "BOOLAND over zero, non-zero and negative values."
+catches = "negative values read as FALSE, or another operator than AND"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/booland.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.booland.t002"
+form = "sf.functions.booland"
+kind = "type_combination"
+target = "FLOAT, FLOAT"
+note = "FLOAT values that round to zero, as the page warns."
+catches = "non-zero floats read as TRUE (0.3 is FALSE after rounding)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/booland.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.booland.t003"
+form = "sf.functions.booland"
+kind = "type_combination"
+target = "NUMBER(10,2), NUMBER"
+note = "Fixed-point fractions."
+catches = "fixed-point treated like FLOAT (rounded) or the reverse"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/booland.toml#t003_decimal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.booland.t004"
+form = "sf.functions.booland"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument, beside values that do and do not decide the result."
+catches = "NULL read as FALSE, or NULL even where three-valued logic gives FALSE (NULL AND FALSE)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/booland.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.booland.t005"
+form = "sf.functions.booland"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument."
+catches = "NULL read as FALSE"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/booland.toml#t005_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolnot.t001"
+form = "sf.functions.boolnot"
+kind = "type_combination"
+target = "NUMBER"
+note = "BOOLNOT of zero, positive and negative values."
+catches = "a negative value read as FALSE"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolnot.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolnot.t002"
+form = "sf.functions.boolnot"
+kind = "type_combination"
+target = "FLOAT"
+note = "FLOAT values around rounding to zero."
+catches = "non-zero floats read as TRUE before rounding"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolnot.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolnot.t003"
+form = "sf.functions.boolnot"
+kind = "null_argument"
+target = "expr"
+note = "NULL argument."
+catches = "NULL read as FALSE (TRUE instead of NULL)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolnot.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolor.t001"
+form = "sf.functions.boolor"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "BOOLOR over zero, non-zero and negative values."
+catches = "negative values read as FALSE, or another operator than OR"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolor.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolor.t002"
+form = "sf.functions.boolor"
+kind = "type_combination"
+target = "FLOAT, FLOAT"
+note = "FLOAT values that round to zero, as the page warns."
+catches = "non-zero floats read as TRUE (0.3 is FALSE after rounding)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolor.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolor.t003"
+form = "sf.functions.boolor"
+kind = "type_combination"
+target = "NUMBER(10,2), NUMBER"
+note = "Fixed-point fractions."
+catches = "fixed-point treated like FLOAT (rounded) or the reverse"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolor.toml#t003_decimal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolor.t004"
+form = "sf.functions.boolor"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument, beside values that do and do not decide the result."
+catches = "NULL read as FALSE, or NULL even where three-valued logic gives TRUE (NULL OR TRUE)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolor.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolor.t005"
+form = "sf.functions.boolor"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument."
+catches = "NULL read as FALSE"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolor.toml#t005_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolxor.t001"
+form = "sf.functions.boolxor"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "BOOLXOR over zero, non-zero and negative values."
+catches = "negative values read as FALSE, or another operator than XOR"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolxor.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolxor.t002"
+form = "sf.functions.boolxor"
+kind = "type_combination"
+target = "FLOAT, FLOAT"
+note = "FLOAT values that round to zero, as the page warns."
+catches = "non-zero floats read as TRUE (0.3 is FALSE after rounding)"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolxor.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolxor.t003"
+form = "sf.functions.boolxor"
+kind = "type_combination"
+target = "NUMBER(10,2), NUMBER"
+note = "Fixed-point fractions."
+catches = "fixed-point treated like FLOAT (rounded) or the reverse"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolxor.toml#t003_decimal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolxor.t004"
+form = "sf.functions.boolxor"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument, beside values that do and do not decide the result."
+catches = "NULL read as FALSE, or NULL even where three-valued logic gives NULL"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolxor.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.boolxor.t005"
+form = "sf.functions.boolxor"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument."
+catches = "NULL read as FALSE"
+reading = "the page: numeric arguments; non-zero is TRUE; floating-point numbers are rounded first, so a value rounding to 0 is FALSE; returns BOOLEAN or NULL"
+cases = ["cases/translation/functions/boolxor.toml#t005_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.t001"
+form = "sf.functions.case.end"
+kind = "type_combination"
+target = "BOOLEAN conditions"
+note = "Two true conditions, where the first must win."
+catches = "the last true condition winning"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.toml#t001_first_true"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.t002"
+form = "sf.functions.case.end"
+kind = "type_combination"
+target = "NUMBER and NUMBER(10,2) results"
+note = "Results of different scales."
+catches = "the result type taken from the first branch (2 instead of 2.50)"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.toml#t002_result_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.t003"
+form = "sf.functions.case.end"
+kind = "type_combination"
+target = "no ELSE"
+note = "No ELSE branch."
+catches = "a default other than NULL (0 or '')"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.toml#t003_no_else"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.t004"
+form = "sf.functions.case.end"
+kind = "null_argument"
+target = "condition"
+note = "A NULL condition before a true one."
+catches = "a NULL condition treated as true, or the CASE returning NULL"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.toml#t004_null_condition"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.t005"
+form = "sf.functions.case.end"
+kind = "null_argument"
+target = "result"
+note = "A NULL result selected."
+catches = "the ELSE value instead of NULL"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.toml#t005_null_result"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.t001"
+form = "sf.functions.case.end.syntax"
+kind = "type_combination"
+target = "simple CASE on NUMBER"
+note = "The first matching value wins."
+catches = "the last match winning, or no match falling through to NULL with ELSE"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.syntax.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.t002"
+form = "sf.functions.case.end.syntax"
+kind = "type_combination"
+target = "VARCHAR value against NUMBER expr"
+note = "Values cast to expr's type, as the page says."
+catches = "string comparison ('1.0' not matching 1)"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.syntax.toml#t002_cast"]
+required = true
+
+[[obligation]]
+id = "sf.functions.case.end.syntax.t003"
+form = "sf.functions.case.end.syntax"
+kind = "null_argument"
+target = "expr"
+note = "NULL expr against a WHEN NULL branch."
+catches = "NULL matching WHEN NULL (DECODE semantics) instead of falling to ELSE"
+reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
+cases = ["cases/translation/functions/case.end.syntax.toml#t003_null_expr"]
 required = true
 
 [[obligation]]
@@ -1137,6 +1500,61 @@ note = "A negative code point: records what Snowflake returns there; it moves to
 catches = "an empty string or a wrapped code point where Snowflake raises an error"
 reading = "the page: <input> is a Unicode code point; returns VARCHAR"
 cases = ["cases/translation/functions/chr.toml#t003_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.coalesce.t001"
+form = "sf.functions.coalesce"
+kind = "type_combination"
+target = "NUMBER..."
+note = "The first non-NULL among several."
+catches = "the last non-NULL, or stopping after two arguments"
+reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/coalesce.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.coalesce.t002"
+form = "sf.functions.coalesce"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A numeric string with a number, which converts to NUMBER."
+catches = "a VARCHAR result ('17.0' kept as text)"
+reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/coalesce.toml#t002_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.coalesce.t003"
+form = "sf.functions.coalesce"
+kind = "type_combination"
+target = "NUMBER(10,2), NUMBER"
+note = "Scales widened."
+catches = "the second argument's scale lost"
+reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/coalesce.toml#t003_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.coalesce.t004"
+form = "sf.functions.coalesce"
+kind = "null_argument"
+target = "expr"
+note = "Every argument NULL."
+catches = "a default value (0 or '') instead of NULL"
+reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/coalesce.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.coalesce.t005"
+form = "sf.functions.coalesce"
+kind = "error_parity"
+target = "error"
+note = "A non-numeric string with a number, which the page says fails."
+catches = "the string returned as text"
+reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/coalesce.toml#t005_unconvertible"]
 required = true
 
 [[obligation]]
@@ -2441,6 +2859,50 @@ cases = ["cases/translation/functions/dayname.toml#t003_null_date_or_timestamp_e
 required = true
 
 [[obligation]]
+id = "sf.functions.decode.t001"
+form = "sf.functions.decode"
+kind = "type_combination"
+target = "NUMBER searches"
+note = "Matches, a repeated search and the default."
+catches = "the last match winning, or the default missed"
+reading = "the page: the first search equal to expr gives its result; NULL matches NULL; no match and no default gives NULL"
+cases = ["cases/translation/functions/decode.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decode.t002"
+form = "sf.functions.decode"
+kind = "type_combination"
+target = "no default"
+note = "No default argument, with an even number of trailing arguments."
+catches = "the last result read as the default"
+reading = "the page: the first search equal to expr gives its result; NULL matches NULL; no match and no default gives NULL"
+cases = ["cases/translation/functions/decode.toml#t002_no_default"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decode.t003"
+form = "sf.functions.decode"
+kind = "null_argument"
+target = "expr"
+note = "NULL expr against a NULL search, which the page says matches."
+catches = "CASE semantics (NULL never matches: the default)"
+reading = "the page: the first search equal to expr gives its result; NULL matches NULL; no match and no default gives NULL"
+cases = ["cases/translation/functions/decode.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decode.t004"
+form = "sf.functions.decode"
+kind = "null_argument"
+target = "result"
+note = "A NULL result selected."
+catches = "the default instead of NULL"
+reading = "the page: the first search equal to expr gives its result; NULL matches NULL; no match and no default gives NULL"
+cases = ["cases/translation/functions/decode.toml#t004_null_result"]
+required = true
+
+[[obligation]]
 id = "sf.functions.decompress-binary.t001"
 form = "sf.functions.decompress-binary"
 kind = "type_combination"
@@ -2910,6 +3372,50 @@ cases = ["cases/translation/functions/endswith.toml#t004_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.equal-null.t001"
+form = "sf.functions.equal-null"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "Equal and unequal values, including different scales."
+catches = "scale compared (1 vs 1.00 unequal)"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/equal-null.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.equal-null.t002"
+form = "sf.functions.equal-null"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Strings differing only in case or trailing blanks."
+catches = "case-insensitive or blank-padded comparison"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/equal-null.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.equal-null.t003"
+form = "sf.functions.equal-null"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument against NULL and a value."
+catches = "ordinary = (NULL instead of TRUE/FALSE)"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/equal-null.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.equal-null.t004"
+form = "sf.functions.equal-null"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument against a value."
+catches = "NULL instead of a definite result"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/equal-null.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
 id = "sf.functions.exp.t001"
 form = "sf.functions.exp"
 kind = "type_combination"
@@ -3300,6 +3806,116 @@ note = "Negative values at the rounding step."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/floor.toml#t008_negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest.t001"
+form = "sf.functions.greatest"
+kind = "type_combination"
+target = "NUMBER, NUMBER(10,2), FLOAT"
+note = "GREATEST across numeric types, with a negative."
+catches = "the result type taken from one argument (scale lost)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/greatest.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest.t002"
+form = "sf.functions.greatest"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A string first, so the numbers compare as strings."
+catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/greatest.toml#t002_first_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest.t003"
+form = "sf.functions.greatest"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings in binary order."
+catches = "case-insensitive order"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/greatest.toml#t003_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest.t004"
+form = "sf.functions.greatest"
+kind = "type_combination"
+target = "DATE"
+note = "Dates."
+catches = "string order of another format"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/greatest.toml#t004_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest.t005"
+form = "sf.functions.greatest"
+kind = "null_argument"
+target = "expr"
+note = "NULL beside larger and smaller values."
+catches = "NULL skipped (DuckDB and Postgres ignore NULLs) instead of returning NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/greatest.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest-ignore-nulls.t001"
+form = "sf.functions.greatest-ignore-nulls"
+kind = "type_combination"
+target = "NUMBER, NUMBER(10,2), FLOAT"
+note = "GREATEST_IGNORE_NULLS across numeric types, with a negative."
+catches = "the result type taken from one argument (scale lost)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest-ignore-nulls.t002"
+form = "sf.functions.greatest-ignore-nulls"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A string first, so the numbers compare as strings."
+catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t002_first_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest-ignore-nulls.t003"
+form = "sf.functions.greatest-ignore-nulls"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings in binary order."
+catches = "case-insensitive order"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t003_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest-ignore-nulls.t004"
+form = "sf.functions.greatest-ignore-nulls"
+kind = "type_combination"
+target = "DATE"
+note = "Dates."
+catches = "string order of another format"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t004_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.greatest-ignore-nulls.t005"
+form = "sf.functions.greatest-ignore-nulls"
+kind = "null_argument"
+target = "expr"
+note = "NULL beside values, and every argument NULL."
+catches = "NULL returned when any argument is NULL (plain GREATEST/LEAST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t005_null_expr"]
 required = true
 
 [[obligation]]
@@ -3824,6 +4440,116 @@ cases = ["cases/translation/functions/hour-minute-second.second.toml#t005_null_t
 required = true
 
 [[obligation]]
+id = "sf.functions.iff.t001"
+form = "sf.functions.iff"
+kind = "type_combination"
+target = "BOOLEAN, VARCHAR, VARCHAR"
+note = "TRUE and FALSE conditions."
+catches = "the branches swapped"
+reading = "the page: expr1 when the condition is TRUE, otherwise expr2, including when it is NULL"
+cases = ["cases/translation/functions/iff.toml#t001_boolean"]
+required = true
+
+[[obligation]]
+id = "sf.functions.iff.t002"
+form = "sf.functions.iff"
+kind = "type_combination"
+target = "BOOLEAN, NUMBER, NUMBER(10,2)"
+note = "Branches of different scales."
+catches = "the type of one branch only (2 instead of 2.50)"
+reading = "the page: expr1 when the condition is TRUE, otherwise expr2, including when it is NULL"
+cases = ["cases/translation/functions/iff.toml#t002_result_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.iff.t003"
+form = "sf.functions.iff"
+kind = "null_argument"
+target = "condition"
+note = "A NULL condition, which the page says gives expr2."
+catches = "NULL returned, or expr1"
+reading = "the page: expr1 when the condition is TRUE, otherwise expr2, including when it is NULL"
+cases = ["cases/translation/functions/iff.toml#t003_null_condition"]
+required = true
+
+[[obligation]]
+id = "sf.functions.iff.t004"
+form = "sf.functions.iff"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL first branch selected."
+catches = "expr2 returned instead"
+reading = "the page: expr1 when the condition is TRUE, otherwise expr2, including when it is NULL"
+cases = ["cases/translation/functions/iff.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.iff.t005"
+form = "sf.functions.iff"
+kind = "null_argument"
+target = "expr2"
+note = "A NULL second branch selected."
+catches = "expr1 returned instead"
+reading = "the page: expr1 when the condition is TRUE, otherwise expr2, including when it is NULL"
+cases = ["cases/translation/functions/iff.toml#t005_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ifnull.t001"
+form = "sf.functions.ifnull"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "IFNULL with NULL and non-NULL first arguments."
+catches = "the arguments swapped"
+reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/ifnull.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ifnull.t002"
+form = "sf.functions.ifnull"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A numeric string and a number."
+catches = "a VARCHAR result"
+reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/ifnull.toml#t002_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ifnull.t003"
+form = "sf.functions.ifnull"
+kind = "null_argument"
+target = "expr1"
+note = "Both arguments NULL."
+catches = "a default instead of NULL"
+reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/ifnull.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ifnull.t004"
+form = "sf.functions.ifnull"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument with a set first."
+catches = "NULL returned instead of expr1"
+reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/ifnull.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ifnull.t005"
+form = "sf.functions.ifnull"
+kind = "error_parity"
+target = "error"
+note = "A non-numeric string with a number."
+catches = "the string returned as text"
+reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/ifnull.toml#t005_unconvertible"]
+required = true
+
+[[obligation]]
 id = "sf.functions.ilike-any.t001"
 form = "sf.functions.ilike-any"
 kind = "type_combination"
@@ -4091,6 +4817,150 @@ cases = ["cases/translation/functions/ilike.ilike.syntax.toml#t009_not"]
 required = true
 
 [[obligation]]
+id = "sf.functions.in.in.t001"
+form = "sf.functions.in.in"
+kind = "type_combination"
+target = "NUMBER IN (NUMBER...)"
+note = "Values in and out of the list, across scales."
+catches = "scale compared (1.00 not found)"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.t002"
+form = "sf.functions.in.in"
+kind = "type_combination"
+target = "NOT IN"
+note = "NOT IN with a match and without."
+catches = "NOT applied to one element only"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in.toml#t002_not"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.t003"
+form = "sf.functions.in.in"
+kind = "type_combination"
+target = "VARCHAR IN"
+note = "Strings differing in case."
+catches = "case-insensitive matching"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in.toml#t003_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.t004"
+form = "sf.functions.in.in"
+kind = "null_argument"
+target = "value"
+note = "NULL value against a list holding NULL."
+catches = "TRUE for NULL IN (NULL)"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in.toml#t004_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.t005"
+form = "sf.functions.in.in"
+kind = "null_argument"
+target = "value_1"
+note = "NULL in the list without a match."
+catches = "FALSE for 9 IN (1, NULL) and TRUE for 9 NOT IN (1, NULL), instead of NULL for both"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in.toml#t005_null_value_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in-2.t001"
+form = "sf.functions.in.in-2"
+kind = "type_combination"
+target = "NUMBER IN (subquery)"
+note = "Values in and out of a subquery."
+catches = "a correlated reading, or duplicates changing the result"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in-2.toml#t001_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in-2.t002"
+form = "sf.functions.in.in-2"
+kind = "type_combination"
+target = "NOT IN (subquery)"
+note = "NOT IN against a subquery."
+catches = "NOT dropped"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in-2.toml#t002_not"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in-2.t003"
+form = "sf.functions.in.in-2"
+kind = "null_argument"
+target = "value"
+note = "NULL value."
+catches = "FALSE instead of NULL"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in-2.toml#t003_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in-2.t004"
+form = "sf.functions.in.in-2"
+kind = "null_argument"
+target = "subquery"
+note = "A subquery returning NULL and no match."
+catches = "TRUE for NOT IN when the subquery holds a NULL"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in-2.toml#t004_null_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in-2.t005"
+form = "sf.functions.in.in-2"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty_string"
+note = "A subquery with no rows."
+catches = "NULL instead of FALSE/TRUE for an empty subquery"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL"
+cases = ["cases/translation/functions/in.in-2.toml#t005_empty_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.t001"
+form = "sf.functions.in.in.syntax"
+kind = "type_combination"
+target = "(NUMBER, VARCHAR) IN ((...), (...))"
+note = "Rows matching on both columns and on one only."
+catches = "a match on one column counted"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL; a row of values against a list of rows"
+cases = ["cases/translation/functions/in.in.syntax.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.t002"
+form = "sf.functions.in.in.syntax"
+kind = "type_combination"
+target = "NOT IN"
+note = "Row NOT IN."
+catches = "NOT dropped"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL; a row of values against a list of rows"
+cases = ["cases/translation/functions/in.in.syntax.toml#t002_not"]
+required = true
+
+[[obligation]]
+id = "sf.functions.in.in.syntax.t003"
+form = "sf.functions.in.in.syntax"
+kind = "null_argument"
+target = "value_A"
+note = "A NULL component."
+catches = "TRUE or FALSE instead of NULL when the other component matches"
+reading = "the page: NULL is not equal to NULL; a NULL value gives NULL whatever the list holds; a list without a match but holding NULL gives NULL; a row of values against a list of rows"
+cases = ["cases/translation/functions/in.in.syntax.toml#t003_null_value_a"]
+required = true
+
+[[obligation]]
 id = "sf.functions.initcap.t001"
 form = "sf.functions.initcap"
 kind = "type_combination"
@@ -4236,6 +5106,94 @@ cases = ["cases/translation/functions/insert.toml#t008_delete"]
 required = true
 
 [[obligation]]
+id = "sf.functions.is-distinct-from.t001"
+form = "sf.functions.is-distinct-from"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "Equal and unequal values, including different scales."
+catches = "scale compared (1 vs 1.00 unequal)"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/is-distinct-from.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-distinct-from.t002"
+form = "sf.functions.is-distinct-from"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Strings differing only in case or trailing blanks."
+catches = "case-insensitive or blank-padded comparison"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/is-distinct-from.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-distinct-from.t003"
+form = "sf.functions.is-distinct-from"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument against NULL and a value."
+catches = "ordinary = (NULL instead of TRUE/FALSE)"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/is-distinct-from.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-distinct-from.t004"
+form = "sf.functions.is-distinct-from"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument against a value."
+catches = "NULL instead of a definite result"
+reading = "the page: NULL against NULL is equal, NULL against a value is not, otherwise ordinary equality"
+cases = ["cases/translation/functions/is-distinct-from.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-null.t001"
+form = "sf.functions.is-null"
+kind = "type_combination"
+target = "VARCHAR, FLOAT"
+note = "Empty string, NaN and zero, which are not NULL."
+catches = "'' or NaN treated as NULL"
+reading = "the page: IS NULL is TRUE only for NULL; IS NOT NULL the reverse"
+cases = ["cases/translation/functions/is-null.toml#t001_values"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-null.t002"
+form = "sf.functions.is-null"
+kind = "null_argument"
+target = "expr"
+note = "NULL of a typed column."
+catches = "NULL instead of TRUE"
+reading = "the page: IS NULL is TRUE only for NULL; IS NOT NULL the reverse"
+cases = ["cases/translation/functions/is-null.toml#t002_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-null-value.t001"
+form = "sf.functions.is-null-value"
+kind = "type_combination"
+target = "VARIANT"
+note = "JSON null, a missing field and set values."
+catches = "a missing field treated as JSON null, or JSON null as SQL NULL"
+reading = "the page: TRUE for a JSON null, FALSE for another JSON value, NULL for SQL NULL"
+cases = ["cases/translation/functions/is-null-value.toml#t001_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-null-value.t002"
+form = "sf.functions.is-null-value"
+kind = "null_argument"
+target = "variant_expr"
+note = "SQL NULL."
+catches = "TRUE for SQL NULL"
+reading = "the page: TRUE for a JSON null, FALSE for another JSON value, NULL for SQL NULL"
+cases = ["cases/translation/functions/is-null-value.toml#t002_null_variant_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.jarowinkler-similarity.t001"
 form = "sf.functions.jarowinkler-similarity"
 kind = "type_combination"
@@ -4345,6 +5303,116 @@ note = "February in leap and common years, including 1900 and 2000."
 catches = "a fixed 28 or a Julian leap rule (1900-02-29)"
 reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
 cases = ["cases/translation/functions/last-day.toml#t006_february"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least.t001"
+form = "sf.functions.least"
+kind = "type_combination"
+target = "NUMBER, NUMBER(10,2), FLOAT"
+note = "LEAST across numeric types, with a negative."
+catches = "the result type taken from one argument (scale lost)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/least.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least.t002"
+form = "sf.functions.least"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A string first, so the numbers compare as strings."
+catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/least.toml#t002_first_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least.t003"
+form = "sf.functions.least"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings in binary order."
+catches = "case-insensitive order"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/least.toml#t003_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least.t004"
+form = "sf.functions.least"
+kind = "type_combination"
+target = "DATE"
+note = "Dates."
+catches = "string order of another format"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/least.toml#t004_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least.t005"
+form = "sf.functions.least"
+kind = "null_argument"
+target = "expr"
+note = "NULL beside larger and smaller values."
+catches = "NULL skipped (DuckDB and Postgres ignore NULLs) instead of returning NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+cases = ["cases/translation/functions/least.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least-ignore-nulls.t001"
+form = "sf.functions.least-ignore-nulls"
+kind = "type_combination"
+target = "NUMBER, NUMBER(10,2), FLOAT"
+note = "LEAST_IGNORE_NULLS across numeric types, with a negative."
+catches = "the result type taken from one argument (scale lost)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/least-ignore-nulls.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least-ignore-nulls.t002"
+form = "sf.functions.least-ignore-nulls"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A string first, so the numbers compare as strings."
+catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/least-ignore-nulls.toml#t002_first_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least-ignore-nulls.t003"
+form = "sf.functions.least-ignore-nulls"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings in binary order."
+catches = "case-insensitive order"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/least-ignore-nulls.toml#t003_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least-ignore-nulls.t004"
+form = "sf.functions.least-ignore-nulls"
+kind = "type_combination"
+target = "DATE"
+note = "Dates."
+catches = "string order of another format"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/least-ignore-nulls.toml#t004_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.least-ignore-nulls.t005"
+form = "sf.functions.least-ignore-nulls"
+kind = "null_argument"
+target = "expr"
+note = "NULL beside values, and every argument NULL."
+catches = "NULL returned when any argument is NULL (plain GREATEST/LEAST)"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+cases = ["cases/translation/functions/least-ignore-nulls.toml#t005_null_expr"]
 required = true
 
 [[obligation]]
@@ -5655,6 +6723,182 @@ note = "A string that names no weekday."
 catches = "NULL or a default weekday instead of an error"
 reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
 cases = ["cases/translation/functions/next-day.toml#t007_bad_name"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t001"
+form = "sf.functions.nullif"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "Equal and unequal values, across scales."
+catches = "expr2 returned, or scale compared"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t002"
+form = "sf.functions.nullif"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Strings differing only in case."
+catches = "case-insensitive equality"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t003"
+form = "sf.functions.nullif"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument against NULL and a value."
+catches = "a value instead of NULL"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t004"
+form = "sf.functions.nullif"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument."
+catches = "NULL returned (NULL treated as equal)"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullifzero.t001"
+form = "sf.functions.nullifzero"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "Zero with a scale and non-zero values."
+catches = "0.00 not seen as zero, or the scale lost"
+reading = "the page: NULL for 0, otherwise the input, as NUMBER(p, s) for fixed-point and DOUBLE for floating point"
+cases = ["cases/translation/functions/nullifzero.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullifzero.t002"
+form = "sf.functions.nullifzero"
+kind = "type_combination"
+target = "FLOAT"
+note = "Floating zero, negative zero and a tiny value."
+catches = "negative zero not seen as zero, or a tiny value rounded to zero"
+reading = "the page: NULL for 0, otherwise the input, as NUMBER(p, s) for fixed-point and DOUBLE for floating point"
+cases = ["cases/translation/functions/nullifzero.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullifzero.t003"
+form = "sf.functions.nullifzero"
+kind = "null_argument"
+target = "expr"
+note = "NULL input."
+catches = "NULL read as 0"
+reading = "the page: NULL for 0, otherwise the input, as NUMBER(p, s) for fixed-point and DOUBLE for floating point"
+cases = ["cases/translation/functions/nullifzero.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl.t001"
+form = "sf.functions.nvl"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "NVL with NULL and non-NULL first arguments."
+catches = "the arguments swapped"
+reading = "the page: NVL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/nvl.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl.t002"
+form = "sf.functions.nvl"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A numeric string and a number."
+catches = "a VARCHAR result"
+reading = "the page: NVL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/nvl.toml#t002_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl.t003"
+form = "sf.functions.nvl"
+kind = "null_argument"
+target = "expr1"
+note = "Both arguments NULL."
+catches = "a default instead of NULL"
+reading = "the page: NVL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/nvl.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl.t004"
+form = "sf.functions.nvl"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument with a set first."
+catches = "NULL returned instead of expr1"
+reading = "the page: NVL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/nvl.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl.t005"
+form = "sf.functions.nvl"
+kind = "error_parity"
+target = "error"
+note = "A non-numeric string with a number."
+catches = "the string returned as text"
+reading = "the page: NVL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
+cases = ["cases/translation/functions/nvl.toml#t005_unconvertible"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl2.t001"
+form = "sf.functions.nvl2"
+kind = "type_combination"
+target = "VARCHAR, NUMBER, NUMBER"
+note = "NVL2 of NULL and non-NULL first arguments."
+catches = "expr2 and expr3 swapped, or expr1 returned (NVL)"
+reading = "the page: NVL2(expr1, expr2, expr3) is expr2 when expr1 is not NULL, otherwise expr3"
+cases = ["cases/translation/functions/nvl2.toml#t001_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl2.t002"
+form = "sf.functions.nvl2"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument."
+catches = "expr2 returned"
+reading = "the page: NVL2(expr1, expr2, expr3) is expr2 when expr1 is not NULL, otherwise expr3"
+cases = ["cases/translation/functions/nvl2.toml#t002_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl2.t003"
+form = "sf.functions.nvl2"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument selected."
+catches = "expr3 returned instead of NULL"
+reading = "the page: NVL2(expr1, expr2, expr3) is expr2 when expr1 is not NULL, otherwise expr3"
+cases = ["cases/translation/functions/nvl2.toml#t003_null_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nvl2.t004"
+form = "sf.functions.nvl2"
+kind = "null_argument"
+target = "expr3"
+note = "NULL third argument selected."
+catches = "expr2 returned instead of NULL"
+reading = "the page: NVL2(expr1, expr2, expr3) is expr2 when expr1 is not NULL, otherwise expr3"
+cases = ["cases/translation/functions/nvl2.toml#t004_null_expr3"]
 required = true
 
 [[obligation]]
@@ -7127,6 +8371,94 @@ note = "An empty subject."
 catches = "NULL instead of an empty array for an empty subject"
 reading = "the pages: POSIX extended regular expressions; parameters c, i, m, e, s (default c); positions are 1-based; NULL if any argument is NULL; REGEXP_SUBSTR_ALL returns an ARRAY of matching parts; with e, group 1 by default"
 cases = ["cases/translation/functions/regexp-substr-all.toml#t011_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valx.t001"
+form = "sf.functions.regr-valx"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "REGR_VALX of asymmetric pairs."
+catches = "y returned instead of x"
+reading = "the page: NULL when either argument is NULL, otherwise x"
+cases = ["cases/translation/functions/regr-valx.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valx.t002"
+form = "sf.functions.regr-valx"
+kind = "type_combination"
+target = "FLOAT, FLOAT"
+note = "REGR_VALX of FLOAT pairs."
+catches = "y returned instead of x, or a NUMBER result"
+reading = "the page: NULL when either argument is NULL, otherwise x"
+cases = ["cases/translation/functions/regr-valx.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valx.t003"
+form = "sf.functions.regr-valx"
+kind = "null_argument"
+target = "y"
+note = "NULL y."
+catches = "x returned (only the returned argument checked)"
+reading = "the page: NULL when either argument is NULL, otherwise x"
+cases = ["cases/translation/functions/regr-valx.toml#t003_null_y"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valx.t004"
+form = "sf.functions.regr-valx"
+kind = "null_argument"
+target = "x"
+note = "NULL x."
+catches = "y returned (only the returned argument checked)"
+reading = "the page: NULL when either argument is NULL, otherwise x"
+cases = ["cases/translation/functions/regr-valx.toml#t004_null_x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valy.t001"
+form = "sf.functions.regr-valy"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "REGR_VALY of asymmetric pairs."
+catches = "x returned instead of y"
+reading = "the page: NULL when either argument is NULL, otherwise y"
+cases = ["cases/translation/functions/regr-valy.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valy.t002"
+form = "sf.functions.regr-valy"
+kind = "type_combination"
+target = "FLOAT, FLOAT"
+note = "REGR_VALY of FLOAT pairs."
+catches = "x returned instead of y, or a NUMBER result"
+reading = "the page: NULL when either argument is NULL, otherwise y"
+cases = ["cases/translation/functions/regr-valy.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valy.t003"
+form = "sf.functions.regr-valy"
+kind = "null_argument"
+target = "y"
+note = "NULL y."
+catches = "x returned (only the returned argument checked)"
+reading = "the page: NULL when either argument is NULL, otherwise y"
+cases = ["cases/translation/functions/regr-valy.toml#t003_null_y"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regr-valy.t004"
+form = "sf.functions.regr-valy"
+kind = "null_argument"
+target = "x"
+note = "NULL x."
+catches = "y returned (only the returned argument checked)"
+reading = "the page: NULL when either argument is NULL, otherwise y"
+cases = ["cases/translation/functions/regr-valy.toml#t004_null_x"]
 required = true
 
 [[obligation]]
@@ -12733,4 +14065,37 @@ note = "Days around 29 February in a leap and a common year."
 catches = "a fixed 365-day year or a non-leap 2024"
 reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
 cases = ["cases/translation/functions/year.yearofweekiso.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zeroifnull.t001"
+form = "sf.functions.zeroifnull"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "NULL and set values with a scale."
+catches = "the result scale dropped (0 instead of 0.00), or values changed"
+reading = "the page: 0 for NULL, otherwise the input, keeping its numeric type"
+cases = ["cases/translation/functions/zeroifnull.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zeroifnull.t002"
+form = "sf.functions.zeroifnull"
+kind = "type_combination"
+target = "FLOAT"
+note = "FLOAT values."
+catches = "a NUMBER result"
+reading = "the page: 0 for NULL, otherwise the input, keeping its numeric type"
+cases = ["cases/translation/functions/zeroifnull.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zeroifnull.t003"
+form = "sf.functions.zeroifnull"
+kind = "null_argument"
+target = "expr"
+note = "NULL input."
+catches = "NULL returned"
+reading = "the page: 0 for NULL, otherwise the input, keeping its numeric type"
+cases = ["cases/translation/functions/zeroifnull.toml#t003_null_expr"]
 required = true
