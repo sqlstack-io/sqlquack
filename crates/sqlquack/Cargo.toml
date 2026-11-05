@@ -24,7 +24,7 @@ serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
 sqlquack-core.workspace = true
-sqlquack-duckdb.workspace = true
+sqlquack-duckdb = { workspace = true, features = ["engine"] }
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules.workspace = true

@@ -1,0 +1,70 @@
+---
+title: "Policy and sessions"
+description: "Choose which known divergences conversion may rely on, and under which Snowflake session."
+---
+
+Some conversions match Snowflake except for a documented difference, called a known divergence.
+`HASH` is one: DuckDB computes its own 64-bit hash, consistent within one run but never
+Snowflake's value. A policy file lists every known divergence and whether conversion may rely on
+it. Anything relying on a refused divergence is refused with
+[`SQ0008`](/docs/diagnostics/reference/#sq0008).
+
+```console
+$ sqlquack convert due.sql --schema schema.json
+error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:HASH`
+ --> due.sql:2:8
+  |
+2 |        HASH(customer_id) AS bucket
+  |        ^^^^^^^^^^^^^^^^^ fn:HASH needs known divergence `hash`, which the policy refuses in this mode
+```
+
+## Choosing a policy
+
+`convert`, `function`, `census` and `index` read `sqlquack.toml` from the current directory, or the
+file `--policy` names. Without one they exit 2, unless `--builtin-policy` asks for the built-in
+default, which refuses every known divergence.
+
+Start from the repository's `sqlquack.toml`. To allow a divergence, set its `default`:
+
+```toml
+[divergences.hash]
+default = "warn"
+```
+
+A conversion that relies on an allowed divergence names it on standard error:
+
+```console
+sqlquack convert: relies on known divergence hash at fn:HASH
+sqlquack convert: done, converted under utc-v1
+```
+
+## Flags
+
+| Flag | Effect |
+|------|--------|
+| `--policy <file>` | The policy file. Default `sqlquack.toml`. |
+| `--builtin-policy` | Use the built-in default: every known divergence is refused. |
+| `--strict` | Refuse every divergence the policy refuses in strict mode. |
+| `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
+| `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
+| `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
+| `--loud-divergences-only` | Rely only on divergences whose converted SQL raises rather than returns another value. |
+
+## Sessions
+
+Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
+`TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
+`session_timezone_utc` assumption, and strict mode refuses them unless you pass `--utc-session`.
+
+`--session NAME=VALUE` passes your Snowflake session parameters, one flag each:
+
+- Conversion runs under the recorded session profile they match: `utc-v1`, or `utc-qiic-v1` for
+  `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. A parameter left unset takes Snowflake's documented
+  default.
+- Parameters that match no profile are refused by name with
+  [`SQ0007`](/docs/diagnostics/reference/#sq0007), so a misspelt name never falls back to defaults.
+- These are accepted and ignored, because they cannot change a result: `QUERY_TAG`,
+  `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
+  `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
+- `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
+  `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.

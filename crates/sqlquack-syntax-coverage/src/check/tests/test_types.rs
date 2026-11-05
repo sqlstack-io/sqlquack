@@ -29,3 +29,12 @@ pub(crate) struct AccountStateTestCase {
     /// Each case id with its parameter names and values, in case-id order.
     pub(crate) expected_cases: Vec<(&'static str, Parameters<'static>)>,
 }
+
+/// Receipts on a case id no form cites, and the receipt verdicts the checker must then give (D141).
+pub(crate) struct ReceiptCheckTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) mutate: fn(&Path),
+    pub(crate) parse: fn(&str) -> LocalVerdict,
+    pub(crate) expected_contradictions: Vec<&'static str>,
+    pub(crate) expected_unjudged: Vec<&'static str>,
+}

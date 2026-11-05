@@ -1,0 +1,41 @@
+name: Website
+
+# Builds the site and checks its links and branding. Manual only, and it never deploys: the site is
+# not public yet. Add push and pull_request triggers, and a deploy job, once publishing is approved.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build the website
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Check the diagnostics reference matches the registry
+        run: python3 scripts/generate_diagnostics.py --check
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check links
+        run: python3 scripts/check_links.py dist

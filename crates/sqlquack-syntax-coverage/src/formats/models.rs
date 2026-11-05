@@ -564,6 +564,8 @@ pub struct SyntaxCoverage {
     pub receipts: Vec<Receipt>,
     /// SHA-256 of each published receipt line that is superseded or withdrawn.
     pub retired_receipts: Vec<String>,
+    /// The SQL of every statement a run report read, by its SHA-256, cited by a case or not.
+    pub receipt_sql: BTreeMap<String, String>,
     pub reviews: Vec<Review>,
     pub unobservable: Vec<Unobservable>,
     pub diagnostics: Vec<Diagnostic>,
