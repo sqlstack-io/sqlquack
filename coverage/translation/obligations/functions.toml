@@ -6584,6 +6584,61 @@ cases = ["cases/translation/functions/concat.concat-subscript-dot.toml#t004_empt
 required = true
 
 [[obligation]]
+id = "sf.functions.conditional-change-event.t001"
+form = "sf.functions.conditional-change-event"
+kind = "type_combination"
+target = "NUMBER"
+note = "Values that repeat and change."
+catches = "repeats counted as changes, or the counter starting at 1"
+reading = "the page: a window event number incremented when the value differs from the previous row, computed as CONDITIONAL_TRUE_EVENT(expr != LAG(expr))"
+cases = ["cases/translation/functions/conditional-change-event.toml#t001_changes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.conditional-change-event.t002"
+form = "sf.functions.conditional-change-event"
+kind = "null_argument"
+target = "expr1"
+note = "NULL values, where the page formula compares with NULL and so counts no change."
+catches = "a change to or from NULL counted"
+reading = "the page: a window event number incremented when the value differs from the previous row, computed as CONDITIONAL_TRUE_EVENT(expr != LAG(expr))"
+cases = ["cases/translation/functions/conditional-change-event.toml#t002_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.conditional-true-event.t001"
+form = "sf.functions.conditional-true-event"
+kind = "type_combination"
+target = "BOOLEAN"
+note = "A condition true on some rows, NULL on others."
+catches = "the counter starting at 1, incremented on the following row, or NULL counted as TRUE"
+reading = "the page: a window event number per row, starting at 0 and incremented on each row where the boolean expression is TRUE"
+cases = ["cases/translation/functions/conditional-true-event.toml#t001_events"]
+required = true
+
+[[obligation]]
+id = "sf.functions.conditional-true-event.t002"
+form = "sf.functions.conditional-true-event"
+kind = "type_combination"
+target = "BOOLEAN using LAG"
+note = "A condition using LAG with the same OVER clause, as the page allows."
+catches = "the LAG evaluated over a different window"
+reading = "the page: a window event number per row, starting at 0 and incremented on each row where the boolean expression is TRUE"
+cases = ["cases/translation/functions/conditional-true-event.toml#t002_with_lag"]
+required = true
+
+[[obligation]]
+id = "sf.functions.conditional-true-event.t003"
+form = "sf.functions.conditional-true-event"
+kind = "null_argument"
+target = "expr1"
+note = "A condition that is NULL on some rows, which is not TRUE."
+catches = "NULL counted as TRUE, or NULL returned for those rows"
+reading = "the page: a window event number per row, starting at 0 and incremented on each row where the boolean expression is TRUE"
+cases = ["cases/translation/functions/conditional-true-event.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
 id = "sf.functions.contains.t001"
 form = "sf.functions.contains"
 kind = "type_combination"
@@ -7490,6 +7545,39 @@ note = "NULL partition keys."
 catches = "NULL-keyed rows split or dropped"
 reading = "the page: the sample covariance; NULL for one pair; both values of a pair must be non-NULL; the dependent variable y comes first; no DISTINCT; as a window function, no ORDER BY or frame"
 cases = ["cases/translation/functions/covar-samp.x-over.toml#t004_null_partition_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cume-dist.t001"
+form = "sf.functions.cume-dist"
+kind = "type_combination"
+target = "ORDER BY"
+note = "A tie and a one-row partition."
+catches = "ties counted one at a time (0.4 instead of 0.6), or PERCENT_RANK computed"
+reading = "the page: the cumulative distribution, the share of rows ordered at or before the current row, as DOUBLE; no explicit frame"
+cases = ["cases/translation/functions/cume-dist.toml#t001_ties"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cume-dist.t002"
+form = "sf.functions.cume-dist"
+kind = "error_parity"
+target = "error"
+note = "An explicit window frame, which the page says CUME_DIST does not support."
+catches = "the frame accepted and ignored"
+reading = "the page: the cumulative distribution, the share of rows ordered at or before the current row, as DOUBLE; no explicit frame"
+cases = ["cases/translation/functions/cume-dist.toml#t002_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cume-dist.t003"
+form = "sf.functions.cume-dist"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys sorted first; tied NULLs share one cumulative share."
+catches = "NULLs sorted last, or counted one at a time"
+reading = "the page: the cumulative distribution, the share of rows ordered at or before the current row, as DOUBLE; no explicit frame"
+cases = ["cases/translation/functions/cume-dist.toml#t003_null_order_expr"]
 required = true
 
 [[obligation]]
@@ -8631,6 +8719,39 @@ cases = ["cases/translation/functions/degrees.toml#t005_overflow"]
 required = true
 
 [[obligation]]
+id = "sf.functions.dense-rank.t001"
+form = "sf.functions.dense-rank"
+kind = "type_combination"
+target = "ORDER BY ASC"
+note = "A tie at 20 and a NULL order key."
+catches = "a gap after the tie (RANK: 1,2,2,4)"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and no gaps"
+cases = ["cases/translation/functions/dense-rank.toml#t001_ties"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dense-rank.t002"
+form = "sf.functions.dense-rank"
+kind = "type_combination"
+target = "ORDER BY DESC NULLS FIRST"
+note = "Descending order with NULLS FIRST."
+catches = "NULLS FIRST ignored"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and no gaps"
+cases = ["cases/translation/functions/dense-rank.toml#t002_desc_nulls_first"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dense-rank.t003"
+form = "sf.functions.dense-rank"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys sorted first with ASC NULLS FIRST; tied NULLs share a rank."
+catches = "NULLs sorted last, or each NULL given its own rank"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and no gaps"
+cases = ["cases/translation/functions/dense-rank.toml#t003_null_order_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.div0.t001"
 form = "sf.functions.div0"
 kind = "type_combination"
@@ -9266,6 +9387,50 @@ note = "A NULL array."
 catches = "an empty array returned"
 reading = "the page: the elements for which the lambda returns TRUE, in order; a NULL condition filters the element out; a NULL argument gives NULL"
 cases = ["cases/translation/functions/filter.toml#t003_null_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.first-value.t001"
+form = "sf.functions.first-value"
+kind = "type_combination"
+target = "default"
+note = "A partition whose first value is NULL."
+catches = "NULLs skipped by default"
+reading = "the page: the first value in the ordered window frame; RESPECT NULLS by default, IGNORE NULLS skips them; without a frame the whole partition"
+cases = ["cases/translation/functions/first-value.toml#t001_respect"]
+required = true
+
+[[obligation]]
+id = "sf.functions.first-value.t002"
+form = "sf.functions.first-value"
+kind = "type_combination"
+target = "IGNORE NULLS"
+note = "IGNORE NULLS on the same partition."
+catches = "IGNORE NULLS ignored (NULL)"
+reading = "the page: the first value in the ordered window frame; RESPECT NULLS by default, IGNORE NULLS skips them; without a frame the whole partition"
+cases = ["cases/translation/functions/first-value.toml#t002_ignore_nulls"]
+required = true
+
+[[obligation]]
+id = "sf.functions.first-value.t003"
+form = "sf.functions.first-value"
+kind = "type_combination"
+target = "ROWS frame"
+note = "A sliding frame of the current and one preceding row."
+catches = "the frame ignored"
+reading = "the page: the first value in the ordered window frame; RESPECT NULLS by default, IGNORE NULLS skips them; without a frame the whole partition"
+cases = ["cases/translation/functions/first-value.toml#t003_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.first-value.t004"
+form = "sf.functions.first-value"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, with IGNORE NULLS."
+catches = "an error, or a value from another partition"
+reading = "the page: the first value in the ordered window frame; RESPECT NULLS by default, IGNORE NULLS skips them; without a frame the whole partition"
+cases = ["cases/translation/functions/first-value.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
@@ -11492,6 +11657,138 @@ cases = ["cases/translation/functions/insert.toml#t008_delete"]
 required = true
 
 [[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.t001"
+form = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by"
+kind = "type_combination"
+target = "NUMBER"
+note = "NULLs inside and at both ends of a partition."
+catches = "the previous value used (FFILL), or values carried across partitions"
+reading = "the page: each NULL replaced by the next non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-bfill-over-order-by.toml#t001_gaps"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.t002"
+form = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A text column, which these functions accept."
+catches = "an error for a non-numeric column"
+reading = "the page: each NULL replaced by the next non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-bfill-over-order-by.toml#t002_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.t003"
+form = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by"
+kind = "error_parity"
+target = "error"
+note = "An explicit window frame, which the page says is not allowed."
+catches = "the frame accepted"
+reading = "the page: each NULL replaced by the next non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-bfill-over-order-by.toml#t003_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by.t004"
+form = "sf.functions.interpolate-bfill.interpolate-bfill-over-order-by"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, which stay NULL."
+catches = "values taken from another partition"
+reading = "the page: each NULL replaced by the next non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-bfill-over-order-by.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.t001"
+form = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by"
+kind = "type_combination"
+target = "NUMBER"
+note = "NULLs inside and at both ends of a partition."
+catches = "the next value used (BFILL), or values carried across partitions"
+reading = "the page: each NULL replaced by the previous non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-ffill-over-order-by.toml#t001_gaps"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.t002"
+form = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A text column, which these functions accept."
+catches = "an error for a non-numeric column"
+reading = "the page: each NULL replaced by the previous non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-ffill-over-order-by.toml#t002_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.t003"
+form = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by"
+kind = "error_parity"
+target = "error"
+note = "An explicit window frame, which the page says is not allowed."
+catches = "the frame accepted"
+reading = "the page: each NULL replaced by the previous non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-ffill-over-order-by.toml#t003_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by.t004"
+form = "sf.functions.interpolate-bfill.interpolate-ffill-over-order-by"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, which stay NULL."
+catches = "values taken from another partition"
+reading = "the page: each NULL replaced by the previous non-NULL value in the ordered partition; ORDER BY is required and an explicit frame is not allowed"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-ffill-over-order-by.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.t001"
+form = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
+kind = "type_combination"
+target = "NUMBER"
+note = "Unevenly spaced order keys (2, 4, 5): the NULL at 4 lies two thirds of the way from 10 to 40."
+catches = "interpolation by row count (25 instead of 30), or ends filled instead of left NULL"
+reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t001_spacing"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.t002"
+form = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
+kind = "type_combination"
+target = "NUMBER ordered by DATE"
+note = "A DATE order key with a gap of two days then one."
+catches = "the dates treated as evenly spaced"
+reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t002_date_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.t003"
+form = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
+kind = "error_parity"
+target = "error"
+note = "A text column, which the page says INTERPOLATE_LINEAR does not accept."
+catches = "the text interpolated or copied"
+reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t003_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.t004"
+form = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, which stay NULL."
+catches = "values taken from another partition, or 0"
+reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
+cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.is-array.t001"
 form = "sf.functions.is-array"
 kind = "type_combination"
@@ -12307,6 +12604,50 @@ cases = ["cases/translation/functions/kurtosis.kurtosis-over.toml#t005_four"]
 required = true
 
 [[obligation]]
+id = "sf.functions.lag.t001"
+form = "sf.functions.lag"
+kind = "type_combination"
+target = "offset 2, default"
+note = "Offset 2 with a default value."
+catches = "the default ignored, or the offset counted across partitions"
+reading = "the page: the value offset rows before the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LEAD; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lag.toml#t001_offset_default"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lag.t002"
+form = "sf.functions.lag"
+kind = "type_combination"
+target = "IGNORE NULLS"
+note = "IGNORE NULLS with offset 1."
+catches = "NULL rows counted"
+reading = "the page: the value offset rows before the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LEAD; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lag.toml#t002_ignore_nulls"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lag.t003"
+form = "sf.functions.lag"
+kind = "type_combination"
+target = "offset -1"
+note = "A negative offset, which the page says acts like LEAD."
+catches = "an error, or the sign ignored"
+reading = "the page: the value offset rows before the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LEAD; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lag.toml#t003_negative_offset"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lag.t004"
+form = "sf.functions.lag"
+kind = "null_argument"
+target = "expr"
+note = "NULL values in the column, respected by default."
+catches = "NULL rows skipped"
+reading = "the page: the value offset rows before the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LEAD; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lag.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.last-day.t001"
 form = "sf.functions.last-day"
 kind = "type_combination"
@@ -12371,6 +12712,94 @@ note = "February in leap and common years, including 1900 and 2000."
 catches = "a fixed 28 or a Julian leap rule (1900-02-29)"
 reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
 cases = ["cases/translation/functions/last-day.toml#t006_february"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-value.t001"
+form = "sf.functions.last-value"
+kind = "type_combination"
+target = "default"
+note = "IGNORE NULLS without a frame, which the page says covers the whole partition."
+catches = "the ANSI default frame ending at the current row (a running last value)"
+reading = "the page: the last value in the ordered window frame; without a frame the whole partition (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING), not the ANSI default"
+cases = ["cases/translation/functions/last-value.toml#t001_default_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-value.t002"
+form = "sf.functions.last-value"
+kind = "type_combination"
+target = "RESPECT NULLS"
+note = "A partition whose last value is NULL."
+catches = "NULLs skipped by default"
+reading = "the page: the last value in the ordered window frame; without a frame the whole partition (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING), not the ANSI default"
+cases = ["cases/translation/functions/last-value.toml#t002_respect"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-value.t003"
+form = "sf.functions.last-value"
+kind = "type_combination"
+target = "ROWS frame"
+note = "A frame ending one row after the current row."
+catches = "the frame ignored"
+reading = "the page: the last value in the ordered window frame; without a frame the whole partition (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING), not the ANSI default"
+cases = ["cases/translation/functions/last-value.toml#t003_frame"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-value.t004"
+form = "sf.functions.last-value"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, with IGNORE NULLS."
+catches = "an error, or a value from another partition"
+reading = "the page: the last value in the ordered window frame; without a frame the whole partition (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING), not the ANSI default"
+cases = ["cases/translation/functions/last-value.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lead.t001"
+form = "sf.functions.lead"
+kind = "type_combination"
+target = "offset 2, default"
+note = "Offset 2 with a default value."
+catches = "the default ignored, or the offset counted across partitions"
+reading = "the page: the value offset rows after the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LAG; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lead.toml#t001_offset_default"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lead.t002"
+form = "sf.functions.lead"
+kind = "type_combination"
+target = "IGNORE NULLS"
+note = "IGNORE NULLS with offset 1."
+catches = "NULL rows counted"
+reading = "the page: the value offset rows after the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LAG; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lead.toml#t002_ignore_nulls"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lead.t003"
+form = "sf.functions.lead"
+kind = "type_combination"
+target = "offset -1"
+note = "A negative offset, which the page says acts like LAG."
+catches = "an error, or the sign ignored"
+reading = "the page: the value offset rows after the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LAG; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lead.toml#t003_negative_offset"]
+required = true
+
+[[obligation]]
+id = "sf.functions.lead.t004"
+form = "sf.functions.lead"
+kind = "null_argument"
+target = "expr"
+note = "NULL values in the column, respected by default."
+catches = "NULL rows skipped"
+reading = "the page: the value offset rows after the current row (default 1), or default outside the partition (default NULL); a negative offset acts like LAG; IGNORE NULLS skips NULL rows when counting"
+cases = ["cases/translation/functions/lead.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
@@ -15059,6 +15488,127 @@ cases = ["cases/translation/functions/next-day.toml#t007_bad_name"]
 required = true
 
 [[obligation]]
+id = "sf.functions.normal.t001"
+form = "sf.functions.normal"
+kind = "type_combination"
+target = "mean, stddev"
+note = "Mean 5 and standard deviation 2 over 1000 rows: the sample mean within 0.4 and about 68% within one deviation."
+catches = "a uniform distribution, or the arguments swapped"
+reading = "the page: a random floating-point number drawn from a normal distribution with the given mean and standard deviation"
+cases = ["cases/translation/functions/normal.toml#t001_distribution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.normal.t002"
+form = "sf.functions.normal"
+kind = "null_argument"
+target = "gen"
+note = "A NULL generator; the page does not say; the recording decides."
+catches = "a value where Snowflake returns NULL, or the reverse"
+reading = "the page: a random floating-point number drawn from a normal distribution with the given mean and standard deviation"
+cases = ["cases/translation/functions/normal.toml#t002_null_gen"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nth-value.t001"
+form = "sf.functions.nth-value"
+kind = "type_combination"
+target = "n = 2"
+note = "The second value, which is NULL in partition a."
+catches = "NULLs skipped by default, or n counted from 0"
+reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
+cases = ["cases/translation/functions/nth-value.toml#t001_from_first"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nth-value.t002"
+form = "sf.functions.nth-value"
+kind = "type_combination"
+target = "n = 2, FROM LAST, IGNORE NULLS"
+note = "The second non-NULL value counted from the end."
+catches = "FROM LAST ignored, or NULLs counted"
+reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
+cases = ["cases/translation/functions/nth-value.toml#t002_from_last_ignore"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nth-value.t003"
+form = "sf.functions.nth-value"
+kind = "type_combination"
+target = "n beyond the partition"
+note = "n larger than the partition."
+catches = "an error, or the last value returned"
+reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
+cases = ["cases/translation/functions/nth-value.toml#t003_past_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nth-value.t004"
+form = "sf.functions.nth-value"
+kind = "error_parity"
+target = "error"
+note = "n = 1001, above the limit of 1000 the page states."
+catches = "the call accepted"
+reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
+cases = ["cases/translation/functions/nth-value.toml#t004_above_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nth-value.t005"
+form = "sf.functions.nth-value"
+kind = "null_argument"
+target = "expr"
+note = "A partition whose values are all NULL, with IGNORE NULLS."
+catches = "an error, or a value from another partition"
+reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
+cases = ["cases/translation/functions/nth-value.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ntile.t001"
+form = "sf.functions.ntile"
+kind = "type_combination"
+target = "NTILE(2)"
+note = "Five rows into two buckets, and one row into two."
+catches = "the larger bucket last (1,1,2,2,2), or buckets numbered from 0"
+reading = "the page: the bucket number from 1 to constant_value, dividing each ordered partition as equally as possible; constant_value must be a positive integer"
+cases = ["cases/translation/functions/ntile.toml#t001_uneven"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ntile.t002"
+form = "sf.functions.ntile"
+kind = "type_combination"
+target = "NTILE(4)"
+note = "Five rows into four buckets."
+catches = "buckets left empty at the front (2,3,4,...)"
+reading = "the page: the bucket number from 1 to constant_value, dividing each ordered partition as equally as possible; constant_value must be a positive integer"
+cases = ["cases/translation/functions/ntile.toml#t002_more_buckets"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ntile.t003"
+form = "sf.functions.ntile"
+kind = "error_parity"
+target = "error"
+note = "Zero buckets; the page requires a positive integer."
+catches = "every row put in bucket 0 or 1"
+reading = "the page: the bucket number from 1 to constant_value, dividing each ordered partition as equally as possible; constant_value must be a positive integer"
+cases = ["cases/translation/functions/ntile.toml#t003_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ntile.t004"
+form = "sf.functions.ntile"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys sorted last, ties broken by ordinal."
+catches = "NULL rows given a NULL bucket"
+reading = "the page: the bucket number from 1 to constant_value, dividing each ordered partition as equally as possible; constant_value must be a positive integer"
+cases = ["cases/translation/functions/ntile.toml#t004_null_order_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.nullif.t001"
 form = "sf.functions.nullif"
 kind = "type_combination"
@@ -15930,6 +16480,39 @@ cases = ["cases/translation/functions/parse-xml.parse-xml-str.toml#t004_null_str
 required = true
 
 [[obligation]]
+id = "sf.functions.percent-rank.t001"
+form = "sf.functions.percent-rank"
+kind = "type_combination"
+target = "ORDER BY"
+note = "A tie and a one-row partition, which gives 0."
+catches = "CUME_DIST computed, or NULL or an error for the one-row partition"
+reading = "the page: the relative rank, (rank - 1) / (rows in partition - 1)"
+cases = ["cases/translation/functions/percent-rank.toml#t001_ties"]
+required = true
+
+[[obligation]]
+id = "sf.functions.percent-rank.t002"
+form = "sf.functions.percent-rank"
+kind = "type_combination"
+target = "ORDER BY DESC"
+note = "Descending order."
+catches = "ascending order used"
+reading = "the page: the relative rank, (rank - 1) / (rows in partition - 1)"
+cases = ["cases/translation/functions/percent-rank.toml#t002_desc"]
+required = true
+
+[[obligation]]
+id = "sf.functions.percent-rank.t003"
+form = "sf.functions.percent-rank"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys sorted first; tied NULLs share a relative rank."
+catches = "NULLs sorted last"
+reading = "the page: the relative rank, (rank - 1) / (rows in partition - 1)"
+cases = ["cases/translation/functions/percent-rank.toml#t003_null_order_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.percentile-cont.by.t001"
 form = "sf.functions.percentile-cont.by"
 kind = "type_combination"
@@ -16147,6 +16730,359 @@ note = "NULL partition keys."
 catches = "NULL-keyed rows split or dropped"
 reading = "the page: <percentile> is a constant between 0.0 and 1.0; NULL values are ignored; a group with one value returns it for every percentile; no DISTINCT; PERCENTILE_DISC returns the closest input value without interpolating; as a window function, no ORDER BY or frame in OVER"
 cases = ["cases/translation/functions/percentile-disc.by-over.toml#t004_null_partition_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-begin.t001"
+form = "sf.functions.period-begin"
+kind = "type_combination"
+target = "PERIOD(DATE)"
+note = "Periods built from dates, and a typed PERIOD literal."
+catches = "the other bound returned, or the end adjusted to be inclusive"
+reading = "the page: the inclusive beginning bound, of the PERIOD element type; NULL gives NULL"
+cases = ["cases/translation/functions/period-begin.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-begin.t002"
+form = "sf.functions.period-begin"
+kind = "null_argument"
+target = "period"
+note = "A NULL period, which the page says gives NULL."
+catches = "an error"
+reading = "the page: the inclusive beginning bound, of the PERIOD element type; NULL gives NULL"
+cases = ["cases/translation/functions/period-begin.toml#t002_null_period"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-construct.t001"
+form = "sf.functions.period-construct"
+kind = "type_combination"
+target = "DATE, DATE"
+note = "A one-day period."
+catches = "the end made inclusive"
+reading = "the page: a PERIOD from an inclusive begin and exclusive end of the same temporal type; begin >= end is an error; a VARCHAR is not converted and raises an error; NULL gives NULL"
+cases = ["cases/translation/functions/period-construct.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-construct.t002"
+form = "sf.functions.period-construct"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, TIMESTAMP_NTZ"
+note = "Timestamps with fractional seconds."
+catches = "the fraction dropped"
+reading = "the page: a PERIOD from an inclusive begin and exclusive end of the same temporal type; begin >= end is an error; a VARCHAR is not converted and raises an error; NULL gives NULL"
+cases = ["cases/translation/functions/period-construct.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-construct.t003"
+form = "sf.functions.period-construct"
+kind = "error_parity"
+target = "error"
+note = "Equal begin and end, which the page says is an error."
+catches = "an empty period returned"
+reading = "the page: a PERIOD from an inclusive begin and exclusive end of the same temporal type; begin >= end is an error; a VARCHAR is not converted and raises an error; NULL gives NULL"
+cases = ["cases/translation/functions/period-construct.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-construct.t004"
+form = "sf.functions.period-construct"
+kind = "error_parity"
+target = "error"
+note = "VARCHAR bounds, which the page says are not converted and raise an error."
+catches = "the strings converted to dates"
+reading = "the page: a PERIOD from an inclusive begin and exclusive end of the same temporal type; begin >= end is an error; a VARCHAR is not converted and raises an error; NULL gives NULL"
+cases = ["cases/translation/functions/period-construct.toml#t004_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-construct.t005"
+form = "sf.functions.period-construct"
+kind = "null_argument"
+target = "begin"
+note = "A NULL begin, which the page says gives NULL."
+catches = "an unbounded period returned"
+reading = "the page: a PERIOD from an inclusive begin and exclusive end of the same temporal type; begin >= end is an error; a VARCHAR is not converted and raises an error; NULL gives NULL"
+cases = ["cases/translation/functions/period-construct.toml#t005_null_begin"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-contains.t001"
+form = "sf.functions.period-contains"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "The six period pairs."
+catches = "containment tested the wrong way round, or overlap tested"
+reading = "the page: for two periods, TRUE when period2 lies within period1; for a value, TRUE when begin <= value < end"
+cases = ["cases/translation/functions/period-contains.toml#t001_periods"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-contains.t002"
+form = "sf.functions.period-contains"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Instants at the begin, inside, at the end and after; the page says the end is not contained."
+catches = "the end bound treated as inclusive"
+reading = "the page: for two periods, TRUE when period2 lies within period1; for a value, TRUE when begin <= value < end"
+cases = ["cases/translation/functions/period-contains.toml#t002_instant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-contains.t003"
+form = "sf.functions.period-contains"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: for two periods, TRUE when period2 lies within period1; for a value, TRUE when begin <= value < end"
+cases = ["cases/translation/functions/period-contains.toml#t003_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-end.t001"
+form = "sf.functions.period-end"
+kind = "type_combination"
+target = "PERIOD(DATE)"
+note = "Periods built from dates, and a typed PERIOD literal."
+catches = "the other bound returned, or the end adjusted to be inclusive"
+reading = "the page: the exclusive ending bound, of the PERIOD element type; NULL gives NULL"
+cases = ["cases/translation/functions/period-end.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-end.t002"
+form = "sf.functions.period-end"
+kind = "null_argument"
+target = "period"
+note = "A NULL period, which the page says gives NULL."
+catches = "an error"
+reading = "the page: the exclusive ending bound, of the PERIOD element type; NULL gives NULL"
+cases = ["cases/translation/functions/period-end.toml#t002_null_period"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-equals.t001"
+form = "sf.functions.period-equals"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "equal begins alone taken as equal"
+reading = "the page: TRUE when both bounds are equal"
+cases = ["cases/translation/functions/period-equals.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-equals.t002"
+form = "sf.functions.period-equals"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when both bounds are equal"
+cases = ["cases/translation/functions/period-equals.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-immediately-precedes.t001"
+form = "sf.functions.period-immediately-precedes"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "TRUE also for the reverse meeting"
+reading = "the page: TRUE when end1 = begin2"
+cases = ["cases/translation/functions/period-immediately-precedes.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-immediately-precedes.t002"
+form = "sf.functions.period-immediately-precedes"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when end1 = begin2"
+cases = ["cases/translation/functions/period-immediately-precedes.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-immediately-succeeds.t001"
+form = "sf.functions.period-immediately-succeeds"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "the arguments swapped"
+reading = "the page: TRUE when end2 = begin1"
+cases = ["cases/translation/functions/period-immediately-succeeds.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-immediately-succeeds.t002"
+form = "sf.functions.period-immediately-succeeds"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when end2 = begin1"
+cases = ["cases/translation/functions/period-immediately-succeeds.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-intersect.t001"
+form = "sf.functions.period-intersect"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "The six period pairs."
+catches = "a meeting pair giving an empty period instead of NULL, or the union returned"
+reading = "the page: [GREATEST(begin1, begin2), LEAST(end1, end2)) when non-empty; NULL when disjoint or only meeting"
+cases = ["cases/translation/functions/period-intersect.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-intersect.t002"
+form = "sf.functions.period-intersect"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "the other period returned"
+reading = "the page: [GREATEST(begin1, begin2), LEAST(end1, end2)) when non-empty; NULL when disjoint or only meeting"
+cases = ["cases/translation/functions/period-intersect.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-ldiff.t001"
+form = "sf.functions.period-ldiff"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "The six period pairs."
+catches = "the right-hand remainder returned (RDIFF), or a period where the rule gives NULL"
+reading = "the page: [begin1, begin2) when begin1 < begin2 < end1, otherwise NULL"
+cases = ["cases/translation/functions/period-ldiff.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-ldiff.t002"
+form = "sf.functions.period-ldiff"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "the other period returned"
+reading = "the page: [begin1, begin2) when begin1 < begin2 < end1, otherwise NULL"
+cases = ["cases/translation/functions/period-ldiff.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-meets.t001"
+form = "sf.functions.period-meets"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "only one direction tested"
+reading = "the page: TRUE when end1 = begin2 or end2 = begin1"
+cases = ["cases/translation/functions/period-meets.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-meets.t002"
+form = "sf.functions.period-meets"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when end1 = begin2 or end2 = begin1"
+cases = ["cases/translation/functions/period-meets.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-overlaps.t001"
+form = "sf.functions.period-overlaps"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "meeting periods counted as overlapping (inclusive ends)"
+reading = "the page: TRUE when begin1 < end2 and begin2 < end1, so periods that only meet do not overlap"
+cases = ["cases/translation/functions/period-overlaps.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-overlaps.t002"
+form = "sf.functions.period-overlaps"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when begin1 < end2 and begin2 < end1, so periods that only meet do not overlap"
+cases = ["cases/translation/functions/period-overlaps.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-precedes.t001"
+form = "sf.functions.period-precedes"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "a strict comparison (meeting periods FALSE)"
+reading = "the page: TRUE when end1 <= begin2, so meeting periods also precede"
+cases = ["cases/translation/functions/period-precedes.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-precedes.t002"
+form = "sf.functions.period-precedes"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when end1 <= begin2, so meeting periods also precede"
+cases = ["cases/translation/functions/period-precedes.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-rdiff.t001"
+form = "sf.functions.period-rdiff"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "The six period pairs."
+catches = "the left-hand remainder returned (LDIFF), or a period where the rule gives NULL"
+reading = "the page: [end2, end1) when begin1 < end2 < end1, otherwise NULL"
+cases = ["cases/translation/functions/period-rdiff.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-rdiff.t002"
+form = "sf.functions.period-rdiff"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "the other period returned"
+reading = "the page: [end2, end1) when begin1 < end2 < end1, otherwise NULL"
+cases = ["cases/translation/functions/period-rdiff.toml#t002_null_period1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-succeeds.t001"
+form = "sf.functions.period-succeeds"
+kind = "type_combination"
+target = "PERIOD(DATE), PERIOD(DATE)"
+note = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way."
+catches = "a strict comparison, or the arguments swapped"
+reading = "the page: TRUE when begin1 >= end2"
+cases = ["cases/translation/functions/period-succeeds.toml#t001_relations"]
+required = true
+
+[[obligation]]
+id = "sf.functions.period-succeeds.t002"
+form = "sf.functions.period-succeeds"
+kind = "null_argument"
+target = "period1"
+note = "A NULL period; the page does not say; the recording decides."
+catches = "FALSE returned"
+reading = "the page: TRUE when begin1 >= end2"
+cases = ["cases/translation/functions/period-succeeds.toml#t002_null_period1"]
 required = true
 
 [[obligation]]
@@ -16643,6 +17579,160 @@ note = "Large degree values."
 catches = "x*pi computed before dividing by 180, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/radians.toml#t004_large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.random.t001"
+form = "sf.functions.random"
+kind = "type_combination"
+target = "seed"
+note = "Two calls with the same seed in each of 1000 rows."
+catches = "the two calls differing within a row, or every row given the same value"
+reading = "the page: a pseudo-random 64-bit integer; with a seed, calls repeated in the same row return the same value while different rows get different values"
+cases = ["cases/translation/functions/random.toml#t001_same_row"]
+required = true
+
+[[obligation]]
+id = "sf.functions.random.t002"
+form = "sf.functions.random"
+kind = "type_combination"
+target = "no seed"
+note = "The type and range of an unseeded value."
+catches = "a floating-point value in [0, 1) returned"
+reading = "the page: a pseudo-random 64-bit integer; with a seed, calls repeated in the same row return the same value while different rows get different values"
+cases = ["cases/translation/functions/random.toml#t002_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.random.t003"
+form = "sf.functions.random"
+kind = "null_argument"
+target = "seed"
+note = "A NULL seed; the page does not say; the recording decides."
+catches = "an error where Snowflake returns a value, or the reverse"
+reading = "the page: a pseudo-random 64-bit integer; with a seed, calls repeated in the same row return the same value while different rows get different values"
+cases = ["cases/translation/functions/random.toml#t003_null_seed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.randstr.t001"
+form = "sf.functions.randstr"
+kind = "type_combination"
+target = "length, gen"
+note = "Strings of length 8 over 1000 rows: their lengths and characters."
+catches = "another length, or characters outside the pool"
+reading = "the page: a random string of the given length drawn from 0-9, a-z and A-Z, seeded by gen"
+cases = ["cases/translation/functions/randstr.toml#t001_pool"]
+required = true
+
+[[obligation]]
+id = "sf.functions.randstr.t002"
+form = "sf.functions.randstr"
+kind = "type_combination"
+target = "constant gen"
+note = "A constant generator, which gives the same string on every row."
+catches = "a fresh string per row"
+reading = "the page: a random string of the given length drawn from 0-9, a-z and A-Z, seeded by gen"
+cases = ["cases/translation/functions/randstr.toml#t002_constant_gen"]
+required = true
+
+[[obligation]]
+id = "sf.functions.randstr.t003"
+form = "sf.functions.randstr"
+kind = "null_argument"
+target = "gen"
+note = "A NULL generator; the page does not say; the recording decides."
+catches = "a string where Snowflake returns NULL, or the reverse"
+reading = "the page: a random string of the given length drawn from 0-9, a-z and A-Z, seeded by gen"
+cases = ["cases/translation/functions/randstr.toml#t003_null_gen"]
+required = true
+
+[[obligation]]
+id = "sf.functions.rank.t001"
+form = "sf.functions.rank"
+kind = "type_combination"
+target = "ORDER BY ASC"
+note = "A tie at 20 and a NULL order key, which sorts last under the session default."
+catches = "no gap after the tie (DENSE_RANK: 1,2,2,3), or the NULL ranked first"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and leaving gaps after them"
+cases = ["cases/translation/functions/rank.toml#t001_ties"]
+required = true
+
+[[obligation]]
+id = "sf.functions.rank.t002"
+form = "sf.functions.rank"
+kind = "type_combination"
+target = "ORDER BY DESC NULLS FIRST"
+note = "Descending order with NULLS FIRST."
+catches = "NULLS FIRST ignored, or ascending order used"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and leaving gaps after them"
+cases = ["cases/translation/functions/rank.toml#t002_desc_nulls_first"]
+required = true
+
+[[obligation]]
+id = "sf.functions.rank.t003"
+form = "sf.functions.rank"
+kind = "type_combination"
+target = "ORDER BY only"
+note = "The whole input as one partition."
+catches = "ranks restarted per value of p"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and leaving gaps after them"
+cases = ["cases/translation/functions/rank.toml#t003_no_partition"]
+required = true
+
+[[obligation]]
+id = "sf.functions.rank.t004"
+form = "sf.functions.rank"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys sorted first with ASC NULLS FIRST; tied NULLs share a rank."
+catches = "NULLs sorted last, or each NULL given its own rank"
+reading = "the page: the rank within the ordered partition, with ties sharing a rank and leaving gaps after them"
+cases = ["cases/translation/functions/rank.toml#t004_null_order_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ratio-to-report.t001"
+form = "sf.functions.ratio-to-report"
+kind = "type_combination"
+target = "NUMBER"
+note = "Values over two partitions, with NULL values."
+catches = "the sum taken over all rows, or NULL values counted as 0 in the result row"
+reading = "the page: the row value divided by the sum of the values in the partition; ORDER BY in OVER does not affect it"
+cases = ["cases/translation/functions/ratio-to-report.toml#t001_partition"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ratio-to-report.t002"
+form = "sf.functions.ratio-to-report"
+kind = "type_combination"
+target = "NUMBER with ORDER BY"
+note = "The same with ORDER BY, which the page says does not change the result."
+catches = "a running sum used"
+reading = "the page: the row value divided by the sum of the values in the partition; ORDER BY in OVER does not affect it"
+cases = ["cases/translation/functions/ratio-to-report.toml#t002_order_by"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ratio-to-report.t003"
+form = "sf.functions.ratio-to-report"
+kind = "type_combination"
+target = "NUMBER"
+note = "A partition whose values sum to zero; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the row value divided by the sum of the values in the partition; ORDER BY in OVER does not affect it"
+cases = ["cases/translation/functions/ratio-to-report.toml#t003_zero_sum"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ratio-to-report.t004"
+form = "sf.functions.ratio-to-report"
+kind = "null_argument"
+target = "expr1"
+note = "A partition whose values are all NULL; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the row value divided by the sum of the values in the partition; ORDER BY in OVER does not affect it"
+cases = ["cases/translation/functions/ratio-to-report.toml#t004_null_expr1"]
 required = true
 
 [[obligation]]
@@ -19227,6 +20317,39 @@ cases = ["cases/translation/functions/round.round-expr-scale.toml#t013_expr_no_s
 required = true
 
 [[obligation]]
+id = "sf.functions.row-number.t001"
+form = "sf.functions.row-number"
+kind = "type_combination"
+target = "PARTITION BY two expressions, ORDER BY two expressions"
+note = "Two partition keys, with the tie broken by a second order key."
+catches = "numbering not restarted per partition, or starting at 0"
+reading = "the page: a unique, consecutive number for each row within the ordered partition, starting at 1; several partition and order expressions are allowed"
+cases = ["cases/translation/functions/row-number.toml#t001_partitions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.row-number.t002"
+form = "sf.functions.row-number"
+kind = "type_combination"
+target = "ORDER BY with a tie"
+note = "A tie in the only order key broken by ordinal so the result is deterministic."
+catches = "tied rows given the same number"
+reading = "the page: a unique, consecutive number for each row within the ordered partition, starting at 1; several partition and order expressions are allowed"
+cases = ["cases/translation/functions/row-number.toml#t002_ties_broken"]
+required = true
+
+[[obligation]]
+id = "sf.functions.row-number.t003"
+form = "sf.functions.row-number"
+kind = "null_argument"
+target = "order-expr"
+note = "NULL order keys, sorted last under the session default; ties broken by ordinal."
+catches = "NULLs numbered first"
+reading = "the page: a unique, consecutive number for each row within the ordered partition, starting at 1; several partition and order expressions are allowed"
+cases = ["cases/translation/functions/row-number.toml#t003_null_order_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.rpad.t001"
 form = "sf.functions.rpad"
 kind = "type_combination"
@@ -19526,6 +20649,139 @@ note = "An IPv6 address written in two forms."
 catches = "an IPv4-only search, or IPv6 compared as text (leading zeros)"
 reading = "the page: <search_string> is an IPv4 or IPv6 address, optionally with a CIDR range or leading zeros; <search_data> holds text to search"
 cases = ["cases/translation/functions/search-ip.toml#t005_ipv6"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq1.t001"
+form = "sf.functions.seq1.seq1"
+kind = "type_combination"
+target = "no argument"
+note = "SEQ1 over GENERATOR rows: starting value, count of distinct values and type."
+catches = "a sequence starting at 1, or repeated values"
+reading = "the page: a monotonically increasing 1-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 1-byte value"
+cases = ["cases/translation/functions/seq1.seq1.toml#t001_sequence"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq1.t002"
+form = "sf.functions.seq1.seq1"
+kind = "boundary"
+subkind = "overflow"
+target = "overflow"
+note = "300 rows of a one-byte sequence with sign 0 and sign 1; the page says sign 0 wraps to 0 and sign 1 to the smallest one-byte value."
+catches = "no wrap (values up to 299), or sign 1 wrapping to 0"
+reading = "the page: a monotonically increasing 1-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 1-byte value"
+cases = ["cases/translation/functions/seq1.seq1.toml#t002_wrap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq1.t003"
+form = "sf.functions.seq1.seq1"
+kind = "null_argument"
+target = "sign"
+note = "A NULL sign argument; the page does not say; the recording decides."
+catches = "the default sign used where Snowflake raises an error, or the reverse"
+reading = "the page: a monotonically increasing 1-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 1-byte value"
+cases = ["cases/translation/functions/seq1.seq1.toml#t003_null_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq2.t001"
+form = "sf.functions.seq1.seq2"
+kind = "type_combination"
+target = "no argument"
+note = "SEQ2 over GENERATOR rows: starting value, count of distinct values and type."
+catches = "a sequence starting at 1, or repeated values"
+reading = "the page: a monotonically increasing 2-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 2-byte value"
+cases = ["cases/translation/functions/seq1.seq2.toml#t001_sequence"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq2.t002"
+form = "sf.functions.seq1.seq2"
+kind = "type_combination"
+target = "sign 1"
+note = "SEQ2(1) before any wrap-around, which starts at 0 like SEQ2(0)."
+catches = "a signed sequence starting at the smallest value"
+reading = "the page: a monotonically increasing 2-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 2-byte value"
+cases = ["cases/translation/functions/seq1.seq2.toml#t002_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq2.t003"
+form = "sf.functions.seq1.seq2"
+kind = "null_argument"
+target = "sign"
+note = "A NULL sign argument; the page does not say; the recording decides."
+catches = "the default sign used where Snowflake raises an error, or the reverse"
+reading = "the page: a monotonically increasing 2-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 2-byte value"
+cases = ["cases/translation/functions/seq1.seq2.toml#t003_null_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq4.t001"
+form = "sf.functions.seq1.seq4"
+kind = "type_combination"
+target = "no argument"
+note = "SEQ4 over GENERATOR rows: starting value, count of distinct values and type."
+catches = "a sequence starting at 1, or repeated values"
+reading = "the page: a monotonically increasing 4-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 4-byte value"
+cases = ["cases/translation/functions/seq1.seq4.toml#t001_sequence"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq4.t002"
+form = "sf.functions.seq1.seq4"
+kind = "type_combination"
+target = "sign 1"
+note = "SEQ4(1) before any wrap-around, which starts at 0 like SEQ4(0)."
+catches = "a signed sequence starting at the smallest value"
+reading = "the page: a monotonically increasing 4-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 4-byte value"
+cases = ["cases/translation/functions/seq1.seq4.toml#t002_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq4.t003"
+form = "sf.functions.seq1.seq4"
+kind = "null_argument"
+target = "sign"
+note = "A NULL sign argument; the page does not say; the recording decides."
+catches = "the default sign used where Snowflake raises an error, or the reverse"
+reading = "the page: a monotonically increasing 4-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 4-byte value"
+cases = ["cases/translation/functions/seq1.seq4.toml#t003_null_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq8.t001"
+form = "sf.functions.seq1.seq8"
+kind = "type_combination"
+target = "no argument"
+note = "SEQ8 over GENERATOR rows: starting value, count of distinct values and type."
+catches = "a sequence starting at 1, or repeated values"
+reading = "the page: a monotonically increasing 8-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 8-byte value"
+cases = ["cases/translation/functions/seq1.seq8.toml#t001_sequence"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq8.t002"
+form = "sf.functions.seq1.seq8"
+kind = "type_combination"
+target = "sign 1"
+note = "SEQ8(1) before any wrap-around, which starts at 0 like SEQ8(0)."
+catches = "a signed sequence starting at the smallest value"
+reading = "the page: a monotonically increasing 8-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 8-byte value"
+cases = ["cases/translation/functions/seq1.seq8.toml#t002_sign"]
+required = true
+
+[[obligation]]
+id = "sf.functions.seq1.seq8.t003"
+form = "sf.functions.seq1.seq8"
+kind = "null_argument"
+target = "sign"
+note = "A NULL sign argument; the page does not say; the recording decides."
+catches = "the default sign used where Snowflake raises an error, or the reverse"
+reading = "the page: a monotonically increasing 8-byte integer sequence (possibly with gaps) that wraps around; sign 0 (default) continues at 0, sign 1 at the smallest 8-byte value"
+cases = ["cases/translation/functions/seq1.seq8.toml#t003_null_sign"]
 required = true
 
 [[obligation]]
@@ -25312,6 +26568,50 @@ cases = ["cases/translation/functions/unicode.toml#t003_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.uniform.t001"
+form = "sf.functions.uniform"
+kind = "type_combination"
+target = "INTEGER bounds"
+note = "Integer bounds over 1000 rows: the range, every value reached, and integral results."
+catches = "the upper bound excluded, or a fraction returned"
+reading = "the page: a random number in [min, max], inclusive; an integer when both bounds are integers, otherwise floating point"
+cases = ["cases/translation/functions/uniform.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.uniform.t002"
+form = "sf.functions.uniform"
+kind = "type_combination"
+target = "FLOAT bounds"
+note = "A floating-point bound over 1000 rows."
+catches = "integers returned"
+reading = "the page: a random number in [min, max], inclusive; an integer when both bounds are integers, otherwise floating point"
+cases = ["cases/translation/functions/uniform.toml#t002_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.uniform.t003"
+form = "sf.functions.uniform"
+kind = "type_combination"
+target = "constant gen"
+note = "A constant generator, which gives the same value on every row."
+catches = "a fresh value per row"
+reading = "the page: a random number in [min, max], inclusive; an integer when both bounds are integers, otherwise floating point"
+cases = ["cases/translation/functions/uniform.toml#t003_constant_gen"]
+required = true
+
+[[obligation]]
+id = "sf.functions.uniform.t004"
+form = "sf.functions.uniform"
+kind = "null_argument"
+target = "gen"
+note = "A NULL generator; the page does not say; the recording decides."
+catches = "a value in range where Snowflake returns NULL, or the reverse"
+reading = "the page: a random number in [min, max], inclusive; an integer when both bounds are integers, otherwise floating point"
+cases = ["cases/translation/functions/uniform.toml#t004_null_gen"]
+required = true
+
+[[obligation]]
 id = "sf.functions.upper.t001"
 form = "sf.functions.upper"
 kind = "type_combination"
@@ -27150,4 +28450,37 @@ note = "NULL input."
 catches = "NULL returned"
 reading = "the page: 0 for NULL, otherwise the input, keeping its numeric type"
 cases = ["cases/translation/functions/zeroifnull.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zipf.t001"
+form = "sf.functions.zipf"
+kind = "type_combination"
+target = "s, N, gen"
+note = "s = 1 and N = 10 over 1000 rows: the range, and 1 drawn more often than 10."
+catches = "values from 0, or a uniform distribution"
+reading = "the reading: ZIPF(s, N, gen), an integer in [1, N] drawn from a Zipf distribution; s and N are constants; N is limited to [1, 16777215]"
+cases = ["cases/translation/functions/zipf.toml#t001_distribution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zipf.t002"
+form = "sf.functions.zipf"
+kind = "error_parity"
+target = "error"
+note = "N = 0, below the range the page states."
+catches = "the call accepted"
+reading = "the reading: ZIPF(s, N, gen), an integer in [1, N] drawn from a Zipf distribution; s and N are constants; N is limited to [1, 16777215]"
+cases = ["cases/translation/functions/zipf.toml#t002_n_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.zipf.t003"
+form = "sf.functions.zipf"
+kind = "null_argument"
+target = "gen"
+note = "A NULL generator; the page does not say; the recording decides."
+catches = "a value where Snowflake returns NULL, or the reverse"
+reading = "the reading: ZIPF(s, N, gen), an integer in [1, N] drawn from a Zipf distribution; s and N are constants; N is limited to [1, 16777215]"
+cases = ["cases/translation/functions/zipf.toml#t003_null_gen"]
 required = true
