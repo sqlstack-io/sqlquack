@@ -76,6 +76,16 @@ pub enum Reason {
     BlockedByHold,
 }
 
+/// What Snowflake's parser did with a case's statement, by every receipt of its SQL, setup and session.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SnowflakeSyntax {
+    /// Every receipt stopped after parsing or succeeded, with an errno other than 1003.
+    Parsed,
+    /// Every receipt is a syntax error: errno 1003 with a parse position, or errno 921.
+    Refused,
+}
+
 /// One case's result: its receipts against the current parser.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct CaseResult {
@@ -89,6 +99,8 @@ pub struct CaseResult {
     pub reason: Option<Reason>,
     /// Agrees, while Snowflake stopped after parsing (semantic, runtime or unsupported phase).
     pub semantic_only: bool,
+    /// What Snowflake's parser did, whatever the case expects; none on disagreeing or no receipts.
+    pub snowflake: Option<SnowflakeSyntax>,
     /// The account parameters its admissible receipts ran under (decision D120).
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub account_state: BTreeMap<String, AccountSetting>,

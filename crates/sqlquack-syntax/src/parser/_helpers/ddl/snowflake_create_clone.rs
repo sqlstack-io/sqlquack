@@ -57,7 +57,7 @@ impl Parser {
                 if self.match_token(TokenType::Eq) {
                     self.expect_token(TokenType::LParen)?;
                     let mut kinds: Vec<Expression> = Vec::new();
-                    loop {
+                    while !self.check(TokenType::RParen) || !kinds.is_empty() {
                         let kind =
                             self.expect_alter_words(&[&["COMMENTS"], &["TAGS"], &["GRANTS"]])?;
                         kinds.push(Expression::Identifier(Identifier::new(kind)));
@@ -234,7 +234,8 @@ impl Parser {
             None if !temporary && self.match_text_seq(&["FILE", "FORMAT"]) => {
                 ("FILE FORMAT", CloneOptions::Bare)
             }
-            None if !temporary && self.match_text_seq(&["DATABASE", "ROLE"]) => {
+            None if !temporary && self.names_a_database_role() => {
+                self.match_text_seq(&["DATABASE", "ROLE"]);
                 ("DATABASE ROLE", CloneOptions::Bare)
             }
             _ => {
@@ -259,6 +260,34 @@ impl Parser {
             return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
         let name = self.parse_object_name()?;
+        if matches!(kind, "DATABASE ROLE") && !self.check_identifier("CLONE") {
+            let mut properties: Vec<ObjectProperty> = Vec::new();
+            if self.match_token(TokenType::Comment) {
+                self.expect_token(TokenType::Eq)?;
+                let comment = if self.is_identifier_token() && !self.check_keyword() {
+                    self.parse_primary()?
+                } else {
+                    self.parse_string_value()?
+                };
+                properties.push(property("COMMENT", None, Some(comment)));
+            }
+            if !self.is_at_end() && !self.check(TokenType::Semicolon) {
+                return Err(
+                    self.parse_error("Expected CLONE or COMMENT after CREATE DATABASE ROLE <name>")
+                );
+            }
+            return Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+                kind: kind.to_owned(),
+                modifier,
+                or_replace,
+                or_alter: false,
+                if_not_exists,
+                name,
+                source: String::new(),
+                operands: Vec::new(),
+                properties,
+            }))));
+        }
         if !self.match_identifier("CLONE") {
             let lone_word = self.is_identifier_token()
                 && !self.check_keyword()
@@ -292,6 +321,14 @@ impl Parser {
             operands,
             properties,
         }))))
+    }
+
+    /// Whether DATABASE ROLE starts a role; alone or before CLONE, ROLE names a database.
+    pub(crate) fn names_a_database_role(&self) -> bool {
+        self.check_text_seq(&["DATABASE", "ROLE"])
+            && self.tokens.get(self.current + 2).is_some_and(|t| {
+                t.token_type != TokenType::Semicolon && !t.text.eq_ignore_ascii_case("CLONE")
+            })
     }
 
     /// Whether the rest of the statement contains REPLICA or AS OF, which make it a replica.

@@ -1266,6 +1266,7 @@ impl Parser {
     pub(crate) fn parse_create_schema(
         &mut self,
         leading_comments: Vec<String>,
+        or_replace: bool,
     ) -> Result<Expression> {
         self.expect_token(TokenType::Schema)?;
 
@@ -1328,6 +1329,7 @@ impl Parser {
 
         Ok(Expression::CreateSchema(Box::new(CreateSchema {
             name,
+            or_replace,
             if_not_exists,
             authorization,
             clone_from,
@@ -1356,12 +1358,16 @@ impl Parser {
     }
 
     /// Parse CREATE DATABASE statement
-    pub(crate) fn parse_create_database(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_create_database(&mut self, or_replace: bool) -> Result<Expression> {
         self.expect_token(TokenType::Database)?;
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+        let name = if self.is_snowflake() {
+            self.parse_quoting_identifier(Self::expect_identifier)?
+        } else {
+            self.parse_unquoted_identifier(Self::expect_identifier)?
+        };
 
         let clone_from = if self.match_identifier("CLONE") {
             Some(self.expect_identifier_or_safe_keyword_with_quoted()?)
@@ -1435,6 +1441,7 @@ impl Parser {
 
         Ok(Expression::CreateDatabase(Box::new(CreateDatabase {
             name,
+            or_replace,
             if_not_exists,
             options,
             clone_from,

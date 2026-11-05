@@ -86,6 +86,8 @@ pub const OFFSET_WITH_COLON: usize = 7;
 pub const OFFSET_WITHOUT_COLON: usize = 6;
 /// Fractional-second digits a Snowflake timestamp holds at most.
 pub const MAX_FRACTION_DIGITS: usize = 9;
+/// The length of `YYYY-MM-DD HH:MI`, a timestamp text without seconds.
+pub const MINUTE_TEXT_LENGTH: usize = 16;
 /// LEFT, RIGHT, SUBSTR and LENGTH.
 pub const TEXT_POSITION: &str = "rule.text_position";
 /// REPLACE and SPLIT_PART.
