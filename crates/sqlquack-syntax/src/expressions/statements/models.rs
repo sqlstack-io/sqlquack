@@ -378,6 +378,9 @@ pub struct ExecuteObject {
     /// `USING CONFIG = <configuration>`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub config: Option<Expression>,
+    /// The clauses and options of a job, notebook, dbt or code bundle, such as `IN COMPUTE POOL` or `ARGS`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<crate::expressions::schema_objects::models::ObjectProperty>,
 }
 
 /// Named parameter in EXEC statement: @name=value

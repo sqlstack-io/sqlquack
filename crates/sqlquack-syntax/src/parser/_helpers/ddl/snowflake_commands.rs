@@ -134,7 +134,7 @@ impl Parser {
         } else if self.match_text_seq(&["TASK"]) {
             "TASK"
         } else {
-            return Ok(None);
+            return self.parse_snowflake_execute_job();
         };
         let name = self.parse_object_name_ref()?;
         let mut node = ExecuteObject {
@@ -144,6 +144,7 @@ impl Parser {
             group: None,
             alias: None,
             config: None,
+            properties: Vec::new(),
         };
         if kind.starts_with("TASK") {
             if self.match_text_seq(&["RETRY", "LAST"]) {

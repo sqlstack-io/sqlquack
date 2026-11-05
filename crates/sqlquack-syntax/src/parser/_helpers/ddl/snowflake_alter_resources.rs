@@ -532,12 +532,12 @@ impl Parser {
     }
 
     /// Whether the current token starts a stage path.
-    fn is_stage_path(&self) -> bool {
+    pub(super) fn is_stage_path(&self) -> bool {
         !self.is_at_end() && self.peek_text().starts_with('@')
     }
 
     /// Parse a stage path, which like Snowflake's ends at the first whitespace: `@"s 1"` is not one path.
-    fn parse_stage_path(&mut self) -> Result<Expression> {
+    pub(super) fn parse_stage_path(&mut self) -> Result<Expression> {
         let mut path = self.peek_text().to_owned();
         let mut end = self.peek().span.end;
         self.skip();

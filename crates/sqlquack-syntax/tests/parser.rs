@@ -16,6 +16,8 @@ mod test_snowflake_alter_gaps;
 mod test_snowflake_create_clone;
 #[path = "parser/test_snowflake_create_properties.rs"]
 mod test_snowflake_create_properties;
+#[path = "parser/test_snowflake_execute.rs"]
+mod test_snowflake_execute;
 #[path = "parser/test_snowflake_grant.rs"]
 mod test_snowflake_grant;
 #[path = "parser/test_snowflake_recorded.rs"]
