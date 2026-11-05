@@ -781,6 +781,9 @@ impl Parser {
                 let id_val = self.parse_expression()?;
                 partitions.push(vec![(Identifier::new("ID".to_string()), id_val)]);
             } else {
+                if self.applies_snowflake_context_rules() && self.check_next(TokenType::String) {
+                    return Err(self.parse_error("Expected a partition, not a typed string"));
+                }
                 let expr = self.parse_expression()?;
                 partitions.push(vec![(Identifier::new("__expr__".to_string()), expr)]);
             }

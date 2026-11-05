@@ -578,6 +578,42 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a name before a string is a typed literal (recorded errno 2121)",
+            sql: "SELECT v1 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a typed literal's type takes parameters (recorded errno 2121)",
+            sql: "SELECT PERIOD ( 'INT' ) '[2026-01-01, 2026-01-02)' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a typed literal's parameters are not empty (recorded errno 1003)",
+            sql: "SELECT PERIOD ( ) '[2026-01-01, 2026-01-02)' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a reserved word is no type (recorded errno 1003)",
+            sql: "SELECT ILIKE 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT IN item is a column, not a typed literal (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR v1 IN ( v1 'v1' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER TABLE drops no partition LOCATION (recorded errno 1003)",
+            sql: "ALTER TABLE v1 DROP PARTITION LOCATION 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -706,6 +742,12 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER NOT NULL AS 'm'",
             pointer: "/0/create_data_metric_function/nullable",
             expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "a typed literal keeps its type's name and parameters",
+            sql: "SELECT PERIOD ( INT ) 'x'",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_value: json!("PERIOD ( INT )"),
         },
     ];
 

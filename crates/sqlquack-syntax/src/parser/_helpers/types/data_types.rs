@@ -121,6 +121,68 @@ pub(crate) fn convert_name_is_known_custom(name: &str) -> bool {
 }
 
 impl Parser {
+    /// `<unreserved name> [ ( ... ) ] '<string>'` as a cast to that named type in Snowflake, or none.
+    pub(crate) fn try_parse_snowflake_named_type_literal(&mut self) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules()
+            || !self.check(TokenType::Var)
+            || self.is_snowflake_reserved_keyword()
+        {
+            return Ok(None);
+        }
+        let Some(end) = self.named_type_literal_end() else {
+            return Ok(None);
+        };
+        let parts: Vec<String> = self.tokens[self.current..end]
+            .iter()
+            .map(|token| match token.token_type {
+                TokenType::String => format!("'{}'", token.text),
+                _ => token.text.to_string(),
+            })
+            .collect();
+        self.current = end;
+        let string_token = self.advance()?;
+        Ok(Some(Expression::Cast(Box::new(
+            crate::expressions::operators::models::Cast {
+                this: Expression::Literal(Box::new(
+                    crate::expressions::names::models::Literal::String(
+                        string_token.text.to_string(),
+                    ),
+                )),
+                to: DataType::Custom {
+                    name: parts.join(" "),
+                },
+                trailing_comments: Vec::new(),
+                double_colon_syntax: false,
+                format: None,
+                default: None,
+                inferred_type: None,
+                span: SourceSpan::default(),
+            },
+        ))))
+    }
+
+    /// The position of the string after a type name and its non-empty balanced parameters, or none.
+    fn named_type_literal_end(&self) -> Option<usize> {
+        let mut end = self.current + 1;
+        if self.tokens.get(end)?.token_type == TokenType::LParen {
+            if self.tokens.get(end + 1)?.token_type == TokenType::RParen {
+                return None;
+            }
+            let mut depth = 0usize;
+            loop {
+                match self.tokens.get(end)?.token_type {
+                    TokenType::LParen => depth += 1,
+                    TokenType::RParen if depth == 1 => break,
+                    TokenType::RParen => depth -= 1,
+                    _ => {}
+                }
+                end += 1;
+            }
+            end += 1;
+        }
+        (self.tokens.get(end)?.token_type == TokenType::String).then_some(end)
+    }
+
     #[inline(never)]
     pub(crate) fn parse_data_type_for_cast_inner(&mut self) -> Result<DataType> {
         if let Some(data_type) = self.parse_vertica_data_type()? {

@@ -1302,7 +1302,9 @@ impl Parser {
                         self.parse_select_or_expression()?
                     }
                 } else {
-                    if snowflake && self.check(TokenType::String) {
+                    if snowflake
+                        && (self.check(TokenType::String) || self.check_next(TokenType::String))
+                    {
                         return Err(self.parse_error("Expected a column in the UNPIVOT IN list"));
                     }
                     self.parse_select_or_expression()?
