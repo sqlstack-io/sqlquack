@@ -344,6 +344,18 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "an interval's value is a string, not a name (recorded errno 1003)",
+            sql: "SELECT INTERVAL m1 YEAR ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a path colon takes no string (recorded errno 1003)",
+            sql: "SELECT v1 :'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {

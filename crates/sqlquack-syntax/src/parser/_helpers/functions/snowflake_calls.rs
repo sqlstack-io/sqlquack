@@ -11,6 +11,26 @@ use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// Refuses a string after a Snowflake path colon, as in `v1 :'v1'`.
+    pub(crate) fn refuse_snowflake_string_path(&self) -> Result<()> {
+        match self.applies_snowflake_context_rules() && self.check(TokenType::String) {
+            true => Err(self.parse_error("Expected a path element, not a string, after :")),
+            false => Ok(()),
+        }
+    }
+
+    /// Refuses a name as a Snowflake interval's value, as in `INTERVAL m1 YEAR`; the value is a string.
+    pub(crate) fn refuse_snowflake_interval_name(&self, value: Option<&Expression>) -> Result<()> {
+        let name = matches!(
+            value,
+            Some(Expression::Column(_) | Expression::Identifier(_))
+        );
+        match self.applies_snowflake_context_rules() && name {
+            true => Err(self.parse_error("Expected a string as the interval's value")),
+            false => Ok(()),
+        }
+    }
+
     /// An array spread into a call's arguments: PostgreSQL's `VARIADIC <array>` or Snowflake's `** <array>`.
     pub(crate) fn parse_variadic_argument(&mut self) -> Result<Option<Expression>> {
         let postgres_variadic = self.config.dialect

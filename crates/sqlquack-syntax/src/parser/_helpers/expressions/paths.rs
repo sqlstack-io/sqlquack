@@ -89,6 +89,8 @@ impl Parser {
                 had_initial_component = true;
             } else if self.check(TokenType::LBracket) {
                 had_initial_component = true;
+            } else {
+                self.refuse_snowflake_string_path()?;
             }
 
             if !had_initial_component {

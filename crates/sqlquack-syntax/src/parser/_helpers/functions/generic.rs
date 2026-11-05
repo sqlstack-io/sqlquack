@@ -1592,6 +1592,7 @@ impl Parser {
             return Ok(None);
         }
 
+        self.refuse_snowflake_interval_name(value.as_ref())?;
         let unit = self.try_parse_interval_unit()?;
 
         let is_generic = self.config.dialect.is_none()
