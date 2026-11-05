@@ -235,33 +235,23 @@ See [docs/architecture.md](docs/architecture.md).
 
 ## Development
 
-`make check-ci` runs every static gate (rustfmt, clippy, fensu, ruff, ty and the append-only
-evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
-recorder out.
-
-`make check-merge RECORDER=0` is what a merge to main must pass on its exact head: the static gate
-and the Rust tests.
-
-`make gate` runs everything CI runs: the static gate, the tests, the replay of every recorded case,
-the exact parser check and timed conversion over DuckShop and DuckShop 10K, and a fuzz smoke run.
-It needs a nightly toolchain with `cargo-fuzz` for the fuzz step, and fetches and compiles the
-pinned DuckShop projects itself on first use (`make duckshop-compiled`, pinned by `SQLBUILD_REF`
-and `SQLBUILD_VERSION`). Run it with `RECORDER=0 UV_NO_SYNC=1` in a clean checkout of the commit:
+Set up the Python tooling once, without the Snowflake recorder:
 
 ```console
 $ uv sync --locked --no-group recorder
-$ RECORDER=0 UV_NO_SYNC=1 make gate VERIFY_FLAGS="--require-verified --strict-errors"
 ```
 
-`make duckshop-measure DUCKSHOP_RESULTS=<dir>` measures DuckShop with the checkout's own binary
-and `sqlquack.toml`. It runs the compiled unit tests on DuckDB, then converts each model and runs
-it over Snowflake's recorded inputs, comparing the result with Snowflake's recorded rows.
-`DUCKSHOP_RESULTS` is a directory of DuckShop results recorded on Snowflake, with its
-`index-<target>.json` files beside it. The reports are written to `DUCKSHOP_MEASURE_DIR`, which
-defaults to `target/duckshop-measure`.
+`make check-ci RECORDER=0` runs the static checks (rustfmt, clippy, fensu, ruff, ty and the
+append-only evidence guard), and `make test RECORDER=0` runs the Rust and Python tests.
+`RECORDER=0` leaves the recorder out; only maintainers with a Snowflake account need it.
 
-A change lands on `main` as one squashed commit whose tree is exactly a tree that passed
-`make gate`.
+A change reaches `main` only after `make check-merge RECORDER=0` passes on its exact head commit:
+the static checks and the Rust tests. That commit is then fast-forwarded onto `main`, so `main`
+only ever holds a tree that passed.
+
+`RECORDER=0 UV_NO_SYNC=1 make gate` runs more: it adds the replay of every recorded case, timed
+conversion over pinned benchmark projects, which it downloads on first use, and a fuzz smoke run,
+which needs a nightly toolchain with `cargo-fuzz`.
 
 ## License
 
