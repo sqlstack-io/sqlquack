@@ -304,6 +304,14 @@ fn order_key(
         ));
     }
     let shadowing = shadowing_names(key, (site, outputs));
+    if site.placement.suffixed && shadowing.is_empty() && names_sole_output(key, outputs) {
+        return Ok(explicit_null_order(
+            "1",
+            flag(object, "desc"),
+            object.get("nulls_first").and_then(Value::as_bool),
+            site.context.log,
+        ));
+    }
     let Some(name) = shadowing.first() else {
         return order_item(item, site);
     };
@@ -372,6 +380,16 @@ fn shadowing_column(
         Ok(source) if emitted.sql != source.sql => Some(name),
         Ok(_) | Err(_) => None,
     }
+}
+
+/// Whether `key` is a bare name of the only output, which DuckDB orders by position, not as text.
+fn names_sole_output(key: &Value, outputs: &[(String, Emitted)]) -> bool {
+    let Some(("column", column)) = node_kind(key) else {
+        return false;
+    };
+    column.get("table").is_none_or(Value::is_null)
+        && matches!((column.get("name").and_then(identifier_name), outputs),
+            (Some(name), [(output, _)]) if *output == name)
 }
 
 /// A bare ORDER BY name that is a select alias and a column of more than one FROM relation.

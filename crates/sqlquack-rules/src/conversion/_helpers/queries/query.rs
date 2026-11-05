@@ -280,6 +280,7 @@ fn convert_select(
     let group_positions = group_positions(select);
     let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
+    let mut suffixed_item: Option<&Value> = None;
     for item in list(select, "expressions") {
         let site = Site {
             scope: &scope,
@@ -291,6 +292,9 @@ fn convert_select(
             },
         };
         for (name, emitted) in convert_projection(item, site, named)? {
+            if emitted.suffixed {
+                suffixed_item.get_or_insert(item);
+            }
             outputs.push((name.clone().unwrap_or_default(), emitted));
             names.push(name);
         }
@@ -346,10 +350,13 @@ fn convert_select(
             emitted.suffixed
                 && (group_positions.contains(&position) || grouped_all.contains(&position))
         });
-    if suffix_read && outputs.iter().any(|(_, emitted)| emitted.suffixed) {
-        return Err(outside_conditions(
-            function_construct(SYSTEM_TYPEOF_NAME),
-            TYPE_SUFFIX_UNREMOVED.to_owned(),
+    if let Some(item) = suffixed_item.filter(|_| suffix_read) {
+        return Err(context.locator.placed(
+            outside_conditions(
+                function_construct(SYSTEM_TYPEOF_NAME),
+                TYPE_SUFFIX_UNREMOVED.to_owned(),
+            ),
+            item,
         ));
     }
     let distinct = match flag(select, "distinct") {

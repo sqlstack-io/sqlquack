@@ -24,7 +24,7 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
             expected_lines: &[
                 "SELECT SYSTEM$TYPEOF(CURRENT_DATE()) AS value",
                 "refused",
-                "# outside a rule's type conditions at 4:8: SYSTEM$TYPEOF other than with its storage suffix removed by REGEXP_REPLACE(..., '\\[.*\\]$', ''), since the suffix depends on Snowflake's plan",
+                "# outside a rule's type conditions at 4:8: SYSTEM$TYPEOF text read before REGEXP_REPLACE(..., '\\[.*\\]$', '') removes its storage suffix, which depends on Snowflake's plan",
             ],
         },
         ReviewTestCase {

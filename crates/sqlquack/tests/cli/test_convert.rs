@@ -99,7 +99,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
                   t AS (SELECT SYSTEM$TYPEOF(s.v) AS kind FROM s ORDER BY kind LIMIT 1) \
                   SELECT REGEXP_REPLACE(t.kind, '\\\\[.*\\\\]$', '') AS kind FROM t",
             flags: &[],
-            mention: "'NUMBER(2,1)'",
+            mention: "done, converted",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
