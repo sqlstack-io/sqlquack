@@ -1189,6 +1189,7 @@ REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("integration_type_name", "SECURITY INTEGRATIONS"): "API INTEGRATIONS",
     ("object_type", "DATABASES"): "SHARES",
     ("type", "DATABASES"): "DYNAMIC_TABLES",
+    ("session_parameter", "LOCK_TIMEOUT"): "STATEMENT_TIMEOUT_IN_SECONDS",
 }
 ALERT_PAGES: tuple[str, ...] = ("sf.ddl.create-alert", "sf.ddl.alter-alert")
 SECURITY_ADMIN_FILLS: dict[str, str] = {

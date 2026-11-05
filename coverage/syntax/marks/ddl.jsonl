@@ -1252,9 +1252,9 @@
 {"case_id":"sf.ddl.alter-task.set-tag.ke92b4e237eb4","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set-tag.o025"],"sql_sha256":"e92b4e237eb4cc694e0b6de6c3ded313007f393a01168849d7b0a528bb5e83d5"}
 {"case_id":"sf.ddl.alter-task.set.k01c6db335b91","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o157"],"sql_sha256":"01c6db335b912096cff3e64a555e500b3eb2a6fd53d9bc13dc6267e01bcc830a"}
 {"case_id":"sf.ddl.alter-task.set.k021b35c7909c","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o109"],"sql_sha256":"021b35c7909c92d38b9c727dc839fbfb279f7fd345ff68cf0156b0ed14696f89"}
-{"case_id":"sf.ddl.alter-task.set.k0653b1d4a25c","mark":"documented (D113)","obligations":["sf.ddl.alter-task.set.o194"],"sql_sha256":"0653b1d4a25cd0377a1aa54174c142cc886c98ff88c738c5c0946d32f2c49d6d"}
 {"case_id":"sf.ddl.alter-task.set.k08f65349ec76","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o037"],"sql_sha256":"08f65349ec76d4d073c019620f322f9d6bda5ea1429c1ed81c9e5c39fd29ea34"}
 {"case_id":"sf.ddl.alter-task.set.k2c7ebfa944f9","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o080"],"sql_sha256":"2c7ebfa944f9892f896c9ad8dd690a107abbec59aafaa16004e60cdec5f56e0d"}
+{"case_id":"sf.ddl.alter-task.set.k40c1b10b46dd","mark":"documented (D113)","obligations":["sf.ddl.alter-task.set.o194"],"sql_sha256":"40c1b10b46ddde4bd437243f438dcacfe01403f862f2bcbd0878f9a002346434"}
 {"case_id":"sf.ddl.alter-task.set.k56587ea02764","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o117"],"sql_sha256":"56587ea027648a520a9bd67d05347d18ab9dfb54b9fa1c262e14affbdd69374d"}
 {"case_id":"sf.ddl.alter-task.set.k59bc588757bf","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o004"],"sql_sha256":"59bc588757bff5f0227318ea56d03586ad240a77db8de98afa0a7c584d3e7f45"}
 {"case_id":"sf.ddl.alter-task.set.k66777f4ffafc","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o052"],"sql_sha256":"66777f4ffafcaf866c2ca713bddb8d4cb87cce250f88287bcc6bccc46d9f8ebc"}
@@ -1269,7 +1269,6 @@
 {"case_id":"sf.ddl.alter-task.set.kc0610704ab0c","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o057"],"sql_sha256":"c0610704ab0c6e40ec4b64fa4b10979e9fd1c7f31a7089a1ff2377fa6c85e404"}
 {"case_id":"sf.ddl.alter-task.set.kc4bd6dc1d8bc","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o093"],"sql_sha256":"c4bd6dc1d8bcd0a9c2233e42fbde0f5653bc7550cc8a5ed1d782eded21236e26"}
 {"case_id":"sf.ddl.alter-task.set.kc9cd7483346a","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o027"],"sql_sha256":"c9cd7483346a76d69b805f1716d9fa26dd3e0cac685271397db30b3b39d61796"}
-{"case_id":"sf.ddl.alter-task.set.kcae5464fa8dc","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o154"],"sql_sha256":"cae5464fa8dcdc62ef72ac1d6b244a66aa93eb7f9cfd5dc22691312acaa6628c"}
 {"case_id":"sf.ddl.alter-task.set.kd38e25c891b4","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o110"],"sql_sha256":"d38e25c891b40d135d7dd63fc7efbdf196e78f4a2e49805f7f889003039dca7b"}
 {"case_id":"sf.ddl.alter-task.set.kd530e57bb69a","mark":"settled reject (D133)","obligations":["sf.ddl.alter-task.set.o102"],"sql_sha256":"d530e57bb69a8ea489fb9926cde925e47c1abe1562b2d539869d6d6987dfda90"}
 {"case_id":"sf.ddl.alter-task.set.kdf8f78103af9","mark":"settled accept (D133)","obligations":["sf.ddl.alter-task.set.o062"],"sql_sha256":"df8f78103af96d8291c04e78f9685257aeb16d257f13d2f311cd726148f68f27"}
