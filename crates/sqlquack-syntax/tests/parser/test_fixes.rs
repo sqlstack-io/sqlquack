@@ -1839,6 +1839,24 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "a quoted RENAME target stays quoted",
+            sql: "SELECT * RENAME v1 AS \"v1 Q\" FROM t1",
+            pointer: "/0/select/expressions/0/star/rename/0/1/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted PIVOT aggregate alias stays quoted",
+            sql: "SELECT * FROM t1 PIVOT ( SUM ( v1 ) \"v1 Q\" FOR v2 IN ( 1 , 2 ) )",
+            pointer: "/0/select/from/expressions/0/pivot/expressions/0/alias/alias/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted UNPIVOT name column stays quoted",
+            sql: "SELECT * FROM t1 UNPIVOT ( v1 FOR \"v1 Q\" IN ( a , b ) )",
+            pointer: "/0/select/from/expressions/0/unpivot/name_column/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
             description: "a cloned task keeps its source",
             sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
             pointer: "/0/create_task/clone_source/schema/name",
