@@ -11,7 +11,9 @@ description = "fn:EDITDISTANCE over benign values of each declared argument kind
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "EDITDISTANCE(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]

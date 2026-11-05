@@ -11,7 +11,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "2"],
-  ["2", "1"],
+  ["2", "12"],
+  ["12", "1"],
+  ["1", "1"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -71,7 +73,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -131,7 +135,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -155,7 +161,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "2"],
-  ["2", "1"],
+  ["2", "12"],
+  ["12", "1"],
+  ["1", "1"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -215,7 +223,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -275,7 +285,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -539,7 +551,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -563,7 +577,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -678,6 +694,7 @@ columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["TRUE", "FALSE"],
   ["FALSE", "TRUE"],
+  ["TRUE", "TRUE"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -702,6 +719,7 @@ columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["TRUE", "FALSE"],
   ["FALSE", "TRUE"],
+  ["TRUE", "TRUE"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -747,7 +765,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'", "'2024-05-17'"],
-  ["'2024-05-17'", "'2024-01-15'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
+  ["'2024-01-15'", "'2024-01-15'"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -795,7 +815,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -819,7 +841,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'", "'2024-05-17'"],
-  ["'2024-05-17'", "'2024-01-15'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
+  ["'2024-01-15'", "'2024-01-15'"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -867,7 +891,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1037,7 +1063,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1085,7 +1113,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1283,7 +1313,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1331,7 +1363,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1435,7 +1469,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "COALESCE(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1459,7 +1495,9 @@ description = "node:coalesce over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "NVL(x0, x1)"
 tags = ["null", "all-null", "mixed-types"]

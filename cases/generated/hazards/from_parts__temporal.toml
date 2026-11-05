@@ -10,8 +10,10 @@ id = "fn_date_from_parts_combination_0_integer_integer_integer"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "2", "1"],
-  ["2", "1", "2"],
+  ["1", "2", "12"],
+  ["2", "12", "1"],
+  ["12", "1", "2"],
+  ["1", "1", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -23,7 +25,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1", "2", "1.5"],
-  ["2", "1", "2.25"],
+  ["2", "12", "2.25"],
+  ["12", "1", "3.125"],
+  ["1", "1", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -35,7 +39,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1", "2", "1.5"],
-  ["2", "1", "2.25"],
+  ["2", "12", "2.25"],
+  ["12", "1", "3.125"],
+  ["1", "1", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -47,7 +53,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "1.5", "2"],
-  ["2", "2.25", "1"],
+  ["2", "2.25", "12"],
+  ["12", "3.125", "1"],
+  ["1", "1.5", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -59,7 +67,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1", "1.5", "2.25"],
-  ["2", "2.25", "1.5"],
+  ["2", "2.25", "3.125"],
+  ["12", "3.125", "1.5"],
+  ["1", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -83,7 +93,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "1.5", "2"],
-  ["2", "2.25", "1"],
+  ["2", "2.25", "12"],
+  ["12", "3.125", "1"],
+  ["1", "1.5", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -107,7 +119,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1", "1.5", "2.25"],
-  ["2", "2.25", "1.5"],
+  ["2", "2.25", "3.125"],
+  ["12", "3.125", "1.5"],
+  ["1", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -119,7 +133,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "1", "2"],
-  ["2.25", "2", "1"],
+  ["2.25", "2", "12"],
+  ["3.125", "12", "1"],
+  ["1.5", "1", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -131,7 +147,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "1", "2.25"],
-  ["2.25", "2", "1.5"],
+  ["2.25", "2", "3.125"],
+  ["3.125", "12", "1.5"],
+  ["1.5", "1", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -155,7 +173,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "2.25", "1"],
-  ["2.25", "1.5", "2"],
+  ["2.25", "3.125", "2"],
+  ["3.125", "1.5", "12"],
+  ["1.5", "1.5", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -166,8 +186,10 @@ id = "fn_date_from_parts_combination_0_decimal_decimal_decimal"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1.5", "2.25", "1.5"],
-  ["2.25", "1.5", "2.25"],
+  ["1.5", "2.25", "3.125"],
+  ["2.25", "3.125", "1.5"],
+  ["3.125", "1.5", "2.25"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -179,7 +201,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1.5", "2.25", "1.5"],
-  ["2.25", "1.5", "2.25"],
+  ["2.25", "3.125", "2.25"],
+  ["3.125", "1.5", "3.125"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -203,7 +227,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["2.25", "2.25", "1.5"],
+  ["2.25", "2.25", "3.125"],
+  ["3.125", "3.125", "1.5"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -215,7 +241,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["2.25", "2.25", "1.5"],
+  ["2.25", "2.25", "3.125"],
+  ["3.125", "3.125", "1.5"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -227,7 +255,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "1", "2"],
-  ["2.25", "2", "1"],
+  ["2.25", "2", "12"],
+  ["3.125", "12", "1"],
+  ["1.5", "1", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -251,7 +281,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1.5", "1", "2.25"],
-  ["2.25", "2", "1.5"],
+  ["2.25", "2", "3.125"],
+  ["3.125", "12", "1.5"],
+  ["1.5", "1", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -275,7 +307,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["2.25", "2.25", "1.5"],
+  ["2.25", "2.25", "3.125"],
+  ["3.125", "3.125", "1.5"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -287,7 +321,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "FLOAT" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["2.25", "2.25", "1.5"],
+  ["2.25", "2.25", "3.125"],
+  ["3.125", "3.125", "1.5"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -299,7 +335,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "2.25", "1"],
-  ["2.25", "1.5", "2"],
+  ["2.25", "3.125", "2"],
+  ["3.125", "1.5", "12"],
+  ["1.5", "1.5", "1"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -311,7 +349,9 @@ description = "fn:DATE_FROM_PARTS over benign values of each declared argument k
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "2.25", "1.5"],
-  ["2.25", "1.5", "2.25"],
+  ["2.25", "3.125", "2.25"],
+  ["3.125", "1.5", "3.125"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -322,8 +362,10 @@ id = "fn_date_from_parts_combination_0_float_float_float"
 description = "fn:DATE_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "2.25", "1.5"],
-  ["2.25", "1.5", "2.25"],
+  ["1.5", "2.25", "3.125"],
+  ["2.25", "3.125", "1.5"],
+  ["3.125", "1.5", "2.25"],
+  ["1.5", "1.5", "1.5"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -334,11 +376,11 @@ id = "fn_date_from_parts_0_integer_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
-  ["0", "1", "1"],
-  ["-1", "1", "1"],
-  ["9007199254740993", "1", "1"],
-  ["-9007199254740993", "1", "1"],
+  ["NULL", "1", "2"],
+  ["0", "1", "2"],
+  ["-1", "1", "2"],
+  ["9007199254740993", "1", "2"],
+  ["-9007199254740993", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -349,8 +391,8 @@ id = "fn_date_from_parts_0_integer_beyond_64_bits"
 description = "fn:DATE_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["18446744073709551616", "1", "1"],
-  ["-9223372036854775809", "1", "1"],
+  ["18446744073709551616", "1", "2"],
+  ["-9223372036854775809", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -361,8 +403,8 @@ id = "fn_date_from_parts_0_integer_digits_38"
 description = "fn:DATE_FROM_PARTS with The largest 38-digit integers in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["99999999999999999999999999999999999999", "1", "1"],
-  ["-99999999999999999999999999999999999999", "1", "1"],
+  ["99999999999999999999999999999999999999", "1", "2"],
+  ["-99999999999999999999999999999999999999", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -373,14 +415,14 @@ id = "fn_date_from_parts_0_decimal_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
-  ["1.0000000000", "1", "1"],
-  ["-0.0000000000", "1", "1"],
-  ["2.5", "1", "1"],
-  ["-2.5", "1", "1"],
-  ["0.0000000005", "1", "1"],
-  ["1234567890123456.7", "1", "1"],
-  ["-1234567890123456.7", "1", "1"],
+  ["NULL", "1", "2"],
+  ["1.0000000000", "1", "2"],
+  ["-0.0000000000", "1", "2"],
+  ["2.5", "1", "2"],
+  ["-2.5", "1", "2"],
+  ["0.0000000005", "1", "2"],
+  ["1234567890123456.7", "1", "2"],
+  ["-1234567890123456.7", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -391,8 +433,8 @@ id = "fn_date_from_parts_0_decimal_digits_38"
 description = "fn:DATE_FROM_PARTS with Values using all 38 digits in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["9999999999999999999999999999.9999999999", "1", "1"],
-  ["-9999999999999999999999999999.9999999999", "1", "1"],
+  ["9999999999999999999999999999.9999999999", "1", "2"],
+  ["-9999999999999999999999999999.9999999999", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -403,19 +445,19 @@ id = "fn_date_from_parts_0_float_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
-  ["1", "1", "1"],
-  ["1.0", "1", "1"],
-  ["1e0", "1", "1"],
-  ["'-0'", "1", "1"],
-  ["5e-324", "1", "1"],
-  ["1.7976931348623157e308", "1", "1"],
-  ["0.1", "1", "1"],
-  ["0.30000000000000004", "1", "1"],
-  ["123456789.12345678", "1", "1"],
-  ["9007199254740992", "1", "1"],
-  ["9007199254740994", "1", "1"],
-  ["1e16", "1", "1"],
+  ["NULL", "1", "2"],
+  ["1", "1", "2"],
+  ["1.0", "1", "2"],
+  ["1e0", "1", "2"],
+  ["'-0'", "1", "2"],
+  ["5e-324", "1", "2"],
+  ["1.7976931348623157e308", "1", "2"],
+  ["0.1", "1", "2"],
+  ["0.30000000000000004", "1", "2"],
+  ["123456789.12345678", "1", "2"],
+  ["9007199254740992", "1", "2"],
+  ["9007199254740994", "1", "2"],
+  ["1e16", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -426,9 +468,9 @@ id = "fn_date_from_parts_0_float_nan_infinity"
 description = "fn:DATE_FROM_PARTS with NaN and the infinities in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'NaN'", "1", "1"],
-  ["'inf'", "1", "1"],
-  ["'-inf'", "1", "1"],
+  ["'NaN'", "1", "2"],
+  ["'inf'", "1", "2"],
+  ["'-inf'", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -439,11 +481,11 @@ id = "fn_date_from_parts_0_float_notation_boundaries"
 description = "fn:DATE_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["100", "1", "1"],
-  ["0.0001", "1", "1"],
-  ["1e-5", "1", "1"],
-  ["1e15", "1", "1"],
-  ["1e21", "1", "1"],
+  ["100", "1", "2"],
+  ["0.0001", "1", "2"],
+  ["1e-5", "1", "2"],
+  ["1e15", "1", "2"],
+  ["1e21", "1", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -454,11 +496,11 @@ id = "fn_date_from_parts_1_integer_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "NULL", "1"],
-  ["1", "0", "1"],
-  ["1", "-1", "1"],
-  ["1", "9007199254740993", "1"],
-  ["1", "-9007199254740993", "1"],
+  ["1", "NULL", "2"],
+  ["1", "0", "2"],
+  ["1", "-1", "2"],
+  ["1", "9007199254740993", "2"],
+  ["1", "-9007199254740993", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -469,8 +511,8 @@ id = "fn_date_from_parts_1_integer_beyond_64_bits"
 description = "fn:DATE_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "18446744073709551616", "1"],
-  ["1", "-9223372036854775809", "1"],
+  ["1", "18446744073709551616", "2"],
+  ["1", "-9223372036854775809", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -481,8 +523,8 @@ id = "fn_date_from_parts_1_integer_digits_38"
 description = "fn:DATE_FROM_PARTS with The largest 38-digit integers in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "99999999999999999999999999999999999999", "1"],
-  ["1", "-99999999999999999999999999999999999999", "1"],
+  ["1", "99999999999999999999999999999999999999", "2"],
+  ["1", "-99999999999999999999999999999999999999", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -493,14 +535,14 @@ id = "fn_date_from_parts_1_decimal_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "NULL", "1"],
-  ["1", "1.0000000000", "1"],
-  ["1", "-0.0000000000", "1"],
-  ["1", "2.5", "1"],
-  ["1", "-2.5", "1"],
-  ["1", "0.0000000005", "1"],
-  ["1", "1234567890123456.7", "1"],
-  ["1", "-1234567890123456.7", "1"],
+  ["1", "NULL", "2"],
+  ["1", "1.0000000000", "2"],
+  ["1", "-0.0000000000", "2"],
+  ["1", "2.5", "2"],
+  ["1", "-2.5", "2"],
+  ["1", "0.0000000005", "2"],
+  ["1", "1234567890123456.7", "2"],
+  ["1", "-1234567890123456.7", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -511,8 +553,8 @@ id = "fn_date_from_parts_1_decimal_digits_38"
 description = "fn:DATE_FROM_PARTS with Values using all 38 digits in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "9999999999999999999999999999.9999999999", "1"],
-  ["1", "-9999999999999999999999999999.9999999999", "1"],
+  ["1", "9999999999999999999999999999.9999999999", "2"],
+  ["1", "-9999999999999999999999999999.9999999999", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -523,19 +565,19 @@ id = "fn_date_from_parts_1_float_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "NULL", "1"],
-  ["1", "1", "1"],
-  ["1", "1.0", "1"],
-  ["1", "1e0", "1"],
-  ["1", "'-0'", "1"],
-  ["1", "5e-324", "1"],
-  ["1", "1.7976931348623157e308", "1"],
-  ["1", "0.1", "1"],
-  ["1", "0.30000000000000004", "1"],
-  ["1", "123456789.12345678", "1"],
-  ["1", "9007199254740992", "1"],
-  ["1", "9007199254740994", "1"],
-  ["1", "1e16", "1"],
+  ["1", "NULL", "2"],
+  ["1", "1", "2"],
+  ["1", "1.0", "2"],
+  ["1", "1e0", "2"],
+  ["1", "'-0'", "2"],
+  ["1", "5e-324", "2"],
+  ["1", "1.7976931348623157e308", "2"],
+  ["1", "0.1", "2"],
+  ["1", "0.30000000000000004", "2"],
+  ["1", "123456789.12345678", "2"],
+  ["1", "9007199254740992", "2"],
+  ["1", "9007199254740994", "2"],
+  ["1", "1e16", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -546,9 +588,9 @@ id = "fn_date_from_parts_1_float_nan_infinity"
 description = "fn:DATE_FROM_PARTS with NaN and the infinities in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "'NaN'", "1"],
-  ["1", "'inf'", "1"],
-  ["1", "'-inf'", "1"],
+  ["1", "'NaN'", "2"],
+  ["1", "'inf'", "2"],
+  ["1", "'-inf'", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -559,11 +601,11 @@ id = "fn_date_from_parts_1_float_notation_boundaries"
 description = "fn:DATE_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "100", "1"],
-  ["1", "0.0001", "1"],
-  ["1", "1e-5", "1"],
-  ["1", "1e15", "1"],
-  ["1", "1e21", "1"],
+  ["1", "100", "2"],
+  ["1", "0.0001", "2"],
+  ["1", "1e-5", "2"],
+  ["1", "1e15", "2"],
+  ["1", "1e21", "2"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -574,11 +616,11 @@ id = "fn_date_from_parts_2_integer_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "NULL"],
-  ["1", "1", "0"],
-  ["1", "1", "-1"],
-  ["1", "1", "9007199254740993"],
-  ["1", "1", "-9007199254740993"],
+  ["1", "2", "NULL"],
+  ["1", "2", "0"],
+  ["1", "2", "-1"],
+  ["1", "2", "9007199254740993"],
+  ["1", "2", "-9007199254740993"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -589,8 +631,8 @@ id = "fn_date_from_parts_2_integer_beyond_64_bits"
 description = "fn:DATE_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "18446744073709551616"],
-  ["1", "1", "-9223372036854775809"],
+  ["1", "2", "18446744073709551616"],
+  ["1", "2", "-9223372036854775809"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -601,8 +643,8 @@ id = "fn_date_from_parts_2_integer_digits_38"
 description = "fn:DATE_FROM_PARTS with The largest 38-digit integers in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "99999999999999999999999999999999999999"],
-  ["1", "1", "-99999999999999999999999999999999999999"],
+  ["1", "2", "99999999999999999999999999999999999999"],
+  ["1", "2", "-99999999999999999999999999999999999999"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -613,14 +655,14 @@ id = "fn_date_from_parts_2_decimal_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "NULL"],
-  ["1", "1", "1.0000000000"],
-  ["1", "1", "-0.0000000000"],
-  ["1", "1", "2.5"],
-  ["1", "1", "-2.5"],
-  ["1", "1", "0.0000000005"],
-  ["1", "1", "1234567890123456.7"],
-  ["1", "1", "-1234567890123456.7"],
+  ["1", "2", "NULL"],
+  ["1", "2", "1.0000000000"],
+  ["1", "2", "-0.0000000000"],
+  ["1", "2", "2.5"],
+  ["1", "2", "-2.5"],
+  ["1", "2", "0.0000000005"],
+  ["1", "2", "1234567890123456.7"],
+  ["1", "2", "-1234567890123456.7"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -631,8 +673,8 @@ id = "fn_date_from_parts_2_decimal_digits_38"
 description = "fn:DATE_FROM_PARTS with Values using all 38 digits in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "9999999999999999999999999999.9999999999"],
-  ["1", "1", "-9999999999999999999999999999.9999999999"],
+  ["1", "2", "9999999999999999999999999999.9999999999"],
+  ["1", "2", "-9999999999999999999999999999.9999999999"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -643,19 +685,19 @@ id = "fn_date_from_parts_2_float_hazards"
 description = "fn:DATE_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1", "1", "NULL"],
-  ["1", "1", "1"],
-  ["1", "1", "1.0"],
-  ["1", "1", "1e0"],
-  ["1", "1", "'-0'"],
-  ["1", "1", "5e-324"],
-  ["1", "1", "1.7976931348623157e308"],
-  ["1", "1", "0.1"],
-  ["1", "1", "0.30000000000000004"],
-  ["1", "1", "123456789.12345678"],
-  ["1", "1", "9007199254740992"],
-  ["1", "1", "9007199254740994"],
-  ["1", "1", "1e16"],
+  ["1", "2", "NULL"],
+  ["1", "2", "1"],
+  ["1", "2", "1.0"],
+  ["1", "2", "1e0"],
+  ["1", "2", "'-0'"],
+  ["1", "2", "5e-324"],
+  ["1", "2", "1.7976931348623157e308"],
+  ["1", "2", "0.1"],
+  ["1", "2", "0.30000000000000004"],
+  ["1", "2", "123456789.12345678"],
+  ["1", "2", "9007199254740992"],
+  ["1", "2", "9007199254740994"],
+  ["1", "2", "1e16"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -666,9 +708,9 @@ id = "fn_date_from_parts_2_float_nan_infinity"
 description = "fn:DATE_FROM_PARTS with NaN and the infinities in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1", "1", "'NaN'"],
-  ["1", "1", "'inf'"],
-  ["1", "1", "'-inf'"],
+  ["1", "2", "'NaN'"],
+  ["1", "2", "'inf'"],
+  ["1", "2", "'-inf'"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -679,11 +721,11 @@ id = "fn_date_from_parts_2_float_notation_boundaries"
 description = "fn:DATE_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1", "1", "100"],
-  ["1", "1", "0.0001"],
-  ["1", "1", "1e-5"],
-  ["1", "1", "1e15"],
-  ["1", "1", "1e21"],
+  ["1", "2", "100"],
+  ["1", "2", "0.0001"],
+  ["1", "2", "1e-5"],
+  ["1", "2", "1e15"],
+  ["1", "2", "1e21"],
 ]
 expression = "DATE_FROM_PARTS(x0, x1, x2)"
 tags = ["null", "boundary"]
@@ -748,8 +790,12 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1", "2", "1", "2"],
-  ["2024", "1", "2", "1", "2", "1"],
+  ["2024", "1", "2", "12", "3", "5"],
+  ["2024", "2", "12", "3", "5", "1"],
+  ["2024", "12", "3", "5", "1", "2"],
+  ["2024", "3", "5", "1", "2", "12"],
+  ["2024", "5", "1", "2", "12", "3"],
+  ["2024", "1", "1", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -760,8 +806,12 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_decimal_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "2", "1", "2", "1"],
-  ["2024", "2", "1", "2", "1", "2"],
+  ["2024", "1", "2", "12", "3", "5"],
+  ["2024", "2", "12", "3", "5", "1"],
+  ["2024", "12", "3", "5", "1", "2"],
+  ["2024", "3", "5", "1", "2", "12"],
+  ["2024", "5", "1", "2", "12", "3"],
+  ["2024", "1", "1", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -772,8 +822,12 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_float_integer_integer_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "2", "1", "2", "1"],
-  ["2024", "2", "1", "2", "1", "2"],
+  ["2024", "1", "2", "12", "3", "5"],
+  ["2024", "2", "12", "3", "5", "1"],
+  ["2024", "12", "3", "5", "1", "2"],
+  ["2024", "3", "5", "1", "2", "12"],
+  ["2024", "5", "1", "2", "12", "3"],
+  ["2024", "1", "1", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -784,8 +838,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_decimal_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1.5", "2", "1", "2", "1"],
-  ["2024", "2.25", "1", "2", "1", "2"],
+  ["2024", "1.5", "1", "2", "12", "3"],
+  ["2024", "2.25", "2", "12", "3", "1"],
+  ["2024", "3.125", "12", "3", "1", "2"],
+  ["2024", "1.5", "3", "1", "2", "12"],
+  ["2024", "1.5", "1", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -796,8 +853,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_float_integer_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1.5", "2", "1", "2", "1"],
-  ["2024", "2.25", "1", "2", "1", "2"],
+  ["2024", "1.5", "1", "2", "12", "3"],
+  ["2024", "2.25", "2", "12", "3", "1"],
+  ["2024", "3.125", "12", "3", "1", "2"],
+  ["2024", "1.5", "3", "1", "2", "12"],
+  ["2024", "1.5", "1", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -808,8 +868,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_decimal_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1.5", "1", "2", "1"],
-  ["2024", "1", "2.25", "2", "1", "2"],
+  ["2024", "1", "1.5", "2", "12", "3"],
+  ["2024", "2", "2.25", "12", "3", "1"],
+  ["2024", "12", "3.125", "3", "1", "2"],
+  ["2024", "3", "1.5", "1", "2", "12"],
+  ["2024", "1", "1.5", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -820,8 +883,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_float_integer_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1.5", "1", "2", "1"],
-  ["2024", "1", "2.25", "2", "1", "2"],
+  ["2024", "1", "1.5", "2", "12", "3"],
+  ["2024", "2", "2.25", "12", "3", "1"],
+  ["2024", "12", "3.125", "3", "1", "2"],
+  ["2024", "3", "1.5", "1", "2", "12"],
+  ["2024", "1", "1.5", "1", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -832,8 +898,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_decima
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,10)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1", "1.5", "2", "1"],
-  ["2024", "1", "2", "2.25", "1", "2"],
+  ["2024", "1", "2", "1.5", "12", "3"],
+  ["2024", "2", "12", "2.25", "3", "1"],
+  ["2024", "12", "3", "3.125", "1", "2"],
+  ["2024", "3", "1", "1.5", "2", "12"],
+  ["2024", "1", "1", "1.5", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -844,8 +913,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_float_
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1", "1.5", "2", "1"],
-  ["2024", "1", "2", "2.25", "1", "2"],
+  ["2024", "1", "2", "1.5", "12", "3"],
+  ["2024", "2", "12", "2.25", "3", "1"],
+  ["2024", "12", "3", "3.125", "1", "2"],
+  ["2024", "3", "1", "1.5", "2", "12"],
+  ["2024", "1", "1", "1.5", "1", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -856,8 +928,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,10)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1", "2", "1.5", "1"],
-  ["2024", "1", "2", "1", "2.25", "2"],
+  ["2024", "1", "2", "12", "1.5", "3"],
+  ["2024", "2", "12", "3", "2.25", "1"],
+  ["2024", "12", "3", "1", "3.125", "2"],
+  ["2024", "3", "1", "2", "1.5", "12"],
+  ["2024", "1", "1", "1", "1.5", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -868,8 +943,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "FLOAT" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "2", "1", "2", "1.5", "1"],
-  ["2024", "1", "2", "1", "2.25", "2"],
+  ["2024", "1", "2", "12", "1.5", "3"],
+  ["2024", "2", "12", "3", "2.25", "1"],
+  ["2024", "12", "3", "1", "3.125", "2"],
+  ["2024", "3", "1", "2", "1.5", "12"],
+  ["2024", "1", "1", "1", "1.5", "1"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -880,8 +958,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,10)" }]
 rows = [
-  ["2024", "2", "1", "2", "1", "1.5"],
-  ["2024", "1", "2", "1", "2", "2.25"],
+  ["2024", "1", "2", "12", "3", "1.5"],
+  ["2024", "2", "12", "3", "1", "2.25"],
+  ["2024", "12", "3", "1", "2", "3.125"],
+  ["2024", "3", "1", "2", "12", "1.5"],
+  ["2024", "1", "1", "1", "1", "1.5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -892,8 +973,11 @@ id = "fn_timestamp_ntz_from_parts_2_combination_0_integer_integer_integer_intege
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "FLOAT" }]
 rows = [
-  ["2024", "2", "1", "2", "1", "1.5"],
-  ["2024", "1", "2", "1", "2", "2.25"],
+  ["2024", "1", "2", "12", "3", "1.5"],
+  ["2024", "2", "12", "3", "1", "2.25"],
+  ["2024", "12", "3", "1", "2", "3.125"],
+  ["2024", "3", "1", "2", "12", "1.5"],
+  ["2024", "1", "1", "1", "1", "1.5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -904,11 +988,11 @@ id = "fn_timestamp_ntz_from_parts_2_0_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1", "1", "1", "1"],
-  ["0", "1", "1", "1", "1", "1"],
-  ["-1", "1", "1", "1", "1", "1"],
-  ["9007199254740993", "1", "1", "1", "1", "1"],
-  ["-9007199254740993", "1", "1", "1", "1", "1"],
+  ["NULL", "1", "2", "12", "3", "5"],
+  ["0", "1", "2", "12", "3", "5"],
+  ["-1", "1", "2", "12", "3", "5"],
+  ["9007199254740993", "1", "2", "12", "3", "5"],
+  ["-9007199254740993", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -919,8 +1003,8 @@ id = "fn_timestamp_ntz_from_parts_2_0_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["18446744073709551616", "1", "1", "1", "1", "1"],
-  ["-9223372036854775809", "1", "1", "1", "1", "1"],
+  ["18446744073709551616", "1", "2", "12", "3", "5"],
+  ["-9223372036854775809", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -931,8 +1015,8 @@ id = "fn_timestamp_ntz_from_parts_2_0_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["99999999999999999999999999999999999999", "1", "1", "1", "1", "1"],
-  ["-99999999999999999999999999999999999999", "1", "1", "1", "1", "1"],
+  ["99999999999999999999999999999999999999", "1", "2", "12", "3", "5"],
+  ["-99999999999999999999999999999999999999", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -943,14 +1027,14 @@ id = "fn_timestamp_ntz_from_parts_2_0_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1", "1", "1", "1"],
-  ["1.0000000000", "1", "1", "1", "1", "1"],
-  ["-0.0000000000", "1", "1", "1", "1", "1"],
-  ["2.5", "1", "1", "1", "1", "1"],
-  ["-2.5", "1", "1", "1", "1", "1"],
-  ["0.0000000005", "1", "1", "1", "1", "1"],
-  ["1234567890123456.7", "1", "1", "1", "1", "1"],
-  ["-1234567890123456.7", "1", "1", "1", "1", "1"],
+  ["NULL", "1", "2", "12", "3", "5"],
+  ["1.0000000000", "1", "2", "12", "3", "5"],
+  ["-0.0000000000", "1", "2", "12", "3", "5"],
+  ["2.5", "1", "2", "12", "3", "5"],
+  ["-2.5", "1", "2", "12", "3", "5"],
+  ["0.0000000005", "1", "2", "12", "3", "5"],
+  ["1234567890123456.7", "1", "2", "12", "3", "5"],
+  ["-1234567890123456.7", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -961,8 +1045,8 @@ id = "fn_timestamp_ntz_from_parts_2_0_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["9999999999999999999999999999.9999999999", "1", "1", "1", "1", "1"],
-  ["-9999999999999999999999999999.9999999999", "1", "1", "1", "1", "1"],
+  ["9999999999999999999999999999.9999999999", "1", "2", "12", "3", "5"],
+  ["-9999999999999999999999999999.9999999999", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -973,19 +1057,19 @@ id = "fn_timestamp_ntz_from_parts_2_0_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1", "1", "1", "1"],
-  ["1", "1", "1", "1", "1", "1"],
-  ["1.0", "1", "1", "1", "1", "1"],
-  ["1e0", "1", "1", "1", "1", "1"],
-  ["'-0'", "1", "1", "1", "1", "1"],
-  ["5e-324", "1", "1", "1", "1", "1"],
-  ["1.7976931348623157e308", "1", "1", "1", "1", "1"],
-  ["0.1", "1", "1", "1", "1", "1"],
-  ["0.30000000000000004", "1", "1", "1", "1", "1"],
-  ["123456789.12345678", "1", "1", "1", "1", "1"],
-  ["9007199254740992", "1", "1", "1", "1", "1"],
-  ["9007199254740994", "1", "1", "1", "1", "1"],
-  ["1e16", "1", "1", "1", "1", "1"],
+  ["NULL", "1", "2", "12", "3", "5"],
+  ["1", "1", "2", "12", "3", "5"],
+  ["1.0", "1", "2", "12", "3", "5"],
+  ["1e0", "1", "2", "12", "3", "5"],
+  ["'-0'", "1", "2", "12", "3", "5"],
+  ["5e-324", "1", "2", "12", "3", "5"],
+  ["1.7976931348623157e308", "1", "2", "12", "3", "5"],
+  ["0.1", "1", "2", "12", "3", "5"],
+  ["0.30000000000000004", "1", "2", "12", "3", "5"],
+  ["123456789.12345678", "1", "2", "12", "3", "5"],
+  ["9007199254740992", "1", "2", "12", "3", "5"],
+  ["9007199254740994", "1", "2", "12", "3", "5"],
+  ["1e16", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -996,9 +1080,9 @@ id = "fn_timestamp_ntz_from_parts_2_0_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["'NaN'", "1", "1", "1", "1", "1"],
-  ["'inf'", "1", "1", "1", "1", "1"],
-  ["'-inf'", "1", "1", "1", "1", "1"],
+  ["'NaN'", "1", "2", "12", "3", "5"],
+  ["'inf'", "1", "2", "12", "3", "5"],
+  ["'-inf'", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1009,11 +1093,11 @@ id = "fn_timestamp_ntz_from_parts_2_0_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["100", "1", "1", "1", "1", "1"],
-  ["0.0001", "1", "1", "1", "1", "1"],
-  ["1e-5", "1", "1", "1", "1", "1"],
-  ["1e15", "1", "1", "1", "1", "1"],
-  ["1e21", "1", "1", "1", "1", "1"],
+  ["100", "1", "2", "12", "3", "5"],
+  ["0.0001", "1", "2", "12", "3", "5"],
+  ["1e-5", "1", "2", "12", "3", "5"],
+  ["1e15", "1", "2", "12", "3", "5"],
+  ["1e21", "1", "2", "12", "3", "5"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1024,11 +1108,11 @@ id = "fn_timestamp_ntz_from_parts_2_1_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "NULL", "1", "1", "1", "1"],
-  ["2024", "0", "1", "1", "1", "1"],
-  ["2024", "-1", "1", "1", "1", "1"],
-  ["2024", "9007199254740993", "1", "1", "1", "1"],
-  ["2024", "-9007199254740993", "1", "1", "1", "1"],
+  ["2024", "NULL", "1", "2", "12", "3"],
+  ["2024", "0", "1", "2", "12", "3"],
+  ["2024", "-1", "1", "2", "12", "3"],
+  ["2024", "9007199254740993", "1", "2", "12", "3"],
+  ["2024", "-9007199254740993", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1039,8 +1123,8 @@ id = "fn_timestamp_ntz_from_parts_2_1_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "18446744073709551616", "1", "1", "1", "1"],
-  ["2024", "-9223372036854775809", "1", "1", "1", "1"],
+  ["2024", "18446744073709551616", "1", "2", "12", "3"],
+  ["2024", "-9223372036854775809", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1051,8 +1135,8 @@ id = "fn_timestamp_ntz_from_parts_2_1_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "99999999999999999999999999999999999999", "1", "1", "1", "1"],
-  ["2024", "-99999999999999999999999999999999999999", "1", "1", "1", "1"],
+  ["2024", "99999999999999999999999999999999999999", "1", "2", "12", "3"],
+  ["2024", "-99999999999999999999999999999999999999", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1063,14 +1147,14 @@ id = "fn_timestamp_ntz_from_parts_2_1_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "NULL", "1", "1", "1", "1"],
-  ["2024", "1.0000000000", "1", "1", "1", "1"],
-  ["2024", "-0.0000000000", "1", "1", "1", "1"],
-  ["2024", "2.5", "1", "1", "1", "1"],
-  ["2024", "-2.5", "1", "1", "1", "1"],
-  ["2024", "0.0000000005", "1", "1", "1", "1"],
-  ["2024", "1234567890123456.7", "1", "1", "1", "1"],
-  ["2024", "-1234567890123456.7", "1", "1", "1", "1"],
+  ["2024", "NULL", "1", "2", "12", "3"],
+  ["2024", "1.0000000000", "1", "2", "12", "3"],
+  ["2024", "-0.0000000000", "1", "2", "12", "3"],
+  ["2024", "2.5", "1", "2", "12", "3"],
+  ["2024", "-2.5", "1", "2", "12", "3"],
+  ["2024", "0.0000000005", "1", "2", "12", "3"],
+  ["2024", "1234567890123456.7", "1", "2", "12", "3"],
+  ["2024", "-1234567890123456.7", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1081,8 +1165,8 @@ id = "fn_timestamp_ntz_from_parts_2_1_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "9999999999999999999999999999.9999999999", "1", "1", "1", "1"],
-  ["2024", "-9999999999999999999999999999.9999999999", "1", "1", "1", "1"],
+  ["2024", "9999999999999999999999999999.9999999999", "1", "2", "12", "3"],
+  ["2024", "-9999999999999999999999999999.9999999999", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1093,19 +1177,19 @@ id = "fn_timestamp_ntz_from_parts_2_1_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "NULL", "1", "1", "1", "1"],
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "1.0", "1", "1", "1", "1"],
-  ["2024", "1e0", "1", "1", "1", "1"],
-  ["2024", "'-0'", "1", "1", "1", "1"],
-  ["2024", "5e-324", "1", "1", "1", "1"],
-  ["2024", "1.7976931348623157e308", "1", "1", "1", "1"],
-  ["2024", "0.1", "1", "1", "1", "1"],
-  ["2024", "0.30000000000000004", "1", "1", "1", "1"],
-  ["2024", "123456789.12345678", "1", "1", "1", "1"],
-  ["2024", "9007199254740992", "1", "1", "1", "1"],
-  ["2024", "9007199254740994", "1", "1", "1", "1"],
-  ["2024", "1e16", "1", "1", "1", "1"],
+  ["2024", "NULL", "1", "2", "12", "3"],
+  ["2024", "1", "1", "2", "12", "3"],
+  ["2024", "1.0", "1", "2", "12", "3"],
+  ["2024", "1e0", "1", "2", "12", "3"],
+  ["2024", "'-0'", "1", "2", "12", "3"],
+  ["2024", "5e-324", "1", "2", "12", "3"],
+  ["2024", "1.7976931348623157e308", "1", "2", "12", "3"],
+  ["2024", "0.1", "1", "2", "12", "3"],
+  ["2024", "0.30000000000000004", "1", "2", "12", "3"],
+  ["2024", "123456789.12345678", "1", "2", "12", "3"],
+  ["2024", "9007199254740992", "1", "2", "12", "3"],
+  ["2024", "9007199254740994", "1", "2", "12", "3"],
+  ["2024", "1e16", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1116,9 +1200,9 @@ id = "fn_timestamp_ntz_from_parts_2_1_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "'NaN'", "1", "1", "1", "1"],
-  ["2024", "'inf'", "1", "1", "1", "1"],
-  ["2024", "'-inf'", "1", "1", "1", "1"],
+  ["2024", "'NaN'", "1", "2", "12", "3"],
+  ["2024", "'inf'", "1", "2", "12", "3"],
+  ["2024", "'-inf'", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1129,11 +1213,11 @@ id = "fn_timestamp_ntz_from_parts_2_1_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "100", "1", "1", "1", "1"],
-  ["2024", "0.0001", "1", "1", "1", "1"],
-  ["2024", "1e-5", "1", "1", "1", "1"],
-  ["2024", "1e15", "1", "1", "1", "1"],
-  ["2024", "1e21", "1", "1", "1", "1"],
+  ["2024", "100", "1", "2", "12", "3"],
+  ["2024", "0.0001", "1", "2", "12", "3"],
+  ["2024", "1e-5", "1", "2", "12", "3"],
+  ["2024", "1e15", "1", "2", "12", "3"],
+  ["2024", "1e21", "1", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1144,11 +1228,11 @@ id = "fn_timestamp_ntz_from_parts_2_2_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "NULL", "1", "1", "1"],
-  ["2024", "1", "0", "1", "1", "1"],
-  ["2024", "1", "-1", "1", "1", "1"],
-  ["2024", "1", "9007199254740993", "1", "1", "1"],
-  ["2024", "1", "-9007199254740993", "1", "1", "1"],
+  ["2024", "1", "NULL", "2", "12", "3"],
+  ["2024", "1", "0", "2", "12", "3"],
+  ["2024", "1", "-1", "2", "12", "3"],
+  ["2024", "1", "9007199254740993", "2", "12", "3"],
+  ["2024", "1", "-9007199254740993", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1159,8 +1243,8 @@ id = "fn_timestamp_ntz_from_parts_2_2_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "18446744073709551616", "1", "1", "1"],
-  ["2024", "1", "-9223372036854775809", "1", "1", "1"],
+  ["2024", "1", "18446744073709551616", "2", "12", "3"],
+  ["2024", "1", "-9223372036854775809", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1171,8 +1255,8 @@ id = "fn_timestamp_ntz_from_parts_2_2_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "99999999999999999999999999999999999999", "1", "1", "1"],
-  ["2024", "1", "-99999999999999999999999999999999999999", "1", "1", "1"],
+  ["2024", "1", "99999999999999999999999999999999999999", "2", "12", "3"],
+  ["2024", "1", "-99999999999999999999999999999999999999", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1183,14 +1267,14 @@ id = "fn_timestamp_ntz_from_parts_2_2_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "NULL", "1", "1", "1"],
-  ["2024", "1", "1.0000000000", "1", "1", "1"],
-  ["2024", "1", "-0.0000000000", "1", "1", "1"],
-  ["2024", "1", "2.5", "1", "1", "1"],
-  ["2024", "1", "-2.5", "1", "1", "1"],
-  ["2024", "1", "0.0000000005", "1", "1", "1"],
-  ["2024", "1", "1234567890123456.7", "1", "1", "1"],
-  ["2024", "1", "-1234567890123456.7", "1", "1", "1"],
+  ["2024", "1", "NULL", "2", "12", "3"],
+  ["2024", "1", "1.0000000000", "2", "12", "3"],
+  ["2024", "1", "-0.0000000000", "2", "12", "3"],
+  ["2024", "1", "2.5", "2", "12", "3"],
+  ["2024", "1", "-2.5", "2", "12", "3"],
+  ["2024", "1", "0.0000000005", "2", "12", "3"],
+  ["2024", "1", "1234567890123456.7", "2", "12", "3"],
+  ["2024", "1", "-1234567890123456.7", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1201,8 +1285,8 @@ id = "fn_timestamp_ntz_from_parts_2_2_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "9999999999999999999999999999.9999999999", "1", "1", "1"],
-  ["2024", "1", "-9999999999999999999999999999.9999999999", "1", "1", "1"],
+  ["2024", "1", "9999999999999999999999999999.9999999999", "2", "12", "3"],
+  ["2024", "1", "-9999999999999999999999999999.9999999999", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1213,19 +1297,19 @@ id = "fn_timestamp_ntz_from_parts_2_2_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "NULL", "1", "1", "1"],
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "1", "1.0", "1", "1", "1"],
-  ["2024", "1", "1e0", "1", "1", "1"],
-  ["2024", "1", "'-0'", "1", "1", "1"],
-  ["2024", "1", "5e-324", "1", "1", "1"],
-  ["2024", "1", "1.7976931348623157e308", "1", "1", "1"],
-  ["2024", "1", "0.1", "1", "1", "1"],
-  ["2024", "1", "0.30000000000000004", "1", "1", "1"],
-  ["2024", "1", "123456789.12345678", "1", "1", "1"],
-  ["2024", "1", "9007199254740992", "1", "1", "1"],
-  ["2024", "1", "9007199254740994", "1", "1", "1"],
-  ["2024", "1", "1e16", "1", "1", "1"],
+  ["2024", "1", "NULL", "2", "12", "3"],
+  ["2024", "1", "1", "2", "12", "3"],
+  ["2024", "1", "1.0", "2", "12", "3"],
+  ["2024", "1", "1e0", "2", "12", "3"],
+  ["2024", "1", "'-0'", "2", "12", "3"],
+  ["2024", "1", "5e-324", "2", "12", "3"],
+  ["2024", "1", "1.7976931348623157e308", "2", "12", "3"],
+  ["2024", "1", "0.1", "2", "12", "3"],
+  ["2024", "1", "0.30000000000000004", "2", "12", "3"],
+  ["2024", "1", "123456789.12345678", "2", "12", "3"],
+  ["2024", "1", "9007199254740992", "2", "12", "3"],
+  ["2024", "1", "9007199254740994", "2", "12", "3"],
+  ["2024", "1", "1e16", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1236,9 +1320,9 @@ id = "fn_timestamp_ntz_from_parts_2_2_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "'NaN'", "1", "1", "1"],
-  ["2024", "1", "'inf'", "1", "1", "1"],
-  ["2024", "1", "'-inf'", "1", "1", "1"],
+  ["2024", "1", "'NaN'", "2", "12", "3"],
+  ["2024", "1", "'inf'", "2", "12", "3"],
+  ["2024", "1", "'-inf'", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1249,11 +1333,11 @@ id = "fn_timestamp_ntz_from_parts_2_2_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "FLOAT" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "100", "1", "1", "1"],
-  ["2024", "1", "0.0001", "1", "1", "1"],
-  ["2024", "1", "1e-5", "1", "1", "1"],
-  ["2024", "1", "1e15", "1", "1", "1"],
-  ["2024", "1", "1e21", "1", "1", "1"],
+  ["2024", "1", "100", "2", "12", "3"],
+  ["2024", "1", "0.0001", "2", "12", "3"],
+  ["2024", "1", "1e-5", "2", "12", "3"],
+  ["2024", "1", "1e15", "2", "12", "3"],
+  ["2024", "1", "1e21", "2", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1264,11 +1348,11 @@ id = "fn_timestamp_ntz_from_parts_2_3_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 3, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "NULL", "1", "1"],
-  ["2024", "1", "1", "0", "1", "1"],
-  ["2024", "1", "1", "-1", "1", "1"],
-  ["2024", "1", "1", "9007199254740993", "1", "1"],
-  ["2024", "1", "1", "-9007199254740993", "1", "1"],
+  ["2024", "1", "2", "NULL", "12", "3"],
+  ["2024", "1", "2", "0", "12", "3"],
+  ["2024", "1", "2", "-1", "12", "3"],
+  ["2024", "1", "2", "9007199254740993", "12", "3"],
+  ["2024", "1", "2", "-9007199254740993", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1279,8 +1363,8 @@ id = "fn_timestamp_ntz_from_parts_2_3_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 3, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "18446744073709551616", "1", "1"],
-  ["2024", "1", "1", "-9223372036854775809", "1", "1"],
+  ["2024", "1", "2", "18446744073709551616", "12", "3"],
+  ["2024", "1", "2", "-9223372036854775809", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1291,8 +1375,8 @@ id = "fn_timestamp_ntz_from_parts_2_3_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 3, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "99999999999999999999999999999999999999", "1", "1"],
-  ["2024", "1", "1", "-99999999999999999999999999999999999999", "1", "1"],
+  ["2024", "1", "2", "99999999999999999999999999999999999999", "12", "3"],
+  ["2024", "1", "2", "-99999999999999999999999999999999999999", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1303,14 +1387,14 @@ id = "fn_timestamp_ntz_from_parts_2_3_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 3, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,10)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "NULL", "1", "1"],
-  ["2024", "1", "1", "1.0000000000", "1", "1"],
-  ["2024", "1", "1", "-0.0000000000", "1", "1"],
-  ["2024", "1", "1", "2.5", "1", "1"],
-  ["2024", "1", "1", "-2.5", "1", "1"],
-  ["2024", "1", "1", "0.0000000005", "1", "1"],
-  ["2024", "1", "1", "1234567890123456.7", "1", "1"],
-  ["2024", "1", "1", "-1234567890123456.7", "1", "1"],
+  ["2024", "1", "2", "NULL", "12", "3"],
+  ["2024", "1", "2", "1.0000000000", "12", "3"],
+  ["2024", "1", "2", "-0.0000000000", "12", "3"],
+  ["2024", "1", "2", "2.5", "12", "3"],
+  ["2024", "1", "2", "-2.5", "12", "3"],
+  ["2024", "1", "2", "0.0000000005", "12", "3"],
+  ["2024", "1", "2", "1234567890123456.7", "12", "3"],
+  ["2024", "1", "2", "-1234567890123456.7", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1321,8 +1405,8 @@ id = "fn_timestamp_ntz_from_parts_2_3_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 3, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,10)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "9999999999999999999999999999.9999999999", "1", "1"],
-  ["2024", "1", "1", "-9999999999999999999999999999.9999999999", "1", "1"],
+  ["2024", "1", "2", "9999999999999999999999999999.9999999999", "12", "3"],
+  ["2024", "1", "2", "-9999999999999999999999999999.9999999999", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1333,19 +1417,19 @@ id = "fn_timestamp_ntz_from_parts_2_3_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 3, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "NULL", "1", "1"],
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "1", "1", "1.0", "1", "1"],
-  ["2024", "1", "1", "1e0", "1", "1"],
-  ["2024", "1", "1", "'-0'", "1", "1"],
-  ["2024", "1", "1", "5e-324", "1", "1"],
-  ["2024", "1", "1", "1.7976931348623157e308", "1", "1"],
-  ["2024", "1", "1", "0.1", "1", "1"],
-  ["2024", "1", "1", "0.30000000000000004", "1", "1"],
-  ["2024", "1", "1", "123456789.12345678", "1", "1"],
-  ["2024", "1", "1", "9007199254740992", "1", "1"],
-  ["2024", "1", "1", "9007199254740994", "1", "1"],
-  ["2024", "1", "1", "1e16", "1", "1"],
+  ["2024", "1", "2", "NULL", "12", "3"],
+  ["2024", "1", "2", "1", "12", "3"],
+  ["2024", "1", "2", "1.0", "12", "3"],
+  ["2024", "1", "2", "1e0", "12", "3"],
+  ["2024", "1", "2", "'-0'", "12", "3"],
+  ["2024", "1", "2", "5e-324", "12", "3"],
+  ["2024", "1", "2", "1.7976931348623157e308", "12", "3"],
+  ["2024", "1", "2", "0.1", "12", "3"],
+  ["2024", "1", "2", "0.30000000000000004", "12", "3"],
+  ["2024", "1", "2", "123456789.12345678", "12", "3"],
+  ["2024", "1", "2", "9007199254740992", "12", "3"],
+  ["2024", "1", "2", "9007199254740994", "12", "3"],
+  ["2024", "1", "2", "1e16", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1356,9 +1440,9 @@ id = "fn_timestamp_ntz_from_parts_2_3_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 3, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "'NaN'", "1", "1"],
-  ["2024", "1", "1", "'inf'", "1", "1"],
-  ["2024", "1", "1", "'-inf'", "1", "1"],
+  ["2024", "1", "2", "'NaN'", "12", "3"],
+  ["2024", "1", "2", "'inf'", "12", "3"],
+  ["2024", "1", "2", "'-inf'", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1369,11 +1453,11 @@ id = "fn_timestamp_ntz_from_parts_2_3_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 3, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "FLOAT" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "100", "1", "1"],
-  ["2024", "1", "1", "0.0001", "1", "1"],
-  ["2024", "1", "1", "1e-5", "1", "1"],
-  ["2024", "1", "1", "1e15", "1", "1"],
-  ["2024", "1", "1", "1e21", "1", "1"],
+  ["2024", "1", "2", "100", "12", "3"],
+  ["2024", "1", "2", "0.0001", "12", "3"],
+  ["2024", "1", "2", "1e-5", "12", "3"],
+  ["2024", "1", "2", "1e15", "12", "3"],
+  ["2024", "1", "2", "1e21", "12", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1384,11 +1468,11 @@ id = "fn_timestamp_ntz_from_parts_2_4_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 4, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "NULL", "1"],
-  ["2024", "1", "1", "1", "0", "1"],
-  ["2024", "1", "1", "1", "-1", "1"],
-  ["2024", "1", "1", "1", "9007199254740993", "1"],
-  ["2024", "1", "1", "1", "-9007199254740993", "1"],
+  ["2024", "1", "2", "12", "NULL", "3"],
+  ["2024", "1", "2", "12", "0", "3"],
+  ["2024", "1", "2", "12", "-1", "3"],
+  ["2024", "1", "2", "12", "9007199254740993", "3"],
+  ["2024", "1", "2", "12", "-9007199254740993", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1399,8 +1483,8 @@ id = "fn_timestamp_ntz_from_parts_2_4_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 4, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "18446744073709551616", "1"],
-  ["2024", "1", "1", "1", "-9223372036854775809", "1"],
+  ["2024", "1", "2", "12", "18446744073709551616", "3"],
+  ["2024", "1", "2", "12", "-9223372036854775809", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1411,8 +1495,8 @@ id = "fn_timestamp_ntz_from_parts_2_4_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 4, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "99999999999999999999999999999999999999", "1"],
-  ["2024", "1", "1", "1", "-99999999999999999999999999999999999999", "1"],
+  ["2024", "1", "2", "12", "99999999999999999999999999999999999999", "3"],
+  ["2024", "1", "2", "12", "-99999999999999999999999999999999999999", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1423,14 +1507,14 @@ id = "fn_timestamp_ntz_from_parts_2_4_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 4, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,10)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "NULL", "1"],
-  ["2024", "1", "1", "1", "1.0000000000", "1"],
-  ["2024", "1", "1", "1", "-0.0000000000", "1"],
-  ["2024", "1", "1", "1", "2.5", "1"],
-  ["2024", "1", "1", "1", "-2.5", "1"],
-  ["2024", "1", "1", "1", "0.0000000005", "1"],
-  ["2024", "1", "1", "1", "1234567890123456.7", "1"],
-  ["2024", "1", "1", "1", "-1234567890123456.7", "1"],
+  ["2024", "1", "2", "12", "NULL", "3"],
+  ["2024", "1", "2", "12", "1.0000000000", "3"],
+  ["2024", "1", "2", "12", "-0.0000000000", "3"],
+  ["2024", "1", "2", "12", "2.5", "3"],
+  ["2024", "1", "2", "12", "-2.5", "3"],
+  ["2024", "1", "2", "12", "0.0000000005", "3"],
+  ["2024", "1", "2", "12", "1234567890123456.7", "3"],
+  ["2024", "1", "2", "12", "-1234567890123456.7", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1441,8 +1525,8 @@ id = "fn_timestamp_ntz_from_parts_2_4_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 4, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,10)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "9999999999999999999999999999.9999999999", "1"],
-  ["2024", "1", "1", "1", "-9999999999999999999999999999.9999999999", "1"],
+  ["2024", "1", "2", "12", "9999999999999999999999999999.9999999999", "3"],
+  ["2024", "1", "2", "12", "-9999999999999999999999999999.9999999999", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1453,19 +1537,19 @@ id = "fn_timestamp_ntz_from_parts_2_4_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 4, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "FLOAT" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "NULL", "1"],
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "1", "1", "1", "1.0", "1"],
-  ["2024", "1", "1", "1", "1e0", "1"],
-  ["2024", "1", "1", "1", "'-0'", "1"],
-  ["2024", "1", "1", "1", "5e-324", "1"],
-  ["2024", "1", "1", "1", "1.7976931348623157e308", "1"],
-  ["2024", "1", "1", "1", "0.1", "1"],
-  ["2024", "1", "1", "1", "0.30000000000000004", "1"],
-  ["2024", "1", "1", "1", "123456789.12345678", "1"],
-  ["2024", "1", "1", "1", "9007199254740992", "1"],
-  ["2024", "1", "1", "1", "9007199254740994", "1"],
-  ["2024", "1", "1", "1", "1e16", "1"],
+  ["2024", "1", "2", "12", "NULL", "3"],
+  ["2024", "1", "2", "12", "1", "3"],
+  ["2024", "1", "2", "12", "1.0", "3"],
+  ["2024", "1", "2", "12", "1e0", "3"],
+  ["2024", "1", "2", "12", "'-0'", "3"],
+  ["2024", "1", "2", "12", "5e-324", "3"],
+  ["2024", "1", "2", "12", "1.7976931348623157e308", "3"],
+  ["2024", "1", "2", "12", "0.1", "3"],
+  ["2024", "1", "2", "12", "0.30000000000000004", "3"],
+  ["2024", "1", "2", "12", "123456789.12345678", "3"],
+  ["2024", "1", "2", "12", "9007199254740992", "3"],
+  ["2024", "1", "2", "12", "9007199254740994", "3"],
+  ["2024", "1", "2", "12", "1e16", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1476,9 +1560,9 @@ id = "fn_timestamp_ntz_from_parts_2_4_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 4, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "FLOAT" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "'NaN'", "1"],
-  ["2024", "1", "1", "1", "'inf'", "1"],
-  ["2024", "1", "1", "1", "'-inf'", "1"],
+  ["2024", "1", "2", "12", "'NaN'", "3"],
+  ["2024", "1", "2", "12", "'inf'", "3"],
+  ["2024", "1", "2", "12", "'-inf'", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1489,11 +1573,11 @@ id = "fn_timestamp_ntz_from_parts_2_4_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 4, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "FLOAT" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "100", "1"],
-  ["2024", "1", "1", "1", "0.0001", "1"],
-  ["2024", "1", "1", "1", "1e-5", "1"],
-  ["2024", "1", "1", "1", "1e15", "1"],
-  ["2024", "1", "1", "1", "1e21", "1"],
+  ["2024", "1", "2", "12", "100", "3"],
+  ["2024", "1", "2", "12", "0.0001", "3"],
+  ["2024", "1", "2", "12", "1e-5", "3"],
+  ["2024", "1", "2", "12", "1e15", "3"],
+  ["2024", "1", "2", "12", "1e21", "3"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1504,11 +1588,11 @@ id = "fn_timestamp_ntz_from_parts_2_5_integer_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, zero_negative, beyond_double in argument 5, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "NULL"],
-  ["2024", "1", "1", "1", "1", "0"],
-  ["2024", "1", "1", "1", "1", "-1"],
-  ["2024", "1", "1", "1", "1", "9007199254740993"],
-  ["2024", "1", "1", "1", "1", "-9007199254740993"],
+  ["2024", "1", "2", "12", "3", "NULL"],
+  ["2024", "1", "2", "12", "3", "0"],
+  ["2024", "1", "2", "12", "3", "-1"],
+  ["2024", "1", "2", "12", "3", "9007199254740993"],
+  ["2024", "1", "2", "12", "3", "-9007199254740993"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1519,8 +1603,8 @@ id = "fn_timestamp_ntz_from_parts_2_5_integer_beyond_64_bits"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 5, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "18446744073709551616"],
-  ["2024", "1", "1", "1", "1", "-9223372036854775809"],
+  ["2024", "1", "2", "12", "3", "18446744073709551616"],
+  ["2024", "1", "2", "12", "3", "-9223372036854775809"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1531,8 +1615,8 @@ id = "fn_timestamp_ntz_from_parts_2_5_integer_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with The largest 38-digit integers in argument 5, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,0)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "99999999999999999999999999999999999999"],
-  ["2024", "1", "1", "1", "1", "-99999999999999999999999999999999999999"],
+  ["2024", "1", "2", "12", "3", "99999999999999999999999999999999999999"],
+  ["2024", "1", "2", "12", "3", "-99999999999999999999999999999999999999"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1543,14 +1627,14 @@ id = "fn_timestamp_ntz_from_parts_2_5_decimal_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, half_way, beyond_double in argument 5, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,10)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "NULL"],
-  ["2024", "1", "1", "1", "1", "1.0000000000"],
-  ["2024", "1", "1", "1", "1", "-0.0000000000"],
-  ["2024", "1", "1", "1", "1", "2.5"],
-  ["2024", "1", "1", "1", "1", "-2.5"],
-  ["2024", "1", "1", "1", "1", "0.0000000005"],
-  ["2024", "1", "1", "1", "1", "1234567890123456.7"],
-  ["2024", "1", "1", "1", "1", "-1234567890123456.7"],
+  ["2024", "1", "2", "12", "3", "NULL"],
+  ["2024", "1", "2", "12", "3", "1.0000000000"],
+  ["2024", "1", "2", "12", "3", "-0.0000000000"],
+  ["2024", "1", "2", "12", "3", "2.5"],
+  ["2024", "1", "2", "12", "3", "-2.5"],
+  ["2024", "1", "2", "12", "3", "0.0000000005"],
+  ["2024", "1", "2", "12", "3", "1234567890123456.7"],
+  ["2024", "1", "2", "12", "3", "-1234567890123456.7"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1561,8 +1645,8 @@ id = "fn_timestamp_ntz_from_parts_2_5_decimal_digits_38"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Values using all 38 digits in argument 5, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "NUMBER(38,10)" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "9999999999999999999999999999.9999999999"],
-  ["2024", "1", "1", "1", "1", "-9999999999999999999999999999.9999999999"],
+  ["2024", "1", "2", "12", "3", "9999999999999999999999999999.9999999999"],
+  ["2024", "1", "2", "12", "3", "-9999999999999999999999999999.9999999999"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1573,19 +1657,19 @@ id = "fn_timestamp_ntz_from_parts_2_5_float_hazards"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 5, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "FLOAT" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "NULL"],
-  ["2024", "1", "1", "1", "1", "1"],
-  ["2024", "1", "1", "1", "1", "1.0"],
-  ["2024", "1", "1", "1", "1", "1e0"],
-  ["2024", "1", "1", "1", "1", "'-0'"],
-  ["2024", "1", "1", "1", "1", "5e-324"],
-  ["2024", "1", "1", "1", "1", "1.7976931348623157e308"],
-  ["2024", "1", "1", "1", "1", "0.1"],
-  ["2024", "1", "1", "1", "1", "0.30000000000000004"],
-  ["2024", "1", "1", "1", "1", "123456789.12345678"],
-  ["2024", "1", "1", "1", "1", "9007199254740992"],
-  ["2024", "1", "1", "1", "1", "9007199254740994"],
-  ["2024", "1", "1", "1", "1", "1e16"],
+  ["2024", "1", "2", "12", "3", "NULL"],
+  ["2024", "1", "2", "12", "3", "1"],
+  ["2024", "1", "2", "12", "3", "1.0"],
+  ["2024", "1", "2", "12", "3", "1e0"],
+  ["2024", "1", "2", "12", "3", "'-0'"],
+  ["2024", "1", "2", "12", "3", "5e-324"],
+  ["2024", "1", "2", "12", "3", "1.7976931348623157e308"],
+  ["2024", "1", "2", "12", "3", "0.1"],
+  ["2024", "1", "2", "12", "3", "0.30000000000000004"],
+  ["2024", "1", "2", "12", "3", "123456789.12345678"],
+  ["2024", "1", "2", "12", "3", "9007199254740992"],
+  ["2024", "1", "2", "12", "3", "9007199254740994"],
+  ["2024", "1", "2", "12", "3", "1e16"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1596,9 +1680,9 @@ id = "fn_timestamp_ntz_from_parts_2_5_float_nan_infinity"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with NaN and the infinities in argument 5, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "FLOAT" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "'NaN'"],
-  ["2024", "1", "1", "1", "1", "'inf'"],
-  ["2024", "1", "1", "1", "1", "'-inf'"],
+  ["2024", "1", "2", "12", "3", "'NaN'"],
+  ["2024", "1", "2", "12", "3", "'inf'"],
+  ["2024", "1", "2", "12", "3", "'-inf'"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]
@@ -1609,11 +1693,11 @@ id = "fn_timestamp_ntz_from_parts_2_5_float_notation_boundaries"
 description = "fn:TIMESTAMP_NTZ_FROM_PARTS with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 5, float."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }, { name = "x3", type = "NUMBER(38,0)" }, { name = "x4", type = "NUMBER(38,0)" }, { name = "x5", type = "FLOAT" }]
 rows = [
-  ["2024", "1", "1", "1", "1", "100"],
-  ["2024", "1", "1", "1", "1", "0.0001"],
-  ["2024", "1", "1", "1", "1", "1e-5"],
-  ["2024", "1", "1", "1", "1", "1e15"],
-  ["2024", "1", "1", "1", "1", "1e21"],
+  ["2024", "1", "2", "12", "3", "100"],
+  ["2024", "1", "2", "12", "3", "0.0001"],
+  ["2024", "1", "2", "12", "3", "1e-5"],
+  ["2024", "1", "2", "12", "3", "1e15"],
+  ["2024", "1", "2", "12", "3", "1e21"],
 ]
 expression = "TIMESTAMP_NTZ_FROM_PARTS(x0, x1, x2, x3, x4, x5)"
 tags = ["null", "boundary"]

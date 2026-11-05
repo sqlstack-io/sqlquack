@@ -96,7 +96,9 @@ description = "fn:TRANSFORM over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
 ]
 expression = "TRANSFORM(x0, e -> e)"
 tags = ["null", "duplicates", "empty", "invalid"]

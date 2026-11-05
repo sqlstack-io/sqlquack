@@ -12,6 +12,7 @@ columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["TRUE", "FALSE"],
   ["FALSE", "TRUE"],
+  ["TRUE", "TRUE"],
 ]
 expression = "x0 AND x1"
 tags = ["null", "ties", "mixed-types"]
@@ -24,6 +25,7 @@ columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["TRUE", "FALSE"],
   ["FALSE", "TRUE"],
+  ["TRUE", "TRUE"],
 ]
 expression = "x0 OR x1"
 tags = ["null", "ties", "mixed-types"]

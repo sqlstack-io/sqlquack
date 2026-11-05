@@ -122,9 +122,24 @@ def test_given_declared_divergences_when_generating_hazards_then_cases_expect_th
             (("'g001'", "''", "1"), ("'g002'", "'$.a'", "2"), ("'g003'", "'/a'", "3")),
         ),
         HazardTestCase(
-            "two arguments of one family never hold the same value in a row",
+            "two arguments of one family differ in each order, then hold one equal row",
             "fn_contains_combination_0_text_text",
-            (("'a'", "'b'"), ("'b'", "'a'")),
+            (("'a'", "'b'"), ("'b'", "'ab'"), ("'ab'", "'a'"), ("'a'", "'a'")),
+        ),
+        HazardTestCase(
+            "a hazard's position uses up no value, so the others of its family differ",
+            "fn_contains_0_text_hazards",
+            (("''", "'a'"), ("'$.a'", "'a'"), ("'/a'", "'a'")),
+        ),
+        HazardTestCase(
+            "three arguments of a two-valued family each differ in a row of their own",
+            "fn_decode_combination_0_boolean_boolean_boolean",
+            (
+                ("FALSE", "TRUE", "TRUE"),
+                ("TRUE", "FALSE", "TRUE"),
+                ("TRUE", "TRUE", "FALSE"),
+                ("TRUE", "TRUE", "TRUE"),
+            ),
         ),
     ),
     ids=lambda case: case.description,

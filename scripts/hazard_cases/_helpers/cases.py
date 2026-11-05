@@ -6,7 +6,7 @@ import re
 from typing import Any
 
 from scripts.case_generators.models import Case, Column
-from scripts.hazard_cases._helpers.combinations import combination_cases
+from scripts.hazard_cases._helpers.combinations import combination_cases, distinct_fill
 from scripts.hazard_cases.constants import (
     COMBINED_HAZARDS,
     EXPRESSION_SLOT,
@@ -137,7 +137,7 @@ def _argument_case(
     labels: tuple[str, str, tuple[str, ...]],
     divergence: str | None,
 ) -> Case:
-    """One hazard's cells in one argument; the other arguments hold their family's benign value."""
+    """One hazard's cells in one argument; the others hold their family's values, each distinct."""
     form, families = declared
     position, cells, literal_only = hazard_at
     case_id, description, tags = labels
@@ -152,7 +152,7 @@ def _argument_case(
         for index, family in enumerate(types)
         if index not in literal_positions
     ]
-    benign: list[str] = _benign(form=form, families=families, types=types)
+    benign: list[str] = distinct_fill(form=form, families=families, types=types, skip=position)
     grouped: bool = EXPRESSION_SLOT in (form.get("query") or "")
     if grouped:
         columns.insert(0, Column(HAZARD_GROUP_COLUMN, "VARCHAR"))
@@ -234,7 +234,7 @@ def _rows_case(
     labels: tuple[str, tuple[str, ...]],
     divergence: str | None,
 ) -> Case:
-    """A row-set hazard: groups of the first argument's values, the others benign."""
+    """A row-set hazard: groups of the first argument's values, the others distinct per family."""
     form, families = declared
     case_id, tags = labels
     literal_positions: set[int] = {
@@ -243,7 +243,7 @@ def _rows_case(
         if argument.get("kinds") == [LITERAL_KIND]
     }
     names: list[str] = [f"{HAZARD_ARGUMENT_PREFIX}{index}" for index in range(len(types))]
-    benign: list[str] = _benign(form=form, families=families, types=types)
+    benign: list[str] = distinct_fill(form=form, families=families, types=types)
     first: dict[str, Any] = families[types[0]]
     columns: list[Column] = [Column(HAZARD_GROUP_COLUMN, "VARCHAR")] + [
         Column(names[index], _sql_type(form=form, families=families, position=(index, family)))
@@ -256,8 +256,10 @@ def _rows_case(
     for number, (group, value) in enumerate(template_rows, start=1):
         cell: str = value.replace("{benign}", first["benign"]).replace("{other}", first["other"])
         values: list[str] = [cell, *benign[1:]]
+        # Ordinals run against insertion order and apart from the values, so an aggregate that
+        # ignores its WITHIN GROUP order, or reads the value as the ordinal, gives another result.
         for index in ordinals:
-            values[index] = str(number)
+            values[index] = str(10 * (len(template_rows) - number + 1))
         rows.append(
             (
                 group,
@@ -292,15 +294,6 @@ def _cells(group: list[dict[str, Any]]) -> list[str]:
             if cell not in cells:
                 cells.append(cell)
     return cells
-
-
-def _benign(*, form: dict[str, Any], families: dict[str, Any], types: list[str]) -> list[str]:
-    """Each argument's benign cell: the form's override for its position, else its family's."""
-    overrides: dict[str, str] = form.get("benign", {})
-    return [
-        overrides.get(str(index), families[family].get("benign", "NULL"))
-        for index, family in enumerate(types)
-    ]
 
 
 def _sql_type(*, form: dict[str, Any], families: dict[str, Any], position: tuple[int, str]) -> str:

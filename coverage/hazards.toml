@@ -26,6 +26,7 @@ version = 4
 sql_type = "VARCHAR"
 benign = "'a'"
 other = "'b'"
+third = "'ab'"
 
 [[families.text.hazard]]
 id = "null"
@@ -90,6 +91,8 @@ cells = ["'007'", "'1.0'", "'1e0'", "'+7'", "'-0'"]
 sql_type = "NUMBER(38,0)"
 benign = "1"
 other = "2"
+third = "12"
+more = ["3", "5", "7"]
 
 [[families.integer.hazard]]
 id = "null"
@@ -123,6 +126,7 @@ cells = ["9007199254740993", "-9007199254740993"]
 sql_type = "NUMBER(38,10)"
 benign = "1.5"
 other = "2.25"
+third = "3.125"
 
 [[families.decimal.hazard]]
 id = "null"
@@ -155,6 +159,7 @@ cells = ["1234567890123456.7", "-1234567890123456.7"]
 sql_type = "FLOAT"
 benign = "1.5"
 other = "2.25"
+third = "3.125"
 
 [[families.float.hazard]]
 id = "null"
@@ -213,6 +218,7 @@ cells = ["NULL"]
 sql_type = "DATE"
 benign = "'2024-01-15'"
 other = "'2024-05-17'"
+third = "'2023-11-30'"
 
 [[families.date.hazard]]
 id = "null"
@@ -239,6 +245,7 @@ cells = ["'0001-01-01'", "'9999-12-31'"]
 sql_type = "TIME(9)"
 benign = "'10:00:00'"
 other = "'11:30:00'"
+third = "'23:15:45.5'"
 
 [[families.time.hazard]]
 id = "null"
@@ -259,6 +266,7 @@ cells = ["'10:00:00.0005'", "'10:00:00.9996'"]
 sql_type = "TIMESTAMP_NTZ(9)"
 benign = "'2024-01-15 10:00:00'"
 other = "'2024-05-17 11:30:00'"
+third = "'2023-11-30 23:15:45.5'"
 
 [[families.timestamp_ntz.hazard]]
 id = "null"
@@ -312,6 +320,7 @@ unrecordable = "The recording connector cannot convert a nanosecond timestamp pa
 sql_type = "TIMESTAMP_LTZ(9)"
 benign = "'2024-01-15 10:00:00'"
 other = "'2024-05-17 11:30:00'"
+third = "'2023-11-30 23:15:45.5'"
 
 [[families.timestamp_ltz.hazard]]
 id = "null"
@@ -355,6 +364,7 @@ unrecordable = "The recording connector cannot convert a nanosecond timestamp pa
 sql_type = "TIMESTAMP_TZ(9)"
 benign = "'2024-01-15 10:00:00 +00:00'"
 other = "'2024-05-17 11:30:00 +00:00'"
+third = "'2023-11-30 23:15:45.5 +00:00'"
 
 [[families.timestamp_tz.hazard]]
 id = "null"
@@ -393,6 +403,7 @@ unrecordable = "The recording connector cannot convert a nanosecond timestamp pa
 sql_type = "VARIANT"
 benign = "PARSE_JSON('{\"a\":1}')"
 other = "PARSE_JSON('{\"a\":2}')"
+third = "PARSE_JSON('{\"a\":3}')"
 
 [[families.variant.hazard]]
 id = "null"

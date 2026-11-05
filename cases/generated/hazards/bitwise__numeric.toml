@@ -11,7 +11,9 @@ description = "fn:BITAND over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "2"],
-  ["2", "1"],
+  ["2", "12"],
+  ["12", "1"],
+  ["1", "1"],
 ]
 expression = "BITAND(x0, x1)"
 tags = ["null", "zero", "negative", "boundary"]
@@ -23,7 +25,9 @@ description = "fn:BITAND over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "2"],
-  ["2", "1"],
+  ["2", "12"],
+  ["12", "1"],
+  ["1", "1"],
 ]
 expression = "BITOR(x0, x1)"
 tags = ["null", "zero", "negative", "boundary"]
@@ -35,7 +39,9 @@ description = "fn:BITAND over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "2"],
-  ["2", "1"],
+  ["2", "12"],
+  ["12", "1"],
+  ["1", "1"],
 ]
 expression = "BITXOR(x0, x1)"
 tags = ["null", "zero", "negative", "boundary"]

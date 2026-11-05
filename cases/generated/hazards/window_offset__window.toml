@@ -1705,7 +1705,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1", "2"],
-  ["'a'", "2", "1"],
+  ["'a'", "2", "12"],
+  ["'a'", "12", "1"],
+  ["'a'", "1", "1"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1731,7 +1733,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1", "2"],
-  ["'a'", "2", "1"],
+  ["'a'", "2", "12"],
+  ["'a'", "12", "1"],
+  ["'a'", "1", "1"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1757,7 +1761,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1", "2"],
-  ["'a'", "2", "1"],
+  ["'a'", "2", "12"],
   ["'b'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1771,7 +1775,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1", "2"],
-  ["'a'", "2", "1"],
+  ["'a'", "2", "12"],
   ["'b'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1785,7 +1789,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "1", "2"],
-  ["1", "2", "1"],
+  ["1", "2", "12"],
   ["2", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1799,7 +1803,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "1", "2"],
-  ["1.5", "2", "1"],
+  ["1.5", "2", "12"],
   ["2.25", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1813,7 +1817,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["1.5", "1", "2"],
-  ["1.5", "2", "1"],
+  ["1.5", "2", "12"],
   ["2.25", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1827,7 +1831,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["TRUE", "1", "2"],
-  ["TRUE", "2", "1"],
+  ["TRUE", "2", "12"],
   ["FALSE", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1841,7 +1845,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'2024-01-15'", "1", "2"],
-  ["'2024-01-15'", "2", "1"],
+  ["'2024-01-15'", "2", "12"],
   ["'2024-05-17'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1855,7 +1859,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'10:00:00'", "1", "2"],
-  ["'10:00:00'", "2", "1"],
+  ["'10:00:00'", "2", "12"],
   ["'11:30:00'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1869,7 +1873,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1", "2"],
-  ["'2024-01-15 10:00:00'", "2", "1"],
+  ["'2024-01-15 10:00:00'", "2", "12"],
   ["'2024-05-17 11:30:00'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1883,7 +1887,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1", "2"],
-  ["'2024-01-15 10:00:00'", "2", "1"],
+  ["'2024-01-15 10:00:00'", "2", "12"],
   ["'2024-05-17 11:30:00'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1897,7 +1901,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1", "2"],
-  ["'2024-01-15 10:00:00 +00:00'", "2", "1"],
+  ["'2024-01-15 10:00:00 +00:00'", "2", "12"],
   ["'2024-05-17 11:30:00 +00:00'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -1911,7 +1915,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "'x'", "1", "2"],
-  ["'a'", "'x'", "2", "1"],
+  ["'a'", "'x'", "2", "12"],
   ["'a'", "'y'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2008,7 +2012,7 @@ id = "node_window_function_2_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "2"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -2020,9 +2024,9 @@ id = "node_window_function_2_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "NULL", "1"],
-  ["'b'", "1", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "NULL", "2"],
+  ["'b'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2034,9 +2038,9 @@ id = "node_window_function_2_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
-  ["'a'", "NULL", "1"],
-  ["'a'", "2", "1"],
+  ["'a'", "1", "2"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "2", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2048,9 +2052,9 @@ id = "node_window_function_2_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
-  ["'a'", "1", "1"],
-  ["'a'", "2", "1"],
+  ["'a'", "1", "2"],
+  ["'a'", "1", "2"],
+  ["'a'", "2", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2062,7 +2066,7 @@ id = "node_window_function_2_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "2"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2075,7 +2079,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
+  ["'a'", "1.5", "1.5"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2101,7 +2107,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
+  ["'a'", "1.5", "1.5"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2127,7 +2135,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
   ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2141,7 +2149,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
   ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2155,7 +2163,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["1", "1.5", "2.25"],
-  ["1", "2.25", "1.5"],
+  ["1", "2.25", "3.125"],
   ["2", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2169,7 +2177,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["1.5", "2.25", "1.5"],
+  ["1.5", "2.25", "3.125"],
   ["2.25", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2183,7 +2191,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["1.5", "2.25", "1.5"],
+  ["1.5", "2.25", "3.125"],
   ["2.25", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2197,7 +2205,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["TRUE", "1.5", "2.25"],
-  ["TRUE", "2.25", "1.5"],
+  ["TRUE", "2.25", "3.125"],
   ["FALSE", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2211,7 +2219,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'2024-01-15'", "1.5", "2.25"],
-  ["'2024-01-15'", "2.25", "1.5"],
+  ["'2024-01-15'", "2.25", "3.125"],
   ["'2024-05-17'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2225,7 +2233,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'10:00:00'", "1.5", "2.25"],
-  ["'10:00:00'", "2.25", "1.5"],
+  ["'10:00:00'", "2.25", "3.125"],
   ["'11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2239,7 +2247,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2253,7 +2261,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2267,7 +2275,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00 +00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00 +00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00 +00:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2281,7 +2289,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "'x'", "1.5", "2.25"],
-  ["'a'", "'x'", "2.25", "1.5"],
+  ["'a'", "'x'", "2.25", "3.125"],
   ["'a'", "'y'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2358,7 +2366,7 @@ id = "node_window_function_3_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
+  ["'a'", "1.5", "2.25"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -2370,9 +2378,9 @@ id = "node_window_function_3_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'a'", "NULL", "1.5"],
-  ["'a'", "NULL", "1.5"],
-  ["'b'", "1.5", "1.5"],
+  ["'a'", "NULL", "2.25"],
+  ["'a'", "NULL", "2.25"],
+  ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2384,9 +2392,9 @@ id = "node_window_function_3_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "NULL", "1.5"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "NULL", "2.25"],
+  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2398,9 +2406,9 @@ id = "node_window_function_3_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2412,7 +2420,7 @@ id = "node_window_function_3_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
+  ["'a'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2425,7 +2433,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
+  ["'a'", "1.5", "1.5"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2451,7 +2461,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
+  ["'a'", "1.5", "1.5"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2477,7 +2489,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
   ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2491,7 +2503,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "1.5", "2.25"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "2.25", "3.125"],
   ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2505,7 +2517,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["1", "1.5", "2.25"],
-  ["1", "2.25", "1.5"],
+  ["1", "2.25", "3.125"],
   ["2", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2519,7 +2531,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["1.5", "2.25", "1.5"],
+  ["1.5", "2.25", "3.125"],
   ["2.25", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2533,7 +2545,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["1.5", "1.5", "2.25"],
-  ["1.5", "2.25", "1.5"],
+  ["1.5", "2.25", "3.125"],
   ["2.25", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2547,7 +2559,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["TRUE", "1.5", "2.25"],
-  ["TRUE", "2.25", "1.5"],
+  ["TRUE", "2.25", "3.125"],
   ["FALSE", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2561,7 +2573,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'2024-01-15'", "1.5", "2.25"],
-  ["'2024-01-15'", "2.25", "1.5"],
+  ["'2024-01-15'", "2.25", "3.125"],
   ["'2024-05-17'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2575,7 +2587,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'10:00:00'", "1.5", "2.25"],
-  ["'10:00:00'", "2.25", "1.5"],
+  ["'10:00:00'", "2.25", "3.125"],
   ["'11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2589,7 +2601,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2603,7 +2615,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'2024-01-15 10:00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2617,7 +2629,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1.5", "2.25"],
-  ["'2024-01-15 10:00:00 +00:00'", "2.25", "1.5"],
+  ["'2024-01-15 10:00:00 +00:00'", "2.25", "3.125"],
   ["'2024-05-17 11:30:00 +00:00'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2631,7 +2643,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "'x'", "1.5", "2.25"],
-  ["'a'", "'x'", "2.25", "1.5"],
+  ["'a'", "'x'", "2.25", "3.125"],
   ["'a'", "'y'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2752,7 +2764,7 @@ id = "node_window_function_4_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
+  ["'a'", "1.5", "2.25"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -2764,9 +2776,9 @@ id = "node_window_function_4_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'a'", "NULL", "1.5"],
-  ["'a'", "NULL", "1.5"],
-  ["'b'", "1.5", "1.5"],
+  ["'a'", "NULL", "2.25"],
+  ["'a'", "NULL", "2.25"],
+  ["'b'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2778,9 +2790,9 @@ id = "node_window_function_4_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "NULL", "1.5"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "NULL", "2.25"],
+  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2792,9 +2804,9 @@ id = "node_window_function_4_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "1.5", "1.5"],
-  ["'a'", "2.25", "1.5"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2806,7 +2818,7 @@ id = "node_window_function_4_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
-  ["'a'", "1.5", "1.5"],
+  ["'a'", "1.5", "2.25"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2819,7 +2831,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'a'", "'b'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
+  ["'a'", "'a'", "'a'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2845,7 +2859,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'a'", "'b'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
+  ["'a'", "'a'", "'a'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -2871,7 +2887,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'a'", "'b'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'b'", "'ab'"],
   ["'b'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2885,7 +2901,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'a'", "'b'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'b'", "'ab'"],
   ["'b'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2899,7 +2915,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["1", "'a'", "'b'"],
-  ["1", "'b'", "'a'"],
+  ["1", "'b'", "'ab'"],
   ["2", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2913,7 +2929,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["1.5", "'a'", "'b'"],
-  ["1.5", "'b'", "'a'"],
+  ["1.5", "'b'", "'ab'"],
   ["2.25", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2927,7 +2943,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["1.5", "'a'", "'b'"],
-  ["1.5", "'b'", "'a'"],
+  ["1.5", "'b'", "'ab'"],
   ["2.25", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2941,7 +2957,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["TRUE", "'a'", "'b'"],
-  ["TRUE", "'b'", "'a'"],
+  ["TRUE", "'b'", "'ab'"],
   ["FALSE", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2955,7 +2971,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15'", "'a'", "'b'"],
-  ["'2024-01-15'", "'b'", "'a'"],
+  ["'2024-01-15'", "'b'", "'ab'"],
   ["'2024-05-17'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2969,7 +2985,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'10:00:00'", "'a'", "'b'"],
-  ["'10:00:00'", "'b'", "'a'"],
+  ["'10:00:00'", "'b'", "'ab'"],
   ["'11:30:00'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2983,7 +2999,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'a'", "'b'"],
-  ["'2024-01-15 10:00:00'", "'b'", "'a'"],
+  ["'2024-01-15 10:00:00'", "'b'", "'ab'"],
   ["'2024-05-17 11:30:00'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -2997,7 +3013,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'a'", "'b'"],
-  ["'2024-01-15 10:00:00'", "'b'", "'a'"],
+  ["'2024-01-15 10:00:00'", "'b'", "'ab'"],
   ["'2024-05-17 11:30:00'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3011,7 +3027,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'a'", "'b'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'b'", "'a'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'b'", "'ab'"],
   ["'2024-05-17 11:30:00 +00:00'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3025,7 +3041,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'x'", "'a'", "'b'"],
-  ["'a'", "'x'", "'b'", "'a'"],
+  ["'a'", "'x'", "'b'", "'ab'"],
   ["'a'", "'y'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3130,7 +3146,7 @@ id = "node_window_function_5_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "'a'"],
+  ["'a'", "'a'", "'b'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -3142,9 +3158,9 @@ id = "node_window_function_5_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "NULL", "'a'"],
-  ["'a'", "NULL", "'a'"],
-  ["'b'", "'a'", "'a'"],
+  ["'a'", "NULL", "'b'"],
+  ["'a'", "NULL", "'b'"],
+  ["'b'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3156,9 +3172,9 @@ id = "node_window_function_5_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "'a'"],
-  ["'a'", "NULL", "'a'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "NULL", "'b'"],
+  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3170,9 +3186,9 @@ id = "node_window_function_5_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "'a'"],
-  ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'a'"],
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3184,7 +3200,7 @@ id = "node_window_function_5_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "'a'"],
+  ["'a'", "'a'", "'b'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3198,6 +3214,7 @@ columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, 
 rows = [
   ["'a'", "TRUE", "FALSE"],
   ["'a'", "FALSE", "TRUE"],
+  ["'a'", "TRUE", "TRUE"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3224,6 +3241,7 @@ columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, 
 rows = [
   ["'a'", "TRUE", "FALSE"],
   ["'a'", "FALSE", "TRUE"],
+  ["'a'", "TRUE", "TRUE"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3440,7 +3458,7 @@ id = "node_window_function_6_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["'a'", "TRUE", "TRUE"],
+  ["'a'", "TRUE", "FALSE"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -3452,9 +3470,9 @@ id = "node_window_function_6_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["'a'", "NULL", "TRUE"],
-  ["'a'", "NULL", "TRUE"],
-  ["'b'", "TRUE", "TRUE"],
+  ["'a'", "NULL", "FALSE"],
+  ["'a'", "NULL", "FALSE"],
+  ["'b'", "TRUE", "FALSE"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3466,9 +3484,9 @@ id = "node_window_function_6_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["'a'", "TRUE", "TRUE"],
-  ["'a'", "NULL", "TRUE"],
-  ["'a'", "FALSE", "TRUE"],
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "NULL", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3480,9 +3498,9 @@ id = "node_window_function_6_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["'a'", "TRUE", "TRUE"],
-  ["'a'", "TRUE", "TRUE"],
-  ["'a'", "FALSE", "TRUE"],
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "FALSE"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3494,7 +3512,7 @@ id = "node_window_function_6_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
-  ["'a'", "TRUE", "TRUE"],
+  ["'a'", "TRUE", "FALSE"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3507,7 +3525,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-05-17'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-05-17'", "'2023-11-30'"],
+  ["'a'", "'2023-11-30'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-01-15'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3533,7 +3553,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-05-17'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-05-17'", "'2023-11-30'"],
+  ["'a'", "'2023-11-30'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-01-15'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3559,7 +3581,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-05-17'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-05-17'", "'2023-11-30'"],
   ["'b'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3573,7 +3595,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-05-17'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-05-17'", "'2023-11-30'"],
   ["'b'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3587,7 +3609,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["1", "'2024-01-15'", "'2024-05-17'"],
-  ["1", "'2024-05-17'", "'2024-01-15'"],
+  ["1", "'2024-05-17'", "'2023-11-30'"],
   ["2", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3601,7 +3623,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["1.5", "'2024-01-15'", "'2024-05-17'"],
-  ["1.5", "'2024-05-17'", "'2024-01-15'"],
+  ["1.5", "'2024-05-17'", "'2023-11-30'"],
   ["2.25", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3615,7 +3637,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["1.5", "'2024-01-15'", "'2024-05-17'"],
-  ["1.5", "'2024-05-17'", "'2024-01-15'"],
+  ["1.5", "'2024-05-17'", "'2023-11-30'"],
   ["2.25", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3629,7 +3651,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["TRUE", "'2024-01-15'", "'2024-05-17'"],
-  ["TRUE", "'2024-05-17'", "'2024-01-15'"],
+  ["TRUE", "'2024-05-17'", "'2023-11-30'"],
   ["FALSE", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3643,7 +3665,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'", "'2024-01-15'", "'2024-05-17'"],
-  ["'2024-01-15'", "'2024-05-17'", "'2024-01-15'"],
+  ["'2024-01-15'", "'2024-05-17'", "'2023-11-30'"],
   ["'2024-05-17'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3657,7 +3679,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'10:00:00'", "'2024-01-15'", "'2024-05-17'"],
-  ["'10:00:00'", "'2024-05-17'", "'2024-01-15'"],
+  ["'10:00:00'", "'2024-05-17'", "'2023-11-30'"],
   ["'11:30:00'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3671,7 +3693,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15'", "'2024-05-17'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17'", "'2024-01-15'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17'", "'2023-11-30'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3685,7 +3707,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15'", "'2024-05-17'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17'", "'2024-01-15'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17'", "'2023-11-30'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3699,7 +3721,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15'", "'2024-05-17'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17'", "'2024-01-15'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17'", "'2023-11-30'"],
   ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3713,7 +3735,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'x'", "'2024-01-15'", "'2024-05-17'"],
-  ["'a'", "'x'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'x'", "'2024-05-17'", "'2023-11-30'"],
   ["'a'", "'y'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3782,7 +3804,7 @@ id = "node_window_function_7_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'a'", "'2024-01-15'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -3794,9 +3816,9 @@ id = "node_window_function_7_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'a'", "NULL", "'2024-01-15'"],
-  ["'a'", "NULL", "'2024-01-15'"],
-  ["'b'", "'2024-01-15'", "'2024-01-15'"],
+  ["'a'", "NULL", "'2024-05-17'"],
+  ["'a'", "NULL", "'2024-05-17'"],
+  ["'b'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3808,9 +3830,9 @@ id = "node_window_function_7_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'a'", "'2024-01-15'", "'2024-01-15'"],
-  ["'a'", "NULL", "'2024-01-15'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
+  ["'a'", "NULL", "'2024-05-17'"],
+  ["'a'", "'2024-05-17'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3822,9 +3844,9 @@ id = "node_window_function_7_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'a'", "'2024-01-15'", "'2024-01-15'"],
-  ["'a'", "'2024-01-15'", "'2024-01-15'"],
-  ["'a'", "'2024-05-17'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
+  ["'a'", "'2024-05-17'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3836,7 +3858,7 @@ id = "node_window_function_7_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
-  ["'a'", "'2024-01-15'", "'2024-01-15'"],
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3849,7 +3871,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'11:30:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'11:30:00'", "'23:15:45.5'"],
+  ["'a'", "'23:15:45.5'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'10:00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3875,7 +3899,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'11:30:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'11:30:00'", "'23:15:45.5'"],
+  ["'a'", "'23:15:45.5'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'10:00:00'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -3901,7 +3927,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'11:30:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'11:30:00'", "'23:15:45.5'"],
   ["'b'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3915,7 +3941,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'11:30:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'11:30:00'", "'23:15:45.5'"],
   ["'b'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3929,7 +3955,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["1", "'10:00:00'", "'11:30:00'"],
-  ["1", "'11:30:00'", "'10:00:00'"],
+  ["1", "'11:30:00'", "'23:15:45.5'"],
   ["2", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3943,7 +3969,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["1.5", "'10:00:00'", "'11:30:00'"],
-  ["1.5", "'11:30:00'", "'10:00:00'"],
+  ["1.5", "'11:30:00'", "'23:15:45.5'"],
   ["2.25", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3957,7 +3983,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["1.5", "'10:00:00'", "'11:30:00'"],
-  ["1.5", "'11:30:00'", "'10:00:00'"],
+  ["1.5", "'11:30:00'", "'23:15:45.5'"],
   ["2.25", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3971,7 +3997,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["TRUE", "'10:00:00'", "'11:30:00'"],
-  ["TRUE", "'11:30:00'", "'10:00:00'"],
+  ["TRUE", "'11:30:00'", "'23:15:45.5'"],
   ["FALSE", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3985,7 +4011,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'2024-01-15'", "'10:00:00'", "'11:30:00'"],
-  ["'2024-01-15'", "'11:30:00'", "'10:00:00'"],
+  ["'2024-01-15'", "'11:30:00'", "'23:15:45.5'"],
   ["'2024-05-17'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -3999,7 +4025,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'10:00:00'", "'10:00:00'", "'11:30:00'"],
-  ["'10:00:00'", "'11:30:00'", "'10:00:00'"],
+  ["'10:00:00'", "'11:30:00'", "'23:15:45.5'"],
   ["'11:30:00'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4013,7 +4039,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'10:00:00'", "'11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'11:30:00'", "'10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'11:30:00'", "'23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4027,7 +4053,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'10:00:00'", "'11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'11:30:00'", "'10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'11:30:00'", "'23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4041,7 +4067,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'10:00:00'", "'11:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'11:30:00'", "'10:00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'11:30:00'", "'23:15:45.5'"],
   ["'2024-05-17 11:30:00 +00:00'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4055,7 +4081,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'x'", "'10:00:00'", "'11:30:00'"],
-  ["'a'", "'x'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'x'", "'11:30:00'", "'23:15:45.5'"],
   ["'a'", "'y'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4100,7 +4126,7 @@ id = "node_window_function_8_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'a'", "'10:00:00'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -4112,9 +4138,9 @@ id = "node_window_function_8_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'a'", "NULL", "'10:00:00'"],
-  ["'a'", "NULL", "'10:00:00'"],
-  ["'b'", "'10:00:00'", "'10:00:00'"],
+  ["'a'", "NULL", "'11:30:00'"],
+  ["'a'", "NULL", "'11:30:00'"],
+  ["'b'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4126,9 +4152,9 @@ id = "node_window_function_8_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'a'", "'10:00:00'", "'10:00:00'"],
-  ["'a'", "NULL", "'10:00:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'11:30:00'"],
+  ["'a'", "NULL", "'11:30:00'"],
+  ["'a'", "'11:30:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4140,9 +4166,9 @@ id = "node_window_function_8_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'a'", "'10:00:00'", "'10:00:00'"],
-  ["'a'", "'10:00:00'", "'10:00:00'"],
-  ["'a'", "'11:30:00'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'11:30:00'"],
+  ["'a'", "'10:00:00'", "'11:30:00'"],
+  ["'a'", "'11:30:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4154,7 +4180,7 @@ id = "node_window_function_8_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
-  ["'a'", "'10:00:00'", "'10:00:00'"],
+  ["'a'", "'10:00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4167,7 +4193,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4193,7 +4221,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4219,7 +4249,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4233,7 +4263,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4247,7 +4277,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["1", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4261,7 +4291,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1.5", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1.5", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2.25", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4275,7 +4305,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1.5", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1.5", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2.25", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4289,7 +4319,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["TRUE", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["TRUE", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["FALSE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4303,7 +4333,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4317,7 +4347,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4331,7 +4361,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4345,7 +4375,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4359,7 +4389,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4373,7 +4403,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'x'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'x'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'x'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'a'", "'y'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4460,7 +4490,7 @@ id = "node_window_function_9_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -4472,9 +4502,9 @@ id = "node_window_function_9_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'b'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4486,9 +4516,9 @@ id = "node_window_function_9_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4500,9 +4530,9 @@ id = "node_window_function_9_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4514,7 +4544,7 @@ id = "node_window_function_9_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4527,7 +4557,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4553,7 +4585,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4579,7 +4613,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4593,7 +4627,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4607,7 +4641,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["1", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4621,7 +4655,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1.5", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1.5", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2.25", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4635,7 +4669,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["1.5", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["1.5", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["2.25", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4649,7 +4683,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["TRUE", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["TRUE", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["FALSE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4663,7 +4697,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4677,7 +4711,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4691,7 +4725,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4705,7 +4739,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4719,7 +4753,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4733,7 +4767,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'x'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
-  ["'a'", "'x'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'x'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
   ["'a'", "'y'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4832,7 +4866,7 @@ id = "node_window_function_10_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -4844,9 +4878,9 @@ id = "node_window_function_10_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'b'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'b'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4858,9 +4892,9 @@ id = "node_window_function_10_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4872,9 +4906,9 @@ id = "node_window_function_10_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4886,7 +4920,7 @@ id = "node_window_function_10_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4899,7 +4933,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'a'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4925,7 +4961,9 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'a'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
 ]
 query = "SELECT g, LEAD(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -4951,7 +4989,7 @@ description = "node:window_function partitioned by none."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'b'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4965,7 +5003,7 @@ description = "node:window_function partitioned by text."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'b'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4979,7 +5017,7 @@ description = "node:window_function partitioned by integer."
 columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["1", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["1", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["1", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["2", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -4993,7 +5031,7 @@ description = "node:window_function partitioned by decimal."
 columns = [{ name = "g", type = "NUMBER(38,10)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["1.5", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["1.5", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["2.25", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5007,7 +5045,7 @@ description = "node:window_function partitioned by float."
 columns = [{ name = "g", type = "FLOAT" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["1.5", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["1.5", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["1.5", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["2.25", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5021,7 +5059,7 @@ description = "node:window_function partitioned by boolean."
 columns = [{ name = "g", type = "BOOLEAN" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["TRUE", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["TRUE", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["FALSE", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5035,7 +5073,7 @@ description = "node:window_function partitioned by date."
 columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-01-15'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'2024-05-17'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5049,7 +5087,7 @@ description = "node:window_function partitioned by time."
 columns = [{ name = "g", type = "TIME(9)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'11:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5063,7 +5101,7 @@ description = "node:window_function partitioned by timestamp ntz."
 columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5077,7 +5115,7 @@ description = "node:window_function partitioned by timestamp ltz."
 columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'2024-05-17 11:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5091,7 +5129,7 @@ description = "node:window_function partitioned by timestamp tz."
 columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5105,7 +5143,7 @@ description = "node:window_function partitioned by several."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "g2", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'x'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
-  ["'a'", "'x'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'x'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'a'", "'y'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g, g2 ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
@@ -5204,7 +5242,7 @@ id = "node_window_function_11_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -5216,9 +5254,9 @@ id = "node_window_function_11_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'a'", "NULL", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00 +00:00'"],
-  ["'b'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00 +00:00'"],
+  ["'b'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -5230,9 +5268,9 @@ id = "node_window_function_11_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "NULL", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "NULL", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -5244,9 +5282,9 @@ id = "node_window_function_11_window_duplicates"
 description = "node:window_function over a partition holding one value several times, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -5258,7 +5296,7 @@ id = "node_window_function_11_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, LAG(x0, 1, x1) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"

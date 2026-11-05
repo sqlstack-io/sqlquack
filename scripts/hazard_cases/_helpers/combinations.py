@@ -109,9 +109,7 @@ def _benign_case(
     """Two rows of benign values in one combination of argument families and kinds."""
     template, positions = shape
     case_id, tags = labels
-    columns, first_row, second_row, arguments = _arguments(
-        form=form, families=families, positions=positions
-    )
+    columns, rows, arguments = _arguments(form=form, families=families, positions=positions)
     expression: str = re.sub(r"\{(\d+)\}", lambda match: arguments[int(match.group(1))], template)
     description: str = f"{form['construct']} over benign values of each declared argument kind."
     query: str | None = form.get("query")
@@ -120,9 +118,8 @@ def _benign_case(
             id=case_id,
             description=description,
             columns=(Column(HAZARD_GROUP_COLUMN, "VARCHAR"), *columns),
-            rows=(
-                (_group(form=form, number=1), *first_row),
-                (_group(form=form, number=2), *second_row),
+            rows=tuple(
+                (_group(form=form, number=number), *row) for number, row in enumerate(rows, start=1)
             ),
             tags=tags,
             query=query.replace(EXPRESSION_SLOT, expression),
@@ -132,7 +129,7 @@ def _benign_case(
         id=case_id,
         description=description,
         columns=tuple(columns),
-        rows=(tuple(first_row), tuple(second_row)),
+        rows=tuple(tuple(row) for row in rows),
         tags=tags,
         expression=expression,
     )
@@ -147,7 +144,7 @@ def _extra_case(
 ) -> Case:
     """The form's declared extra rows, in its first combination of argument families."""
     slug, tags = labels
-    columns, _, _, arguments = _arguments(form=form, families=families, positions=positions)
+    columns, _, arguments = _arguments(form=form, families=families, positions=positions)
     expression: str = re.sub(
         r"\{(\d+)\}", lambda match: arguments[int(match.group(1))], form["template"]
     )
@@ -171,9 +168,8 @@ def _partition_case(
     """The form's window partitioned by a key of one family, by two keys, or not at all."""
     partition, positions = shape
     case_id, tags = labels
-    columns, first_row, second_row, arguments = _arguments(
-        form=form, families=families, positions=positions
-    )
+    columns, cell_rows, arguments = _arguments(form=form, families=families, positions=positions)
+    first_row, second_row = cell_rows[0], cell_rows[1]
     template: str = form["template"]
     keys: list[Column] = []
     values: list[tuple[str, ...]] = [("'a'",), ("'a'",), ("'b'",)]
@@ -210,13 +206,42 @@ def _partition_case(
     )
 
 
+def family_values(declared: dict[str, Any], count: int = 0) -> list[str]:
+    """A family's unremarkable values in order: benign, other, third where it has one, then as
+    many of its `more` values as `count` arguments of the family need."""
+    values: list[str] = [
+        declared[key] for key in ("benign", "other", "third") if declared.get(key) is not None
+    ]
+    return values + list(declared.get("more", []))[: max(0, count - len(values))]
+
+
+def distinct_fill(
+    *, form: dict[str, Any], families: dict[str, Any], types: list[str], skip: int | None = None
+) -> list[str]:
+    """Each argument's cell: the form's override, else its family's next value, so arguments of
+    one family differ. The `skip` position, which a hazard replaces, uses up no value."""
+    overrides: dict[str, str] = form.get("benign", {})
+    counts: dict[str, int] = {family: types.count(family) for family in types}
+    seen: dict[str, int] = {}
+    cells: list[str] = []
+    for index, family in enumerate(types):
+        if str(index) in overrides:
+            cells.append(overrides[str(index)])
+            continue
+        values: list[str] = family_values(families.get(family, {}), counts[family]) or ["NULL"]
+        cells.append(values[seen.get(family, 0) % len(values)])
+        if index != skip:
+            seen[family] = seen.get(family, 0) + 1
+    return cells
+
+
 def _arguments(
     *, form: dict[str, Any], families: dict[str, Any], positions: list[Position]
-) -> tuple[list[Column], list[str], list[str], list[str]]:
-    """The columns, two rows of cells and the template arguments of a combination."""
+) -> tuple[list[Column], list[list[str]], list[str]]:
+    """The columns, rows of cells and template arguments of a combination: benign then other,
+    or, when a family repeats, each rotation of its values and then a row of equal values."""
     columns: list[Column] = []
-    first_row: list[str] = []
-    second_row: list[str] = []
+    cells: list[tuple[str | None, list[str], int]] = []
     arguments: list[str] = []
     overrides: dict[str, str] = form.get("benign", {})
     types: dict[str, str] = form.get("sql_types", {})
@@ -229,19 +254,44 @@ def _arguments(
             arguments.append(overrides[str(index)])
             continue
         declared: dict[str, Any] = families[family]
-        benign: str = overrides.get(str(index), declared["benign"])
         if literal:
-            arguments.append(benign)
+            arguments.append(overrides.get(str(index), declared["benign"]))
             continue
         name: str = f"{HAZARD_ARGUMENT_PREFIX}{index}"
         arguments.append(name)
         columns.append(Column(name, types.get(str(index), declared["sql_type"])))
-        other: str = benign if str(index) in overrides else declared["other"]
-        swapped: bool = seen.get(family, 0) % 2 == 1
+        if str(index) in overrides:
+            cells.append((None, [overrides[str(index)]], 0))
+            continue
+        cells.append((family, [], seen.get(family, 0)))
         seen[family] = seen.get(family, 0) + 1
-        first_row.append(other if swapped else benign)
-        second_row.append(benign if swapped else other)
-    return columns, first_row, second_row, arguments
+    values_of: dict[str, list[str]] = {
+        family: family_values(families[family], count) for family, count in seen.items()
+    }
+    resolved: list[tuple[list[str], int, int]] = [
+        (values_of[family], occurrence, seen[family]) if family else (fixed, 0, 1)
+        for family, fixed, occurrence in cells
+    ]
+    if not any(count > 1 for count in seen.values()):
+        rows: list[list[str]] = [
+            [values[shift % len(values)] for values, _, _ in resolved] for shift in range(2)
+        ]
+        return columns, rows, arguments
+    rows = [
+        [_rotated(values, occurrence, count, shift) for values, occurrence, count in resolved]
+        for shift in range(max(max(len(values), count) for values, _, count in resolved))
+    ]
+    rows.append([values[0] for values, _, _ in resolved])
+    return columns, rows, arguments
+
+
+def _rotated(values: list[str], occurrence: int, count: int, shift: int) -> str:
+    """The cell of a family's `occurrence`-th argument in row `shift`: a rotation of its values
+    when it has one per argument, else, as for booleans, the other value in that argument's own
+    row only, so no two arguments are equal on every row."""
+    if len(values) >= count:
+        return values[(occurrence + shift) % len(values)]
+    return values[1] if shift % count == occurrence else values[0]
 
 
 def _group(*, form: dict[str, Any], number: int) -> str:

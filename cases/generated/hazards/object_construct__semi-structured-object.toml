@@ -23,7 +23,9 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -449,7 +451,9 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -509,7 +513,9 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
 rows = [
   ["1.5", "2.25"],
-  ["2.25", "1.5"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
+  ["1.5", "1.5"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
 tags = ["null", "json-null", "missing-key", "invalid"]

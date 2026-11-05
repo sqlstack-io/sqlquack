@@ -11,7 +11,9 @@ description = "node:starts_with over benign values of each declared argument kin
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "STARTSWITH(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -23,7 +25,9 @@ description = "node:starts_with over benign values of each declared argument kin
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'b'"],
-  ["'b'", "'a'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
+  ["'a'", "'a'"],
 ]
 expression = "ENDSWITH(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
