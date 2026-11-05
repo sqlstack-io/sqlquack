@@ -1,5 +1,6 @@
+use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySettings};
@@ -1028,4 +1029,58 @@ pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
         .as_array()
         .cloned()
         .unwrap_or_default()
+}
+
+/// The first refusal's help converting `sql` under the repository policy, its path as `<policy>`.
+pub(crate) fn first_refusal_help(sql: &str, flags: &[&str]) -> String {
+    let policy = repository_root().join("sqlquack.toml");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--json", "--policy"])
+        .arg(&policy)
+        .args(flags)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .and_then(|mut child| {
+            child
+                .stdin
+                .take()
+                .expect("stdin")
+                .write_all(sql.as_bytes())?;
+            child.wait_with_output()
+        })
+        .expect("sqlquack runs");
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).expect("a JSON report");
+    report["refusals"][0]["help"]
+        .as_str()
+        .unwrap_or_default()
+        .replace(&policy.display().to_string(), "<policy>")
+}
+
+/// The exit code and standard error of converting a statement with the schema `text`.
+pub(crate) fn schema_failure(text: &str) -> (Option<i32>, String) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(&schema, text).expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--builtin-policy", "--schema"])
+        .arg(&schema)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .and_then(|mut child| {
+            child
+                .stdin
+                .take()
+                .expect("stdin")
+                .write_all(b"SELECT 1 AS one")?;
+            child.wait_with_output()
+        })
+        .expect("sqlquack runs");
+    (
+        output.status.code(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
 }

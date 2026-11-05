@@ -42,3 +42,9 @@ pub const DEFAULT_SESSION_PROFILE: &str = "utc-v1";
 
 /// The only schema version this build understands.
 pub const SCHEMA_VERSION: u32 = 1;
+
+/// The fields every `[divergences.<id>]` entry must give.
+pub const DIVERGENCE_FIELDS: [&str; 5] = ["constructs", "default", "strict", "reason", "failure"];
+
+/// The most character edits between a misspelt divergence id and the one it suggests.
+pub const MAX_SPELLING_DISTANCE: usize = 2;

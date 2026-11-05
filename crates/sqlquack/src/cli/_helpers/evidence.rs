@@ -1,18 +1,23 @@
-//! Loading the policy and cases for evidence commands.
+//! Loading the policy and cases for evidence commands, and SQ0008's help for refused divergences.
 
+use std::collections::BTreeMap;
 use std::path::Path;
 
+use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_core::refusals::models::Refusal;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
+use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_policy::policy::models::Policy;
+use sqlquack_policy::policy::models::{DivergenceFailure, DivergenceMode, Policy};
 
 use sqlquack_rules::conversion::models::ConversionOptions;
 
+use crate::analysis::main::assumption_id::assumption_id;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refuse_value_divergences::refuse_value_divergences;
 use crate::cli::models::{EvidencePaths, PolicyArguments};
-use sqlquack_rules::conversion::constants::{DECLARED_OFFSET, PROJECT_UDF};
+use sqlquack_rules::conversion::constants::{DECLARED_OFFSET, PROJECT_UDF, SESSION_TIMEZONE_UTC};
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 
@@ -87,5 +92,103 @@ pub(crate) fn parse_percent(sample: &str) -> Result<f64, String> {
     match number.trim().parse::<f64>() {
         Ok(percent) if (0.0..=100.0).contains(&percent) => Ok(percent),
         Ok(_) | Err(_) => Err(invalid()),
+    }
+}
+
+/// `diagnostics`, each SQ0008 one's help naming its divergence and the fixes that work here.
+pub(crate) fn with_divergence_help(
+    refusals: &[Refusal],
+    diagnostics: Vec<Diagnostic>,
+    (policy, arguments, parameters): (Option<&Policy>, &PolicyArguments, &BTreeMap<String, String>),
+) -> Vec<Diagnostic> {
+    refusals
+        .iter()
+        .zip(diagnostics)
+        .map(|(refusal, mut diagnostic)| {
+            if let Some(id) = refusal.divergence() {
+                diagnostic.help = Some(divergence_help(
+                    assumption_id(id),
+                    (policy, arguments, parameters),
+                ));
+            }
+            diagnostic
+        })
+        .collect()
+}
+
+/// The fixes for divergence `id`, given the policy, the caller's flags and session parameters.
+fn divergence_help(
+    id: &str,
+    (policy, arguments, parameters): (Option<&Policy>, &PolicyArguments, &BTreeMap<String, String>),
+) -> String {
+    let Some(policy) = policy else {
+        return format!(
+            "--builtin-policy refuses every known divergence; pass --policy with a policy file \
+             that allows `{id}`, such as the repository's sqlquack.toml"
+        );
+    };
+    let file = arguments.policy.display();
+    let Some(divergence) = policy.divergences.get(id) else {
+        return format!(
+            "{file} has no [divergences.{id}]; copy it from the repository's sqlquack.toml"
+        );
+    };
+    let zone = parameters
+        .get(TIMEZONE_PARAMETER)
+        .filter(|zone| *zone != SESSION_TIME_ZONE);
+    if let (SESSION_TIMEZONE_UTC, Some(zone)) = (id, zone) {
+        return format!(
+            "`{id}` holds only in a UTC session, and TIMEZONE = {zone}; convert for a UTC \
+             session (--session TIMEZONE=UTC)"
+        );
+    }
+    let mut fixes: Vec<String> = Vec::new();
+    let confirmation = match id {
+        SESSION_TIMEZONE_UTC => Some(("--utc-session", arguments.utc_session)),
+        DECLARED_OFFSET => Some((
+            "--confirm-declared-offsets",
+            arguments.confirm_declared_offsets,
+        )),
+        PROJECT_UDF => Some(("--python-runtime", arguments.python_runtime)),
+        _ => None,
+    };
+    let confirmable = match confirmation {
+        Some((flag, false)) => {
+            fixes.push(format!("confirm its assumption with {flag}"));
+            true
+        }
+        Some((_, true)) => true,
+        None => false,
+    };
+    let mode = match arguments.strict {
+        true => divergence.strict,
+        false => divergence.default,
+    };
+    if mode == DivergenceMode::Refuse && !confirmable {
+        let keys = match (arguments.strict, divergence.default) {
+            (true, DivergenceMode::Warn) => {
+                fixes.push("drop --strict".to_owned());
+                "strict"
+            }
+            (true, DivergenceMode::Refuse) => "default and strict",
+            (false, _) => "default",
+        };
+        fixes.push(format!(
+            "set {keys} = \"warn\" under [divergences.{id}] in {file}"
+        ));
+    }
+    let value = divergence.failure == DivergenceFailure::Value;
+    match (arguments.loud_divergences_only && value, fixes.is_empty()) {
+        (true, true) => format!(
+            "`{id}` can return a different value rather than raise, which \
+             --loud-divergences-only refuses; drop that flag"
+        ),
+        (true, false) => format!(
+            "drop --loud-divergences-only, since `{id}` can return a different value rather \
+             than raise, and {}",
+            fixes.join(", or ")
+        ),
+        (false, false) => format!("to rely on `{id}`: {}", fixes.join(", or ")),
+        (false, true) => format!("allow `{id}` under [divergences.{id}] in {file}"),
     }
 }
