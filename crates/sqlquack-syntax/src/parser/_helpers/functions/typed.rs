@@ -43,6 +43,7 @@ use crate::expressions::typed_functions::models::ValueFunc;
 use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::BINARY_ARITY;
+use crate::parser::constants::EMPTY_CALL_SYNTAX_ERRORS;
 use crate::parser::constants::FIRST_VALUE;
 use crate::parser::constants::LEAD;
 use crate::parser::constants::TIME_TO_TIME_STR;
@@ -269,7 +270,7 @@ impl Parser {
             Ok(typed) => typed,
             Err(_)
                 if self.tokens[saved].token_type == TokenType::RParen
-                    && !crate::functions::names::main::faithful_keyword_syntax_name::faithful_keyword_syntax_name(upper_name) =>
+                    && !EMPTY_CALL_SYNTAX_ERRORS.contains(&upper_name) =>
             {
                 self.restore_comments(comments);
                 self.current = saved;

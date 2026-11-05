@@ -1065,6 +1065,36 @@ fn given_disagreement_receipts_when_parsing_then_acceptance_matches_snowflake() 
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "TRIM parses with no arguments (recorded errno 938, import 19)",
+            sql: "SELECT TRIM ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SUBSTRING parses with no arguments (recorded errno 938, import 160)",
+            sql: "SELECT SUBSTRING ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "CONVERT parses with no arguments (recorded errno 2139, import 160)",
+            sql: "SELECT CONVERT ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "CAST needs its operand and type (recorded errno 1003, import 160)",
+            sql: "SELECT CAST ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXTRACT needs its part and operand (recorded errno 1003, import 160)",
+            sql: "SELECT EXTRACT ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "PRECISION alone is no type (recorded errno 1003, import 159)",
             sql: "SELECT CAST ( NULL AS PRECISION ) ;",
             dialect: Dialect::Snowflake,

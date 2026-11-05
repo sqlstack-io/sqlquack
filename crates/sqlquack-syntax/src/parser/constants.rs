@@ -119,6 +119,9 @@ pub(crate) const PLAN: &str = "PLAN";
 /// The text "PARAMETERS", as comparisons test it.
 pub(crate) const PARAMETERS: &str = "PARAMETERS";
 
+/// Calls Snowflake refuses with empty parentheses (errno 1003, import 160); other names parse.
+pub(crate) const EMPTY_CALL_SYNTAX_ERRORS: &[&str] = &["CAST", "TRY_CAST", "EXTRACT", "POSITION"];
+
 /// The text "PROCEDURE", as comparisons test it.
 pub(crate) const PROCEDURE: &str = "PROCEDURE";
 
