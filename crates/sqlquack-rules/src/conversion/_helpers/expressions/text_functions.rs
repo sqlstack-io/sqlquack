@@ -953,10 +953,30 @@ pub(crate) fn stripped_type_name(
         Ok(converted) => converted.data_type,
         Err(refusal) => result_type(operand).ok_or(refusal)?,
     };
+    let widened = node_kind(operand).is_some_and(|(kind, call)| {
+        kind == "function"
+            && ["DATEADD", "TIMEADD", "TIMESTAMPADD"].contains(&call_name(call).as_str())
+    }) && matches!(data_type, SnowflakeType::TimestampNtz { precision } | SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision } if precision < 9);
+    let null_operand = node_kind(operand)
+        .and_then(|(_, payload)| payload.as_object())
+        .is_some_and(|payload| {
+            payload
+                .values()
+                .any(|child| node_kind(child).is_some_and(|(kind, _)| kind == "null"))
+        });
     match data_type {
         SnowflakeType::Varchar | SnowflakeType::SemiStructured => Err(refuse(format!(
             "SYSTEM$TYPEOF of {data_type}, whose length or kind is not tracked"
         ))),
+        _ if widened => Err(refuse(format!(
+            "SYSTEM$TYPEOF of DATEADD of a {data_type}, which Snowflake was recorded widening to \
+             nanoseconds"
+        ))),
+        SnowflakeType::Boolean if null_operand => Err(refuse(
+            "SYSTEM$TYPEOF of a predicate with a NULL operand, which Snowflake was recorded typing \
+             NULL"
+                .to_owned(),
+        )),
         _ => Ok(Emitted::new(
             string_literal(&data_type.to_string(), log),
             SnowflakeType::Varchar,

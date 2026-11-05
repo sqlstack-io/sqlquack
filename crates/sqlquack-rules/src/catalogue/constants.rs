@@ -526,7 +526,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SYSTEM_TYPE_NAME,
         constructs: &["fn:SYSTEM$TYPEOF"],
-        conditions: "SYSTEM$TYPEOF(x) only as the subject of REGEXP_REPLACE(..., '\\\\[.*\\\\]$', ''), which removes the storage suffix Snowflake's plan decides: x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked.",
+        conditions: "SYSTEM$TYPEOF(x) only as the subject of REGEXP_REPLACE(..., '\\\\[.*\\\\]$', ''), which removes the storage suffix Snowflake's plan decides: x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked; so do DATEADD of a timestamp below nanoseconds, which Snowflake was recorded widening to TIMESTAMP_NTZ(9), and a BOOLEAN predicate with a NULL operand, which it was recorded typing NULL.",
         failures: &[],
     },
     RuleSpec {
@@ -1317,7 +1317,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:RATIO_TO_REPORT",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions, AVG as SUM divided by COUNT over the same frame, NULL for a frame without values; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
+        conditions: "The aggregate's own conditions, AVG as SUM divided by COUNT over the same rows, NULL without values: over a whole partition or running window typed and rounded as the aggregate, over an explicit ROWS or RANGE frame with 3 more decimal places and 12 more leading digits, truncated toward zero, as recorded; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

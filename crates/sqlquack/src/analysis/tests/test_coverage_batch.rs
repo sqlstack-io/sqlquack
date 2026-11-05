@@ -1181,20 +1181,20 @@ fn given_a_frame_when_converting_avg_over_a_window_then_it_averages_the_frame_va
     };
     let test_cases = [
         BuiltFirstValueTestCase {
-            description: "a ROWS frame skips NULLs and keeps six more decimal places",
+            description: "a ROWS frame skips NULLs and keeps three more decimal places",
             sql: averaged(
                 "PARTITION BY g ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW",
                 3,
             ),
-            expected_outcome: Ok("1.500000"),
+            expected_outcome: Ok("1.500"),
         },
         BuiltFirstValueTestCase {
-            description: "the sixth place is rounded half up",
+            description: "a ROWS frame truncates past its third place, as recorded",
             sql: averaged(
                 "PARTITION BY g ORDER BY n ROWS BETWEEN 3 PRECEDING AND CURRENT ROW",
                 4,
             ),
-            expected_outcome: Ok("1.666667"),
+            expected_outcome: Ok("1.666"),
         },
         BuiltFirstValueTestCase {
             description: "a frame without values is NULL",

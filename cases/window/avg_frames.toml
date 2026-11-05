@@ -55,3 +55,21 @@ rows = [
 query = "SELECT r, m, d, x, AVG(x) OVER (PARTITION BY r, m ORDER BY d RANGE BETWEEN INTERVAL '27 days' PRECEDING AND CURRENT ROW) AS a FROM input"
 order = "bag"
 tags = ["null", "ties", "boundary"]
+
+[[case]]
+id = "avg_rows_negative_inexact"
+description = "AVG over ROWS BETWEEN 2 PRECEDING AND CURRENT ROW of negative values whose average has digits beyond the frame's scale, beside positive ones: toward zero or away."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [["1", "-1.00"], ["2", "0.00"], ["3", "0.00"], ["4", "-2.00"], ["5", "-0.01"], ["6", "1.00"]]
+query = "SELECT n, AVG(x) OVER (ORDER BY n ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS a FROM input"
+order = "bag"
+tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "avg_unordered_partition_and_cumulative_rows"
+description = "AVG over a whole unordered partition and over an explicit ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, of thirds, to show which typing each takes."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [["'a'", "1", "1.00"], ["'a'", "2", "1.00"], ["'a'", "3", "2.00"], ["'b'", "1", "NULL"]]
+query = "SELECT g, n, AVG(x) OVER (PARTITION BY g) AS whole, AVG(x) OVER (PARTITION BY g ORDER BY n ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative FROM input"
+order = "bag"
+tags = ["null", "ties", "single-row-partition"]

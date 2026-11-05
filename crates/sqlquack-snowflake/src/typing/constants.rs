@@ -8,6 +8,8 @@ pub const MAX_PRECISION: u8 = 38;
 pub const SCALE_CAP: u8 = 12;
 /// The digits `/` and AVG add to the dividend's scale.
 pub const DIVISION_EXTRA_SCALE: u8 = 6;
+/// The digits AVG over an explicit window frame adds to its argument's scale, as recorded.
+pub const FRAMED_AVERAGE_EXTRA_SCALE: u8 = 3;
 /// The leading digits SUM adds to its argument.
 pub const SUM_EXTRA_DIGITS: u8 = 12;
 /// The leading digits AVG adds to its argument.
@@ -49,6 +51,8 @@ pub const COUNT: &str = "snowflake.count";
 pub const SUM: &str = "snowflake.sum";
 /// AVG: `snowflake.average`.
 pub const AVERAGE: &str = "snowflake.average";
+/// AVG over an explicit window frame: `snowflake.framed_average`.
+pub const FRAMED_AVERAGE: &str = "snowflake.framed_average";
 /// ROW_NUMBER, RANK and DENSE_RANK: `snowflake.ranking`.
 pub const RANKING: &str = "snowflake.ranking";
 

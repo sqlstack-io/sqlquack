@@ -26,7 +26,8 @@ pub fn json_flatten_recursive(sql: &str, mode: FlattenMode, log: &ProvenanceLog)
         ),
     };
     let steps = format!("regexp_extract_all({row}.fullkey, '{KEY_STEP}|{ELEMENT_STEP}')");
-    let decoded = r#"CASE WHEN step[2] <> '"' THEN step[2:] ELSE replace(step[3:-2], '\"', '"') END"#;
+    let decoded =
+        r#"CASE WHEN step[2] <> '"' THEN step[2:] ELSE replace(step[3:-2], '\"', '"') END"#;
     let path = joined_path(&format!(
         "list_transform({steps}, lambda step: CASE WHEN step[1] = '[' THEN step \
          ELSE list_transform([{decoded}], lambda k: {})[1] END)",
@@ -50,6 +51,7 @@ pub fn json_flatten_recursive(sql: &str, mode: FlattenMode, log: &ProvenanceLog)
          WHEN NOT contains({decoded}, '\\') THEN '0' || {decoded} \
          ELSE CAST({unordered} AS VARCHAR) END)",
         unordered = fidelity_error("a recursive FLATTEN through a key holding an escape"),
-        unread = fidelity_error("a FLATTEN path through a key holding a character no recording shows"),
+        unread =
+            fidelity_error("a FLATTEN path through a key holding a character no recording shows"),
     )
 }

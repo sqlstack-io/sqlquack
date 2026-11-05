@@ -507,7 +507,12 @@ fn aggregate_window(
         ));
     }
     let clause = aggregate_clause(over, site, &construct)?;
-    convert_aggregate(function, payload, site, Some(&clause))
+    convert_aggregate(
+        function,
+        payload,
+        site,
+        Some((&clause, over.frame.is_some())),
+    )
 }
 
 /// An aggregate's OVER clause: an explicit literal ROWS frame, or a running one when ordered.
