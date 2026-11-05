@@ -32,6 +32,7 @@ query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input G
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_within_group_combination_0_text_literal_text_decimal"
@@ -329,6 +330,7 @@ query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP 
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_within_group_1_combination_0_text_decimal"

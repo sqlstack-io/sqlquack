@@ -19,6 +19,7 @@ query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROU
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
 
 [[case]]
 id = "node_within_group_combination_0_integer_text"
@@ -99,6 +100,7 @@ query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROU
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
 
 [[case]]
 id = "node_within_group_combination_0_text_decimal"

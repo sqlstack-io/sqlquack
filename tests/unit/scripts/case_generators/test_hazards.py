@@ -92,6 +92,16 @@ def test_given_a_review_finding_when_reading_the_coverage_files_then_it_is_a_haz
             "json_fidelity",
         ),
         ExpectationTestCase(
+            "the equal row ties two different values of one group on the ordering key",
+            "node_within_group_1_combination_0_text_text",
+            "listagg_order",
+        ),
+        ExpectationTestCase(
+            "rows each in a group of their own never tie",
+            "node_within_group_combination_0_text_integer",
+            None,
+        ),
+        ExpectationTestCase(
             "the other hazards of the family share a case expecting nothing",
             "fn_get_1_text_hazards",
             None,

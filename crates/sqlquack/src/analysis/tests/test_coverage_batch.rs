@@ -447,6 +447,53 @@ fn given_simple_case_of_a_computed_operand_when_converting_then_the_first_equal_
 }
 
 #[test]
+fn given_listagg_when_rows_tie_on_its_keys_then_only_equal_tied_values_convert() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "distinct keys order the values",
+            sql: "SELECT LISTAGG(TO_VARCHAR(customer_id), ',') WITHIN GROUP (ORDER BY amount) AS v \
+                  FROM orders",
+            expected_outcome: Ok("2,1,2"),
+        },
+        FirstValueTestCase {
+            description: "tied keys holding equal values convert",
+            sql: "SELECT LISTAGG(TO_VARCHAR(customer_id), ',') \
+                  WITHIN GROUP (ORDER BY customer_id) AS v FROM orders",
+            expected_outcome: Ok("1,2,2"),
+        },
+        FirstValueTestCase {
+            description: "tied keys holding different values raise",
+            sql: "SELECT LISTAGG(TO_VARCHAR(amount), ',') WITHIN GROUP (ORDER BY customer_id) AS v \
+                  FROM orders",
+            expected_outcome: Err("LISTAGG of different values tied on its order"),
+        },
+        FirstValueTestCase {
+            description: "tied keys holding different values raise over a window",
+            sql: "SELECT LISTAGG(TO_VARCHAR(amount), ',') WITHIN GROUP (ORDER BY customer_id) \
+                  OVER (PARTITION BY customer_id) AS v FROM orders ORDER BY customer_id DESC",
+            expected_outcome: Err("LISTAGG of different values tied on its order"),
+        },
+        FirstValueTestCase {
+            description: "a second key breaking the tie converts",
+            sql: "SELECT LISTAGG(TO_VARCHAR(customer_id), ',') \
+                  WITHIN GROUP (ORDER BY customer_id, amount) AS v FROM orders",
+            expected_outcome: Ok("1,2,2"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_ordered_array_agg_when_rows_tie_on_its_keys_then_only_equal_tied_values_convert() {
     let test_cases = [
         FirstValueTestCase {

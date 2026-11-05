@@ -62,6 +62,16 @@ query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
 row_groups = true
+divergences = { tied = "listagg_order" }
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [{ families = ["text"] }, { families = ["text"], grammar = true }]
+template = "LISTAGG({0}, ',') WITHIN GROUP (ORDER BY {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+ordinal = ["1"]
+divergences = { tied = "listagg_order" }
 
 [[rule]]
 id = "rule.text_pair"

@@ -17,6 +17,7 @@ from scripts.hazard_cases.constants import (
     PARTITION_FACET,
     SECOND_GROUP_COLUMN,
     SEVERAL_PARTITIONS,
+    TIED_DIVERGENCE,
     UNPARTITIONED,
     VALUE_KIND,
 )
@@ -114,16 +115,18 @@ def _benign_case(
     description: str = f"{form['construct']} over benign values of each declared argument kind."
     query: str | None = form.get("query")
     if query is not None and EXPRESSION_SLOT in query:
+        grouped: list[list[str]] = [
+            [_group(form=form, number=number), *row] for number, row in enumerate(rows, start=1)
+        ]
         return Case(
             id=case_id,
             description=description,
             columns=(Column(HAZARD_GROUP_COLUMN, "VARCHAR"), *columns),
-            rows=tuple(
-                (_group(form=form, number=number), *row) for number, row in enumerate(rows, start=1)
-            ),
+            rows=tuple(tuple(row) for row in grouped),
             tags=tags,
             query=query.replace(EXPRESSION_SLOT, expression),
             order="ordered",
+            expected_divergence=_tied_divergence(form=form, columns=columns, rows=grouped),
         )
     return Case(
         id=case_id,
@@ -133,6 +136,28 @@ def _benign_case(
         tags=tags,
         expression=expression,
     )
+
+
+def _tied_divergence(
+    *, form: dict[str, Any], columns: list[Column], rows: list[list[str]]
+) -> str | None:
+    """The form's `tied` divergence when two rows of a group tie on every ordinal argument only."""
+    divergence: str | None = form.get("divergences", {}).get(TIED_DIVERGENCE)
+    if divergence is None:
+        return None
+    ordinal: set[str] = {f"{HAZARD_ARGUMENT_PREFIX}{index}" for index in form.get("ordinal", [])}
+    keyed: list[int] = [
+        position for position, column in enumerate(columns, start=1) if column.name in ordinal
+    ]
+    seen: dict[tuple[str, ...], tuple[str, ...]] = {}
+    for row in rows:
+        key: tuple[str, ...] = (row[0], *(row[position] for position in keyed))
+        values: tuple[str, ...] = tuple(
+            cell for position, cell in enumerate(row) if position and position not in keyed
+        )
+        if seen.setdefault(key, values) != values:
+            return divergence
+    return None
 
 
 def _extra_case(

@@ -22,3 +22,5 @@ PARTITION_CLAUSE: str = "PARTITION BY g"
 SECOND_GROUP_COLUMN: str = "g2"
 SEVERAL_PARTITIONS: str = "several"
 UNPARTITIONED: str = "none"
+
+TIED_DIVERGENCE: str = "tied"

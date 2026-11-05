@@ -520,6 +520,8 @@ pub const CAST_UTC_ZONED: &str = "rule.cast_utc_zoned";
 pub const NUMERIC_RANGE: &str = "numeric_range";
 /// The divergence for ARRAY_AGG without WITHIN GROUP of several distinct values.
 pub const ARRAY_AGG_ORDER: &str = "array_agg_order";
+/// The divergence for LISTAGG of different values tied on every WITHIN GROUP key.
+pub const LISTAGG_ORDER: &str = "listagg_order";
 /// SUM of FLOAT.
 pub const SUM_FLOAT: &str = "rule.sum_float";
 

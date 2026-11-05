@@ -32,6 +32,7 @@ query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION B
 order = "ordered"
 tags = ["null", "ties", "single-row-partition"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_window_function_2_combination_0_text_literal_text_decimal"
