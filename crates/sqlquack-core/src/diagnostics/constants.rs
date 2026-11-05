@@ -172,7 +172,7 @@ pub const CODES: &[CodeEntry] = &[
             the expression at the span is not one of them, so the statement is refused rather \
             than converted with a different column name. An alias fixes the name in both \
             engines.",
-        example: r#"echo "SELECT 1, UPPER('a')" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT 'a' || 'b'" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: "SQ0101",
