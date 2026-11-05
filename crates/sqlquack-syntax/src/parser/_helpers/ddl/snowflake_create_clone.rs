@@ -57,7 +57,7 @@ impl Parser {
                 if self.match_token(TokenType::Eq) {
                     self.expect_token(TokenType::LParen)?;
                     let mut kinds: Vec<Expression> = Vec::new();
-                    loop {
+                    while !self.check(TokenType::RParen) || !kinds.is_empty() {
                         let kind =
                             self.expect_alter_words(&[&["COMMENTS"], &["TAGS"], &["GRANTS"]])?;
                         kinds.push(Expression::Identifier(Identifier::new(kind)));
@@ -294,8 +294,7 @@ impl Parser {
         }))))
     }
 
-    /// Whether DATABASE ROLE starts a database role: `CREATE DATABASE ROLE ;` and
-    /// `CREATE DATABASE ROLE CLONE d2` create a database named ROLE.
+    /// Whether DATABASE ROLE starts a role; alone or before CLONE, ROLE names a database.
     fn names_a_database_role(&self) -> bool {
         self.check_text_seq(&["DATABASE", "ROLE"])
             && self.tokens.get(self.current + 2).is_some_and(|t| {

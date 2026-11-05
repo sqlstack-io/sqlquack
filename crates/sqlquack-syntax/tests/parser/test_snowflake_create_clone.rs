@@ -39,6 +39,24 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_ar
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a database named ROLE clones (recorded errno 2003, after parsing)",
+            sql: "CREATE DATABASE ROLE CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "COPY = ( ) names no kind (recorded errno 1422, after parsing)",
+            sql: "CREATE STREAM v1 CLONE v1 COPY = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a COPY list does not end in a comma",
+            sql: "CREATE TABLE v1 CLONE v1 COPY = ( TAGS , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "a role has no CLONE (recorded errno 1003)",
             sql: "CREATE ROLE v1 CLONE v1 ;",
             dialect: Dialect::Snowflake,
