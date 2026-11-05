@@ -397,6 +397,12 @@ pub struct DropDatabase {
     /// ClickHouse: SYNC modifier
     #[serde(default)]
     pub sync: bool,
+    /// Snowflake CASCADE, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub cascade: bool,
+    /// Snowflake RESTRICT, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropDatabase {
@@ -405,6 +411,8 @@ impl DropDatabase {
             name: Identifier::new(name),
             if_exists: false,
             sync: false,
+            cascade: false,
+            restrict: false,
         }
     }
 }
