@@ -14,7 +14,7 @@ impl Parser {
     pub(crate) fn parse_data_metric_function_action(
         &mut self,
     ) -> Result<Option<DataMetricFunctionAction>> {
-        if !self.is_snowflake() {
+        if !self.applies_snowflake_context_rules() {
             return Ok(None);
         }
         let kind = if self.check(TokenType::Add) {

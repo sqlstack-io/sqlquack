@@ -1253,8 +1253,9 @@ impl Parser {
 
     /// `inner` with a trailing Snowflake `NOT NULL` on a structured type's element or value.
     fn parse_snowflake_not_null(&mut self, inner: DataType) -> DataType {
-        let not_null =
-            self.is_snowflake() && self.check(TokenType::Not) && self.check_next(TokenType::Null);
+        let not_null = self.applies_snowflake_context_rules()
+            && self.check(TokenType::Not)
+            && self.check_next(TokenType::Null);
         if !not_null {
             return inner;
         }

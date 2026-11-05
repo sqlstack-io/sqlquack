@@ -249,7 +249,9 @@ impl Parser {
             if let Some(statement) = self.parse_snowflake_execute_object()? {
                 return Ok(statement);
             }
-            if self.match_text_seq(&["USING", "POLICY_CONTEXT"]) {
+            if self.applies_snowflake_context_rules()
+                && self.match_text_seq(&["USING", "POLICY_CONTEXT"])
+            {
                 return self.parse_execute_using_policy_context();
             }
             if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
