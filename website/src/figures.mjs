@@ -1,4 +1,4 @@
-// Fills {{NAME}} tokens from src/data/figures.json: in the static homepage at build time and
+// Fills {{NAME}} tokens from src/data/figures.json: in the built HTML and llms.txt files and
 // while `astro dev` serves it, and in MDX pages through the exported `figures`.
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -7,18 +7,19 @@ import data from './data/figures.json' with { type: 'json' };
 
 export const figures = Object.fromEntries(Object.entries(data).filter(([name]) => !name.startsWith('_')));
 
+// Markdown output, such as llms.txt, escapes the underscores: {{SYNTAX\_PCT}}.
 export function fill(text) {
-	return text.replace(/\{\{([A-Z_]+)\}\}/g, (token, name) => figures[name] ?? token);
+	return text.replace(/\{\{([A-Z\\_]+)\}\}/g, (token, name) => figures[name.replaceAll('\\', '')] ?? token);
 }
 
-const placeholders = () => Object.entries(figures).filter(([name, value]) => value === `{{${name}}}`).map(([name]) => name);
+export const placeholders = () => Object.entries(figures).filter(([name, value]) => value === `{{${name}}}`).map(([name]) => name);
 
-async function htmlFiles(dir) {
+async function builtFiles(dir) {
 	const entries = await readdir(dir, { withFileTypes: true });
 	const nested = await Promise.all(
 		entries.map((entry) => {
 			const full = path.join(dir, entry.name);
-			return entry.isDirectory() ? htmlFiles(full) : entry.name.endsWith('.html') ? [full] : [];
+			return entry.isDirectory() ? builtFiles(full) : /\.(html|txt)$/.test(entry.name) ? [full] : [];
 		}),
 	);
 	return nested.flat();
@@ -37,7 +38,7 @@ export function figuresIntegration() {
 				});
 			},
 			'astro:build:done': async ({ dir, logger }) => {
-				for (const file of await htmlFiles(fileURLToPath(dir))) {
+				for (const file of await builtFiles(fileURLToPath(dir))) {
 					const html = await readFile(file, 'utf8');
 					const filled = fill(html);
 					if (filled !== html) await writeFile(file, filled);

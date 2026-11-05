@@ -22,8 +22,6 @@ function engine(op, fields) {
 	});
 }
 
-// DuckDB-WASM, served from this site (scripts/prepare_playground.mjs copies it in at build time).
-const DUCKDB_WASM = new URL('./duckdb/', import.meta.url);
 
 const SCHEMA = `{
   "ORDERS": [
@@ -177,6 +175,9 @@ let duckdb = null;
 let running = 0;
 
 async function loadDuckDB() {
+	// Served from this site, in a directory named for its version (scripts/prepare_playground.mjs).
+	const { DUCKDB_DIR } = await import('./duckdb-version.js');
+	const DUCKDB_WASM = new URL(DUCKDB_DIR, import.meta.url);
 	const module = await import(new URL('duckdb-browser.mjs', DUCKDB_WASM).href);
 	const worker = new Worker(new URL('duckdb-browser-base.worker.js', DUCKDB_WASM));
 	const db = new module.AsyncDuckDB(new module.VoidLogger(), worker);

@@ -25,6 +25,17 @@ that bundles DuckDB 2.0. Swap it for a stable 2.x release once one ships: change
 `package.json`, run `npm install`, and check that stage 4 of the playground reports the expected
 DuckDB version.
 
+The headline coverage figures live in one file, `src/data/figures.json`: the syntax and
+translation percentages, their basis lines and the number of catalogued syntax forms. The homepage,
+`/docs/coverage/` and the `llms.txt` files all read it at build time. A value left as its own
+`{{NAME}}` token shows as a placeholder; `npm run build` warns about it and `npm run check:figures`
+fails until every figure is set, so run that before publishing.
+
+`public/_headers` sets caching for hosts that read it, such as Cloudflare Pages and Netlify:
+content-hashed Astro assets and the version-named DuckDB-WASM directory are immutable for a year;
+the engine revalidates after five minutes. Both hosts serve Brotli on their own. GitHub Pages
+ignores the file and serves gzip with a 10-minute cache.
+
 The logo uses the SQLQuack icon from `sqlstack-io/sqlstack` (`assets/icons/sqlquack.png`); the
 footer's SQLStack symbols are unchanged copies from the same repository.
 
@@ -45,4 +56,5 @@ npm run build    # static site in dist/, including the search index
 npm run preview  # serve dist/
 python3 scripts/check_links.py dist
 npm run test:engine   # the engine and its spans, after build_engine.sh
+npm run check:figures # fails while a coverage figure is still a placeholder
 ```
