@@ -1,6 +1,8 @@
 {
-	"_comment": "Headline coverage figures, used by the homepage and docs/coverage. A value left as its own {{NAME}} token renders as a visible placeholder, and the build warns about it.",
+	"_comment": "Headline coverage figures: the only file to edit for them. The homepage, docs/coverage and llms.txt read it at build time. A value left as its own {{NAME}} token renders as a visible placeholder; `npm run build` warns, and `npm run check:figures` fails, while any is left.",
+	"_sources": "SYNTAX_FORMS is the `forms` count in coverage/syntax/baseline.json. SYNTAX_PCT is the verified share of those forms, as `make syntax-coverage` reports it. TRANSLATION_PCT is the share of actual Snowflake statements that convert in full.",
 	"SYNTAX_PCT": "{{SYNTAX_PCT}}",
+	"SYNTAX_FORMS": "3,475",
 	"SYNTAX_BASIS": "{{SYNTAX_BASIS}}",
 	"TRANSLATION_PCT": "{{TRANSLATION_PCT}}",
 	"TRANSLATION_BASIS": "{{TRANSLATION_BASIS}}"

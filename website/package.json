@@ -9,7 +9,8 @@
     "dev": "node scripts/prepare_playground.mjs && astro dev",
     "build": "node scripts/prepare_playground.mjs && astro build",
     "preview": "astro preview",
-    "test:engine": "node --test tests/playground.test.mjs"
+    "test:engine": "node --test tests/playground.test.mjs",
+    "check:figures": "node scripts/check_figures.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.4",
