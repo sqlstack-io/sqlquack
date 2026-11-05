@@ -44,13 +44,9 @@ pub(crate) fn flatten_boolean_terms_owned(expr: Expression, is_and: bool) -> Vec
 
     while let Some(node) = stack.pop() {
         match (is_and, node) {
-            (true, Expression::And(op)) => {
-                stack.push(op.right);
-                stack.push(op.left);
-            }
-            (false, Expression::Or(op)) => {
-                stack.push(op.right);
-                stack.push(op.left);
+            (true, Expression::And(mut op)) | (false, Expression::Or(mut op)) => {
+                stack.push(std::mem::replace(&mut op.right, Expression::Null(Null)));
+                stack.push(std::mem::replace(&mut op.left, Expression::Null(Null)));
             }
             (_, other) => terms.push(other),
         }

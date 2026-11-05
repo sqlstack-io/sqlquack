@@ -72,15 +72,45 @@ pub(crate) fn push_ast_children<'a>(
             stack = push_connector_child(stack, &op.right, depth, ConnectorKind::Or);
             stack = push_connector_child(stack, &op.left, depth, ConnectorKind::Or);
         }
-        _ => {
-            let child_start = stack.len();
-            crate::traversal::main::for_each_child::for_each_child(expr, |_, child| {
-                stack.push((child, depth + 1));
-            });
-            stack[child_start..].reverse();
-        }
+        _ => match chain_operator(expr).filter(|op| is_commentless_binary_op(op)) {
+            Some(op) => {
+                stack.push((&op.right, depth + 1));
+                let left_depth = match chain_operator(&op.left) {
+                    Some(left) if is_commentless_binary_op(left) => depth,
+                    _ => depth + 1,
+                };
+                stack.push((&op.left, left_depth));
+            }
+            None => {
+                let child_start = stack.len();
+                crate::traversal::main::for_each_child::for_each_child(expr, |_, child| {
+                    stack.push((child, depth + 1));
+                });
+                stack[child_start..].reverse();
+            }
+        },
     }
     stack
+}
+
+/// A left-associative operator whose flat chain, such as `1 + 1 + 1`, is one level, not nesting.
+pub(crate) fn chain_operator(
+    expr: &Expression,
+) -> Option<&crate::expressions::operators::models::BinaryOp> {
+    match expr {
+        Expression::Add(op)
+        | Expression::Sub(op)
+        | Expression::Mul(op)
+        | Expression::Div(op)
+        | Expression::Mod(op)
+        | Expression::Concat(op)
+        | Expression::BitwiseAnd(op)
+        | Expression::BitwiseOr(op)
+        | Expression::BitwiseXor(op)
+        | Expression::BitwiseLeftShift(op)
+        | Expression::BitwiseRightShift(op) => Some(op),
+        _ => None,
+    }
 }
 
 pub(crate) fn push_connector_child<'a>(

@@ -5,6 +5,7 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::expressions::names::models::Identifier;
+use crate::expressions::names::models::Null;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::queries::models::Ordered;
 use crate::expressions::tree::models::Expression;
@@ -159,6 +160,31 @@ pub struct BinaryOp {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+}
+
+/// Frees nested operators with a worklist so dropping a long chain such as `1 + 1 + ...` cannot overflow.
+impl Drop for BinaryOp {
+    fn drop(&mut self) {
+        if crate::expressions::operators::_helpers::binary_ops::binary_op_mut(&mut self.left)
+            .is_none()
+            && crate::expressions::operators::_helpers::binary_ops::binary_op_mut(&mut self.right)
+                .is_none()
+        {
+            return;
+        }
+        let mut pending = vec![
+            std::mem::replace(&mut self.left, Expression::Null(Null)),
+            std::mem::replace(&mut self.right, Expression::Null(Null)),
+        ];
+        while let Some(mut expr) = pending.pop() {
+            if let Some(op) =
+                crate::expressions::operators::_helpers::binary_ops::binary_op_mut(&mut expr)
+            {
+                pending.push(std::mem::replace(&mut op.left, Expression::Null(Null)));
+                pending.push(std::mem::replace(&mut op.right, Expression::Null(Null)));
+            }
+        }
+    }
 }
 
 impl BinaryOp {
