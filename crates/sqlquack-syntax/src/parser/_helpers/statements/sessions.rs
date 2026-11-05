@@ -554,7 +554,13 @@ impl Parser {
             None
         };
 
-        self.match_token(TokenType::RParen);
+        let snowflake = self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake);
+        if snowflake && information.is_none() {
+            return Err(self.parse_error("Expected a CHANGES INFORMATION value"));
+        }
+        if !self.match_token(TokenType::RParen) && snowflake {
+            return Err(self.parse_error("Expected ) to close the CHANGES clause"));
+        }
 
         let at_before = self.parse_historical_data()?.map(Box::new);
 

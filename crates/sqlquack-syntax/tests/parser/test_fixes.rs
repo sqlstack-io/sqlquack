@@ -1810,3 +1810,48 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
         );
     }
 }
+
+#[test]
+fn given_a_time_travel_clause_when_parsing_snowflake_then_its_parentheses_close() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "Snowflake rejects an unclosed AT (recorded errno 1003)",
+            sql: "SELECT 1 FROM v1 AT ( OFFSET => -60 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects an unclosed CHANGES (recorded errno 1003)",
+            sql: "SELECT 1 FROM v1 CHANGES ( INFORMATION => DEFAULT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects CHANGES without an INFORMATION value (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 CHANGES ( INFORMATION => ) AT ( TIMESTAMP => TO_TIMESTAMP_LTZ ( '2026-01-01' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps a closed AT",
+            sql: "SELECT 1 FROM v1 AT ( OFFSET => -60 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake keeps CHANGES with AT",
+            sql: "SELECT 1 FROM t1 CHANGES ( INFORMATION => DEFAULT ) AT ( TIMESTAMP => TO_TIMESTAMP_LTZ ( '2026-01-01' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}

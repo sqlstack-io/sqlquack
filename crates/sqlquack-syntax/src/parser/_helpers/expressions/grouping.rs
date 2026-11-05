@@ -136,7 +136,11 @@ impl Parser {
             return Ok(None);
         }
 
-        self.match_token(TokenType::RParen);
+        if !self.match_token(TokenType::RParen)
+            && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+        {
+            return Err(self.parse_error("Expected ) to close the AT/BEFORE/END clause"));
+        }
 
         Ok(Some(Expression::HistoricalData(Box::new(HistoricalData {
             this: Box::new(Expression::Identifier(Identifier::new(this))),
