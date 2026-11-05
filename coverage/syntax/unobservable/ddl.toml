@@ -52888,3 +52888,291 @@ cases = [
 runs = []
 probes = []
 
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o002"
+form = "sf.ddl.alter-notebook.set"
+construct = "option_present: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o007"
+form = "sf.ddl.alter-notebook.set"
+construct = "option_present: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o010"
+form = "sf.ddl.alter-notebook.set"
+construct = "a valid string_literal: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o012"
+form = "sf.ddl.alter-notebook.set"
+construct = "option_present: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o015"
+form = "sf.ddl.alter-notebook.set"
+construct = "a valid operand: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o016"
+form = "sf.ddl.alter-notebook.set"
+construct = "option_present: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o019"
+form = "sf.ddl.alter-notebook.set"
+construct = "a valid integer_literal: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o029"
+form = "sf.ddl.alter-notebook.set"
+construct = "the list continued at least once: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o036"
+form = "sf.ddl.alter-notebook.set"
+construct = "every independent option of one production together: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o041"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 59 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 59 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k82e7fe05e36b", sql_sha256 = "82e7fe05e36b20ae1c1f170ca10694bbf51038cd3eabffefcc276a5bd6c374fb" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o042"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 60 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 60 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k5c6337263a4a", sql_sha256 = "5c6337263a4afa42c566c2f5e5934b0df118b6ef5d1a9ad743beca4d77cadd14" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o043"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 61 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 61 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k74ef3e51c73b", sql_sha256 = "74ef3e51c73b09f4cf4fc44eb7b29a38bb9cbbc3c908d15accffd3f9dbbf5b8e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o044"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259,199 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259199 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k81069ba35bc2", sql_sha256 = "81069ba35bc2a66ca090af3ee9fb2be712f59b1ae2647965ab226a7f5ffad9c2" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o045"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259,200 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259200 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k7efa73e84c13", sql_sha256 = "7efa73e84c133b4dc697d4b9c68f717937c56e318f0c744df789bfc20a493366" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o046"
+form = "sf.ddl.alter-notebook.set"
+construct = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259,201 against the documented range 60 to 259,200: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259201 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k06419d3523c4", sql_sha256 = "06419d3523c4d33e4913b8197461e07f207cfd344dab0c1a04dd0a5a5f7327fd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o047"
+form = "sf.ddl.alter-notebook.set"
+construct = "option_present: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o049"
+form = "sf.ddl.alter-notebook.set"
+construct = "omit '<secret_variable_name>': ALTER NOTEBOOK v1 SET SECRETS = ( = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k6969adfb3a6f", sql_sha256 = "6969adfb3a6fb64ebf45e78c03dd0f27af4ccf9a492b7adfcae20ed2f59d37fd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o050"
+form = "sf.ddl.alter-notebook.set"
+construct = "a valid string_literal: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o051"
+form = "sf.ddl.alter-notebook.set"
+construct = "an unquoted identifier in place of '<secret_variable_name>': ALTER NOTEBOOK v1 SET SECRETS = ( m1 = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kfac8c979862a", sql_sha256 = "fac8c979862aef0dd4cdf477a80dec97de5bce7f86c74439d58d56631cca3661" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o052"
+form = "sf.ddl.alter-notebook.set"
+construct = "omit <secret_name>: ALTER NOTEBOOK v1 SET SECRETS = ( 'm' = ) ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kc8afc1c83931", sql_sha256 = "c8afc1c839319ebd6cebe62c75dd0b1e738f4d7b33973a23aff850a98405ecf7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o053"
+form = "sf.ddl.alter-notebook.set"
+construct = "a valid identifier: ALTER NOTEBOOK IF EXISTS v1 SET COMMENT = 'm' QUERY_WAREHOUSE = v1 IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 1 SECRETS = ( 'm' = v1 , 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet rr3-05f75c93 (ddl_sweep): credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kcb4b51733cf4", sql_sha256 = "cb4b51733cf44d345893d805100f59fc87acc7a74a0b759a7ab2d744f66b5ff4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o054"
+form = "sf.ddl.alter-notebook.set"
+construct = "a string literal in place of <secret_name>: ALTER NOTEBOOK v1 SET SECRETS = ( 'm' = 'v1' ) ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k9f791ab91b9e", sql_sha256 = "9f791ab91b9efb698308555bb387deadbee8ad392dced8adef6bbb11d8f22cac" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o055"
+form = "sf.ddl.alter-notebook.set"
+construct = "the form without its required ( in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]: ALTER NOTEBOOK v1 SET SECRETS = 'm' = v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.kc1c4ab3c62c3", sql_sha256 = "c1c4ab3c62c3a5a772632d09be4fa81a1d41f2036d96b7af9ed94cc7eea4f098" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-notebook.set.o056"
+form = "sf.ddl.alter-notebook.set"
+construct = "the form without its required ) in [ SECRETS = ( '<secret_variable_name>' = <secret_name> [ , ... ] ) ]: ALTER NOTEBOOK v1 SET SECRETS = ( 'm' = v1 ;"
+reason = "not submitted: held by the capture guard in packet d40: credential or integration"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.alter-notebook.set.k6b0d4faf713c", sql_sha256 = "6b0d4faf713c3924198f6e83cdabd23e91b9f122fbe9c6ba37048b6de5c1c55a" },
+]
+runs = []
+probes = []
