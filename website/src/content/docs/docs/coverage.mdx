@@ -11,7 +11,7 @@ None of them means every input is proven: a figure says what was checked, under 
 | Measure | Figure | Basis |
 |---------|--------|-------|
 | Snowflake statements that translate | {figures.TRANSLATION_PCT} | {figures.TRANSLATION_BASIS} |
-| Documented Snowflake syntax forms verified | {figures.SYNTAX_PCT} of 3,348 | {figures.SYNTAX_BASIS} |
+| Documented Snowflake syntax forms verified | {figures.SYNTAX_PCT} of {figures.SYNTAX_FORMS} | {figures.SYNTAX_BASIS} |
 
 ## Translation
 
@@ -23,7 +23,7 @@ against results recorded on Snowflake, not every possible input.
 ## Syntax
 
 The syntax figure is the share of documented Snowflake syntax forms that meet every obligation
-declared for them. The catalogue holds 3,348 forms, one per documented syntax block or variant.
+declared for them. The catalogue holds {figures.SYNTAX_FORMS} forms, one per documented syntax block or variant.
 A form counts as verified only when it has at least one required obligation, every required
 obligation is satisfied by a case recorded on Snowflake, and an approved review of its family is
 current. Anything missing, ambiguous or stale counts as not verified.
