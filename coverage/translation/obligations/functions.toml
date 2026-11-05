@@ -1,0 +1,2535 @@
+# Translation obligations of family functions (D151): per form, the documented type
+# combinations, NULL in each argument, boundaries and error parity, each met by its
+# cases under cases/translation. Hand-written; see coverage/translation/README.md.
+
+[[obligation]]
+id = "sf.functions.abs.t001"
+form = "sf.functions.abs"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "ABS of integers."
+catches = "the sign kept (ABS as identity) or SIGN computed"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/abs.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.abs.t002"
+form = "sf.functions.abs"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "ABS of NUMBER(10,2), keeping its type."
+catches = "the scale lost or FLOAT returned"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/abs.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.abs.t003"
+form = "sf.functions.abs"
+kind = "type_combination"
+target = "FLOAT"
+note = "ABS of FLOAT."
+catches = "negative zero and tiny negatives"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/abs.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.abs.t004"
+form = "sf.functions.abs"
+kind = "null_argument"
+target = "x"
+note = "ABS of NULL."
+catches = "NULL turned into 0"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/abs.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.abs.t005"
+form = "sf.functions.abs"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "The 38-digit and double extremes."
+catches = "64-bit arithmetic overflowing"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/abs.toml#t005-extremes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acos.t001"
+form = "sf.functions.acos"
+kind = "type_combination"
+target = "FLOAT"
+note = "ACOS of FLOAT values."
+catches = "ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acos.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acos.t002"
+form = "sf.functions.acos"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ACOS of NUMBER(12,4), converted to FLOAT."
+catches = "ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acos.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acos.t003"
+form = "sf.functions.acos"
+kind = "null_argument"
+target = "x"
+note = "ACOS of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acos.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acos.t004"
+form = "sf.functions.acos"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "The domain edges, 1 and -1."
+catches = "pi returned for 1 or 0 for -1 (sign of the edge)"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acos.toml#t004-edges"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acosh.t001"
+form = "sf.functions.acosh"
+kind = "type_combination"
+target = "FLOAT"
+note = "ACOSH of FLOAT values."
+catches = "ASINH computed"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acosh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acosh.t002"
+form = "sf.functions.acosh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ACOSH of NUMBER(12,4), converted to FLOAT."
+catches = "ASINH computed; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acosh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acosh.t003"
+form = "sf.functions.acosh"
+kind = "null_argument"
+target = "x"
+note = "ACOSH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acosh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.acosh.t004"
+form = "sf.functions.acosh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "At 1, the domain edge, and large values."
+catches = "edge returned as NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acosh.toml#t004-edge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asin.t001"
+form = "sf.functions.asin"
+kind = "type_combination"
+target = "FLOAT"
+note = "ASIN of FLOAT values."
+catches = "ACOS computed instead, or degrees returned"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asin.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asin.t002"
+form = "sf.functions.asin"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ASIN of NUMBER(12,4), converted to FLOAT."
+catches = "ACOS computed instead, or degrees returned; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asin.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asin.t003"
+form = "sf.functions.asin"
+kind = "null_argument"
+target = "x"
+note = "ASIN of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asin.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asin.t004"
+form = "sf.functions.asin"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Odd symmetry at negatives."
+catches = "absolute value taken"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asin.toml#t004-odd"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asinh.t001"
+form = "sf.functions.asinh"
+kind = "type_combination"
+target = "FLOAT"
+note = "ASINH of FLOAT values."
+catches = "ACOSH computed"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asinh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asinh.t002"
+form = "sf.functions.asinh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ASINH of NUMBER(12,4), converted to FLOAT."
+catches = "ACOSH computed; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asinh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asinh.t003"
+form = "sf.functions.asinh"
+kind = "null_argument"
+target = "x"
+note = "ASINH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asinh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asinh.t004"
+form = "sf.functions.asinh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large arguments."
+catches = "precision loss in the log formula"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asinh.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan.t001"
+form = "sf.functions.atan"
+kind = "type_combination"
+target = "FLOAT"
+note = "ATAN of FLOAT values."
+catches = "ATAN2 with a swapped argument, or degrees returned"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atan.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan.t002"
+form = "sf.functions.atan"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ATAN of NUMBER(12,4), converted to FLOAT."
+catches = "ATAN2 with a swapped argument, or degrees returned; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atan.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan.t003"
+form = "sf.functions.atan"
+kind = "null_argument"
+target = "x"
+note = "ATAN of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atan.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan.t004"
+form = "sf.functions.atan"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Very large arguments approach pi/2."
+catches = "overflow handling"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atan.toml#t004-huge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t001"
+form = "sf.functions.atan2"
+kind = "type_combination"
+target = "FLOAT"
+note = "ATAN2 in all four quadrants."
+catches = "arguments swapped (ATAN2(y, x) vs ATAN2(x, y)) or ATAN(y/x) losing the quadrant"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t002"
+form = "sf.functions.atan2"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ATAN2 of NUMBER(12,4), converted to DOUBLE."
+catches = "the result left fixed-point"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t003"
+form = "sf.functions.atan2"
+kind = "type_combination"
+target = "VARCHAR"
+note = "ATAN2 of numeric strings, converted to DOUBLE."
+catches = "the strings rejected"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t003-text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t004"
+form = "sf.functions.atan2"
+kind = "null_argument"
+target = "y"
+note = "NULL y."
+catches = "NULL turned into 0 (giving 0 or pi)"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t004-null-y"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t005"
+form = "sf.functions.atan2"
+kind = "null_argument"
+target = "x"
+note = "NULL x."
+catches = "NULL turned into 0 (giving pi/2)"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t006"
+form = "sf.functions.atan2"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Signed zeros on the negative x axis."
+catches = "the sign of zero lost (pi vs -pi)"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t006-zeros"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t007"
+form = "sf.functions.atan2"
+kind = "error_parity"
+target = "error"
+note = "A string that is not a number is an error."
+catches = "the string read as 0"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t007-bad-text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atan2.t008"
+form = "sf.functions.atan2"
+kind = "error_parity"
+target = "error"
+note = "A BOOLEAN argument is an error (\"any other data type\")."
+catches = "TRUE read as 1"
+reading = "the page: y and x \"must be FLOAT\"; \"If the data type of an argument is a numeric data type other than DOUBLE, then the value is converted to DOUBLE. If ... string, the value is converted to DOUBLE if possible. If ... any other data type, the function returns an error.\""
+cases = ["cases/translation/functions/atan2.toml#t008-boolean"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atanh.t001"
+form = "sf.functions.atanh"
+kind = "type_combination"
+target = "FLOAT"
+note = "ATANH of FLOAT values."
+catches = "TANH computed, or the odd symmetry lost"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atanh.t002"
+form = "sf.functions.atanh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ATANH of NUMBER(12,4), converted to FLOAT."
+catches = "TANH computed, or the odd symmetry lost; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atanh.t003"
+form = "sf.functions.atanh"
+kind = "null_argument"
+target = "x"
+note = "ATANH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atanh.t004"
+form = "sf.functions.atanh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Close to the domain edges."
+catches = "precision near the asymptote"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t004-near-one"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cbrt.t001"
+form = "sf.functions.cbrt"
+kind = "type_combination"
+target = "FLOAT"
+note = "CBRT of FLOAT values."
+catches = "SQRT computed, or POW(x, 1/3) giving NaN for negatives"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/cbrt.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cbrt.t002"
+form = "sf.functions.cbrt"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "CBRT of NUMBER(12,4), converted to FLOAT."
+catches = "SQRT computed, or POW(x, 1/3) giving NaN for negatives; or the result left fixed-point"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/cbrt.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cbrt.t003"
+form = "sf.functions.cbrt"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "CBRT of DECFLOAT, which returns DECFLOAT."
+catches = "a DECFLOAT argument computed and returned as FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/cbrt.toml#t003-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cbrt.t004"
+form = "sf.functions.cbrt"
+kind = "null_argument"
+target = "x"
+note = "CBRT of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/cbrt.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cbrt.t005"
+form = "sf.functions.cbrt"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Cube roots of negatives are negative."
+catches = "NaN from a fractional power of a negative"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/cbrt.toml#t005-neg"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t001"
+form = "sf.functions.ceil"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "CEIL of integers with a negative scale."
+catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3); or a negative scale ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t002"
+form = "sf.functions.ceil"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "CEIL of NUMBER(12,4) with and without a scale."
+catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t003"
+form = "sf.functions.ceil"
+kind = "type_combination"
+target = "FLOAT"
+note = "CEIL of FLOAT returns FLOAT."
+catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3); or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t004"
+form = "sf.functions.ceil"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "CEIL of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t005"
+form = "sf.functions.ceil"
+kind = "null_argument"
+target = "input_expr"
+note = "CEIL of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t006"
+form = "sf.functions.ceil"
+kind = "null_argument"
+target = "scale_expr"
+note = "CEIL with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t006-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t007"
+form = "sf.functions.ceil"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and far negative."
+catches = "scale capped or wrapping"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t007-scale-past"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ceil.t008"
+form = "sf.functions.ceil"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative values at the rounding step."
+catches = "FLOOR or truncation used (CEIL(-2.5) is -2, CEIL(2.1) is 3)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/ceil.toml#t008-negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cos.t001"
+form = "sf.functions.cos"
+kind = "type_combination"
+target = "FLOAT"
+note = "COS of FLOAT values."
+catches = "SIN computed, or the argument read in degrees"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cos.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cos.t002"
+form = "sf.functions.cos"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "COS of NUMBER(12,4), converted to FLOAT."
+catches = "SIN computed, or the argument read in degrees; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cos.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cos.t003"
+form = "sf.functions.cos"
+kind = "null_argument"
+target = "x"
+note = "COS of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cos.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cos.t004"
+form = "sf.functions.cos"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large arguments."
+catches = "argument reduction differing"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cos.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cosh.t001"
+form = "sf.functions.cosh"
+kind = "type_combination"
+target = "FLOAT"
+note = "COSH of FLOAT values."
+catches = "SINH computed (cosh is even, sinh odd)"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cosh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cosh.t002"
+form = "sf.functions.cosh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "COSH of NUMBER(12,4), converted to FLOAT."
+catches = "SINH computed (cosh is even, sinh odd); or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cosh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cosh.t003"
+form = "sf.functions.cosh"
+kind = "null_argument"
+target = "x"
+note = "COSH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cosh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cosh.t004"
+form = "sf.functions.cosh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Arguments past the double range."
+catches = "infinity versus error"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cosh.toml#t004-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cot.t001"
+form = "sf.functions.cot"
+kind = "type_combination"
+target = "FLOAT"
+note = "COT of FLOAT values."
+catches = "TAN computed instead of its reciprocal"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cot.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cot.t002"
+form = "sf.functions.cot"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "COT of NUMBER(12,4), converted to FLOAT."
+catches = "TAN computed instead of its reciprocal; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cot.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cot.t003"
+form = "sf.functions.cot"
+kind = "null_argument"
+target = "x"
+note = "COT of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cot.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cot.t004"
+form = "sf.functions.cot"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Very small arguments give large cotangents."
+catches = "reciprocal computed in fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cot.toml#t004-small"]
+required = true
+
+[[obligation]]
+id = "sf.functions.degrees.t001"
+form = "sf.functions.degrees"
+kind = "type_combination"
+target = "FLOAT"
+note = "DEGREES of FLOAT values."
+catches = "RADIANS computed (the reverse conversion)"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/degrees.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.degrees.t002"
+form = "sf.functions.degrees"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "DEGREES of NUMBER(12,4), converted to FLOAT."
+catches = "RADIANS computed (the reverse conversion); or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/degrees.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.degrees.t003"
+form = "sf.functions.degrees"
+kind = "null_argument"
+target = "x"
+note = "DEGREES of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/degrees.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.degrees.t004"
+form = "sf.functions.degrees"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large radian values."
+catches = "overflow handling"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/degrees.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t001"
+form = "sf.functions.div0"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "DIV0 of integers, as / divides."
+catches = "integer division (3 instead of 3.500000)"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t002"
+form = "sf.functions.div0"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "DIV0 of NUMBER(10,2) values."
+catches = "quotient scale differing from /"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t003"
+form = "sf.functions.div0"
+kind = "type_combination"
+target = "FLOAT"
+note = "DIV0 of FLOAT values."
+catches = "infinity or NaN for a zero divisor instead of 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t004"
+form = "sf.functions.div0"
+kind = "null_argument"
+target = "dividend"
+note = "NULL dividend."
+catches = "NULL turned into 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t004-null-a"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t005"
+form = "sf.functions.div0"
+kind = "null_argument"
+target = "divisor"
+note = "NULL divisor."
+catches = "a NULL divisor returning 0 (that is DIV0NULL)"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t005-null-b"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0.t006"
+form = "sf.functions.div0"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative dividends over zero."
+catches = "-0 or a negative zero result"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
+cases = ["cases/translation/functions/div0.toml#t006-neg-zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t001"
+form = "sf.functions.div0null"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "DIV0NULL of integers, as / divides."
+catches = "integer division (3 instead of 3.500000)"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t002"
+form = "sf.functions.div0null"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "DIV0NULL of NUMBER(10,2) values."
+catches = "quotient scale differing from /"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t003"
+form = "sf.functions.div0null"
+kind = "type_combination"
+target = "FLOAT"
+note = "DIV0NULL of FLOAT values."
+catches = "infinity or NaN for a zero divisor instead of 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t004"
+form = "sf.functions.div0null"
+kind = "null_argument"
+target = "dividend"
+note = "NULL dividend."
+catches = "NULL turned into 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t004-null-a"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t005"
+form = "sf.functions.div0null"
+kind = "null_argument"
+target = "divisor"
+note = "NULL divisor."
+catches = "a NULL divisor returning NULL (that is DIV0)"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t005-null-b"]
+required = true
+
+[[obligation]]
+id = "sf.functions.div0null.t006"
+form = "sf.functions.div0null"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative dividends over zero."
+catches = "-0 or a negative zero result"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
+cases = ["cases/translation/functions/div0null.toml#t006-neg-zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.exp.t001"
+form = "sf.functions.exp"
+kind = "type_combination"
+target = "FLOAT"
+note = "EXP of FLOAT values."
+catches = "LN computed, or e^x read as 10^x"
+reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
+cases = ["cases/translation/functions/exp.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.exp.t002"
+form = "sf.functions.exp"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "EXP of NUMBER(12,4), converted to FLOAT."
+catches = "LN computed, or e^x read as 10^x; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
+cases = ["cases/translation/functions/exp.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.exp.t003"
+form = "sf.functions.exp"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "EXP of DECFLOAT, which returns DECFLOAT."
+catches = "a DECFLOAT argument computed and returned as FLOAT"
+reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
+cases = ["cases/translation/functions/exp.toml#t003-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.exp.t004"
+form = "sf.functions.exp"
+kind = "null_argument"
+target = "x"
+note = "EXP of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
+cases = ["cases/translation/functions/exp.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.exp.t005"
+form = "sf.functions.exp"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Past the double range."
+catches = "infinity versus error"
+reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
+cases = ["cases/translation/functions/exp.toml#t005-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t001"
+form = "sf.functions.factorial"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "FACTORIAL of integers."
+catches = "gamma(x) computed (fractional), or x! off by one (n-1)!"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t002"
+form = "sf.functions.factorial"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "FACTORIAL of an integral NUMBER(10,2)."
+catches = "scale carried into the result"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t002-dec-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t003"
+form = "sf.functions.factorial"
+kind = "null_argument"
+target = "integer_expr"
+note = "FACTORIAL of NULL."
+catches = "NULL turned into 1"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t004"
+form = "sf.functions.factorial"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large factorials that still fit 38 digits."
+catches = "64-bit overflow (21! does not fit a BIGINT)"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t005"
+form = "sf.functions.factorial"
+kind = "error_parity"
+target = "error"
+note = "A negative argument."
+catches = "a gamma value or 1 instead of the error"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t005-negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.factorial.t006"
+form = "sf.functions.factorial"
+kind = "error_parity"
+target = "error"
+note = "A result past 38 digits."
+catches = "FLOAT or wrapping instead of the error"
+reading = "the page names only <integer_expr>; the examples use 0 to 10"
+cases = ["cases/translation/functions/factorial.toml#t006-too-big"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t001"
+form = "sf.functions.floor"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "FLOOR of integers with a negative scale."
+catches = "CEIL or truncation used (FLOOR(-2.1) is -3); or a negative scale ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t002"
+form = "sf.functions.floor"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "FLOOR of NUMBER(12,4) with and without a scale."
+catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t003"
+form = "sf.functions.floor"
+kind = "type_combination"
+target = "FLOAT"
+note = "FLOOR of FLOAT returns FLOAT."
+catches = "CEIL or truncation used (FLOOR(-2.1) is -3); or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t004"
+form = "sf.functions.floor"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "FLOOR of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t005"
+form = "sf.functions.floor"
+kind = "null_argument"
+target = "input_expr"
+note = "FLOOR of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t006"
+form = "sf.functions.floor"
+kind = "null_argument"
+target = "scale_expr"
+note = "FLOOR with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t006-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t007"
+form = "sf.functions.floor"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and far negative."
+catches = "scale capped or wrapping"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t007-scale-past"]
+required = true
+
+[[obligation]]
+id = "sf.functions.floor.t008"
+form = "sf.functions.floor"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative values at the rounding step."
+catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/floor.toml#t008-negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t001"
+form = "sf.functions.ln"
+kind = "type_combination"
+target = "FLOAT"
+note = "LN of FLOAT values."
+catches = "LOG10 or LOG2 computed"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t002"
+form = "sf.functions.ln"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "LN of NUMBER(12,4), converted to FLOAT."
+catches = "LOG10 or LOG2 computed; or the result left fixed-point"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t003"
+form = "sf.functions.ln"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "LN of DECFLOAT, which returns DECFLOAT."
+catches = "a DECFLOAT argument computed and returned as FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t003-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t004"
+form = "sf.functions.ln"
+kind = "null_argument"
+target = "x"
+note = "LN of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t005"
+form = "sf.functions.ln"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Very small positive values."
+catches = "underflow to -infinity"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t005-tiny"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ln.t006"
+form = "sf.functions.ln"
+kind = "error_parity"
+target = "error"
+note = "LN of 0 or a negative value is an error."
+catches = "NULL, NaN or -infinity instead of the error"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/ln.toml#t006-zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t001"
+form = "sf.functions.log"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "LOG of integers."
+catches = "arguments swapped (LOG(2, 8) is 3, LOG(8, 2) is 1/3) or LN used"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t002"
+form = "sf.functions.log"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "LOG of fixed-point values."
+catches = "base rounded to an integer"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t003"
+form = "sf.functions.log"
+kind = "type_combination"
+target = "FLOAT"
+note = "LOG of FLOAT values."
+catches = "computed in decimal"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t004"
+form = "sf.functions.log"
+kind = "type_combination"
+target = "NUMBER(38,0), FLOAT"
+note = "LOG with an integer base and a FLOAT value."
+catches = "type promotion differing"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t004-mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t005"
+form = "sf.functions.log"
+kind = "null_argument"
+target = "base"
+note = "NULL base."
+catches = "NULL turned into e or 10"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t005-null-base"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t006"
+form = "sf.functions.log"
+kind = "null_argument"
+target = "expr"
+note = "NULL value."
+catches = "NULL turned into 1"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t006-null-expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t007"
+form = "sf.functions.log"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "A base between 0 and 1 gives negative logs of values above 1."
+catches = "the sign lost"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t007-base-below-one"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t008"
+form = "sf.functions.log"
+kind = "error_parity"
+target = "error"
+note = "A base of 1 is an error."
+catches = "infinity or NULL instead of the error"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t008-base-one"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t009"
+form = "sf.functions.log"
+kind = "error_parity"
+target = "error"
+note = "A negative base is an error."
+catches = "NaN instead of the error"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t009-base-neg"]
+required = true
+
+[[obligation]]
+id = "sf.functions.log.t010"
+form = "sf.functions.log"
+kind = "error_parity"
+target = "error"
+note = "A value of 0 is an error."
+catches = "-infinity instead of the error"
+reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
+cases = ["cases/translation/functions/log.toml#t010-expr-zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t001"
+form = "sf.functions.mod"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "MOD of integers with negatives."
+catches = "floor-based modulo (MOD(-7, 3) is -1, not 2)"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t002"
+form = "sf.functions.mod"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "MOD of NUMBER(10,2) values."
+catches = "fractional remainder dropped"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t003"
+form = "sf.functions.mod"
+kind = "type_combination"
+target = "NUMBER(10,2), NUMBER(38,0)"
+note = "MOD of a scaled and an integer operand."
+catches = "result scale from one side"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t003-dec-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t004"
+form = "sf.functions.mod"
+kind = "type_combination"
+target = "FLOAT"
+note = "MOD of FLOAT values."
+catches = "floor-based float modulo"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t004-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t005"
+form = "sf.functions.mod"
+kind = "null_argument"
+target = "expr1"
+note = "NULL dividend."
+catches = "NULL treated as 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t005-null-a"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t006"
+form = "sf.functions.mod"
+kind = "null_argument"
+target = "expr2"
+note = "NULL divisor."
+catches = "NULL treated as 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t006-null-b"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t007"
+form = "sf.functions.mod"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Argument order with negatives."
+catches = "arguments swapped"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t007-order"]
+required = true
+
+[[obligation]]
+id = "sf.functions.mod.t008"
+form = "sf.functions.mod"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Remainders of 38-digit integers."
+catches = "64-bit modulo"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t008-max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pi.t001"
+form = "sf.functions.pi"
+kind = "type_combination"
+target = "()"
+note = "PI() in arithmetic, at full double precision."
+catches = "a rounded constant (3.14159) or a NUMBER"
+reading = "the page: PI() takes no argument and returns FLOAT"
+cases = ["cases/translation/functions/pi.toml#t001-value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t001"
+form = "sf.functions.pow.pow"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "POW of integers returns FLOAT."
+catches = "arguments swapped (2^3 is 8, 3^2 is 9) or an integer result"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t002"
+form = "sf.functions.pow.pow"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "POW with fractional exponents."
+catches = "the exponent rounded"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t003"
+form = "sf.functions.pow.pow"
+kind = "type_combination"
+target = "FLOAT"
+note = "POW of FLOAT values."
+catches = "computed in decimal"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t004"
+form = "sf.functions.pow.pow"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "POW of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t005"
+form = "sf.functions.pow.pow"
+kind = "null_argument"
+target = "x"
+note = "NULL base."
+catches = "NULL^0 returning 1"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t006"
+form = "sf.functions.pow.pow"
+kind = "null_argument"
+target = "y"
+note = "NULL exponent."
+catches = "1^NULL returning 1"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t006-null-y"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t007"
+form = "sf.functions.pow.pow"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Powers past the double range, and 0^0."
+catches = "infinity versus error; 0^0 as 0"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t007-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.pow.t008"
+form = "sf.functions.pow.pow"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative bases with integer exponents."
+catches = "the sign lost for odd exponents"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t008-neg-base"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t001"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "POWER of integers returns FLOAT."
+catches = "arguments swapped (2^3 is 8, 3^2 is 9) or an integer result"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t002"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "POWER with fractional exponents."
+catches = "the exponent rounded"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t003"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "FLOAT"
+note = "POWER of FLOAT values."
+catches = "computed in decimal"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t004"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "POWER of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t005"
+form = "sf.functions.pow.power"
+kind = "null_argument"
+target = "x"
+note = "NULL base."
+catches = "NULL^0 returning 1"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t006"
+form = "sf.functions.pow.power"
+kind = "null_argument"
+target = "y"
+note = "NULL exponent."
+catches = "1^NULL returning 1"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t006-null-y"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t007"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Powers past the double range, and 0^0."
+catches = "infinity versus error; 0^0 as 0"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t007-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t008"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative bases with integer exponents."
+catches = "the sign lost for odd exponents"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t008-neg-base"]
+required = true
+
+[[obligation]]
+id = "sf.functions.radians.t001"
+form = "sf.functions.radians"
+kind = "type_combination"
+target = "FLOAT"
+note = "RADIANS of FLOAT values."
+catches = "DEGREES computed (the reverse conversion)"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/radians.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.radians.t002"
+form = "sf.functions.radians"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "RADIANS of NUMBER(12,4), converted to FLOAT."
+catches = "DEGREES computed (the reverse conversion); or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/radians.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.radians.t003"
+form = "sf.functions.radians"
+kind = "null_argument"
+target = "x"
+note = "RADIANS of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/radians.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.radians.t004"
+form = "sf.functions.radians"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large degree values."
+catches = "overflow handling"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/radians.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t001"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "ROUND of integers with a negative scale."
+catches = "a negative scale ignored, or 1550 rounded to even (1600 expected half away)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t002"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ROUND of NUMBER(12,4) halves."
+catches = "banker's rounding (2.5 to 2) instead of half away from zero (3), or truncation"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t003"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "FLOAT"
+note = "ROUND of FLOAT halves exact in binary."
+catches = "half-to-even for FLOAT, or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t004"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "ROUND of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t005"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "'HALF_TO_EVEN'"
+note = "rounding_mode 'HALF_TO_EVEN' on fixed-point."
+catches = "the mode ignored (2.5 to 3 instead of 2)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t005-mode-even"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t006"
+form = "sf.functions.round.round"
+kind = "type_combination"
+target = "'HALF_AWAY_FROM_ZERO'"
+note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
+catches = "the mode read as half-even"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t006-mode-away"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t007"
+form = "sf.functions.round.round"
+kind = "null_argument"
+target = "input_expr"
+note = "ROUND of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t007-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t008"
+form = "sf.functions.round.round"
+kind = "null_argument"
+target = "scale_expr"
+note = "ROUND with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t008-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t009"
+form = "sf.functions.round.round"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and a carry across digits."
+catches = "carry lost (9.995 to 9.99) or scale capped"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t009-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t010"
+form = "sf.functions.round.round"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Rounding the largest 38-digit integers up to a power of ten."
+catches = "overflow to FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t010-max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t011"
+form = "sf.functions.round.round"
+kind = "error_parity"
+target = "error"
+note = "A rounding_mode with a FLOAT input is an error."
+catches = "the mode applied to FLOAT instead of the documented error"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t011-mode-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round.t012"
+form = "sf.functions.round.round"
+kind = "error_parity"
+target = "error"
+note = "An unknown rounding_mode is an error."
+catches = "the mode ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
+cases = ["cases/translation/functions/round.round.toml#t012-mode-bad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t001"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "ROUND of integers with a negative scale."
+catches = "a negative scale ignored, or 1550 rounded to even (1600 expected half away)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t002"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "ROUND of NUMBER(12,4) halves."
+catches = "banker's rounding (2.5 to 2) instead of half away from zero (3), or truncation"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t003"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "FLOAT"
+note = "ROUND of FLOAT halves exact in binary."
+catches = "half-to-even for FLOAT, or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t004"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "ROUND of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT (1.005 rounds to 1.01 in DECFLOAT)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t005"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "'HALF_TO_EVEN'"
+note = "rounding_mode 'HALF_TO_EVEN' on fixed-point."
+catches = "the mode ignored (2.5 to 3 instead of 2)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t005-mode-even"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t006"
+form = "sf.functions.round.round-expr-scale"
+kind = "type_combination"
+target = "'HALF_AWAY_FROM_ZERO'"
+note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
+catches = "the mode read as half-even"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t006-mode-away"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t007"
+form = "sf.functions.round.round-expr-scale"
+kind = "null_argument"
+target = "input_expr"
+note = "ROUND of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t007-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t008"
+form = "sf.functions.round.round-expr-scale"
+kind = "null_argument"
+target = "scale_expr"
+note = "ROUND with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t008-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t009"
+form = "sf.functions.round.round-expr-scale"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and a carry across digits."
+catches = "carry lost (9.995 to 9.99) or scale capped"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t009-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t010"
+form = "sf.functions.round.round-expr-scale"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Rounding the largest 38-digit integers up to a power of ten."
+catches = "overflow to FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t010-max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t011"
+form = "sf.functions.round.round-expr-scale"
+kind = "error_parity"
+target = "error"
+note = "A rounding_mode with a FLOAT input is an error."
+catches = "the mode applied to FLOAT instead of the documented error"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t011-mode-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t012"
+form = "sf.functions.round.round-expr-scale"
+kind = "error_parity"
+target = "error"
+note = "An unknown rounding_mode is an error."
+catches = "the mode ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t012-mode-bad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.round.round-expr-scale.t013"
+form = "sf.functions.round.round-expr-scale"
+kind = "error_parity"
+target = "error"
+note = "EXPR => without SCALE => is an error, as the page says."
+catches = "SCALE defaulted to 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
+cases = ["cases/translation/functions/round.round-expr-scale.toml#t013-expr-no-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sign.t001"
+form = "sf.functions.sign"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "SIGN of integers."
+catches = "ABS computed, or -0.001 rounded to 0 before taking the sign"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/sign.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sign.t002"
+form = "sf.functions.sign"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "SIGN of NUMBER(10,2), keeping its type."
+catches = "the scale lost or FLOAT returned"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/sign.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sign.t003"
+form = "sf.functions.sign"
+kind = "type_combination"
+target = "FLOAT"
+note = "SIGN of FLOAT."
+catches = "negative zero and tiny negatives"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/sign.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sign.t004"
+form = "sf.functions.sign"
+kind = "null_argument"
+target = "x"
+note = "SIGN of NULL."
+catches = "NULL turned into 0"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/sign.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sign.t005"
+form = "sf.functions.sign"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "The 38-digit and double extremes."
+catches = "64-bit arithmetic overflowing"
+reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/functions/sign.toml#t005-extremes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sin.t001"
+form = "sf.functions.sin"
+kind = "type_combination"
+target = "FLOAT"
+note = "SIN of FLOAT values."
+catches = "COS computed, or the argument read in degrees"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sin.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sin.t002"
+form = "sf.functions.sin"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "SIN of NUMBER(12,4), converted to FLOAT."
+catches = "COS computed, or the argument read in degrees; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sin.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sin.t003"
+form = "sf.functions.sin"
+kind = "null_argument"
+target = "x"
+note = "SIN of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sin.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sin.t004"
+form = "sf.functions.sin"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large arguments."
+catches = "argument reduction differing"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sin.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sinh.t001"
+form = "sf.functions.sinh"
+kind = "type_combination"
+target = "FLOAT"
+note = "SINH of FLOAT values."
+catches = "COSH computed"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sinh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sinh.t002"
+form = "sf.functions.sinh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "SINH of NUMBER(12,4), converted to FLOAT."
+catches = "COSH computed; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sinh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sinh.t003"
+form = "sf.functions.sinh"
+kind = "null_argument"
+target = "x"
+note = "SINH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sinh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sinh.t004"
+form = "sf.functions.sinh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Arguments past the double range."
+catches = "infinity versus error"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/sinh.toml#t004-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t001"
+form = "sf.functions.sqrt"
+kind = "type_combination"
+target = "FLOAT"
+note = "SQRT of FLOAT values."
+catches = "CBRT or squaring computed"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t002"
+form = "sf.functions.sqrt"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "SQRT of NUMBER(12,4), converted to FLOAT."
+catches = "CBRT or squaring computed; or the result left fixed-point"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t003"
+form = "sf.functions.sqrt"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "SQRT of DECFLOAT, which returns DECFLOAT."
+catches = "a DECFLOAT argument computed and returned as FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t003-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t004"
+form = "sf.functions.sqrt"
+kind = "null_argument"
+target = "x"
+note = "SQRT of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t004-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t005"
+form = "sf.functions.sqrt"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Very small and very large values."
+catches = "precision at the extremes"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t005-tiny-huge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t001"
+form = "sf.functions.square"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "SQUARE of integers returns FLOAT."
+catches = "x*x kept as NUMBER (the type differs), or SQRT computed"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t002"
+form = "sf.functions.square"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "SQUARE of NUMBER(10,2)."
+catches = "the result left fixed-point"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t003"
+form = "sf.functions.square"
+kind = "type_combination"
+target = "FLOAT"
+note = "SQUARE of FLOAT."
+catches = "SQRT computed"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t004"
+form = "sf.functions.square"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "SQUARE of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t005"
+form = "sf.functions.square"
+kind = "null_argument"
+target = "x"
+note = "SQUARE of NULL."
+catches = "NULL turned into 0"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t005-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.square.t006"
+form = "sf.functions.square"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Squares past the double range."
+catches = "infinity versus error"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/square.toml#t006-overflow-inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tan.t001"
+form = "sf.functions.tan"
+kind = "type_combination"
+target = "FLOAT"
+note = "TAN of FLOAT values."
+catches = "SIN or COT computed, or degrees"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tan.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tan.t002"
+form = "sf.functions.tan"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "TAN of NUMBER(12,4), converted to FLOAT."
+catches = "SIN or COT computed, or degrees; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tan.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tan.t003"
+form = "sf.functions.tan"
+kind = "null_argument"
+target = "x"
+note = "TAN of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tan.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tan.t004"
+form = "sf.functions.tan"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Near pi/2."
+catches = "pole handling"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tan.toml#t004-near-pole"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tanh.t001"
+form = "sf.functions.tanh"
+kind = "type_combination"
+target = "FLOAT"
+note = "TANH of FLOAT values."
+catches = "SINH or a clamped value"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tanh.toml#t001-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tanh.t002"
+form = "sf.functions.tanh"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "TANH of NUMBER(12,4), converted to FLOAT."
+catches = "SINH or a clamped value; or the result left fixed-point"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tanh.toml#t002-fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tanh.t003"
+form = "sf.functions.tanh"
+kind = "null_argument"
+target = "x"
+note = "TANH of NULL."
+catches = "NULL turned into 0 or NaN"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tanh.toml#t003-null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.tanh.t004"
+form = "sf.functions.tanh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Large arguments saturate to 1 and -1."
+catches = "NaN from exp overflow"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/tanh.toml#t004-saturate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t001"
+form = "sf.functions.trunc.trunc"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "TRUNC of integers with a negative scale."
+catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen; or a negative scale ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t002"
+form = "sf.functions.trunc.trunc"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "TRUNC of NUMBER(12,4) with and without a scale."
+catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t003"
+form = "sf.functions.trunc.trunc"
+kind = "type_combination"
+target = "FLOAT"
+note = "TRUNC of FLOAT returns FLOAT."
+catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen; or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t004"
+form = "sf.functions.trunc.trunc"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "TRUNC of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t005"
+form = "sf.functions.trunc.trunc"
+kind = "null_argument"
+target = "input_expr"
+note = "TRUNC of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t006"
+form = "sf.functions.trunc.trunc"
+kind = "null_argument"
+target = "scale_expr"
+note = "TRUNC with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t006-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t007"
+form = "sf.functions.trunc.trunc"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and far negative."
+catches = "scale capped or wrapping"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t007-scale-past"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.trunc.t008"
+form = "sf.functions.trunc.trunc"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative values at the rounding step."
+catches = "FLOOR used for negatives (TRUNC(-2.7) is -2), or the date TRUNC chosen"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.trunc.toml#t008-negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t001"
+form = "sf.functions.trunc.truncate"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "TRUNCATE of integers with a negative scale."
+catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2); or a negative scale ignored"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t002"
+form = "sf.functions.trunc.truncate"
+kind = "type_combination"
+target = "NUMBER(12,4)"
+note = "TRUNCATE of NUMBER(12,4) with and without a scale."
+catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t003"
+form = "sf.functions.trunc.truncate"
+kind = "type_combination"
+target = "FLOAT"
+note = "TRUNCATE of FLOAT returns FLOAT."
+catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2); or a NUMBER returned"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t004"
+form = "sf.functions.trunc.truncate"
+kind = "type_combination"
+target = "DECFLOAT"
+note = "TRUNCATE of DECFLOAT returns DECFLOAT."
+catches = "computed in FLOAT"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t004-decfloat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t005"
+form = "sf.functions.trunc.truncate"
+kind = "null_argument"
+target = "input_expr"
+note = "TRUNCATE of NULL."
+catches = "NULL turned into 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t005-null-x"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t006"
+form = "sf.functions.trunc.truncate"
+kind = "null_argument"
+target = "scale_expr"
+note = "TRUNCATE with a NULL scale."
+catches = "the NULL scale read as 0"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t006-null-scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t007"
+form = "sf.functions.trunc.truncate"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales past the input scale and far negative."
+catches = "scale capped or wrapping"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t007-scale-past"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc.truncate.t008"
+form = "sf.functions.trunc.truncate"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative values at the rounding step."
+catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2)"
+reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
+cases = ["cases/translation/functions/trunc.truncate.toml#t008-negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t001"
+form = "sf.functions.width-bucket"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "WIDTH_BUCKET of integers, including below and above the range."
+catches = "buckets numbered from 0, or the overflow buckets 0 and n+1 missing"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t001-int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t002"
+form = "sf.functions.width-bucket"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "WIDTH_BUCKET of fixed-point values on bucket edges."
+catches = "edges assigned to the lower bucket"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t002-dec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t003"
+form = "sf.functions.width-bucket"
+kind = "type_combination"
+target = "FLOAT"
+note = "WIDTH_BUCKET of FLOAT values with FLOAT end points."
+catches = "integer end points assumed"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t003-float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t004"
+form = "sf.functions.width-bucket"
+kind = "type_combination"
+target = "min_value > max_value"
+note = "End points given high to low."
+catches = "the end points swapped back, numbering buckets upwards"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t004-reversed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t005"
+form = "sf.functions.width-bucket"
+kind = "null_argument"
+target = "expr"
+note = "NULL value."
+catches = "NULL put in bucket 0"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t005-null-expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t006"
+form = "sf.functions.width-bucket"
+kind = "null_argument"
+target = "min_value"
+note = "NULL low end point."
+catches = "NULL read as 0"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t006-null-min"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t007"
+form = "sf.functions.width-bucket"
+kind = "null_argument"
+target = "max_value"
+note = "NULL high end point."
+catches = "NULL read as 0"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t007-null-max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t008"
+form = "sf.functions.width-bucket"
+kind = "null_argument"
+target = "num_buckets"
+note = "NULL bucket count."
+catches = "NULL read as 1"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t008-null-n"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t009"
+form = "sf.functions.width-bucket"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Values at the documented 2^53 - 1 limit."
+catches = "precision loss rounding the limit into another bucket"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t009-range-edge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t010"
+form = "sf.functions.width-bucket"
+kind = "error_parity"
+target = "error"
+note = "num_buckets 0 is an error."
+catches = "bucket 0 returned"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t010-zero-buckets"]
+required = true
+
+[[obligation]]
+id = "sf.functions.width-bucket.t011"
+form = "sf.functions.width-bucket"
+kind = "error_parity"
+target = "error"
+note = "Equal end points are an error."
+catches = "division by zero returning NULL or infinity"
+reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
+cases = ["cases/translation/functions/width-bucket.toml#t011-equal-ends"]
+required = true
