@@ -1,7 +1,11 @@
 # How a recorded statement's constructs link to catalogue forms, for the result-matching measure
-# (decision D139). Function calls link by name to every function form whose grammar calls that name;
-# a form whose syntax needs OVER or named arguments links only when the statement uses them. This
-# file links everything else. A [[link]] applies when the statement uses every one of its
+# (decision D139). Function calls link by name to the function forms whose grammar calls that name
+# in the same shape: a plain call, a call over a window, a call with named arguments, or a bare name
+# without parentheses. Each call's own shape decides, not the statement's. Two limits remain: TRUNC
+# credits both its numeric and its date form, and GENERATOR with ROWCOUNT credits both GENERATOR
+# forms, because the call shape does not tell their arguments apart. A `spelling:` key separates
+# what one construct merges, such as `<>` and `!=`, or a simple and a searched CASE. This file links
+# everything else. A [[link]] applies when the statement uses every one of its
 # constructs. A [[no_form]] construct is part of other forms' grammar and names no form itself.
 # Every construct a recorded statement uses must be accounted for here or by a function name, or
 # the checker fails. The auditor reviews this file in full before a figure is published.
@@ -109,8 +113,12 @@ constructs = ["clause:union_by_name"]
 forms = ["sf.query.operators-query.union"]
 
 [[link]]
-constructs = ["node:except"]
+constructs = ["node:except", "spelling:except"]
 forms = ["sf.query.operators-query.except", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["node:except", "spelling:minus"]
+forms = ["sf.query.operators-query.minus", "sf.query.operators-query.intersect-minus-except-union"]
 
 [[link]]
 constructs = ["node:intersect"]
@@ -202,8 +210,12 @@ constructs = ["node:eq"]
 forms = ["sf.expressions.operators-comparison.equal"]
 
 [[link]]
-constructs = ["node:neq"]
-forms = ["sf.expressions.operators-comparison.not-equal-angle", "sf.expressions.operators-comparison.not-equal-bang"]
+constructs = ["node:neq", "spelling:neq_angle"]
+forms = ["sf.expressions.operators-comparison.not-equal-angle"]
+
+[[link]]
+constructs = ["node:neq", "spelling:neq_bang"]
+forms = ["sf.expressions.operators-comparison.not-equal-bang"]
 
 [[link]]
 constructs = ["node:gt"]
@@ -270,8 +282,12 @@ constructs = ["node:i_like", "node:tuple"]
 forms = ["sf.functions.ilike-any"]
 
 [[link]]
-constructs = ["node:regexp_like"]
+constructs = ["node:regexp_like", "spelling:rlike"]
 forms = ["sf.functions.rlike.rlike.syntax"]
+
+[[link]]
+constructs = ["node:regexp_like", "spelling:regexp"]
+forms = ["sf.functions.regexp"]
 
 [[link]]
 constructs = ["node:is_null"]
@@ -286,8 +302,12 @@ constructs = ["node:null_safe_neq"]
 forms = ["sf.functions.is-distinct-from"]
 
 [[link]]
-constructs = ["node:case"]
-forms = ["sf.functions.case.end", "sf.functions.case.end.syntax"]
+constructs = ["node:case", "spelling:case_searched"]
+forms = ["sf.functions.case.end"]
+
+[[link]]
+constructs = ["node:case", "spelling:case_simple"]
+forms = ["sf.functions.case.end.syntax"]
 
 [[link]]
 constructs = ["node:concat"]
@@ -396,8 +416,12 @@ constructs = ["node:j_s_o_n_extract"]
 forms = ["sf.functions.get-path.colon"]
 
 [[link]]
-constructs = ["node:subscript"]
-forms = ["sf.expressions.data-types-semistructured.array-index-access", "sf.expressions.data-types-semistructured.object-key-access"]
+constructs = ["node:subscript", "spelling:subscript_index"]
+forms = ["sf.expressions.data-types-semistructured.array-index-access"]
+
+[[link]]
+constructs = ["node:subscript", "spelling:subscript_key"]
+forms = ["sf.expressions.data-types-semistructured.object-key-access"]
 
 [[link]]
 constructs = ["node:array_func"]
@@ -411,13 +435,39 @@ forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
 constructs = ["node:interval"]
 forms = ["sf.expressions.data-types-datetime.interval.interval-constants"]
 
-[[no_form]]
-constructs = ["node:column", "node:alias", "node:literal", "node:null", "node:boolean", "node:paren", "node:annotated"]
-reason = "Column references, aliases, literal values, parentheses and comments are part of every form's grammar rather than forms of their own."
+# Literal constants: numbers, typed date and time literals, and the two string quotings.
+[[link]]
+constructs = ["node:literal", "spelling:number"]
+forms = ["sf.expressions.data-types-numeric.numeric-constant"]
+
+[[link]]
+constructs = ["node:literal", "spelling:datetime_literal"]
+forms = ["sf.expressions.data-types-datetime.date-time-constant"]
+
+[[link]]
+constructs = ["spelling:quoted_string"]
+forms = ["sf.expressions.data-types-text.single-quoted-string-constant"]
+
+[[link]]
+constructs = ["spelling:dollar_string"]
+forms = ["sf.expressions.data-types-text.dollar-quoted-string-constant"]
+
+# Parameters: $name session variables, ? and :name bind variables, and $1 positional columns.
+[[link]]
+constructs = ["node:parameter", "spelling:session_variable"]
+forms = ["sf.expressions.session-variables"]
+
+[[link]]
+constructs = ["node:parameter", "spelling:bind_variable"]
+forms = ["sf.expressions.bind-variables"]
+
+[[link]]
+constructs = ["node:parameter", "spelling:positional_column"]
+forms = ["sf.query.select.select.selecting-specific-columns"]
 
 [[no_form]]
-constructs = ["node:parameter"]
-reason = "A positional column reference such as $1 is part of the VALUES or FROM form whose columns it reads."
+constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:paren", "node:annotated"]
+reason = "Column references, aliases, NULL, TRUE and FALSE, parentheses and comments are part of every form's grammar rather than forms of their own."
 
 [[no_form]]
 constructs = ["node:var"]

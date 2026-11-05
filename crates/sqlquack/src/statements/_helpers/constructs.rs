@@ -9,6 +9,8 @@ use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
 use sqlquack_evidence::cases::models::LoadedCase;
 
+use crate::statements::_helpers::spellings::{token_spellings, tree_spellings};
+
 /// The upper-case names of the functions the case itself defines.
 pub(crate) fn own_functions(case: &LoadedCase) -> BTreeSet<String> {
     case.functions
@@ -29,7 +31,7 @@ pub(crate) fn project_key(key: String, own: &BTreeSet<String>) -> String {
     }
 }
 
-/// Every construct key the case's statement uses, sorted, its own functions as one project key.
+/// Every construct and spelling key the case's statement uses, sorted, its own functions as one project key.
 pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Vec<String>, String> {
     let sql = &case.source_sql;
     let lines = SourceLines::new(sql);
@@ -39,8 +41,9 @@ pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Ve
             case.reference
         )
     })?;
-    let mut keys: BTreeSet<String> = BTreeSet::new();
+    let mut keys: BTreeSet<String> = token_spellings(sql);
     for statement in &statements {
+        keys.extend(tree_spellings(statement));
         for occurrence in classify(statement, &lines, SourceDialect::Snowflake) {
             keys.insert(project_key(occurrence.construct.key(), own));
         }

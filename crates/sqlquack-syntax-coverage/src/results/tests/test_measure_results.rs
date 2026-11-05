@@ -1,9 +1,10 @@
 use crate::results::models::{ResultState, StatementOutcome};
 use crate::results::tests::helpers::{
-    LINKS, form_state, list, list_signoff, measure, nothing, statement,
+    LINKS, SHAPE_FORMS, form_state, list, list_signoff, measure, nothing, statement,
 };
 use crate::results::tests::test_types::{
-    FormStateTestCase, LinkTestCase, ListedMatchTestCase, RefusalTestCase, RefusedConstructTestCase,
+    CallShapeTestCase, FormStateTestCase, LinkTestCase, ListedMatchTestCase, RefusalTestCase,
+    RefusedConstructTestCase,
 };
 
 const COUNT_IF: &str = "sf.functions.count-if";
@@ -19,7 +20,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Matching,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "refused for one recorded type: not matching (D139a)",
@@ -31,7 +32,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Refused,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "a guard raised where Snowflake returned rows",
@@ -42,7 +43,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Refused,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "types only beside a match: the match decides",
@@ -50,7 +51,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Matching,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "only a matching error: no rows compared, so not matching",
@@ -58,7 +59,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "types only: syntax only, never matching",
@@ -66,7 +67,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "converts but nothing recorded",
@@ -74,7 +75,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::SyntaxOnly,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "a differing replay outranks a refusal",
@@ -86,7 +87,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Differs,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "no recorded statement",
@@ -94,7 +95,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list: nothing,
             review: nothing,
             expected_state: ResultState::Unmeasured,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
         FormStateTestCase {
             description: "listed and signed off: out of the denominator",
@@ -102,7 +103,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list,
             review: list_signoff,
             expected_state: ResultState::NotTranslatable,
-            expected_translatable: 3,
+            expected_translatable: 10,
         },
         FormStateTestCase {
             description: "listed without a sign-off: still counted",
@@ -110,7 +111,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             list,
             review: nothing,
             expected_state: ResultState::Unmeasured,
-            expected_translatable: 4,
+            expected_translatable: 11,
         },
     ];
     for test_case in test_cases {
@@ -374,5 +375,71 @@ fn given_a_refusal_naming_one_construct_when_measuring_then_only_its_forms_are_r
             test_case.description
         );
         assert_eq!(iff.0, test_case.expected_iff, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_call_shapes_when_measuring_then_each_call_credits_only_its_own_form() {
+    let test_cases = [
+        CallShapeTestCase {
+            description: "a windowed SUM beside a plain call of another function credits only the OVER form",
+            constructs: &["fn:SUM", "call_over:SUM", "fn:IFF", "node:window_function"],
+            expected_forms: &["sf.functions.sum-over"],
+        },
+        CallShapeTestCase {
+            description: "a plain and a windowed SUM credit both forms",
+            constructs: &[
+                "fn:SUM",
+                "call:SUM",
+                "call_over:SUM",
+                "node:window_function",
+            ],
+            expected_forms: &["sf.functions.sum", "sf.functions.sum-over"],
+        },
+        CallShapeTestCase {
+            description: "a plain REGR_SYY never credits the window form the page prints without OVER",
+            constructs: &["fn:REGR_SYY"],
+            expected_forms: &[],
+        },
+        CallShapeTestCase {
+            description: "a comma EXTRACT call never credits the FROM form",
+            constructs: &["fn:EXTRACT"],
+            expected_forms: &["sf.functions.extract"],
+        },
+        CallShapeTestCase {
+            description: "a bare CURRENT_DATE credits the bare form only",
+            constructs: &["fn:CURRENT_DATE", "call_bare:CURRENT_DATE"],
+            expected_forms: &["sf.functions.current-date.syntax"],
+        },
+        CallShapeTestCase {
+            description: "CURRENT_DATE() credits the call form only",
+            constructs: &["fn:CURRENT_DATE"],
+            expected_forms: &["sf.functions.current-date"],
+        },
+    ];
+    for test_case in test_cases {
+        let statements = vec![statement(
+            "f.toml#c",
+            StatementOutcome::Matching,
+            test_case.constructs,
+        )];
+
+        let report = measure(statements, (LINKS, "", "")).expect(test_case.description);
+
+        let credited: Vec<&str> = SHAPE_FORMS
+            .iter()
+            .map(|(id, _)| *id)
+            .filter(|id| {
+                report
+                    .form_results
+                    .iter()
+                    .any(|form| form.id == *id && form.statements > 0)
+            })
+            .collect();
+        assert_eq!(
+            credited, test_case.expected_forms,
+            "{}",
+            test_case.description
+        );
     }
 }

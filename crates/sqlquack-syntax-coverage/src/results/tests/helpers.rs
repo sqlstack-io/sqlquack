@@ -1,11 +1,11 @@
-//! Fixtures for the result-matching measure: a catalogue with two function forms and statements.
+//! Fixtures for the result-matching measure: a catalogue of function forms and statements.
 
 use std::collections::BTreeMap;
 use std::path::Path;
 
 use crate::check::tests::helpers::{sha256, verified_tree, write};
 use crate::formats::main::load_coverage::load_coverage;
-use crate::results::constants::STATEMENTS_FORMAT;
+use crate::results::constants::{CALL, CALL_PREFIXES, FUNCTION_PREFIX, STATEMENTS_FORMAT};
 use crate::results::main::load_results_files::load_results_files;
 use crate::results::main::measure_results::measure_results;
 use crate::results::models::{
@@ -29,7 +29,24 @@ fn call_form(id: &str, grammar: &str) -> String {
     )
 }
 
-/// A verified query tree under `directory/syntax` with COUNT_IF and IFF call forms.
+/// Call shapes the fixture catalogue tells apart: plain, windowed, keyword and bare forms.
+pub(crate) const SHAPE_FORMS: [(&str, &str); 7] = [
+    ("sf.functions.sum", "SUM( <x> )"),
+    (
+        "sf.functions.sum-over",
+        "SUM( <x> ) OVER ( [ PARTITION BY <p> ] )",
+    ),
+    (
+        "sf.functions.regr-syy.x",
+        "REGR_SYY(y, x) ( [ PARTITION BY <expr3> ] )",
+    ),
+    ("sf.functions.extract", "EXTRACT( <part> , <expr> )"),
+    ("sf.functions.extract-from", "EXTRACT( <part> FROM <expr> )"),
+    ("sf.functions.current-date", "CURRENT_DATE()"),
+    ("sf.functions.current-date.syntax", "CURRENT_DATE"),
+];
+
+/// A verified query tree under `directory/syntax` with COUNT_IF, IFF and the call-shape forms.
 pub(crate) fn tree(directory: &Path) -> std::path::PathBuf {
     let root = directory.join("syntax");
     verified_tree(&root);
@@ -40,7 +57,13 @@ pub(crate) fn tree(directory: &Path) -> std::path::PathBuf {
             call_form("sf.functions.count-if", "COUNT_IF( <condition> )"),
             call_form("sf.functions.iff", "IFF( <condition> , <a> , <b> )"),
         ]
-        .concat(),
+        .into_iter()
+        .chain(
+            SHAPE_FORMS
+                .iter()
+                .map(|(id, grammar)| call_form(id, grammar)),
+        )
+        .collect::<String>(),
     );
     root
 }
@@ -59,7 +82,7 @@ pub(crate) fn list_signoff(form: &str) -> String {
     )
 }
 
-/// One recorded statement using `constructs`.
+/// One recorded statement using `constructs`, each function a plain call unless they give its shape.
 pub(crate) fn statement(
     reference: &str,
     outcome: StatementOutcome,
@@ -71,11 +94,29 @@ pub(crate) fn statement(
         outcome,
         codes: vec!["SQ0003".to_owned()],
         refused: Vec::new(),
-        constructs: constructs
-            .iter()
-            .map(|construct| (*construct).to_owned())
-            .collect(),
+        constructs: with_call_shapes(constructs),
     }
+}
+
+/// `constructs` with a plain call key for each function whose call shape they do not give.
+fn with_call_shapes(constructs: &[&str]) -> Vec<String> {
+    let shaped = |name: &str| {
+        constructs.iter().any(|key| {
+            CALL_PREFIXES
+                .iter()
+                .any(|prefix| key.strip_prefix(prefix) == Some(name))
+        })
+    };
+    let plain_calls = constructs
+        .iter()
+        .filter_map(|key| key.strip_prefix(FUNCTION_PREFIX))
+        .filter(|name| !shaped(name))
+        .map(|name| format!("{CALL}{name}"));
+    constructs
+        .iter()
+        .map(|key| (*key).to_owned())
+        .chain(plain_calls)
+        .collect()
 }
 
 /// The measure of `statements` over the fixture tree, with the given translation files.

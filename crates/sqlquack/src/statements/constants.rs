@@ -19,3 +19,13 @@ pub const CATEGORIES: [RefusalCategory; 8] = [
     RefusalCategory::SnowflakeRejects,
     RefusalCategory::DivergenceRefused,
 ];
+/// The key prefix of a spelling the construct keys merge, such as `<>` beside `!=`.
+pub const SPELLING: &str = "spelling:";
+/// The key prefix of a plain function call.
+pub const CALL: &str = "call:";
+/// The key prefix of a function call over a window.
+pub const CALL_OVER: &str = "call_over:";
+/// The key prefix of a function call with named arguments.
+pub const CALL_NAMED: &str = "call_named:";
+/// The key prefix of a function called without parentheses.
+pub const CALL_BARE: &str = "call_bare:";

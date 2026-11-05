@@ -5,12 +5,13 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::models::{FormStatus, SyntaxCoverage};
 use crate::results::constants::{
-    FUNCTION_PREFIX, FUNCTIONS_FAMILY, NAMED_ARGUMENT, STATEMENT_REFUSAL, WINDOW_FUNCTION,
+    CALL, CALL_BARE, CALL_NAMED, CALL_OVER, CALL_PREFIXES, FUNCTION_PREFIX, FUNCTIONS_FAMILY,
+    STATEMENT_REFUSAL,
 };
 use crate::results::models::{LinksFile, RecordedStatement};
 
-/// A function form a call links to, and the construct its syntax needs beside the call, if any.
-pub(crate) type FunctionForm = (String, Option<&'static str>);
+/// A function form a call links to, and the call-shape key prefix its syntax needs.
+pub(crate) type FunctionForm = (String, &'static str);
 
 /// Function forms by the upper-case name their grammar calls, and the SHA-256 of that index.
 pub(crate) struct FunctionIndex {
@@ -27,9 +28,9 @@ pub(crate) struct StatementLinks {
     pub(crate) unaccounted: Vec<String>,
 }
 
-/// The name a call grammar starts with, such as `SNOWFLAKE.CORTEX.COMPLETE` in `...COMPLETE(`.
-fn call_name(grammar: &str) -> Option<String> {
-    let grammar = grammar.trim_start();
+/// The name a grammar calls and the call shape it needs, such as `SUM` over a window.
+fn call_shape(grammar: &str) -> Option<(String, &'static str)> {
+    let grammar = grammar.trim();
     let end = grammar
         .find(|character: char| {
             !(character.is_ascii_alphanumeric() || matches!(character, '_' | '$' | '.'))
@@ -40,28 +41,39 @@ fn call_name(grammar: &str) -> Option<String> {
         .chars()
         .next()
         .is_some_and(|first| first.is_ascii_alphabetic() || first == '_');
-    (starts && rest.trim_start().starts_with('(')).then(|| name.to_ascii_uppercase())
-}
-
-/// The construct a function form's own syntax needs: OVER a window, or named arguments.
-fn needed(grammar: &str) -> Option<&'static str> {
+    if !starts {
+        return None;
+    }
+    let rest = rest.trim_start();
+    if rest.is_empty() {
+        return Some((name.to_ascii_uppercase(), CALL_BARE));
+    }
+    if !rest.starts_with('(') {
+        return None;
+    }
     let upper = grammar.to_ascii_uppercase();
-    if upper.contains(" OVER ") || upper.contains(" OVER(") {
-        return Some(WINDOW_FUNCTION);
+    let arguments = upper.split(" OVER ").next().unwrap_or_default();
+    if arguments.contains(" FROM ") || arguments.contains(" IN ") {
+        return None;
     }
-    upper.contains("=>").then_some(NAMED_ARGUMENT)
+    let shape =
+        if upper.contains(" OVER ") || upper.contains(" OVER(") || upper.contains("PARTITION BY") {
+            CALL_OVER
+        } else if upper.contains("=>") {
+            CALL_NAMED
+        } else {
+            CALL
+        };
+    Some((name.to_ascii_uppercase(), shape))
 }
 
-/// One form in the hashed index text: its id, and `+` the construct its syntax needs.
-fn index_entry((id, needed): &FunctionForm) -> String {
-    match needed {
-        Some(key) => format!("{id}+{key}"),
-        None => id.clone(),
-    }
-}
-
-/// Every catalogued function form under the name its first signature calls.
+/// Every catalogued function form under the name its grammar calls, its reading's where one parses.
 pub(crate) fn function_index(coverage: &SyntaxCoverage) -> FunctionIndex {
+    let readings: BTreeMap<&str, &str> = coverage
+        .readings
+        .iter()
+        .filter_map(|reading| Some((reading.form.as_str(), reading.grammar.first()?.as_str())))
+        .collect();
     let mut forms: BTreeMap<String, Vec<FunctionForm>> = BTreeMap::new();
     for form in coverage
         .catalogue
@@ -72,19 +84,23 @@ pub(crate) fn function_index(coverage: &SyntaxCoverage) -> FunctionIndex {
         if form.status == FormStatus::AbsentFromSource {
             continue;
         }
-        let Some(grammar) = form.grammar.first() else {
+        let read = readings
+            .get(form.id.as_str())
+            .and_then(|grammar| call_shape(grammar));
+        let Some((name, shape)) = read.or_else(|| call_shape(form.grammar.first()?)) else {
             continue;
         };
-        if let Some(name) = call_name(grammar) {
-            forms
-                .entry(name)
-                .or_default()
-                .push((form.id.clone(), needed(grammar)));
-        }
+        forms
+            .entry(name)
+            .or_default()
+            .push((form.id.clone(), shape));
     }
     let mut text: String = String::new();
     for (name, ids) in &forms {
-        let ids: Vec<String> = ids.iter().map(index_entry).collect();
+        let ids: Vec<String> = ids
+            .iter()
+            .map(|(id, shape)| format!("{id}+{shape}"))
+            .collect();
         text.push_str(&format!("{name} {}\n", ids.join(",")));
     }
     FunctionIndex {
@@ -105,9 +121,10 @@ fn construct_forms(
     let named = construct
         .strip_prefix(FUNCTION_PREFIX)
         .and_then(|name| functions.forms.get(name));
-    for (id, needed) in named.into_iter().flatten() {
+    for (id, shape) in named.into_iter().flatten() {
         accounted = true;
-        if needed.is_none_or(|key| used.contains(key)) {
+        let name = &construct[FUNCTION_PREFIX.len()..];
+        if used.contains(format!("{shape}{name}").as_str()) {
             forms.insert(id.clone());
         }
     }
@@ -140,6 +157,12 @@ pub(crate) fn link_statement(
     let mut forms: BTreeSet<String> = BTreeSet::new();
     let mut unaccounted: Vec<String> = Vec::new();
     for construct in &statement.constructs {
+        if CALL_PREFIXES
+            .iter()
+            .any(|prefix| construct.starts_with(prefix))
+        {
+            continue;
+        }
         let (linked, accounted) = construct_forms(construct, &used, functions, links);
         forms.extend(linked);
         if !accounted {

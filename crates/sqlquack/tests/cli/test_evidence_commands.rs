@@ -130,6 +130,22 @@ fn given_recorded_cases_when_verify_writes_translation_statements_then_each_outc
             expected_refused: &["statement"],
             expected_use: "clause:group_by",
         },
+        TranslationStatementTestCase {
+            description: "a plain call keeps its shape",
+            id: "count_if_comparison",
+            expected_outcome: "matching",
+            expected_codes: &[],
+            expected_refused: &[],
+            expected_use: "call:COUNT_IF",
+        },
+        TranslationStatementTestCase {
+            description: "a call over a window keeps its shape",
+            id: "count_if_window",
+            expected_outcome: "matching",
+            expected_codes: &[],
+            expected_refused: &[],
+            expected_use: "call_over:COUNT_IF",
+        },
     ];
     for test_case in test_cases {
         let statement = find(test_case.id);

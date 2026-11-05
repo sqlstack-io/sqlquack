@@ -30,9 +30,15 @@ pub const WORK_PRINTED: usize = 25;
 pub const PROBLEMS_PRINTED: usize = 40;
 /// Families whose forms a query-result receipt can measure, in the capture queue's order.
 pub const QUERY_FAMILIES: [&str; 3] = ["functions", "expressions", "query"];
-/// The construct of a window function call, which a function's OVER form needs.
-pub const WINDOW_FUNCTION: &str = "node:window_function";
-/// The construct of a named argument, which a function's `=>` form needs.
-pub const NAMED_ARGUMENT: &str = "node:named_argument";
+/// The key prefix of a plain function call, beside its `fn:` construct.
+pub const CALL: &str = "call:";
+/// The key prefix of a function call over a window.
+pub const CALL_OVER: &str = "call_over:";
+/// The key prefix of a function call with named arguments.
+pub const CALL_NAMED: &str = "call_named:";
+/// The key prefix of a function called without parentheses.
+pub const CALL_BARE: &str = "call_bare:";
+/// Every call-shape prefix; these keys qualify a function's construct and link nothing alone.
+pub const CALL_PREFIXES: [&str; 4] = [CALL, CALL_OVER, CALL_NAMED, CALL_BARE];
 /// The refused construct of a refusal that names no construct: the whole statement.
 pub const STATEMENT_REFUSAL: &str = "statement";

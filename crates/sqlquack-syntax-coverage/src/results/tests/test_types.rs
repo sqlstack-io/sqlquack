@@ -52,3 +52,10 @@ pub(crate) struct DiffTestCase {
     pub(crate) head: Option<StatementOutcome>,
     pub(crate) expected_regression: bool,
 }
+
+/// The keys of one statement calling SUM, REGR_SYY, EXTRACT or CURRENT_DATE, and the forms it credits.
+pub(crate) struct CallShapeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) constructs: &'static [&'static str],
+    pub(crate) expected_forms: &'static [&'static str],
+}
