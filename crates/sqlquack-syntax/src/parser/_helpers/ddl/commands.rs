@@ -90,6 +90,9 @@ impl Parser {
     /// Parses CALL procedure(args, ...).
     pub(crate) fn parse_call(&mut self) -> Result<Expression> {
         let call_token = self.advance()?;
+        if let Some(call) = self.parse_snowflake_method_call()? {
+            return Ok(call);
+        }
 
         let mut tokens = vec![("CALL".to_string(), call_token.token_type)];
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -732,6 +735,7 @@ impl Parser {
 
             Expression::Identifier(Identifier::new(name_str))
         } else {
+            self.check_snowflake_comment_name()?;
             self.parse_qualified_name()?
         };
 
@@ -739,6 +743,12 @@ impl Parser {
             self.skip();
         } else {
             return Err(self.parse_error("Expected IS in COMMENT ON statement"));
+        }
+        if self.is_snowflake()
+            && !self.check(TokenType::String)
+            && !self.check(TokenType::DollarString)
+        {
+            return Err(self.parse_error("Expected a string after IS"));
         }
 
         let expression = self.parse_primary()?;
@@ -1457,11 +1467,15 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let sync = { false };
+        let cascade = self.match_token(TokenType::Cascade);
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropDatabase(Box::new(DropDatabase {
             name,
             if_exists,
             sync,
+            cascade,
+            restrict,
         })))
     }
 

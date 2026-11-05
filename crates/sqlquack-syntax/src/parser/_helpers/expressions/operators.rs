@@ -231,6 +231,16 @@ impl Parser {
             let mut types: Vec<DataType> = Vec::new();
             if !self.check(TokenType::RParen) {
                 loop {
+                    if self.check(TokenType::Table)
+                        && self.check_next(TokenType::LParen)
+                        && self.tokens.get(self.current + 2).is_some_and(|token| {
+                            matches!(token.token_type, TokenType::RParen | TokenType::String)
+                        })
+                    {
+                        return Err(
+                            self.parse_error("A TABLE argument names at least one data type")
+                        );
+                    }
                     types.push(self.parse_data_type()?);
                     if !self.match_token(TokenType::Comma) {
                         break;
