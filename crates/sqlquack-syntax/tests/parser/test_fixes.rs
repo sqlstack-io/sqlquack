@@ -2205,3 +2205,52 @@ fn given_a_snowflake_show_of_grants_or_policies_when_parsing_then_its_clauses_ar
         assert_eq!(kind(&parsed[0]), "show", "Snowflake parses {sql}");
     }
 }
+
+#[test]
+fn given_a_snowflake_insert_frame_or_execute_when_parsing_then_missing_parts_are_refused() {
+    let rejected = [
+        (
+            "WHEN without a condition",
+            "INSERT FIRST WHEN THEN INTO v1 SELECT 1 ;",
+        ),
+        (
+            "WHEN without THEN",
+            "INSERT FIRST WHEN TRUE INTO v1 SELECT 1 ;",
+        ),
+        ("INTO without a table", "INSERT ALL INTO SELECT 1 ;"),
+        (
+            "ELSE without a table",
+            "INSERT FIRST WHEN TRUE THEN INTO v1 ELSE INTO SELECT 1 ;",
+        ),
+        (
+            "a parenthesized value that is not a query",
+            "INSERT INTO v1 ( v1 ) ( 1 ) ;",
+        ),
+        (
+            "a string frame bound",
+            "SELECT SUM ( 1 ) OVER ( ROWS 'x' PRECEDING ) ;",
+        ),
+        ("a reserved experiment name", "EXECUTE EXPERIMENT SELECT ;"),
+        (
+            "a reserved PURGE alias",
+            "EXECUTE DCM PROJECT v1 PURGE AS SELECT ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "INSERT FIRST WHEN a > 1 THEN INTO t1 INTO t2 WHEN a > 2 THEN INTO t3 ELSE INTO t4 SELECT 1 AS a ;",
+        "INSERT ALL INTO t1 INTO t2 ( a ) VALUES ( 1 ) SELECT 1 ;",
+        "INSERT INTO t1 ( a ) ( SELECT 1 ) ;",
+        "SELECT SUM ( a ) OVER ( ORDER BY a ROWS BETWEEN 1 PRECEDING AND CURRENT ROW ) FROM t1 ;",
+        "EXECUTE EXPERIMENT \"v1 Q\" ;",
+        "EXECUTE DCM PROJECT v1 PURGE AS a1 ;",
+    ];
+    for sql in kept {
+        assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}

@@ -1491,6 +1491,9 @@ impl Parser {
                 Ok((WindowFrameBound::Following(Box::new(expr)), Some(text)))
             }
         } else {
+            if snowflake && self.check(TokenType::String) {
+                return Err(self.parse_error("Snowflake frame bounds take a number, not a string"));
+            }
             let expr = self.parse_addition()?;
             if self.match_token(TokenType::Preceding) {
                 let text = self.tokens[self.current - 1].text.to_string();

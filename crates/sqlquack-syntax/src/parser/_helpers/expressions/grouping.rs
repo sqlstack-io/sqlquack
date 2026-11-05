@@ -1108,8 +1108,11 @@ impl Parser {
 
         loop {
             let condition = if self.match_token(TokenType::When) {
+                if self.check(TokenType::Then) {
+                    return Err(self.parse_error("Expected a condition after WHEN"));
+                }
                 let cond = self.parse_or()?;
-                self.match_token(TokenType::Then);
+                self.expect_token(TokenType::Then)?;
                 Some(cond)
             } else {
                 None
@@ -1118,12 +1121,15 @@ impl Parser {
             let is_else = self.match_token(TokenType::Else);
 
             if !self.match_token(TokenType::Into) {
+                if condition.is_some() || is_else || expressions.is_empty() {
+                    return Err(self.parse_error("Expected INTO and a target table"));
+                }
                 break;
             }
 
-            let table_expr = self.parse_table_parts()?;
-
-            let table_ref = if let Some(Expression::Table(t)) = table_expr {
+            let table_ref = if self.is_snowflake() {
+                self.parse_object_name()?
+            } else if let Some(Expression::Table(t)) = self.parse_table_parts()? {
                 *t
             } else {
                 TableRef::new("")

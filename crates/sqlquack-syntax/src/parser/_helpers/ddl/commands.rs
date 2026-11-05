@@ -204,7 +204,7 @@ impl Parser {
         )
     }
 
-    /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
+    /// Snowflake `EXECUTE ALERT | EXPERIMENT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
     fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
         let start = self.current;
         let kind = if self.match_text_seq(&["ALERT"]) {
@@ -215,10 +215,15 @@ impl Parser {
             "TASK GRAPH"
         } else if self.match_text_seq(&["TASK"]) {
             "TASK"
+        } else if self.match_text_seq(&["EXPERIMENT"]) {
+            "EXPERIMENT"
         } else {
             return Ok(None);
         };
-        let name = self.parse_object_name_ref()?;
+        let name = match kind {
+            "EXPERIMENT" => self.parse_object_name()?,
+            _ => self.parse_object_name_ref()?,
+        };
         let mut node = ExecuteObject {
             kind: kind.to_owned(),
             name,
@@ -244,7 +249,7 @@ impl Parser {
             if self.match_text_seq(&["PURGE"]) {
                 node.action = Some("PURGE".to_owned());
                 if self.match_token(TokenType::As) {
-                    node.alias = Some(self.expect_identifier_or_keyword_with_quoted()?);
+                    node.alias = Some(self.parse_simple_name()?);
                 }
             } else if self.match_text_seq(&["TEST", "ALL"]) {
                 node.action = Some("TEST ALL".to_owned());
