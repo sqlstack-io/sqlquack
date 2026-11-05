@@ -199,7 +199,8 @@ A statement both parsers parse, where polyglot drops the quoting of a name SQLQu
 is a `[[kept_quoting]]` entry: an id, a marker the statement contains (whitespace removed) and a
 reason. The check counts it as kept quoting, not different, only when the marker appears and the
 two trees differ in nothing but identifiers that are unquoted in polyglot's tree and quoted in
-SQLQuack's. The only entry: a star's `EXCLUDE ("note")`, whose quotes make the name case-sensitive.
+SQLQuack's. The entries: a star's `EXCLUDE ("note")` and a `COMMENT ON` name, whose quotes make
+the name case-sensitive.
 
 A statement both parsers parse, where SQLQuack keeps a wrapper node polyglot drops, is a
 `[[kept_node]]` entry: an id, a marker, the node and a reason. The check counts it as a kept node,

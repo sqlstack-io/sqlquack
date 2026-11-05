@@ -1049,6 +1049,11 @@ id = "star_exclude_quoted_name"
 marker = "EXCLUDE(\""
 note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not NOTE; polyglot drops the quotes of a star's EXCLUDE names"
 
+[[kept_quoting]]
+id = "comment_on_quoted_name"
+marker = "COMMENTON"
+note = "COMMENT ON TABLE \"v1\" names the case-sensitive object v1, not V1; polyglot drops the quotes of a COMMENT ON name; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
 # Wrapper nodes SQLQuack keeps where polyglot drops them. The check counts an entry only when the
 # statement, without whitespace and ignoring case, contains `marker`, and both trees are equal once
 # every `{ "<node>": { "this": … } }` in SQLQuack's tree is replaced by its operand.

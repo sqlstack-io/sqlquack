@@ -1857,6 +1857,24 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "a quoted COMMENT ON name stays quoted",
+            sql: "COMMENT ON TABLE \"v1\" IS 'm'",
+            pointer: "/0/comment/this/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted COMMENT ON COLUMN table stays quoted",
+            sql: "COMMENT ON COLUMN \"v1 Q\" . v1 IS 'm'",
+            pointer: "/0/comment/this/column/table/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a quoted part of a longer COMMENT ON COLUMN table keeps its quotes",
+            sql: "COMMENT ON COLUMN \"a.b\" . c . d IS 'm'",
+            pointer: "/0/comment/this/column/table/name",
+            expected_value: json!("\"a.b\".c"),
+        },
+        ProjectionTestCase {
             description: "a cloned task keeps its source",
             sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
             pointer: "/0/create_task/clone_source/schema/name",

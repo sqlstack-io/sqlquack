@@ -1156,11 +1156,11 @@ impl Parser {
 
     /// Parse a qualified name (schema.table.column or just table)
     pub(crate) fn parse_qualified_name(&mut self) -> Result<Expression> {
-        let first = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+        let first = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
         let mut parts = vec![first];
 
         while self.match_token(TokenType::Dot) {
-            let next = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+            let next = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
             parts.push(next);
         }
 
@@ -1186,7 +1186,10 @@ impl Parser {
                 .map(|(start, end)| start.through(end));
             let table_name = parts
                 .iter()
-                .map(|id| id.name.as_str())
+                .map(|id| match id.quoted {
+                    true => format!("\"{}\"", id.name.replace('"', "\"\"")),
+                    false => id.name.clone(),
+                })
                 .collect::<Vec<_>>()
                 .join(".");
             let mut table = Identifier::new(table_name);
