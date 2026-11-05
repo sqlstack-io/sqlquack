@@ -129,7 +129,14 @@ impl Parser {
             "ALERT"
         } else if self.match_text_seq(&["DCM", "PROJECT"]) {
             EXECUTE_DCM_PROJECT
-        } else if self.match_text_seq(&["TASK", "GRAPH"]) {
+        } else if self.check_text_seq(&["TASK", "GRAPH"])
+            && !matches!(
+                self.text_at(2).as_deref(),
+                None | Some(";" | "RETRY" | "USING")
+            )
+        {
+            self.skip();
+            self.skip();
             "TASK GRAPH"
         } else if self.match_text_seq(&["TASK"]) {
             "TASK"

@@ -446,6 +446,84 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "an interval SECOND qualifier takes one precision inside CAST (recorded errno 1003)",
+            sql: "SELECT CAST ( INTERVAL '1' SECOND ( 9 ) , ( 3 ) AS VARCHAR ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "SECOND ( 9 ) , ( 3 ) is two select items (recorded success)",
+            sql: "SELECT INTERVAL '1' SECOND ( 9 ) , ( 3 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a class's instances are shown with an empty schema (recorded semantic error)",
+            sql: "SHOW SNOWFLAKE . . FORECAST ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a class's instances are shown in a container (recorded semantic error)",
+            sql: "SHOW SNOWFLAKE . ML . FORECAST LIKE 'm' IN SCHEMA v1 LIMIT 1 FROM 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a class show takes no unnamed scope (recorded errno 1003)",
+            sql: "SHOW SNOWFLAKE . ML . FORECAST IN ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a class name has a database (recorded errno 1003)",
+            sql: "SHOW . ML . FORECAST ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "USE ROLE alone uses a database named ROLE (recorded semantic error)",
+            sql: "USE ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "USE SCHEMA . v1 uses database SCHEMA's schema v1 (recorded semantic error)",
+            sql: "USE SCHEMA . v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "USE needs a name (recorded errno 1003)",
+            sql: "USE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DESC RESULT alone describes an object named RESULT (recorded semantic error)",
+            sql: "DESC RESULT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DESC RESULT keeps refusing an unclosed LAST_QUERY_ID (recorded errno 1003)",
+            sql: "DESC RESULT LAST_QUERY_ID ( ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE TASK GRAPH alone runs a task named GRAPH (recorded semantic error)",
+            sql: "EXECUTE TASK GRAPH ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a task named GRAPH is retried (recorded semantic error)",
+            sql: "EXECUTE TASK GRAPH RETRY LAST ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
@@ -520,6 +598,42 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "SELECT GREATEST ( ** [ 1 , 2 ] )",
             pointer: "/0/select/expressions/0/function/args/0/variadic/this/array_func/expressions/1/literal/value",
             expected_value: json!("2"),
+        },
+        ProjectionTestCase {
+            description: "a class show keeps the class as its target",
+            sql: "SHOW SNOWFLAKE . ML . FORECAST INSTANCES",
+            pointer: "/0/show/target/table/catalog/name",
+            expected_value: json!("SNOWFLAKE"),
+        },
+        ProjectionTestCase {
+            description: "a class show records INSTANCES",
+            sql: "SHOW SNOWFLAKE . ML . FORECAST INSTANCES",
+            pointer: "/0/show/this",
+            expected_value: json!("CLASS INSTANCES"),
+        },
+        ProjectionTestCase {
+            description: "USE ROLE alone names a database ROLE",
+            sql: "USE ROLE",
+            pointer: "/0/use/this/name",
+            expected_value: json!("ROLE"),
+        },
+        ProjectionTestCase {
+            description: "USE ROLE alone has no kind",
+            sql: "USE ROLE",
+            pointer: "/0/use/kind",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "DESC of a lone name describes it",
+            sql: "DESC RESULT",
+            pointer: "/0/describe/target/table/name/name",
+            expected_value: json!("RESULT"),
+        },
+        ProjectionTestCase {
+            description: "EXECUTE TASK GRAPH alone runs a task named GRAPH",
+            sql: "EXECUTE TASK GRAPH",
+            pointer: "/0/execute_object/name/name/name",
+            expected_value: json!("GRAPH"),
         },
     ];
 
