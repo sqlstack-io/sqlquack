@@ -769,13 +769,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-java-runtime-version.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o017"
@@ -919,33 +919,33 @@ target = "[ , '<package_name_and_version>' ... ]"
 id = "sf.utility.call-with.table-language-java-runtime-version.o040"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o041"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o042"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o043"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o044"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -1243,13 +1243,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-java-runtime-version.o090"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o091"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o092"
@@ -1614,13 +1614,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o017"
@@ -1764,33 +1764,33 @@ target = "[ , '<package_name_and_version>' ... ]"
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o040"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o041"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o042"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o043"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o044"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -2055,13 +2055,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o085"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o086"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o087"
@@ -2426,13 +2426,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-python-runtime-version.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o017"
@@ -2570,33 +2570,33 @@ target = "[ , '<package_name>[==<version>]' ... ]"
 id = "sf.utility.call-with.table-language-python-runtime-version.o039"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o040"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o041"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o042"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o043"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -2882,13 +2882,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-python-runtime-version.o087"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o088"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o089"
@@ -3266,13 +3266,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o017"
@@ -3410,33 +3410,33 @@ target = "[ , '<package_name>[==<version>]' ... ]"
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o039"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o040"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o041"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o042"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o043"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -3680,13 +3680,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o081"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o082"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o083"
@@ -4051,13 +4051,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-scala-runtime-version.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o017"
@@ -4201,33 +4201,33 @@ target = "[ , '<package_name_and_version>' ... ]"
 id = "sf.utility.call-with.table-language-scala-runtime-version.o040"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o041"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o042"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o043"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o044"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -4525,13 +4525,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-scala-runtime-version.o090"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o091"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o092"
@@ -4896,13 +4896,13 @@ target = "[ , <arg_name> <arg_data_type> ... ]"
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o015"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , … → <result_data_type> [ [ NOT ] NULL ]"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ ,… → <result_data_type> [ [ NOT ] NULL ]"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name>… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o017"
@@ -5046,33 +5046,33 @@ target = "[ , '<package_name_and_version>' ... ]"
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o040"
 kind = "option_present"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o041"
 kind = "option_absent"
 required = true
-target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+target = "[ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o042"
 kind = "required_operand_missing"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o043"
 kind = "operand_type_class"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o044"
 kind = "negative_neighbour"
 required = true
-target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ …"
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' […"
 note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
@@ -5337,13 +5337,13 @@ note = "the form without its required ) #2"
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o085"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ( in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o086"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>' .…"
+note = "the form without its required ) in [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , '<stage_path_and_directory_or_file_name_to_read>'…"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o087"
@@ -5714,7 +5714,7 @@ target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ... ] 
 id = "sf.utility.call-with.table-language-sql-as.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ..… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ ,… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o017"
@@ -7394,13 +7394,13 @@ target = "[ AS \"d1\" ]"
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o019"
 kind = "alternative"
 required = true
-target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <exp… → [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>'"
+target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ ,… → [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>'"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o020"
 kind = "alternative"
 required = true
-target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <exp… → FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST }"
+target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ ,… → FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST }"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o021"
@@ -7796,13 +7796,13 @@ target = "[ DELTA ]"
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o023"
 kind = "alternative"
 required = true
-target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <exp… → [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>'"
+target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ ,… → [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ] [ ENVIRONMENT ( <bind_variable> ) ] FROM '<source_files_path>'"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o024"
 kind = "alternative"
 required = true
-target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <exp… → FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST }"
+target = "{ [ USING { CONFIGURATION <config_name> [ ( <expr> [ ,… → FROM DEPLOYMENT { <deployment_name> | \"d1\" | LAST | LATEST }"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o025"
@@ -8638,31 +8638,31 @@ note = "the documented form with every required part and no optional part"
 id = "sf.utility.execute-immediate-from.o030"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<p… → @ [ <namespace> . ] <stage_name> / <path> / <filename>"
+target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> |… → @ [ <namespace> . ] <stage_name> / <path> / <filename>"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o031"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' | '/<path>/<filena… → '<path>/<filename>'"
+target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' |… → '<path>/<filename>'"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o032"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' | '/<path>/<filen… → '/<path>/<filename>'"
+target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' |… → '/<path>/<filename>'"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o033"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' | '/<path>/<file… → './<path>/<filename>'"
+target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' |… → './<path>/<filename>'"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o034"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' | '/<path>/<fil… → '../<path>/<filename>'"
+target = "{ @ [ <namespace> . ] <stage_name> / <path> / <filename> | '<path>/<filename>' |… → '../<path>/<filename>'"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o035"
@@ -9859,25 +9859,25 @@ note = "a string literal in place of <compute_pool_name>"
 id = "sf.utility.execute-job-service.o110"
 kind = "alternative"
 required = true
-target = "{ { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_p… → { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>' }"
+target = "{ { FROM @ <stage> SPECIFICATION_FILE =… → { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>' }"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o111"
 kind = "alternative"
 required = true
-target = "{ { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>' } | { FR… → { FROM SPECIFICATION <specification_text> }"
+target = "{ { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>' } | {… → { FROM SPECIFICATION <specification_text> }"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o112"
 kind = "alternative"
 required = true
-target = "{ { FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_p… → { { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' } | { FROM SPECIFICATION_TEMPLATE <specification_text> } } USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] )"
+target = "{ { FROM @ <stage> SPECIFICATION_FILE =… → { { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' } | { FROM SPECIFICATION_TEMPLATE <specification_text> } } USING ( <key> => <value> [ , <key> => <value> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o113"
 kind = "alternative"
 required = true
-target = "{ FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_pat… → FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>'"
+target = "{ FROM @ <stage> SPECIFICATION_FILE =… → FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>'"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o067"
@@ -9931,19 +9931,19 @@ note = "a valid operand"
 id = "sf.utility.execute-job-service.o116"
 kind = "alternative"
 required = true
-target = "{ { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_fil… → { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' }"
+target = "{ { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE =… → { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>' }"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o117"
 kind = "alternative"
 required = true
-target = "{ { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_sta… → { FROM SPECIFICATION_TEMPLATE <specification_text> }"
+target = "{ { FROM @ <stage> SPECIFICATION_TEMPLATE_FILE =… → { FROM SPECIFICATION_TEMPLATE <specification_text> }"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o118"
 kind = "alternative"
 required = true
-target = "{ FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_… → FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>'"
+target = "{ FROM @ <stage> SPECIFICATION_TEMPLATE_FILE =… → FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>'"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o076"

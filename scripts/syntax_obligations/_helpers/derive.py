@@ -66,6 +66,8 @@ from scripts.syntax_obligations.constants import (
     QUOTED_WITHOUT_BLANK_NAMES,
     STRING_CLASS,
     SUBGRAMMAR_CLASS,
+    TARGET_BREAK,
+    TARGET_ELLIPSIS,
     TARGET_WIDTH,
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
@@ -82,6 +84,16 @@ def operand_class(name: str) -> str:
         if pattern.search(name):
             return label
     return DEFAULT_CLASS
+
+
+def _cut_at_word(*, text: str, width: int) -> str:
+    """`text` if it fits in `width`, else cut at a word boundary to fit with an ellipsis."""
+    if len(text) <= width:
+        return text
+    cut: str = text[: width - 1]
+    if text[width - 1] != TARGET_BREAK and TARGET_BREAK in cut:
+        cut = cut[: cut.rindex(TARGET_BREAK)]
+    return cut.rstrip() + TARGET_ELLIPSIS
 
 
 class _Walk:
@@ -115,7 +127,7 @@ class _Walk:
     def target(self, *, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
         width: int = max(TARGET_WIDTH - len(tail), TARGET_WIDTH // 2)
-        short: str = (text if len(text) <= width else text[: width - 1] + "…") + tail
+        short: str = _cut_at_word(text=text, width=width) + tail
         self.seen[short] += 1
         return short if self.seen[short] == 1 else f"{short} #{self.seen[short]}"
 

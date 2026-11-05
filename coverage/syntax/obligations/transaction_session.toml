@@ -23,19 +23,19 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o008"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY… → AUTOCOMMIT = { TRUE | FALSE }"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → AUTOCOMMIT = { TRUE | FALSE }"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o009"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMOR… → BINARY_INPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → BINARY_INPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o010"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMO… → BINARY_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → BINARY_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o011"
@@ -47,7 +47,7 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o012"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY… → DATE_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → DATE_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o013"
@@ -59,43 +59,43 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER… 
 id = "sf.transaction_session.alter-session.set-sessionparams.o014"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILE… → ERROR_ON_NONDETERMINISTIC_UPDATE = { TRUE | FALSE }"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } |… → ERROR_ON_NONDETERMINISTIC_UPDATE = { TRUE | FALSE }"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o015"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_P… → GEOGRAPHY_OUTPUT_FORMAT = { 'GeoJSON' | 'WKT' | 'WKB' | 'EWKT' | 'EWKB' }"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } |… → GEOGRAPHY_OUTPUT_FORMAT = { 'GeoJSON' | 'WKT' | 'WKB' | 'EWKT' | 'EWKB' }"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o016"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'ME… → HYBRID_TABLE_LOCK_TIMEOUT = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → HYBRID_TABLE_LOCK_TIMEOUT = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o017"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUTO… → JSON_INDENT = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → JSON_INDENT = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o018"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUT… → LOG_LEVEL = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → LOG_LEVEL = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o019"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUT… → LOCK_TIMEOUT = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → LOCK_TIMEOUT = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o020"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE… → OPT_OUT_ERROR_LOGGING = { TRUE | FALSE }"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {… → OPT_OUT_ERROR_LOGGING = { TRUE | FALSE }"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o021"
@@ -107,13 +107,13 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o022"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'M… → PYTHON_PROFILER_MODULES = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → PYTHON_PROFILER_MODULES = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o023"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUT… → QUERY_TAG = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → QUERY_TAG = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o024"
@@ -125,25 +125,25 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o025"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'ME… → S3_STAGE_VPCE_DNS_NAME = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → S3_STAGE_VPCE_DNS_NAME = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o026"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | A… → SEARCH_PATH = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → SEARCH_PATH = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o027"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LI… → SIMULATED_DATA_SHARING_CONSUMER = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {… → SIMULATED_DATA_SHARING_CONSUMER = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o028"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | … → STATEMENT_TIMEOUT_IN_SECONDS = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → STATEMENT_TIMEOUT_IN_SECONDS = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o029"
@@ -161,31 +161,31 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o031"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'ME… → TIMESTAMP_INPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → TIMESTAMP_INPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o032"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' … → TIMESTAMP_LTZ_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE'… → TIMESTAMP_LTZ_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o033"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' … → TIMESTAMP_NTZ_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE'… → TIMESTAMP_NTZ_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o034"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'M… → TIMESTAMP_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → TIMESTAMP_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o035"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'ME… → TIMESTAMP_TYPE_MAPPING = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → TIMESTAMP_TYPE_MAPPING = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o036"
@@ -197,7 +197,7 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o037"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUTO… → TIMEZONE = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → TIMEZONE = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o038"
@@ -209,13 +209,13 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o039"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY… → TIME_OUTPUT_FORMAT = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → TIME_OUTPUT_FORMAT = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o040"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | A… → TRACE_LEVEL = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → TRACE_LEVEL = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o041"
@@ -227,31 +227,31 @@ target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = {
 id = "sf.transaction_session.alter-session.set-sessionparams.o042"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMO… → TWO_DIGIT_CENTURY_START = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → TWO_DIGIT_CENTURY_START = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o043"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'ME… → UNSUPPORTED_DDL_ACTION = <string>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → UNSUPPORTED_DDL_ACTION = <string>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o044"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | … → USE_CACHED_RESULT = { TRUE | FALSE }"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' |… → USE_CACHED_RESULT = { TRUE | FALSE }"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o045"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' … → WEEK_OF_YEAR_POLICY = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY'… → WEEK_OF_YEAR_POLICY = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o046"
 kind = "alternative"
 required = true
-target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } | AUTOC… → WEEK_START = <num>"
+target = "{ ABORT_DETACHED_QUERY = { TRUE | FALSE } | ACTIVE_PYTHON_PROFILER = { 'LINE' | 'MEMORY' } |… → WEEK_START = <num>"
 
 [[obligation]]
 id = "sf.transaction_session.alter-session.set-sessionparams.o047"
@@ -1974,13 +1974,13 @@ note = "an unquoted identifier in place of '<pattern>'"
 id = "sf.transaction_session.show-parameters.o007"
 kind = "option_present"
 required = true
-target = "[ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <t…"
+target = "[ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE […"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o008"
 kind = "option_absent"
 required = true
-target = "[ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <t…"
+target = "[ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE […"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o009"
@@ -1998,13 +1998,13 @@ target = "{ IN | FOR } → FOR"
 id = "sf.transaction_session.show-parameters.o011"
 kind = "alternative"
 required = true
-target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | T… → { SESSION | ACCOUNT }"
+target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] |… → { SESSION | ACCOUNT }"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o012"
 kind = "alternative"
 required = true
-target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | S… → { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ]"
+target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE |… → { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ]"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o014"
@@ -2110,13 +2110,13 @@ note = "the form without its required PARAMETERS"
 id = "sf.transaction_session.show-parameters.o039"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TABLE after FOR in [ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <t…"
+note = "the form without its required TABLE after FOR in [ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE […"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o031"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <table_or_view_name> ] } in [ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <t…"
+note = "the form without its required { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE [ <table_or_view_name> ] } in [ { IN | FOR } { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ] | TABLE […"
 
 [[obligation]]
 id = "sf.transaction_session.show-parameters.o032"
@@ -2160,7 +2160,7 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 id = "sf.transaction_session.show-parameters.o037"
 kind = "alternative"
 required = true
-target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <na… → TABLE [ <table_or_view_name> ]"
+target = "{ { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [… → TABLE [ <table_or_view_name> ]"
 anchor = "doc.sql.show-parameters / Syntax"
 note = "alternative { { SESSION | ACCOUNT } | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <na… → TABLE [ <table_or_view_name> ], observed"
 

@@ -1000,44 +1000,44 @@ note = "the documented form with every required part and no optional part"
 id = "sf.scripting.declare.declare.o002"
 kind = "alternative"
 required = true
-target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_pro… → <variable_declaration>"
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <variable_declaration>"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o003"
 kind = "alternative"
 required = true
-target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_proce… → <cursor_declaration>"
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <cursor_declaration>"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o004"
 kind = "alternative"
 required = true
-target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_pr… → <resultset_declaration>"
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <resultset_declaration>"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o005"
 kind = "alternative"
 required = true
-target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <ne… → <nested_stored_procedure_declaration>"
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <nested_stored_procedure_declaration>"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o006"
 kind = "alternative"
 required = true
-target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_pr… → <exception_declaration>"
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <exception_declaration>"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o007"
 kind = "option_present"
 required = true
-target = "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> | <…"
+target = "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> |…"
 note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o008"
 kind = "option_absent"
 required = true
-target = "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> | <…"
+target = "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> |…"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o009"
@@ -1349,7 +1349,7 @@ target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ... ] 
 id = "sf.scripting.declare.procedure-returns-table-as.o016"
 kind = "alternative"
 required = true
-target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ , ..… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
+target = "{ <result_data_type> | TABLE ( [ <col_name> <col_data_type> [ ,… → TABLE ( [ <col_name> <col_data_type> [ , ... ] ] )"
 
 [[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o017"

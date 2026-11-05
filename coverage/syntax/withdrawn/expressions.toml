@@ -61,7 +61,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required LOCAL"
 sql = "SELECT CAST ( NULL AS TIMESTAMP WITH TIME ZONE ) ;"
-valid_as = "sf.expressions.data-types-datetime.timestamp-variations alternative { TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ | TIMESTAMPN… → TIMESTAMP WITH TIME ZONE"
+valid_as = "sf.expressions.data-types-datetime.timestamp-variations alternative { TIMESTAMP_LTZ | TIMESTAMPLTZ | TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP_NTZ |… → TIMESTAMP WITH TIME ZONE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

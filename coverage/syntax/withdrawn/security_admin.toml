@@ -493,7 +493,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ROLE after APPLICATION"
 sql = "GRANT APPLICATION ROLE v1 TO APPLICATION v1 ;"
-valid_as = "sf.security_admin.grant-application-role.application-role-application-user alternative { APPLICATION ROLE <application_role> | APPLICATION <application_name> | USER <user_na… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.grant-application-role.application-role-application-user alternative { APPLICATION ROLE <application_role> | APPLICATION <application_name> | USER… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -520,7 +520,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "GRANT ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN APPLICATION v1 TO ROLE v1 ;"
-valid_as = "sf.security_admin.grant-caller.all-inherited-caller-privileges alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION P… → APPLICATION <app_name>"
+valid_as = "sf.security_admin.grant-caller.all-inherited-caller-privileges alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION… → APPLICATION <app_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -547,7 +547,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "GRANT INHERITED CALLER USAGE ON ALL TABLES IN APPLICATION v1 TO ROLE v1 ;"
-valid_as = "sf.security_admin.grant-caller.inherited-caller-on-all alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION P… → APPLICATION <app_name>"
+valid_as = "sf.security_admin.grant-caller.inherited-caller-on-all alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION… → APPLICATION <app_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -583,7 +583,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ROLE after TO"
 sql = "GRANT OWNERSHIP ON TABLE v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { MODIFY | MONITOR | USAGE | OPERATE | READ | APPLY | WRITE | SELECT | CREATE | APPLYBUDGET | DELETE | OWNE… → OWNERSHIP"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { MODIFY | MONITOR | USAGE | OPERATE | READ | APPLY | WRITE | SELECT | CREATE | APPLYBUDGET | DELETE |… → OWNERSHIP"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -610,7 +610,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "GRANT MODIFY ON APPLICATION v1 TO APPLICATION v1 ;"
-valid_as = "sf.security_admin.grant-privilege-application alternative { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GRO… → APPLICATION"
+valid_as = "sf.security_admin.grant-privilege-application alternative { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -628,7 +628,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MATERIALIZED after CREATE"
 sql = "GRANT CREATE VIEW ON SCHEMA v1 TO APPLICATION v1 ;"
-valid_as = "sf.security_admin.grant-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.grant-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -637,7 +637,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after CREATE"
 sql = "GRANT CREATE VIEW ON SCHEMA v1 TO APPLICATION v1 ;"
-valid_as = "sf.security_admin.grant-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.grant-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -646,7 +646,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION"
 sql = "GRANT CREATE COMPUTE POOL ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FA… → COMPUTE POOL"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → COMPUTE POOL"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -664,7 +664,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MATERIALIZED after CREATE"
 sql = "GRANT CREATE VIEW ON SCHEMA v1 TO APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.grant-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -673,7 +673,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after CREATE"
 sql = "GRANT CREATE VIEW ON SCHEMA v1 TO APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.grant-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -691,7 +691,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after ON"
 sql = "GRANT REFERENCE_USAGE ON VIEW v1 TO SHARE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE <name… → VIEW <name>"
+valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <name> | SEMANTIC VIEW <name> | { TABLE… → VIEW <name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -700,7 +700,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required EXTERNAL after ON"
 sql = "GRANT REFERENCE_USAGE ON TABLE v1 TO SHARE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <na… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -718,7 +718,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ICEBERG after ON"
 sql = "GRANT REFERENCE_USAGE ON TABLE v1 TO SHARE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <na… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -736,7 +736,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DYNAMIC after ON"
 sql = "GRANT REFERENCE_USAGE ON TABLE v1 TO SHARE v1 ;"
-valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL <na… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.grant-privilege-share alternative { DATABASE <name> | SCHEMA <name> | FUNCTION <name> | MODEL… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -790,7 +790,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESOLVE after GRANT"
 sql = "GRANT ALL ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN … → ALL [ PRIVILEGES ]"
+valid_as = "sf.security_admin.grant-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN… → ALL [ PRIVILEGES ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -799,7 +799,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE"
 sql = "GRANT CREATE SERVICE ON SCHEMA v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -817,7 +817,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT"
 sql = "GRANT CREATE SNAPSHOT ON SCHEMA v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -826,7 +826,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET"
 sql = "GRANT CREATE SNAPSHOT ON SCHEMA v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -844,7 +844,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #2"
 sql = "GRANT CREATE SERVICE ON FUTURE SCHEMAS IN DATABASE v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE #2"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -862,7 +862,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT #2"
 sql = "GRANT CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -871,7 +871,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET after SNAPSHOT"
 sql = "GRANT CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 TO DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -880,7 +880,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "GRANT CREATE APPLICATION ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -889,7 +889,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ORGANIZATION after CREATE"
 sql = "GRANT CREATE LISTING ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVE… → LISTING"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → LISTING"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -898,7 +898,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PREVIEW after CREATE"
 sql = "GRANT CREATE APPLICATION ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -961,7 +961,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESOLVE after GRANT"
 sql = "GRANT ALL ON ACCOUNT TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN … → ALL [ PRIVILEGES ]"
+valid_as = "sf.security_admin.grant-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN… → ALL [ PRIVILEGES ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -970,7 +970,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE after APPLICATION"
 sql = "GRANT ATTACH LISTING ON APPLICATION v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | C… → APPLICATION"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -979,7 +979,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #2"
 sql = "GRANT CREATE SERVICE ON SCHEMA v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -997,7 +997,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT"
 sql = "GRANT CREATE SNAPSHOT ON SCHEMA v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1006,7 +1006,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET"
 sql = "GRANT CREATE SNAPSHOT ON SCHEMA v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1024,7 +1024,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #3"
 sql = "GRANT CREATE SERVICE ON FUTURE SCHEMAS IN DATABASE v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE #2"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1042,7 +1042,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT #2"
 sql = "GRANT CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1051,7 +1051,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET after SNAPSHOT"
 sql = "GRANT CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 TO v1 ;"
-valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1123,7 +1123,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "REVOKE ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN APPLICATION v1 FROM ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-caller.all-inherited-caller-privileges alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION P… → APPLICATION <app_name>"
+valid_as = "sf.security_admin.revoke-caller.all-inherited-caller-privileges alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION… → APPLICATION <app_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1150,7 +1150,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "REVOKE INHERITED CALLER USAGE ON ALL TABLES IN APPLICATION v1 FROM ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-caller.inherited-caller-on-all alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION P… → APPLICATION <app_name>"
+valid_as = "sf.security_admin.revoke-caller.inherited-caller-on-all alternative { ACCOUNT | DATABASE <db_name> | SCHEMA <schema_name> | APPLICATION <app_name> | APPLICATION… → APPLICATION <app_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1195,7 +1195,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MATERIALIZED after CREATE"
 sql = "REVOKE CREATE VIEW ON SCHEMA v1 FROM APPLICATION v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.revoke-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1204,7 +1204,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after CREATE"
 sql = "REVOKE CREATE VIEW ON SCHEMA v1 FROM APPLICATION v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.revoke-privilege-application alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1213,7 +1213,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION"
 sql = "REVOKE CREATE COMPUTE POOL ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FA… → COMPUTE POOL"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → COMPUTE POOL"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1231,7 +1231,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MATERIALIZED after CREATE"
 sql = "REVOKE CREATE VIEW ON SCHEMA v1 FROM APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1240,7 +1240,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after CREATE"
 sql = "REVOKE CREATE VIEW ON SCHEMA v1 FROM APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW"
+valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1258,7 +1258,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MATERIALIZED after CREATE #2"
 sql = "REVOKE CREATE VIEW ON FUTURE SCHEMAS IN DATABASE v1 FROM APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW #2"
+valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1267,7 +1267,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after CREATE #2"
 sql = "REVOKE CREATE VIEW ON FUTURE SCHEMAS IN DATABASE v1 FROM APPLICATION ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { … → VIEW #2"
+valid_as = "sf.security_admin.revoke-privilege-application-role alternative { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | {… → VIEW #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1285,7 +1285,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC after ON"
 sql = "REVOKE REFERENCE_USAGE ON VIEW v1 FROM SHARE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIEW … → { VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIEW… → { VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1294,7 +1294,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required EXTERNAL after ON"
 sql = "REVOKE REFERENCE_USAGE ON TABLE v1 FROM SHARE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIE… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1312,7 +1312,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ICEBERG after ON"
 sql = "REVOKE REFERENCE_USAGE ON TABLE v1 FROM SHARE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIE… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1330,7 +1330,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DYNAMIC after ON"
 sql = "REVOKE REFERENCE_USAGE ON TABLE v1 FROM SHARE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIE… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
+valid_as = "sf.security_admin.revoke-privilege-share alternative { DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC… → { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1384,7 +1384,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESOLVE after REVOKE"
 sql = "REVOKE ALL ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN … → ALL [ PRIVILEGES ]"
+valid_as = "sf.security_admin.revoke-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN… → ALL [ PRIVILEGES ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1393,7 +1393,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "REVOKE CREATE APPLICATION ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1402,7 +1402,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ORGANIZATION after CREATE"
 sql = "REVOKE CREATE LISTING ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVE… → LISTING"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → LISTING"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1411,7 +1411,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PREVIEW after CREATE"
 sql = "REVOKE CREATE APPLICATION ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1420,7 +1420,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required MANAGED after EXECUTE"
 sql = "REVOKE EXECUTE ALERT ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE | CO… → EXECUTE { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE |… → EXECUTE { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1438,7 +1438,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SESSION after MODIFY"
 sql = "REVOKE MODIFY LOG LEVEL ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE | CO… → MODIFY { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE |… → MODIFY { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1456,7 +1456,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESOLVE after REVOKE"
 sql = "REVOKE ALL ON ACCOUNT FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXT… → ALL [ PRIVILEGES ]"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { { CREATE { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE |… → ALL [ PRIVILEGES ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1465,7 +1465,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #2"
 sql = "REVOKE CREATE SERVICE ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1483,7 +1483,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT"
 sql = "REVOKE CREATE SNAPSHOT ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1492,7 +1492,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET"
 sql = "REVOKE CREATE SNAPSHOT ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1510,7 +1510,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #3"
 sql = "REVOKE CREATE SERVICE ON FUTURE SCHEMAS IN DATABASE v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE #2"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1528,7 +1528,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT #2"
 sql = "REVOKE CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1537,7 +1537,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET after SNAPSHOT"
 sql = "REVOKE CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 FROM DATABASE ROLE v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1546,7 +1546,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE"
 sql = "REVOKE CREATE APPLICATION ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1555,7 +1555,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ORGANIZATION after CREATE"
 sql = "REVOKE CREATE LISTING ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVE… → LISTING"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → LISTING"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1564,7 +1564,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PREVIEW after CREATE"
 sql = "REVOKE CREATE APPLICATION ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAI… → APPLICATION"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME |… → APPLICATION"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1627,7 +1627,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESOLVE after REVOKE"
 sql = "REVOKE ALL ON ACCOUNT FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN … → ALL [ PRIVILEGES ]"
+valid_as = "sf.security_admin.revoke-privilege-user alternative { { ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT | APPLY { { AGGREGATION | AUTHENTICATION | JOIN… → ALL [ PRIVILEGES ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1636,7 +1636,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #2"
 sql = "REVOKE CREATE SERVICE ON SCHEMA v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1654,7 +1654,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT"
 sql = "REVOKE CREATE SNAPSHOT ON SCHEMA v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1663,7 +1663,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET"
 sql = "REVOKE CREATE SNAPSHOT ON SCHEMA v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1681,7 +1681,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after CREATE #3"
 sql = "REVOKE CREATE SERVICE ON FUTURE SCHEMAS IN DATABASE v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC F… → SERVICE #2"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1699,7 +1699,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required POLICY after SNAPSHOT #2"
 sql = "REVOKE CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1708,7 +1708,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SET after SNAPSHOT"
 sql = "REVOKE CREATE SNAPSHOT ON FUTURE SCHEMAS IN DATABASE v1 FROM v1 ;"
-valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC … → SNAPSHOT #2"
+valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SNAPSHOT #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1741,19 +1741,19 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.security_admin.show-authentication-policies"
 kind = "required_operand_missing"
-target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <…"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <database_name>"
 sql = "SHOW AUTHENTICATION POLICIES IN DATABASE ;"
-valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_n… → DATABASE"
+valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-authentication-policies"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <ap…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <schema_name>"
 sql = "SHOW AUTHENTICATION POLICIES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_nam… → SCHEMA"
+valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1762,7 +1762,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
 sql = "SHOW AUTHENTICATION POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPL… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-authentication-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1777,7 +1777,7 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.security_admin.show-backup-policies"
 kind = "required_operand_missing"
-target = "<db_name> in [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } [ STARTS WITH '<name_stri…"
+target = "<db_name> in [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } [ STARTS WITH…"
 note = "omit <db_name>"
 sql = "SHOW BACKUP POLICIES IN DATABASE ;"
 valid_as = "sf.security_admin.show-backup-policies alternative { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } → DATABASE"
@@ -1786,7 +1786,7 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.security_admin.show-backup-policies"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } [ STARTS WITH '<name_…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } [ STARTS WITH…"
 note = "omit <schema_name>"
 sql = "SHOW BACKUP POLICIES IN SCHEMA ;"
 valid_as = "sf.security_admin.show-backup-policies alternative { ACCOUNT | DATABASE | DATABASE <db_name> | SCHEMA | SCHEMA <schema_name> } → SCHEMA"
@@ -1859,9 +1859,9 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.security_admin.show-feature-policies.policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_name> | SCHEMA <s…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_name> | SCHEMA…"
 sql = "SHOW FEATURE POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-feature-policies.policies alternative { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databa… → APPLICATION <app_name>"
+valid_as = "sf.security_admin.show-feature-policies.policies alternative { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE… → APPLICATION <app_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1897,7 +1897,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required FUTURE"
 sql = "SHOW GRANTS TO ROLE v1 ;"
-valid_as = "sf.security_admin.show-grants.grants-to-application-application alternative { APPLICATION <app_name> | APPLICATION ROLE [ <app_name> . ] <app_role_name> | SERVICE ROLE <service… → ROLE <role_name>"
+valid_as = "sf.security_admin.show-grants.grants-to-application-application alternative { APPLICATION <app_name> | APPLICATION ROLE [ <app_name> . ] <app_role_name> | SERVICE ROLE… → ROLE <role_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1906,7 +1906,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after OF"
 sql = "SHOW GRANTS OF ROLE v1 ;"
-valid_as = "sf.security_admin.show-grants.grants-of-application-role alternative { APPLICATION ROLE <app_role_name> | SERVICE ROLE <service_name> ! <service_role_name> | ROLE <role_… → ROLE <role_name>"
+valid_as = "sf.security_admin.show-grants.grants-of-application-role alternative { APPLICATION ROLE <app_role_name> | SERVICE ROLE <service_name> ! <service_role_name> | ROLE… → ROLE <role_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1924,7 +1924,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required APPLICATION after TO #2"
 sql = "SHOW GRANTS TO ROLE v1 ;"
-valid_as = "sf.security_admin.show-grants.grants-to-application-application alternative { APPLICATION <app_name> | APPLICATION ROLE [ <app_name> . ] <app_role_name> | SERVICE ROLE <service… → ROLE <role_name>"
+valid_as = "sf.security_admin.show-grants.grants-to-application-application alternative { APPLICATION <app_name> | APPLICATION ROLE [ <app_name> . ] <app_role_name> | SERVICE ROLE… → ROLE <role_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1948,7 +1948,7 @@ reason = "the rejection renders SQL a hand row observes because Snowflake parses
 [[withdrawn]]
 form = "sf.security_admin.show-ingress-policies"
 kind = "required_operand_missing"
-target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUN…"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON {…"
 note = "omit <database_name>"
 sql = "SHOW INGRESS POLICIES IN DATABASE ;"
 valid_as = "sf.security_admin.show-ingress-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } → DATABASE"
@@ -1957,7 +1957,7 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.security_admin.show-ingress-policies"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT …"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT…"
 note = "omit <schema_name>"
 sql = "SHOW INGRESS POLICIES IN SCHEMA ;"
 valid_as = "sf.security_admin.show-ingress-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } → SCHEMA"
@@ -1978,7 +1978,7 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW MASKING POLICIES IN DATABASE ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1987,43 +1987,43 @@ kind = "required_operand_missing"
 target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW MASKING POLICIES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-masking-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW MASKING POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-masking-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW MASKING POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-masking-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW MASKING POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-masking-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW MASKING POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-masking-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2092,19 +2092,19 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.security_admin.show-password-policies"
 kind = "required_operand_missing"
-target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <…"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <database_name>"
 sql = "SHOW PASSWORD POLICIES IN DATABASE ;"
-valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_n… → DATABASE"
+valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-password-policies"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <ap…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <schema_name>"
 sql = "SHOW PASSWORD POLICIES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_nam… → SCHEMA"
+valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2113,7 +2113,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
 sql = "SHOW PASSWORD POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPL… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-password-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2131,7 +2131,7 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW ROW ACCESS POLICIES IN DATABASE ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2140,50 +2140,50 @@ kind = "required_operand_missing"
 target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW ROW ACCESS POLICIES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-row-access-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW ROW ACCESS POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-row-access-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW ROW ACCESS POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-row-access-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW ROW ACCESS POLICIES IN v1 ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-row-access-policies"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW ROW ACCESS POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-row-access-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-secrets"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_name> | APPLICATION PACKA…"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_name> | APPLICATION…"
 sql = "SHOW SECRETS IN v1 ;"
 valid_as = "sf.security_admin.show-secrets alternative { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_name>… → [ DATABASE ] <db_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
@@ -2192,27 +2192,27 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 form = "sf.security_admin.show-secrets"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_name> | APPLICATION PACKA…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_name> | APPLICATION…"
 sql = "SHOW SECRETS IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-secrets alternative { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <applicati… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-secrets alternative { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-session-policies"
 kind = "required_operand_missing"
-target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <…"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <database_name>"
 sql = "SHOW SESSION POLICIES IN DATABASE ;"
-valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_n… → DATABASE"
+valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-session-policies"
 kind = "required_operand_missing"
-target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <ap…"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION…"
 note = "omit <schema_name>"
 sql = "SHOW SESSION POLICIES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_nam… → SCHEMA"
+valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2221,7 +2221,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
 sql = "SHOW SESSION POLICIES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPL… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-session-policies alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2284,7 +2284,7 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW USER FUNCTIONS IN DATABASE ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2293,43 +2293,43 @@ kind = "required_operand_missing"
 target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW USER FUNCTIONS IN SCHEMA ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-functions"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER FUNCTIONS IN v1 ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-functions"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER FUNCTIONS IN v1 ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-functions"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER FUNCTIONS IN v1 ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-functions"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER FUNCTIONS IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-user-functions alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2338,7 +2338,7 @@ kind = "required_operand_missing"
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 note = "omit <database_name>"
 sql = "SHOW USER PROCEDURES IN DATABASE ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATIO… → DATABASE"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → DATABASE"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2347,41 +2347,41 @@ kind = "required_operand_missing"
 target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
 note = "omit <schema_name>"
 sql = "SHOW USER PROCEDURES IN SCHEMA ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION … → SCHEMA"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION… → SCHEMA"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-procedures"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER PROCEDURES IN v1 ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-procedures"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER PROCEDURES IN v1 ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-procedures"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER PROCEDURES IN v1 ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLI… → <schema_name>"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… → <schema_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.show-user-procedures"
 kind = "negative_neighbour"
 target = ""
-note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "the form without its required PACKAGE in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 sql = "SHOW USER PROCEDURES IN APPLICATION v1 ;"
-valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <sch… → APPLICATION <application_name>"
+valid_as = "sf.security_admin.show-user-procedures alternative { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → APPLICATION <application_name>"
 reason = "the rejection renders SQL the documented grammar also accepts"

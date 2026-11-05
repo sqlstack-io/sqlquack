@@ -748,13 +748,13 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { @
 id = "sf.dml.copy-into-location.o060"
 kind = "alternative"
 required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
+target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o062"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o063"
@@ -766,7 +766,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.copy-into-location.o064"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o010"
@@ -1191,87 +1191,87 @@ note = "a bare literal in place of <query>"
 id = "sf.dml.copy-into-location.o427"
 kind = "option_present"
 required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o428"
 kind = "option_absent"
 required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o429"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<… → STORAGE_INTEGRATION = <integration_name>"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID =… → STORAGE_INTEGRATION = <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o430"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = … → CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS =… → CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o431"
 kind = "required_operand_missing"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "omit <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o432"
 kind = "operand_type_class"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o433"
 kind = "negative_neighbour"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "a string literal in place of <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o434"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "omit '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o435"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o436"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o437"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "omit '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o438"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o439"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
@@ -1311,19 +1311,19 @@ note = "an unquoted identifier in place of '<string>'"
 id = "sf.dml.copy-into-location.o121"
 kind = "option_present"
 required = true
-target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o122"
 kind = "option_absent"
 required = true
-target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o123"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE =… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o124"
@@ -1335,13 +1335,13 @@ target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S
 id = "sf.dml.copy-into-location.o125"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE =… → TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o440"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_K… → TYPE = 'NONE'"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… → TYPE = 'NONE'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o127"
@@ -1578,7 +1578,7 @@ target = "[ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' 
 id = "sf.dml.copy-into-location.o462"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = … → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE =… → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o463"
@@ -1755,13 +1755,13 @@ target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE
 id = "sf.dml.copy-into-location.o482"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOK… → STORAGE_INTEGRATION = <integration_name>"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [… → STORAGE_INTEGRATION = <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o483"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZU… → CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [… → CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o484"
@@ -1916,13 +1916,13 @@ note = "a valid expression"
 id = "sf.dml.copy-into-location.o192"
 kind = "option_present"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o193"
 kind = "option_absent"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o194"
@@ -1934,39 +1934,39 @@ target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = 
 id = "sf.dml.copy-into-location.o195"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ FILE_EXTENSION = '<string>' ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ FILE_EXTENSION = '<string>' ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o196"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ FILE_EXTENSION = '<string>' ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ FILE_EXTENSION = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o197"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o198"
 kind = "required_operand_missing"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "omit '<file_format_name_ref>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o199"
 kind = "operand_type_class"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o200"
 kind = "negative_neighbour"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "an unquoted identifier in place of '<file_format_name_ref>'"
 
 [[obligation]]
@@ -2818,67 +2818,67 @@ note = "the form without its required FROM after '<s3_url>'"
 id = "sf.dml.copy-into-location.o526"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required STORAGE_INTEGRATION after ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required STORAGE_INTEGRATION after ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o527"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CREDENTIALS after ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required CREDENTIALS after ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o496"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o497"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AWS_KEY_ID in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required AWS_KEY_ID in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o498"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o499"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o334"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o528"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o529"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_… #2"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #2"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o530"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_… #3"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #3"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o335"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o531"
@@ -2968,25 +2968,25 @@ note = "the form without its required BY in [ PARTITION BY <expr> ]"
 id = "sf.dml.copy-into-location.o344"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o536"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o537"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o345"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o346"
@@ -3070,13 +3070,13 @@ note = "the form without its required { TRUE | FALSE } in [ EMPTY_FIELD_AS_NULL 
 id = "sf.dml.copy-into-location.o538"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #2"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #2"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o359"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o360"
@@ -3088,13 +3088,13 @@ note = "the form without its required { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFL
 id = "sf.dml.copy-into-location.o539"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #3"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #3"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o361"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o362"
@@ -3112,13 +3112,13 @@ note = "the form without its required { TRUE | FALSE } in [ SNAPPY_COMPRESSION =
 id = "sf.dml.copy-into-location.o364"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ FILE_EXTENSION = '<string>' ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ FILE_EXTENSION = '<string>' ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ FILE_EXTENSION = '<string>' ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string1>' [ , '<string2>' , ... ] ) ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ FILE_EXTENSION = '<string>' ] | TYPE = PARQUET [ COMPRESSION = { AUTO | LZO | SNAPPY | NONE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o365"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o366"
@@ -3415,7 +3415,7 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { @
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o073"
 kind = "alternative"
 required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
+target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o074"
@@ -3427,7 +3427,7 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { '
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o075"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o076"
@@ -3439,7 +3439,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o077"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o078"
@@ -3708,87 +3708,87 @@ note = "an unquoted identifier in place of '<s3_url>'"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o124"
 kind = "option_present"
 required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o125"
 kind = "option_absent"
 required = true
-target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o126"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<… → STORAGE_INTEGRATION = <integration_name>"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID =… → STORAGE_INTEGRATION = <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o127"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = … → CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS =… → CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o128"
 kind = "required_operand_missing"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "omit <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o129"
 kind = "operand_type_class"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o130"
 kind = "negative_neighbour"
 required = true
-target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET…"
+target = "<integration_name> in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>'…"
 note = "a string literal in place of <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o131"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "omit '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o132"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o133"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '…"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =…"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o134"
 kind = "required_operand_missing"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "omit '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o135"
 kind = "operand_type_class"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o136"
 kind = "negative_neighbour"
 required = true
-target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '… #2"
+target = "'<string>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY =… #2"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
@@ -3828,19 +3828,19 @@ note = "an unquoted identifier in place of '<string>'"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o142"
 kind = "option_present"
 required = true
-target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o143"
 kind = "option_absent"
 required = true
-target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+target = "[ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o144"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE =… → [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o145"
@@ -3852,13 +3852,13 @@ target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o146"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE… → TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE =… → TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o147"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_K… → TYPE = 'NONE'"
+target = "{ [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… → TYPE = 'NONE'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o148"
@@ -4008,7 +4008,7 @@ target = "[ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' 
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o170"
 kind = "alternative"
 required = true
-target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = … → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+target = "{ [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE =… → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o171"
@@ -4098,13 +4098,13 @@ target = "[ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o184"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZURE_SAS_TOK… → STORAGE_INTEGRATION = <integration_name>"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [… → STORAGE_INTEGRATION = <integration_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o185"
 kind = "alternative"
 required = true
-target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [ AZU… → CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )"
+target = "{ STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( [… → CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] )"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o186"
@@ -4338,13 +4338,13 @@ note = "an unquoted identifier in place of '<regex_pattern>'"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o205"
 kind = "option_present"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o206"
 kind = "option_absent"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o207"
@@ -4356,57 +4356,57 @@ target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = 
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o208"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o209"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o210"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o211"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o212"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o213"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o214"
 kind = "required_operand_missing"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "omit '<file_format_name_ref>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o215"
 kind = "operand_type_class"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o216"
 kind = "negative_neighbour"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "an unquoted identifier in place of '<file_format_name_ref>'"
 
 [[obligation]]
@@ -6314,57 +6314,57 @@ target = "{ TRUE | FALSE } → FALSE #35"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o527"
 kind = "option_present"
 required = true
-target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o528"
 kind = "option_absent"
 required = true
-target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o529"
 kind = "required_operand_missing"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o530"
 kind = "operand_type_class"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o532"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MOD… → METADATA$FILENAME"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILENAME"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o533"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_L… → METADATA$FILE_ROW_NUMBER"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_ROW_NUMBER"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o534"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_… → METADATA$FILE_CONTENT_KEY"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_CONTENT_KEY"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o535"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FIL… → METADATA$FILE_LAST_MODIFIED"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_LAST_MODIFIED"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o536"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_L… → METADATA$START_SCAN_TIME"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$START_SCAN_TIME"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o537"
@@ -6670,67 +6670,67 @@ note = "the form without its required FROM"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o711"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required STORAGE_INTEGRATION after '<s3_url>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required STORAGE_INTEGRATION after '<s3_url>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o712"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CREDENTIALS after '<s3_url>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required CREDENTIALS after '<s3_url>' in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o584"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required ( in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o585"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AWS_KEY_ID in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required AWS_KEY_ID in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o586"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required AWS_SECRET_KEY in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o587"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AW…"
+note = "the form without its required ) in [ { STORAGE_INTEGRATION = <integration_name> | CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o588"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o713"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o714"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_… #2"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #2"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o715"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_… #3"
+note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #3"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o589"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_…"
+note = "the form without its required ) in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o590"
@@ -6814,25 +6814,25 @@ note = "the form without its required ) in [ FILES = ( '<file_name>' [ , '<file_
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o598"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o719"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o720"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o599"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o600"
@@ -6964,13 +6964,13 @@ note = "the form without its required { '<string>' | UTF8 } in [ ENCODING = { '<
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o721"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #2"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #2"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o621"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o622"
@@ -7072,13 +7072,13 @@ note = "the form without its required { TRUE | FALSE } in [ SKIP_BYTE_ORDER_MARK
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o722"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #3"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #3"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o638"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AVRO in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required AVRO in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o639"
@@ -7114,13 +7114,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o723"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #4"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #4"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o644"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORC in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ORC in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o645"
@@ -7150,13 +7150,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o724"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #5"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #5"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o649"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o650"
@@ -7210,13 +7210,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o725"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #6"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #6"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o658"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required XML in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required XML in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o659"
@@ -7264,13 +7264,13 @@ note = "the form without its required { TRUE | FALSE } in [ SKIP_BYTE_ORDER_MARK
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o666"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o667"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o668"
@@ -7294,13 +7294,13 @@ note = "the form without its required { TRUE | FALSE } in [ FORCE = { TRUE | FAL
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o671"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required ( in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o672"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o673"
@@ -7312,7 +7312,7 @@ note = "the form without its required METADATA$FILENAME in [ , <column_name> = M
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o674"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required ) in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o675"
@@ -7561,7 +7561,7 @@ note = "omit <namespace>, observed"
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o707"
 kind = "negative_neighbour"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 anchor = "doc.sql.copy-into-table / Syntax"
 note = "a string literal in place of <column_name>, observed"
 
@@ -7791,13 +7791,13 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { @
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o092"
 kind = "alternative"
 required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
+target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o093"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o094"
@@ -7809,7 +7809,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o095"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o096"
@@ -8144,13 +8144,13 @@ note = "an unquoted identifier in place of '<regex_pattern>'"
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o136"
 kind = "option_present"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o137"
 kind = "option_absent"
 required = true
-target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+target = "[ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o138"
@@ -8162,57 +8162,57 @@ target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = 
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o139"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o140"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o141"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o142"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o143"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o144"
 kind = "alternative"
 required = true
-target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COM… → TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
+target = "{ FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [… → TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o145"
 kind = "required_operand_missing"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "omit '<file_format_name_ref>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o146"
 kind = "operand_type_class"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o147"
 kind = "negative_neighbour"
 required = true
-target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { A…"
+target = "'<file_format_name_ref>' in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = {…"
 note = "an unquoted identifier in place of '<file_format_name_ref>'"
 
 [[obligation]]
@@ -10120,57 +10120,57 @@ target = "{ TRUE | FALSE } → FALSE #35"
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o458"
 kind = "option_present"
 required = true
-target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o459"
 kind = "option_absent"
 required = true
-target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+target = "[ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o460"
 kind = "required_operand_missing"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o461"
 kind = "operand_type_class"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 note = "a valid identifier"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o463"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MOD… → METADATA$FILENAME"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILENAME"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o464"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_L… → METADATA$FILE_ROW_NUMBER"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_ROW_NUMBER"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o465"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_… → METADATA$FILE_CONTENT_KEY"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_CONTENT_KEY"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o466"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FIL… → METADATA$FILE_LAST_MODIFIED"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$FILE_LAST_MODIFIED"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o467"
 kind = "alternative"
 required = true
-target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_L… → METADATA$START_SCAN_TIME"
+target = "{ METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |… → METADATA$START_SCAN_TIME"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o468"
@@ -10494,25 +10494,25 @@ note = "the form without its required ) in [ FILES = ( '<file_name>' [ , '<file_
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o511"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o618"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required FORMAT_NAME after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o619"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o512"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required CSV in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o513"
@@ -10644,13 +10644,13 @@ note = "the form without its required { '<string>' | UTF8 } in [ ENCODING = { '<
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o620"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #2"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #2"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o534"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required JSON in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o535"
@@ -10752,13 +10752,13 @@ note = "the form without its required { TRUE | FALSE } in [ SKIP_BYTE_ORDER_MARK
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o621"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #3"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #3"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o551"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AVRO in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required AVRO in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o552"
@@ -10794,13 +10794,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o622"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #4"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #4"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o557"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORC in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ORC in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o558"
@@ -10830,13 +10830,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o623"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #5"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #5"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o562"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required PARQUET in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o563"
@@ -10890,13 +10890,13 @@ note = "the form without its required ) in [ NULL_IF = ( [ '<string>' [ , '<stri
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o624"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | … #6"
+note = "the form without its required TYPE after ( in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |… #6"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o571"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required XML in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required XML in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o572"
@@ -10944,13 +10944,13 @@ note = "the form without its required { TRUE | FALSE } in [ SKIP_BYTE_ORDER_MARK
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o579"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] | TYPE = JSON [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] | TYPE = AVRO [ COMPRESSION = { AUTO | GZIP | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = ORC [ TRIM_SPACE = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = PARQUET [ COMPRESSION = { AUTO | SNAPPY | NONE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] | TYPE = XML [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] } in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o580"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | …"
+note = "the form without its required ) in [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name_ref>' | TYPE = CSV [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o581"
@@ -10974,13 +10974,13 @@ note = "the form without its required { TRUE | FALSE } in [ FORCE = { TRUE | FAL
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o584"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required ( in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o585"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | METADATA$FILE_LAST_MODIFIED | METADATA$START_SCAN_TIME } in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o586"
@@ -10992,7 +10992,7 @@ note = "the form without its required METADATA$FILENAME in [ , <column_name> = M
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o587"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY | MET…"
+note = "the form without its required ) in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_CONTENT_KEY |…"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o588"
@@ -11173,7 +11173,7 @@ note = "omit <namespace>, observed"
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o607"
 kind = "negative_neighbour"
 required = true
-target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER | METADATA$FILE_…"
+target = "<column_name> in [ INCLUDE_METADATA = ( <column_name> = { METADATA$FILENAME | METADATA$FILE_ROW_NUMBER |…"
 anchor = "doc.sql.copy-into-table / Syntax"
 note = "a string literal in place of <column_name>, observed"
 
@@ -11478,7 +11478,7 @@ note = "the documented form with every required part and no optional part"
 id = "sf.dml.get.o018"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.get.o019"
@@ -11490,7 +11490,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.get.o020"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.get.o021"
@@ -11965,7 +11965,7 @@ target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( {… → VAL
 id = "sf.dml.insert.o053"
 kind = "alternative"
 required = true
-target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] … → <query>"
+target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ]… → <query>"
 
 [[obligation]]
 id = "sf.dml.insert.o015"
@@ -12889,13 +12889,13 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { @
 id = "sf.dml.list.internalstage-externalstage.o013"
 kind = "alternative"
 required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
+target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o014"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o015"
@@ -12907,7 +12907,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.list.internalstage-externalstage.o016"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.list.internalstage-externalstage.o017"
@@ -13548,7 +13548,7 @@ note = "a valid expression"
 id = "sf.dml.merge.o022"
 kind = "alternative"
 required = true
-target = "{ UPDATE { ALL BY NAME | SET <col_name> = <expr> [ , <col_n… → UPDATE { ALL BY NAME | SET <col_name> = <expr> [ , <col_name> = <expr> ... ] }"
+target = "{ UPDATE { ALL BY NAME | SET <col_name> = <expr> [ ,… → UPDATE { ALL BY NAME | SET <col_name> = <expr> [ , <col_name> = <expr> ... ] }"
 
 [[obligation]]
 id = "sf.dml.merge.o023"
@@ -13743,40 +13743,40 @@ target = "[ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED A
 id = "sf.dml.merge.o052"
 kind = "alternative"
 required = true
-target = "{ WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND … → WHEN MATCHED AND <case_predicate> THEN DELETE"
+target = "{ WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND… → WHEN MATCHED AND <case_predicate> THEN DELETE"
 
 [[obligation]]
 id = "sf.dml.merge.o053"
 kind = "alternative"
 required = true
-target = "{ WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT … → WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME"
+target = "{ WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT… → WHEN NOT MATCHED AND <case_predicate> THEN INSERT ALL BY NAME"
 
 [[obligation]]
 id = "sf.dml.merge.o054"
 kind = "required_operand_missing"
 required = true
-target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSE…"
+target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN…"
 note = "omit <case_predicate>"
 
 [[obligation]]
 id = "sf.dml.merge.o055"
 kind = "operand_type_class"
 required = true
-target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSE…"
+target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN…"
 note = "a valid expression"
 
 [[obligation]]
 id = "sf.dml.merge.o056"
 kind = "required_operand_missing"
 required = true
-target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSE… #2"
+target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN… #2"
 note = "omit <case_predicate>"
 
 [[obligation]]
 id = "sf.dml.merge.o057"
 kind = "operand_type_class"
 required = true
-target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN INSE… #2"
+target = "<case_predicate> in [ { WHEN MATCHED AND <case_predicate> THEN DELETE | WHEN NOT MATCHED AND <case_predicate> THEN… #2"
 note = "a valid expression"
 
 [[obligation]]
@@ -14108,7 +14108,7 @@ note = "a valid operand"
 id = "sf.dml.put.o062"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.put.o063"
@@ -14120,7 +14120,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.put.o064"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.put.o065"
@@ -14602,13 +14602,13 @@ target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → { @
 id = "sf.dml.remove.o013"
 kind = "alternative"
 required = true
-target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namesp… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
+target = "{ { @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <ext_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.remove.o014"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespac… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [… → @ [ <namespace> . ] <int_stage_name> [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.remove.o015"
@@ -14620,7 +14620,7 @@ target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace>�
 id = "sf.dml.remove.o016"
 kind = "alternative"
 required = true
-target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path> … → @ ~ [ / <path> ]"
+target = "{ @ [ <namespace> . ] <int_stage_name> [ / <path> ] | @ [ <namespace> . ] % <table_name> [ / <path>… → @ ~ [ / <path> ]"
 
 [[obligation]]
 id = "sf.dml.remove.o017"

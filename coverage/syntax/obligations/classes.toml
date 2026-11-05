@@ -451,13 +451,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o002"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . ANOMALY_DETECTION | SHOW SNOWFLAKE . ML . ANOMALY_DET… → SHOW SNOWFLAKE . ML . ANOMALY_DETECTION"
+target = "{ SHOW SNOWFLAKE . ML . ANOMALY_DETECTION | SHOW SNOWFLAKE . ML .… → SHOW SNOWFLAKE . ML . ANOMALY_DETECTION"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o003"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . ANOMALY_DETECTION | SHOW SNOWFLAKE . ML . A… → SHOW SNOWFLAKE . ML . ANOMALY_DETECTION INSTANCES"
+target = "{ SHOW SNOWFLAKE . ML . ANOMALY_DETECTION | SHOW SNOWFLAKE . ML .… → SHOW SNOWFLAKE . ML . ANOMALY_DETECTION INSTANCES"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o004"
@@ -513,7 +513,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o014"
@@ -3527,7 +3527,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.budget.commands.show-budget.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.budget.commands.show-budget.o014"
@@ -7317,7 +7317,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.classification-profile.commands.show-classification-profile.o011"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.commands.show-classification-profile.o012"
@@ -9360,13 +9360,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.classes.classification.commands.show-classification.o002"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . CLASSIFICATION | SHOW SNOWFLAKE . ML . CLASSIFICATION IN… → SHOW SNOWFLAKE . ML . CLASSIFICATION"
+target = "{ SHOW SNOWFLAKE . ML . CLASSIFICATION | SHOW SNOWFLAKE . ML . CLASSIFICATION… → SHOW SNOWFLAKE . ML . CLASSIFICATION"
 
 [[obligation]]
 id = "sf.classes.classification.commands.show-classification.o003"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . CLASSIFICATION | SHOW SNOWFLAKE . ML . CLASSIF… → SHOW SNOWFLAKE . ML . CLASSIFICATION INSTANCES"
+target = "{ SHOW SNOWFLAKE . ML . CLASSIFICATION | SHOW SNOWFLAKE . ML .… → SHOW SNOWFLAKE . ML . CLASSIFICATION INSTANCES"
 
 [[obligation]]
 id = "sf.classes.classification.commands.show-classification.o004"
@@ -9422,7 +9422,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.classification.commands.show-classification.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.classification.commands.show-classification.o014"
@@ -10157,13 +10157,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o002"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SHOW SNOWFLAK… → SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER"
+target = "{ SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SHOW… → SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o003"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SHOW … → SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER INSTANCES"
+target = "{ SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SHOW… → SHOW SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER INSTANCES"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o004"
@@ -10219,7 +10219,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o014"
@@ -11313,7 +11313,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.forecast.commands.show-forecast.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o014"
@@ -12644,13 +12644,13 @@ note = "the documented form with every required part and no optional part"
 id = "sf.classes.top-insights.commands.show-top-insights.o002"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . TOP_INSIGHTS | SHOW SNOWFLAKE . ML . TOP_INSIGHTS INSTANCE… → SHOW SNOWFLAKE . ML . TOP_INSIGHTS"
+target = "{ SHOW SNOWFLAKE . ML . TOP_INSIGHTS | SHOW SNOWFLAKE . ML . TOP_INSIGHTS… → SHOW SNOWFLAKE . ML . TOP_INSIGHTS"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o003"
 kind = "alternative"
 required = true
-target = "{ SHOW SNOWFLAKE . ML . TOP_INSIGHTS | SHOW SNOWFLAKE . ML . TOP_INSIGHT… → SHOW SNOWFLAKE . ML . TOP_INSIGHTS INSTANCES"
+target = "{ SHOW SNOWFLAKE . ML . TOP_INSIGHTS | SHOW SNOWFLAKE . ML .… → SHOW SNOWFLAKE . ML . TOP_INSIGHTS INSTANCES"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o004"
@@ -12706,7 +12706,7 @@ target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <sch
 id = "sf.classes.top-insights.commands.show-top-insights.o013"
 kind = "alternative"
 required = true
-target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na… → DATABASE <database_name>"
+target = "{ ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |… → DATABASE <database_name>"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o014"
