@@ -1022,3 +1022,98 @@ fn given_pivot_in_from_when_converting_then_each_listed_key_aggregates_its_group
         );
     }
 }
+
+#[test]
+fn given_keys_beyond_plain_names_when_converting_flatten_then_paths_are_written_as_recorded() {
+    let path = |json: &str, recursive: bool, filter: &str| {
+        format!(
+            "SELECT f.path AS v FROM (SELECT 1 AS x) AS t, LATERAL FLATTEN(input => PARSE_JSON('{json}'), \
+             recursive => {recursive}) AS f WHERE {filter}"
+        )
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "an accented name is written as it is",
+            sql: path(r#"{"éa": 1}"#, false, "TRUE"),
+            expected_outcome: Ok("éa"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a quote is bracketed, the quote escaped",
+            sql: path(r#"{"it''s": 1}"#, false, "TRUE"),
+            expected_outcome: Ok(r"['it\'s']"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a name below a bracketed key keeps its dot, the leading dot dropped",
+            sql: path(r#"{"a_1": {"b c": {"d": 6}}}"#, true, "f.key = 'd'"),
+            expected_outcome: Ok("a_1['b c'].d"),
+        },
+        BuiltFirstValueTestCase {
+            description: "an index below a bracketed key holding [ follows the bracket",
+            sql: path(r#"{"a[b": [3]}"#, true, "f.index = 0"),
+            expected_outcome: Ok("['a[b'][0]"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a double quote is bracketed as it is",
+            sql: path(r#"{"q\\"t": 3}"#, true, "TRUE"),
+            expected_outcome: Ok(r#"['q"t']"#),
+        },
+        BuiltFirstValueTestCase {
+            description: "a letter outside Latin-1 raises",
+            sql: path(r#"{"λ": 1}"#, false, "TRUE"),
+            expected_outcome: Err("a character no recording shows"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key with a backslash raises",
+            sql: path(r#"{"a\\\\b": 1}"#, true, "TRUE"),
+            expected_outcome: Err("a character no recording shows"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_misspelled_text_when_trying_a_month_name_format_then_it_is_null_and_spaces_are_trimmed() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "surrounding spaces are trimmed",
+            sql: "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP_NTZ(' 01-MAR-26 10:15 ', 'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("2026-03-01 10:15:00.000"),
+        },
+        FirstValueTestCase {
+            description: "seconds the format does not read make it NULL",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('01-MAR-26 10:15:30', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "an ISO spelling is NULL under the month-name format",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('2026-03-01T10:15:00Z', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a tab, which no recording shows, still raises",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('01-MAR-26\t10:15', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Err("date_text_spelling"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

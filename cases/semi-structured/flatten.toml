@@ -124,14 +124,13 @@ tags = ["invalid"]
 
 [[case]]
 id = "flatten_key_paths"
-description = "FLATTEN's KEY and PATH for keys with spaces, digits, dots and accents, whose PATH the guard raises for."
+description = "FLATTEN's KEY and PATH for keys with spaces, digits, dots and accents."
 columns = [{ name = "v", type = "VARIANT" }]
 rows = [
   ["PARSE_JSON('{\"o\":{\"1\":1,\"A b\":2,\"a.b\":3,\"_x\":4,\"é\":5,\"Z9\":6}}')"],
 ]
 query = "SELECT f.key, f.path, f.value::NUMBER(10,0) AS n FROM input i, LATERAL FLATTEN(input => i.v:o) f ORDER BY f.key"
 order = "ordered"
-expected_divergence = "json_fidelity"
 tags = ["unicode", "case-sensitive-key"]
 
 [[case]]

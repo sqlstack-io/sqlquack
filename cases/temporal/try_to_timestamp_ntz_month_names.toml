@@ -40,5 +40,4 @@ rows = [
   ["'01 MAR 26 10:15'"],
 ]
 expression = "TRY_TO_TIMESTAMP_NTZ(x, 'DD-MON-YY HH24:MI')"
-expected_divergence = "date_text_spelling"
 tags = ["boundary", "whitespace"]

@@ -79,6 +79,8 @@ pub const NULL_DATE_TEXT_PATTERN: &str = "[0-9]{4}/[0-9]{2}/[0-9]{2}|(Jan|Feb|Ma
 pub const RAISE_MARKER: &str = "' AS INTEGER) AS \"NULL\")";
 /// The known divergence for timestamps DuckDB cannot hold in nanoseconds.
 pub const TIMESTAMP_RANGE: &str = "timestamp_range";
+/// Whitespace other than a space, which no recording shows a formatted TRY_ parse trimming or rejecting.
+pub const UNTRIMMED_SPACE: &str = "[\\t\\n\\r\\x0b\\x0c]";
 /// The error a TRY_ conversion to DATE raises for a spelling no recording shows.
 pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
 /// ISO date-time text with an optional `T`, fraction and Z, ±HH:MM or ` ±HHMM` zone, captured.
