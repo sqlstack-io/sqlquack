@@ -4,12 +4,12 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::analysis::main::analyze::analyze;
-use crate::analysis::main::parse_session::parse_session;
-use crate::analysis::main::session_conversion_options::session_conversion_options;
 use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};
 use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::{ConvertArguments, ConvertReport};
+use sqlquack_rules::session::main::parse_session::parse_session;
+use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
