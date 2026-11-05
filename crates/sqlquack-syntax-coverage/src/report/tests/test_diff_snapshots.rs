@@ -1,8 +1,10 @@
+use std::collections::BTreeSet;
+
 use crate::check::models::FormState;
 use crate::report::main::diff_snapshots::diff_snapshots;
 use crate::report::models::{Snapshot, SnapshotDiff};
 use crate::report::tests::helpers::{base, ids};
-use crate::report::tests::test_types::DiffTestCase;
+use crate::report::tests::test_types::{BaseDiffTestCase, DiffTestCase};
 
 #[test]
 fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_are_named() {
@@ -106,6 +108,42 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             expected_diff: SnapshotDiff::default(),
         },
         DiffTestCase {
+            description: "a receipt the head newly contradicts, cited by a form or not, is a regression",
+            head: |head| Snapshot {
+                receipt_contradictions: Some(BTreeSet::from(["retired-1".to_owned()])),
+                ..head
+            },
+            expected_diff: SnapshotDiff {
+                receipts_contradicted: ids(&["retired-1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
+            description: "a documented case's receipt newly contradicted is listed apart (D135)",
+            head: |mut head| {
+                head.documented_cases
+                    .insert("sf.query.select.k3".to_owned());
+                head.receipt_contradictions =
+                    Some(BTreeSet::from(["sf.query.select.k3".to_owned()]));
+                head
+            },
+            expected_diff: SnapshotDiff {
+                documented_receipts_contradicted: ids(&["sf.query.select.k3"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
+            description: "a receipt without SQL to judge is listed, not a regression",
+            head: |head| Snapshot {
+                unjudged_receipts: Some(BTreeSet::from(["retired-2".to_owned()])),
+                ..head
+            },
+            expected_diff: SnapshotDiff {
+                unjudged_receipts: ids(&["retired-2"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
             description: "a verified form removed from the catalogue is also lost",
             head: |mut head| {
                 head.forms.remove("sf.query.select");
@@ -120,6 +158,42 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
     ];
     for test_case in test_cases {
         let diff: SnapshotDiff = diff_snapshots(&base(), &(test_case.head)(base()));
+        assert_eq!(diff, test_case.expected_diff, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_a_base_without_receipt_verdicts_when_diffing_then_no_contradiction_is_new() {
+    let test_cases = [
+        BaseDiffTestCase {
+            description: "every head contradiction is existing against a base from before D141",
+            base: |base| Snapshot {
+                receipt_contradictions: None,
+                ..base
+            },
+            head: |head| Snapshot {
+                receipt_contradictions: Some(BTreeSet::from(["retired-1".to_owned()])),
+                ..head
+            },
+            expected_diff: SnapshotDiff {
+                receipts_still_contradicted: ids(&["retired-1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        BaseDiffTestCase {
+            description: "a head from before D141 lists no receipts at all",
+            base: |base| base,
+            head: |head| Snapshot {
+                receipt_contradictions: None,
+                unjudged_receipts: None,
+                ..head
+            },
+            expected_diff: SnapshotDiff::default(),
+        },
+    ];
+    for test_case in test_cases {
+        let diff: SnapshotDiff =
+            diff_snapshots(&(test_case.base)(base()), &(test_case.head)(base()));
         assert_eq!(diff, test_case.expected_diff, "{}", test_case.description);
     }
 }

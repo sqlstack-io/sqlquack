@@ -35,6 +35,7 @@ pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
         cases: sections.cases.records,
         receipts: sections.receipts.records.0,
         retired_receipts: sections.receipts.records.1,
+        receipt_sql: sections.receipts.records.2,
         reviews: sections.reviews.records,
         unobservable: sections.unobservable.records.0,
         diagnostics: sections.unobservable.records.1,

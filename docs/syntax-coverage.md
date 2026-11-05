@@ -416,6 +416,24 @@ tree, so any parser commit makes its verified forms stale until it is renewed; a
 fingerprints goes stale only for the forms whose cases now parse differently. Either shows up as a
 regression.
 
+## Receipt contradictions (decision D141)
+
+The case lists above only reach receipts through the catalogue: a receipt whose case id no form
+cites, such as a retired or hand-written case, never counts. A snapshot therefore also records
+`receipt_contradictions`: every current receipt, cited or not, whose statement the parser
+contradicts. Statements are grouped by SQL, setup and session hashes and judged as above: the parser
+rejects a statement Snowflake parsed, or accepts one Snowflake refused as syntax. The SQL comes from
+the case that names the hash or from the `inputs` of the run reports beside the receipts, each
+checked against its hash. A receipt neither gives is listed in `unjudged_receipts` and judged by
+nothing. `diff` fails on a receipt the head contradicts and the base did not. A receipt of a case
+marked `documented (D113)` is listed on its own line instead (decision D135). Receipts both sides
+contradict, and every head contradiction when the base snapshot predates these fields, are listed in
+the JSON without failing.
+
+The tracked baseline and receipts are a subset of the evidence, so a merge gate takes both snapshots
+on the full catalogue and evidence: `snapshot` with the target branch's binary, `snapshot` with the
+head's binary, then `diff BASE HEAD`.
+
 ## Translation
 
 `syntax-coverage translation --sqlquack <binary> [--policy sqlquack.toml] [--family <family>]

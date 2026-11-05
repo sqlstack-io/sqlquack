@@ -246,24 +246,32 @@ impl Parser {
 
     /// Reads Snowflake CREATE TASK properties up to AS, refusing items that are not tags, contacts, assignments or clauses.
     pub(crate) fn check_snowflake_task_properties(&mut self, graph: bool) -> Result<()> {
+        let mut executes_as = false;
         while !(graph && (self.is_at_end() || self.check(TokenType::Semicolon)))
             && !(!graph && self.check(TokenType::As))
         {
             self.match_token(TokenType::With);
             if self.match_identifier("TAG") {
                 self.skip_snowflake_task_assignments(|parser| {
-                    parser.expect_token(TokenType::String).map(|_| ())
+                    if parser.match_token(TokenType::String) {
+                        return Ok(());
+                    }
+                    parser.skip_snowflake_name()
                 })?;
             } else if self.match_identifier("CONTACT") {
                 self.skip_snowflake_task_assignments(Self::skip_snowflake_name)?;
             } else if self.match_identifier("TASK_DEFAULTS") {
                 self.skip_snowflake_task_assignments(Self::skip_snowflake_task_value)?;
             } else if self.match_token(TokenType::After) {
+                if executes_as {
+                    return Err(self.parse_error("AFTER comes before EXECUTE AS USER"));
+                }
                 self.skip_snowflake_name()?;
                 while self.match_token(TokenType::Comma) {
                     self.skip_snowflake_name()?;
                 }
             } else if self.match_text_seq(&["EXECUTE", "AS", "USER"]) {
+                executes_as = true;
                 self.skip_snowflake_name()?;
             } else if self.match_token(TokenType::When) {
                 if self.check(TokenType::As) {
@@ -311,6 +319,8 @@ impl Parser {
         }
         self.match_token(TokenType::Dash);
         if self.check(TokenType::String)
+            || self.check(TokenType::DollarString)
+            || self.check(TokenType::HeredocString)
             || self.check(TokenType::Number)
             || self.check(TokenType::True)
             || self.check(TokenType::False)

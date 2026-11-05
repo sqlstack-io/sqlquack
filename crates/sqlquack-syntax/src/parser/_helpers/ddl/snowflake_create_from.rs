@@ -96,7 +96,7 @@ impl Parser {
         }))))
     }
 
-    /// Parses `MODEL ... FROM MODEL`, `GATEWAY ... FROM SPECIFICATION` or a bare `EXPERIMENT`; None for other forms.
+    /// Parses `MODEL ... FROM MODEL`, `{ GATEWAY | EXPERIMENT } ... FROM SPECIFICATION` or a bare `EXPERIMENT`; None for other forms.
     fn parse_snowflake_create_ml_object(&mut self, or_replace: bool) -> Result<Option<Expression>> {
         let kind = if self.check_identifier("MODEL") && !self.check_next_identifier("MONITOR") {
             "MODEL"
@@ -138,7 +138,10 @@ impl Parser {
                 }
                 "MODEL"
             }
-            "GATEWAY" => {
+            "GATEWAY" if !self.check(TokenType::From) => {
+                return Err(self.parse_error("Expected FROM SPECIFICATION"));
+            }
+            _ if self.check(TokenType::From) => {
                 self.expect_token(TokenType::From)?;
                 self.expect_alter_words(&[&["SPECIFICATION"]])?;
                 if !self.check(TokenType::String) && !self.check(TokenType::DollarString) {
@@ -215,6 +218,13 @@ impl Parser {
                 None,
                 Some(value),
             ));
+            if self.check(TokenType::Comma)
+                && self
+                    .peek_nth(1)
+                    .is_some_and(|token| token.token_type != TokenType::Semicolon)
+            {
+                self.skip();
+            }
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: kind.to_owned(),

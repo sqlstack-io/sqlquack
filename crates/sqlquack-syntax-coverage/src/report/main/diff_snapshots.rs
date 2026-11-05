@@ -25,7 +25,33 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
         .intersection(&head.syntax_error_cases_accepted)
         .cloned()
         .collect();
+    let empty: BTreeSet<String> = BTreeSet::new();
+    let head_contradicted: &BTreeSet<String> =
+        head.receipt_contradictions.as_ref().unwrap_or(&empty);
+    let new_contradictions: Vec<String> = match &base.receipt_contradictions {
+        Some(base_contradicted) => head_contradicted
+            .difference(base_contradicted)
+            .cloned()
+            .collect(),
+        None => Vec::new(),
+    };
     SnapshotDiff {
+        receipts_contradicted: new_contradictions
+            .iter()
+            .filter(|id| !head.documented_cases.contains(*id))
+            .cloned()
+            .collect(),
+        documented_receipts_contradicted: new_contradictions
+            .iter()
+            .filter(|id| head.documented_cases.contains(*id))
+            .cloned()
+            .collect(),
+        receipts_still_contradicted: head_contradicted
+            .iter()
+            .filter(|id| !new_contradictions.contains(id))
+            .cloned()
+            .collect(),
+        unjudged_receipts: head.unjudged_receipts.iter().flatten().cloned().collect(),
         catalogue_files_changed: paths
             .into_iter()
             .filter(|path| base.catalogue_files.get(*path) != head.catalogue_files.get(*path))
