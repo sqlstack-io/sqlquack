@@ -89,3 +89,15 @@ rows = [
 query = "SELECT x BETWEEN 1 AND NULL AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t008_varchar_number"
+description = "A string compared with numeric bounds, which converts to a number. Catches: a text comparison ('9' and '10' both FALSE against 2 and 10)"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'9'"],
+  ["'10'"],
+]
+query = "SELECT x BETWEEN 2 AND 10 AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

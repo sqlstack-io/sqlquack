@@ -23,7 +23,7 @@ rows = [
   ["1"],
   ["2"],
 ]
-query = "SELECT CASE WHEN x = 1 THEN 1 ELSE 2.5 END AS r FROM input ORDER BY ordinal"
+query = "SELECT CASE WHEN x = 1 THEN 1 ELSE CAST(2.5 AS NUMBER(10,2)) END AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -62,3 +62,17 @@ rows = [
 query = "SELECT CASE WHEN x = 1 THEN NULL ELSE 'e' END AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t006_branches"
+description = "A later true branch, a branch that would divide by zero, a NULL condition and no ELSE. Catches: eager evaluation (10/0 raising on the 0 row), the last true branch winning (0.5 for 4), a NULL condition treated as true, or a default for no ELSE"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"],
+  ["4"],
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT CASE WHEN x = 0 THEN -1 WHEN x > 1 THEN 10 / x WHEN x >= 1 THEN 0.5 END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

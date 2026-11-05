@@ -22,7 +22,7 @@ rows = [
   ["FALSE"],
   ["TRUE"],
 ]
-query = "SELECT IFF(c, 1, 2.5) AS r FROM input ORDER BY ordinal"
+query = "SELECT IFF(c, 1, CAST(2.5 AS NUMBER(10,2))) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

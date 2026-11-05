@@ -19,7 +19,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_timestamp_ntz"
-description = "WEEK of a timestamp just before midnight on 31 December. Catches: the timestamp rounded to the next day"
+description = "WEEK of a timestamp just before midnight on Sunday 29 December 2024, the last day of ISO week 52. Catches: the timestamp rounded to the next day"
 columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
 rows = [
   ["'2024-12-29 23:59:59.999'"],
@@ -31,7 +31,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_tz"
-description = "WEEK of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the part taken from the UTC instant instead of the wall clock"
+description = "WEEK of a TIMESTAMP_TZ whose UTC instant is in the next ISO week. Catches: the part taken from the UTC instant instead of the wall clock"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-29 23:30:00.250 -0800'"],

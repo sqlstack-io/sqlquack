@@ -31,7 +31,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_timestamp_tz"
-description = "QUARTER of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the quarter of the UTC instant (1 for the December row, 2 for the March row) instead of the wall clock"
+description = "QUARTER of TIMESTAMP_TZ values whose UTC instant is in the next quarter. Catches: the quarter of the UTC instant (1 for the December row, 2 for the March row) instead of the wall clock"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-31 23:30:00.250 -0800'"],

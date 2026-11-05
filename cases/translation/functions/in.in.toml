@@ -22,6 +22,7 @@ columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],
   ["9"],
+  ["2"],
 ]
 query = "SELECT x NOT IN (1, 2) AS r FROM input ORDER BY ordinal"
 order = "ordered"

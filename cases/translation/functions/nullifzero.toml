@@ -30,7 +30,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_expr"
-description = "NULL input. Catches: NULL read as 0"
+description = "NULL input. Catches: 0 returned for NULL (ZEROIFNULL semantics)"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
   ["NULL"],

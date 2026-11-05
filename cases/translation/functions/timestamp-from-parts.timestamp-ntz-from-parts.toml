@@ -27,7 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_carry"
-description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end, or zero and negative parts clamped instead of carrying backwards"
+description = "Parts beyond their ranges, which carry. Catches: an error instead of carrying across a year end, or a negative part clamped instead of carrying backwards"
 columns = [{ name = "h", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["24", "0"],

@@ -100,7 +100,7 @@ tags = ["error"]
 
 [[case]]
 id = "t009_two_argument"
-description = "The two-argument form on a TIMESTAMP_TZ, which returns a TIMESTAMP_TZ in the target zone. Catches: the three-argument NTZ path (the wall clock reinterpreted), or an NTZ result (the wall column shows the offset, which the instant comparison ignores)"
+description = "The two-argument form on a TIMESTAMP_TZ, which returns a TIMESTAMP_TZ in the target zone. Catches: the three-argument NTZ path (the wall clock read as UTC: 05:00 instead of 13:00 Kolkata), an NTZ result (r), or the right instant kept in the source or UTC offset (wall 23:30 or 07:30 instead of 13:00)"
 columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
 rows = [
   ["'2024-12-31 23:30:00.250 -0800'"],

@@ -43,11 +43,11 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_null_expr1"
-description = "NULL first argument, beside values that do and do not decide the result. Catches: NULL read as FALSE, or NULL even where three-valued logic gives NULL"
+description = "NULL first argument beside zero and non-zero values. Catches: NULL read as FALSE or TRUE (a value instead of NULL)"
 columns = [{ name = "b", type = "NUMBER(38,0)" }]
 rows = [
+  ["0"],
   ["5"],
-  ["1"],
 ]
 query = "SELECT BOOLXOR(NULL, b) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -55,11 +55,11 @@ tags = ["null"]
 
 [[case]]
 id = "t005_null_expr2"
-description = "NULL second argument. Catches: NULL read as FALSE"
+description = "NULL second argument. beside zero and non-zero values. Catches: NULL read as FALSE or TRUE (a value instead of NULL)"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
+  ["0"],
   ["5"],
-  ["1"],
 ]
 query = "SELECT BOOLXOR(a, NULL) AS r FROM input ORDER BY ordinal"
 order = "ordered"
