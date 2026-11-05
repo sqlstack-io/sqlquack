@@ -1219,3 +1219,39 @@ sql = "SELECT x::INTERVAL"
 dialects = ["Snowflake"]
 sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
 note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_list_function_call"
+sql = "LIST(a)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage after the command"
+note = "Snowflake's LIST is a stage command; DuckDB's LIST(a) aggregate is no Snowflake statement, and LIST needs @stage first"
+
+[[rejection]]
+id = "snowflake_list_function_order_by"
+sql = "LIST(a ORDER BY b)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage after the command"
+note = "Snowflake's LIST is a stage command; DuckDB's ordered LIST aggregate is no Snowflake statement, and LIST needs @stage first"
+
+[[rejection]]
+id = "snowflake_list_without_stage"
+sql = "LIST"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage after the command"
+note = "Snowflake's LIST needs the @stage it lists"
+
+[[rejection]]
+id = "snowflake_unpivot_reserved_value_column"
+sql = "SELECT * FROM q UNPIVOT(values FOR quarter IN (b, c))"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a value column name in UNPIVOT"
+note = "VALUES is a Snowflake reserved word, so it cannot name UNPIVOT's value column unquoted"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword"
+sql = "GRANT abluva TO \"kk8529p@abluva.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; PostgreSQL's keywordless role grant is no Snowflake statement"
+
