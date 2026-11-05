@@ -18,9 +18,10 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Literal};
 
 use crate::conversion::constants::{
-    HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
-    NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,
-    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO, ZERO_OFFSETS,
+    HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTE_TEXT_LENGTH,
+    MINUTES_PER_HOUR, NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON,
+    OFFSET_WITHOUT_COLON, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
+    ZERO_OFFSETS,
 };
 
 /// A timestamp literal in the recorded ISO form: `YYYY-MM-DD[ HH:MI:SS[.f]][ ±HH:MM]`.
@@ -56,7 +57,9 @@ pub(crate) fn timestamp_literal(
     let log = context.log;
     match to {
         SnowflakeType::TimestampNtz { precision } => {
-            let parsed = parse_timestamp(text, false).ok_or_else(unproven)?;
+            let with_seconds = without_seconds(text).then(|| format!("{text}:00"));
+            let parsed = parse_timestamp(with_seconds.as_deref().unwrap_or(text), false)
+                .ok_or_else(unproven)?;
             fits(&parsed, precision).ok_or_else(unproven)?;
             if precision > MICROSECOND_DIGITS && !in_nanosecond_range(parsed.date) {
                 if context.fixture_body {
@@ -191,6 +194,13 @@ fn fits(parsed: &TimestampText<'_>, precision: u8) -> Option<()> {
 
 fn in_nanosecond_range(date: (u16, u16, u16)) -> bool {
     (NANOSECOND_RANGE_START..NANOSECOND_RANGE_END).contains(&date)
+}
+
+/// Whether `text` is `YYYY-MM-DD HH:MI` or `YYYY-MM-DDTHH:MI`, which Snowflake reads with zero seconds.
+fn without_seconds(text: &str) -> bool {
+    text.len() == MINUTE_TEXT_LENGTH
+        && text.as_bytes()[MINUTE_TEXT_LENGTH - 3] == b':'
+        && parse_timestamp(text, false).is_none()
 }
 
 fn parse_timestamp(text: &str, zoned: bool) -> Option<TimestampText<'_>> {
