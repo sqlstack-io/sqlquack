@@ -156,8 +156,15 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a TIMESTAMP_TZ column without a declared offset keeps refusing",
             sql: "SELECT TO_DATE(shipped_at) AS shipped_on FROM orders",
             flags: &["--schema", DECLARED_SCHEMA],
-            mention: "casting TIMESTAMP_TZ(9) to DATE has no proven conversion",
+            mention: "casting to DATE of TIMESTAMP_TZ(9), which reads the local time of an offset",
             expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "the suggested rewrite through a zone column converts the local date",
+            sql: "SELECT CONVERT_TIMEZONE(ship_zone, shipped_at)::TIMESTAMP_NTZ::DATE AS shipped_on FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "relies on known divergence time_zone_spelling at fn:CONVERT_TIMEZONE",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "the declared offset carries through a CTE and COALESCE to DATE_TRUNC",
@@ -1275,6 +1282,23 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every \
                 one\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a TIMESTAMP_TZ local-time reading explains the dropped offset and suggests the rewrite",
+            sql: "SELECT DATEDIFF('day', shipped_at, paid_at) AS days FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            expected_text: "error[SQ0003]: the operand types fall outside every rule's proven \
+                conditions: `fn:DATEDIFF`\n --> <stdin>:1:8\n  |\n1 | SELECT DATEDIFF('day', shipped_at, \
+                paid_at) AS days FROM orders\n  |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ DATEDIFF in \
+                DAY of TIMESTAMP_TZ(9), which reads the local time of an offset DuckDB's TIMESTAMPTZ \
+                drops\n  |\n  = note: a Snowflake TIMESTAMP_TZ stores each value's own UTC offset, and \
+                local dates, times, day boundaries and formats read that offset; DuckDB's TIMESTAMPTZ \
+                keeps only the instant, so SQLQuack cannot reproduce them and adds no columns or hidden \
+                state to keep the offset\n  = help: convert the value to a wall time first: \
+                `CONVERT_TIMEZONE('UTC', col)::TIMESTAMP_NTZ` for UTC, or `CONVERT_TIMEZONE(<zone \
+                column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone\nsqlquack \
+                convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0003", "type_condition", 1, 8),
         },
         ConvertDiagnosticTestCase {
             description: "a schema key matching only ignoring case says unquoted names fold to upper case",

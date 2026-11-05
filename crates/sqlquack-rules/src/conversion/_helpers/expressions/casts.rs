@@ -48,7 +48,7 @@ use crate::conversion::_helpers::expressions::temporal::{
     is_temporal, literal_date, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
     zoned_literal_utc,
 };
-use crate::conversion::_helpers::expressions::variants::to_variant;
+use crate::conversion::_helpers::expressions::variants::{to_variant, written_array};
 use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
@@ -66,7 +66,7 @@ use crate::conversion::constants::{
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
     TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TIMESTAMP_TZ_OFFSET,
     TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE,
-    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
+    VARIANT_CAST, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -117,8 +117,22 @@ pub(crate) fn convert_cast(
         let sql = number_literal_cast(&digits, target.data_type, log).map_err(refuse)?;
         return Ok(Emitted::new(sql, target.data_type));
     }
-    let operand = convert_held(operand_node, site)?;
     let trying = matches!(construct.name.as_str(), "try_cast");
+    if target.data_type == SnowflakeType::Varchar
+        && !trying
+        && let Some(written) = written_array(operand_node, None, site)
+    {
+        let _rule = cast_rule(VARIANT_CAST, log);
+        let written = written?;
+        return Ok(match target.max_length {
+            Some(max_length) => Emitted::new(
+                varchar_length_check(&written.sql, max_length, log),
+                SnowflakeType::Varchar,
+            ),
+            None => written,
+        });
+    }
+    let operand = convert_held(operand_node, site)?;
     if operand.is_variant_held() {
         if type_name == OBJECT_TYPE_NAME && !built_object(operand_node) {
             return Err(refuse(
