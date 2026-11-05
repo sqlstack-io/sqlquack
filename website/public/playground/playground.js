@@ -125,7 +125,8 @@ async function run() {
 		spans.push({ kind: refused ? 'warn' : 'error', span: diagnostic.span, text: tone(rendered(diagnostic, chars)) });
 	let body = '';
 	if (translate.status !== 'skipped') {
-		body = (translate.statements ?? []).map((s) => terminal(escape(s.sql))).join('');
+		const sql = (translate.statements ?? []).map((s) => s.pretty).join(';\n\n');
+		if (sql) body = `<div class="pg-sql">${terminal(escape(sql))}<button class="copy" type="button" data-copy-sql>Copy</button></div>`;
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
 	const policy = translate.profile ? `policy: ${translate.profile}` : '';
@@ -204,6 +205,13 @@ const schedule = () => {
 
 document.addEventListener('click', (event) => {
 	if (event.target.id === 'pg-run') execute();
+	const copy = event.target.closest('[data-copy-sql]');
+	if (copy) {
+		navigator.clipboard.writeText(copy.previousElementSibling.textContent).then(() => {
+			copy.textContent = 'Copied';
+			setTimeout(() => (copy.textContent = 'Copy'), 1500);
+		});
+	}
 });
 sqlBox.addEventListener('input', () => {
 	showCaption(null);

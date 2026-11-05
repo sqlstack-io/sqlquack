@@ -38,6 +38,8 @@ mod test_locations;
 mod test_object_values;
 #[path = "tests/test_override_calls.rs"]
 mod test_override_calls;
+#[path = "tests/test_pretty_sql.rs"]
+mod test_pretty_sql;
 #[path = "tests/test_raises.rs"]
 mod test_raises;
 #[path = "tests/test_session_timezone.rs"]

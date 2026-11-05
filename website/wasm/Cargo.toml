@@ -18,6 +18,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlquack-core = { path = "../../crates/sqlquack-core" }
 sqlquack-duckdb = { path = "../../crates/sqlquack-duckdb", default-features = false }
+sqlquack-format = { path = "../../crates/sqlquack-format" }
 sqlquack-policy = { path = "../../crates/sqlquack-policy" }
 sqlquack-rules = { path = "../../crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "../../crates/sqlquack-semantics" }

@@ -51,6 +51,13 @@ test('each stage reports pass, fail or skipped', () => {
 	assert.deepEqual(stages('SELECT HASH(order_id) AS h FROM orders'), ['pass', 'pass', 'fail']);
 });
 
+test('translated SQL comes laid out over lines, with only whitespace changed', () => {
+	const report = JSON.parse(analyze('SELECT order_id, note FROM orders WHERE order_id > 1', SCHEMA));
+	const [statement] = report.translate.statements;
+	assert.match(statement.pretty, /^SELECT\n {4}.+,\n {4}.+\nFROM .+\nWHERE /);
+	assert.equal(statement.pretty.replace(/\s+/g, ''), statement.sql.replace(/\s+/g, ''));
+});
+
 test('the policy and session parameters choose the profile, or refuse, as on the command line', () => {
 	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	const translate = (settings) => {

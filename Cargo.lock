@@ -1354,6 +1354,7 @@ dependencies = [
  "sqlquack-core",
  "sqlquack-duckdb",
  "sqlquack-evidence",
+ "sqlquack-format",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
@@ -1405,6 +1406,13 @@ dependencies = [
  "tempfile",
  "toml",
  "walkdir",
+]
+
+[[package]]
+name = "sqlquack-format"
+version = "0.2.0"
+dependencies = [
+ "sqlquack-syntax",
 ]
 
 [[package]]

@@ -1250,6 +1250,8 @@ footer a {
 
 .pg-stages {
 	display: grid;
+	/* A zero minimum, so the unwrapped SQL scrolls inside its pane instead of widening the page. */
+	grid-template-columns: minmax(0, 1fr);
 	gap: 12px;
 	align-content: start;
 }
@@ -1357,6 +1359,26 @@ footer a {
 
 .pg-body button {
 	margin: 12px 16px;
+}
+
+/* The translated SQL, laid out over lines, with its Copy button in the corner. */
+.pg-sql {
+	position: relative;
+}
+
+/* The SQL is already laid out over lines, so it never wraps; a long line scrolls sideways. */
+.pg-body .pg-sql .terminal {
+	padding-right: 80px;
+	white-space: pre;
+	overflow-wrap: normal;
+	overflow-x: auto;
+}
+
+.pg-body .pg-sql .copy {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	margin: 0;
 }
 
 .pg-rows {

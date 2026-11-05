@@ -1,0 +1,16 @@
+[package]
+name = "sqlquack-format"
+version.workspace = true
+description = "Readable layout for SQL: line breaks and indentation between tokens, never a token changed."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sqlquack-syntax.workspace = true
+
+[lints]
+workspace = true

@@ -12,10 +12,12 @@ use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_format::pretty_sql;
 use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::Schema;
+use sqlquack_syntax::Dialect;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::analysis::main::assumption_id::assumption_id;
@@ -53,7 +55,10 @@ pub(crate) fn convert_command(
             return ExitCode::from(2);
         }
     };
-    let (report, sql) = report;
+    let (mut report, sql) = report;
+    if arguments.pretty {
+        report.sql = pretty_sql(&report.sql, Dialect::DuckDB);
+    }
     let rendered = match arguments.output.json() {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
         false if report.converted => {

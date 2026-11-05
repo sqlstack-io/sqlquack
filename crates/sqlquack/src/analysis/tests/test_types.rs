@@ -20,6 +20,11 @@ pub(crate) struct EquivalenceCasesTestCase {
     pub(crate) expected_mismatches: Vec<String>,
 }
 
+pub(crate) struct PrettyLayoutTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_mismatches: Vec<String>,
+}
+
 pub(crate) struct DivergenceModeTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

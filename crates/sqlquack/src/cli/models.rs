@@ -103,6 +103,9 @@ pub struct ConvertArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
+    /// Lay the DuckDB SQL out over lines, one clause per line; only whitespace changes.
+    #[arg(long)]
+    pub pretty: bool,
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,

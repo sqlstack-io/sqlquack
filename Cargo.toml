@@ -7,6 +7,7 @@ members = [
     "crates/sqlquack-semantics",
     "crates/sqlquack-rules",
     "crates/sqlquack-duckdb",
+    "crates/sqlquack-format",
     "crates/sqlquack-policy",
     "crates/sqlquack-compare",
     "crates/sqlquack-evidence",
@@ -56,6 +57,7 @@ sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
+sqlquack-format = { path = "crates/sqlquack-format" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }

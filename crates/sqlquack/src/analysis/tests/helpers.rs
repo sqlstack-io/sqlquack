@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use sqlquack_core::parsing::models::{SourceDialect, SourceLocation};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
@@ -7,6 +7,7 @@ use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::constants::CASES_DIR;
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_format::pretty_sql;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::DivergenceMode;
@@ -18,6 +19,7 @@ use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_syntax::{Dialect, TokenKind, tokenize};
 
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::analyze_function::analyze_function;
@@ -694,3 +696,86 @@ pub(crate) fn relying_on_utc_session(constructs: &[&str]) -> DivergenceModeOutco
         categories: vec![],
     }
 }
+
+/// Each repository case whose converted SQL loses a token or its DuckDB parse tree laid out.
+pub(crate) fn pretty_layout_mismatches() -> Vec<String> {
+    let root = repository_root();
+    let policy = load_policy(&root.join(POLICY_FILE_NAME)).expect("the repository policy loads");
+    let cases = load_cases(&root.join(CASES_DIR), &policy).expect("the repository cases load");
+    let converter = PipelineConverter {
+        options: conversion_options(&policy, false),
+        python: None,
+    };
+    let converted: BTreeMap<String, String> = cases
+        .iter()
+        .filter_map(|case| {
+            Some((
+                converted_text(converter.convert(case))?,
+                case.reference.clone(),
+            ))
+        })
+        .rev()
+        .collect();
+    assert!(
+        converted.len() > 100,
+        "{} statements converted",
+        converted.len()
+    );
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    converted
+        .iter()
+        .filter(|(sql, _)| {
+            let pretty = pretty_sql(sql, Dialect::DuckDB);
+            let tree = parse_tree(&connection, sql);
+            !tree.starts_with(PARSED_TREE)
+                || significant_tokens(&pretty) != significant_tokens(sql)
+                || parse_tree(&connection, &pretty) != tree
+                || (pretty == **sql && sql.contains(" FROM "))
+        })
+        .map(|(_, reference)| reference.clone())
+        .collect()
+}
+
+/// The SQL of a conversion, or `None` when it refused.
+fn converted_text(conversion: Conversion) -> Option<String> {
+    let Conversion::Converted { sql, .. } = conversion else {
+        return None;
+    };
+    Some(sql)
+}
+
+/// The text of each token of DuckDB SQL but whitespace.
+fn significant_tokens(sql: &str) -> Vec<&str> {
+    tokenize(sql, Dialect::DuckDB)
+        .expect("converted SQL tokenizes")
+        .iter()
+        .filter(|token| token.kind != TokenKind::Whitespace)
+        .map(|token| token.text(sql))
+        .collect()
+}
+
+/// DuckDB's parse tree of `sql` as JSON, without the source offsets that whitespace moves.
+fn parse_tree(connection: &duckdb::Connection, sql: &str) -> String {
+    let tree: String = connection
+        .query_row("SELECT json_serialize_sql(?)", [sql], |row| row.get(0))
+        .expect("DuckDB serializes the parse tree");
+    let mut parts = tree.split(LOCATION_FIELD);
+    let first: &str = parts.next().unwrap_or_default();
+    std::iter::once(first)
+        .chain(parts.map(|part| {
+            part.trim_start_matches(location_rest)
+                .trim_start_matches(',')
+        }))
+        .collect()
+}
+
+/// Whether `character` can follow `"query_location` in its field: `_length`, `":` and digits.
+fn location_rest(character: char) -> bool {
+    character.is_ascii_alphanumeric() || matches!(character, '_' | '"' | ':')
+}
+
+/// How DuckDB's serialized parse tree of SQL that parses starts.
+const PARSED_TREE: &str = r#"{"error":false"#;
+
+/// The start of DuckDB's source-offset fields, `query_location` and `query_location_length`.
+const LOCATION_FIELD: &str = r#""query_location"#;

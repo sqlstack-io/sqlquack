@@ -177,6 +177,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-format"
+version = "0.2.0"
+dependencies = [
+ "sqlquack-syntax",
+]
+
+[[package]]
 name = "sqlquack-policy"
 version = "0.2.0"
 dependencies = [
@@ -246,6 +253,7 @@ dependencies = [
  "serde_json",
  "sqlquack-core",
  "sqlquack-duckdb",
+ "sqlquack-format",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
