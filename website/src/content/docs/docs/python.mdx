@@ -21,13 +21,18 @@ result.sql  # 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"'
 
 The package builds from the repository with [uv](https://docs.astral.sh/uv/) and requires Python
 3.12 or newer. One wheel loads into every CPython from 3.12, and it ships DuckDB's library beside
-itself.
+itself. On Linux it needs glibc 2.34 or newer. An older interpreter rejects the wheel as "not a
+supported wheel on this platform", so install it into a 3.12 environment:
 
 ```bash
 uv sync --locked --no-group recorder
 make python-wheel
-pip install target/wheels/sqlquack-*.whl
+uv venv --python 3.12 .sqlquack-env
+uv pip install --python .sqlquack-env target/wheels/sqlquack-*.whl
+.sqlquack-env/bin/python -c "import sqlquack; print(sqlquack.__version__)"
 ```
+
+With an existing Python 3.12 or newer, `pip install target/wheels/sqlquack-*.whl` works too.
 
 ## Checking
 
@@ -54,6 +59,7 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 | `diagnostics` | `tuple[Diagnostic, ...]` | The refusals. |
 | `divergences` | `Mapping[str, tuple[str, ...]]` | Known divergences relied on, with their constructs. |
 | `assumptions` | `tuple[str, ...]` | The divergences among them that are assumptions. |
+| `divergence_failures` | `Mapping[str, str]` | How each divergence relied on fails, as the policy file says: `value` (it can return another value) or `loud` (it raises instead). |
 | `notes` | `tuple[str, ...]` | Notes the command line prints. |
 | `rendered` | `str` | The refusals as the command line prints them. |
 | `report` | `Mapping[str, Any]` | Exactly `sqlquack convert --json`'s report. |
@@ -61,7 +67,11 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
 `schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
 `confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides` and
-`verified_overrides`.
+`verified_overrides`. `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
+the parsed contents. `session` and `verified_overrides` take a mapping, such as
+`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings. With `policy` and
+`builtin_policy` both unset, `convert` reads `sqlquack.toml` from the current directory and raises
+`SqlQuackError` when there is none.
 
 ## Diagnostics
 

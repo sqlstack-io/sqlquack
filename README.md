@@ -114,15 +114,32 @@ on divergences whose converted SQL raises rather than returns another value). Ev
 
 HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
 run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
-deduplication or change detection can opt in by setting `default = "warn"` under
-`[divergences.hash]` in its `sqlquack.toml`.
+deduplication or change detection can opt in. A policy file is complete on its own, so start from
+this repository's [sqlquack.toml](sqlquack.toml): a file holding only `[divergences.hash]` is
+rejected, because the comparator, session profiles and edge-case tables are required. Copy it into
+the directory you run `sqlquack` from, and change `default` in its existing `[divergences.hash]`
+table from `"refuse"` to `"warn"`:
+
+```console
+$ cp path/to/sqlquack/sqlquack.toml .
+$ sed -i.bak '/^\[divergences.hash\]/,/^$/ s/^default = "refuse"/default = "warn"/' sqlquack.toml
+$ grep -A3 '^\[divergences.hash\]' sqlquack.toml
+[divergences.hash]
+constructs = ["fn:HASH"]
+default = "warn"
+strict = "refuse"
+```
+
+A divergence the file leaves out is refused.
 
 `function` converts a SQL project function's body, read from a file or from standard input with
 `-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
 "refusals": [diagnostics]}` instead, with the same diagnostics on standard error.
 
-`convert`, `function`, `census` and `index` exit 0 when they succeed, 1 when something is refused,
-and 2 when they cannot run: bad arguments, an unreadable file, or input without SQL.
+`convert` and `function` exit 0 when they succeed, 1 when something is refused, and 2 when they
+cannot run: bad arguments, an unreadable file, or input without SQL. `census` and `index` report
+refused files rather than failing on them: they exit 0 once the report is printed, and 2 when they
+cannot run.
 
 ## Census
 
@@ -182,10 +199,11 @@ result = sqlquack.convert(
 )
 ```
 
-The `sqlquack` package (in `python/`, built with `make python-wheel`) runs the same code as the
-command line. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
-command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
-per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
+The `sqlquack` package (in `python/`, built with `make python-wheel`) needs Python 3.12 or newer and
+runs the same code as the command line. `check` and `convert` return frozen results with typed
+`Diagnostic`s, the text the command line renders, and, for `convert`, its exact `--json` report.
+`ConvertOptions` has one field per `convert` flag. Where the command line exits 2, they raise
+`SqlQuackError`.
 
 ## Evidence
 
