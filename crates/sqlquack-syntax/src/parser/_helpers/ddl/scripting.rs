@@ -140,7 +140,8 @@ impl Parser {
                 if (self.check(TokenType::Var)
                     || self.check(TokenType::Type)
                     || self.check_keyword())
-                    && self.peek_nth(1).map(|token| token.token_type) == Some(TokenType::Eq)
+                    && (!self.is_snowflake()
+                        || self.peek_nth(1).map(|token| token.token_type) == Some(TokenType::Eq))
                 {
                     let name = self.advance_text()?.to_lowercase();
                     if self.match_token(TokenType::Eq) {

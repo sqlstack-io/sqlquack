@@ -913,6 +913,69 @@ sqlquack_error = "Snowflake set operations take no LEFT, RIGHT, FULL, INNER or O
 note = "INNER UNION ... BY NAME is BigQuery's; Snowflake rejects a join side before a set operation (recorded errno 1003)"
 
 [[rejection]]
+id = "snowflake_describe_bare_name"
+sql = "DESCRIBE x"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "Snowflake DESCRIBE names its object kind before the name: it refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_show_profile"
+sql = "SHOW PROFILE FOR QUERY 5"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "SHOW PROFILE is MySQL's; PROFILE is no Snowflake SHOW kind"
+
+[[rejection]]
+id = "snowflake_show_groups"
+sql = "SHOW GROUPS FOR ROLE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "GROUPS is no Snowflake SHOW kind; Snowflake shows user groups as SHOW ORGANIZATION USER GROUPS"
+
+[[rejection]]
+id = "snowflake_show_create_table"
+sql = "SHOW CREATE TABLE t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "SHOW CREATE TABLE is MySQL's; Snowflake returns DDL through GET_DDL, and CREATE is no SHOW kind"
+
+[[rejection]]
+id = "snowflake_describe_extended"
+sql = "DESCRIBE EXTENDED a.b"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "EXTENDED is Hive's and Spark's; Snowflake DESCRIBE names an object kind, and EXTENDED is none"
+
+[[rejection]]
+id = "snowflake_describe_formatted"
+sql = "DESCRIBE FORMATTED a.b"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "FORMATTED is Hive's; Snowflake DESCRIBE names an object kind, and FORMATTED is none"
+
+[[rejection]]
+id = "snowflake_describe_query"
+sql = "DESCRIBE SELECT 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "Snowflake describes a query's result with DESCRIBE RESULT and a query id, not the query itself"
+
+[[rejection]]
+id = "snowflake_describe_bare_quoted_name"
+sql = "DESCRIBE \"history\""
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "a quoted name is still a bare name: Snowflake refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_describe_bare_qualified_name"
+sql = "DESCRIBE db.table"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "a qualified name is still a bare name: Snowflake refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
 id = "snowflake_by_name_on_intersect"
 sql = "SELECT 1 AS a, 2 AS b INTERSECT DISTINCT BY NAME ON (b, a) SELECT 3 AS b, 4 AS a"
 dialects = ["Snowflake"]
@@ -995,6 +1058,28 @@ id = "unary_plus"
 marker = "+"
 node = "pos"
 note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polyglot drops it and keeps only the operand; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+# Fields SQLQuack keeps as written where polyglot drops or infers them. The check counts an entry
+# only when the statement, without whitespace and ignoring case, contains `marker`, the trees differ,
+# and both are equal once every `<field>` key is removed from each.
+
+[[kept_field]]
+id = "snowflake_secondary_role_list"
+marker = "SECONDARYROLES"
+field = "roles"
+note = "USE SECONDARY ROLES a, b, c lists its roles one by one with their quoting; polyglot joins them into one unquoted name; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+[[kept_field]]
+id = "snowflake_show_unnamed_container"
+marker = "SHOW"
+field = "scope_kind"
+note = "SHOW ... IN a.b names no container kind, so SQLQuack records none; polyglot infers SCHEMA from the two-part name, which makes IN a.b and IN SCHEMA a.b one tree"
+
+[[kept_field]]
+id = "snowflake_timestamp_without_time_zone"
+marker = "WITHOUTTIMEZONE"
+field = "to"
+note = "Snowflake documents TIMESTAMP WITHOUT TIME ZONE as a synonym of TIMESTAMP_NTZ, so SQLQuack's cast target is TIMESTAMPNTZ, as for TIMESTAMP_NTZ; polyglot reads it as bare TIMESTAMP, whose meaning follows TIMESTAMP_TYPE_MAPPING; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
 
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts

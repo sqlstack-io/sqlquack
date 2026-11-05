@@ -620,7 +620,6 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["PENDING", "SPECIFICATIONS"],
     &["POSTGRES", "INSTANCES"],
     &["PRICING", "PLANS"],
-    &["PRIMARY", "KEYS"],
     &["PRIVACY", "POLICIES"],
     &["PROJECTION", "POLICIES"],
     &["RELEASE", "CHANNELS"],
@@ -711,6 +710,10 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
 pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["CALLER"],
     &["CORTEX", "SEARCH", "SERVICES"],
+    &["EXPORTED", "KEYS"],
+    &["IMPORTED", "KEYS"],
+    &["PRIMARY", "KEYS"],
+    &["UNIQUE", "KEYS"],
     &["AVAILABLE", "LISTINGS"],
     &["EVENT", "ROUTING", "TABLE", "ON"],
     &["FEATURE", "POLICIES"],

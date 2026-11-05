@@ -60,8 +60,16 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                 let rejection = expected.rejection_for(&entry.sql, &dialect, &sqlquack);
                 let kept_quoting = expected.kept_quoting_for(&entry.sql, &polyglot, &sqlquack);
                 let kept_node = expected.kept_node_for(&entry.sql, &polyglot, &sqlquack);
+                let kept_field = expected.kept_field_for(&entry.sql, &polyglot, &sqlquack);
                 let structured = expected.structured_for(&entry.sql, &polyglot, &sqlquack);
-                match (fix, rejection, kept_quoting, kept_node, structured) {
+                match (
+                    fix,
+                    rejection,
+                    kept_quoting,
+                    kept_node,
+                    kept_field,
+                    structured,
+                ) {
                     (Some(fix), ..) => *summary.fixed.entry(fix.id.clone()).or_default() += 1,
                     (None, Some(rejection), ..) => {
                         *summary.rejected.entry(rejection.id.clone()).or_default() += 1;
@@ -72,13 +80,19 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                             .entry(kept_quoting.id.clone())
                             .or_default() += 1;
                     }
-                    (None, None, None, Some(kept_node), _) => {
+                    (None, None, None, Some(kept_node), ..) => {
                         *summary.kept_nodes.entry(kept_node.id.clone()).or_default() += 1;
                     }
-                    (None, None, None, None, Some(structured)) => {
+                    (None, None, None, None, Some(kept_field), _) => {
+                        *summary
+                            .kept_fields
+                            .entry(kept_field.id.clone())
+                            .or_default() += 1;
+                    }
+                    (None, None, None, None, None, Some(structured)) => {
                         *summary.structured.entry(structured.id.clone()).or_default() += 1;
                     }
-                    (None, None, None, None, None) => summary.differences.push(Finding {
+                    (None, None, None, None, None, None) => summary.differences.push(Finding {
                         from,
                         detail: format!("polyglot: {polyglot}\nsqlquack: {sqlquack}"),
                     }),
