@@ -181,7 +181,8 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: STAR,
         constructs: &["node:star"],
-        conditions: "No EXCLUDE, REPLACE or RENAME; expands to the known columns.",
+        conditions: "Expands to the known columns, without those an EXCLUDE list names; each EXCLUDE \
+                     name unquoted and read by the star. No REPLACE or RENAME.",
         failures: &[],
     },
     RuleSpec {

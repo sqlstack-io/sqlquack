@@ -571,7 +571,7 @@ fn convert_projection(
     named: bool,
 ) -> Result<Vec<Projected>, Refusal> {
     match node_kind(item) {
-        Some(("star", payload)) => star(payload, site, false),
+        Some(("star", payload)) => star(payload, site),
         Some(("annotated", payload)) => {
             let construct = node_construct("annotated");
             let _rule = site.context.log.rule(COMMENT);
@@ -610,21 +610,13 @@ fn convert_projection(
     }
 }
 
-/// The columns `*` or `alias.*` names, without those an EXCLUDE list names where `excluding`.
-pub(crate) fn star(
-    payload: &Value,
-    site: Site<'_>,
-    excluding: bool,
-) -> Result<Vec<Projected>, Refusal> {
+/// The columns `*` or `alias.*` names, without those its EXCLUDE list names.
+pub(crate) fn star(payload: &Value, site: Site<'_>) -> Result<Vec<Projected>, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(STAR);
     let construct = node_construct("star");
     let star = payload_object(payload, &construct)?;
-    let understood: &[&str] = match excluding {
-        true => &["table", "except"],
-        false => &["table"],
-    };
-    require_understood(star, understood, &construct)?;
+    require_understood(star, &["table", "except"], &construct)?;
     let qualifier = star.get("table").and_then(identifier_name);
     let excluded: Vec<String> = list(star, "except")
         .iter()

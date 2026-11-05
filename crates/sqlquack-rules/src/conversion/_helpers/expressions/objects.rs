@@ -114,7 +114,7 @@ pub(crate) fn object_construct(
     if let [argument] = arguments
         && let Some(("star", payload)) = node_kind(argument)
     {
-        let columns = star(payload, site, true)?;
+        let columns = star(payload, site)?;
         let mut keys: Vec<String> = Vec::new();
         let mut values: Vec<Emitted> = Vec::new();
         for (column, value) in columns {
