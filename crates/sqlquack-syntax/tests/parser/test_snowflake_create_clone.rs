@@ -33,6 +33,30 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_ar
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "CREATE DATABASE ROLE alone creates a database named ROLE (recorded success)",
+            sql: "CREATE DATABASE ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database named ROLE clones (recorded errno 2003, after parsing)",
+            sql: "CREATE DATABASE ROLE CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "COPY = ( ) names no kind (recorded errno 1422, after parsing)",
+            sql: "CREATE STREAM v1 CLONE v1 COPY = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a COPY list does not end in a comma",
+            sql: "CREATE TABLE v1 CLONE v1 COPY = ( TAGS , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "a role has no CLONE (recorded errno 1003)",
             sql: "CREATE ROLE v1 CLONE v1 ;",
             dialect: Dialect::Snowflake,
@@ -178,6 +202,30 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_the_tree_keeps_its_parts
             sql: "CREATE FAILOVER GROUP g1 AS REPLICA OF o1.a1.g2",
             pointer: "/0/create_object/source",
             expected_value: json!("REPLICA"),
+        },
+        ProjectionTestCase {
+            description: "a database named ROLE clones as a database",
+            sql: "CREATE DATABASE ROLE CLONE d2",
+            pointer: "/0/create_database/name/name",
+            expected_value: json!("ROLE"),
+        },
+        ProjectionTestCase {
+            description: "a database clone keeps OR REPLACE",
+            sql: "CREATE OR REPLACE DATABASE d1 CLONE d2",
+            pointer: "/0/create_database/or_replace",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a database clone keeps its name's quoting",
+            sql: "CREATE DATABASE \"v1 Q\" CLONE d2",
+            pointer: "/0/create_database/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a schema clone keeps OR REPLACE",
+            sql: "CREATE OR REPLACE SCHEMA s1 CLONE s2",
+            pointer: "/0/create_schema/or_replace",
+            expected_value: json!(true),
         },
     ];
 
