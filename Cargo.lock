@@ -1361,6 +1361,7 @@ dependencies = [
  "sqlquack-snowflake",
  "sqlquack-syntax",
  "tempfile",
+ "toml",
  "walkdir",
 ]
 

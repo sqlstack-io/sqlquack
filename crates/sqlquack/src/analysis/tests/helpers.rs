@@ -24,13 +24,16 @@ use sqlquack_syntax::{Dialect, TokenKind, tokenize};
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
+use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
-    AnalysisSummary, CollectedSummary, DivergenceModeOutcome,
+    AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus,
 };
+use crate::cli::main::convert_report::convert_report;
+use crate::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 
@@ -779,3 +782,69 @@ const PARSED_TREE: &str = r#"{"error":false"#;
 
 /// The start of DuckDB's source-offset fields, `query_location` and `query_location_length`.
 const LOCATION_FIELD: &str = r#""query_location"#;
+
+/// Each everyday corpus query whose outcome differs from its recorded `expect`, with both.
+pub(crate) fn everyday_outcome_mismatches() -> Vec<String> {
+    let root = repository_root().join(EVERYDAY_CORPUS);
+    let text = std::fs::read_to_string(root.join("queries.toml")).expect("the corpus reads");
+    let corpus: EverydayCorpus = toml::from_str(&text).expect("the corpus parses");
+    assert!(corpus.query.len() > 400, "{} queries", corpus.query.len());
+    let arguments = ConvertArguments {
+        path: None,
+        schema: Some(root.join("schema.json")),
+        overrides: None,
+        verified_overrides: Vec::new(),
+        session: Vec::new(),
+        pretty: false,
+        output: OutputArguments {
+            format: OutputFormat::Json,
+            json: false,
+        },
+        conversion: PolicyArguments {
+            policy: POLICY_FILE_NAME.into(),
+            builtin_policy: true,
+            strict: false,
+            utc_session: false,
+            confirm_declared_offsets: false,
+            python_runtime: false,
+            loud_divergences_only: false,
+        },
+    };
+    corpus
+        .query
+        .iter()
+        .map(|query| (query, everyday_outcome(&query.sql, &arguments)))
+        .filter(|(query, outcome)| *outcome != query.expect)
+        .map(|(query, outcome)| format!("{}: expected {}, got {outcome}", query.sql, query.expect))
+        .collect()
+}
+
+/// What SQLQuack does with `sql`: its first check diagnostic, first refusal, or `translated`.
+fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> String {
+    let diagnostics = check_source(sql).expect("the query holds a statement");
+    diagnostics.first().map_or_else(
+        || {
+            let report = convert_report(arguments, sql).expect("the query converts or refuses");
+            report.refusals.first().map_or_else(
+                || TRANSLATED.to_owned(),
+                |refusal| {
+                    let code = refusal.diagnostic.as_ref().map_or("", |found| found.code);
+                    format!("refused {code} {}", refusal.construct)
+                },
+            )
+        },
+        |found| {
+            let stage = (found.code == PARSE_FAILURE_CODE).then_some("parse");
+            format!("{} {}", stage.unwrap_or("check"), found.code)
+        },
+    )
+}
+
+/// The corpus directory, under the repository root.
+const EVERYDAY_CORPUS: &str = "corpora/everyday";
+
+/// The outcome of a query that converts.
+const TRANSLATED: &str = "translated";
+
+/// The diagnostic code of SQL that does not parse.
+const PARSE_FAILURE_CODE: &str = "SQ0001";

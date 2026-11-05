@@ -210,3 +210,21 @@ pub(crate) struct OverrideCallsTestCase {
     pub(crate) emitted: &'static str,
     pub(crate) expected_refused: bool,
 }
+
+pub(crate) struct EverydayCorpusTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_mismatches: Vec<String>,
+}
+
+/// The everyday corpus file.
+#[derive(serde::Deserialize)]
+pub(crate) struct EverydayCorpus {
+    pub(crate) query: Vec<EverydayQuery>,
+}
+
+/// One everyday query and the outcome recorded for it.
+#[derive(serde::Deserialize)]
+pub(crate) struct EverydayQuery {
+    pub(crate) sql: String,
+    pub(crate) expect: String,
+}
