@@ -85,12 +85,11 @@ impl Parser {
                 properties.push(property("TARGET_LAG", None, Some(value)));
             } else if dynamic && self.match_text_seq(&["WAREHOUSE"]) {
                 self.expect_token(TokenType::Eq)?;
-                let warehouse = self.parse_object_name()?;
-                properties.push(property(
-                    "WAREHOUSE",
-                    None,
-                    Some(Expression::Table(Box::new(warehouse))),
-                ));
+                let warehouse = match self.check(TokenType::String) {
+                    true => self.parse_string_value()?,
+                    false => Expression::Table(Box::new(self.parse_object_name()?)),
+                };
+                properties.push(property("WAREHOUSE", None, Some(warehouse)));
             } else if dynamic && self.match_text_seq(&["EXECUTE"]) {
                 self.expect_alter_words(&[&["AS", "USER"]])?;
                 let user = self.parse_object_name()?;

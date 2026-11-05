@@ -58,7 +58,7 @@ impl Parser {
         } else if self.match_token(TokenType::View) {
             self.parse_alter_kind_extension("VIEW", &[&["RENAME", "TO"]])
         } else if self.match_identifier("SHARE") {
-            return self.parse_alter_share();
+            return self.parse_alter_share().map(Some);
         } else {
             Ok(None)
         };
@@ -172,28 +172,6 @@ impl Parser {
             _ => (vec![self.parse_tag_operand()?], vec![]),
         };
         Ok(Some(alter_object(kind, head, action, parts)))
-    }
-
-    /// Parse ALTER SHARE: UNSET COMMENT typed; ADD, REMOVE, SET and other UNSETs are left to the fallback.
-    fn parse_alter_share(&mut self) -> Result<Option<Expression>> {
-        let start = self.current - 1;
-        let head = self.parse_alter_object_head()?;
-        if self.match_text_seq(&["UNSET", "COMMENT"]) {
-            let parts = (vec![], vec![property("COMMENT", None, None)]);
-            return Ok(Some(alter_object("SHARE", head, "UNSET".to_owned(), parts)));
-        }
-        match (
-            self.text_at(0).unwrap_or_default().as_str(),
-            self.text_at(1).as_deref(),
-        ) {
-            ("UNSET", None | Some(";")) => {
-                return Err(self.parse_error("Expected a property after UNSET"))
-            }
-            ("ADD" | "REMOVE" | "SET" | "UNSET", _) => {}
-            _ => return Err(self.parse_error("Expected ADD, REMOVE, SET or UNSET")),
-        }
-        self.current = start;
-        Ok(None)
     }
 
     /// Parse a name operand: an identifier, never a string or an unquoted reserved keyword.

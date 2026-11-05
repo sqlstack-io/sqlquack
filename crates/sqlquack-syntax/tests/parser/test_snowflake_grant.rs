@@ -174,6 +174,30 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("CREATE SNOWFLAKE.ML.FORECAST"),
         },
         ProjectionTestCase {
+            description: "CALLER qualifies every privilege of the list",
+            sql: "GRANT CALLER USAGE , SELECT ON TABLE t1 TO ROLE r1",
+            pointer: "/0/grant/privileges/1/name",
+            expected_value: json!("CALLER SELECT"),
+        },
+        ProjectionTestCase {
+            description: "INHERITED CALLER qualifies every privilege of a revoked list",
+            sql: "REVOKE INHERITED CALLER USAGE , SELECT ON ALL TABLES IN ACCOUNT FROM ROLE r1",
+            pointer: "/0/revoke/privileges/1/name",
+            expected_value: json!("INHERITED CALLER SELECT"),
+        },
+        ProjectionTestCase {
+            description: "a service role keeps the quoting of each part",
+            sql: "GRANT SERVICE ROLE \"s 1\"!r1 TO ROLE r2",
+            pointer: "/0/grant/securable/name",
+            expected_value: json!("\"s 1\"!r1"),
+        },
+        ProjectionTestCase {
+            description: "a quoted class name keeps its quotes and case",
+            sql: "GRANT OWNERSHIP ON \"c 1\" i1 TO ROLE r1",
+            pointer: "/0/grant/kind",
+            expected_value: json!("\"c 1\""),
+        },
+        ProjectionTestCase {
             description: "ownership keeps COPY CURRENT GRANTS",
             sql: "GRANT OWNERSHIP ON TABLE t1 TO ROLE r1 COPY CURRENT GRANTS",
             pointer: "/0/grant/current_grants",

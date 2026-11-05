@@ -65,6 +65,9 @@ impl Parser {
                 "Snowflake has ALTER ONLINE FEATURE TABLE and ALTER FEATURE POLICY only",
             ));
         }
+        if self.match_identifier("USER") {
+            return self.parse_alter_user().map(Some);
+        }
         if self.match_identifier("VARIABLE") {
             return self.parse_alter_variable().map(Some);
         }
