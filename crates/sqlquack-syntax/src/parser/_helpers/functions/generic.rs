@@ -1240,6 +1240,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 expr = self.parse_method_call_expression(expr, ident, args);
+                expr = self.parse_qualified_window(expr)?;
             } else {
                 expr = Expression::Dot(Box::new(DotAccess {
                     this: expr,
