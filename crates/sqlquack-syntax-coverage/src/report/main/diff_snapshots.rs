@@ -59,5 +59,10 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
             .intersection(&head.refused_cases)
             .cloned()
             .collect(),
+        syntax_error_cases_accepted: base
+            .syntax_error_cases_rejected
+            .intersection(&head.syntax_error_cases_accepted)
+            .cloned()
+            .collect(),
     }
 }
