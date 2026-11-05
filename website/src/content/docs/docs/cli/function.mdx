@@ -1,0 +1,42 @@
+---
+title: "sqlquack function"
+description: "Convert a SQL project function's body into a DuckDB macro body."
+sidebar:
+  label: "function"
+---
+
+`sqlquack function` converts the body of a SQL function your project defines into the body of a
+DuckDB macro, and prints it as JSON.
+
+## Usage
+
+```bash
+sqlquack function --name <NAME> --schema <SCHEMA> [OPTIONS] <BODY>
+```
+
+```bash
+sqlquack function --name NET_TOTAL --schema schema.json net_total.sql
+```
+
+`BODY` is the file holding the function's body: a scalar function's expression, or a table
+function's query. Use `-` to read standard input. The schema declares the function under
+`functions`, with its arguments and return type, and the relations its body reads. See
+[Schema files](/docs/schema/#relations-and-functions).
+
+A converted body prints the macro's parameters and body. A refused body prints
+`{"converted": false, "name": …, "refusals": [diagnostics]}` instead, with the same diagnostics
+on standard error.
+
+## Options
+
+| Option | Meaning |
+|--------|---------|
+| `--name <name>` | The function's name, as the schema declares it. Required. |
+| `--schema <file>` | The schema declaring the function and the relations its body reads. Required. |
+| `--session NAME=VALUE` | A Snowflake session parameter of your session. Repeatable. |
+
+`function` also takes the [policy flags](/docs/policy/#flags).
+
+## Exit status
+
+`0` when the body converts, `1` when it is refused, `2` when the command can't run.
