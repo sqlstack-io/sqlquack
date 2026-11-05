@@ -69,6 +69,7 @@ SCORE_EXCLUDED: frozenset[str] = frozenset(
 WORKERS: int = 3
 BODY_DELIMITER: str = "$$"
 PYTHON_LANGUAGE: str = "python"
+UNRESOLVED_UDF: re.Pattern[str] = re.compile(r'__udf\(\s*"([^"]+)"\s*\)')
 TOP_CONSTRUCTS: int = 15
 JSON_SUFFIX: str = ".json"
 VALUE_FAILURE: str = "value"
