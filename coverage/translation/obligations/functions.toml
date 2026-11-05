@@ -5676,6 +5676,72 @@ cases = ["cases/translation/functions/check-json.toml#t004_null_string_or_varian
 required = true
 
 [[obligation]]
+id = "sf.functions.check-xml.check-xml.t001"
+form = "sf.functions.check-xml.check-xml"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid documents."
+catches = "a valid document reported as an error"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.t002"
+form = "sf.functions.check-xml.check-xml"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Mismatched and unclosed tags."
+catches = "NULL returned for invalid XML, or an error raised instead of a message"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml.t003"
+form = "sf.functions.check-xml.check-xml"
+kind = "null_argument"
+target = "string-containing-xml"
+note = "A SQL NULL; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml.toml#t003_null_string_containing_xml"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml-str.t001"
+form = "sf.functions.check-xml.check-xml-str"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid documents."
+catches = "a valid document reported as an error"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml-str.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml-str.t002"
+form = "sf.functions.check-xml.check-xml-str"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Mismatched and unclosed tags."
+catches = "NULL returned for invalid XML, or an error raised instead of a message"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml-str.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-xml.check-xml-str.t003"
+form = "sf.functions.check-xml.check-xml-str"
+kind = "null_argument"
+target = "string-containing-xml"
+note = "A SQL NULL; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: NULL when the input is valid XML; otherwise a VARCHAR describing the error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-xml.check-xml-str.toml#t003_null_string_containing_xml"]
+required = true
+
+[[obligation]]
 id = "sf.functions.chr.t001"
 form = "sf.functions.chr"
 kind = "type_combination"
@@ -8827,6 +8893,72 @@ cases = ["cases/translation/functions/filter.toml#t003_null_array"]
 required = true
 
 [[obligation]]
+id = "sf.functions.flatten.t001"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT"
+note = "An array and an object, flattened one level."
+catches = "nested elements expanded, or the array index 1-based"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t001_default"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t002"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH"
+note = "A PATH into a nested array."
+catches = "the PATH ignored"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t002_path"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t003"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, OUTER"
+note = "An empty array and a scalar with OUTER TRUE, which the page says give one row each."
+catches = "the inputs dropped as with OUTER FALSE"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t003_outer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t004"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, RECURSIVE"
+note = "Nested containers with RECURSIVE TRUE."
+catches = "only the top level expanded"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t004_recursive"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t005"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, MODE"
+note = "MODE 'ARRAY' with RECURSIVE TRUE on an object holding an array."
+catches = "objects expanded as well"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t005_mode"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t006"
+form = "sf.functions.flatten"
+kind = "null_argument"
+target = "input"
+note = "A NULL input, which without OUTER gives no rows."
+catches = "a row of NULLs"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.toml#t006_null_input"]
+required = true
+
+[[obligation]]
 id = "sf.functions.floor.t001"
 form = "sf.functions.floor"
 kind = "type_combination"
@@ -8914,6 +9046,182 @@ note = "Negative values at the rounding step."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/floor.toml#t008_negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t001"
+form = "sf.functions.get"
+kind = "type_combination"
+target = "ARRAY, INTEGER"
+note = "Indexes 0 and 2 of a three-element array."
+catches = "a 1-based index (20 for 0, NULL for 2)"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t001_array_index"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t002"
+form = "sf.functions.get"
+kind = "type_combination"
+target = "ARRAY, INTEGER"
+note = "An index equal to the length and a negative index; the page returns NULL outside the array."
+catches = "an error, or a negative index counted from the end"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t002_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t003"
+form = "sf.functions.get"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "Keys differing only in case; the page says matching is case-sensitive."
+catches = "a case-insensitive match (1 for \"A\" on the second row)"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t003_field_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t004"
+form = "sf.functions.get"
+kind = "type_combination"
+target = "VARIANT, INTEGER or VARCHAR"
+note = "An index into an object and a field name on an array; the page returns NULL for both."
+catches = "the object's first value returned for index 0, or an error"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t004_kind_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t005"
+form = "sf.functions.get"
+kind = "type_combination"
+target = "MAP, key"
+note = "A MAP with the key present and absent."
+catches = "an error for the absent key"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t005_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get.t006"
+form = "sf.functions.get"
+kind = "null_argument"
+target = "object"
+note = "A NULL container and a NULL field name; the page does not say; the recording decides."
+catches = "an error, or the NULL name read as an empty key"
+reading = "the page: the element at a 0-based index of an ARRAY, or the value of a case-sensitive key of an OBJECT or MAP; NULL outside the array, for a missing key, or when a VARIANT holds the other kind of container"
+cases = ["cases/translation/functions/get.toml#t006_null_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-ignore-case.t001"
+form = "sf.functions.get-ignore-case"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "A key matched in another case."
+catches = "a case-sensitive match (NULL)"
+reading = "the page: the value of the key matched case-insensitively; an exact match is preferred; NULL when a VARIANT does not hold an object or the key is missing"
+cases = ["cases/translation/functions/get-ignore-case.toml#t001_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-ignore-case.t002"
+form = "sf.functions.get-ignore-case"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "Two keys differing in case, one an exact match; the page says the first exact match is returned."
+catches = "the other case variant returned"
+reading = "the page: the value of the key matched case-insensitively; an exact match is preferred; NULL when a VARIANT does not hold an object or the key is missing"
+cases = ["cases/translation/functions/get-ignore-case.toml#t002_exact_first"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-ignore-case.t003"
+form = "sf.functions.get-ignore-case"
+kind = "type_combination"
+target = "VARIANT, VARCHAR"
+note = "A VARIANT holding an array, and a missing key; the page returns NULL for both."
+catches = "an error, or the array element at position 0"
+reading = "the page: the value of the key matched case-insensitively; an exact match is preferred; NULL when a VARIANT does not hold an object or the key is missing"
+cases = ["cases/translation/functions/get-ignore-case.toml#t003_not_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-ignore-case.t004"
+form = "sf.functions.get-ignore-case"
+kind = "null_argument"
+target = "object"
+note = "A NULL object and a NULL field name; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the value of the key matched case-insensitively; an exact match is preferred; NULL when a VARIANT does not hold an object or the key is missing"
+cases = ["cases/translation/functions/get-ignore-case.toml#t004_null_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.colon.t001"
+form = "sf.functions.get-path.colon"
+kind = "type_combination"
+target = "VARIANT"
+note = "Dotted, indexed and bracketed paths on the same value, and a path that matches nothing."
+catches = "a 1-based index, or an error for a path that matches nothing"
+reading = "the page: <column>:<path> is shorthand for GET_PATH; the path uses dots, [index] operators and double-quoted field names"
+cases = ["cases/translation/functions/get-path.colon.toml#t001_paths"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.colon.t002"
+form = "sf.functions.get-path.colon"
+kind = "type_combination"
+target = "VARIANT"
+note = "An unquoted and a double-quoted field name on an object whose key is mixed case."
+catches = "the unquoted name upper-cased like a SQL identifier (NULL for v:Key), or matched case-insensitively (a value for v:key)"
+reading = "the page: <column>:<path> is shorthand for GET_PATH; the path uses dots, [index] operators and double-quoted field names"
+cases = ["cases/translation/functions/get-path.colon.toml#t002_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.colon.t003"
+form = "sf.functions.get-path.colon"
+kind = "null_argument"
+target = "column-identifier"
+note = "A NULL value; the page says the path is GET_PATH, which gives NULL when nothing matches."
+catches = "an error"
+reading = "the page: <column>:<path> is shorthand for GET_PATH; the path uses dots, [index] operators and double-quoted field names"
+cases = ["cases/translation/functions/get-path.colon.toml#t003_null_column_identifier"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.get-path.t001"
+form = "sf.functions.get-path.get-path"
+kind = "type_combination"
+target = "VARIANT, VARCHAR"
+note = "Paths with dots, indexes, a bracketed quoted key and a key with a space, and two that match nothing."
+catches = "a 1-based index, the bracketed key read literally, or an error for a path past a scalar"
+reading = "the page: equivalent to a chain of GET calls along a JavaScript-style path of field names and [index] operators; NULL when the path matches no element"
+cases = ["cases/translation/functions/get-path.get-path.toml#t001_paths"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.get-path.t002"
+form = "sf.functions.get-path.get-path"
+kind = "type_combination"
+target = "VARIANT, VARCHAR"
+note = "A path whose field differs from the key only in case."
+catches = "a case-insensitive match"
+reading = "the page: equivalent to a chain of GET calls along a JavaScript-style path of field names and [index] operators; NULL when the path matches no element"
+cases = ["cases/translation/functions/get-path.get-path.toml#t002_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.get-path.get-path.t003"
+form = "sf.functions.get-path.get-path"
+kind = "null_argument"
+target = "column-identifier"
+note = "A NULL value and a NULL path; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: equivalent to a chain of GET calls along a JavaScript-style path of field names and [index] operators; NULL when the path matches no element"
+cases = ["cases/translation/functions/get-path.get-path.toml#t003_null_column_identifier"]
 required = true
 
 [[obligation]]
@@ -11436,6 +11744,50 @@ cases = ["cases/translation/functions/jarowinkler-similarity.toml#t004_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.json-extract-path-text.t001"
+form = "sf.functions.json-extract-path-text"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "A string, a number and a boolean extracted as text."
+catches = "the string returned with its JSON quotes, or the number reformatted"
+reading = "the page: the element at the path of JSON text, returned as VARCHAR; NULL when the path matches no element"
+cases = ["cases/translation/functions/json-extract-path-text.toml#t001_scalars"]
+required = true
+
+[[obligation]]
+id = "sf.functions.json-extract-path-text.t002"
+form = "sf.functions.json-extract-path-text"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "A path ending at an array and at an object."
+catches = "NULL for a container, or only its first element"
+reading = "the page: the element at the path of JSON text, returned as VARCHAR; NULL when the path matches no element"
+cases = ["cases/translation/functions/json-extract-path-text.toml#t002_container"]
+required = true
+
+[[obligation]]
+id = "sf.functions.json-extract-path-text.t003"
+form = "sf.functions.json-extract-path-text"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "A path that matches nothing, and a JSON null at the path; the page gives NULL for the first and does not say for the second, so the recording decides that row."
+catches = "an empty string for the missing path"
+reading = "the page: the element at the path of JSON text, returned as VARCHAR; NULL when the path matches no element"
+cases = ["cases/translation/functions/json-extract-path-text.toml#t003_missing"]
+required = true
+
+[[obligation]]
+id = "sf.functions.json-extract-path-text.t004"
+form = "sf.functions.json-extract-path-text"
+kind = "null_argument"
+target = "column-identifier"
+note = "NULL text and a NULL path; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the element at the path of JSON text, returned as VARCHAR; NULL when the path matches no element"
+cases = ["cases/translation/functions/json-extract-path-text.toml#t004_null_column_identifier"]
+required = true
+
+[[obligation]]
 id = "sf.functions.kurtosis.kurtosis.t001"
 form = "sf.functions.kurtosis.kurtosis"
 kind = "type_combination"
@@ -12712,6 +13064,293 @@ note = "An empty character set, and a string made only of trimmed characters."
 catches = "an empty set read as the default blank, or NULL for a fully trimmed string"
 reading = "the page: <characters> is a set removed in any order, default a single blank; other whitespace is not removed unless listed; NULL if either argument is NULL"
 cases = ["cases/translation/functions/ltrim.toml#t005_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-cat.t001"
+form = "sf.functions.map-cat"
+kind = "type_combination"
+target = "MAP, MAP"
+note = "Maps sharing the key b."
+catches = "map1's value kept for b"
+reading = "the page: map2 appended to map1; for a key in both, the value from map2; NULL when either is NULL"
+cases = ["cases/translation/functions/map-cat.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-cat.t002"
+form = "sf.functions.map-cat"
+kind = "null_argument"
+target = "map1"
+note = "A NULL map on either side, which the page says gives NULL."
+catches = "the other map returned"
+reading = "the page: map2 appended to map1; for a key in both, the value from map2; NULL when either is NULL"
+cases = ["cases/translation/functions/map-cat.toml#t002_null_map1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-construct.t001"
+form = "sf.functions.map-construct"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "Pairs given out of key order."
+catches = "a pair dropped, or keys and values swapped"
+reading = "the page: a MAP of VARCHAR or numeric keys cast to one key type and values cast to one value type; a NULL key drops its pair; a NULL value is kept; equal keys are an error"
+cases = ["cases/translation/functions/map-construct.toml#t001_pairs"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-construct.t002"
+form = "sf.functions.map-construct"
+kind = "type_combination"
+target = "NUMBER and VARCHAR keys"
+note = "Keys 1 and '2', which the page says unify to a numeric type."
+catches = "the key '2' kept as text"
+reading = "the page: a MAP of VARCHAR or numeric keys cast to one key type and values cast to one value type; a NULL key drops its pair; a NULL value is kept; equal keys are an error"
+cases = ["cases/translation/functions/map-construct.toml#t002_key_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-construct.t003"
+form = "sf.functions.map-construct"
+kind = "null_argument"
+target = "key"
+note = "A NULL key, whose pair the page drops, and a NULL value, whose pair it keeps."
+catches = "the NULL-keyed pair kept, or the NULL-valued pair dropped"
+reading = "the page: a MAP of VARCHAR or numeric keys cast to one key type and values cast to one value type; a NULL key drops its pair; a NULL value is kept; equal keys are an error"
+cases = ["cases/translation/functions/map-construct.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-construct.t004"
+form = "sf.functions.map-construct"
+kind = "error_parity"
+target = "error"
+note = "Two equal keys, which the page says is an error."
+catches = "the last or first value kept"
+reading = "the page: a MAP of VARCHAR or numeric keys cast to one key type and values cast to one value type; a NULL key drops its pair; a NULL value is kept; equal keys are an error"
+cases = ["cases/translation/functions/map-construct.toml#t004_duplicate_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-contains-key.t001"
+form = "sf.functions.map-contains-key"
+kind = "type_combination"
+target = "VARCHAR, MAP"
+note = "A key present, one absent, and one differing only in case."
+catches = "a case-insensitive match"
+reading = "the page: TRUE when the map has the key, FALSE when not; NULL input gives NULL"
+cases = ["cases/translation/functions/map-contains-key.toml#t001_present"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-contains-key.t002"
+form = "sf.functions.map-contains-key"
+kind = "null_argument"
+target = "key"
+note = "A NULL key, which the page says gives NULL."
+catches = "FALSE returned"
+reading = "the page: TRUE when the map has the key, FALSE when not; NULL input gives NULL"
+cases = ["cases/translation/functions/map-contains-key.toml#t002_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-delete.t001"
+form = "sf.functions.map-delete"
+kind = "type_combination"
+target = "MAP, VARCHAR, VARCHAR"
+note = "One key present and one absent."
+catches = "an error for the absent key, or nothing removed"
+reading = "the page: the map with the given keys removed; keys not in the map are ignored"
+cases = ["cases/translation/functions/map-delete.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-delete.t002"
+form = "sf.functions.map-delete"
+kind = "type_combination"
+target = "MAP, VARCHAR"
+note = "Every key removed."
+catches = "NULL instead of an empty map"
+reading = "the page: the map with the given keys removed; keys not in the map are ignored"
+cases = ["cases/translation/functions/map-delete.toml#t002_all"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-delete.t003"
+form = "sf.functions.map-delete"
+kind = "null_argument"
+target = "map"
+note = "A NULL key; the page does not say; the recording decides."
+catches = "the map returned as NULL"
+reading = "the page: the map with the given keys removed; keys not in the map are ignored"
+cases = ["cases/translation/functions/map-delete.toml#t003_null_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-entries.t001"
+form = "sf.functions.map-entries"
+kind = "type_combination"
+target = "MAP"
+note = "A one-entry map, and the entry count of a two-entry map."
+catches = "fields named other than key and value, or entries missing"
+reading = "the page: an ARRAY of OBJECTs with key and value fields, one per entry, in an undefined order; NULL for NULL; an empty ARRAY for an empty map"
+cases = ["cases/translation/functions/map-entries.toml#t001_entry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-entries.t002"
+form = "sf.functions.map-entries"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty_string"
+note = "An empty map, made by deleting its only key; the page returns an empty ARRAY."
+catches = "NULL instead of []"
+reading = "the page: an ARRAY of OBJECTs with key and value fields, one per entry, in an undefined order; NULL for NULL; an empty ARRAY for an empty map"
+cases = ["cases/translation/functions/map-entries.toml#t002_empty_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-entries.t003"
+form = "sf.functions.map-entries"
+kind = "null_argument"
+target = "map"
+note = "A NULL map, which the page says gives NULL."
+catches = "an empty array"
+reading = "the page: an ARRAY of OBJECTs with key and value fields, one per entry, in an undefined order; NULL for NULL; an empty ARRAY for an empty map"
+cases = ["cases/translation/functions/map-entries.toml#t003_null_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t001"
+form = "sf.functions.map-insert"
+kind = "type_combination"
+target = "MAP, VARCHAR, NUMBER"
+note = "A new key, and an update of an existing key with updateFlag TRUE."
+catches = "the update ignored, or a second entry added"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t001_insert"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t002"
+form = "sf.functions.map-insert"
+kind = "type_combination"
+target = "MAP, VARCHAR, NUMBER, BOOLEAN"
+note = "updateFlag TRUE with a key not in the map; the page says the pair is added."
+catches = "an error, or the map unchanged"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t002_flag_new_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t003"
+form = "sf.functions.map-insert"
+kind = "null_argument"
+target = "key"
+note = "A NULL key, whose pair the page omits, and a SQL NULL value, which it inserts as a JSON null."
+catches = "the NULL-keyed pair inserted, or the NULL-valued pair omitted"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t004"
+form = "sf.functions.map-insert"
+kind = "error_parity"
+target = "error"
+note = "An existing key without updateFlag, which the page says is an error."
+catches = "the value silently updated or kept"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t004_existing_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-keys.t001"
+form = "sf.functions.map-keys"
+kind = "type_combination"
+target = "MAP"
+note = "Keys of a three-entry map, sorted for comparison."
+catches = "values returned instead of keys, or a key missing"
+reading = "the page: a structured ARRAY of the map's keys, in an undefined order"
+cases = ["cases/translation/functions/map-keys.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-keys.t002"
+form = "sf.functions.map-keys"
+kind = "type_combination"
+target = "MAP with NUMBER keys"
+note = "Numeric keys."
+catches = "keys returned as text"
+reading = "the page: a structured ARRAY of the map's keys, in an undefined order"
+cases = ["cases/translation/functions/map-keys.toml#t002_numeric"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-keys.t003"
+form = "sf.functions.map-keys"
+kind = "null_argument"
+target = "map"
+note = "A NULL map; the page does not say; the recording decides."
+catches = "an empty array"
+reading = "the page: a structured ARRAY of the map's keys, in an undefined order"
+cases = ["cases/translation/functions/map-keys.toml#t003_null_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-pick.t001"
+form = "sf.functions.map-pick"
+kind = "type_combination"
+target = "MAP, VARCHAR"
+note = "Keys as arguments, one of them absent."
+catches = "an error for the absent key"
+reading = "the page: a new MAP holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/map-pick.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-pick.t002"
+form = "sf.functions.map-pick"
+kind = "type_combination"
+target = "MAP, ARRAY"
+note = "Keys as a semi-structured ARRAY."
+catches = "the array read as one key"
+reading = "the page: a new MAP holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/map-pick.toml#t002_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-pick.t003"
+form = "sf.functions.map-pick"
+kind = "null_argument"
+target = "map"
+note = "A NULL key; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: a new MAP holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/map-pick.toml#t003_null_map"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-size.t001"
+form = "sf.functions.map-size"
+kind = "type_combination"
+target = "MAP"
+note = "Maps of one and three entries, and an empty map made by deleting its key."
+catches = "NULL for the empty map"
+reading = "the page: the number of entries in the map"
+cases = ["cases/translation/functions/map-size.toml#t001_size"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-size.t002"
+form = "sf.functions.map-size"
+kind = "null_argument"
+target = "map"
+note = "A NULL map; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the number of entries in the map"
+cases = ["cases/translation/functions/map-size.toml#t002_null_map"]
 required = true
 
 [[obligation]]
@@ -14298,6 +14937,259 @@ cases = ["cases/translation/functions/object-agg.object-agg-over.toml#t004_null_
 required = true
 
 [[obligation]]
+id = "sf.functions.object-construct.t001"
+form = "sf.functions.object-construct"
+kind = "type_combination"
+target = "VARCHAR, any"
+note = "Three pairs of different value types."
+catches = "a pair dropped, or a value converted to text"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key or value omits the pair; a JSON null value is kept; (*) builds the object from the input columns"
+cases = ["cases/translation/functions/object-construct.toml#t001_pairs"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct.t002"
+form = "sf.functions.object-construct"
+kind = "type_combination"
+target = "VARCHAR, VARIANT"
+note = "A JSON null value, which the page keeps."
+catches = "the JSON null pair omitted like a SQL NULL"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key or value omits the pair; a JSON null value is kept; (*) builds the object from the input columns"
+cases = ["cases/translation/functions/object-construct.toml#t002_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct.t003"
+form = "sf.functions.object-construct"
+kind = "null_argument"
+target = "value"
+note = "A SQL NULL value and a SQL NULL key, whose pairs the page omits."
+catches = "the pairs kept with null values"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key or value omits the pair; a JSON null value is kept; (*) builds the object from the input columns"
+cases = ["cases/translation/functions/object-construct.toml#t003_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct.t004"
+form = "sf.functions.object-construct"
+kind = "type_combination"
+target = "*"
+note = "OBJECT_CONSTRUCT(*) over the input row; the column names become keys."
+catches = "lower-case keys, or the NULL column kept"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key or value omits the pair; a JSON null value is kept; (*) builds the object from the input columns"
+cases = ["cases/translation/functions/object-construct.toml#t004_star"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.t001"
+form = "sf.functions.object-construct-keep-null"
+kind = "type_combination"
+target = "VARCHAR, any"
+note = "Pairs of different value types."
+catches = "a pair dropped"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key omits the pair; a SQL NULL value keeps it"
+cases = ["cases/translation/functions/object-construct-keep-null.toml#t001_pairs"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.t002"
+form = "sf.functions.object-construct-keep-null"
+kind = "null_argument"
+target = "value"
+note = "A SQL NULL value, whose pair the page keeps, and a SQL NULL key, whose pair it omits."
+catches = "the NULL-valued pair omitted (as OBJECT_CONSTRUCT does), or the NULL-keyed pair kept"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key omits the pair; a SQL NULL value keeps it"
+cases = ["cases/translation/functions/object-construct-keep-null.toml#t002_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null.t003"
+form = "sf.functions.object-construct-keep-null"
+kind = "type_combination"
+target = "*"
+note = "OBJECT_CONSTRUCT_KEEP_NULL(*) over a row with a NULL column, which the page keeps."
+catches = "the NULL column dropped"
+reading = "the page: an OBJECT of the key-value pairs; a SQL NULL key omits the pair; a SQL NULL value keeps it"
+cases = ["cases/translation/functions/object-construct-keep-null.toml#t003_star"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.t001"
+form = "sf.functions.object-construct-keep-null-structured"
+kind = "type_combination"
+target = "VARCHAR, typed values"
+note = "Fields of NUMBER and VARCHAR values."
+catches = "a field dropped or retyped"
+reading = "the page: a structured OBJECT whose fields are the constant keys with the types of their values; a typed NULL value is kept; an untyped NULL literal is an error"
+cases = ["cases/translation/functions/object-construct-keep-null-structured.toml#t001_pairs"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.t002"
+form = "sf.functions.object-construct-keep-null-structured"
+kind = "null_argument"
+target = "value"
+note = "A typed NULL value, which the page keeps."
+catches = "the NULL field dropped"
+reading = "the page: a structured OBJECT whose fields are the constant keys with the types of their values; a typed NULL value is kept; an untyped NULL literal is an error"
+cases = ["cases/translation/functions/object-construct-keep-null-structured.toml#t002_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.t003"
+form = "sf.functions.object-construct-keep-null-structured"
+kind = "error_parity"
+target = "error"
+note = "An untyped NULL literal value, which the page says is an error because the field type cannot be determined."
+catches = "the field kept as a VARIANT null"
+reading = "the page: a structured OBJECT whose fields are the constant keys with the types of their values; a typed NULL value is kept; an untyped NULL literal is an error"
+cases = ["cases/translation/functions/object-construct-keep-null-structured.toml#t003_untyped_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-delete.t001"
+form = "sf.functions.object-delete"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "Two keys removed, one absent, and one differing only in case."
+catches = "an error for the absent key, or a case-insensitive removal"
+reading = "the page: the OBJECT with the given keys removed"
+cases = ["cases/translation/functions/object-delete.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-delete.t002"
+form = "sf.functions.object-delete"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "A key that exists only in a nested object."
+catches = "the nested key removed"
+reading = "the page: the OBJECT with the given keys removed"
+cases = ["cases/translation/functions/object-delete.toml#t002_nested"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-delete.t003"
+form = "sf.functions.object-delete"
+kind = "null_argument"
+target = "object"
+note = "A NULL object and a NULL key; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the OBJECT with the given keys removed"
+cases = ["cases/translation/functions/object-delete.toml#t003_null_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-insert.t001"
+form = "sf.functions.object-insert"
+kind = "type_combination"
+target = "OBJECT, VARCHAR, any"
+note = "A new key, an update with updateFlag TRUE, and updateFlag TRUE on a new key."
+catches = "the update ignored, or the new key rejected under the flag"
+reading = "the page: the OBJECT with a new key-value pair; an existing key is an error unless updateFlag is TRUE; a JSON null value is inserted; a SQL NULL key or value omits the pair"
+cases = ["cases/translation/functions/object-insert.toml#t001_insert"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-insert.t002"
+form = "sf.functions.object-insert"
+kind = "type_combination"
+target = "OBJECT, VARCHAR, VARIANT"
+note = "A JSON null value, which the page inserts."
+catches = "the pair omitted like a SQL NULL"
+reading = "the page: the OBJECT with a new key-value pair; an existing key is an error unless updateFlag is TRUE; a JSON null value is inserted; a SQL NULL key or value omits the pair"
+cases = ["cases/translation/functions/object-insert.toml#t002_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-insert.t003"
+form = "sf.functions.object-insert"
+kind = "null_argument"
+target = "value"
+note = "A SQL NULL value and a SQL NULL key, whose pairs the page omits."
+catches = "the pair inserted with a null value (as MAP_INSERT does)"
+reading = "the page: the OBJECT with a new key-value pair; an existing key is an error unless updateFlag is TRUE; a JSON null value is inserted; a SQL NULL key or value omits the pair"
+cases = ["cases/translation/functions/object-insert.toml#t003_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-insert.t004"
+form = "sf.functions.object-insert"
+kind = "error_parity"
+target = "error"
+note = "An existing key without updateFlag, which the page says is an error."
+catches = "the value silently updated or kept"
+reading = "the page: the OBJECT with a new key-value pair; an existing key is an error unless updateFlag is TRUE; a JSON null value is inserted; a SQL NULL key or value omits the pair"
+cases = ["cases/translation/functions/object-insert.toml#t004_existing_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-keys.t001"
+form = "sf.functions.object-keys"
+kind = "type_combination"
+target = "OBJECT"
+note = "An object with a nested object, keys sorted for comparison."
+catches = "nested keys included"
+reading = "the page: an ARRAY of the top-level keys of an OBJECT or a VARIANT holding one"
+cases = ["cases/translation/functions/object-keys.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-keys.t002"
+form = "sf.functions.object-keys"
+kind = "type_combination"
+target = "VARIANT holding an array"
+note = "A VARIANT holding an array; the page does not say; the recording decides."
+catches = "the indexes returned as keys"
+reading = "the page: an ARRAY of the top-level keys of an OBJECT or a VARIANT holding one"
+cases = ["cases/translation/functions/object-keys.toml#t002_not_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-keys.t003"
+form = "sf.functions.object-keys"
+kind = "null_argument"
+target = "object"
+note = "A NULL object; the page does not say; the recording decides."
+catches = "an empty array"
+reading = "the page: an ARRAY of the top-level keys of an OBJECT or a VARIANT holding one"
+cases = ["cases/translation/functions/object-keys.toml#t003_null_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-pick.t001"
+form = "sf.functions.object-pick"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "Keys as arguments, one absent and one differing only in case."
+catches = "an error for the absent key, or a case-insensitive pick"
+reading = "the page: a new OBJECT holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/object-pick.toml#t001_keys"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-pick.t002"
+form = "sf.functions.object-pick"
+kind = "type_combination"
+target = "OBJECT, ARRAY"
+note = "Keys as an ARRAY."
+catches = "the array read as one key"
+reading = "the page: a new OBJECT holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/object-pick.toml#t002_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.object-pick.t003"
+form = "sf.functions.object-pick"
+kind = "null_argument"
+target = "object"
+note = "A NULL object and a NULL key; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: a new OBJECT holding the pairs of the given keys, listed as arguments or as an ARRAY"
+cases = ["cases/translation/functions/object-pick.toml#t003_null_object"]
+required = true
+
+[[obligation]]
 id = "sf.functions.octet-length.t001"
 form = "sf.functions.octet-length"
 kind = "type_combination"
@@ -14409,6 +15301,84 @@ cases = ["cases/translation/functions/parse-ip.toml#t006_strict"]
 required = true
 
 [[obligation]]
+id = "sf.functions.parse-json.t001"
+form = "sf.functions.parse-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A decimal and the same value with an exponent, with their types."
+catches = "the decimal parsed as DOUBLE, or trailing zeros changed"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t001_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t002"
+form = "sf.functions.parse-json"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty_string"
+note = "An empty string and a string of spaces, which the page says give NULL rather than an error."
+catches = "an error"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t002_blank"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t003"
+form = "sf.functions.parse-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The text null, which the page says is a JSON null rather than a SQL NULL."
+catches = "a SQL NULL returned (IS NULL true)"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t003_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t004"
+form = "sf.functions.parse-json"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Duplicate keys with the parameter 'd', which keeps the last value."
+catches = "the first value kept"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t004_duplicates_d"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t005"
+form = "sf.functions.parse-json"
+kind = "error_parity"
+target = "error"
+note = "Duplicate keys under the default strict parameter, which the page says is an error."
+catches = "the last or first value kept"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t005_duplicates"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t006"
+form = "sf.functions.parse-json"
+kind = "error_parity"
+target = "error"
+note = "Malformed JSON."
+catches = "NULL returned (as TRY_PARSE_JSON does)"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t006_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-json.t007"
+form = "sf.functions.parse-json"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL, which the page says gives NULL."
+catches = "a JSON null returned"
+reading = "the page: a VARIANT holding the JSON document; decimals stay exact fixed-point numbers, exponents become DOUBLE; an empty or blank string gives NULL; the text null gives a JSON null; duplicate keys are an error unless the parameter is d, which keeps the last"
+cases = ["cases/translation/functions/parse-json.toml#t007_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.parse-url.t001"
 form = "sf.functions.parse-url"
 kind = "type_combination"
@@ -14461,6 +15431,94 @@ note = "An unparseable URL with permissive 0."
 catches = "an error object or NULL instead of an error"
 reading = "the page: returns an OBJECT with fragment, host, parameters, path, port, query and scheme; NULL for NULL; <permissive> as for PARSE_IP"
 cases = ["cases/translation/functions/parse-url.toml#t005_strict"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.t001"
+form = "sf.functions.parse-xml.parse-xml"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A document with repeated elements, an attribute and an empty element."
+catches = "an element or attribute lost"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml.toml#t001_document"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.t002"
+form = "sf.functions.parse-xml.parse-xml"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "Numeric content with and without disable_auto_convert, with its type."
+catches = "the number left as text by default, or converted under TRUE"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml.toml#t002_auto_convert"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.t003"
+form = "sf.functions.parse-xml.parse-xml"
+kind = "error_parity"
+target = "error"
+note = "Malformed XML."
+catches = "NULL returned"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml.toml#t003_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml.t004"
+form = "sf.functions.parse-xml.parse-xml"
+kind = "null_argument"
+target = "string-containing-xml"
+note = "A SQL NULL; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml.toml#t004_null_string_containing_xml"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml-str.t001"
+form = "sf.functions.parse-xml.parse-xml-str"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A document with repeated elements, an attribute and an empty element."
+catches = "an element or attribute lost"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml-str.toml#t001_document"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml-str.t002"
+form = "sf.functions.parse-xml.parse-xml-str"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "Numeric content with and without disable_auto_convert, with its type."
+catches = "the number left as text by default, or converted under TRUE"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml-str.toml#t002_auto_convert"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml-str.t003"
+form = "sf.functions.parse-xml.parse-xml-str"
+kind = "error_parity"
+target = "error"
+note = "Malformed XML."
+catches = "NULL returned"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml-str.toml#t003_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.parse-xml.parse-xml-str.t004"
+form = "sf.functions.parse-xml.parse-xml-str"
+kind = "null_argument"
+target = "string-containing-xml"
+note = "A SQL NULL; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: an OBJECT holding the parsed XML; obviously numeric and Boolean content is converted to native values unless disable_auto_convert is TRUE"
+cases = ["cases/translation/functions/parse-xml.parse-xml-str.toml#t004_null_string_containing_xml"]
 required = true
 
 [[obligation]]
@@ -21632,6 +22690,39 @@ cases = ["cases/translation/functions/to-date.to-date.toml#t009_not_a_date"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-json.t001"
+form = "sf.functions.to-json"
+kind = "type_combination"
+target = "VARIANT"
+note = "A document with spaces, a decimal with a trailing zero and an escaped quote, on single-key objects so key order cannot vary."
+catches = "the original spacing kept, or the quote unescaped"
+reading = "the page: the VARIANT as JSON text; NULL gives NULL; a JSON null gives the text null; whitespace may be removed; key order is not predictable"
+cases = ["cases/translation/functions/to-json.toml#t001_compact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-json.t002"
+form = "sf.functions.to-json"
+kind = "type_combination"
+target = "VARIANT"
+note = "A JSON null, which the page says gives the text null."
+catches = "a SQL NULL returned"
+reading = "the page: the VARIANT as JSON text; NULL gives NULL; a JSON null gives the text null; whitespace may be removed; key order is not predictable"
+cases = ["cases/translation/functions/to-json.toml#t002_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-json.t003"
+form = "sf.functions.to-json"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL, which the page says gives NULL."
+catches = "the text null returned"
+reading = "the page: the VARIANT as JSON text; NULL gives NULL; a JSON null gives the text null; whitespace may be removed; key order is not predictable"
+cases = ["cases/translation/functions/to-json.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-object.t001"
 form = "sf.functions.to-object"
 kind = "type_combination"
@@ -21928,6 +23019,39 @@ note = "Strings with fractional seconds, an explicit format and an integer strin
 catches = "the fraction dropped, the format ignored, or an integer string read as a date"
 reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
 cases = ["cases/translation/functions/to-timestamp.toml#t009_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-xml.t001"
+form = "sf.functions.to-xml"
+kind = "type_combination"
+target = "VARIANT from PARSE_XML"
+note = "An XML document parsed and written back."
+catches = "attributes or empty elements lost"
+reading = "the page: the value as XML text; a value parsed from XML gives back its XML; other values get generated SnowflakeData tags with a type attribute"
+cases = ["cases/translation/functions/to-xml.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-xml.t002"
+form = "sf.functions.to-xml"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "A single-key object and a number, which get generated tags."
+catches = "the JSON text returned unchanged"
+reading = "the page: the value as XML text; a value parsed from XML gives back its XML; other values get generated SnowflakeData tags with a type attribute"
+cases = ["cases/translation/functions/to-xml.toml#t002_generated"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-xml.t003"
+form = "sf.functions.to-xml"
+kind = "null_argument"
+target = "expression"
+note = "A SQL NULL; the page does not say; the recording decides."
+catches = "an empty element returned"
+reading = "the page: the value as XML text; a value parsed from XML gives back its XML; other values get generated SnowflakeData tags with a type attribute"
+cases = ["cases/translation/functions/to-xml.toml#t003_null_expression"]
 required = true
 
 [[obligation]]
@@ -22566,6 +23690,50 @@ note = "The empty string."
 catches = "NULL or an error for empty input"
 reading = "the page: <input> is a string of hexadecimal digits (decode) or a binary or string (encode); returns VARCHAR"
 cases = ["cases/translation/functions/try-hex-decode-string.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-parse-json.t001"
+form = "sf.functions.try-parse-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid documents, including the text null."
+catches = "a JSON null turned into a SQL NULL"
+reading = "the page: as PARSE_JSON, but NULL when parsing fails"
+cases = ["cases/translation/functions/try-parse-json.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-parse-json.t002"
+form = "sf.functions.try-parse-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Malformed JSON and duplicate keys under the default strict parameter."
+catches = "an error raised, or the duplicate accepted"
+reading = "the page: as PARSE_JSON, but NULL when parsing fails"
+cases = ["cases/translation/functions/try-parse-json.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-parse-json.t003"
+form = "sf.functions.try-parse-json"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Duplicate keys with the parameter 'd'."
+catches = "NULL returned, or the first value kept"
+reading = "the page: as PARSE_JSON, but NULL when parsing fails"
+cases = ["cases/translation/functions/try-parse-json.toml#t003_duplicates_d"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-parse-json.t004"
+form = "sf.functions.try-parse-json"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL."
+catches = "a JSON null returned"
+reading = "the page: as PARSE_JSON, but NULL when parsing fails"
+cases = ["cases/translation/functions/try-parse-json.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
@@ -23647,6 +24815,39 @@ note = "Equal end points are an error."
 catches = "division by zero returning NULL or infinity"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
 cases = ["cases/translation/functions/width-bucket.toml#t011_equal_ends"]
+required = true
+
+[[obligation]]
+id = "sf.functions.xmlget.t001"
+form = "sf.functions.xmlget"
+kind = "type_combination"
+target = "OBJECT, VARCHAR, INTEGER"
+note = "The first and second <a> elements, and their content and attribute through GET."
+catches = "a 1-based instance, or the element content returned instead of the element"
+reading = "the page: the instance_number-th (0-based, default 0) element named tag_name inside the OBJECT, as a whole element; NULL when the tag instance is missing or any argument is NULL"
+cases = ["cases/translation/functions/xmlget.toml#t001_instances"]
+required = true
+
+[[obligation]]
+id = "sf.functions.xmlget.t002"
+form = "sf.functions.xmlget"
+kind = "type_combination"
+target = "OBJECT, VARCHAR"
+note = "A tag that is absent and an instance past the last."
+catches = "an error, or the last instance returned"
+reading = "the page: the instance_number-th (0-based, default 0) element named tag_name inside the OBJECT, as a whole element; NULL when the tag instance is missing or any argument is NULL"
+cases = ["cases/translation/functions/xmlget.toml#t002_missing"]
+required = true
+
+[[obligation]]
+id = "sf.functions.xmlget.t003"
+form = "sf.functions.xmlget"
+kind = "null_argument"
+target = "instance-number"
+note = "A NULL instance number and a NULL tag name, which the page says give NULL."
+catches = "instance 0 used, or an error"
+reading = "the page: the instance_number-th (0-based, default 0) element named tag_name inside the OBJECT, as a whole element; NULL when the tag instance is missing or any argument is NULL"
+cases = ["cases/translation/functions/xmlget.toml#t003_null_instance_number"]
 required = true
 
 [[obligation]]
