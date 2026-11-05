@@ -116,6 +116,9 @@ pub(crate) const PERCENT_SIGN: &str = "%";
 /// The text "PLAN", as comparisons test it.
 pub(crate) const PLAN: &str = "PLAN";
 
+/// The text "PARAMETERS", as comparisons test it.
+pub(crate) const PARAMETERS: &str = "PARAMETERS";
+
 /// The text "PROCEDURE", as comparisons test it.
 pub(crate) const PROCEDURE: &str = "PROCEDURE";
 

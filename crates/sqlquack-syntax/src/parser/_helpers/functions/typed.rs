@@ -265,7 +265,24 @@ impl Parser {
             return Ok(expr);
         }
         let comments = self.call_comments(saved);
-        let typed = self.parse_typed_function_lowered(name, upper_name, quoted)?;
+        let typed = match self.parse_typed_function_lowered(name, upper_name, quoted) {
+            Ok(typed) => typed,
+            Err(_)
+                if self.tokens[saved].token_type == TokenType::RParen
+                    && !crate::functions::names::main::faithful_keyword_syntax_name::faithful_keyword_syntax_name(upper_name) =>
+            {
+                self.restore_comments(comments);
+                self.current = saved;
+                let mut expr = self.parse_generic_function(name, quoted)?;
+                if self.config.record_call_spans {
+                    self.record_call_span(&mut expr, saved);
+                }
+                self.faithful_calls
+                    .insert(saved, (expr.clone(), self.current));
+                return Ok(expr);
+            }
+            Err(error) => return Err(error),
+        };
         let mut expr = match Self::call_name(&typed) {
             Some(kept) if kept.eq_ignore_ascii_case(name) => typed,
             _ if crate::functions::names::main::faithful_keyword_syntax_name::faithful_keyword_syntax_name(upper_name)

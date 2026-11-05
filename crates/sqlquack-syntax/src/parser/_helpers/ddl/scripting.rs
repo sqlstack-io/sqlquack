@@ -18,6 +18,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::ENGINE;
 use crate::parser::constants::MUTEX;
+use crate::parser::constants::PARAMETERS;
 use crate::parser::constants::PLAN;
 use crate::parser::constants::REPRODUCTION;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
@@ -654,6 +655,7 @@ impl Parser {
 
     fn parse_show_scope(&mut self, this: &str) -> Result<(Option<String>, Option<Expression>)> {
         Ok(if self.match_token(TokenType::In) {
+            let snowflake = self.applies_snowflake_context_rules();
             let (kind, scope_obj) = if self.match_keyword("ACCOUNT") {
                 (Some("ACCOUNT".to_string()), None)
             } else if self.match_token(TokenType::Database) {
@@ -689,7 +691,10 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check_keyword_text("STARTS")
                 {
-                    let table = self.parse_table_ref()?;
+                    let table = match snowflake {
+                        true => self.parse_object_name()?,
+                        false => self.parse_table_ref()?,
+                    };
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -708,6 +713,13 @@ impl Parser {
                     None
                 };
                 (Some("VIEW".to_string()), scope_obj)
+            } else if snowflake && this == PARAMETERS && self.match_identifier("USER") {
+                let named = !self.is_at_end() && !self.check(TokenType::Semicolon);
+                let scope_obj = match named {
+                    true => Some(Expression::Table(Box::new(self.parse_object_name()?))),
+                    false => None,
+                };
+                (Some("USER".to_string()), scope_obj)
             } else if self.match_keyword("CLASS") {
                 let scope_obj = if !self.is_at_end() {
                     let table = self.parse_table_ref()?;

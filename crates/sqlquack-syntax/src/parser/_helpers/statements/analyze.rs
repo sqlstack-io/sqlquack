@@ -1289,12 +1289,23 @@ impl Parser {
     /// Parses ALTER SESSION SET/UNSET.
     pub(crate) fn parse_alter_session(&mut self) -> Result<Option<Expression>> {
         if self.match_token(TokenType::Set) {
+            let snowflake = self.applies_snowflake_context_rules();
             let mut expressions: Vec<Expression> = Vec::new();
             loop {
+                let valueless = self.check_next(TokenType::Eq)
+                    && self.tokens.get(self.current + 2).is_none_or(|token| {
+                        matches!(token.token_type, TokenType::Semicolon | TokenType::Comma)
+                    });
+                if snowflake && (self.is_at_end() || self.check(TokenType::Semicolon) || valueless)
+                {
+                    return Err(self.parse_error("Expected <parameter> = <value>"));
+                }
                 if let Some(item) = self.parse_set_item_assignment()? {
                     expressions.push(item);
                 }
-                if !self.match_token(TokenType::Comma) {
+                let listed = self.match_token(TokenType::Comma)
+                    || snowflake && !self.is_at_end() && self.check_next(TokenType::Eq);
+                if !listed {
                     break;
                 }
             }

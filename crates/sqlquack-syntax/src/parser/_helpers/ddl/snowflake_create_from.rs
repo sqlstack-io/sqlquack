@@ -150,7 +150,26 @@ impl Parser {
                 operands.push(self.parse_primary()?);
                 "SPECIFICATION"
             }
-            _ if self.check(TokenType::Type) || self.check_identifier("TYPE") => return Ok(None),
+            _ if self.check(TokenType::Type) || self.check_identifier("TYPE") => {
+                self.skip();
+                self.expect_token(TokenType::Eq)?;
+                let experiment_type = match self.check(TokenType::String) {
+                    true => self.parse_primary()?,
+                    false => Expression::Identifier(self.parse_simple_name()?),
+                };
+                properties.push(property("TYPE", None, Some(experiment_type)));
+                if !self.check(TokenType::From) {
+                    ""
+                } else {
+                    self.skip();
+                    self.expect_alter_words(&[&["SPECIFICATION"]])?;
+                    if !self.check(TokenType::String) && !self.check(TokenType::DollarString) {
+                        return Err(self.parse_error("Expected the specification text"));
+                    }
+                    operands.push(self.parse_primary()?);
+                    "SPECIFICATION"
+                }
+            }
             _ => "",
         };
         if !self.is_at_end() && !self.check(TokenType::Semicolon) {

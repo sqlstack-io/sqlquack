@@ -534,6 +534,10 @@ impl Parser {
             "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" => self.parse_timestampltz_data_type(),
             "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => self.parse_timestampntz_data_type(),
             "INTERVAL" => self.parse_interval_data_type(),
+            "PRECISION" | "VARYING" if self.applies_snowflake_context_rules() => Err(self
+                .parse_error(format!(
+                    "{name} only follows DOUBLE or CHARACTER in a Snowflake type"
+                ))),
             _ => self.parse_other_scalar_data_type(name, raw_name),
         }
     }

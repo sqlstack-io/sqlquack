@@ -3,15 +3,21 @@
 use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::Call;
 use crate::expressions::schema_objects::models::ExecuteObject;
+use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::statements::models::CreateTask;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::tree::models::Expression;
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
+use crate::tokens::models::ParserToken;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 use crate::traversal::types::ExpressionWalk;
+
+/// The action, alias and properties of an EXECUTE DCM PROJECT deploy, plan or preview.
+type DcmRun = (String, Option<Identifier>, Vec<ObjectProperty>);
 
 impl Parser {
     /// In Snowflake, refuse an unquoted reserved keyword in any dotted part of a COMMENT ON name.
@@ -181,12 +187,83 @@ impl Parser {
                 }
             } else if self.match_text_seq(&["TEST", "ALL"]) {
                 node.action = Some("TEST ALL".to_owned());
+            } else if let Some((action, alias, properties)) = self.parse_dcm_project_run()? {
+                node.action = Some(action);
+                node.alias = alias;
+                node.properties = properties;
             } else {
                 self.current = start;
                 return Ok(None);
             }
         }
         Ok(Some(Expression::ExecuteObject(Box::new(node))))
+    }
+}
+
+impl Parser {
+    /// Reads `DEPLOY [ AS <alias> ] <source>`, `PLAN [ DELTA ] <source> [ OUTPUT_PATH '<path>' ]` or `PREVIEW <table> USING CONFIGURATION <config> FROM '<path>' [ LIMIT <n> ]` of EXECUTE DCM PROJECT; none for other actions.
+    fn parse_dcm_project_run(&mut self) -> Result<Option<DcmRun>> {
+        if self.match_text_seq(&["DEPLOY"]) {
+            let alias = match self.match_token(TokenType::As) {
+                true => Some(self.parse_simple_name()?),
+                false => None,
+            };
+            return Ok(Some((
+                "DEPLOY".to_owned(),
+                alias,
+                self.parse_dcm_project_source()?,
+            )));
+        }
+        if self.match_text_seq(&["PLAN"]) {
+            let action = match self.match_text_seq(&["DELTA"]) {
+                true => "PLAN DELTA",
+                false => "PLAN",
+            };
+            let mut properties = self.parse_dcm_project_source()?;
+            if self.match_text_seq(&["OUTPUT_PATH"]) {
+                properties.push(property(
+                    "OUTPUT_PATH",
+                    None,
+                    Some(self.parse_string_value()?),
+                ));
+            }
+            return Ok(Some((action.to_owned(), None, properties)));
+        }
+        if !self.match_text_seq(&["PREVIEW"]) {
+            return Ok(None);
+        }
+        let table = Expression::Table(Box::new(self.parse_object_name()?));
+        let mut properties = vec![property("PREVIEW", None, Some(table))];
+        if !self.check_text_seq(&["USING"]) {
+            return Err(self.parse_error("Expected USING CONFIGURATION"));
+        }
+        properties.extend(self.parse_dcm_project_source()?);
+        if self.match_token(TokenType::Limit) {
+            if !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected a row count after LIMIT"));
+            }
+            properties.push(property("LIMIT", None, Some(self.parse_primary()?)));
+        }
+        Ok(Some(("PREVIEW".to_owned(), None, properties)))
+    }
+
+    /// Reads `[ USING CONFIGURATION <config> ] FROM '<path>'` or `FROM DEPLOYMENT <deployment>`.
+    fn parse_dcm_project_source(&mut self) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        let configured = self.match_text_seq(&["USING"]);
+        if configured {
+            self.expect_alter_words(&[&["CONFIGURATION"]])?;
+            let config = Expression::Table(Box::new(self.parse_object_name()?));
+            properties.push(property("USING CONFIGURATION", None, Some(config)));
+        }
+        self.expect_token(TokenType::From)?;
+        if !configured && self.match_text_seq(&["DEPLOYMENT"]) {
+            let deployment = Expression::Table(Box::new(self.parse_object_name()?));
+            properties.push(property("FROM DEPLOYMENT", None, Some(deployment)));
+        } else {
+            properties.push(property("FROM", None, Some(self.parse_string_value()?)));
+        }
+        Ok(properties)
     }
 }
 
@@ -229,6 +306,108 @@ impl Parser {
             return Err(self.parse_error("Expected a file:// target after the stage"));
         }
         Ok(())
+    }
+
+    /// Refuses the EXECUTE IMMEDIATE shapes Snowflake rejects: no target, a stage without FROM, a broken FROM location or option, and an empty or unbalanced USING list.
+    pub(crate) fn check_snowflake_execute_immediate(&self) -> Result<()> {
+        if !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        let rest = &self.tokens[(self.current + 1).min(self.tokens.len())..];
+        let end = rest
+            .iter()
+            .position(|token| token.token_type == TokenType::Semicolon)
+            .unwrap_or(rest.len());
+        let tokens = &rest[..end];
+        let refuse = |message: &str| Err(self.parse_error(message));
+        let Some(first) = tokens.first() else {
+            return refuse("Expected a statement, a variable or FROM after EXECUTE IMMEDIATE");
+        };
+        if first.token_type == TokenType::DAt || first.text.starts_with('@') {
+            return refuse("Expected FROM before the stage");
+        }
+        if first.token_type != TokenType::From {
+            let target = match first.token_type {
+                TokenType::Dollar | TokenType::Parameter if first.text.len() <= 1 => {
+                    match tokens.get(1) {
+                        Some(name) if name.span.start == first.span.end => 2,
+                        _ => return refuse("Expected a variable name after $"),
+                    }
+                }
+                _ => 1,
+            };
+            return match &tokens[target..] {
+                [] => Ok(()),
+                [using, list @ ..] if using.text.eq_ignore_ascii_case("USING") => {
+                    Self::check_immediate_list(list, false).map_or_else(
+                        || refuse("Expected a non-empty USING ( ... ) list"),
+                        |_| Ok(()),
+                    )
+                }
+                _ => refuse("Expected USING or the end after the EXECUTE IMMEDIATE target"),
+            };
+        }
+        let location = &tokens[1..];
+        let Some(head) = location.first() else {
+            return refuse("Expected a stage or a path after FROM");
+        };
+        let mut next = 1;
+        if head.token_type != TokenType::String {
+            while location
+                .get(next)
+                .is_some_and(|token| token.span.start == location[next - 1].span.end)
+            {
+                next += 1;
+            }
+            if location[..next]
+                .iter()
+                .any(|token| token.token_type == TokenType::String)
+            {
+                return refuse("A stage location part cannot be a string literal");
+            }
+        }
+        let mut options = &location[next..];
+        if options
+            .first()
+            .is_some_and(|token| token.text.eq_ignore_ascii_case("USING"))
+        {
+            match Self::check_immediate_list(&options[1..], true) {
+                Some(used) => options = &options[1 + used..],
+                None => return refuse("Expected USING ( <name> => <value> , ... )"),
+            }
+        }
+        match options {
+            [] => Ok(()),
+            [dry_run, eq, value]
+                if dry_run.text.eq_ignore_ascii_case("DRY_RUN")
+                    && eq.token_type == TokenType::Eq
+                    && matches!(value.token_type, TokenType::True | TokenType::False) =>
+            {
+                Ok(())
+            }
+            _ => refuse("Expected USING, DRY_RUN = TRUE | FALSE or the end after the location"),
+        }
+    }
+
+    /// The tokens a non-empty `( <item> , ... )` list takes, each item `<name> => <value>` when `named`; none when it is malformed.
+    fn check_immediate_list(tokens: &[ParserToken], named: bool) -> Option<usize> {
+        if tokens.first()?.token_type != TokenType::LParen {
+            return None;
+        }
+        let close = tokens
+            .iter()
+            .position(|token| token.token_type == TokenType::RParen)?;
+        let items = &tokens[1..close];
+        if items.is_empty() {
+            return None;
+        }
+        let well_formed = items
+            .split(|token| token.token_type == TokenType::Comma)
+            .all(|item| match named {
+                true => matches!(item, [name, arrow, _, ..] if name.token_type != TokenType::FArrow && arrow.token_type == TokenType::FArrow),
+                false => !item.is_empty(),
+            });
+        well_formed.then_some(close + 1)
     }
 
     /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely.

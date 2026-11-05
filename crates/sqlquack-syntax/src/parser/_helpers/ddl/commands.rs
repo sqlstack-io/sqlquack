@@ -177,7 +177,10 @@ impl Parser {
             {
                 return self.parse_execute_using_policy_context();
             }
-            if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
+            if self.current + 1 >= self.tokens.len()
+                || self.check_next(TokenType::Semicolon)
+                || self.applies_snowflake_context_rules()
+            {
                 return Err(self.parse_error("Expected an object kind and name after EXECUTE"));
             }
         }
@@ -835,6 +838,11 @@ impl Parser {
                 break;
             }
 
+            if self.applies_snowflake_context_rules()
+                && (self.check(TokenType::Eq) || self.is_snowflake_reserved_keyword())
+            {
+                return Err(self.parse_error("Expected a variable name"));
+            }
             let name = self.parse_set_item_name()?;
 
             if self.match_token(TokenType::Eq)

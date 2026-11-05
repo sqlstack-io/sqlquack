@@ -776,7 +776,7 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATIO",
             sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",

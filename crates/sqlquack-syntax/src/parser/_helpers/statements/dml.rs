@@ -483,6 +483,9 @@ impl Parser {
                     ["CLONE", "FROM", "AS", "USING", "LIKE", "("]
                         .iter()
                         .any(|word| t.text.eq_ignore_ascii_case(word))
+                        || t.text.eq_ignore_ascii_case("TYPE")
+                            && self.tokens.get(self.current + 2).map(|eq| eq.token_type)
+                                == Some(TokenType::Eq)
                 })
             {
                 return Err(self.parse_error("Expected an object kind and a name"));

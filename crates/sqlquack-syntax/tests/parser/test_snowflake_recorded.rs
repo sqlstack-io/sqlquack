@@ -1048,3 +1048,138 @@ fn given_expression_gap_receipts_when_parsing_then_acceptance_matches_snowflake(
         );
     }
 }
+
+#[test]
+fn given_disagreement_receipts_when_parsing_then_acceptance_matches_snowflake() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a typed function parses with no arguments (recorded errno 938, import 155)",
+            sql: "SELECT TO_TIMESTAMP ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an aggregate parses with no arguments before OVER (recorded errno 938, import 19)",
+            sql: "SELECT COUNT_IF ( ) OVER ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "PRECISION alone is no type (recorded errno 1003, import 159)",
+            sql: "SELECT CAST ( NULL AS PRECISION ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "VARYING alone is no type (recorded errno 1003, import 159)",
+            sql: "SELECT CAST ( NULL AS VARYING ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE ... TYPE = needs an object kind (recorded errno 1003, import 66)",
+            sql: "CREATE v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER SESSION SET needs an assignment (recorded errno 1003, import 20)",
+            sql: "ALTER SESSION SET ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a session parameter needs a value (recorded errno 1003, import 20)",
+            sql: "ALTER SESSION SET BINARY_INPUT_FORMAT = ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "session assignments may be separated by spaces (recorded success, import 20)",
+            sql: "ALTER SESSION SET QUERY_TAG = 'q1' TIMEZONE = 'UTC' WEEK_START = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SET needs a variable name (recorded errno 1003, import 20)",
+            sql: "SET = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a reserved word is no variable name (recorded errno 1003, import 20)",
+            sql: "SET CURRENT = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "SHOW PARAMETERS takes IN USER with a name (recorded errno 2003, import 51)",
+            sql: "SHOW PARAMETERS IN USER v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW PARAMETERS IN TABLE needs an object name (recorded errno 1003, import 20)",
+            sql: "SHOW PARAMETERS IN TABLE SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE needs a known kind (recorded errno 1003, import 21)",
+            sql: "EXECUTE GRAPH v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE PROJECT needs DBT (recorded errno 1003, import 21)",
+            sql: "EXECUTE PROJECT v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE DCM PROJECT deploys from a source (recorded errno 1011, import 21)",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY FROM 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE DCM PROJECT plans from a source (recorded errno 1011, import 21)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE DCM PROJECT previews with a configuration (recorded errno 1011, import 21)",
+            sql: "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 FROM 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE IMMEDIATE needs a statement (recorded errno 1003, import 21)",
+            sql: "EXECUTE IMMEDIATE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE IMMEDIATE takes no bare $ (recorded errno 1003, import 21)",
+            sql: "EXECUTE IMMEDIATE $ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE IMMEDIATE FROM takes no quoted stage name (recorded errno 1003, import 21)",
+            sql: "EXECUTE IMMEDIATE FROM @'v1'.s1/p1/f1.sql ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
