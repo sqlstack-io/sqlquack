@@ -73,6 +73,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t007_time_day"
+compile_error = true
 description = "A TIME truncated to day, which the page says is an error. Catches: midnight returned instead of an error"
 columns = [{ name = "t", type = "TIME" }]
 rows = [

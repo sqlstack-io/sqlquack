@@ -121,6 +121,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t011_time_day"
+compile_error = true
 description = "Days added to a TIME, which the page says is an error. Catches: a wrapped TIME instead of an error"
 columns = [{ name = "t", type = "TIME" }]
 rows = [

@@ -41,13 +41,13 @@ tags = ["null"]
 
 [[case]]
 id = "t004_null_subquery"
-description = "A subquery returning NULL and no match. Catches: TRUE for NOT IN when the subquery holds a NULL"
+description = "A subquery returning NULL and no match, used as a filter: only x = 1 passes IN, and nothing passes NOT IN. Catches: TRUE for NOT IN when the subquery holds a NULL"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["9"],
   ["1"],
 ]
-query = "SELECT x IN (SELECT 1 UNION ALL SELECT NULL) AS r, x NOT IN (SELECT 1 UNION ALL SELECT NULL) AS n FROM input ORDER BY ordinal"
+query = "SELECT x, 'in' AS k FROM input WHERE x IN (SELECT 1 UNION ALL SELECT NULL) UNION ALL SELECT x, 'not in' FROM input WHERE x NOT IN (SELECT 1 UNION ALL SELECT NULL) ORDER BY k, x"
 order = "ordered"
 tags = ["null"]
 

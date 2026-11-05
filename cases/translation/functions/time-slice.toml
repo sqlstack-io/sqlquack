@@ -76,6 +76,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t007_zero_length"
+compile_error = true
 description = "A slice length of 0, below the documented minimum of 1. Catches: a division by zero yielding NULL instead of an error"
 columns = [{ name = "d", type = "DATE" }]
 rows = [

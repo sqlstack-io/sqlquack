@@ -53,14 +53,15 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_quoted_part"
-description = "The part given as a string literal. Catches: a quoted part rejected"
+compile_error = true
+description = "The part given as a string literal in the FROM form: Snowflake rejects it at parse time (1003, unexpected FROM), unlike the two-argument form. Catches: the quoted part accepted (a value returned where Snowflake refuses the statement)"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-11-05'"],
 ]
 query = "SELECT EXTRACT('month' FROM d) AS month, EXTRACT('dow' FROM d) AS dow FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["type-combination"]
+tags = ["error"]
 
 [[case]]
 id = "t006_null_date_interval_time_or_timestamp_expr"
