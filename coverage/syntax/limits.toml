@@ -10568,6 +10568,7 @@ sql = "ALTER TASK v1 ADD AFTER p1 , p2 , p3 , p4 , p5 , p6 , p7 , p8 , p9 , p10 
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: this boundary row carries the page's TABLES item, which Snowflake rejects as a syntax error at position 195, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144) before MAX_STALENESS is read, so the receipt says nothing about the minimum; observed with its 120 and 121 siblings, not settled (auditor 3066d631)
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_below"
@@ -10576,9 +10577,10 @@ note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 195, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_at"
@@ -10590,7 +10592,7 @@ expect = "observe"
 documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 195, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_above"
@@ -10602,6 +10604,7 @@ expect = "observe"
 documented = true
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: this boundary row carries the page's TABLES item, which Snowflake rejects as a syntax error at position 211, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144) before MAX_STALENESS is read, so the receipt says nothing about the minimum; observed with its 120 and 121 siblings, not settled (auditor 3066d631)
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_below"
@@ -10610,9 +10613,10 @@ note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "observe"
+documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 211, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_at"
@@ -10624,7 +10628,7 @@ expect = "observe"
 documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 211, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-144); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_above"
@@ -15730,6 +15734,7 @@ sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 TAG ( v1 = 'xxxxxxxxxxxxxxxxxxx
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: this boundary row carries the page's TABLES item, which Snowflake rejects as a syntax error at definition position 198, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-145) before MAX_STALENESS is read, so the receipt says nothing about the minimum; observed with its 120 and 121 siblings, not settled (auditor 3066d631)
 [[limit]]
 form = "sf.ddl.create-semantic-view.define-semantic-view"
 kind = "boundary_below"
@@ -15738,9 +15743,10 @@ note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
+documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-145); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at definition position 198, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-145); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.define-semantic-view"
 kind = "boundary_at"
@@ -15752,7 +15758,7 @@ expect = "observe"
 documented = true
 context = "raw"
 
-# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-145); observed, not flipped to reject
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at definition position 198, the WITH of WITH TAG after COMMENT = 'm' inside the first TABLES item (Snowflake requires COMMENT last there, probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-145); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.define-semantic-view"
 kind = "boundary_above"
