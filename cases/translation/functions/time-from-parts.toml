@@ -16,13 +16,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_nanoseconds"
-description = "Nanoseconds that need all nine digits. The result is cast to VARCHAR because the connector returns TIME in microseconds. Catches: nanoseconds read as milliseconds or truncated to microseconds"
+description = "Nanoseconds that need all nine digits. The result is formatted with TO_VARCHAR(..., 'HH24:MI:SS.FF9') because the connector returns TIME in microseconds and the session TIME_OUTPUT_FORMAT has no fraction. Catches: nanoseconds read as milliseconds or truncated to microseconds"
 columns = [{ name = "n", type = "NUMBER(38,0)" }]
 rows = [
   ["987654321"],
   ["5"],
 ]
-query = "SELECT CAST(TIME_FROM_PARTS(1, 2, 3, n) AS VARCHAR) AS r FROM input ORDER BY ordinal"
+query = "SELECT TO_VARCHAR(TIME_FROM_PARTS(1, 2, 3, n), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -77,12 +77,12 @@ tags = ["null"]
 
 [[case]]
 id = "t007_null_nanoseconds"
-description = "NULL nanoseconds. The result is cast to VARCHAR because the connector returns TIME in microseconds. Catches: NULL read as 0"
+description = "NULL nanoseconds. The result is formatted with TO_VARCHAR(..., 'HH24:MI:SS.FF9') because the connector returns TIME in microseconds and the session TIME_OUTPUT_FORMAT has no fraction. Catches: NULL read as 0"
 columns = [{ name = "n", type = "NUMBER(38,0)" }]
 rows = [
   ["NULL"],
   ["1"],
 ]
-query = "SELECT CAST(TIME_FROM_PARTS(0, 0, 0, n) AS VARCHAR) AS r FROM input ORDER BY ordinal"
+query = "SELECT TO_VARCHAR(TIME_FROM_PARTS(0, 0, 0, n), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
