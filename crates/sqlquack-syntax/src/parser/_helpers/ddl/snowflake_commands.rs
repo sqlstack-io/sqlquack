@@ -1,13 +1,16 @@
-//! Snowflake's rules on COMMENT ON names and values, and its class instance method calls.
+//! Snowflake's rules on COMMENT ON names and values, role grants, stage commands, DEFINE and class instance method calls.
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::Call;
 use crate::expressions::statements::models::{Grant, GrantPrincipal, Revoke};
 use crate::expressions::tree::models::Expression;
+use crate::parser::constants::ROLE;
+use crate::parser::constants::SHARE;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
+use crate::traversal::types::ExpressionWalk;
 
 /// The roles a Snowflake GRANT or REVOKE without ON hands out, each with the grantee kinds it takes.
 const ROLE_GRANTS: &[(&[&str], &[&[&str]])] = &[
@@ -61,9 +64,9 @@ impl Parser {
         let grantee = self.expect_alter_words(grantees)?;
         let principal = GrantPrincipal {
             name: securable_identifier(self.parse_object_name()?),
-            is_role: grantee == "ROLE",
+            is_role: grantee == ROLE,
             is_group: false,
-            is_share: grantee == "SHARE",
+            is_share: grantee == SHARE,
             kind: (!matches!(grantee.as_str(), "ROLE" | "SHARE")).then_some(grantee),
         };
         let kind = Some(kind.join(" "));
@@ -189,5 +192,67 @@ fn securable_identifier(name: crate::expressions::names::models::TableRef) -> Id
                 .collect::<Vec<_>>()
                 .join("."),
         ),
+    }
+}
+
+impl Parser {
+    /// Refuses a Snowflake GET/LIST/REMOVE lacking a stage, with a literal stage part, an empty option or GET's `file://` target.
+    pub(crate) fn check_snowflake_stage_command(&self, needs_target: bool) -> Result<()> {
+        if !self.is_snowflake() {
+            return Ok(());
+        }
+        let rest = &self.tokens[(self.current + 1).min(self.tokens.len())..];
+        let end: usize = rest
+            .iter()
+            .position(|token| token.token_type == TokenType::Semicolon)
+            .unwrap_or(rest.len());
+        let tokens = &rest[..end];
+        let stage: bool = tokens
+            .first()
+            .is_some_and(|token| token.token_type == TokenType::DAt || token.text.starts_with('@'));
+        if !stage {
+            return Err(self.parse_error("Expected a stage after the command"));
+        }
+        let quoted_part: bool = tokens.windows(2).any(|pair| {
+            pair[1].token_type == TokenType::String
+                && matches!(
+                    pair[0].token_type,
+                    TokenType::DAt | TokenType::Percent | TokenType::Mod | TokenType::Dot
+                )
+        });
+        if quoted_part {
+            return Err(self.parse_error("A stage name part cannot be a string literal"));
+        }
+        if tokens.last().map(|token| token.token_type) == Some(TokenType::Eq) {
+            return Err(self.parse_error("Expected a value after ="));
+        }
+        let target: bool = tokens[1..].iter().any(|token| {
+            token.token_type == TokenType::String
+                || token.text.to_ascii_lowercase().starts_with("file")
+        });
+        if needs_target && !target {
+            return Err(self.parse_error("Expected a file:// target after the stage"));
+        }
+        Ok(())
+    }
+
+    /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely.
+    pub(crate) fn parse_snowflake_define(&mut self) -> Result<Expression> {
+        let definition = self.parse_create()?;
+        let unchecked_kind = matches!(
+            definition,
+            Expression::CreateTable(_)
+                | Expression::CreateView(_)
+                | Expression::CreateFunction(_)
+                | Expression::CreateProcedure(_)
+                | Expression::CreateTask(_)
+        );
+        if unchecked_kind
+            || definition
+                .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
+        {
+            return Err(self.parse_error("Unsupported DEFINE object definition"));
+        }
+        Ok(definition)
     }
 }

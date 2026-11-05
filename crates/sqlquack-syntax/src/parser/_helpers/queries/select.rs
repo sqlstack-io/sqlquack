@@ -654,7 +654,6 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 self.parse_table_qualified_source(first_ident, first_name)?
             } else if self.match_token(TokenType::LParen) {
-                // `t ( TIMESTAMP => ... )` is a time-travel or CHANGES clause missing its keyword.
                 if self.is_snowflake()
                     && self.check_next(TokenType::FArrow)
                     && ["TIMESTAMP", "OFFSET", "STATEMENT", "STREAM", "INFORMATION"]

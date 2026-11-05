@@ -3,6 +3,9 @@
 use crate::expressions::queries::models::Limit;
 use crate::expressions::statements::models::Show;
 use crate::expressions::tree::models::Expression;
+use crate::parser::constants::ACCOUNT;
+use crate::parser::constants::ON_ACCOUNT;
+use crate::parser::constants::USER;
 use crate::parser::constants::{
     SHARED_SHOW_KINDS, SNOWFLAKE_SHOW_CONTAINERS, SNOWFLAKE_SHOW_EXTRA_CONTAINERS,
     SNOWFLAKE_SHOW_GENERAL_CONTAINERS, SNOWFLAKE_SHOW_KINDS, SNOWFLAKE_SHOW_REQUIRED_CONTAINERS,
@@ -58,7 +61,7 @@ impl Parser {
         };
         if !on_targets.is_empty() && self.match_token(TokenType::On) {
             let on = self.expect_alter_words(on_targets)?;
-            if on != "ACCOUNT" {
+            if on != ACCOUNT {
                 show.scope = Some(self.parse_show_name()?);
             }
             show.scope_kind = Some(format!("ON {on}"));
@@ -126,7 +129,7 @@ impl Parser {
         };
         if !for_targets.is_empty() && self.match_token(TokenType::For) {
             let target = self.expect_alter_words(for_targets)?;
-            if target != "USER" {
+            if target != USER {
                 show.scope_kind = Some(format!("FOR {target}"));
             }
             show.for_target = Some(self.parse_show_name()?);
@@ -226,19 +229,22 @@ impl Parser {
 
     /// SHOW [ FUTURE ] GRANTS after GRANTS: its one ON, TO, OF or IN clause, then LIMIT.
     fn parse_snowflake_show_grants(&mut self, future: bool) -> Result<Expression> {
-        let mut show = Show::new(if future { "FUTURE GRANTS" } else { "GRANTS" }.to_owned());
-        let clause = if future {
-            Some(self.expect_alter_words(&[
+        let show = Show::new(if future { "FUTURE GRANTS" } else { "GRANTS" }.to_owned());
+        let (clause, mut show) = if future {
+            let words = self.expect_alter_words(&[
                 &["IN", "DATABASE"],
                 &["IN", "SCHEMA"],
                 &["IN", "DCM", "PROJECT"],
                 &["TO", "ROLE"],
                 &["TO", "DATABASE", "ROLE"],
-            ])?)
+            ])?;
+            (Some(words), show)
         } else if self.match_token(TokenType::On) {
-            Some(self.parse_show_grants_on(&mut show)?)
+            let (clause, show) = self.parse_show_grants_on(show)?;
+            (Some(clause), show)
         } else if self.match_token(TokenType::To) {
-            Some(self.parse_show_grants_to(&mut show)?)
+            let (clause, show) = self.parse_show_grants_to(show)?;
+            (Some(clause), show)
         } else if self.match_text_seq(&["OF"]) {
             let words = self.expect_alter_words(&[
                 &["APPLICATION", "ROLE"],
@@ -247,15 +253,15 @@ impl Parser {
                 &["ROLE"],
                 &["SHARE"],
             ])?;
-            Some(format!("OF {words}"))
+            (Some(format!("OF {words}")), show)
         } else if self.match_token(TokenType::In) {
             self.expect_alter_words(&[&["DCM", "PROJECT"]])?;
-            Some("IN DCM PROJECT".to_owned())
+            (Some("IN DCM PROJECT".to_owned()), show)
         } else {
-            None
+            (None, show)
         };
         if let Some(clause) = clause {
-            if show.scope.is_none() && clause != "ON ACCOUNT" {
+            if show.scope.is_none() && clause != ON_ACCOUNT {
                 show.scope = Some(match clause.ends_with("SERVICE ROLE") {
                     true => self.parse_show_instance_role()?,
                     false => self.parse_show_name()?,
@@ -281,9 +287,9 @@ impl Parser {
     }
 
     /// The clause after SHOW GRANTS ON: ACCOUNT, or an object kind of one or more words and the object's name.
-    fn parse_show_grants_on(&mut self, show: &mut Show) -> Result<String> {
-        if self.match_identifier("ACCOUNT") {
-            return Ok("ON ACCOUNT".to_owned());
+    fn parse_show_grants_on(&mut self, mut show: Show) -> Result<(String, Show)> {
+        if self.match_identifier(ACCOUNT) {
+            return Ok((ON_ACCOUNT.to_owned(), show));
         }
         let mut kind: Vec<String> = Vec::new();
         while (self.is_identifier_token() || self.check_keyword())
@@ -305,11 +311,11 @@ impl Parser {
         if self.check(TokenType::LParen) {
             show.privileges = self.parse_function_param_types()?;
         }
-        Ok(format!("ON {}", kind.join(" ")))
+        Ok((format!("ON {}", kind.join(" ")), show))
     }
 
     /// The grantee after SHOW GRANTS TO; a class instance role names its class as the target.
-    fn parse_show_grants_to(&mut self, show: &mut Show) -> Result<String> {
+    fn parse_show_grants_to(&mut self, mut show: Show) -> Result<(String, Show)> {
         const GRANTEES: &[&[&str]] = &[
             &["APPLICATION", "ROLE"],
             &["APPLICATION"],
@@ -320,12 +326,12 @@ impl Parser {
             &["USER"],
         ];
         if let Some(words) = GRANTEES.iter().find(|words| self.match_text_seq(words)) {
-            return Ok(format!("TO {}", words.join(" ")));
+            return Ok((format!("TO {}", words.join(" ")), show));
         }
         show.target = Some(self.parse_show_name()?);
         self.expect_alter_words(&[&["ROLE"]])?;
         show.scope = Some(self.parse_show_instance_role()?);
-        Ok("TO INSTANCE ROLE".to_owned())
+        Ok(("TO INSTANCE ROLE".to_owned(), show))
     }
 
     /// `<instance_name>!<role_name>`, as a pair.

@@ -1,0 +1,921 @@
+use crate::helpers::snowflake_kind;
+use crate::test_types::SnowflakeVerdictTestCase;
+
+#[test]
+fn given_a_snowflake_merge_when_parsing_then_its_actions_need_their_clauses() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a MERGE with no WHEN clause (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", "", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UPDATE without SET (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET with a string for a column (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE SET 'v1' = 1", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INSERT without VALUES (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty INSERT column list (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT ( ) VALUES ( 1 )", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed INSERT column list (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT ( v1 VALUES ( 1 )", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty VALUES list (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( )", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed VALUES list (recorded errno 1003)",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( 1", " ;"),
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps MERGE WHEN MATCHED THEN UPDATE SET c1 = t2.c1",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE SET c1 = t2.c1", " ;"),
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps MERGE WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THE",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THEN INSERT ( c1 , c2 ) VALUES ( t2.c1 , DEFAULT )", " ;"),
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps MERGE WHEN NOT MATCHED THEN INSERT VALUES ( 1 )",
+            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( 1 )", " ;"),
+            expected_kind: Some("merge"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_stage_command_when_parsing_then_its_stage_and_options_must_be_complete() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "GET with no stage (recorded errno 1003)",
+            sql: "GET file:///tmp/d1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "GET with no file target (recorded errno 1003)",
+            sql: "GET @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string stage name (recorded errno 1003)",
+            sql: "GET @'v1' file:///tmp/d1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string table stage name (recorded errno 1003)",
+            sql: "LIST @%'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string namespace part (recorded errno 1003)",
+            sql: "REMOVE @'v1'.s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an option without its value (recorded errno 1003)",
+            sql: "LIST @s1 PATTERN = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "LIST with nothing (recorded errno 1003)",
+            sql: "LIST ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "REMOVE with nothing (recorded errno 1003)",
+            sql: "REMOVE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GET @~/p1 file:///tmp/d1/ PARALLEL = 1 PATTERN = 'm' ;",
+            sql: "GET @~/p1 file:///tmp/d1/ PARALLEL = 1 PATTERN = 'm' ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GET @s1 'file:///tmp/d 1/' ;",
+            sql: "GET @s1 'file:///tmp/d 1/' ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GET '@%'v1 Q'' file:///tmp/d1/ ;",
+            sql: "GET '@%\"v1 Q\"' file:///tmp/d1/ ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps LIST @~ ;",
+            sql: "LIST @~ ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps LIST '@'v1 Q'.r1/branches/main' ;",
+            sql: "LIST '@\"v1 Q\".r1/branches/main' ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps LIST @v1.s1/p1 PATTERN = 'm' ;",
+            sql: "LIST @v1.s1/p1 PATTERN = 'm' ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps REMOVE @%'SELECT' ;",
+            sql: "REMOVE @%\"SELECT\" ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps REMOVE @v1.%v1 ;",
+            sql: "REMOVE @v1.%v1 ;",
+            expected_kind: Some("command"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_dynamic_table_when_parsing_then_each_action_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "ALTER DYNAMIC without TABLE (recorded errno 1003)",
+            sql: "ALTER DYNAMIC v1 SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "no action (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET with no property (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string contact (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET CONTACT ( STEWARD = 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "FROZEN without WHERE (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET FROZEN ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string policy (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ADD ROW ACCESS POLICY 'v1' ON ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty clustering key (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 CLUSTER BY ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string search target (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 RESUME SEARCH OPTIMIZATION ON 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a second UNSET TAG with no column (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 UNSET TAG v1 , UNSET TAG v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column comment that is not a string (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 COMMENT m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a name list on another action (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 , v1 SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE IF EXISTS v1 , v1 REFRESH COPY SESSION ;",
+            sql: "ALTER DYNAMIC TABLE IF EXISTS v1 , v1 REFRESH COPY SESSION ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 SET TARGET_LAG = DOWNSTREAM CONTACT ( STEWARD =",
+            sql: "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = DOWNSTREAM CONTACT ( STEWARD = v1 ) ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 UNSET FROZEN WHERE , EXECUTE AS USER ;",
+            sql: "ALTER DYNAMIC TABLE v1 UNSET FROZEN WHERE , EXECUTE AS USER ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLI",
+            sql: "ALTER DYNAMIC TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( v1 , v1 ) ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 SET AGGREGATION POLICY v1 ENTITY KEY ( v1 ) FOR",
+            sql: "ALTER DYNAMIC TABLE v1 SET AGGREGATION POLICY v1 ENTITY KEY ( v1 ) FORCE ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 DROP SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , v",
+            sql: "ALTER DYNAMIC TABLE v1 DROP SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , v1 , 1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 ALTER v1 SET TAG v1 = 'm' , v2 = 'm' , COLUMN v",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 SET TAG v1 = 'm' , v2 = 'm' , COLUMN v3 SET TAG v1 = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 MODIFY v1 UNSET TAG a.b , v2 UNSET COMMENT ;",
+            sql: "ALTER DYNAMIC TABLE v1 MODIFY v1 UNSET TAG a.b , v2 UNSET COMMENT ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER DYNAMIC TABLE v1 ALTER v1 SET MASKING POLICY v1 USING ( v1 , v2 ",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 SET MASKING POLICY v1 USING ( v1 , v2 ) FORCE ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_grant_of_a_role_when_parsing_then_its_role_and_grantee_kinds_are_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a role granted to an application (recorded errno 1003)",
+            sql: "GRANT ROLE v1 TO APPLICATION v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "no role kind (recorded errno 1003)",
+            sql: "GRANT v1 TO ROLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DATABASE without ROLE (recorded errno 1003)",
+            sql: "GRANT DATABASE v1 TO USER v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "no grantee kind (recorded errno 1003)",
+            sql: "GRANT ROLE v1 TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WITH GRANT without OPTION (recorded errno 1003)",
+            sql: "GRANT ROLE v1 TO ROLE v1 WITH GRANT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "GRANT FOR without OPTION (recorded errno 1003)",
+            sql: "REVOKE GRANT FOR ROLE v1 FROM ROLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a role revoked from a share (recorded errno 1003)",
+            sql: "REVOKE ROLE v1 FROM SHARE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string role (recorded errno 1003)",
+            sql: "GRANT APPLICATION ROLE 'v1' TO USER v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GRANT ROLE v1 TO ROLE v1 WITH GRANT OPTION ;",
+            sql: "GRANT ROLE v1 TO ROLE v1 WITH GRANT OPTION ;",
+            expected_kind: Some("grant"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GRANT DATABASE ROLE d1.v1 TO SHARE 'v1 Q' ;",
+            sql: "GRANT DATABASE ROLE d1.v1 TO SHARE \"v1 Q\" ;",
+            expected_kind: Some("grant"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps GRANT APPLICATION ROLE a1.v1 TO APPLICATION v1 ;",
+            sql: "GRANT APPLICATION ROLE a1.v1 TO APPLICATION v1 ;",
+            expected_kind: Some("grant"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps REVOKE GRANT OPTION FOR DATABASE ROLE v1 FROM ROLE v1 RESTRICT ;",
+            sql: "REVOKE GRANT OPTION FOR DATABASE ROLE v1 FROM ROLE v1 RESTRICT ;",
+            expected_kind: Some("revoke"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps REVOKE APPLICATION ROLE v1 FROM USER v1 ;",
+            sql: "REVOKE APPLICATION ROLE v1 FROM USER v1 ;",
+            expected_kind: Some("revoke"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_show_of_grants_or_policies_when_parsing_then_its_clauses_are_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "FUTURE without GRANTS (recorded errno 1003)",
+            sql: "SHOW FUTURE IN DATABASE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "FUTURE GRANTS in a bare name (recorded errno 1003)",
+            sql: "SHOW FUTURE GRANTS IN v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "GRANTS in a database (recorded errno 1003)",
+            sql: "SHOW GRANTS IN DATABASE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ON with a string kind (recorded errno 1003)",
+            sql: "SHOW GRANTS ON 'TABLE' v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ON with no name (recorded errno 1003)",
+            sql: "SHOW GRANTS ON TABLE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "OF with no grantee (recorded errno 1003)",
+            sql: "SHOW GRANTS OF ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ON with no kind (recorded errno 1003)",
+            sql: "SHOW FEATURE POLICIES ON v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ACCOUNT without ON or IN (recorded errno 1003)",
+            sql: "SHOW MAINTENANCE POLICIES ACCOUNT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "RULES without NETWORK (recorded errno 1003)",
+            sql: "SHOW RULES ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "USER with no kind (recorded errno 1003)",
+            sql: "SHOW USER ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "FOR without USER (recorded errno 1003)",
+            sql: "SHOW USER KEY PAIRS FOR v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string consumer (recorded errno 1003)",
+            sql: "SHOW USER PATS FOR EXTERNAL CONSUMER 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an incomplete routing table (recorded errno 1003)",
+            sql: "SHOW EVENT ROUTING TABLE ON ORGANIZATION FOR ALL LISTINGS ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS ;",
+            sql: "SHOW GRANTS ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS ON ACCOUNT LIMIT 1 ;",
+            sql: "SHOW GRANTS ON ACCOUNT LIMIT 1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS ON EXTERNAL TABLE 'v1 Q' ;",
+            sql: "SHOW GRANTS ON EXTERNAL TABLE \"v1 Q\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS TO SERVICE ROLE v1!'v1 Q' ;",
+            sql: "SHOW GRANTS TO SERVICE ROLE v1!\"v1 Q\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS TO 'SELECT' ROLE v1!v1 ;",
+            sql: "SHOW GRANTS TO \"SELECT\" ROLE v1!v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
+            sql: "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS OF APPLICATION ROLE v1 LIMIT 1 ;",
+            sql: "SHOW GRANTS OF APPLICATION ROLE v1 LIMIT 1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW GRANTS IN DCM PROJECT v1 ;",
+            sql: "SHOW GRANTS IN DCM PROJECT v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW FUTURE GRANTS TO DATABASE ROLE 'v1 Q' ;",
+            sql: "SHOW FUTURE GRANTS TO DATABASE ROLE \"v1 Q\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW FEATURE POLICIES ON DATABASE 'SELECT' ;",
+            sql: "SHOW FEATURE POLICIES ON DATABASE \"SELECT\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW MAINTENANCE POLICIES ON ACCOUNT ;",
+            sql: "SHOW MAINTENANCE POLICIES ON ACCOUNT ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SHOW MULTI PARTY APPROVAL POLICIES ON ACCOUNT ;",
+            sql: "SHOW MULTI PARTY APPROVAL POLICIES ON ACCOUNT ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps SHOW USER PROGRAMMATIC ACCESS TOKENS FOR EXTERNAL CONSUMER 'v1 Q' ;",
+            sql: "SHOW USER PROGRAMMATIC ACCESS TOKENS FOR EXTERNAL CONSUMER \"v1 Q\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS FOR USER 'SELECT' ;",
+            sql: "SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS FOR USER \"SELECT\" ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps SHOW EVENT ROUTING TABLE ON ORGANIZATION FOR ALL APPLICATION LISTINGS ",
+            sql: "SHOW EVENT ROUTING TABLE ON ORGANIZATION FOR ALL APPLICATION LISTINGS ;",
+            expected_kind: Some("show"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_insert_frame_or_execute_when_parsing_then_missing_parts_are_refused() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "WHEN without a condition (recorded errno 1003)",
+            sql: "INSERT FIRST WHEN THEN INTO v1 SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WHEN without THEN (recorded errno 1003)",
+            sql: "INSERT FIRST WHEN TRUE INTO v1 SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INTO without a table (recorded errno 1003)",
+            sql: "INSERT ALL INTO SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ELSE without a table (recorded errno 1003)",
+            sql: "INSERT FIRST WHEN TRUE THEN INTO v1 ELSE INTO SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized value that is not a query (recorded errno 1003)",
+            sql: "INSERT INTO v1 ( v1 ) ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string frame bound (recorded errno 1003)",
+            sql: "SELECT SUM ( 1 ) OVER ( ROWS 'x' PRECEDING ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved experiment name (recorded errno 1003)",
+            sql: "EXECUTE EXPERIMENT SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved PURGE alias (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PURGE AS SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps INSERT FIRST WHEN a > 1 THEN INTO t1 INTO t2 WHEN a > 2 THEN INTO t3 E",
+            sql: "INSERT FIRST WHEN a > 1 THEN INTO t1 INTO t2 WHEN a > 2 THEN INTO t3 ELSE INTO t4 SELECT 1 AS a ;",
+            expected_kind: Some("multitable_inserts"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps INSERT ALL INTO t1 INTO t2 ( a ) VALUES ( 1 ) SELECT 1 ;",
+            sql: "INSERT ALL INTO t1 INTO t2 ( a ) VALUES ( 1 ) SELECT 1 ;",
+            expected_kind: Some("multitable_inserts"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps INSERT INTO t1 ( a ) ( SELECT 1 ) ;",
+            sql: "INSERT INTO t1 ( a ) ( SELECT 1 ) ;",
+            expected_kind: Some("insert"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SELECT SUM ( a ) OVER ( ORDER BY a ROWS BETWEEN 1 PRECEDING AND CURREN",
+            sql: "SELECT SUM ( a ) OVER ( ORDER BY a ROWS BETWEEN 1 PRECEDING AND CURRENT ROW ) FROM t1 ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps EXECUTE EXPERIMENT 'v1 Q' ;",
+            sql: "EXECUTE EXPERIMENT \"v1 Q\" ;",
+            expected_kind: Some("execute_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps EXECUTE DCM PROJECT v1 PURGE AS a1 ;",
+            sql: "EXECUTE DCM PROJECT v1 PURGE AS a1 ;",
+            expected_kind: Some("execute_object"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_table_column_list_when_parsing_then_each_column_and_definition_is_checked(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "UNSET with nothing (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 UNSET ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a collation that is not a string (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD v1 INT COLLATE m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string identity start (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD v1 INT AUTOINCREMENT START 'x' INCREMENT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved referenced table (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD v1 INT REFERENCES SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved column in the list (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 COMMENT 'm' , SELECT COMMENT 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table action inside a column list (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 DROP DEFAULT , UNSET COMMENT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DEFAULT as a column type (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v2 DEFAULT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an incomplete lifecycle policy kind (recorded errno 1003)",
+            sql: "ALTER STORAGE LIFECYCLE v1 RENAME TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a lifecycle policy SET with nothing (recorded errno 1003)",
+            sql: "ALTER STORAGE LIFECYCLE POLICY v1 SET ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE IF EXISTS v1 ALTER COLUMN v1 DROP DEFAULT , COLUMN v2 SET ",
+            sql: "ALTER TABLE IF EXISTS v1 ALTER COLUMN v1 DROP DEFAULT , COLUMN v2 SET DATA TYPE INT ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 MODIFY v1 DROP DEFAULT , v2 DROP NOT NULL ;",
+            sql: "ALTER TABLE v1 MODIFY v1 DROP DEFAULT , v2 DROP NOT NULL ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 ALTER v1 UNSET COMMENT , v2 UNSET COMMENT ;",
+            sql: "ALTER TABLE v1 ALTER v1 UNSET COMMENT , v2 UNSET COMMENT ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 ALTER v1 SET DEFAULT s1.NEXTVAL , v2 NOT NULL ;",
+            sql: "ALTER TABLE v1 ALTER v1 SET DEFAULT s1.NEXTVAL , v2 NOT NULL ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE IF EXISTS v1 DROP COLUMN IF EXISTS v1 , v2 ;",
+            sql: "ALTER TABLE IF EXISTS v1 DROP COLUMN IF EXISTS v1 , v2 ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 ADD COLUMN v1 INT CONSTRAINT c1 UNIQUE RELY COLLATE 'm'",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT CONSTRAINT c1 UNIQUE RELY COLLATE 'm' ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE TABLE t1 ( v1 INT AUTOINCREMENT START -1 INCREMENT 1 , v2 VARCH",
+            sql: "CREATE TABLE t1 ( v1 INT AUTOINCREMENT START -1 INCREMENT 1 , v2 VARCHAR COLLATE 'en-ci' ) ;",
+            expected_kind: Some("create_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 RENAME TO 'v1 Q' ;",
+            sql: "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 RENAME TO \"v1 Q\" ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER STORAGE LIFECYCLE POLICY v1 SET ARCHIVE_TIER = COOL ;",
+            sql: "ALTER STORAGE LIFECYCLE POLICY v1 SET ARCHIVE_TIER = COOL ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER STORAGE LIFECYCLE POLICY v1 UNSET ARCHIVE_FOR_DAYS ;",
+            sql: "ALTER STORAGE LIFECYCLE POLICY v1 UNSET ARCHIVE_FOR_DAYS ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_source_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "FROM without MODEL (recorded errno 1003)",
+            sql: "CREATE MODEL v1 FROM v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string source version (recorded errno 1003)",
+            sql: "CREATE MODEL v1 FROM MODEL v1 VERSION 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string new version (recorded errno 1003)",
+            sql: "CREATE MODEL v1 WITH VERSION 'v1' FROM MODEL v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a gateway with no specification (recorded errno 1003)",
+            sql: "CREATE GATEWAY v1 FROM SPECIFICATION ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved experiment name (recorded errno 1003)",
+            sql: "CREATE EXPERIMENT SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an INT precision (recorded errno 1003)",
+            sql: "CREATE TABLE t1 ( v1 INT ( 1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a computed column without a type (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD v1 AS ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE OR REPLACE MODEL IF NOT EXISTS v1 WITH VERSION v2 FROM MODEL d1",
+            sql: "CREATE OR REPLACE MODEL IF NOT EXISTS v1 WITH VERSION v2 FROM MODEL d1.s1.m1 VERSION last ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE MODEL v1 WITH VERSION 'v1 Q' FROM @s1 ;",
+            sql: "CREATE MODEL v1 WITH VERSION \"v1 Q\" FROM @s1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE GATEWAY 'v1 Q' FROM SPECIFICATION $$m: 1$$ ;",
+            sql: "CREATE GATEWAY \"v1 Q\" FROM SPECIFICATION $$m: 1$$ ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE EXPERIMENT v1 ;",
+            sql: "CREATE EXPERIMENT v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATIO",
+            sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
+            sql: "ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
+            sql: "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
+            sql: "CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
+            expected_kind: Some("create_table"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_values() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an option without a value (recorded errno 1003)",
+            sql: "CREATE FILE FORMAT v1 TYPE = JSON FILE_EXTENSION = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved name (recorded errno 1003)",
+            sql: "CREATE FILE FORMAT SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column without a type and no query (recorded errno 1003)",
+            sql: "CREATE OR REPLACE TEMPORARY TABLE t1 ( c1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a time-travel clause without AT (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 ( TIMESTAMP => TO_TIMESTAMP_LTZ ( '2026-01-01' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a query as the table body (recorded errno 1003)",
+            sql: "CREATE TABLE t1 ( SELECT 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string PIVOT column (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR 'v1' IN ( 1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved UNPIVOT value column (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( SELECT FOR v1 IN ( v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string name (recorded errno 1003)",
+            sql: "CREATE STAGE 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed option list (recorded errno 1003)",
+            sql: "CREATE OR ALTER STAGE v1 ENCRYPTION = ( TYPE = 'SNOWFLAKE_FULL' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an extra closing parenthesis (recorded errno 1003)",
+            sql: "CREATE OR ALTER FILE FORMAT v1 TYPE = CSV NULL_IF = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a nested option without a value (recorded errno 1003)",
+            sql: "DEFINE STAGE d1.s1.v1 URL = 's3://b1/p1/' CREDENTIALS = ( AWS_KEY_ID = AWS_SECRET_KEY = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a nested value without an option (recorded errno 1003)",
+            sql: "DEFINE STAGE d1.s1.v1 URL = 's3://b1/p1/' ENCRYPTION = ( = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~",
+            sql: "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~' ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE OR ALTER STAGE v1 FILE_FORMAT = ( TYPE = ORC NULL_IF = ( ) ) ;",
+            sql: "CREATE OR ALTER STAGE v1 FILE_FORMAT = ( TYPE = ORC NULL_IF = ( ) ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE STAGE v1 FILE_FORMAT = ( TYPE = JSON TIME_FORMAT = m1 ) ;",
+            sql: "CREATE STAGE v1 FILE_FORMAT = ( TYPE = JSON TIME_FORMAT = m1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( FORMAT_NAME = m1 ) ;",
+            sql: "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( FORMAT_NAME = m1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
+            sql: "DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE FILE FORMAT v1 TYPE = JSON NULL_IF = ( m1 ) ;",
+            sql: "CREATE FILE FORMAT v1 TYPE = JSON NULL_IF = ( m1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE STAGE 'SELECT' CLONE v1 ;",
+            sql: "CREATE STAGE \"SELECT\" CLONE v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CREATE TABLE t1 ( c1 , c2 ) AS SELECT 1 , 2 ;",
+            sql: "CREATE TABLE t1 ( c1 , c2 ) AS SELECT 1 , 2 ;",
+            expected_kind: Some("create_table"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

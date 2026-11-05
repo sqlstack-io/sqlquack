@@ -563,7 +563,6 @@ impl Parser {
 
     fn parse_column_collate(&mut self, mut col_def: ColumnDef) -> Result<ColumnDef> {
         if self.is_snowflake() {
-            // Snowflake's collation is a string specification, such as 'en-ci'.
             if !self.check(TokenType::String) {
                 return Err(self.parse_error("Expected a collation string after COLLATE"));
             }

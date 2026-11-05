@@ -1,11 +1,15 @@
 //! Parser statements: dml.
 
+use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
+use crate::expressions::operators::models::ConditionalInsert;
+use crate::expressions::operators::models::MultitableInserts;
 use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::Where;
 use crate::expressions::schema_objects::models::FunctionSecurity;
 use crate::expressions::statements::models::Delete;
+use crate::expressions::statements::models::Insert;
 use crate::expressions::statements::models::Paren;
 use crate::expressions::statements::models::Raw;
 use crate::expressions::tree::models::Expression;
@@ -260,8 +264,6 @@ impl Parser {
     /// Parse a CREATE statement
     pub(crate) fn parse_create(&mut self) -> Result<Expression> {
         let create_pos = self.current;
-        // Snowflake DCM `DEFINE <kind> ...` declares an object the way CREATE OR ALTER does, so it
-        // parses as a CREATE OR ALTER of that kind.
         let define = self.is_snowflake() && self.check(TokenType::Define);
         let create_token = if define {
             self.advance()?
@@ -567,5 +569,119 @@ impl Parser {
     /// The structured block, parsed by its own owner.
     pub(crate) fn parse_raw_scripting_block(&mut self) -> Result<Expression> {
         self.parse_scripting_block()
+    }
+
+    /// Parses Oracle INSERT ALL|FIRST [WHEN cond THEN] INTO table ... multi-table inserts.
+    pub(crate) fn parse_multitable_inserts(
+        &mut self,
+        leading_comments: Vec<String>,
+        overwrite: bool,
+    ) -> Result<Option<Expression>> {
+        let kind = self.previous_text().to_ascii_uppercase();
+
+        let mut expressions: Vec<Expression> = Vec::new();
+
+        loop {
+            let condition = if self.match_token(TokenType::When) {
+                if self.check(TokenType::Then) {
+                    return Err(self.parse_error("Expected a condition after WHEN"));
+                }
+                let cond = self.parse_or()?;
+                self.expect_token(TokenType::Then)?;
+                Some(cond)
+            } else {
+                None
+            };
+
+            let is_else = self.match_token(TokenType::Else);
+
+            if !self.match_token(TokenType::Into) {
+                if condition.is_some() || is_else || expressions.is_empty() {
+                    return Err(self.parse_error("Expected INTO and a target table"));
+                }
+                break;
+            }
+
+            let table_ref = if self.is_snowflake() {
+                self.parse_object_name()?
+            } else if let Some(Expression::Table(t)) = self.parse_table_parts()? {
+                *t
+            } else {
+                TableRef::new("")
+            };
+
+            let columns = if self.match_token(TokenType::LParen) {
+                let cols = self.parse_identifier_list()?;
+                self.expect_token(TokenType::RParen)?;
+                cols
+            } else {
+                Vec::new()
+            };
+
+            let values = if self.match_token(TokenType::Values) {
+                self.expect_token(TokenType::LParen)?;
+                let row = self.parse_expression_list()?;
+                self.expect_token(TokenType::RParen)?;
+                vec![row]
+            } else {
+                Vec::new()
+            };
+
+            let insert_expr = Expression::Insert(Box::new(Insert {
+                table: table_ref,
+                columns,
+                values,
+                query: None,
+                overwrite: false,
+                partition: Vec::new(),
+                directory: None,
+                returning: Vec::new(),
+                output: None,
+                on_conflict: None,
+                leading_comments: Vec::new(),
+                if_exists: false,
+                with: None,
+                ignore: false,
+                source_alias: None,
+                alias: None,
+                alias_explicit_as: false,
+                default_values: false,
+                by_name: false,
+                conflict_action: None,
+                is_replace: false,
+                replace_where: None,
+                source: None,
+                hint: None,
+                function_target: None,
+                partition_by: None,
+                settings: Vec::new(),
+            }));
+
+            let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {
+                this: Box::new(insert_expr),
+                expression: condition.map(Box::new),
+                else_: if is_else {
+                    Some(Box::new(Expression::Boolean(BooleanLiteral {
+                        value: true,
+                    })))
+                } else {
+                    None
+                },
+            }));
+
+            expressions.push(conditional_insert);
+        }
+
+        let source = self.parse_statement()?;
+
+        Ok(Some(Expression::MultitableInserts(Box::new(
+            MultitableInserts {
+                kind,
+                expressions,
+                source: Some(Box::new(source)),
+                leading_comments,
+                overwrite,
+            },
+        ))))
     }
 }

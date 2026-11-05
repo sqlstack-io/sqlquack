@@ -323,9 +323,6 @@ impl Parser {
             self.skip();
             let is_ctas = self.check(TokenType::Select) || self.check(TokenType::With);
             self.current = saved;
-            if is_ctas && self.is_snowflake() {
-                return Err(self.parse_error("Expected column definitions or AS before the query"));
-            }
             if is_ctas {
                 return self.parse_create_table_parenthesized_as_select(
                     CreateTableHead {
@@ -402,11 +399,7 @@ impl Parser {
             snowflake_inline_properties,
         )?;
 
-        let as_select = if !no_column_defs && self.match_token(TokenType::As) {
-            Some(self.parse_statement()?)
-        } else {
-            None
-        };
+        let as_select = self.parse_create_table_column_list_query(no_column_defs, &columns)?;
 
         table_properties = self.parse_create_table_partitioning(table_properties)?;
 
@@ -439,11 +432,6 @@ impl Parser {
         let post_table_properties = self.parse_post_table_properties()?;
 
         let inherits = self.parse_create_table_inherits()?;
-
-        // Snowflake names a column without a type only in a column list that an AS query fills.
-        if self.is_snowflake() && as_select.is_none() && columns.iter().any(|c| c.no_type) {
-            return Err(self.parse_error("Expected a data type for the column"));
-        }
 
         Ok(Expression::CreateTable(Box::new(CreateTable {
             name,
@@ -574,6 +562,23 @@ impl Parser {
             }
         }
         Ok(table_properties)
+    }
+
+    /// The `AS <query>` after a column list; Snowflake requires one when a listed column has no type.
+    fn parse_create_table_column_list_query(
+        &mut self,
+        no_column_defs: bool,
+        columns: &[ColumnDef],
+    ) -> Result<Option<Expression>> {
+        let as_select = if !no_column_defs && self.match_token(TokenType::As) {
+            Some(self.parse_statement()?)
+        } else {
+            None
+        };
+        if self.is_snowflake() && as_select.is_none() && columns.iter().any(|c| c.no_type) {
+            return Err(self.parse_error("Expected a data type for the column"));
+        }
+        Ok(as_select)
     }
 
     fn parse_create_table_columns(

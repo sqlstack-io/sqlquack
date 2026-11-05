@@ -96,8 +96,7 @@ impl Parser {
         }))))
     }
 
-    /// `MODEL <name> [ WITH VERSION <v> ] FROM MODEL <source> [ VERSION <v> ]`, `GATEWAY <name> FROM SPECIFICATION <text>`
-    /// or a bare `EXPERIMENT <name>`; None (position unchanged by the caller) for a model from a stage or a typed experiment.
+    /// Parses `MODEL ... FROM MODEL`, `GATEWAY ... FROM SPECIFICATION` or a bare `EXPERIMENT`; None for other forms.
     fn parse_snowflake_create_ml_object(&mut self, or_replace: bool) -> Result<Option<Expression>> {
         let kind = if self.check_identifier("MODEL") && !self.check_next_identifier("MONITOR") {
             "MODEL"
@@ -167,8 +166,7 @@ impl Parser {
         }))))
     }
 
-    /// Snowflake `CREATE [ OR REPLACE | OR ALTER ] [ TEMPORARY ] { STAGE | FILE FORMAT } [ IF NOT EXISTS ] <name>`
-    /// with its `<option> = <value>` and `[ WITH ] TAG ( ... )` properties; None leaves a CLONE and other kinds alone.
+    /// Parses Snowflake `CREATE ... { STAGE | FILE FORMAT } <name>` with options and tags; None leaves CLONE and other kinds.
     pub(crate) fn parse_snowflake_create_stage_or_format(
         &mut self,
         or_replace: bool,
@@ -231,8 +229,7 @@ impl Parser {
         }))))
     }
 
-    /// Parse an option value: a literal or name, a parenthesized `<option> = <value>` list, or a
-    /// parenthesized, comma-separated and possibly empty value list.
+    /// Parses an option value: a literal or name, a parenthesized option list, or a possibly empty value list.
     fn parse_option_value(&mut self) -> Result<Expression> {
         if !self.match_token(TokenType::LParen) {
             return self.parse_object_value();

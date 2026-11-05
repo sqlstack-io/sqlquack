@@ -1705,7 +1705,6 @@ impl Parser {
 
         loop {
             if last_was_alter_column {
-                // Snowflake: `{ ALTER | MODIFY } [ COLUMN ] c1 <action> , [ COLUMN ] c2 <action> ...`.
                 self.match_token(TokenType::Column);
                 let name = self.parse_simple_name()?;
                 let action = self.parse_alter_column_action()?;
@@ -1722,7 +1721,6 @@ impl Parser {
             if let Some(if_exists) =
                 dropping_columns.filter(|_| !self.check_alter_table_action_start())
             {
-                // Snowflake: `DROP [ COLUMN ] [ IF EXISTS ] c1 , c2 ...`.
                 actions.push(AlterTableAction::DropColumn {
                     name: self.parse_simple_name()?,
                     if_exists,
@@ -1801,8 +1799,6 @@ impl Parser {
                 }
                 let modify = self.is_snowflake() && self.check_identifier("MODIFY");
                 let typed = if modify {
-                    // The column actions read as typed; policy, tag, DATA METRIC FUNCTION and parenthesized
-                    // MODIFY keep the raw action they had.
                     let start = self.current;
                     self.skip();
                     self.match_token(TokenType::Column);
@@ -1816,11 +1812,12 @@ impl Parser {
                     let ends = self.is_at_end()
                         || self.check(TokenType::Comma)
                         || self.check(TokenType::Semicolon);
-                    if typed.is_err() || !ends {
-                        self.current = start;
-                        None
-                    } else {
-                        typed.ok()
+                    match typed {
+                        Ok(action) if ends => Some(action),
+                        _ => {
+                            self.current = start;
+                            None
+                        }
                     }
                 } else {
                     None

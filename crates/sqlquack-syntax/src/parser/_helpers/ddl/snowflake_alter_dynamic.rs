@@ -6,6 +6,10 @@ use crate::expressions::tree::models::Expression;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter_objects::tuple;
+use crate::parser::constants::DROP_ROW_ACCESS_POLICY;
+use crate::parser::constants::SET;
+use crate::parser::constants::SET_MASKING_POLICY;
+use crate::parser::constants::SET_TAG;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -72,7 +76,7 @@ impl Parser {
         Ok(match action {
             "RENAME TO" | "SWAP WITH" | "DROP ROW ACCESS POLICY" => {
                 let name = self.policy_operand()?;
-                if action == "DROP ROW ACCESS POLICY" && self.match_token(TokenType::Comma) {
+                if action == DROP_ROW_ACCESS_POLICY && self.match_token(TokenType::Comma) {
                     self.expect_alter_words(&[&["ADD", "ROW", "ACCESS", "POLICY"]])?;
                     let added = self.policy_operand()?;
                     self.expect_token(TokenType::On)?;
@@ -125,11 +129,8 @@ impl Parser {
                 }
                 (vec![policy], properties)
             }
-            "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == "SET TAG")?),
-            "SET" | "UNSET" => (
-                vec![],
-                self.parse_dynamic_table_properties(action == "SET")?,
-            ),
+            "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == SET_TAG)?),
+            "SET" | "UNSET" => (vec![], self.parse_dynamic_table_properties(action == SET)?),
             "ALTER" | "MODIFY" => (self.parse_dynamic_column_actions()?, vec![]),
             _ => (vec![], vec![]),
         })
@@ -272,7 +273,7 @@ impl Parser {
                 }
                 "SET MASKING POLICY" | "SET PROJECTION POLICY" => {
                     properties.push(property(&action, None, Some(self.policy_operand()?)));
-                    if action == "SET MASKING POLICY" && self.match_token(TokenType::Using) {
+                    if action == SET_MASKING_POLICY && self.match_token(TokenType::Using) {
                         properties.push(property("USING", None, Some(self.column_list_operand()?)));
                     }
                     if self.match_text_seq(&["FORCE"]) {
@@ -280,7 +281,7 @@ impl Parser {
                     }
                 }
                 "SET TAG" | "UNSET TAG" => {
-                    properties = self.parse_tag_list(action == "SET TAG")?;
+                    properties = self.parse_tag_list(action == SET_TAG)?;
                 }
                 _ => properties.push(property(&action, None, None)),
             }

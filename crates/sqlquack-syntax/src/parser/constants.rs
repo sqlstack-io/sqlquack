@@ -173,6 +173,33 @@ pub(crate) const VARIABLE: &str = "VARIABLE";
 /// The text "ZEROFILL", as comparisons test it.
 pub(crate) const ZEROFILL: &str = "ZEROFILL";
 
+/// The text "ACCOUNT", as comparisons test it.
+pub(crate) const ACCOUNT: &str = "ACCOUNT";
+
+/// The text "DROP ROW ACCESS POLICY", as comparisons test it.
+pub(crate) const DROP_ROW_ACCESS_POLICY: &str = "DROP ROW ACCESS POLICY";
+
+/// The text "ON ACCOUNT", as comparisons test it.
+pub(crate) const ON_ACCOUNT: &str = "ON ACCOUNT";
+
+/// The text ")", as comparisons test it.
+pub(crate) const RIGHT_PAREN: &str = ")";
+
+/// The text "ROLE", as comparisons test it.
+pub(crate) const ROLE: &str = "ROLE";
+
+/// The text "SET", as comparisons test it.
+pub(crate) const SET: &str = "SET";
+
+/// The text "SET MASKING POLICY", as comparisons test it.
+pub(crate) const SET_MASKING_POLICY: &str = "SET MASKING POLICY";
+
+/// The text "SET TAG", as comparisons test it.
+pub(crate) const SET_TAG: &str = "SET TAG";
+
+/// The text "SHARE", as comparisons test it.
+pub(crate) const SHARE: &str = "SHARE";
+
 /// The argument count of a two-argument call.
 pub(crate) const BINARY_ARITY: usize = 2;
 
