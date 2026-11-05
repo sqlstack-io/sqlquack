@@ -814,6 +814,41 @@ sqlquack_error = "Expected AS before the CTE body"
 note = "prose read as a CTE without AS; polyglot fails here too, with another error"
 
 [[rejection]]
+id = "snowflake_copy_prose_into_with"
+sql = "COPY INTO with ? source failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_on_error"
+sql = "COPY ON_ERROR=? failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_reversed"
+sql = "COPY reversed param order failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_minimal"
+sql = "COPY minimal with ? source failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_roundtrip"
+sql = "COPY roundtrip failed to re-parse: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
 id = "snowflake_reserved_cte_name"
 sql = "WITH all AS (SELECT 1 AS count) SELECT all.count FROM all"
 dialects = ["Snowflake"]
@@ -826,6 +861,34 @@ sql = "TRUNCATE TABLE table"
 dialects = ["Snowflake"]
 sqlquack_error = "Reserved word TABLE cannot be an unquoted object name"
 note = "TABLE is a Snowflake reserved word, so it cannot name a table unquoted"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_credentials"
+sql = "COPY INTO 's3://example/data.csv'\n    FROM EXTRA.EXAMPLE.TABLE\n    CREDENTIALS = ()\n    FILE_FORMAT = (TYPE = CSV COMPRESSION = NONE NULL_IF = ('') FIELD_OPTIONALLY_ENCLOSED_BY = '\"')\n    HEADER = TRUE\n    OVERWRITE = TRUE\n    SINGLE = TRUE\n            "
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_credentials_flat"
+sql = "COPY INTO 's3://example/data.csv'\nFROM EXTRA.EXAMPLE.TABLE\nCREDENTIALS = ()\nFILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=(\n  ''\n) FIELD_OPTIONALLY_ENCLOSED_BY='\"')\nHEADER = TRUE\nOVERWRITE = TRUE\nSINGLE = TRUE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_integration"
+sql = "COPY INTO 's3://example/data.csv'\n    FROM EXTRA.EXAMPLE.TABLE\n    STORAGE_INTEGRATION = S3_INTEGRATION\n    FILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=('') FIELD_OPTIONALLY_ENCLOSED_BY='\"')\n    HEADER = TRUE\n    OVERWRITE = TRUE\n    SINGLE = TRUE\n            "
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_integration_flat"
+sql = "COPY INTO 's3://example/data.csv' FROM EXTRA.EXAMPLE.TABLE STORAGE_INTEGRATION = S3_INTEGRATION FILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=('') FIELD_OPTIONALLY_ENCLOSED_BY='\"') HEADER = TRUE OVERWRITE = TRUE SINGLE = TRUE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
 
 [[rejection]]
 id = "snowflake_empty_call_argument"

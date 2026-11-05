@@ -22,6 +22,11 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("malformed_typed_type_text".to_owned(), 1),
                     ("snowflake_bare_values_cte".to_owned(), 1),
                     ("snowflake_cte_without_as_prose".to_owned(), 1),
+                    ("snowflake_copy_prose_into_with".to_owned(), 1),
+                    ("snowflake_copy_prose_on_error".to_owned(), 1),
+                    ("snowflake_copy_prose_reversed".to_owned(), 1),
+                    ("snowflake_copy_prose_minimal".to_owned(), 1),
+                    ("snowflake_copy_prose_roundtrip".to_owned(), 1),
                     ("snowflake_reserved_type_name".to_owned(), 1),
                     ("snowflake_string_part_extract".to_owned(), 1),
                     ("snowflake_function_body_number".to_owned(), 1),
@@ -105,6 +110,22 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("snowflake_empty_call_argument".to_owned(), 1),
                     ("snowflake_reserved_cte_name".to_owned(), 1),
                     ("snowflake_reserved_truncate_target".to_owned(), 1),
+                    (
+                        "snowflake_copy_unload_reserved_table_credentials".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_copy_unload_reserved_table_credentials_flat".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_copy_unload_reserved_table_integration".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_copy_unload_reserved_table_integration_flat".to_owned(),
+                        1,
+                    ),
                     (
                         "snowflake_empty_select_list_trailing_order_by".to_owned(),
                         1,

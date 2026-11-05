@@ -1253,3 +1253,127 @@ fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_t
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "COPY without INTO (recorded errno 1003)",
+            sql: "COPY v1 FROM @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a load from a plain table name (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string as a stage name (recorded errno 1003)",
+            sql: "COPY INTO @'v1' FROM v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload from a string (recorded errno 1003)",
+            sql: "COPY INTO 's3://b1/p1/' FROM 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION without BY (recorded errno 1003)",
+            sql: "COPY INTO @s1 FROM v1 PARTITION 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as an INCLUDE_METADATA key (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( SELECT = METADATA$FILENAME ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty file format value (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = JSON DATE_FORMAT = ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a credential without a key (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM 's3://b1/p1/' CREDENTIALS = ( = 'm' AWS_SECRET_KEY = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string key after the first INCLUDE_METADATA item (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( v1 = METADATA$FILENAME , 'v1' = METADATA$FILENAME ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty select list in COPY FILES (recorded errno 1003)",
+            sql: "COPY FILES INTO @s1 FROM ( SELECT FROM v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty top-level option value (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM 's3://b1/p1/' ENCRYPTION = ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a load from the table's own stage names no source",
+            sql: "COPY INTO v1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage after the table still needs FROM",
+            sql: "COPY INTO v1 @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload still needs FROM",
+            sql: "COPY INTO 's3://b1/p1/' v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "the connector's load from a bind placeholder",
+            sql: "COPY INTO \"T\" FROM ? ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "the connector's IDENTIFIER(?) target with a column list",
+            sql: "COPY INTO identifier(?) ( \"A\" ) FROM ( SELECT $1:\"A\" FROM '@\"STG\"' ) ON_ERROR = ? PURGE = TRUE ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a typed load stays a COPY tree",
+            sql: "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "COPY FILES from a query parses (recorded errno 90105)",
+            sql: "COPY FILES INTO @s1 FROM ( SELECT v1 , 'v1' FROM v1 ) ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "COPY FILES into the bare stage @ parses (recorded errno 1012)",
+            sql: "COPY FILES INTO @ FROM @s1 ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload with PARTITION BY parses (recorded errno 90105)",
+            sql: "COPY INTO @s1 FROM v1 PARTITION BY 1 ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string key as the only INCLUDE_METADATA item parses (recorded errno 1757)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( 'v1' = METADATA$FILENAME ) ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a $ column named by a reserved word parses (recorded errno 2211)",
+            sql: "COPY INTO v1 FROM ( SELECT $SELECT FROM @s1 ) ;",
+            expected_kind: Some("command"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

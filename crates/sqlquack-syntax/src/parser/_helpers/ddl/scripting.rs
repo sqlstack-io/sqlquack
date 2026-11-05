@@ -824,7 +824,14 @@ impl Parser {
     /// Parses COPY INTO a table or a location (Snowflake, PostgreSQL).
     pub(crate) fn parse_copy(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Copy)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_copy();
+        }
+        self.parse_copy_typed()
+    }
 
+    /// Reads COPY's typed tree; the position is after COPY.
+    pub(crate) fn parse_copy_typed(&mut self) -> Result<Expression> {
         let is_into = self.match_token(TokenType::Into);
 
         let this = self.parse_copy_target()?;
