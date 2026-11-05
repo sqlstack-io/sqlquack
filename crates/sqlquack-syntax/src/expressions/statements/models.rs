@@ -639,6 +639,9 @@ pub struct GrantPrincipal {
     /// Whether prefixed with SHARE keyword (Snowflake)
     #[serde(default)]
     pub is_share: bool,
+    /// Snowflake: the grantee's kind when it is USER, DATABASE ROLE, APPLICATION ROLE or APPLICATION
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<String>,
 }
 
 /// GRANT statement

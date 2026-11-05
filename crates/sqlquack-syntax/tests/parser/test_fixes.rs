@@ -2104,3 +2104,49 @@ fn given_a_snowflake_alter_dynamic_table_when_parsing_then_each_action_is_checke
         assert_eq!(kind(&parsed[0]), "alter_object", "Snowflake parses {sql}");
     }
 }
+
+#[test]
+fn given_a_snowflake_grant_of_a_role_when_parsing_then_its_role_and_grantee_kinds_are_checked() {
+    let rejected = [
+        (
+            "a role granted to an application",
+            "GRANT ROLE v1 TO APPLICATION v1 ;",
+        ),
+        ("no role kind", "GRANT v1 TO ROLE v1 ;"),
+        ("DATABASE without ROLE", "GRANT DATABASE v1 TO USER v1 ;"),
+        ("no grantee kind", "GRANT ROLE v1 TO v1 ;"),
+        (
+            "WITH GRANT without OPTION",
+            "GRANT ROLE v1 TO ROLE v1 WITH GRANT ;",
+        ),
+        (
+            "GRANT FOR without OPTION",
+            "REVOKE GRANT FOR ROLE v1 FROM ROLE v1 ;",
+        ),
+        (
+            "a role revoked from a share",
+            "REVOKE ROLE v1 FROM SHARE v1 ;",
+        ),
+        ("a string role", "GRANT APPLICATION ROLE 'v1' TO USER v1 ;"),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        ("GRANT ROLE v1 TO ROLE v1 WITH GRANT OPTION ;", "grant"),
+        ("GRANT DATABASE ROLE d1.v1 TO SHARE \"v1 Q\" ;", "grant"),
+        ("GRANT APPLICATION ROLE a1.v1 TO APPLICATION v1 ;", "grant"),
+        (
+            "REVOKE GRANT OPTION FOR DATABASE ROLE v1 FROM ROLE v1 RESTRICT ;",
+            "revoke",
+        ),
+        ("REVOKE APPLICATION ROLE v1 FROM USER v1 ;", "revoke"),
+    ];
+    for (sql, expected) in kept {
+        let parsed = statements(sql, Dialect::Snowflake, CallMode::Faithful);
+        assert_eq!(kind(&parsed[0]), expected, "Snowflake parses {sql}");
+    }
+}

@@ -1,13 +1,103 @@
 //! Snowflake's rules on COMMENT ON names and values, and its class instance method calls.
 
+use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::Call;
+use crate::expressions::statements::models::{Grant, GrantPrincipal, Revoke};
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
+/// The roles a Snowflake GRANT or REVOKE without ON hands out, each with the grantee kinds it takes.
+const ROLE_GRANTS: &[(&[&str], &[&[&str]])] = &[
+    (&["ROLE"], &[&["ROLE"], &["USER"]]),
+    (
+        &["DATABASE", "ROLE"],
+        &[
+            &["DATABASE", "ROLE"],
+            &["ROLE"],
+            &["USER"],
+            &["APPLICATION"],
+            &["SHARE"],
+        ],
+    ),
+    (
+        &["APPLICATION", "ROLE"],
+        &[
+            &["APPLICATION", "ROLE"],
+            &["APPLICATION"],
+            &["USER"],
+            &["ROLE"],
+        ],
+    ),
+];
+
 impl Parser {
+    /// In Snowflake, parse a GRANT (or, when `revoke`, a REVOKE) of a role after its first word; None outside Snowflake or for a SERVICE ROLE.
+    pub(super) fn parse_snowflake_role_grant(
+        &mut self,
+        revoke: bool,
+    ) -> Result<Option<Expression>> {
+        if !self.is_snowflake() || self.check_text_seq(&["SERVICE", "ROLE"]) {
+            return Ok(None);
+        }
+        let grant_option = revoke && self.match_text_seq(&["GRANT"]) && {
+            self.expect_alter_words(&[&["OPTION", "FOR"]])?;
+            true
+        };
+        let Some((kind, grantees)) = ROLE_GRANTS
+            .iter()
+            .find(|(kind, _)| self.match_text_seq(kind))
+        else {
+            return Err(self.parse_error("Expected ROLE, DATABASE ROLE or APPLICATION ROLE"));
+        };
+        let role = securable_identifier(self.parse_object_name()?);
+        self.expect_token(if revoke {
+            TokenType::From
+        } else {
+            TokenType::To
+        })?;
+        let grantee = self.expect_alter_words(grantees)?;
+        let principal = GrantPrincipal {
+            name: securable_identifier(self.parse_object_name()?),
+            is_role: grantee == "ROLE",
+            is_group: false,
+            is_share: grantee == "SHARE",
+            kind: (!matches!(grantee.as_str(), "ROLE" | "SHARE")).then_some(grantee),
+        };
+        let kind = Some(kind.join(" "));
+        let securable = role;
+        if revoke {
+            let cascade = self.match_token(TokenType::Cascade);
+            let restrict = !cascade && self.match_token(TokenType::Restrict);
+            return Ok(Some(Expression::Revoke(Box::new(Revoke {
+                privileges: Vec::new(),
+                kind,
+                securable,
+                function_params: Vec::new(),
+                principals: vec![principal],
+                grant_option,
+                cascade,
+                restrict,
+            }))));
+        }
+        let grant_option = self.match_token(TokenType::With) && {
+            self.expect_token(TokenType::Grant)?;
+            self.expect_alter_words(&[&["OPTION"]])?;
+            true
+        };
+        Ok(Some(Expression::Grant(Box::new(Grant {
+            privileges: Vec::new(),
+            kind,
+            securable,
+            function_params: Vec::new(),
+            principals: vec![principal],
+            grant_option,
+            as_principal: None,
+        }))))
+    }
+
     /// In Snowflake, refuse an unquoted reserved keyword in any dotted part of a COMMENT ON name.
     pub(super) fn check_snowflake_comment_name(&self) -> Result<()> {
         if !self.is_snowflake() {
@@ -84,5 +174,20 @@ impl Parser {
             with: None,
             into: None,
         }))))
+    }
+}
+
+/// A role or grantee name as one identifier, its parts joined by dots like a GRANT securable.
+fn securable_identifier(name: crate::expressions::names::models::TableRef) -> Identifier {
+    match (name.catalog, name.schema) {
+        (None, None) => name.name,
+        (catalog, schema) => Identifier::new(
+            [catalog, schema, Some(name.name)]
+                .into_iter()
+                .flatten()
+                .map(|part| part.name)
+                .collect::<Vec<_>>()
+                .join("."),
+        ),
     }
 }

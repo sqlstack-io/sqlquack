@@ -405,6 +405,9 @@ impl Parser {
         }
         if found_to && on_count == 0 {
             self.current = saved_pos;
+            if let Some(grant) = self.parse_snowflake_role_grant(false)? {
+                return Ok(grant);
+            }
             return self.fallback_to_command(statement_start);
         }
 
@@ -488,6 +491,9 @@ impl Parser {
         }
         if found_from && on_count == 0 {
             self.current = saved_pos;
+            if let Some(revoke) = self.parse_snowflake_role_grant(true)? {
+                return Ok(revoke);
+            }
             return self.fallback_to_command(statement_start);
         }
 
@@ -683,6 +689,7 @@ impl Parser {
                 is_role,
                 is_group,
                 is_share,
+                kind: None,
             });
             if !self.match_token(TokenType::Comma) {
                 break;
