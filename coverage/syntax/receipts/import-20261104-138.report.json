@@ -1,0 +1,361 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-schema.define-schema.k47985c81e822",
+   "kind": "held",
+   "raw_record_sha256": "e2fa3472fda04fc0433d8ba0d3d2281d3428ad49aa45476438601a973ba91b84",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-07"
+  },
+  {
+   "case_id": "sf.ddl.create-schema.define-schema.k623d2ff0dcb6",
+   "kind": "held",
+   "raw_record_sha256": "d39480b872b9466f4177198e72ef1f61a88e3cfd54cb3f5b60f466f55b30ff0c",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-07"
+  },
+  {
+   "case_id": "sf.ddl.create-schema.define-schema.k64f8130dbdde",
+   "kind": "held",
+   "raw_record_sha256": "1398cda2cfb1b9a88d6a780903a6a7c7674d220830960c7a480c66e13f30000d",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-07"
+  },
+  {
+   "case_id": "sf.ddl.create-schema.define-schema.kff6352c8e30d",
+   "kind": "held",
+   "raw_record_sha256": "01ebb15d9e3a99b68f08959e530143deeb544acf88ad84c1a34b5bec41543956",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-07"
+  }
+ ],
+ "receipts": 296,
+ "repositioned_by_import": [
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k0093ea7e6ec7",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k079a457fe7c6",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k0f3423a436ff",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k2ff6eccd2c68",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k35ad09ea7823",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k386d51c05559",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k3abfec20baff",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k3bdeffb3d6a5",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k42b3470e1ca8",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k4541102fe97e",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k4d6ebcbe3489",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k54ce7563b41b",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k574b680aeb4b",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k64c3ae4a9e9f",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k652c19eae799",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k7fe7281ba191",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k87735d163d75",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k8a384e593a0f",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k8f7bd0591c39",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k9046f52fd17a",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k9051d495b622",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k923f7cfb339a",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.k9aad3ed241e6",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.ka17ee18d50e3",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.ka7a45ac8a0a9",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kb04fc5da0d04",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kb5157928382b",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kb85f7a025938",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kc283a16ebfff",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  }
+ ],
+ "runs": [
+  "define-def-07"
+ ]
+}

@@ -1,0 +1,2063 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REGISTER_CMK_INFO_POSTGRES ( ) ;",
+   "sql_sha256": "04d5befb991870bc482b3bfd665b309ab854ff4ba4e57fcf14f9340c16d6f730"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$TASK_DEPENDENTS_ENABLE ( ) ;",
+   "sql_sha256": "04e96b49f39849a4e2d3bb1ca72240b4c4dca8b05b4864835af33e507edd1ec9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 ) ;",
+   "sql_sha256": "0747e56f7e0e4e467f8ae413d9996bb2fddc4d0a0dd13379be215190db89767b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REVOKE_SNOWFLAKE_MANAGED_STORAGE_VOLUME_PRIVATELINK_ACCESS ( ) ;",
+   "sql_sha256": "07d37fe32ad7f63b35020bd5c3199aea5b81d213215f383749bdcfc1fec8a642"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CANCEL_QUERY ( ) ;",
+   "sql_sha256": "092c87903182bc4d608696abadad24e249720c166e8f29733b63c5e043d2db56"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CAST_MULTI_PARTY_APPROVAL_VOTE ( 'm' ) ;",
+   "sql_sha256": "0b44ebd8b9c3aab43529d213dffbf7721890301812b6531a034d49cb69cc53ca"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT , v1 ) ;",
+   "sql_sha256": "11f5222ee1567fb1785719db4c8fc630ce4cf22cd5116b38c36e0371a0232343"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES ( 'm' ) ;",
+   "sql_sha256": "120702bf6a28d666999910e60b3cd0c24acafb07c56738c44f29554b562a8837"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$RESTORE_PRIVATELINK_ENDPOINT ( ) ;",
+   "sql_sha256": "164cb714331ec1cc25e3a0cec3de0857c4c057bc7825282d1749e6c0f4c9837f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CANCEL_CLASSIFY_SCHEMA ( ) ;",
+   "sql_sha256": "16cb24e5017054c554ad64c40e2b7a828c376afebf9659252bb5382de3436ea2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( \"SELECT\" ) ;",
+   "sql_sha256": "1934b8e3a52c73be1b0e732d0068f1a7cb097f357ae084741bba34508c168c43"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REMOVE_PRIVATELINK_ENDPOINT_HOSTNAME ( 'm' ) ;",
+   "sql_sha256": "1bcf12895d7b98f942f587c83b9f8e4c39d4746be472727043af623e351aa00c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$AUTHORIZE_SNOWFLAKE_MANAGED_STORAGE_VOLUME_PRIVATELINK_ACCESS ( ) ;",
+   "sql_sha256": "1fe117682040cc69d963bfcb855ba9515585b5b78ae48cb02e71ce55366301ad"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$VERIFY_EXTERNAL_SECRET_INTEGRATION ( ) ;",
+   "sql_sha256": "22f9687e1f93ceeb7202edcb45446dab2974ba4f026b82040bf5766aa9e4f672"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' , 'STALENESS_CHECK_OVERRIDE' ) ;",
+   "sql_sha256": "2a1ba3a668a53107553b3cac41752914834a046770679e5935f80c2e69e44595"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$START_USER_EMAIL_VERIFICATION ( ) ;",
+   "sql_sha256": "2a38da3bff06be34f034a35de50e27e77235d85718ae7bad1b4594ac4ee0ae53"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GET_SERVICE_CALLER_TOKEN_EXPIRY ( ) ;",
+   "sql_sha256": "2b9964faa7cffc38c9365a9586f2cb263572949bdbf76cd60aa434ce69884f35"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ABORT_TRANSACTION ( ) ;",
+   "sql_sha256": "2c87d783d9a2443cd85bbdd531543a90ed3ce3346d73adb4c4030cfc0da601e5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'c1,c2' ) ;",
+   "sql_sha256": "2f25bb520f3edea77b0981d64e207586a4176bf50ef9bacb08b3bc4d3a210816"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CREATE_BILLING_EVENTS ( ) ;",
+   "sql_sha256": "31b4e00b6dcdf33754787616f50110f3cd369f6df4aeed8253bb3abb995edb6e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION ( ) ;",
+   "sql_sha256": "352165de71c817d6ece3928c67f9d733aece120df320c129202fc7e312957a18"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SNOWFLAKE . CORTEX . FINETUNE ( 'CREATE' , 'm' , 'm' ) ;",
+   "sql_sha256": "3603e23b8415cf6cb62e436f036e644dfb9a8fc5b899838f38abec0c6d146273"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$AUTHORIZE_STAGE_PRIVATELINK_ACCESS ( ) ;",
+   "sql_sha256": "3871282896c29a454b43214bac3a5473d8e21c26d35acc13a255fcfe19742b17"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ENABLE_FEATURE_GROUPS ( ) ;",
+   "sql_sha256": "40acaca970de8414988d7ee042e41d482ac04415f0a8d91f97d2dc023c4ccc97"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'c1,c2' , 'm' ) ;",
+   "sql_sha256": "4338e44720349b2bf2894ced5fda15322f8a2facba7773fb7182e48be60654d7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$LIST_EXTERNAL_SECRETS ( ) ;",
+   "sql_sha256": "440f81793e8998a4ccf246ff41b743f06f471afdf6d72e644daff66af5652985"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SAML_CSR ( v1 ) ;",
+   "sql_sha256": "4525b7fbd8556f323b45edc369fb7a81415472a984f670bb6301abda7356e251"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$VERIFY_DNS_DOMAIN ( ) ;",
+   "sql_sha256": "480219988975f54baa86d697b89e5f09f1c41be4c26fdc220bfc95341cdce6aa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SAML_CSR ( v1 , 'm' ) ;",
+   "sql_sha256": "4a8b12689140f69d2ad4c96ecbf7195794a098b862de1a26d8c0d8635dc15e8b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$MIGRATE_DBT_PROJECT ( ) ;",
+   "sql_sha256": "4b4cbaa16accdc05a0b31c6ff65cf4fd4d4ce58bf06d7efe20a6d8cf2a8dab7e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$UNVERIFY_DNS_DOMAIN ( ) ;",
+   "sql_sha256": "53744d30bb6b1ef22b5841221f9afcc8727ea7d42344985a9d1b4bc78ce86a8f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT ( ) ;",
+   "sql_sha256": "596d89cfa98155ca69a61d0b551466ce04c13965658cfaa2a67876bd5d041afa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$START_OAUTH_FLOW ( ) ;",
+   "sql_sha256": "5e651b5b6cf70b0a1a322d403eaaf6cfebc748336bfb8bbdaa22d4ba0305e32d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SET_PRIVATELINK_ENDPOINT_HOSTNAME ( 'm' ) ;",
+   "sql_sha256": "5fb367abf84cd8dc90be7b56f833dd4df0e1bd1dbe559408d900aea2a8c8f0e9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REQUEST_LISTING_AND_WAIT ( ) ;",
+   "sql_sha256": "600e20c66f174fd4cb57d814b6a956636c9338f26bba1d382609afed0da63b4c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SAML_CSR ( ) ;",
+   "sql_sha256": "6180d5a6b8037cdb13a34efa4f55df2251e3adf58825f852c67799eacae35a8d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_RUNTIMES ( v1 ) ;",
+   "sql_sha256": "619bb6f11decb5199a552e262a4c3c452db2303190a3008c695f1ef0f72e00e8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REVOKE_STAGE_PRIVATELINK_ACCESS ( ) ;",
+   "sql_sha256": "663a0da36935843461ba7534f8b14efbb818020a92040676fc82a91d7216092d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REMOVE_ALL_REFERENCES ( ) ;",
+   "sql_sha256": "6a9c7feeb14a9ce521288aafd6aeef9e3c49f727ea97df420d2b936ea87de8f7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$COMMIT_MOVE_ORGANIZATION_ACCOUNT ( ) ;",
+   "sql_sha256": "6de09988c1b28355e2d9832bd86163df397ae09d0b35686532429cafb877f4e9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ADD_PRIVATELINK_ENDPOINT_HOSTNAME ( 'm' ) ;",
+   "sql_sha256": "6e5c2b64d719eb992324df41df643c0a39722ed9a51580fe92f059d45ee3696a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT ( ) ;",
+   "sql_sha256": "71417972d4894694192e2fb3baa7f9ad63e7218306245be088e7f57e46f76448"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$RESTORE_PRIVATELINK_ENDPOINT_TSS ( ) ;",
+   "sql_sha256": "74e9bd5f47e2f40aeb06d26035342fd0cef89995fc5f21576a96492bf9ec0def"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT ( 'm' ) ;",
+   "sql_sha256": "7682abd8b83c9c1a005af1fb3615bb8993fa2dc84e1010039db04a1030cfaa41"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( \"v1 Q\" ) ;",
+   "sql_sha256": "77bb217defdc427f7b0c9567c28fbaea6cdbf9d3f9db2f19dbbdf3ee5d82a004"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT ( ) ;",
+   "sql_sha256": "7aaa774cf4f7e1ba7c409cc73aa2d5215803f6986070c774bbce5bec46996f56"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_OPENFLOW_RUNTIME_STATUS ( v1 , 'm' ) ;",
+   "sql_sha256": "7ce42f2f7b58069f97eff85e2fb6520a67ed2ea2ae8e138a03f2d3c371104be9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GET_LOGIN_FAILURE_DETAILS ( ) ;",
+   "sql_sha256": "7ebf3bf4031e99fa61a252be90f4750a3a2a6440f95478e557317a1b920a269a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SEND_NOTIFICATIONS_TO_CATALOG ( 'm' ) ;",
+   "sql_sha256": "8588c5f081dd8ec31790a798fa80eb0708d45d5304674e7dbb01feb18b922e2e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REMOTE_APP_OPERATION ( 'm' , 'm' ) ;",
+   "sql_sha256": "85cc5308cb21a86fbf550d8acf6a77a00b13f9599173e707d68f676feca5a6f5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CANCEL_ALL_QUERIES ( ) ;",
+   "sql_sha256": "88c48b15d42bc0138b896a954b7e0d37239debf5a886c1d4547be85283962a37"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$UNLINK_ORGANIZATION_USER ( ) ;",
+   "sql_sha256": "895dd5b66e2fe8fd28a9b24d8b9653e31884acfe71511280cf961ab18122e6d4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SCIM_ACCESS_TOKEN ( ) ;",
+   "sql_sha256": "8a39a2c41f0162830e3b71f492f9f487379624e17540ff05010816a54a14fe35"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DISABLE_FEATURE_GROUPS ( ) ;",
+   "sql_sha256": "8ad3317cc79a0706aecce9a2b2dd6a23632194e007439d8e808fb46394b18d86"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_CONNECTORS ( v1 ) ;",
+   "sql_sha256": "8dfe0d8820da85d79cffa0c629444582887eb0afa8f7c78a2278c5050155ac47"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DEMIGRATE_DBT_PROJECT ( ) ;",
+   "sql_sha256": "8f6d537decb3395fcf7bfedd84cf8a7063e0df7c2f9ae4fcbed82d9f1ff2ea26"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REGISTRY_LIST_IMAGES ( '/d1/s1/r1' ) ;",
+   "sql_sha256": "916c6f8967d1445395cec7cccaaf61cf97c6bf424c9ce75a0142f7cb6109ea3e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$EXECUTE_CATALOG_OPERATION ( 'm' ) ;",
+   "sql_sha256": "9176b593e14ccde49093742e741d3ce7a77ce376f82b11ba9e5b9170dba5b0a6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$BLOCK_SNOWFLAKE_MANAGED_STORAGE_VOLUME_PUBLIC_ACCESS_WITH_EXCEPTION ( ) ;",
+   "sql_sha256": "92647b4639037b2da3bf5bba1af66e9c5cc66838bf03234ae3c0f823d025b853"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$UNLINK_ORGANIZATION_USER_GROUP ( ) ;",
+   "sql_sha256": "9450465a6c42b455f2fe0bf0b37bd7f325652b3469bb5a4b5a21a140b451a38e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT ( v1 , v1 ) ;",
+   "sql_sha256": "95fa84513e2e76a958add23383d0e16b0feb339ae66e93d7d8f06973396afab7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SNOWFLAKE . TELEMETRY . DROP_ROW_ACCESS_POLICY_ON_EVENTS_VIEW ( ) ;",
+   "sql_sha256": "9869d8f6cb10288f90a40a9444f6d29a14d3a3a4755a62d33adc0142891bd3a3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REGISTER_CMK_INFO_SNOWFLAKE_MANAGED_VOLUME ( ) ;",
+   "sql_sha256": "9a2457a4c4ff10ade4f34cdf7ee93762eec26edc79034cc0de8bc08ba1509221"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME ( ) ;",
+   "sql_sha256": "9ad8678fe0041d4c2da3de323f39422dfceeab7b882fbeeeda69e42ef66d0a06"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$BEGIN_DEBUG_APPLICATION ( ) ;",
+   "sql_sha256": "9b67a904368822964966c612d98adb1190d6cdde08d7aacd65386f6af3c079f6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'm' , 'm' ) ;",
+   "sql_sha256": "a03f827a15e68a1d97fa49371cb81a489c46f94a35f71d4fc6181d7c39ecdea5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REGISTER_CMK_INFO ( ) ;",
+   "sql_sha256": "a119f4a9f516014d266662a7e738d1c279bc0d9fef0fbf8614b30587ccde2c05"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ABORT_SESSION ( ) ;",
+   "sql_sha256": "a1f97166ac5246d053f7054224c768630449150f991987632230f1c3cfebc0d5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT ( ) ;",
+   "sql_sha256": "a54d60663c662e711aac565033a5afbde3da1e5ae86b33c1c5c45c433c57fd2c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SAML_CSR ( \"SELECT\" ) ;",
+   "sql_sha256": "a6cd8273c85d13cf55c4682a4edf04c7e502a7b6e233e9823dc3c34560599026"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$FINISH_OAUTH_FLOW ( ) ;",
+   "sql_sha256": "a839cbe9a592de20e6090869481e9ef7f37026a188a6ff5a6e088ba7fc8dd2a2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_OPENFLOW_DEPLOYMENT_STATUS ( v1 , 'm' ) ;",
+   "sql_sha256": "aadea8644e67ac22537facccb5a8a2b7c239ed5aef059b92b137269a48e965ba"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$LINK_ORGANIZATION_USER_GROUP ( ) ;",
+   "sql_sha256": "b0d195ce58ac7bb0776f75697b404a6b09fdf98c933578a965fb882b15b84edd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REMOVE_REFERENCE ( ) ;",
+   "sql_sha256": "b19775aeae29ee447f7117118d7eaf809542d962e1db9bda360618773b295171"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( v1 ) ;",
+   "sql_sha256": "b2317e70d8ef448639456eab90ee1d85b7e8f076524c9870e8085f5fbdd4d138"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS ( ) ;",
+   "sql_sha256": "b41658e34580ea1adc3ccaa3c671fef501be95631fa11a5a66d8f2beecfed1fa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$REPORT_HEALTH_STATUS ( ) ;",
+   "sql_sha256": "b7d9efa560c2356f1528c33d07f626b6b4b3fcd98870882e0d8fa57d4813c97f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$BLOCK_INTERNAL_STAGES_PUBLIC_ACCESS_WITH_EXCEPTION ( ) ;",
+   "sql_sha256": "ba88417540881e7ebf03d540c42c0c1a69b13e66ff9c180a3244209ec58db703"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT , COMMENT ) ;",
+   "sql_sha256": "bba5369c023155da15042b7840754dcb9a1efcc4bd725ccd2d9d47f82dd86451"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$UNSET_DEFAULT_COLUMNS_OVERRIDE_FOR_SHOW_COMMAND ( ) ;",
+   "sql_sha256": "bd67acb7b41ea4568437069f899633ff6548ad1ccb88d06f6911be7c3d6b0914"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DISABLE_BEHAVIOR_CHANGE_BUNDLE ( ) ;",
+   "sql_sha256": "bec1dbaf1639b77710494f51da1ccf26302f1ce793deff18fd43ba90bfb14750"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DECODE_PAT ( ) ;",
+   "sql_sha256": "beea3e12eae77473b9b8091892367937ede5685d9fb9131d7d3f9708c5e96825"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( ) ;",
+   "sql_sha256": "c4e4a56ff2db3d2f81fc345d6e1fc631a5639d170459329d09f5a96a2d9cc9ea"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'm' ) ;",
+   "sql_sha256": "c5135a444bb2b091cf41b4cd7215c3ed6acda7b9317685cc483022265bb9d8d1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SET_RETURN_VALUE ( ) ;",
+   "sql_sha256": "c51544e0b061f29d1aeefea53c6dd82facf666ff959f1b03ea8761f244e20b42"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$ENABLE_BEHAVIOR_CHANGE_BUNDLE ( ) ;",
+   "sql_sha256": "d07a6a9a683b687e8f987fd05bb8df21a8ad297c26c43e1dde62a3a2a375209d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$PIPE_REBINDING_WITH_NOTIFICATION_CHANNEL ( ) ;",
+   "sql_sha256": "d48d321671139b843694d610f3d77e493b942f6f930b0078425d24df04209cde"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$HOLD_PRIVILEGE_ON_ACCOUNT ( ) ;",
+   "sql_sha256": "d4b06b7382b762b4c878419fc7f31d05fe8a8e32626e48b2e94fb739b86ec0a8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SEND_SNOWFLAKE_NOTIFICATION ( ( 'm' , 'm' ) , v1 ) ;",
+   "sql_sha256": "d54f280ab59fed40765378e8ac07dcec7f85e311daa7ffb1ccd961d0c38d6b1c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$SET_SPAN_ATTRIBUTES ( ) ;",
+   "sql_sha256": "d6603ec63957cbc37e4df4a45c11b26c1a69761c59a2f124bf17754b78d8ef3e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$VERIFY_EXTERNAL_OAUTH_TOKEN ( ) ;",
+   "sql_sha256": "d90ac3e96c5b6fce220a13dad757bd9c92cd948ab1ffb620b2e31bcab2217801"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DISABLE_DATABASE_REPLICATION ( ) ;",
+   "sql_sha256": "d9f3480a44fdf29e7c5e35f704792ecf08a4e2542fbf14417d3175e542d084a5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$GENERATE_SAML_CSR ( \"v1 Q\" ) ;",
+   "sql_sha256": "dbc96e6650c4ff1078ec18279e7c74aa23678729bcb362714deafc6447b82e12"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML ( 'm' ) ;",
+   "sql_sha256": "dda1a4766321096e1f973dff73ec458a4c148550095bf51fdbbd292a5bbf3acc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$MIGRATE_LEGACY_EVENT_ROUTING_CONFIGURATION ( ) ;",
+   "sql_sha256": "de1bedc39dee17dfdac9e7ace550accfe111d7d72be4ecd03a98521ceb9a340e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DISABLE_FEATURE_GROUPS_PREVIEW ( ) ;",
+   "sql_sha256": "e05afdcb6797ce7224b994e567479f2b990ff56965a08d10c6a35e08c369bdd2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT_TSS ( ) ;",
+   "sql_sha256": "eab171a37f70fc05beb27f3e1758e3ce00b654b61a624e57029211c884c10b02"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$USER_TASK_CANCEL_ONGOING_EXECUTIONS ( ) ;",
+   "sql_sha256": "ef5514fdf463efbeace008edf49f2c5d8d10e867a608b10df895f6f86589e5ab"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_OPENFLOW_CONNECTOR_STATUS ( v1 , 'm' ) ;",
+   "sql_sha256": "f93ef1f9ef3e0b8968e4e567501055d06e22143dfa8f122b20a9a9841a80abe8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_DEPLOYMENTS ( v1 ) ;",
+   "sql_sha256": "f942fe8dcbdcd10525d95f9e2c73b9a425d030c46a7ea21f5cf459ad68c7d47b"
+  }
+ ],
+ "receipts": 463,
+ "receipts_file_sha256": "529f96d854a5dc239d3df7209c59866ca3059ab621f41d2d7818f855d9528573",
+ "reconciled_receipts": 0,
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.k1a83a51f82b1",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.k66198ba8496f",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.kd8fa792d9395",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.kf738ec73125a",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.k3e09455c9bfe",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kb4bda3f085a1",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kd6504ed97cf6",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 3616)",
+   "row_id": "sf.functions.system-cleanup-database-role-grants.ka5feba6a2a17",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 612)",
+   "row_id": "sf.functions.system-decode-pat.k9f8d8c4274e8",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 502501)",
+   "row_id": "sf.functions.system-disable-privatelink-access-only.k1fb53d68ff26",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 3969)",
+   "row_id": "sf.functions.system-link-account-objects-by-name.k2070537ddd73",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 60164)",
+   "row_id": "sf.functions.system-link-organization-user.kc57ee735c001",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 93314)",
+   "row_id": "sf.functions.system-set-application-restricted-feature-access.kced26efe9236",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 60158)",
+   "row_id": "sf.functions.system-unlink-organization-user-group.k3dc80534293b",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 60164)",
+   "row_id": "sf.functions.system-unlink-organization-user.k8e60f2e82222",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 511516)",
+   "row_id": "sf.functions.system-unverify-dns-domain.kad74f3dcf9c3",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 91880)",
+   "row_id": "sf.functions.system-user-task-cancel-ongoing-executions.k5d957f73db82",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 511516)",
+   "row_id": "sf.functions.system-verify-dns-domain.kc94d9a9ae549",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 3107)",
+   "row_id": "sf.transaction_session.use-secondary-roles.k360113970753",
+   "run_id": "d103h-01"
+  },
+  {
+   "reason": "error phase not established (errno 3107)",
+   "row_id": "sf.transaction_session.use-secondary-roles.k829a17fa8ac0",
+   "run_id": "d103h-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k012366a62e88",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k0d647ec8521c",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k3141cde5afe3",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k4c96b51269b8",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k662e7b5626b5",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k6ac017df1d98",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kf5b51733f997",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k0a3251f0f0a6",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k14efa4154bd8",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc0fb4749f47b",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc1a67643ae08",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kea1fde4a0dbf",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kefe569e91ee3",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kf2045f4990bc",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.k9109a4aed2ae",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d",
+   "run_id": "ddl-510fb2fd-p1-02"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.k9e7d88f2b93d",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.ka5984371b88a",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-table.clusteringaction.k4766deb8b18b",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.k3631b5db7233",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-backups-in-backup-set.kb9855fb78979",
+   "run_id": "ddl-510fb2fd-p1-13b"
+  },
+  {
+   "reason": "error phase not established (errno 4)",
+   "row_id": "sf.ddl.show-service-containers-in-service.k0d7585bbc9e6",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 4)",
+   "row_id": "sf.ddl.show-service-instances-in-service.k281832eec14a",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-snapshots-in-snapshot-set.ke9163e3b7b28",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.create-function.create-function-returns-table.java-handler.kcc6de9b401f3",
+   "run_id": "ddl-510fb2fd-p2-09a"
+  },
+  {
+   "reason": "error phase not established (errno 4)",
+   "row_id": "sf.ddl.show-service-volumes-in-service.k8bcbcc06f002",
+   "run_id": "ddl-510fb2fd-p2-16a"
+  }
+ ],
+ "refused": 52,
+ "runs": [
+  {
+   "audit_sha256": "3213df7088e1c2adcde00edb2d2b32e46c75302fca6424588bbafd25f6294594",
+   "receipts": 278,
+   "refused_rows": 18,
+   "run_id": "d103h-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a7179d880b5a408f783064a7510d4aa782e51b69c7326d3ebc050695aefd6639",
+   "receipts": 14,
+   "refused_rows": 2,
+   "run_id": "d103h-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c08938585499c27ad5e0617fe6b295338230141c56f6b632d2f4d52ffe7ad09b",
+   "receipts": 22,
+   "refused_rows": 0,
+   "run_id": "d104-warehouses-20261104T072915Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "43a55c5c4ef2f5922b4ba2cc334e84c015c1e0a45c158c46e57c6c0c518c658d",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "acfe06dc7907c6a24076d522af94addd576ab587e472cfdfa858771ee8f20369",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "427a5c0fa8b32c4668d41e0efadcca97bea149413e41f97fe738e6d2e8001088",
+   "receipts": 297,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "bf180fe9fa4e4a753abbfb1c260989b90e56b85d3b3aa24e7403c451f8e77813",
+   "receipts": 297,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd45ae02b91e0befe65e0bbe9753f9d579cff399e38b91826aa78ebf850a99b6",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "52b2163580a628c3d1cead479da853815161d61bfbb3e5c72f81a4662898541d",
+   "receipts": 293,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "23c8601758b9cfc904a18e6af61f521a5d4a0457dc5935967a5764805fe01580",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1e3775ed641688263954966225febeb4d137aaf0be2c89e632cc4d5f3916d6d9",
+   "receipts": 68,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8b601fa3efa3d197a79b27c6e19dda43da7bb2e6ccfc507aa3f2a7d7c42d848f",
+   "receipts": 91,
+   "refused_rows": 0,
+   "run_id": "d113b-dml-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5f61d5b0c6187af1b86f1aabcc3ae1e1c57b6681f57fcfd4d6196c26c7556aa9",
+   "receipts": 54,
+   "refused_rows": 0,
+   "run_id": "d113b-functions-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "402cb73c1862029cadf26d77249a4320ab504d8faf26207050c72b66777256e0",
+   "receipts": 27,
+   "refused_rows": 0,
+   "run_id": "d113b-query-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8afc780db41afc45cb1891789d30150e822aa62cf53459ce993fa641c5d438d5",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d113b-session-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cfcfeb81aa46e7485d0d4ad741ef20cc17b2c069a2bc967b61fc1c75e577e7b8",
+   "receipts": 47,
+   "refused_rows": 14,
+   "run_id": "d113b-utility-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "28d783c9dd239da5d2486213befd8ca4c6e6b76b9fbea2ba37836692d6d02806",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "d113c-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "adcf05eedc26cefec9bf896db2ccf7bf3b848db0d980a0a5a64df40d8852eb25",
+   "receipts": 171,
+   "refused_rows": 0,
+   "run_id": "d113e-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "20e1884c63aba41c80b93ec45256be555928d3675fd8d600c2d07b6398c58610",
+   "receipts": 145,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-followup",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3b334629b5095667437676a5b82b1edef9222af8352eb931150a58f531de2e61",
+   "receipts": 692,
+   "refused_rows": 4,
+   "run_id": "ddl-510fb2fd-p1-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1c28f1968df46d5109ea76c3457d2a373cebd011220acfd50d86060f2b244de2",
+   "receipts": 791,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7c0eb30ded2a011394b3f7fde8c4b6f147b8605fa1bb60ead22396a150d14bd0",
+   "receipts": 479,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c0af7097170f282d614bf15acd73c5255fdbe888928c0fefc269d57f485230c2",
+   "receipts": 790,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6f31fac0f2265b133d808b63cad71625263e6f062f5ec42c43f8db3aac742d2f",
+   "receipts": 704,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b5ad38c2fd780e3d8f0df1a69e770aa671a239e9cc043c690b62265d6b653a1",
+   "receipts": 594,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a1ad43fe8fe22d9dd908ea9ff8ad1d4de86a3ef08b9595fc1708659fe0d5b61f",
+   "receipts": 652,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "33372268130f80a1f61a435a906040ec279404238c5ffe44a77e1d0550603a8e",
+   "receipts": 774,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-08",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d5697c57fb0b9a72e7ab4abdb1c0d76d8be862fe466a064e924044b7ff6fa503",
+   "receipts": 568,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-09",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da32649b026d8c1f8776e5919490251f63c44ed035bb23dcf34396147cc489f2",
+   "receipts": 756,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-10",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4fe2e477bc3396ef27c8c53dd25f6bd5ea6e325151d44ebb897f70e143a6e2da",
+   "receipts": 796,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-11",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "20995017191ccc91f3393a3536cdfa2f316469ac7c3958aecd9857be72055ed8",
+   "receipts": 138,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-12b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "47fb3688a30ee235417ad915da0e9b9eb7dd8acac75773c65720f6faee9509d9",
+   "receipts": 127,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-13b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a438b439f5e4a83e4f346a9d472c97c655df1e3db69ad911380cf758cf33c195",
+   "receipts": 732,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-14",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "468c175b68b93bf1875e77d0e427c2b5a7b9376cebc49ac28e45eacad8bfa145",
+   "receipts": 273,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-15a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6dda9b6ef5b085d3a99a3df2adfdc58e4b243fd5e2e5052bdc4343083c275368",
+   "receipts": 206,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-15b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "51818d7a91781492c50f0be10271a253f11a4a6be40d8679a72ae93a55d2d98a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd2c002b710d1fa281315f919c471806a1d4a0ea5aa2097cf20d62fae6097e97",
+   "receipts": 183,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6b1bb3976edbacc958d93640855bb9c337a2d1a8c9bba4fbae9ff8dee9b8fd5",
+   "receipts": 171,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00d",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8f2eb30b1e4dc86a98b3a17d73e40a02bf6512dda687cd38fa56682a67288432",
+   "receipts": 268,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0daee47ccd248bcc3069e710d8251a81ebb16be9b60efe0aba00aea7f1fc231",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cb0b8ae1ee9e68840b0fb75c330d09f92b024e42358011440879de1f64d8aecc",
+   "receipts": 192,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "10163701716884b1ca7a54fbf890a93ca47f0304ad0c354bb53ddbb170ddfd11",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0db2f4259c16000e6fc0caccb2757fac42e7996fb14b9fb42cb0657e89d5aef",
+   "receipts": 195,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0dec04ba9b3873c1cc1869b360196bc63d342bfd7e97be10c4a3a58640b8a97",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9ddb37641f33143d3f8ccdf52a07a5f8ab6b3fed1b605c8dcacca4f91e31de01",
+   "receipts": 54,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cdac6bb9d3d2a95948293121b7424f04ef1cc022c1b8ebd9c56433bb4657675d",
+   "receipts": 237,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5daa6ed9d1428b14ab4b002abd681dd55451eaec88dd34ddb79e41d7508f77b0",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "869b1991d5d768db2a552490a134b4c41b155915e146660f7088c1934828db9f",
+   "receipts": 175,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "40bb2e06768be42fa4e7f2b027b09351ef4865751d6b796e80011b2292f7236e",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "18ca659c756c9d6cb82c073d8bc2f442d3f66364332af4c3232275f61babd39f",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d24e54fa0f9d21d235654b65126e1a01677944020a55b338c640a09f71b14205",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d7854d193f85c9e5b7192f14c19b13f2eb36d40d090eef80be68a989bb8af1f1",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2b075562fc323a4b82a4eb3ce66caa3c7931eccd9db8828af9675af54adf8e6a",
+   "receipts": 191,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7e34478011b01b034321ffec13b9af9d171ac4255ee3f56b575042cbbd7efcbd",
+   "receipts": 81,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "bbe3da4594b36f79f68b2059d3d0076db304ae8345973862f4ef71b4615f40d5",
+   "receipts": 249,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "754715b117ed24683789048d3a5796c9ac8a53f9338fb92c019867f107338b9a",
+   "receipts": 249,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "11b43b76bbc902609e7b7073b6f05694c0511a808bb44fc83f19bb61d48e464a",
+   "receipts": 178,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da668470dd6bd60ec2b8114fcaeab0185f47c54eb452bd68fb8e2453a19105e3",
+   "receipts": 253,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4e2fdd2f573eab8c1a4afc0749b6f627619bbd5c02ebc34d1323abd94bece96c",
+   "receipts": 261,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "02c05589a3d42cd143fb9d4fd91485862a2a91a718e4ee18ce14e185bbcf6b27",
+   "receipts": 197,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "317f2cf397c7893c2b70beeeb6a05509de388df1a9ea2d7be5a594ae2dc772f7",
+   "receipts": 276,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p2-09a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2859f7b1003322fb06a0872942c2ad70388face4b69f4b2f17001f19d11e5270",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-09b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a6d61987847f1860745d596b72b52f101e78bb064394e0b94166420b66f608ef",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-09c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "15fde65fdc7f7cd84bfca21694f3c0dd2bc0a96e8cee59a0935b8b43d25fdb2c",
+   "receipts": 258,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6852240df14894336d19276e26e882ba3fa4519cec82a69cd9473153362ff8e8",
+   "receipts": 263,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "564ebcde8fd8dd20e30ad4e1b38badece29a2d79647d708714a88755fc2c09dc",
+   "receipts": 67,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "53faea5e58f6d90a71556d1ad42f94c62d76755943a0941c789be9283f29dd08",
+   "receipts": 280,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1e44b822d3adc8fdae2f86d50d468dddec919efa8c92543c6d57173a5e039925",
+   "receipts": 266,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ad807efc6ff31e84330461d96e0d4e7b106a91ad4cdc5a5b13d22e048a16791c",
+   "receipts": 199,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "60c1765b8df79eb612261f10a54093e06ebbb2df232213c4d6bfcd3c4763be95",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5b7a0302b95ae5b4ffabad2e29ebfb764dc8cfefeb6f1304cf774ebeb75fa664",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "0d43f600812c749fa5e07e694b795d7e6bb191958f0e78c23db5ce558e2cbcd6",
+   "receipts": 199,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d11d435b89304d46f32a1f1e29093e8e125b8dec50c75207328c8c4bb2ff7673",
+   "receipts": 295,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ab8b36f1a86f2a6822a81aa8a420ca7d36688a92f03f71004660a33de82c3108",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d512ffe35735ce67bfb10bb65c844ea032ea9ffbb0f2581996acc494a5f1da8f",
+   "receipts": 195,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "09f0bbd37c020b13dc4be79ba21e7576246c550d10ac996f5cfd9868f6696ce0",
+   "receipts": 263,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b4e1f9673cc292befe88bb7600eacad431cc5c00e70fe9713149b55be0af523d",
+   "receipts": 262,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "30943889dd796462ffd7f8e1c6ef5682b74693e2818700158b37e37e7d095778",
+   "receipts": 190,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "590d019deeda1c1acfc57175226944c1c1d72b23059e97d1fef3277ea31b5c5e",
+   "receipts": 293,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a51943c2b3deb5aa71502f8812864d6cef950aaaad7fb1fb839890dfa0cf222",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "43e7969731c52873b701c8c80746f82613f78f95824a8548386f07b7b4923829",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "34fee2bb4ee0a108c4fbcdd2af98de15c4a367057105ea7fac2032982b3746ec",
+   "receipts": 299,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p2-16a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "57104edcd81aa2b1df8265c3809bccc08faa5952ac0f19bc49cad725ab6eaa7e",
+   "receipts": 27,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-16b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a1a8958cc0c4ecbb7edbe761ee76bcac5f9d11049989a1b2c877d04df1e5302",
+   "receipts": 791,
+   "refused_rows": 0,
+   "run_id": "ddl-sweep-20261104T053447Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

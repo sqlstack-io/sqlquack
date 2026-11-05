@@ -1,0 +1,1879 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW POLICY v1 ON ( v1 ) ;",
+   "sql_sha256": "0394c107b42a148d8b25f7bcf784135df532c550176949f05f029273c8b0b5e3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ON ( SELECT ) ;",
+   "sql_sha256": "05834a3cb67acafd055f2c6861ac08274711d9fd645cf128e31d6b87cfd7ea9d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY ;",
+   "sql_sha256": "06c0d9059daeb38931168e6c6eba1293469f7790fb203e56249e854ae636a180"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG SET TAG v1 = 'm' ;",
+   "sql_sha256": "077b7c176ba9783e074e6d5c95157d86d68589dad7230bd242ab7c0b4f3ebbb4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY 'v1' ;",
+   "sql_sha256": "08583b7b7a6726298b164053c2bc0555aa281933a732937a18383710e17a6f4e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ON v1 ) ;",
+   "sql_sha256": "087ac1340292b34abfbdf898c9dc7a45159d4e59f1976c17fefada6d55d61a74"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT TAG ( 'v1' = 'm' ) ;",
+   "sql_sha256": "09931c3eefc5247ed3ffc17f27080f3cd286ce44fcc921fcc17d66a127088e45"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER SET TAG v1 = 'm' ;",
+   "sql_sha256": "0a731904c26f4fa9b8a7405e71ceaaaedd9b9be65c7eed332e1e031b7a161697"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS v1 ON ( v1 ) ;",
+   "sql_sha256": "0bb0911fd17dc33224dfb0f4d91c7c094f8d08af68810b85a63bfbe8e20b7858"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE UNSET TAG 'v1' ;",
+   "sql_sha256": "0eb31f499484ce40038fb9f2a61a3a077687807d296165fd08cb5a1483ca03f9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ALL ROW ACCESS ;",
+   "sql_sha256": "156e2ddb806b92f6a6b7e12aaca3cf2bb1a0dbb1c9b50717ea7248d909273b2b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET TAG SELECT = 'm' ;",
+   "sql_sha256": "15bd1321e7e5c4fc5f6bc9b465b6bb87fe815c346ff0b6de76132f0d0ae542c7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SELECT REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "1cc0ff9ef55cd8646e404188c6d6cc0ea4117af7e1793c292687d5440efec2c6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER SET PROJECTION POLICY v1 ;",
+   "sql_sha256": "1f03823edb47077205a23a797bd0f6b36fc5ca5112b8b23e759f6b81bf7b16c1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET TAG 'v1' = 'm' ;",
+   "sql_sha256": "225490ccdf3c21ac64ca72f78f5c1b3dafc9add770b9e734e38edcafe0fe1be1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( 1 WITH ( 1 ) ;",
+   "sql_sha256": "2477c39118367ec71b7f9f43b814d60353417d6699b1e0f6f8c3df0326441d61"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , UNSET TAG v1 ;",
+   "sql_sha256": "25900ffc9f4f627b32cdbae7e4d8cc53c93b53ecc97c3f25d6ac7f33a437796f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( v1 , v1 ;",
+   "sql_sha256": "2679a7fdb4776a0f8b55428b0a646a0e0faed461b96a1e7359cb574cc1f1fa0b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION v1 ( ) COMPRESSION = INT ;",
+   "sql_sha256": "26d6d86a52649fa9945c176ee718e3b60f21d92b9e9d55d6be9528e12af7d2eb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD IF EXISTS v1 INT ;",
+   "sql_sha256": "26db6539efd369cf54209c7f48ab76db79392f24f8b56e500a0bb77886382078"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , v1 UNSET TAG ;",
+   "sql_sha256": "2a83c6ae1d84d4c9d7237f9fbd6eec41ec44268f89f190bf523ee73e0529fa9a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD INT ;",
+   "sql_sha256": "3049984442ac42aca45c20634fe28c80565fbed03bb07f122279dea1e04dabc7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD IF NOT v1 INT ;",
+   "sql_sha256": "31f73df3001df1fc45f2825de303c9e0b33e13583c7ecc08be6a75dd523a80c8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY v1 , ROW ACCESS POLICY v1 ON ( v1 ) ;",
+   "sql_sha256": "345b22dca02c6349a572eff42a17fa8dd15feaccd87f4377f7ea5fc45ac6cd74"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY v1 ENTITY KEY ( 'v1' ) ;",
+   "sql_sha256": "370f854085380712e03c340373d4a05e318d6112d441c3baa2824760ce793de6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY 'v1' ON ( v1 ) ;",
+   "sql_sha256": "39d90975ad98afce3a65ee67caabf4febaabc7392dee73513a4b5a0fa24b98f8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ON ( ) ;",
+   "sql_sha256": "3c10e6af5c4c0182e8dfb1c63a2fe51f68dfe2a7495397216f4c28c0c60664bb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER UNSET TAG v1 ;",
+   "sql_sha256": "3ca9fb8710a996628eb67eca8873346408dad8bfcbf89e8677775a9150d51a4d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY 'v1' ;",
+   "sql_sha256": "490959126ea1ce15260baf9800341e1539790339714b4f0d7821ff1188f3a65a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY ;",
+   "sql_sha256": "4b86723af24a2cd16a697c228a103e838cd2605865f15c90cfe27f9a2dd1780b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , v1 UNSET TAG 'v1' ;",
+   "sql_sha256": "4f6eb7e0e29b84ca0d3f945271a6c323100046649ecb3e0e0007d2a9a8b21901"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE UNSET TAG ;",
+   "sql_sha256": "5093d847825562afbe9b7327eec86209ee2f7dbec6f7062b2873c7d56dbbbc51"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( SELECT , v1 ) ;",
+   "sql_sha256": "5297e48977f1d577975a4532568b9ec2c4166a3badd712ebe05592ba24949686"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( v1 , 'v1' ) ;",
+   "sql_sha256": "52cea30d32dc554822ae9c7626df421ef6b1bae39e0cfe67abeeed276ee16369"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 MASKING POLICY v1 ;",
+   "sql_sha256": "536f6aa1574d30b617e26dac163d410d8e278df4fe12b85cbf27242bae30d4c8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING v1 ;",
+   "sql_sha256": "55d9683279c5232a67bd7fe138dc1c7737ed5e443880eff8169ab8370eba7881"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY ON ( v1 ) ;",
+   "sql_sha256": "5619f0708f06b29c89bae0f3ae4dc601ecab97d3bde68c0bc37b50134315208e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT TAG ( v1 = ) ;",
+   "sql_sha256": "576d7744469a04d062653b59dc712de050d32da648c2c76fe5571453c599d814"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , v1 UNSET v1 ;",
+   "sql_sha256": "57c45657906866a53767ec9afc95f253afb37b1d0294d1ab962cef5dc75ded31"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT POLICY v1 ;",
+   "sql_sha256": "5a7c263a946fd8029af959ba1852746679b379db95c5aaf85719fb93fcd95046"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "5aab074d9dd8472d0f2ff02b86047ce920d78a6cf6e4400e6fff51cf6e32af33"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FILE FORMAT v1 ;",
+   "sql_sha256": "5b001540d518fcf2caefd6db5d7b414e2a8744ea5c4e31457190e84c893a4d47"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION 'v1' ( ) SET COMPRESSION = INT ;",
+   "sql_sha256": "5beb311685be00251238c330d94d76521750332d42d668009af74653d8c25c71"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET POLICY v1 ;",
+   "sql_sha256": "5cccc2a1e892451c3ec704dfb46196c876fd66e62dc699d77d2308f7ad7c8bcb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = ;",
+   "sql_sha256": "5e17e7942da7e043d8f23c98663957125730299befbf478bd2bf721822a554cb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY ON ( v1 ) ;",
+   "sql_sha256": "611fd8654fd80801bad94f55f38051ff7b53f02770f54fc8e7c0af44d589f6be"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT PROJECTION v1 ;",
+   "sql_sha256": "618051d10d9b98b0908c756463eca699465e355dde285523fbd0e11a7b684f64"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG v1 REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "632f5607207f88e39d1c75b1a4512928037cc48597c775ae616c0c1106c21d7a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT ( v1 = 'm' ) ;",
+   "sql_sha256": "6548bc703e70d27484bfa9fb7d7e3652486673571ca54db433b6dcb52413a097"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( , v1 ) ;",
+   "sql_sha256": "6558f9c4681b847db749c5bb6c40d5acc773a5ecc652be49b7e9af1927085c34"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT PROJECTION POLICY 'v1' ;",
+   "sql_sha256": "659e60edb9d8da12677dee80b67b06d61e50db935a6068cd192962addc425847"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING v1 , v1 ) ;",
+   "sql_sha256": "69b29424b2e2c6809fe070cba65e7d679a984e6d71abdee23ab4fa4f7f30c36e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , v1 SET TAG = 'm' ;",
+   "sql_sha256": "6a724cc8c87c6f9efc57c64348735e6ad62b9f9343dc7b0095138d3e5081c19e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT PROJECTION POLICY ;",
+   "sql_sha256": "6a7d77820b41d344c4e891e84b21f123228a9cf4c97ca69164ac0abc678ee748"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY SELECT ON ( v1 ) ;",
+   "sql_sha256": "6bc738ac36601834bcacae9b76c5d2efdb08726ac87f5eef3a3eaea17c0cc8ce"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , 'v1' UNSET TAG v1 ;",
+   "sql_sha256": "6c428c970f2b6d09467f003b23c0e5f87b32c382010f2411c036244b21e62bf3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICIES ;",
+   "sql_sha256": "6e1e7206d339bb613f527c51c4894a93f78ba1ef614f116aed6720c8211b9abc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE 'v1' REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "6f0fc65b3e4e2d50644da62f4755710ba21955312dfbdce9a257b0bf298c6905"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT TAG ( = 'm' ) ;",
+   "sql_sha256": "70a8b2f872e52262349375251734b97322d03e2aa6cfa4ed7f2dfdce075238a3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION ( ) SET COMPRESSION = INT ;",
+   "sql_sha256": "72bb75035f26cc43eca07ad487328cc5e91af6c262b5851df05a4ce52d631337"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET v1 = 'm' ;",
+   "sql_sha256": "76bc848bba5d0ce4581f1edc411462dd5c73247c2d3983621e0508fe4a99f77f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY , ADD ROW ACCESS POLICY v1 ON ( v1 ) ;",
+   "sql_sha256": "7a90cdb7cdb421ecc8907e2b7cf0d5ecc905e1dfb8ab55e4aa8313b445ab47e8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY v1 USING v1 , v1 ) ;",
+   "sql_sha256": "7b7b669e5a8d57b567f5fae6a2966f42d5930ba50abf3ba1abd1d59633faad56"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( v1 , SELECT ) ;",
+   "sql_sha256": "7b84f663cf3f198b5aee64b2a2307d72814478ee1cc93e65cf9dcf4d738efc30"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY ;",
+   "sql_sha256": "7cb6c8dea33f61b41171b84a7780b44f9b5d4bd1ca02458e8c06f064a1c58ac3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION IF v1 ( ) SET COMPRESSION = INT ;",
+   "sql_sha256": "7d5bbbdcc42d240ecbda6c92595431a5d90999e914dcd7f7b304546b949fe4d1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY 'v1' , ADD ROW ACCESS POLICY v1 ON ( v1 ) ;",
+   "sql_sha256": "80d3d75164fd4914cc6cc7a55eb6f6991e047f28ec9356f999c54b8858a492ca"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET JOIN POLICY 'v1' ;",
+   "sql_sha256": "81779ccf396feaf2258b5c33abfd2b9c8911c649125757bcde1a04e0ceb07766"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY v1 USING ( v1 , ) ;",
+   "sql_sha256": "81dad6790187a0943f7a23782a61c58c1f628b8bc209ae9f851ca8b8f011e60c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET POLICY v1 ;",
+   "sql_sha256": "84d547ea993d783302915aa4f304e2be9b783d3a4aa1b8f75adc9e83392dc03e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER TABLE v1 REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "883a6fc21e3465dbae84774b49f513056c8e5b58aec361f22324bb2d01152223"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , v1 TAG v1 = 'm' ;",
+   "sql_sha256": "898f32be768a5a9197cf2c7020200d375203995f764ea7cb014fd20bf30908fc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY ;",
+   "sql_sha256": "8b562bf9baebc58ad2709020cffec263bdc1bff9c3a6497fda4328b83172e091"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG 'v1' ;",
+   "sql_sha256": "8d663eb7f9babf4d153fa8e8a7a06a11f40551e5b23ae313df183c0a4a5a8f39"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION v1 ( SET COMPRESSION = INT ;",
+   "sql_sha256": "90017e51914851936a5dd7b04387f4f4f1e358605223229aa0631bace5342c8f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "92d2334b6548737e8d6f8252caf55b33fb796c5e54161bae7e9e68c0567d0241"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 ;",
+   "sql_sha256": "9344114b59289e968c9fe858fcc6ef034133f7ef17fc8f419512c98268809543"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY 'v1' ON ( v1 ) ;",
+   "sql_sha256": "94467ecc2799e77b048042fd431d8d75112f58bf6743bcf8856d9b1c05093ca8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 TAG v1 ;",
+   "sql_sha256": "94495ae5534d4674096c9234a3651c61d9c6c72e74182c81d109ad560e49399f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER SET MASKING POLICY v1 ;",
+   "sql_sha256": "956de8517464d0722614740d269e5f3e0f32eb63235d61f692b49badf301a133"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( 1 ) ( 1 ) ;",
+   "sql_sha256": "97e880dfc550dd702f033e85ff5fb7060a8e143a08e818f05a98e5d5743f5446"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 'INT' ;",
+   "sql_sha256": "99c773729c78c6b8e741ec953bc0d486c86b25fd6016f8758300f0016a6a41b2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY v1 ENTITY ( v1 ) ;",
+   "sql_sha256": "9b341f0e7277ef49dad471ca96fcaa8d411188d49a9a82609e0b84c2615de45e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER 'v1' SET MASKING POLICY v1 ;",
+   "sql_sha256": "9e20d488321226ad721a2b3039e5adb3cdea0ec53cfc9ef1c146ba8506c76e05"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ;",
+   "sql_sha256": "9f7f4cc6c8ff58860a23ae97c2668161a377c087b4ff2d8a9724345156abd87c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER 'v1' SET PROJECTION POLICY v1 ;",
+   "sql_sha256": "9fb322d95e7a6ea3418b920e28a81dc206c087279ed7b70795e46832f9d426dd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY v1 ENTITY KEY ( v1 ;",
+   "sql_sha256": "a0417da0c2346175e1b4de2f6f910c5a697fbd68ca897abc0c15510fc34b85c1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION v1 ( ) SET = INT ;",
+   "sql_sha256": "a4f1aaae81242c4c1f25b36fe4c1751abdb25db23bca1af3072362871ee1d622"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( v1 , ) ;",
+   "sql_sha256": "a885e2be4853d9e618064783407637d6bd892e359e4925453dfde3cf22c436b9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET PROJECTION POLICY 'v1' ;",
+   "sql_sha256": "a973af1ea0d7699481b3da91d550eeb9ea390d5098f1348efe16f645d7efdaa3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET PROJECTION POLICY ;",
+   "sql_sha256": "aa6b987c1ddbb40c6d947907294a5bb7b2322e4ce928fdeacab7664a42cca80d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( ) ;",
+   "sql_sha256": "ab4401e4a3395c83632d0c328f969655d8a4dc1564d4b1e931754b68aa973363"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , v1 SET v1 = 'm' ;",
+   "sql_sha256": "ab850e6accb877b8f5410395eec4e3d36111d762f77eb55c58d9f99030248cac"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY v1 USING ( v1 , v1 ;",
+   "sql_sha256": "addc160b3d2585919db5fbb523e74df0a2e3bfb97c69fa879745cae28fce8892"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY v1 USING ( v1 , 'v1' ) ;",
+   "sql_sha256": "b16273bff260838478d99ed5c452246e6d9055a5c151bd80516f12f9c7ff3a1b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET TAG = 'm' ;",
+   "sql_sha256": "b8e2207b5d6a29580b26e9d7167c693a7a7fd65a165f9f14c2685b7013193a71"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , v1 SET TAG v1 = ;",
+   "sql_sha256": "b925099583d12fd641472d6c3b4066534c15822c267871819eb03959596e1570"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 SET TARGET_FILE_SIZE = 1 6 ;",
+   "sql_sha256": "ba8ba23c9d8cee02477349f1fd65d5342a5aca62ca5a663469f2482e1169f269"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY 'v1' ;",
+   "sql_sha256": "bc168c01da0dd533b8b9768d43ac931e3466ab09f5da5eaf10695b9085a98182"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY v1 ENTITY KEY v1 ) ;",
+   "sql_sha256": "bd7e3805fcf521b9e12238c50e2bf24a34951af0a69593da373ec599393183e7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER EXTERNAL AGENT v1 ;",
+   "sql_sha256": "bf77e9da40622c32154f1de689b3e24a3a8764e0be541fd301fce6bd0b495bad"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET TAG v1 = ;",
+   "sql_sha256": "c035a26f8ef6c6fecd25061f8da9b9d8d73892fef86aa0aedcebd8fbd9ddb795"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "c21f7ef76fc4ec27262fa68dc500a24920d1d4a867289625cbeda0f6e708b490"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET MASKING POLICY v1 USING ( 'v1' , v1 ) ;",
+   "sql_sha256": "c6cb26bd988366331847f1af145465d0105fc3c1e7815f8f4dd56a755bb36068"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION SELECT ( ) SET COMPRESSION = INT ;",
+   "sql_sha256": "c7e47296edd7655870b331b69a9b8828b7394df49100e37f1568dd5dbec2c4ce"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET JOIN POLICY ;",
+   "sql_sha256": "c91c4ebfef5f49e89bca100d63f0d28939e6f97d0fc3ae5669c6c80cc74764ed"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER 'v1' SET TAG v1 = 'm' ;",
+   "sql_sha256": "c963015007893662fb929b482c53406b886b1d5d2d71939da7744d56e952f97f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION v1 ( ) ;",
+   "sql_sha256": "ca7e4b9fef305690434f633e774559bc3f3badf2176f2209a50f5cb3eb26e416"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER FUNCTION v1 ) SET COMPRESSION = INT ;",
+   "sql_sha256": "cb4f2b6e06dfad326cba2d0de5d50026adf5b41068b99eaf9ed03acfbc0f3b66"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG ;",
+   "sql_sha256": "d0ab7afe5716792e7aea310e2769689954afab20ca6cabd77cf7086627b18ce3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT TAG v1 = 'm' ) ;",
+   "sql_sha256": "d133a5121dc7c5f904d28921739ec362dafba82bbc7bc299a9c29ba6833e507a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY 'v1' ;",
+   "sql_sha256": "d28a3b2f7b9f642ed85bfa35c49505817d20d0e6a9f09b5c672f2a5c8da75e4c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , v1 SET TAG 'v1' = 'm' ;",
+   "sql_sha256": "d67d4f67cdf323492a978fa1201a894b00d328bfbd7eee9a08a60332cbca64c9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER 'v1' UNSET TAG v1 ;",
+   "sql_sha256": "d6de264ddce7b08f078792bbca17441ab92571ab10e7332fbb79bea10ece26e5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( 1 ) WITH ( ) ;",
+   "sql_sha256": "df3b1d95068d99ac2c5336836b329990a63688a89ad54387afe8b49d7d1444d8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE IF v1 REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "dff5294dce41aef5e5e09509e2d090d037a5597e753b4145c8556b272cc808b7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE REPLACE PARTITION BY ( 1 ) WITH ( 1 ) ;",
+   "sql_sha256": "e0ad4670fc531f5c5d4dc61ecaac5932d03cd4e460961cbcf052bc92afc905ad"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD 'v1' INT ;",
+   "sql_sha256": "e19b807f02b44240d0eeb8935ea65c7fc379fa26c9801e28f93721fffab65e70"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( 'v1' ) ;",
+   "sql_sha256": "e6b00bcc10dae7ff4746786dbee9fba17ea770a754e1b9797ab56036cd537cfc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG = 'm' ;",
+   "sql_sha256": "ea19525ee5404fa961ce073a5e48eb72f70642df7ca5255a2daa87f71bf7cb18"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG 'v1' = 'm' ;",
+   "sql_sha256": "ea793c6ba9338e5b10dc8c4ba909a1f6bc955efa7e5c023c076b70a71f1444c9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ACCESS POLICY v1 ON ( v1 ) ;",
+   "sql_sha256": "eaa59e8b86f13e38ce1730623e7bbdb8b05300a2b586f4caab7ec0ca83d95549"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , SET TAG v1 = 'm' ;",
+   "sql_sha256": "ebf11926c83391339de9c33f9b94e7338c3e58181bc78d703b39f03eab5d2ba1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE SET AGGREGATION POLICY v1 ENTITY KEY ( ) ;",
+   "sql_sha256": "ed370ba2cbb60075a8e5a68bfa7e5a5387bc40a81c57bee042468820269795f2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( ) WITH ( 1 ) ;",
+   "sql_sha256": "ed42a015b23327943902fbad968372c64d23ff09e94ca5b8f9623c9107ed9798"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ( v1 ) ;",
+   "sql_sha256": "f04be917da08d9fa3d4dc5ca6d75c37955b01eafd0cd58398784e1dbe07d578f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , SELECT SET TAG v1 = 'm' ;",
+   "sql_sha256": "f0c573f734634aef8066c5c283ce04b09164a1ba9bb51524c0d56eaa16ca7700"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT MASKING POLICY v1 USING ( 'v1' , v1 ) ;",
+   "sql_sha256": "f1c75751adc2989b7802d400f02fbbedcb3a85304b08b3f682c286f236e9a052"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 SET TAG v1 = 'm' , 'v1' SET TAG v1 = 'm' ;",
+   "sql_sha256": "f1f6fbea7c88f09bc143addf1e3c9e9f8d0a3530ccfa19fd9e3eadaf8c1d7376"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ON ( 'v1' ) ;",
+   "sql_sha256": "f4c35f46cf193206ffb9d3545b5dcd12dbb53b8ad537af4d82d214a4c57edb2b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD v1 INT TAG ( v1 = 'm' ;",
+   "sql_sha256": "f90542cdc335f440567b9935ffce49aacfe6d005dc53d0b5f78865a38216d2c2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ALTER v1 UNSET TAG v1 , v1 TAG v1 ;",
+   "sql_sha256": "fb8fc31470a5b64a5b2552cb0a1749c55edb81ce7118d477af8d73da434c1e1e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ICEBERG TABLE ADD ROW ACCESS POLICY v1 ON ( v1 ;",
+   "sql_sha256": "fbfaf9a2f798af1d8ad9eea1223c6522b6696003769c6eef5b9b7fd7e48a8b97"
+  }
+ ],
+ "receipts": 987,
+ "receipts_file_sha256": "27daa798750016bfee73aaf83b53f530326141b5857dc8453fa2a8c775615bf8",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.k9109a4aed2ae",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d",
+   "run_id": "ddl-510fb2fd-p1-02"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.k9e7d88f2b93d",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.ka5984371b88a",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-table.clusteringaction.k4766deb8b18b",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.k3631b5db7233",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-backups-in-backup-set.kb9855fb78979",
+   "run_id": "ddl-510fb2fd-p1-13b"
+  },
+  {
+   "reason": "error phase not established (errno 4)",
+   "row_id": "sf.ddl.show-service-containers-in-service.k0d7585bbc9e6",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 4)",
+   "row_id": "sf.ddl.show-service-instances-in-service.k281832eec14a",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-snapshots-in-snapshot-set.ke9163e3b7b28",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  }
+ ],
+ "refused": 16,
+ "runs": [
+  {
+   "audit_sha256": "c08938585499c27ad5e0617fe6b295338230141c56f6b632d2f4d52ffe7ad09b",
+   "receipts": 22,
+   "refused_rows": 0,
+   "run_id": "d104-warehouses-20261104T072915Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3b334629b5095667437676a5b82b1edef9222af8352eb931150a58f531de2e61",
+   "receipts": 692,
+   "refused_rows": 4,
+   "run_id": "ddl-510fb2fd-p1-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1c28f1968df46d5109ea76c3457d2a373cebd011220acfd50d86060f2b244de2",
+   "receipts": 791,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7c0eb30ded2a011394b3f7fde8c4b6f147b8605fa1bb60ead22396a150d14bd0",
+   "receipts": 479,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c0af7097170f282d614bf15acd73c5255fdbe888928c0fefc269d57f485230c2",
+   "receipts": 790,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6f31fac0f2265b133d808b63cad71625263e6f062f5ec42c43f8db3aac742d2f",
+   "receipts": 704,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b5ad38c2fd780e3d8f0df1a69e770aa671a239e9cc043c690b62265d6b653a1",
+   "receipts": 594,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a1ad43fe8fe22d9dd908ea9ff8ad1d4de86a3ef08b9595fc1708659fe0d5b61f",
+   "receipts": 652,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "33372268130f80a1f61a435a906040ec279404238c5ffe44a77e1d0550603a8e",
+   "receipts": 774,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-08",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d5697c57fb0b9a72e7ab4abdb1c0d76d8be862fe466a064e924044b7ff6fa503",
+   "receipts": 568,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-09",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da32649b026d8c1f8776e5919490251f63c44ed035bb23dcf34396147cc489f2",
+   "receipts": 756,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-10",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4fe2e477bc3396ef27c8c53dd25f6bd5ea6e325151d44ebb897f70e143a6e2da",
+   "receipts": 796,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-11",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "20995017191ccc91f3393a3536cdfa2f316469ac7c3958aecd9857be72055ed8",
+   "receipts": 138,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-12b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "47fb3688a30ee235417ad915da0e9b9eb7dd8acac75773c65720f6faee9509d9",
+   "receipts": 127,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-13b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a438b439f5e4a83e4f346a9d472c97c655df1e3db69ad911380cf758cf33c195",
+   "receipts": 732,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-14",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "468c175b68b93bf1875e77d0e427c2b5a7b9376cebc49ac28e45eacad8bfa145",
+   "receipts": 273,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-15a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6dda9b6ef5b085d3a99a3df2adfdc58e4b243fd5e2e5052bdc4343083c275368",
+   "receipts": 206,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-15b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "51818d7a91781492c50f0be10271a253f11a4a6be40d8679a72ae93a55d2d98a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd2c002b710d1fa281315f919c471806a1d4a0ea5aa2097cf20d62fae6097e97",
+   "receipts": 183,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6b1bb3976edbacc958d93640855bb9c337a2d1a8c9bba4fbae9ff8dee9b8fd5",
+   "receipts": 171,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00d",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8f2eb30b1e4dc86a98b3a17d73e40a02bf6512dda687cd38fa56682a67288432",
+   "receipts": 268,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0daee47ccd248bcc3069e710d8251a81ebb16be9b60efe0aba00aea7f1fc231",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cb0b8ae1ee9e68840b0fb75c330d09f92b024e42358011440879de1f64d8aecc",
+   "receipts": 192,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "10163701716884b1ca7a54fbf890a93ca47f0304ad0c354bb53ddbb170ddfd11",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0db2f4259c16000e6fc0caccb2757fac42e7996fb14b9fb42cb0657e89d5aef",
+   "receipts": 195,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0dec04ba9b3873c1cc1869b360196bc63d342bfd7e97be10c4a3a58640b8a97",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a1a8958cc0c4ecbb7edbe761ee76bcac5f9d11049989a1b2c877d04df1e5302",
+   "receipts": 791,
+   "refused_rows": 0,
+   "run_id": "ddl-sweep-20261104T053447Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

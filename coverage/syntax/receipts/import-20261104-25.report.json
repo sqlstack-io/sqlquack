@@ -1,0 +1,3351 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( = 'm' ) ;",
+   "sql_sha256": "0064695ea75aa365cfd9ea9de3978f107a54f13257a31ae592ef36f347bcc5a0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = m1 ) ;",
+   "sql_sha256": "00cdaeb9cc83d980f41eb5d55333c48fc12165f2ee4c225f659260604bbfde44"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"v1 Q\".s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "023504f3b095e699bc8ccae8f835e0ea3543645f00bad152e8875f78d83aba54"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "023e3da9ce27e1858e0fe59f788c090de0f435fc20040e0afecb910e9663681b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||||' ) ;",
+   "sql_sha256": "027377c667dddbe075e76f5afa92931e81be17c4552d4fc18e6f6d8278e36d63"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM SCHEDULER = ENABLE WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "0290bc2a6104f61518b57623687c7af2444bf2a92da99b3ebbe3172c00043b04"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "03734c16218e019ee48fbfb95c5bf6811655c243e8aaec0d23e7e927622ba84f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON STRIP_OUTER_ARRAY = FALSE ) ;",
+   "sql_sha256": "03dcdc74ca0c271f5950d8fbad8176ff09493f6ebc6273929c147c47e42bf24a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"SELECT\".s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "03f5eaffe511f2f96f059688aad7ad4c38edf71e2953964e2d5e9684d0449c69"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "0529ac1518a1cca9db9683f20681c483b8fb746b7ee764bd5ff6fcaabbdb049b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV MULTI_LINE = FALSE ) ;",
+   "sql_sha256": "06e958da4657f044b7d005a329b10cae963606b9f24745ff0cd41111eecb52db"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) PARTITION BY ( v1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "0701353b99e8518c5f88ffdbb9a78dce13a9d1c4e33d02abc4760917c39196b1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV NULL_IF = ( 'm' ) ) ;",
+   "sql_sha256": "0711bd4afcf52a958b755c3a734c4b4703ca2004d021c10a6329dff1e9b69a22"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 USING TEMPLATE SELECT * FROM ( SELECT 1 ) ;",
+   "sql_sha256": "07181c2e98c34459e7db7039b749437cbe87c13b8d9e301d4506ea5d276505b5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV SKIP_BLANK_LINES = TRUE ) ;",
+   "sql_sha256": "0864853572a4924416343d7a84c6e18071b1edac129451c21b74f3eca56ec085"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "092090c12a18f436c45a0ae7877bdab855ab387a4b38e773bc4c27bb895101c2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "0a0521d3494b3b1e990c170a4d20549733365153aaadfd3cd0ac6a08f98d64b9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "0af74c1074158e088e50a664d612f29c7ef988e964dd4c0c1012247708a849b4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ENCODING = m1 ) ;",
+   "sql_sha256": "0f672a1c5ed9f017c2e0e82fa53d2c6c2fdcc2107e64ef9dc4aa23cdf12284bc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = TRUE ) ;",
+   "sql_sha256": "11766f6b9bc92f7dce22b489bb3a2716bcf346338a1746e607018d46a527291a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV MULTI_LINE = FALSE ) ;",
+   "sql_sha256": "13616a8a966d1d073f168db6878277eea2718ce113ad8f8e36dcad95410918e9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES \"v1 Q\" ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "168304c4e6b907c37ab39c85ed4e4c169c23343d04a09541375ff34315dc5cff"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"SELECT\" ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "178531b7877194b3588c9da7b7e3954bb9f9fbfc6f45d3c3b432b5232c451f14"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = NONE ) ;",
+   "sql_sha256": "17e29781fe6dd1a5de620f2db1672b7041e7608e945c262cd3109591c83c5821"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "1aef10434462f9e0cf68ab434a68a082e13a4e4553afffb6d5475f96935b7bed"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"SELECT\" PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "1c0e17fc5861611c1c7350a5a8f12b9b399cda451acf1f0d8334612c846d7bd1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "1ce519d0f32a13bf1b9288ab0dc03672ee76fccaad348162efa51baf3dbd1393"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY \"SELECT\" ON ( VALUE ) ;",
+   "sql_sha256": "1d25aecc9f3633b7c939711b6eb398fd06730a5105f3f16abf586e295f2adb38"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET ) ;",
+   "sql_sha256": "1dcbc981f61fb88d887c2888e9392bbc39f3b3f2f38759307ed0911de474e66f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON STRIP_OUTER_ARRAY = TRUE ) ;",
+   "sql_sha256": "1fd5bb31581127a2e5ebab19d986f0fd879155b56db65d77e2877689aac52f0f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "20e68b5b6cf0bd4c03e50eaf2872c69cd1772541e53bd4a88f39892f93408fe8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "210c46a7a7cb24fdce315d1d0095fbef69a731bf6356dbf47748c303b09d357d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"s1 Q\" FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "217a1ce6b388ab1587d5696b20f88dd0369a01ee1c72fc84c705285a98f5496e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV EMPTY_FIELD_AS_NULL = FALSE ) ;",
+   "sql_sha256": "22884f1e4842fd6e054ef032a7458d95b4d0e6a82c761d4b5e7d0758aa197f86"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"SELECT\".s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "229ca3d7e45589ddefce1eabd6466aa45bc4644cf46c754f468b3de2f2b5961b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = m1 ) ;",
+   "sql_sha256": "22c88a7e5dd053b87c721fc99e1a53e297412f49494a75d20ef1eff884b8ae54"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = m1 ) ;",
+   "sql_sha256": "23f7d24cc6adf94ed8fe005401670e21b82e94198103bca0903c92cc265c5073"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = \"SELECT\" ) ;",
+   "sql_sha256": "2438f50fe8f3f6f8e94c081bc99e8ab98f36c1663d210b16a815eb495d86bfd7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON STRIP_OUTER_ARRAY = FALSE ) ;",
+   "sql_sha256": "24b59e053ae6ce34eac4edfa5bd4f8ec648ea9a95f9830046f53eb379930e2a8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "26d6018f24c28742184a36b394bc00ddc36fdfd861c723b366859156f18ec627"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "27873a711f0856d1d30e15c0bc15d6f9053938de367b052e5979ff4ba81a6cad"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "278ef16d8205c5634b42f273aa8f3eb0124f7a84bd9c953671d144052459f323"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = NONE ) ;",
+   "sql_sha256": "2866e1311098dbf0758d3c6d0b9ad6f44ebd2a8cae1f0a8b517c1fbb09b4627c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = m1 ) ;",
+   "sql_sha256": "2988fd4b7357e66edd652f1ad3d4fa1651c8c64ff7ca6f8250f9fde007d8160f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "2a470435a6328867c61ae577600c92fb937acaf49151e022d91f75211be080f3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 ROW_TIMESTAMP = FALSE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "2abf822e4cd3da468899acd5402e12b0aaa390bb748b01a258da8e08c0ea172c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = NONE ) ;",
+   "sql_sha256": "2af0a8839d38e757dfd73a8d9fa0cc6739dcd245ce8e62ec8b4feb242a9073a4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON ) ;",
+   "sql_sha256": "2b603477eff2aa3538ac4c542e2bfab4411fb32ee0c0bb5cff94af12ecb9b53d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = AUTO ) ;",
+   "sql_sha256": "2d83742bdd0e805960dce85db348bac53631b43d4006c0d5ecd228c7d588c318"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"s1 Q\" PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "30460eed4bc1e5620f510893db079135c5a88c79ab6e0b1898d8f7500f5056c0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"v1 Q\".s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "33211a1a29d7a901f5ec6047737f74c7e881a1a62e7152fda896c7b7cd4484c9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON MULTI_LINE = FALSE ) ;",
+   "sql_sha256": "34b1f14c8d783f1c00b57f731a58cf207c1132ec6cea7864fb6850d33338be6e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "369e8e5858551a8d96ec56bef56f9e0169a3f76f7d42dd83cf996405ac86db81"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "372456a4c8c30ac5cc846e1949890ce6daac2509ad1031749a37b4e927ff1bf9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = FALSE ) ;",
+   "sql_sha256": "37c62eece993d065d37cee3885c6a262a3aabc43330943bbab08a2a372b84a31"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON STRIP_NULL_VALUES = TRUE ) ;",
+   "sql_sha256": "37fd7a3de01af0a854f0629cd202b04fcfa56d6049660407bd4c8722d2dce8a4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "383a3bc5e7caf0c642c568af934d224e5a6e520729255dce66451eb110f7f2ec"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON ALLOW_DUPLICATE = FALSE ) ;",
+   "sql_sha256": "385c074fd0b7918a9bed6e2b01d33b6acc8341c02bf06f3315b2f0b3056ab261"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "3910fee2b540edfc7cded7551d05dcc2481316de54670e13a87a383be33652fa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = m1 ) ;",
+   "sql_sha256": "3a42f0a64011af63bbb60c85dc0222e05abb12085ad14753bb2f28cdc0efd821"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 REFRESH_ON_CREATE = FALSE FILE_FORMAT = ( TYPE = CSV ) ;",
+   "sql_sha256": "3aa6a1b23591f62f296ae5fdd922a6af820fc81709457c995119fe1b07172fa9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = m1 ) ;",
+   "sql_sha256": "3b111dfbfc945f5a0791a082d7c31b92d20a7148ff7cfa297a3b5322bfcf519e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET ) ;",
+   "sql_sha256": "3b1c9e8eefb676363ff5381cd7a0c676e8207b21843c4b1d92627e250f009a01"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"SELECT\" ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "3b590addc77b506eff409e9d8981200fde3b74a52fbd5bc9e190f5e632e13595"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON STRIP_NULL_VALUES = FALSE ) ;",
+   "sql_sha256": "3c1cdb97ca63826cdde63d7869bead576da0a92a73e6c0a7d473cc37671f3517"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = NONE ) ;",
+   "sql_sha256": "3d3380668d46c9dbeb640950f62ddf0ddfbcf40443a0517fe1bcf9de787d0ef6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "3df215d643850a21b11b8ead7e8889b452fd79087a7a2fb386583f5a70c34156"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET BINARY_AS_TEXT = TRUE ) ;",
+   "sql_sha256": "3e2caff4d46040bc225fc3fe23bc99d4533048b8fbd09c1d06cb5c44a5dcdb6a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "3f303bca60679f8a03c87c21ccf612537478303be810e1371d9bf2f9ad23a412"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||||' ) ;",
+   "sql_sha256": "3fbabd2788d2854c25a1bf957cddc5054422e66e241400c97d2c7d3936b3664c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC NULL_IF = ( 'm' ) ) ;",
+   "sql_sha256": "3fd390f48761f5b98ac75068a9501e99cb7e28f542d19eedaf6d05322ce7dbab"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 REFRESH_ON_CREATE = TRUE FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "3fdaaf851b3e4d3290c3b5ac0d1ddb4f72bea4d252ae0f7980baddc99d848c02"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = GZIP ) ;",
+   "sql_sha256": "40250ae82011d2d16837ce5bd642daeb8369b0daa3716bee9c4fa82089d23b8e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"v1 Q\" ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "4113fe0a57fef110819cb0e8e0ee2b35bb9174730b55e72ffaedaf8b430fd2b9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||' ) ;",
+   "sql_sha256": "4114ff1de0983b56173a6bfc9c6df103d063d10c97089b9e6648a8bd667a4411"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = GZIP ) ;",
+   "sql_sha256": "41db0080bf8bfd1ac953d4223edd920b78e95abf374d287e514d7790592d3d5c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( \"SELECT\" = 'm' ) ;",
+   "sql_sha256": "45c4aa2998d056be660d7e103272a40f0add6491c482368aa9a90ba15c5a2253"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "4764f0e3cc45ad1fd740eb0443e52ff0a0ab8d8e9543fd7ff10680ebe3a0324e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1/ FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "48bd31c1c4226fa3320c1c7f5b4bc04add0269148fa6a61d37078ad025f748aa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON ALLOW_DUPLICATE = TRUE ) ;",
+   "sql_sha256": "49624ce73d1d16b7036b3dcf409d1e66b15b643fe2e7c106dd5ec199a0b6cc3d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = NONE ) ;",
+   "sql_sha256": "4a0e59de5b15e9d9889e3170c445836b8035fe69e37a15fcb69a910a8b3b54ba"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "4a40f01c552b2a177f1de12e2bd158b751f0f27b81c00c73e6a7dd3b903a888a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = TRUE ) ;",
+   "sql_sha256": "4ae4a1913cd897c1ab01801b8b6f7dc3bbbc93e4287c473dd8d31a912d31ccc5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON STRIP_OUTER_ARRAY = TRUE ) ;",
+   "sql_sha256": "4bc045bf54cc2cefbf5d50e6313f48638f248390a8c944d1112ba1adb447725d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = NONE ) ;",
+   "sql_sha256": "4c1b6cd188088716722ae51f5afc96fdbf9d929de49f90ea6b9406e002abc856"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "4cb48f157ad54231559e7569d3f40c4a9abb94b845c21d82f9d14eef72943aee"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES \"v1 Q\" ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "4d166c45999400effd2e1dae8b1eedf20b482ab562590d7973f4709873d9fa1b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "4e5b9616ab83625865b8cefa9b5b8bb91ed0eff80d08ca052832e66a60baee36"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PATTERN = m1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "4f59dbd507bd2b1c179e06c2eb8084662ce28dd3acc2ed024ec73971e11e26cf"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"v1 Q\" ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "4fc2d4ba5b26ac70e7b8588fa3e6e0330fa26537843e03278e6c1d185e3d1143"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES \"SELECT\" ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "519e7db54d5e285d61ef16b1d8c7cb9501eb54555a817220da9aecb83ef93af4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = NONE ) ;",
+   "sql_sha256": "52cf125c5620c01bdb0e2e2a2d7069472a4910cfd4cec551d319986b6acf5aa2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON ALLOW_DUPLICATE = FALSE ) ;",
+   "sql_sha256": "53d352c37e434375a3f6c4b808d585a69cfe50b0b1906ad434ed864feace83e7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "546d068d71797d9aa65f623a5e88aded23f973ef6075241e3355599e8719b647"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "551b2c26ef2a21f8c42b6dd22662dac12445be95efdfb289c105f76ccf434237"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "553734efb85069cf26c8a7aeaf71291f01f157fd1dec9ca6d9df9e6238d1037b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON MULTI_LINE = TRUE ) ;",
+   "sql_sha256": "559bc5a8c43e613c1b20d77d449128e406b18f501499ac810d1573aa9198f28f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "560d447eacf57073f0d933bec7c9ddeae4aeba3c660ffd4367d15862680e809c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = m1 ) ;",
+   "sql_sha256": "566a1e31bb939b3d565dcc7a220909f577e3fde2b0dd4c3847ee09ed1d4f31dd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO ) ;",
+   "sql_sha256": "5948ad33d085526c8aa2154f9983ab7e4e6dc00d7c01d43704bff81d37555e97"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "59d9f7d7acdcf4cce91bc2e29a5c1a5bbe0fe7269ce0621bc110862f80c9dbb9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = 'm' ) ;",
+   "sql_sha256": "5ac91e4a3b3a1db3931d0997547cae2d0032d788c6bf7f9077ae20eeb5348266"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES \"SELECT\" ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "5b11fe5368313172b2d86a0e196989a456f2c95b816225dfc41c47177a7d7a94"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = 'm' ) ;",
+   "sql_sha256": "5c509217591d23cb3407df6044d3574ead2f0173a98014c1c2654be2d0776c6b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV MULTI_LINE = TRUE ) ;",
+   "sql_sha256": "5d80eef5cec839c4898f95221d0d4edc96947c942726b47bfd6800e0980a2c47"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = AUTO ) ;",
+   "sql_sha256": "5e15ab28eebe69db9607abe1c0bf4190789c190653adecbd2b7ecc37f0e87b6b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '||||||||||||||||||||' ) ;",
+   "sql_sha256": "5f2440f9479baeee4d7a1795690b6329dd90368a5b5ecfe3d52c8fcc05630fe5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV TRIM_SPACE = FALSE ) ;",
+   "sql_sha256": "5f5d401fcd26e2b69acbbd8b285845462177d261a6c5da7303f7f20e45ad3a83"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = 'm' ) ;",
+   "sql_sha256": "5f82b9daebd9b3f148580deda20b11662263dcb9a6616d234f6c80d121537bab"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "5fc447e86f186c54efe902cddd28da0a41c136511b6221d2e9e818d954c060c5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = GZIP ) ;",
+   "sql_sha256": "5fdac07d2032906ce52bd16b76713f4c911af52a2ac95db68dcbc785f7b8f277"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = NONE ) ;",
+   "sql_sha256": "60715a8b0d6460ece0ea1e0cdc6614c3e0cae3b7fd87d2fe2721c11757199a9a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( v1 ) ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "6096ba7ade6376ffc50ccab3c709cca843b94a9dde265ce78d9082ca1562fc8f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "610d4a62ba7efac06d8d3e17a640f533bf1b690bc90ca026394b9bc319638172"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC NULL_IF = ( 'm' ) ) ;",
+   "sql_sha256": "653f3a3721b25c702810c37a66aa8561319a03f50a7cecfb516d58fb79c10c7a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "676b1eeb21c693674af70190407d0e768b6bacb38dcfe5254e8a5c6af7f1d856"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 PATH_LAYOUT = HIERARCHICAL REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "67a4a0f9e5f194cc21c34525e2155820e9b0bbc778179efefa175b9d11739e3f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC ) ;",
+   "sql_sha256": "683710745d6255ae8a5e8f1a2ef28f1e9b1a352d79e557bd1489c9879331decc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = NONE ) ;",
+   "sql_sha256": "69dca94dd804e59ddab1f382095ad59b72a93d6e7a13740faa69dcd0abfc6781"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = 'm' ) ;",
+   "sql_sha256": "6a42072a1e1eebcdd49ce3f659899d8f238b4c9a44b5d24cf09d9c9507a0ca74"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( PRIMARY KEY ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "6a4e03ab69b79841253ff72c1c6b2b64501aa5ea91037abfa5448b0a6b62c9a3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "6b01c0ca989f4ec9ad08c84fd8650d0febe326bc9a5de53d7078c6247d560418"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "6c4f09fe8b6fbdb6850436a7acc56d43fc8bbbc06b2d524208a69150c434da8e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON MULTI_LINE = TRUE ) ;",
+   "sql_sha256": "6d5128c4d50afa94e1bebae3b73e6bc7614c811afb72b2a16402054e1337236f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = AUTO ) ;",
+   "sql_sha256": "6ed40b71bde39fb0907653d0b77d158b7678fd68689ef7d1a5477ac38402e255"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = m1 ) ;",
+   "sql_sha256": "6f3006046f26b3261017d8a520bae7eed7e7075170802bd72924af320cf98d93"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "6fe3c6764ffbb2419c6c9d82db23ed3c9b2175c338e898f23a55cae4f5a21101"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "713bfcd74b42d8127b35d53b8abfc4cf4041ba2b036db47a5937f6735ef3ce3a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = NONE ) ;",
+   "sql_sha256": "7158f4012c12aee470d98c15d17edfcae07f28161e2745c435dedd4ed1526a35"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC ) ;",
+   "sql_sha256": "71b3f239a5d14f8529ec5f975d142c0b677d12d37cc4cc324c7926875e41805c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = FALSE ) ;",
+   "sql_sha256": "725461a3d1939ee3487dff2a3c2d54f6cd22a2337eec3125e99efba31c9ca3bd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( \"SELECT\" = 'm' ) ;",
+   "sql_sha256": "728ec8e9fb112fe0f72d08bf9b2b5891d02d0b2c7adf60e6b2d91964e2469f12"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"SELECT\" USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "73d172133f9dc67a16cb12762127a7041343bb2fea01c2bc7d81a730975f866a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 INITIALIZE = ON_SCHEDULE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "76842e3807956b400b3d04a408f57a2928cb84c3002feb849a02642f7aab112c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER EXTERNAL FUNCTION ;",
+   "sql_sha256": "782ba5c3914e5bb3cd7b40595ada11db3b9e5a6e56887689d5efaac0c2362320"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "784ecc958f3f6297fd5dbf44d838c5c265f741f319c7907f7f11d9348afecb95"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV TRIM_SPACE = FALSE ) ;",
+   "sql_sha256": "7901dda3567b3d4ffbfb6947ba3d2d4c0766bf4cc7d0ea937fff96edc2fba04e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO ) ;",
+   "sql_sha256": "79ad887c581ef10a7854d8cc3d72b89e36aa415348131416c57e854cdebd0886"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = 'm' ) ;",
+   "sql_sha256": "79cfa6f73db357b10abf3167ed7fbf1c93571d3b2a877c817ec7ab018f5ba134"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = m1 ) ;",
+   "sql_sha256": "7d6f1df0efce5a0f8d9c5937c9a8d5b2530587f7a6322a1193083204d58d2014"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "7e8afa6b29d9829359e2c6cd20df9d80bc5a6c10d7a808da4b206b8dfd6a3971"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = m1 ) ;",
+   "sql_sha256": "7f9ef5ecedd3600532471d5cce83c0d2127f23b40cb5488b608ee8434b0fccd5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY \"v1 Q\" ON ( VALUE ) ;",
+   "sql_sha256": "7fe48a6f2217f890160531f0adc46555d836f8e073e126aab78337bbac5e4fc4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;",
+   "sql_sha256": "84eaf7caa237d779b3e8c1ab68281c668bfd9edc199630e5c4580700434654f9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "84fc251eef3d08db6df9b0def2f7ae23f42337f2b05b5656e4df5aec23246a19"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = NONE ) ;",
+   "sql_sha256": "850431a58eab47c6dee84d773d1d78fd33b6e1596abec5100e618bfd8e8f14e7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR EXTERNAL FUNCTION ;",
+   "sql_sha256": "85c54ebff462d34825c3fe294a78399d0f45754e375b0ad944aad18d93f1d2c8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( CONSTRAINT \"v1 Q\" UNIQUE ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "85e241136eae3b664c9c0121a7d241015ff82dce76f07860892cbb192ab404c9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( UNIQUE ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "863b35cea63e7cb6a60763f1d68016b707f11737c08aca3a18d0f718d840b874"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "87d3aff274d1920c74eed0049554a6a34bd6f8bf3305f768637c4244cff38d98"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"SELECT\" ) ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "894444a23d52b550228e5fc8a062628cfab74078534e4936fb45e98ebe191891"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 ROW_TIMESTAMP = FALSE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "8966f4582b1e330ace4bdd519f42a3a6292bd0b025c17957f76b3dd1502d9e2f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV TRIM_SPACE = TRUE ) ;",
+   "sql_sha256": "8a6ec15cee645485d50dfde07ffa5cd9e7871e40f83558eb948bf30be50d1dd0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = 'v1' ) ;",
+   "sql_sha256": "8a77b509cd92d2f16a79850ed521ac321e9d2858277a2d2f9d1c0cca669d23c0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = 'm' ) ;",
+   "sql_sha256": "8aacec768c1c5eaf9507a59cfafce4227cf6fbe6af36f2b1c7cbb22b094534bf"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE EXTERNAL TABLE v1 USING TEMPLATE SELECT 1 COPY GRANTS COPY = ( GRANTS ) ;",
+   "sql_sha256": "8c92fa3735ae55c986f840f3a7175e945c47a6ab3bcb7e64ca8f0c51595d0870"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "8d5ebf5a23159e4f3c23b78d79c9ddfd57afb7df391aa87e61023d699e0e60a9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '|||||||||||||||||||' ) ;",
+   "sql_sha256": "8deb0abeb9dad762d13d62576f62db73928a9e85cc50bb7d06213da275d01a59"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON STRIP_NULL_VALUES = FALSE ) ;",
+   "sql_sha256": "8f9e74df0a96a0a7954077e0473ec08a66cc95ba12f44c6073ba442e972852de"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "8fb515ca51859acf2858f0626db195a3ac34fd2e746b4c4a72e0e574b3a34ca2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = NONE ) ;",
+   "sql_sha256": "9061b7e783406a51dbadf2d6422f22fe50df3091a9ab3337ad831b6d631f98a7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON ) ;",
+   "sql_sha256": "91bd97764ff52b1e87d425cebf62d4d2c76d7aec229fd5987e3fb33efdabc09c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( PRIMARY KEY ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "922f4987aaafea789d2c2a12abbf819af5e48fdeca48c52891680edeb054a117"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"v1 Q\" ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "93dcd485c8219cec48be41942648fcd713e88fde011da22f25b57c0940a8726c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) AWS_SNS_TOPIC = m1 ;",
+   "sql_sha256": "941b5994d6c045ea3c7e1ae417c607319e1b275f88b84d901a95afd0dda6762a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @\"SELECT\" FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "9456d7b62636093983768d980b3bd087c934940750c5875bfc199fa7b0dd3f27"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV SKIP_BLANK_LINES = TRUE ) ;",
+   "sql_sha256": "950d90365250e998e6286c4bd91c84352512cf7cafc70390dae776def4ba8c93"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "95d4ee5b18baf5eb69414876b6554a626fece98739d43764194163dfaa679015"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "96af97195aa6796420a34f1d747784cc4567f22e10512c98762f77cea6bd7a20"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( CONSTRAINT \"v1 Q\" UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "97fdc36c23556c0822396d3256cb6240cafa43e1a2e4b38b265cef5cb28fa4a7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( \"v1 Q\" = 'm' ) ;",
+   "sql_sha256": "9a32cce9bc06b2db21244d21c52dc85fd5b8e655f09610cbfc53ab841263195e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY \"SELECT\" ON ( VALUE ) ;",
+   "sql_sha256": "9b72237776523ad235305143a2f144164360053ae8fbb002bd01dea3c5b26598"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "9c0ca496afd91189639b943495a903a234afffabd74bccf4a38e1cb2b3da9eac"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( v1 ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "9cec4d7d5853af1c7a869f26b77daf815faf39e03ecedc6cb45c8e7a3f0c2edf"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "9d0c20b76ff7070649fd29df86fa41fb60414cb4d1fde4183398f72b5bd7bfff"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'm' ) ;",
+   "sql_sha256": "a0c582ff01366a7db7f5504a1fed616920f1e60b6c76d838f9ad69f86e578d30"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = \"v1 Q\" ) ;",
+   "sql_sha256": "a1408af7bc9b0e75de8a2c757faf2eae817010b24a141bfacc1254f25c4f2382"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) COMMENT = m1 ;",
+   "sql_sha256": "a2bc3a565d147dd2f46498818f8a6482d94bd7d741dbf6b14d123be24b87369b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV ENCODING = m1 ) ;",
+   "sql_sha256": "a358da0560ce1d05fca7f4ddef59b25ebbc92733ee48800c8394eb978a6ea781"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON MULTI_LINE = FALSE ) ;",
+   "sql_sha256": "a62affc78af51481d64f6f47de28a9c4fc687b0c7acbf3dfacec36d440ccce79"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = 'v1' ) ;",
+   "sql_sha256": "a67f2506f2d37d89ae3b96dce536cfd441693524f28d0bff3b193a0347f58193"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) COMMENT = m1 ;",
+   "sql_sha256": "a690daec758abda0a60a7ee6a39696e004cb105fc69ba914e99e9d0dca5b624d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = AUTO ) ;",
+   "sql_sha256": "a6ec9d80501fd65f54d9afb7ea047c9e43e986936da0093aaafe40b5a42a45c0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV EMPTY_FIELD_AS_NULL = TRUE ) ;",
+   "sql_sha256": "a79f77aae2fb2218b5e699f86bdb2a6f102d68948621c3fbb8b760f4a9547ed2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "a883db7b6cbb83a1d9df40fca32bdb329a410d428dc245e6b55ea97745e0776f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV NULL_IF = ( 'm' ) ) ;",
+   "sql_sha256": "a8a010a8353f63439995118d5520c915dc75d7f192e1ae4fc3b0825ccd8a72d4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "aa4c6bf45fa00488f3f0b7d808c96edfdf400dd6ac647af982ef1423fd677b58"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON ALLOW_DUPLICATE = TRUE ) ;",
+   "sql_sha256": "ace69b3a06a7fb89b718974499fa619e1bf76b5144310fe5a387c4b69825050a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "ae7a4db5bdff4f3ae13bc514c789f18a8f7bbf9412b1e612015d870377240593"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV MULTI_LINE = TRUE ) ;",
+   "sql_sha256": "afc9271fce07af271ea09e029795db018f2157fc6391bd3666a7dd538472d586"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "afd64ac5ee3bf2d36f4fe9d2669a3973cc0e99e99c93013744dcc4fcb95101f7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV EMPTY_FIELD_AS_NULL = FALSE ) ;",
+   "sql_sha256": "b02cf367abdf32689d285a34891c63a7a0770148747acfaf606019dbfdc2fde8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "b0cd513d0f44660e2d65f3de7f89127da1aea035604fda45c2ec2f6a673756c0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;",
+   "sql_sha256": "b4e0327925d3e9663ee91d17b811821994d214c8df27756976032ccd097e37e9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = NONE ) ;",
+   "sql_sha256": "b57f3df62824f264519238617c4210385ec64b99ad89d7a3ac87f5cb014e2b52"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = m1 ) ;",
+   "sql_sha256": "b607938076f1d8f9a7fb93bd27954941a2ce9b6ca6b44f022c01e439ad7d42b5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 AUTO_REFRESH = FALSE FILE_FORMAT = ( TYPE = CSV ) ;",
+   "sql_sha256": "b63021fa57edcb672da8c20edcbd6bac7e540d5e6e96bccb1dbb869b674e7d13"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ESCAPE_UNENCLOSED_FIELD = NONE ) ;",
+   "sql_sha256": "b73a5bc61b8b4af279a9c842a3cb5de298160ba87cb523cc49ed09d5261c7480"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV SKIP_BLANK_LINES = FALSE ) ;",
+   "sql_sha256": "b90e2ebd23da1bd341fc07596f0a3a4875013b820396e676da448dca086a4ae5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1/ PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "b9ecb0ca0c3a2e00a9b258ecbd53ffdd109088f8a01c03ddd81d795dbc9ce1e1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "bd6ffe8745fe0a28f657e9dfb5be0d45e5ce658147b85bc4f2f5b8bfe812c322"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "be9f903f76d04e7e56774e6a09560d3d7654cc44e14d3f8fe38cf3b38db44ab2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"SELECT\" ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "c0d1b1a1c21cfbff177e8e4886532678ab2c87b26f916f8da1ae25eb8eb3d126"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = \"SELECT\" ) ;",
+   "sql_sha256": "c43b0046b299effc6ac9b9b5e8a14129b7dcb90b3bcb5c078329db0e3c9c8a88"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM SCHEDULER = ENABLE WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "c4ed328223f4a48b68c5bbbc0c5de9ad665a20ae3701e5cdf484eb99f8dfb5d0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV TRIM_SPACE = TRUE ) ;",
+   "sql_sha256": "c51a71dffa6a812755aa0d3ac6c770bff8f1a8bb586189f9bf0621c9db00bd3d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "c9293794eddba13cd243bbb6f87448436f42a38ec37db251e586744e9f4d97f4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( CONSTRAINT \"SELECT\" UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "c94f2db200f76625cede8c9685e9088bd942b2ed55d0e7f2f3ae015100bac8c1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = NONE ) ;",
+   "sql_sha256": "c9c1d9b5e1eef06da9bc38e9ef07632b5b9bf24c8f017ffd46cb7dea42a2bcab"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 INITIALIZE = ON_SCHEDULE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "c9e6693b146a4ce0d5c2659e2dd015a8f668bce1f4b8bab582239103d61b79de"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( \"v1 Q\" = 'm' ) ;",
+   "sql_sha256": "ca24c34f223279b13973e21ef2dd74dc8ea2a6ef5e7a3a90db1218af2500557b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = m1 ) ;",
+   "sql_sha256": "cb25c634969947e54676c82c3d6975817adfff2a7a3d22166507d000ae16dc52"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = AUTO ) ;",
+   "sql_sha256": "ccb159c47ef0bed4e5e71bb4d4698fdf6c3b01188d1dfa9c198ba41c4bb115e0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV COMPRESSION = AUTO ) ;",
+   "sql_sha256": "cd69cfa7bf2902809ee0030ac71a704349549fab27b6339acbcdb88acb53b6e5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = ZSTD ) ;",
+   "sql_sha256": "ced3ce5af1602e5422f76b984af03e6cbdad5d6bd58489334205d74187ba3040"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE \"v1 Q\" USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "d30a928ef6e3805e206475afa54ce8a3390b5f279de3dd25861f9adfbb195ac5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'm' ) ;",
+   "sql_sha256": "d57768894652499cd74a3f21be570b1d5f3bdf112528c6a897f954678027b841"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) PARTITION BY ( v1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "d5c1636dee3a7e9581aa2ca2d5f9039cb535792d9e21ca0e687470d5b0725d07"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = GZIP ) ;",
+   "sql_sha256": "d6d6c7a3304e8accb37e7a95d9d4bd1d2b2dd94d9aa3179d729a0cdd255eac32"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = ORC REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "d6dc540da78ea02b3fb58abf1fcc728cdfacd782490f537ede95db9fc3c27f04"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY \"v1 Q\" ON ( VALUE ) ;",
+   "sql_sha256": "d6fc504431e4f8eaa3b46d1e9372e87a6239d974e4b1eb719ad962370f77fbc1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "d7c1b8e808725854137a0c6d740aac16f750ca28d6c7b011daf3d059777c0f4a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "d888259db12d71a28c0c1164868f7383b6fb5f1ace22e59a3c4a410903c2ffcc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE EVENT TABLE IF NOT EXISTS v1 CLONE v1 AT ( STATEMENT => 'q1' ) COPY GRANTS ;",
+   "sql_sha256": "d9672596772c3c053aca321dd90caf729249c87e91ee9a6f0074e448d1eecc13"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL FUNCTION ;",
+   "sql_sha256": "da86d2318d921044e0b303383899b325a0ccc48f8b2c9e53055f764ef8a0a8d7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON STRIP_NULL_VALUES = TRUE ) ;",
+   "sql_sha256": "dc7a75564a63da253912047b2eeb633c0b2692f0602e5af22ecd33b6a7d178d7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = GZIP ) ;",
+   "sql_sha256": "df2b9f1600c6c9b63edfdd0efc6e900b5c150c4999e972bf456a3e3b6073df98"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO REPLACE_INVALID_CHARACTERS = FALSE ) ;",
+   "sql_sha256": "e0c6157e6d84880fd97b759c230b06e3f4689d6e1e8bcbcd2ad8e8b156cd0307"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = SNAPPY ) ;",
+   "sql_sha256": "e18ec99e7d017debe235dd2774020274952356366aaffdbf9c852737bb4a4f3a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY v1 ON ( VALUE ) ;",
+   "sql_sha256": "e2d04bcb8165f81d1bc16318cce793c84948c95799d014e28d4f7ef7c40a21b0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = AUTO ) ;",
+   "sql_sha256": "e2f0afbaa94479aa2abd5bd40231cacdb74152aa8ed7043869f9147e7e1ab929"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "e37fe63ee7266b526acd6f661caefae284abc8973b4e10233023ff23e9c54741"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "e63bd1c1443085dfbccdc480e49d36e9ec8fdd5228a1f141528ad10ea6838467"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = \"v1 Q\" ) ;",
+   "sql_sha256": "e6d8c756e759ec5c22428eaccaad858e7f5453d42fb3e102452c75c2ad61f39d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TAG ( v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ) ;",
+   "sql_sha256": "e7019ee915de82a8f7a36f03cb95f1f3eac3eb01e8501eac4a2c1152e03732e0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = GZIP ) ;",
+   "sql_sha256": "e83f5a22a12f5f7b6da2d652de6c07da4d81dd6ca694f9190abc049ff1ef6c15"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = AVRO COMPRESSION = BROTLI ) ;",
+   "sql_sha256": "e884679c595348aa7f07e94fbd4f1990b12fe0925b2fc66f587121f315983ae3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) TABLE_FORMAT = ;",
+   "sql_sha256": "e8fabd5f98370c7c571a814c13012bf17cd2f71058988bdc9148ea76c4155edf"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = BZ2 ) ;",
+   "sql_sha256": "e9ada340e79aa6fda8d6b99bed3d7a447b2d757990512c493b25911ce100f8b5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV EMPTY_FIELD_AS_NULL = TRUE ) ;",
+   "sql_sha256": "e9d41701fcf6601e6d175b7a61e17b892c772ba1fa049530395684418922012d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = ORC REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "eaf5df1ee6b4348f3a179ce61c69cbaff975b851df5c593db011c8d9e3d95682"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 USING TEMPLATE SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT 1 ) ) ) ) ) ) ) ;",
+   "sql_sha256": "eb40ff75b2aa86a019216443be5c54623fab212cf8bfdcb7494d14ac822ab895"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON REPLACE_INVALID_CHARACTERS = TRUE ) ;",
+   "sql_sha256": "ed59ce465ec94c03ba6e565210a63d29a1014b35988a2114ae2d731713238e88"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "edd1cb000b28bce229c59ecd92a8532f5dc6908090658770ddc642fdd7c845b4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = SNAPPY ) ;",
+   "sql_sha256": "ee23814f8cb2ba515cb54211cff8a5136134681003b7106adc7c491a8eefe904"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"v1 Q\" ) ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "ef96a41458ea7dd1101cf9419566498e419eaf2cc9aeeb6e8159a45fe9c6c5fd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET BINARY_AS_TEXT = TRUE ) ;",
+   "sql_sha256": "f04f799b7cf0e2db777db9a7dac5787e8c4f281a0aab4969f273fca0049d09d8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE EVENT TABLE IF NOT EXISTS v1 CLONE v1 AT ( OFFSET => -60 ) COPY GRANTS ;",
+   "sql_sha256": "f0f53d99cdda9b0045b94f499ba15447649df1d752759d46401a94ee4f02e325"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = '||||||||||||||||||||' ) ;",
+   "sql_sha256": "f2546cc96d0b0f0a9505a20d8d84d0cecf9438e3a5915b67a567187b6ffa84bb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV SKIP_BLANK_LINES = FALSE ) ;",
+   "sql_sha256": "f256dac808d640e3e11a45e5d6ef9389b038d77e0afe3ebc571d6e65565865bc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ROW ACCESS POLICY v1 ON ( VALUE ) ;",
+   "sql_sha256": "f4298394ba0219585b64607a727bdc02222fea3cac20410e4a3448fd73b09f48"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET BINARY_AS_TEXT = FALSE ) ;",
+   "sql_sha256": "f458dca8e5e83ccc2225b3907cf69996e9468295e11ec9fccee20973dbcf0140"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 INITIALIZE = ON_SCHEDULE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "f5bd2f1bdb3e54ad8e290d14d59ae2623542b22530ea6b6105a7a95c5ff975c5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 AUTO_REFRESH = TRUE FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "f6f0798aabf781fd5987d3fc91d1dad3e244945cabe22bcd2654c22410b7cd68"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = PARQUET BINARY_AS_TEXT = FALSE ) ;",
+   "sql_sha256": "f7f07e8425819229f7957ea8932a2be52333e67e08fe22ec54f54c822a3db300"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = NONE ) ;",
+   "sql_sha256": "f9a02239334757a9ed71f1c1aa1ed7cf3461bd73279d185c83623fe010e06530"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( CONSTRAINT \"SELECT\" UNIQUE ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+   "sql_sha256": "f9c052b238c9a245ca5a98b822149215fd60ebb1b94fbb7bd9c274c1a4b33eb7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_DELIMITER = 'm' ) ;",
+   "sql_sha256": "fa0c99d2cb717aff608bc6c119d8a643bc88a901393b514bdcb736dd57782611"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = AVRO COMPRESSION = DEFLATE ) ;",
+   "sql_sha256": "fab5abc19481c70501c31c1772aa8e978f287eac5d10d1b6fec75093047d0d26"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = AUTO ) ;",
+   "sql_sha256": "fba9bf6b9d1f840408c08e4ad76da71c4220c00657c05aa904119175514ef270"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = JSON COMPRESSION = RAW_DEFLATE ) ;",
+   "sql_sha256": "fd3675bf3b8db8f946d23eb69d0567d38ce3933f85f0a2456ea8de7a8cb616ba"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = 'm' ) ;",
+   "sql_sha256": "fd501d5ebaed007eeb6ce83bd46cbcdb883f4cf7fd2040e750e25d6fc1d00d1a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV RECORD_DELIMITER = '~~~~~~~~~~~~~~~~~~~~' ) ;",
+   "sql_sha256": "fe6f133165b8de2d230590efce7d4cd45782bf8bcd92bde23b505274a52f7b14"
+  }
+ ],
+ "receipts": 848,
+ "receipts_file_sha256": "3b3e229807e68fce9c722f6ffafa13ae94587b8d37d0162be35ba3422dcef924",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.k9109a4aed2ae",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d",
+   "run_id": "ddl-510fb2fd-p1-02"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.k9e7d88f2b93d",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.ka5984371b88a",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-table.clusteringaction.k4766deb8b18b",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k05489686a7dc",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2820)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k117cad7aed52",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k2a2214ae4024",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.k39b41a06b542",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2820)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.kc45105404227",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.kc9814d1416b1",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.kcdaff9947aaa",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.k6f9d6c1d8925",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.k99682b2b7b03",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.ka5b6aa577803",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2820)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.kbfe6e95a6143",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.kc2387e48daff",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2820)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.kcbf4b3671406",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 2829)",
+   "row_id": "sf.ddl.create-dynamic-table.create-or-alter-dynamic.kee4d1b0debb2",
+   "run_id": "ddl-510fb2fd-p1-07"
+  },
+  {
+   "reason": "error phase not established (errno 3215)",
+   "row_id": "sf.ddl.create-event-table.table.kcff9d270749a",
+   "run_id": "ddl-510fb2fd-p1-07"
+  }
+ ],
+ "refused": 25,
+ "runs": [
+  {
+   "audit_sha256": "3b334629b5095667437676a5b82b1edef9222af8352eb931150a58f531de2e61",
+   "receipts": 692,
+   "refused_rows": 4,
+   "run_id": "ddl-510fb2fd-p1-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1c28f1968df46d5109ea76c3457d2a373cebd011220acfd50d86060f2b244de2",
+   "receipts": 791,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7c0eb30ded2a011394b3f7fde8c4b6f147b8605fa1bb60ead22396a150d14bd0",
+   "receipts": 479,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c0af7097170f282d614bf15acd73c5255fdbe888928c0fefc269d57f485230c2",
+   "receipts": 790,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6f31fac0f2265b133d808b63cad71625263e6f062f5ec42c43f8db3aac742d2f",
+   "receipts": 704,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b5ad38c2fd780e3d8f0df1a69e770aa671a239e9cc043c690b62265d6b653a1",
+   "receipts": 594,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a1ad43fe8fe22d9dd908ea9ff8ad1d4de86a3ef08b9595fc1708659fe0d5b61f",
+   "receipts": 637,
+   "refused_rows": 15,
+   "run_id": "ddl-510fb2fd-p1-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a1a8958cc0c4ecbb7edbe761ee76bcac5f9d11049989a1b2c877d04df1e5302",
+   "receipts": 791,
+   "refused_rows": 0,
+   "run_id": "ddl-sweep-20261104T053447Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

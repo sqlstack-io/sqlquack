@@ -1,0 +1,513 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = ` \"v1 Q\" ` HANDLER = 'm' AS 'm' ;",
+   "sql_sha256": "1baafd3bf4321cee9eaabf8268c4ca743326acf2395f756fae873cc9c08a5b1d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE MODEL IF NOT EXISTS v1 WITH VERSION v1 FROM @~/p1 ;",
+   "sql_sha256": "2f80c62fdd3ab4f26fcc43d09732ac65368d7c14312ecb2a0e22068f014319c8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE SECURE PROCEDURE v1 ( v1 INT DEFAULT 1 , v1 INT DEFAULT 1 ) COPY GRANTS RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' TARGET_PATH = 'm' CALLED ON NULL INPUT VOLATILE COMMENT = 'm' COPY = ( GRANTS ) EXECUTE AS OWNER AS 'm' ;",
+   "sql_sha256": "2ff019ecbf050037b16ffc18973f702346520c0eb3b000461ecfa36087b0a68e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = ` \"SELECT\" ` HANDLER = 'm1.run' ;",
+   "sql_sha256": "35dd5aa4db4bae2e7ec4893495a1f47c9d54f91877f2886403291c66a9f9fc69"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE MODEL IF NOT EXISTS v1 WITH VERSION v1 FROM @v1.%v1/p1 ;",
+   "sql_sha256": "55d8466383601c24e577efd8fe995a53967659895c3199a4beece6bce3071bcb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR PROCEDURE ;",
+   "sql_sha256": "5ec15b2eee7d7fd5a20d3c2595d29dba85ea0ef760af0a555f7627d53c440dc8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY ) PARTITION BY ( DAY ( v1 ) , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "6cc4ca737e799843a2efe82d622fcf67a755726cf463c284d4fd8c877ab32360"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 PRIMARY KEY ( v1 , v1 ) RELY ) PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "6d73b938f48e672ce61d3822253ef4247f0a8676b4826c4174d4e447a98407d2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE SECURE PROCEDURE v1 ( v1 INT DEFAULT 1 , v1 INT DEFAULT 1 ) COPY GRANTS RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT VOLATILE COMMENT = 'm' COPY = ( GRANTS ) EXECUTE AS OWNER ;",
+   "sql_sha256": "72c396200ec2cf21e367aa4256465409d6b8604ba7793acf968b19382c762972"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY ) PARTITION BY ( MONTH ( v1 ) , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "73ea4a31c6f7af41445bce64f8a283bce58404e4d13529d7a1eeb652f6b9d4b9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY ) PARTITION BY ( BUCKET ( 1 , v1 ) , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "81169837538d174783618dc167b41c5ecc719cb83669874772c8f952f3e63fd0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 CHECK ( 1 ) RELY ) PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "8850641ddea712ba6479f203e967093d389c1b6f7ae034d95585ae1210190972"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = ` \"SELECT\" ` HANDLER = 'm' AS 'm' ;",
+   "sql_sha256": "8efcdbbcd77c0d12aa0fb7ccba1965b6e92edc85e543b1bad8350bdb2125acc7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE PROCEDURE ;",
+   "sql_sha256": "9859642c5054af29f60a80f9b3649cf7a165cee1d3b2c0d30d735320641be98e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE PROCEDURE v1 ( v1 IN INT DEFAULT 1 , INT DEFAULT 1 ) COPY GRANTS RETURNS TABLE ( v1 INT , v1 INT ) NOT NULL LANGUAGE SQL CALLED ON NULL INPUT VOLATILE COMMENT = 'm' COPY = ( GRANTS ) EXECUTE AS OWNER AS $$ BEGIN RETURN 1 ; END $$ ;",
+   "sql_sha256": "98d0fc03bb284b77c45c9378d114ba669d0dcb691598eb94dd5fdbf1e3cbce26"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER PROCEDURE ;",
+   "sql_sha256": "a60057fee8bca4a38562766a4c477f91c08b8566f5db3bf7ea71853eeb3cdbe6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 CHECK ( 1 ) RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY ) PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "da298ce19f1ad0d5224994e29bc8adebbb3bb5845345f7b7dc4b2fbb0b679f17"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE SERVICE IF NOT EXISTS v1 IN COMPUTE POOL v1 FROM SPECIFICATION_TEMPLATE_FILE = 'm' USING ( v1 => 1 , v1 => 1 , v1 => 1 ) AUTO_SUSPEND_SECS = 1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) AUTO_RESUME = TRUE MIN_INSTANCES = 1 MIN_READY_INSTANCES = 1 MAX_INSTANCES = 1 LOG_LEVEL = 'm' QUERY_WAREHOUSE = v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ;",
+   "sql_sha256": "db43087a568b085724a641dff1c3edeb64a754501662865a3d34b3e5d94a22cc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TRANSIENT ICEBERG TABLE IF NOT EXISTS v1 ( v1 INT DEFAULT 1 CONSTRAINT v1 UNIQUE RELY NOT NULL WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT DEFAULT 1 , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY ) PARTITION BY ( HOUR ( v1 ) , v1 ) PATH_LAYOUT = FLAT CLUSTER BY ( 1 , 1 ) EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' CATALOG_SYNC = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ERROR_LOGGING = TRUE COMMENT = 'm' ICEBERG_VERSION = 1 ALLOW_V3_EXPRESSION_DEFAULTS = TRUE ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ENABLE_DATA_COMPACTION = TRUE ENABLE_SCHEMA_EVOLUTION = TRUE ;",
+   "sql_sha256": "deb38bc667b1bbd826ec954ef44468bfc8232f23bdf889b9a2efe8f5ac82da4c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = ` \"v1 Q\" ` HANDLER = 'm1.run' ;",
+   "sql_sha256": "e4c671c9eeadbe797088a0ac123edf31e6dd2aa542f8dc116fa1ba3f42ba7d61"
+  }
+ ],
+ "receipts": 1347,
+ "receipts_file_sha256": "68911b5ba267cb7d75c576b7a3758f6e6cbaaaafa88098edb2586cd0fc323613",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.k9109a4aed2ae",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d",
+   "run_id": "ddl-510fb2fd-p1-02"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.k9e7d88f2b93d",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-materialized-view.set-data-metric-schedule.ka5984371b88a",
+   "run_id": "ddl-510fb2fd-p1-03"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-table.clusteringaction.k4766deb8b18b",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 397006)",
+   "row_id": "sf.ddl.create-image-repository.k958afbb70359",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 397006)",
+   "row_id": "sf.ddl.create-image-repository.kc20ef300bf63",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k01e8ff350eb2",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k02928aaf679d",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k0c5fbc8a3808",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k254ae275a63f",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k28eb414f2c3e",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k6136d240c981",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k7452b3d21a46",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.k7759ce48574a",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kb80b98621891",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kbabb360d4572",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kc074ccb3e6a4",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kc0a7247583df",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kd38b5214a143",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kd686c2d79be5",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kd7f8984b3ea5",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.ke959b1fee8ae",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kf9e571177fd4",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kfc0ddb63aa00",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391515)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table-2.kff834a81af1c",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 391577)",
+   "row_id": "sf.ddl.create-procedure.create-procedure-returns-table.python-handler.kf698096f691d",
+   "run_id": "ddl-510fb2fd-p1-09"
+  },
+  {
+   "reason": "error phase not established (errno 3019)",
+   "row_id": "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.kd113a78b5ae6",
+   "run_id": "ddl-510fb2fd-p1-10"
+  },
+  {
+   "reason": "error phase not established (errno 3019)",
+   "row_id": "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.kd6d7040eb583",
+   "run_id": "ddl-510fb2fd-p1-10"
+  },
+  {
+   "reason": "error phase not established (errno 90040)",
+   "row_id": "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.kf67d923b73fb",
+   "run_id": "ddl-510fb2fd-p1-10"
+  }
+ ],
+ "refused": 35,
+ "runs": [
+  {
+   "audit_sha256": "c08938585499c27ad5e0617fe6b295338230141c56f6b632d2f4d52ffe7ad09b",
+   "receipts": 22,
+   "refused_rows": 0,
+   "run_id": "d104-warehouses-20261104T072915Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3b334629b5095667437676a5b82b1edef9222af8352eb931150a58f531de2e61",
+   "receipts": 692,
+   "refused_rows": 4,
+   "run_id": "ddl-510fb2fd-p1-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1c28f1968df46d5109ea76c3457d2a373cebd011220acfd50d86060f2b244de2",
+   "receipts": 791,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7c0eb30ded2a011394b3f7fde8c4b6f147b8605fa1bb60ead22396a150d14bd0",
+   "receipts": 479,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c0af7097170f282d614bf15acd73c5255fdbe888928c0fefc269d57f485230c2",
+   "receipts": 790,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6f31fac0f2265b133d808b63cad71625263e6f062f5ec42c43f8db3aac742d2f",
+   "receipts": 704,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b5ad38c2fd780e3d8f0df1a69e770aa671a239e9cc043c690b62265d6b653a1",
+   "receipts": 594,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a1ad43fe8fe22d9dd908ea9ff8ad1d4de86a3ef08b9595fc1708659fe0d5b61f",
+   "receipts": 652,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "33372268130f80a1f61a435a906040ec279404238c5ffe44a77e1d0550603a8e",
+   "receipts": 774,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-08",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d5697c57fb0b9a72e7ab4abdb1c0d76d8be862fe466a064e924044b7ff6fa503",
+   "receipts": 546,
+   "refused_rows": 22,
+   "run_id": "ddl-510fb2fd-p1-09",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da32649b026d8c1f8776e5919490251f63c44ed035bb23dcf34396147cc489f2",
+   "receipts": 753,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-10",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a1a8958cc0c4ecbb7edbe761ee76bcac5f9d11049989a1b2c877d04df1e5302",
+   "receipts": 791,
+   "refused_rows": 0,
+   "run_id": "ddl-sweep-20261104T053447Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

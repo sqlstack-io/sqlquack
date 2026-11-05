@@ -1,0 +1,28 @@
+{
+ "capture_method": "dcm_definition_file",
+ "echoed_case_literals_replaced": [],
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-task.define-task.k5488e87b3c2b",
+   "kind": "held",
+   "raw_record_sha256": "d4d4d2edb8dbfb72621fb0e0d95286d7b4461ac93a518a7008b2bddf4be739d4",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-d133d"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.ke456028ed3ea",
+   "kind": "held",
+   "raw_record_sha256": "5c3e221341c50b163b048b24dffbf7b511b5b79f8e80cf002d02b377dc407385",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-d133d"
+  }
+ ],
+ "receipts": 1,
+ "repositioned_by_import": [],
+ "runs": [
+  "define-d133d"
+ ]
+}
