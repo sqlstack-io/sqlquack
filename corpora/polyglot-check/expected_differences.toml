@@ -1086,6 +1086,18 @@ marker = "WITHOUTTIMEZONE"
 field = "to"
 note = "Snowflake documents TIMESTAMP WITHOUT TIME ZONE as a synonym of TIMESTAMP_NTZ, so SQLQuack's cast target is TIMESTAMPNTZ, as for TIMESTAMP_NTZ; polyglot reads it as bare TIMESTAMP, whose meaning follows TIMESTAMP_TYPE_MAPPING; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
 
+[[kept_field]]
+id = "snowflake_clone_time_travel"
+marker = "CLONE"
+field = "at_clause"
+note = "a database or schema clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
+
+[[kept_field]]
+id = "snowflake_table_clone_time_travel"
+marker = "CLONE"
+field = "clone_at_clause"
+note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
+
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
 # with `sqlquack_node`, and the statement, without whitespace and ignoring case, contains `marker`.

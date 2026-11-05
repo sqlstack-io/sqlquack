@@ -1222,7 +1222,9 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
+        } else if self.match_identifier("AT") || self.match_token(TokenType::Before) {
             let keyword = self.previous_text().to_ascii_uppercase();
             self.expect_token(TokenType::LParen)?;
             let mut result = format!("{} (", keyword);
@@ -1273,7 +1275,7 @@ impl Parser {
             None
         };
 
-        let mut properties: Vec<Expression> = Vec::new();
+        let mut properties = self.parse_clone_container_properties(clone_from.is_some())?;
 
         if self.match_token(TokenType::With) {
             self.expect_token(TokenType::LParen)?;
@@ -1351,7 +1353,9 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
+        } else if self.match_identifier("AT") || self.match_token(TokenType::Before) {
             let keyword = self.previous_text().to_ascii_uppercase();
             self.expect_token(TokenType::LParen)?;
             let mut result = format!("{} (", keyword);
@@ -1398,6 +1402,7 @@ impl Parser {
 
         let _on_cluster = self.parse_on_cluster_clause()?;
 
+        let properties = self.parse_clone_container_properties(clone_from.is_some())?;
         let mut options: Vec<DatabaseOption> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1459,6 +1464,7 @@ impl Parser {
             options,
             clone_from,
             at_clause,
+            properties,
         })))
     }
 

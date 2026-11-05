@@ -299,6 +299,13 @@ impl Parser {
                 return Ok(create);
             }
         }
+        if self.is_snowflake() && !or_alter && !materialized && !secure {
+            if let Some(create) =
+                self.parse_snowflake_create_clone(or_replace, temporary, table_modifier.as_deref())?
+            {
+                return Ok(create);
+            }
+        }
 
         match self.peek().token_type {
             TokenType::Table => {
