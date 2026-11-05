@@ -34,6 +34,8 @@ pub struct CodeEntry {
     pub help: Option<&'static str>,
     /// One paragraph explaining what the code means and what to do.
     pub explanation: &'static str,
+    /// A command that draws the code, or what input does when no short command can.
+    pub example: &'static str,
 }
 
 /// Where a diagnostic points, in characters of the source; lines and columns are one-based.

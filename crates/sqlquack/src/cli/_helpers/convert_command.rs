@@ -1,4 +1,4 @@
-//! `sqlquack convert` and `sqlquack check`: Snowflake SQL as DuckDB SQL, or what is wrong with it.
+//! `sqlquack convert`, `check` and `explain`: Snowflake SQL as DuckDB SQL, what is wrong with it, and what each code means.
 
 use std::io::{Read, Write};
 use std::path::Path;
@@ -6,6 +6,7 @@ use std::process::ExitCode;
 
 use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::explain_code::explain_code;
 use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
@@ -26,7 +27,8 @@ use crate::analysis::main::with_overrides::with_overrides;
 use crate::analysis::models::Analysis;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::models::{
-    CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, OverrideListing,
+    CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
+    OverrideListing,
 };
 
 use crate::cli::main::convert_report::convert_report;
@@ -143,6 +145,27 @@ fn source_name(path: Option<&Path>) -> String {
 }
 
 /// `sqlquack check`: exit 0 when the SQL holds no problem, 1 with diagnostics, 2 without SQL.
+pub(crate) fn explain_command(
+    arguments: &ExplainArguments,
+    stdout: &mut dyn Write,
+    stderr: &mut dyn Write,
+) -> ExitCode {
+    match explain_code(&arguments.code) {
+        Some(text) => {
+            let _ = write!(stdout, "{text}");
+            ExitCode::SUCCESS
+        }
+        None => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack explain: no diagnostic code, name or former name is `{}`",
+                arguments.code
+            );
+            ExitCode::from(2)
+        }
+    }
+}
+
 pub(crate) fn check_command(
     arguments: &CheckArguments,
     stdout: &mut dyn Write,

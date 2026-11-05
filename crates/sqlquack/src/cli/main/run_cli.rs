@@ -8,7 +8,7 @@ use crate::cli::_helpers::audit_command::{
     audit_compare_command, audit_errors_command, audit_sample_command,
 };
 use crate::cli::_helpers::census_command::census_command;
-use crate::cli::_helpers::convert_command::{check_command, convert_command};
+use crate::cli::_helpers::convert_command::{check_command, convert_command, explain_command};
 use crate::cli::_helpers::function_command::function_command;
 use crate::cli::_helpers::index_command::index_command;
 use crate::cli::_helpers::pending_command::pending_command;
@@ -41,6 +41,7 @@ pub fn run_cli() -> ExitCode {
         Command::Convert(arguments) => convert_command(arguments, &mut stdout, &mut stderr),
         Command::Check(arguments) => check_command(arguments, &mut stdout, &mut stderr),
         Command::Compare(arguments) => compare_command(arguments, &mut stdout, &mut stderr),
+        Command::Explain(arguments) => explain_command(arguments, &mut stdout, &mut stderr),
         Command::Audit(arguments) => match (&arguments.sample, arguments.errors) {
             (Some(sample), _) => audit_sample_command(arguments, sample, &mut stderr),
             (None, true) => audit_errors_command(arguments, &mut stderr),

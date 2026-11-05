@@ -34,12 +34,15 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 ```console
 $ cargo run --release -p sqlquack -- check query.sql
 $ echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check --json
+$ cargo run --release -p sqlquack -- explain SQ0203
 ```
 
 `check` parses Snowflake SQL and reports what Snowflake would reject, without a schema or a
 conversion. It prints coded diagnostics on standard error, and `--json` prints
 `{"ok": …, "diagnostics": [...]}`. It exits 0 when it finds nothing, 1 when it finds a problem and
-2 for input without SQL.
+2 for input without SQL. `explain` prints a diagnostic code's meaning, help and an example that
+draws it; it takes the code, its name or a guard's former `E_GUARD_*` name, and exits 2 for an
+unknown one.
 
 ## Convert
 
@@ -78,10 +81,11 @@ error[SQ0004]: a name does not resolve
 With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `alias` (a parser
 guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
 `column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
-listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`; a code is
-never reused or renumbered. SQL that Snowflake parses but then rejects, such as `INTERSECT ALL`,
-`FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of
-a column the pattern removes, is refused with its own `SQ02xx` code instead of being converted.
+listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`, which
+`sqlquack explain <code>` prints; a code is never reused or renumbered. SQL that Snowflake parses
+but then rejects, such as `INTERSECT ALL`, `FOR UPDATE WAIT`, `QUALIFY` without a window function,
+or a `* ILIKE` `REPLACE` or `RENAME` of a column the pattern removes, is refused with its own
+`SQ02xx` code instead of being converted.
 A `VALUES` list of more than 1,000 rows is refused for now.
 `--session NAME=VALUE` passes the caller's Snowflake session parameters
 (`function` takes it too):
