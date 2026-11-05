@@ -1143,3 +1143,49 @@ pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
     "WAREHOUSE",
     "WORKSPACE",
 ];
+
+/// The Snowflake kinds a CREATE defines only by `<property> = <value>` lists.
+pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
+    "ACCOUNT",
+    "API INTEGRATION",
+    "APPLICATION ROLE",
+    "AUTHENTICATION POLICY",
+    "BACKUP POLICY",
+    "CATALOG INTEGRATION",
+    "DATA MOVEMENT POLICY",
+    "EXTERNAL ACCESS INTEGRATION",
+    "FAILOVER GROUP",
+    "FEATURE POLICY",
+    "INGRESS POLICY",
+    "MAINTENANCE POLICY",
+    "MANAGED ACCOUNT",
+    "MULTI PARTY APPROVAL POLICY",
+    "NETWORK POLICY",
+    "NETWORK RULE",
+    "NOTIFICATION INTEGRATION",
+    "ORGANIZATION ACCOUNT",
+    "ORGANIZATION USER",
+    "PACKAGES POLICY",
+    "PASSWORD POLICY",
+    "REPLICATION GROUP",
+    "RESOURCE MONITOR",
+    "ROLE",
+    "SECRET",
+    "SECURITY INTEGRATION",
+    "SESSION POLICY",
+    "SHARE",
+    "SNAPSHOT POLICY",
+    "STORAGE INTEGRATION",
+    "USER",
+];
+
+/// The Snowflake policy kinds a CREATE defines by a signature, a return type and a body.
+pub(crate) const SNOWFLAKE_BODY_POLICY_KINDS: &[&str] = &[
+    "AGGREGATION POLICY",
+    "JOIN POLICY",
+    "MASKING POLICY",
+    "PRIVACY POLICY",
+    "PROJECTION POLICY",
+    "ROW ACCESS POLICY",
+    "STORAGE LIFECYCLE POLICY",
+];

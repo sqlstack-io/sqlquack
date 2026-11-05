@@ -268,6 +268,14 @@ impl Parser {
         if self.is_snowflake() && self.check(TokenType::Or) {
             return Err(self.parse_error("Expected REPLACE or ALTER after CREATE OR"));
         }
+        if self.is_snowflake() {
+            if let Some(create) = self.parse_snowflake_create_properties(or_replace, or_alter)? {
+                return Ok(create);
+            }
+            if let Some(create) = self.parse_snowflake_create_body_policy(or_replace, or_alter)? {
+                return Ok(create);
+            }
+        }
 
         let hana_modifier: Option<String> = None;
         let temporary = hana_modifier
