@@ -559,6 +559,47 @@ pub struct DataMetricFunctionAction {
     pub items: Vec<DataMetricFunctionItem>,
 }
 
+/// Snowflake `{ CREATE | DEFINE } [ SECURE ] DATA METRIC FUNCTION`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CreateDataMetricFunction {
+    /// The leading keyword: "CREATE" or "DEFINE".
+    pub verb: String,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub secure: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub if_not_exists: bool,
+    pub name: TableRef,
+    pub arguments: Vec<DataMetricTableArgument>,
+    pub return_type: DataType,
+    /// `NULL` as true or `NOT NULL` as false after the return type, absent without either.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub nullable: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub language: Option<Identifier>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment: Option<Expression>,
+    /// The `AS` body, a string literal.
+    pub body: Expression,
+}
+
+/// One `<name> TABLE ( <column> <type>, ... )` argument of a data metric function.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricTableArgument {
+    pub name: Identifier,
+    pub columns: Vec<DataMetricColumn>,
+}
+
+/// One `<column> <type>` of a data metric function's table argument.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricColumn {
+    pub name: Identifier,
+    pub data_type: DataType,
+}
+
 /// One `<name> ON ( <argument>, ... )` of a data metric function action, with its clauses.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DataMetricFunctionItem {

@@ -21,6 +21,7 @@ use crate::expressions::columns::models::Comprehension;
 use crate::expressions::columns::models::CompressColumnConstraint;
 use crate::expressions::columns::models::ComputedColumnConstraint;
 use crate::expressions::columns::models::Constraint;
+use crate::expressions::columns::models::CreateDataMetricFunction;
 use crate::expressions::columns::models::DateFormatColumnConstraint;
 use crate::expressions::columns::models::DefaultColumnConstraint;
 use crate::expressions::columns::models::EphemeralColumnConstraint;
@@ -1183,6 +1184,7 @@ pub enum Expression {
     AlterView(Box<AlterView>),
     AlterObject(Box<AlterObject>),
     CreateObject(Box<CreateObject>),
+    CreateDataMetricFunction(Box<CreateDataMetricFunction>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),

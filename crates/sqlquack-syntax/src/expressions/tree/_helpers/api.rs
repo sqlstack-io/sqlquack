@@ -408,6 +408,7 @@ impl Expression {
             Expression::AlterView(_) => "alter_view",
             Expression::AlterObject(_) => "alter_object",
             Expression::CreateObject(_) => "create_object",
+            Expression::CreateDataMetricFunction(_) => "create_data_metric_function",
             Expression::AlterIndex(_) => "alter_index",
             Expression::Truncate(_) => "truncate",
             Expression::Use(_) => "use",

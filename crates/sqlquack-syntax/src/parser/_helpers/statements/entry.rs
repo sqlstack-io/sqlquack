@@ -511,6 +511,11 @@ impl Parser {
 
     fn parse_statement_by_keyword(&mut self, statement_start: usize) -> Result<Expression> {
         match self.peek().token_type {
+            TokenType::Define if self.applies_snowflake_context_rules() => {
+                self.skip();
+                self.parse_snowflake_create_data_metric_function("DEFINE", false, false)?
+                    .ok_or_else(|| self.parse_error("Expected DATA METRIC FUNCTION after DEFINE"))
+            }
             TokenType::Get
                 if self.check_next(TokenType::DAt) || !self.check_next(TokenType::LParen) =>
             {

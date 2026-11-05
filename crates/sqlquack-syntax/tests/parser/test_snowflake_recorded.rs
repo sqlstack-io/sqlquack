@@ -524,6 +524,60 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "a data metric function takes table arguments (recorded success)",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) , v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a secure data metric function takes every clause (recorded success)",
+            sql: "CREATE OR REPLACE SECURE DATA METRIC FUNCTION IF NOT EXISTS v1 ( v1 TABLE ( v1 INT , v1 INT ) ) RETURNS NUMBER NOT NULL LANGUAGE SQL COMMENT = 'm' AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DEFINE defines a data metric function (recorded semantic error)",
+            sql: "DEFINE DATA METRIC FUNCTION d1.s1.v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER COMMENT = m1 AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function's body is a string (recorded errno 1003)",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function's argument is a table (recorded errno 1003)",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 ( v1 INT ) ) RETURNS NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a table argument's column has a type (recorded errno 1003)",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 ) ) RETURNS NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a table argument's column type is no string (recorded errno 1003)",
+            sql: "DEFINE DATA METRIC FUNCTION d1.s1.v1 ( v1 TABLE ( v1 'INT' ) ) RETURNS NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function needs RETURNS (recorded errno 1003)",
+            sql: "DEFINE DATA METRIC FUNCTION d1.s1.v1 ( v1 TABLE ( v1 INT ) ) NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data metric function's name part is no reserved word (recorded errno 1003)",
+            sql: "DEFINE DATA METRIC FUNCTION d1.s1.SELECT ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -634,6 +688,24 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "EXECUTE TASK GRAPH",
             pointer: "/0/execute_object/name/name/name",
             expected_value: json!("GRAPH"),
+        },
+        ProjectionTestCase {
+            description: "a data metric function keeps its table argument's columns",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( \"v1 Q\" INT ) ) RETURNS NUMBER AS 'm'",
+            pointer: "/0/create_data_metric_function/arguments/0/columns/0/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DEFINE keeps its verb",
+            sql: "DEFINE SECURE DATA METRIC FUNCTION d1.s1.v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS 'm'",
+            pointer: "/0/create_data_metric_function/verb",
+            expected_value: json!("DEFINE"),
+        },
+        ProjectionTestCase {
+            description: "a data metric function keeps NOT NULL",
+            sql: "CREATE DATA METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER NOT NULL AS 'm'",
+            pointer: "/0/create_data_metric_function/nullable",
+            expected_value: json!(false),
         },
     ];
 
