@@ -1262,6 +1262,78 @@ close = "END ;"
 # binds the catalogue grammar it reads by grammar_sha256; a catalogue change invalidates it.
 
 [[reading]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+grammar_sha256 = "5ce5598618751297a3c6037fb50b850832da5597478f7af61e7e4a490571f86a"
+grammar = ["ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> REPLACE PARTITION BY ( { <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_name> ) | YEAR ( <old_col_name> ) | MONTH ( <old_col_name> ) | DAY ( <old_col_name> ) | HOUR ( <old_col_name> ) } ) WITH ( { <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_name> ) | YEAR ( <new_col_name> ) | MONTH ( <new_col_name> ) | DAY ( <new_col_name> ) | HOUR ( <new_col_name> ) } )"]
+reason = "page definitions inlined: partitionExpression (a column or a BUCKET, TRUNCATE, YEAR, MONTH, DAY or HOUR transform of one) for oldPartitionExpression and newPartitionExpression"
+
+[[reading]]
+form = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
+grammar_sha256 = "38a56322646cca22cd682c96e93fcb198e45345f48ff0f9b603e6f710d67a0e5"
+grammar = ["<name>!FORECAST( SERIES_VALUE => <series>, SERIES_COLNAME => '<series_colname>', INPUT_DATA => <input_data>, TIMESTAMP_COLNAME => '<timestamp_colname>', [ CONFIG_OBJECT => <config_object> ] );"]
+reason = "the argument list quotes 'series_colname': the series column name is a string, like 'timestamp_colname'"
+
+[[reading]]
+form = "sf.classes.budget.methods.remove-shared-resource"
+grammar_sha256 = "be1adb0c549815b80f5784434e48a9cb8782ebfc5a90f9a502464a73d729e201"
+grammar = ["<budget_name>!REMOVE_SHARED_RESOURCE( '<domain>' [ , { '<instance>' | <reference_statement> } ] )"]
+reason = "the instance argument of an object-backed domain is an object reference: the serialized string, or a subquery such as `(SELECT SYSTEM$REFERENCE(...))` (Arguments)"
+
+[[reading]]
+form = "sf.classes.budget.methods.add-shared-resource"
+grammar_sha256 = "211f5ec2ca61ca8f8d1e09d7791a70991e30151f4cc346dce89c6a6a8d06831c"
+grammar = ["<budget_name>!ADD_SHARED_RESOURCE( '<domain>' [ , { '<instance>' | <reference_statement> } ] )"]
+reason = "the instance argument of an object-backed domain is an object reference: the serialized string, or a subquery such as `(SELECT SYSTEM$REFERENCE(...))` (Arguments)"
+
+[[reading]]
+form = "sf.classes.budget.methods.set-email-notifications"
+grammar_sha256 = "fcbd93f4ccb91e9f74ad0558be6fb4705857b0e1761aa534e5f5e61b69e51d90"
+grammar = ["<budget_name>!SET_EMAIL_NOTIFICATIONS( [ '<notification_integration>', ] '<email_list>' )"]
+reason = "the email list is one string literal holding comma-separated addresses; read as a single string operand"
+
+[[reading]]
+form = "sf.classes.budget.methods.remove-resource-tag"
+grammar_sha256 = "7d5937a9336a81ad4430f6a53cc498c250311bb18f3f568f72ec81ef69ee22e1"
+grammar = ["<budget_name>!REMOVE_RESOURCE_TAG( { '<tag_reference>' | <reference_statement> }, '<tag_value>' )"]
+reason = "the Arguments section documents 'tag_value' as an argument (the value of the tag/value combination), not a fixed literal"
+
+[[reading]]
+form = "sf.classes.budget.methods.remove-tag"
+grammar_sha256 = "5866b87ae0aaed407d63ee083c104bf8f0ebe791c2ce28d15c03a715d7a8900e"
+grammar = ["<budget_name>!REMOVE_TAG( { '<tag_reference>' | <reference_statement> }, '<tag_value>' )"]
+reason = "the Arguments section documents 'tag_value' as an argument (the value of the tag/value combination), not a fixed literal"
+
+[[reading]]
+form = "sf.ddl.alter-external-table.set"
+grammar_sha256 = "62de9f758a7e6943989174d25476b02701f185710fa6746e7dc36fa5b81734c6"
+grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> SET AUTO_REFRESH = { TRUE | FALSE }"]
+reason = "SET names at least one property, and AUTO_REFRESH is its only property, so it is required"
+
+[[reading]]
+form = "sf.ddl.show-models"
+grammar_sha256 = "b176f9708e129cc27cdaf40934f77531fb68b93d552deaa85e17676891fe57e2"
+grammar = ["SHOW MODELS [ LIKE '<pattern>' ] [ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"]
+reason = "the IN parameter documents the keyword ACCOUNT (records for all schemas in all databases of the account), which the block omits"
+
+[[reading]]
+form = "sf.ddl.show-classes"
+grammar_sha256 = "7087766a32abed7f008d7699bfa5ccfcc44308aa661ddbcc00208ee9c586a05a"
+grammar = ["SHOW CLASSES [ LIKE '<pattern>' ] [ IN { DATABASE [ <db_name> ] | <db_name> } ] [ STARTS WITH '<name_string>' ] [ LIMIT <rows> [ FROM '<name_string>' ] ]"]
+reason = "the Parameters section documents `STARTS WITH 'name_string'`, which the block omits, and says the DATABASE keyword is not required when the database name is given; read in the parameter order LIKE, IN, STARTS WITH, LIMIT"
+
+[[reading]]
+form = "sf.functions.reduce"
+grammar_sha256 = "e1c8d246c9153c4553f0d79d921c7a8a62966130f76baac41c48926bd20c5c6c"
+grammar = ["REDUCE( <array> , <init> , <lambda_expression> )"]
+reason = "the Syntax line defines <lambda_expression> as `<acc> [ <datatype> ] , <value> [ <datatype> ] -> <expr>` without parentheses, but every example parenthesises the two parameters (`(acc, val) -> acc + val`), so the cases render the parameters parenthesised"
+
+[[reading]]
+form = "sf.query.unpivot"
+grammar_sha256 = "fd64454d8a18ff6333a691b27cdbdb8bb364b050d71f06b7b8d202aa36725ad9"
+grammar = ["SELECT ... FROM ... UNPIVOT [ { INCLUDE | EXCLUDE } NULLS ] ( <value_column> FOR <name_column> IN ( <col> [ [ AS ] <col_alias> ] [ , ... ] ) ) [ ... ]"]
+reason = "the page writes the IN list as `<col> [ [ AS ] <col_alias> ], ...`: the column list repeats, read as a `[ , ... ]` continuation of the whole item"
+
+[[reading]]
 form = "sf.ddl.alter-external-consumer-modify-programmatic-access-token"
 grammar_sha256 = "6f76f9ae23bd0abed94c64252b49793d3366e020c5a1597872b31a3381d54170"
 grammar = ["ALTER EXTERNAL CONSUMER <name> MODIFY { PROGRAMMATIC ACCESS TOKEN | PAT } [ IF EXISTS ] <token_name> [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ] [ UNSET COMMENT ]"]
@@ -4429,8 +4501,8 @@ reason = "matchedClause and notMatchedClause inlined from the page; the repetiti
 [[reading]]
 form = "sf.dml.insert"
 grammar_sha256 = "60546e7649c4cb35b2478bfb20b774ea289ea70ea3b005f187d5dabbf78546d9"
-grammar = ["INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ] | <query> }"]
-reason = "the page's `[ , ( ... ) ]` repeats the parenthesized row of values, not the VALUES keyword"
+grammar = ["INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ] { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ] | <query> }"]
+reason = "the page's `[ , ( ... ) ]` is a further parenthesized row of values, not the VALUES keyword, and repeats: the usage notes insert multiple rows in one VALUES clause"
 
 # DML: documented bounds and rules (hand limits) and the D90 extremes, each under 50 KB.
 
@@ -4877,6 +4949,15 @@ kind = "negative_neighbour"
 note = "a path that begins with none of branches/, tags/ or commits/"
 anchor = "doc.sql.list / Parameters"
 sql = "LIST @r1/p1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.insert"
+kind = "negative_neighbour"
+note = "a parenthesized row of values without the VALUES keyword"
+anchor = "doc.sql.insert / Syntax"
+sql = "INSERT INTO v1 ( v1 ) ( 1 ) ;"
 expect = "observe"
 context = "raw"
 
@@ -10443,7 +10524,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
@@ -10453,7 +10534,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -10463,7 +10544,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -10473,7 +10554,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "observe"
 context = "raw"
 
@@ -10483,7 +10564,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "accept"
 context = "raw"
 
@@ -10493,7 +10574,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "accept"
 context = "raw"
 
@@ -13208,40 +13289,6 @@ expect = "observe"
 context = "raw"
 
 [[suppress]]
-form = "sf.ddl.show-service-containers-in-service"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>"
-reason = "D97: Snowflake answers the form without <name> with errno 4 (import-20261104-33 refused the row: error phase not established), which is unruled, so the omission is not established as a syntax error; the hand row below observes it"
-
-[[limit]]
-form = "sf.ddl.show-service-containers-in-service"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>, observed"
-anchor = "doc.sql.show-service-containers-in-service / Syntax"
-sql = "SHOW SERVICE CONTAINERS IN SERVICE ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.show-service-instances-in-service"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>"
-reason = "D97: Snowflake answers the form without <name> with errno 4 (import-20261104-33 refused the row: error phase not established), which is unruled, so the omission is not established as a syntax error; the hand row below observes it"
-
-[[limit]]
-form = "sf.ddl.show-service-instances-in-service"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>, observed"
-anchor = "doc.sql.show-service-instances-in-service / Syntax"
-sql = "SHOW SERVICE INSTANCES IN SERVICE ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
 form = "sf.ddl.alter-application-package.rename-to"
 kind = "required_operand_missing"
 target = "<name>"
@@ -15631,7 +15678,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
@@ -15641,7 +15688,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -15651,7 +15698,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS d1.s1.v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -16923,7 +16970,7 @@ kind = "boundary_below"
 target = "'<tag_value>'"
 note = "a tag value of 255 characters against the documented maximum of 256"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Parameters"
-sql = "COMMENT = TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
+sql = "ALTER STORAGE LIFECYCLE POLICY v1 SET TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
 expect = "accept"
 context = "raw"
 
@@ -16933,7 +16980,7 @@ kind = "boundary_at"
 target = "'<tag_value>'"
 note = "a tag value of 256 characters against the documented maximum of 256"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Parameters"
-sql = "COMMENT = TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
+sql = "ALTER STORAGE LIFECYCLE POLICY v1 SET TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
 expect = "accept"
 context = "raw"
 
@@ -16943,7 +16990,7 @@ kind = "boundary_above"
 target = "'<tag_value>'"
 note = "a tag value of 257 characters against the documented maximum of 256"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Parameters"
-sql = "COMMENT = TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
+sql = "ALTER STORAGE LIFECYCLE POLICY v1 SET TAG v1 = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' ;"
 expect = "observe"
 context = "raw"
 
@@ -17277,24 +17324,28 @@ sql = "SHOW MULTI PARTY APPROVAL POLICIES LIKE 'm' IN ACCOUNT STARTS WITH 'm' LI
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.show-oflow-data-plane-integration"
 kind = "boundary_below"
 target = "LIMIT <rows>"
-note = "LIMIT 9,999 against the documented maximum of 10,000"
+note = "LIMIT 9,999 against the documented maximum of 10,000, observed"
 anchor = "doc.sql.show-oflow-data-plane-integration / Usage notes"
 sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIMIT 9999 ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject
 [[limit]]
 form = "sf.security_admin.show-oflow-data-plane-integration"
 kind = "boundary_at"
 target = "LIMIT <rows>"
-note = "LIMIT 10,000 against the documented maximum of 10,000"
+note = "LIMIT 10,000 against the documented maximum of 10,000, observed"
 anchor = "doc.sql.show-oflow-data-plane-integration / Usage notes"
 sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIMIT 10000 ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
 [[limit]]
@@ -21563,20 +21614,6 @@ kind = "identifier_class"
 target = "<account_name>"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 reason = "the argument is an expression, not an identifier: the page's examples pass a string ('prod_acct1'), NULL or CURRENT_ACCOUNT_NAME() (auditor review 53401a6a)"
-
-[[suppress]]
-form = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
-kind = "identifier_class"
-target = "<series_colname>"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-reason = "the argument is a column-name string, as the page's argument list quotes 'series_colname' (auditor review 53401a6a)"
-
-[[suppress]]
-form = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
-kind = "identifier_class"
-target = "<series_colname>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-reason = "the argument is a column-name string, as the page's argument list quotes 'series_colname' (auditor review 53401a6a)"
 
 # dml: scored rejects whose receipt shows no syntax error, observed under D97 (auditor review e92ce262, applied family-wide).
 
@@ -30267,7 +30304,7 @@ reason = "D113 [page misreading]: The block omits the values; the parameters rea
 form = "sf.ddl.show-compute-pools"
 grammar_sha256 = "acc7af6831c31f694d239f753ec1bb0bb8e136408c47ee5e9e9145c498eb259f"
 grammar = ["SHOW COMPUTE POOLS [ LIKE '<pattern>' ] [ STARTS WITH '<name_string>' ] [ LIMIT <rows> [ FROM '<name_string>' ] ]"]
-reason = "D113 [page misreading]: The block omits <rows> after LIMIT; the parameter reads `LIMIT rows [ FROM 'name_string' ]`."
+reason = "D113 [page misreading]: the block writes LIMIT <ROWS>; the extractor drops that all-caps placeholder (the page's Markdown source has none), so the extracted grammar has LIMIT without its operand; the parameter reads `LIMIT rows [ FROM 'name_string' ]`."
 
 [[reading]]
 form = "sf.ddl.show-contacts"
@@ -68929,5 +68966,1386 @@ target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_n
 note = "omit <application_name>, observed"
 anchor = "doc.sql.show-masking-policies / Syntax"
 sql = "SHOW MASKING POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+# D113 utility receipt triage (imports 110-120): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 92225 SQLSTATE P0000, phase semantic_error, import-20261104-115), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-115), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "negative_neighbour"
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+note = "a bare literal in place of <query>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' , v1 AS ( 1 ) CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 ddl receipt triage (imports 110-120): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<tag_name> #3"
+note = "omit <tag_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<tag_name> #3"
+note = "omit <tag_name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET TAG = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<col_name> #2"
+note = "omit <col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "required_operand_missing"
+target = "<col_name> #2"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+kind = "negative_neighbour"
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ EQUALITY ] [ , ... ] ]"
+note = "a string literal in place of <column_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 904 SQLSTATE 42000, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.searchoptimizationaction"
+kind = "negative_neighbour"
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ EQUALITY ] [ , ... ] ]"
+note = "a string literal in place of <column_name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 DROP SEARCH OPTIMIZATION ON 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.set-unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 926 SQLSTATE 42601, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set-unset-comment"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required WHERE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required WHERE, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 UNSET FROZEN ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required DYNAMIC"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "negative_neighbour"
+note = "the form without its required DYNAMIC, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER TABLE v1 UNSET INITIALIZATION_WAREHOUSE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1420 SQLSTATE 22023, phase semantic_error, import-20261104-116), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.unset"
+kind = "required_operand_missing"
+target = "<purpose>"
+note = "omit <purpose>, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 UNSET CONTACT ;"
+expect = "observe"
+context = "raw"
+
+# D113 security_admin receipt triage (imports 110-120): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+sql = "ALTER STORAGE LIFECYCLE POLICY UNSET ARCHIVE_FOR_DAYS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-add-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-add-key-pair"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-add-key-pair / Syntax"
+sql = "ALTER USER IF ADD KEY PAIR v1 PUBLIC_KEY = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-add-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-add-programmatic-access-token"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-add-programmatic-access-token / Syntax"
+sql = "ALTER USER IF ADD PROGRAMMATIC ACCESS TOKEN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-add-workload-identity"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-add-workload-identity"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-add-workload-identity / Syntax"
+sql = "ALTER USER IF ADD WORKLOAD IDENTITY v1 TYPE = AWS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-key-pair.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-key-pair.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-key-pair / Syntax"
+sql = "ALTER USER IF MODIFY KEY PAIR v1 RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-113), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-user-modify-programmatic-access-token.rename-to"
+kind = "negative_neighbour"
+note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+anchor = "doc.sql.alter-user-modify-programmatic-access-token / Syntax"
+sql = "ALTER USER IF MODIFY PROGRAMMATIC ACCESS TOKEN v1 RENAME TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE SNOWFLAKE . . ANOMALY_DETECTION ON SCHEMA v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ON DATABASE v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE SCHEMA ON v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ERROR"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ERROR, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT SELECT TABLE ON TABLE v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT ADD SEARCH OPTIMIZATION ON SCHEMA TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ON USER v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE SNOWFLAKE . . CLASSIFICATION_PROFILE ON SCHEMA v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT MANAGE APPLICATION ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-118); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+note = "alternative { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT MANAGE CORTEX EXTENSION SECURITY SCAN ON ACCOUNT TO v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required LISTING"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required LISTING, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ORGANIZATION ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ORGANIZATION ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VIEW"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VIEW, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ON SCHEMA v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE ON SCHEMA v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT READ ERROR TABLE ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT MANAGE ON USER v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT MANAGE ON USER v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME | APPLICATION PACKAGE | APPLICATION }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME | APPLICATION PACKAGE | APPLICATION }, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT ATTACH LISTING ON v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CORE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CORE, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE SNOWFLAKE . . BUDGET ON SCHEMA v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-118), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT ATTACH LISTING ON USER TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_absent"
+target = "[ FROM '<name_string>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_absent"
+target = "[ FROM '<name_string>' ]"
+note = "option absent [ FROM '<name_string>' ], observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIMIT 1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ LIKE '<pattern>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ LIKE '<pattern>' ]"
+note = "option present [ LIKE '<pattern>' ], observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ STARTS WITH '<name_string>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ STARTS WITH '<name_string>' ]"
+note = "option present [ STARTS WITH '<name_string>' ], observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "option present [ LIMIT <rows> [ FROM '<name_string>' ] ], observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid operand, observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ FROM '<name_string>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "option_present"
+target = "[ FROM '<name_string>' ]"
+note = "option present [ FROM '<name_string>' ], observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "operand_type_class"
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-oflow-data-plane-integration"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
+sql = "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-password-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-password-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-password-policies / Syntax"
+sql = "SHOW PASSWORD POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-replication-groups"
+kind = "negative_neighbour"
+note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-replication-groups"
+kind = "negative_neighbour"
+note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ], observed"
+anchor = "doc.sql.show-replication-groups / Syntax"
+sql = "SHOW REPLICATION GROUPS IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-roles-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-roles-in-service"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-roles-in-service / Syntax"
+sql = "SHOW ROLES IN SERVICE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-roles-in-service"
+kind = "negative_neighbour"
+note = "the form without its required SERVICE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-roles-in-service"
+kind = "negative_neighbour"
+note = "the form without its required SERVICE, observed"
+anchor = "doc.sql.show-roles-in-service / Syntax"
+sql = "SHOW ROLES IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-roles"
+kind = "negative_neighbour"
+note = "the form without its required CLASS in [ IN CLASS <class_name> ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-roles"
+kind = "negative_neighbour"
+note = "the form without its required CLASS in [ IN CLASS <class_name> ], observed"
+anchor = "doc.sql.show-roles / Syntax"
+sql = "SHOW ROLES IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-roles"
+kind = "required_operand_missing"
+target = "<class_name> in [ IN CLASS <class_name> ]"
+note = "omit <class_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-roles"
+kind = "required_operand_missing"
+target = "<class_name> in [ IN CLASS <class_name> ]"
+note = "omit <class_name>, observed"
+anchor = "doc.sql.show-roles / Syntax"
+sql = "SHOW ROLES IN CLASS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN APPLICATION v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN DATABASE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ LIKE '<pattern>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ LIKE '<pattern>' ]"
+note = "option present [ LIKE '<pattern>' ], observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "option present [ LIMIT <rows> [ FROM '<name_string>' ] ], observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid operand"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid operand, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ FROM '<name_string>' ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ FROM '<name_string>' ]"
+note = "option present [ FROM '<name_string>' ], observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "option_present"
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…"
+note = "option present [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN ACCOUNT ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-110), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <s…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<application_package_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <s…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN APPLICATION PACKAGE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |… #2"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-row-access-policies"
+kind = "operand_type_class"
+target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> |…"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-row-access-policies / Syntax"
+sql = "SHOW ROW ACCESS POLICIES LIKE 'm' LIMIT 1 FROM 'm' IN SCHEMA v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-secrets"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_nam…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-secrets"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | [ DATABASE ] <db_name> | [ SCHEMA ] <schema_name> | APPLICATION <application_nam…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-secrets / Syntax"
+sql = "SHOW SECRETS IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-session-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-session-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-session-policies / Syntax"
+sql = "SHOW SESSION POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-shares-in-failover-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-112), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-shares-in-failover-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-shares-in-failover-group / Syntax"
+sql = "SHOW SHARES IN FAILOVER GROUP ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-shares-in-replication-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-112), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-shares-in-replication-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-shares-in-replication-group / Syntax"
+sql = "SHOW SHARES IN REPLICATION GROUP ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-user-functions"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-user-functions"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-user-functions / Syntax"
+sql = "SHOW USER FUNCTIONS IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-user-procedures"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-user-procedures"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-user-procedures / Syntax"
+sql = "SHOW USER PROCEDURES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-versions-in-organization-profile"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2 SQLSTATE 0A000, phase unsupported_feature, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-versions-in-organization-profile"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE, observed"
+anchor = "doc.sql.show-versions-in-organization-profile / Syntax"
+sql = "SHOW VERSIONS IN ORGANIZATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-versions-in-organization-profile"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2 SQLSTATE 0A000, phase unsupported_feature, import-20261104-112), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-versions-in-organization-profile"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-versions-in-organization-profile / Syntax"
+sql = "SHOW VERSIONS IN ORGANIZATION PROFILE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.reduce"
+kind = "negative_neighbour"
+note = "the lambda without its required ->"
+anchor = "doc.functions.reduce / Syntax"
+sql = "SELECT REDUCE ( v1 , v1 , ( acc , x ) acc + x ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.show-databases"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D129 [page misreading]: the all-options row combines HISTORY with WITH PRIVILEGES, which the usage notes make mutually exclusive (Snowflake answers unsupported_feature); the two corrected rows below apply the page's rule"
+
+[[limit]]
+form = "sf.ddl.show-databases"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied (HISTORY without WITH PRIVILEGES), observed"
+anchor = "doc.sql.show-databases / Syntax"
+sql = "SHOW TERSE DATABASES HISTORY LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.show-databases"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied (WITH PRIVILEGES without HISTORY), observed"
+anchor = "doc.sql.show-databases / Syntax"
+sql = "SHOW TERSE DATABASES LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' WITH PRIVILEGES USAGE , USAGE ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D129 [page misreading]: the all-options row combines OR REPLACE with IF NOT EXISTS, which the page forbids in one statement; the two corrected rows below apply the page's rule"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied (OR REPLACE without IF NOT EXISTS), observed"
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+sql = "ALTER ICEBERG TABLE IF EXISTS v1 CREATE OR REPLACE VERSION_TAG v1 AS OF VERSION 1 RETAIN 1 DAYS ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag"
+kind = "interaction_all_options"
+note = "every independent option of one production together, with the page's combination rules applied (IF NOT EXISTS without OR REPLACE), observed"
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+sql = "ALTER ICEBERG TABLE IF EXISTS v1 CREATE VERSION_TAG IF NOT EXISTS v1 AS OF VERSION 1 RETAIN 1 DAYS ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.show-replication-databases"
+kind = "alternative"
+target = "<account_identifier>"
+note = "an org.account account identifier, so the primary database is a three-part name, observed"
+anchor = "doc.sql.show-replication-databases / Parameters"
+sql = "SHOW REPLICATION DATABASES WITH PRIMARY o1 . a1 . v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table.upgrade-to-iceberg-version"
+kind = "negative_neighbour"
+note = "the form without its required version number 3"
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+sql = "ALTER ICEBERG TABLE v1 UPGRADE TO ICEBERG VERSION ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "operand_type_class"
+target = "<new_col_name>"
+note = "a column name different from the replaced one, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( c1 ) WITH ( c2 ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "alternative"
+target = "<new_col_name>"
+note = "an identity column replaced by a transform of another column, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( c1 ) WITH ( BUCKET ( 16 , c2 ) ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.comment.is"
+kind = "operand_type_class"
+target = "<object_type>"
+note = "a valid data_type"
+reason = "<object_type> is an object kind keyword (the page: TABLE, SCHEMA, VIEW, and so on), not a data type; the hand rows below type it"
+
+[[suppress]]
+form = "sf.ddl.comment.is"
+kind = "negative_neighbour"
+target = "<object_type>"
+note = "a string literal in place of <object_type>"
+reason = "<object_type> is an object kind keyword, not a data type, so the data-type neighbour 'INT' does not apply; the hand rows below give the object kind neighbours"
+
+[[limit]]
+form = "sf.ddl.comment.is"
+kind = "operand_type_class"
+target = "<object_type>"
+note = "an object kind keyword (TABLE)"
+anchor = "doc.sql.comment / Parameters"
+sql = "COMMENT ON TABLE v1 IS 'm' ;"
+expect = "accept"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.comment.is"
+kind = "alternative"
+target = "<object_type>"
+note = "the object kind SCHEMA, observed"
+anchor = "doc.sql.comment / Parameters"
+sql = "COMMENT ON SCHEMA v1 IS 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.comment.is"
+kind = "alternative"
+target = "<object_type>"
+note = "the object kind VIEW, observed"
+anchor = "doc.sql.comment / Parameters"
+sql = "COMMENT ON VIEW v1 IS 'm' ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.comment.is"
+kind = "negative_neighbour"
+target = "<object_type>"
+note = "a string literal in place of the object kind keyword"
+anchor = "doc.sql.comment / Parameters"
+sql = "COMMENT ON 'TABLE' v1 IS 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.comment.is"
+kind = "negative_neighbour"
+target = "<object_type>"
+note = "a data type in place of the object kind keyword"
+anchor = "doc.sql.comment / Parameters"
+sql = "COMMENT ON INT v1 IS 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.classes.budget.methods.set-email-notifications"
+kind = "required_operand_missing"
+target = "'<email_list>'"
+note = "omit '<email_list>' with the integration present, observed"
+anchor = "doc.classes.budget.methods.set_email_notifications / Syntax"
+sql = "CALL v1!SET_EMAIL_NOTIFICATIONS ( 'm' , ) ;"
 expect = "observe"
 context = "raw"

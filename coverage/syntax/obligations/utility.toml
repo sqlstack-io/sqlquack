@@ -5497,13 +5497,6 @@ required = true
 target = "[ <col_name> <col_data_type> [ , ... ] ]"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-sql-as.o021"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o022"
 kind = "operand_type_class"
 required = true
@@ -5680,13 +5673,6 @@ kind = "operand_type_class"
 required = true
 target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
 note = "a valid query"
-
-[[obligation]]
-id = "sf.utility.call-with.table-language-sql-as.o102"
-kind = "negative_neighbour"
-required = true
-target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
-note = "a bare literal in place of <query>"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o048"
@@ -5987,6 +5973,22 @@ required = true
 target = "<col_data_type> in [ <col_name> <col_data_type> [ , ... ] ]"
 anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
 note = "omit <col_data_type>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o114"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ <col_name> <col_data_type> [ , ... ] ]"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+note = "omit <col_name>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o115"
+kind = "negative_neighbour"
+required = true
+target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+note = "a bare literal in place of <query>, observed"
 
 [[obligation]]
 id = "sf.utility.execute-alert.o001"

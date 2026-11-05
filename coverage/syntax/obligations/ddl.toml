@@ -23560,13 +23560,6 @@ target = "<policy_name> #4"
 note = "a string literal in place of <policy_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o042"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> #2"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o043"
 kind = "operand_type_class"
 required = true
@@ -24187,13 +24180,6 @@ required = true
 target = "{ SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag… → SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o132"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name> #3"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o133"
 kind = "operand_type_class"
 required = true
@@ -24751,6 +24737,22 @@ anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "option present [ COLUMN ] #6, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o277"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> #3"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o278"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> #2"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <col_name>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.refresh.o001"
 kind = "positive"
 required = true
@@ -25135,13 +25137,6 @@ target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | 
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o032"
-kind = "negative_neighbour"
-required = true
-target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ EQUALITY ] [ , ... ] ]"
-note = "a string literal in place of <column_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o105"
 kind = "operand_type_class"
 required = true
@@ -25439,6 +25434,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.searchoptimizationaction.o148"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ ON { <search_method_with_target> | <column_name> | <expression_id> } [ EQUALITY ] [ , ... ] ]"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a string literal in place of <column_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o001"
@@ -26136,13 +26139,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set-unset-comment.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.set-unset-comment.o003"
 kind = "operand_type_class"
 required = true
@@ -26224,6 +26220,14 @@ required = true
 target = "{ SET | UNSET } → UNSET"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "alternative { SET | UNSET } → UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set-unset-comment.o019"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.storagelifecyclepolicyaction.o001"
@@ -27025,19 +27029,6 @@ required = true
 target = "{ INITIALIZATION_WAREHOUSE | DATA_RETENTION_TIME_IN_DAYS | MAX_DATA_EXTENSION_TIME_IN_DAYS | DEFAULT_DD… → ROW_TIMESTAMP"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.unset.o046"
-kind = "required_operand_missing"
-required = true
-target = "<purpose>"
-note = "omit <purpose>"
-
-[[obligation]]
-id = "sf.ddl.alter-dynamic-table.unset.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DYNAMIC"
-
-[[obligation]]
 id = "sf.ddl.alter-dynamic-table.unset.o028"
 kind = "negative_neighbour"
 required = true
@@ -27054,12 +27045,6 @@ id = "sf.ddl.alter-dynamic-table.unset.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
-
-[[obligation]]
-id = "sf.ddl.alter-dynamic-table.unset.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WHERE"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.unset.o049"
@@ -27117,6 +27102,28 @@ required = true
 target = "<purpose>"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.unset.o059"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the form without its required WHERE, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.unset.o060"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "the form without its required DYNAMIC, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.unset.o061"
+kind = "required_operand_missing"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "omit <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.modify-rule-rename-to.o001"
@@ -30797,18 +30804,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.set.o007"
-kind = "option_present"
-required = true
-target = "[ AUTO_REFRESH = { TRUE | FALSE } ]"
-
-[[obligation]]
-id = "sf.ddl.alter-external-table.set.o008"
-kind = "option_absent"
-required = true
-target = "[ AUTO_REFRESH = { TRUE | FALSE } ]"
-
-[[obligation]]
 id = "sf.ddl.alter-external-table.set.o009"
 kind = "alternative"
 required = true
@@ -30845,16 +30840,16 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.set.o014"
+id = "sf.ddl.alter-external-table.set.o019"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { TRUE | FALSE } in [ AUTO_REFRESH = { TRUE | FALSE } ]"
+note = "the form without its required AUTO_REFRESH"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.set.o015"
-kind = "interaction_all_options"
+id = "sf.ddl.alter-external-table.set.o020"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required { TRUE | FALSE }"
 
 [[obligation]]
 id = "sf.ddl.alter-external-table.set.o016"
@@ -40690,32 +40685,438 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o007"
-kind = "required_operand_missing"
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o024"
+kind = "alternative"
 required = true
-target = "<oldPartitionExpression>"
-note = "omit <oldPartitionExpression>"
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_name> ) |… → <old_col_name>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o008"
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o025"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <… → BUCKET ( <num_buckets> , <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o026"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <widt… → TRUNCATE ( <width> , <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o027"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_… → YEAR ( <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o028"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col… → MONTH ( <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o029"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_n… → DAY ( <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o030"
+kind = "alternative"
+required = true
+target = "{ <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_… → HOUR ( <old_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o031"
 kind = "operand_type_class"
 required = true
-target = "<oldPartitionExpression>"
-note = "a valid expression"
+target = "<old_col_name>"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o009"
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o032"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name>"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o033"
 kind = "required_operand_missing"
 required = true
-target = "<newPartitionExpression>"
-note = "omit <newPartitionExpression>"
+target = "<num_buckets>"
+note = "omit <num_buckets>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o010"
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o034"
 kind = "operand_type_class"
 required = true
-target = "<newPartitionExpression>"
-note = "a valid expression"
+target = "<num_buckets>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o035"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o036"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #2"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o037"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o038"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #2"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o039"
+kind = "required_operand_missing"
+required = true
+target = "<width>"
+note = "omit <width>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o040"
+kind = "operand_type_class"
+required = true
+target = "<width>"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o041"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #3"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o042"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o043"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #3"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o044"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #4"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o045"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o046"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #4"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o047"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #5"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o048"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #5"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o049"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #5"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o050"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #6"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o051"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #6"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o052"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #6"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o053"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #7"
+note = "omit <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o054"
+kind = "operand_type_class"
+required = true
+target = "<old_col_name> #7"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o055"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #7"
+note = "a string literal in place of <old_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o056"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_name> ) |… → <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o057"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <… → BUCKET ( <num_buckets> , <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o058"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <widt… → TRUNCATE ( <width> , <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o059"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_… → YEAR ( <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o060"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col… → MONTH ( <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o061"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_n… → DAY ( <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o062"
+kind = "alternative"
+required = true
+target = "{ <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_… → HOUR ( <new_col_name> )"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o063"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o064"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name>"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o065"
+kind = "required_operand_missing"
+required = true
+target = "<num_buckets> #2"
+note = "omit <num_buckets>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o066"
+kind = "operand_type_class"
+required = true
+target = "<num_buckets> #2"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o067"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets> #2"
+note = "a string literal in place of <num_buckets>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o068"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #2"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o069"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o070"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #2"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o071"
+kind = "required_operand_missing"
+required = true
+target = "<width> #2"
+note = "omit <width>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o072"
+kind = "operand_type_class"
+required = true
+target = "<width> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o073"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #3"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o074"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o075"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #3"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o076"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #4"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o077"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #4"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o078"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #4"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o079"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #5"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o080"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #5"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o081"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #5"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o082"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #6"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o083"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #6"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o084"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #6"
+note = "a string literal in place of <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o085"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #7"
+note = "omit <new_col_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o086"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name> #7"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o087"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #7"
+note = "a string literal in place of <new_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o011"
@@ -40766,6 +41167,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o088"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_name> ) | YEAR ( <old_col_name> ) | MONTH ( <old_col_name> ) | DAY ( <old_col_name> ) | HOUR ( <old_col_name> ) }"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o019"
 kind = "negative_neighbour"
 required = true
@@ -40776,6 +41183,12 @@ id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ( #2"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o089"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_name> ) | YEAR ( <new_col_name> ) | MONTH ( <new_col_name> ) | DAY ( <new_col_name> ) | HOUR ( <new_col_name> ) }"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o023"
@@ -40798,6 +41211,54 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o090"
+kind = "identifier_class"
+required = true
+target = "<old_col_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o091"
+kind = "identifier_class"
+required = true
+target = "<old_col_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o092"
+kind = "identifier_class"
+required = true
+target = "<new_col_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o093"
+kind = "identifier_class"
+required = true
+target = "<new_col_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o094"
+kind = "operand_type_class"
+required = true
+target = "<new_col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a column name different from the replaced one, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o095"
+kind = "alternative"
+required = true
+target = "<new_col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "an identity column replaced by a transform of another column, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-refresh.refresh.o001"
@@ -41455,12 +41916,6 @@ required = true
 note = "the form without its required { DAYS | HOURS | MINUTES } in [ RETAIN <num> { DAYS | HOURS | MINUTES } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag.o035"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag.o036"
 kind = "identifier_class"
 required = true
@@ -41491,6 +41946,20 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag.o057"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied (OR REPLACE without IF NOT EXISTS), observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-version-tag.create-version-tag.o058"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.alter-iceberg-table-version-tag / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied (IF NOT EXISTS without OR REPLACE), observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag.o001"
@@ -46212,6 +46681,13 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.upgrade-to-iceberg-version.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-iceberg-table / Syntax"
+note = "the form without its required version number 3"
 
 [[obligation]]
 id = "sf.ddl.alter-listing.listing.o004"
@@ -98925,20 +99401,6 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.ddl.comment.is.o005"
-kind = "operand_type_class"
-required = true
-target = "<object_type>"
-note = "a valid data_type"
-
-[[obligation]]
-id = "sf.ddl.comment.is.o006"
-kind = "negative_neighbour"
-required = true
-target = "<object_type>"
-note = "a string literal in place of <object_type>"
-
-[[obligation]]
 id = "sf.ddl.comment.is.o007"
 kind = "required_operand_missing"
 required = true
@@ -99013,6 +99475,46 @@ required = true
 target = "<object_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o022"
+kind = "operand_type_class"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.comment / Parameters"
+note = "an object kind keyword (TABLE)"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o018"
+kind = "alternative"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.comment / Parameters"
+note = "the object kind SCHEMA, observed"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o019"
+kind = "alternative"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.comment / Parameters"
+note = "the object kind VIEW, observed"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o020"
+kind = "negative_neighbour"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.comment / Parameters"
+note = "a string literal in place of the object kind keyword"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o021"
+kind = "negative_neighbour"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.comment / Parameters"
+note = "a data type in place of the object kind keyword"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o001"
@@ -272891,16 +273393,28 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-classes.o007"
+id = "sf.ddl.show-classes.o027"
 kind = "option_present"
 required = true
-target = "[ IN DATABASE [ <db_name> ] ]"
+target = "[ IN { DATABASE [ <db_name> ] | <db_name> } ]"
 
 [[obligation]]
-id = "sf.ddl.show-classes.o008"
+id = "sf.ddl.show-classes.o028"
 kind = "option_absent"
 required = true
-target = "[ IN DATABASE [ <db_name> ] ]"
+target = "[ IN { DATABASE [ <db_name> ] | <db_name> } ]"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o029"
+kind = "alternative"
+required = true
+target = "{ DATABASE [ <db_name> ] | <db_name> } → DATABASE [ <db_name> ]"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o030"
+kind = "alternative"
+required = true
+target = "{ DATABASE [ <db_name> ] | <db_name> } → <db_name>"
 
 [[obligation]]
 id = "sf.ddl.show-classes.o009"
@@ -272927,6 +273441,53 @@ kind = "negative_neighbour"
 required = true
 target = "<db_name> in [ <db_name> ]"
 note = "a string literal in place of <db_name>"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o031"
+kind = "operand_type_class"
+required = true
+target = "<db_name> in [ IN { DATABASE [ <db_name> ] | <db_name> } ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o032"
+kind = "negative_neighbour"
+required = true
+target = "<db_name> in [ IN { DATABASE [ <db_name> ] | <db_name> } ]"
+note = "a string literal in place of <db_name>"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o033"
+kind = "option_present"
+required = true
+target = "[ STARTS WITH '<name_string>' ]"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o034"
+kind = "option_absent"
+required = true
+target = "[ STARTS WITH '<name_string>' ]"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o035"
+kind = "required_operand_missing"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "omit '<name_string>'"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o036"
+kind = "operand_type_class"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o037"
+kind = "negative_neighbour"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "an unquoted identifier in place of '<name_string>'"
 
 [[obligation]]
 id = "sf.ddl.show-classes.o013"
@@ -272994,10 +273555,16 @@ required = true
 note = "the form without its required CLASSES"
 
 [[obligation]]
-id = "sf.ddl.show-classes.o023"
+id = "sf.ddl.show-classes.o038"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required DATABASE in [ IN DATABASE [ <db_name> ] ]"
+note = "the form without its required { DATABASE [ <db_name> ] | <db_name> } in [ IN { DATABASE [ <db_name> ] | <db_name> } ]"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WITH in [ STARTS WITH '<name_string>' ]"
 
 [[obligation]]
 id = "sf.ddl.show-classes.o024"
@@ -275466,10 +276033,18 @@ required = true
 note = "the form without its required PRIVILEGES in [ WITH PRIVILEGES <object_privilege> [ , <object_privilege> [ , ... ] ] ]"
 
 [[obligation]]
-id = "sf.ddl.show-databases.o038"
+id = "sf.ddl.show-databases.o039"
 kind = "interaction_all_options"
 required = true
-note = "every independent option of one production together"
+anchor = "doc.sql.show-databases / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied (HISTORY without WITH PRIVILEGES), observed"
+
+[[obligation]]
+id = "sf.ddl.show-databases.o040"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.show-databases / Syntax"
+note = "every independent option of one production together, with the page's combination rules applied (WITH PRIVILEGES without HISTORY), observed"
 
 [[obligation]]
 id = "sf.ddl.show-datasets.o001"
@@ -282444,28 +283019,34 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
-id = "sf.ddl.show-models.o007"
+id = "sf.ddl.show-models.o026"
 kind = "option_present"
 required = true
-target = "[ IN { DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
 
 [[obligation]]
-id = "sf.ddl.show-models.o008"
+id = "sf.ddl.show-models.o027"
 kind = "option_absent"
 required = true
-target = "[ IN { DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
+target = "[ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
 
 [[obligation]]
-id = "sf.ddl.show-models.o009"
+id = "sf.ddl.show-models.o028"
 kind = "alternative"
 required = true
-target = "{ DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → DATABASE [ <db_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → ACCOUNT"
 
 [[obligation]]
-id = "sf.ddl.show-models.o010"
+id = "sf.ddl.show-models.o029"
 kind = "alternative"
 required = true
-target = "{ DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → SCHEMA [ <schema_name> ]"
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → DATABASE [ <db_name> ]"
+
+[[obligation]]
+id = "sf.ddl.show-models.o030"
+kind = "alternative"
+required = true
+target = "{ ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } → SCHEMA [ <schema_name> ]"
 
 [[obligation]]
 id = "sf.ddl.show-models.o011"
@@ -282526,10 +283107,10 @@ required = true
 note = "the form without its required MODELS"
 
 [[obligation]]
-id = "sf.ddl.show-models.o020"
+id = "sf.ddl.show-models.o031"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } in [ IN { DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
+note = "the form without its required { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } in [ IN { ACCOUNT | DATABASE [ <db_name> ] | SCHEMA [ <schema_name> ] } ]"
 
 [[obligation]]
 id = "sf.ddl.show-models.o021"
@@ -286624,6 +287205,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.ddl.show-replication-databases.o022"
+kind = "alternative"
+required = true
+target = "<account_identifier>"
+anchor = "doc.sql.show-replication-databases / Parameters"
+note = "an org.account account identifier, so the primary database is a three-part name, observed"
+
+[[obligation]]
 id = "sf.ddl.show-restricted-session-scopes.o001"
 kind = "positive"
 required = true
@@ -289659,6 +290248,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.ddl.show-service-containers-in-service.o012"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
 id = "sf.ddl.show-service-containers-in-service.o003"
 kind = "operand_type_class"
 required = true
@@ -289713,18 +290309,17 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.show-service-containers-in-service.o010"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-anchor = "doc.sql.show-service-containers-in-service / Syntax"
-note = "omit <name>, observed"
-
-[[obligation]]
 id = "sf.ddl.show-service-instances-in-service.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.ddl.show-service-instances-in-service.o012"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
 
 [[obligation]]
 id = "sf.ddl.show-service-instances-in-service.o003"
@@ -289779,14 +290374,6 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.show-service-instances-in-service.o010"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-anchor = "doc.sql.show-service-instances-in-service / Syntax"
-note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.show-service-volumes-in-service.o001"

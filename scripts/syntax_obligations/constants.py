@@ -1362,8 +1362,8 @@ CLASS_PROCEDURE_REFERENCE: str = (
 CLASS_TABLE_REFERENCE: str = (
     "( SELECT SYSTEM$REFERENCE ( 'TABLE' , 't1' , 'SESSION' , 'APPLYBUDGET' ) )"
 )
-CLASS_FORECAST_SERIES_COLUMN: str = (
-    "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname"
+CLASS_AGENT_REFERENCE: str = (
+    "( SELECT SYSTEM$REFERENCE ( 'CORTEX AGENT' , 'ag1' ) )"
 )
 CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.add-custom-action": {
@@ -1376,7 +1376,8 @@ CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.remove-resource": {"reference_statement": CLASS_TABLE_REFERENCE},
     "sf.classes.budget.methods.add-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
     "sf.classes.budget.methods.remove-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
-    CLASS_FORECAST_SERIES_COLUMN: {"series_colname": "'m'"},
+    "sf.classes.budget.methods.add-shared-resource": {"reference_statement": CLASS_AGENT_REFERENCE},
+    "sf.classes.budget.methods.remove-shared-resource": {"reference_statement": CLASS_AGENT_REFERENCE},
     "sf.classes.classification-profile.commands.create-classification-profile": {
         "config_object": "OBJECT_CONSTRUCT ( 'auto_tag' , FALSE )"
     },
@@ -1385,6 +1386,7 @@ CLASSES_LITERAL_FILLS: dict[str, str] = {
     **DDL_LITERAL_FILLS,
     "'<email_address> [, <email_address> ... ]'": "'u1@example.com, u2@example.com'",
     "'<email> [ , <email> [ , ... ] ]'": "'u1@example.com, u2@example.com'",
+    "'<email_list>'": "'u1@example.com, u2@example.com'",
     "'<refresh_interval>'": "'TIER_1H'",
     "'<anomaly_scope>'": "'ACCOUNT'",
 }

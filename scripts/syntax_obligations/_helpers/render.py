@@ -323,7 +323,7 @@ class _Renderer:
         """Rendered tokens; a replaced operand is still declared under its valid name."""
         out: list[str] = []
         dangling: int = -1
-        for node in nodes:
+        for position, node in enumerate(nodes):
             key: int = id(node)
             if key in choices.drop:
                 if dangling >= 0 and node.text == CLOSE_PAREN:
@@ -340,7 +340,10 @@ class _Renderer:
                     self._token(node=node, choices=_Choices())
                 out.append(_qualified(prefix=self.style.qualify.get(name, ""), text=text))
             elif node.kind == NODE_OPTIONAL:
-                out += self._optional(node=node, choices=choices, before=out)
+                closes: bool = nodes[position + 1 : position + 2] != () and (
+                    nodes[position + 1].text == CLOSE_PAREN
+                )
+                out += self._optional(node=node, choices=choices, before=out, closes=closes)
             elif node.kind == NODE_CHOICE:
                 index: int = choices.branch.get(key, 0)
                 chosen: list[str] = self._sequence(nodes=node.branches[index], choices=choices)
@@ -361,7 +364,10 @@ class _Renderer:
             dangling = _dangling_separator(out=out, emitted=emitted, dangling=dangling, node=node)
         return out
 
-    def _optional(self, *, node: Node, choices: _Choices, before: list[str]) -> list[str]:
+    def _optional(
+        self, *, node: Node, choices: _Choices, before: list[str], closes: bool = False
+    ) -> list[str]:
+        """An optional part; a `[ , ... ]` repeats the list item it continues."""
         key: int = id(node)
         if is_pure_elision(node) or not (choices.full or key in choices.path):
             return []
@@ -373,8 +379,17 @@ class _Renderer:
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
             cut_by_keyword: bool = start >= 0 and before[start] not in CLOSE_REPEAT_AFTER
             item: list[str] = before[start + 1 :]
-            if cut_by_keyword and item[:1] == ["="]:
-                item = before[_separator_start(before=before) + 1 :]
+            separator: int = _separator_start(before=before)
+            if cut_by_keyword and (
+                item[:1] == ["="]
+                or (
+                    closes
+                    and separator >= 0
+                    and before[separator] == OPEN_PAREN
+                    and before[separator + 1].upper() not in self._keywords
+                )
+            ):
+                item = before[separator + 1 :]
             elif cut_by_keyword:
                 item = self._whole_choice(item=item, before=before)
             other: list[str] = self._other_branch(item=item, choices=choices)

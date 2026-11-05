@@ -9680,6 +9680,19 @@ target = "<col_alias> in [ [ AS ] <col_alias> ]"
 note = "a string literal in place of <col_alias>"
 
 [[obligation]]
+id = "sf.query.unpivot.o036"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.query.unpivot.o037"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+
+[[obligation]]
 id = "sf.query.unpivot.o020"
 kind = "negative_neighbour"
 required = true

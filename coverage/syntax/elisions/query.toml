@@ -1243,14 +1243,6 @@ reason = "the FROM source"
 [[elision]]
 form = "sf.query.unpivot"
 production = 0
-after = "AS"
-fill = ""
-defers_to = []
-reason = "repetition of the preceding aliased list item; this form's own list"
-
-[[elision]]
-form = "sf.query.unpivot"
-production = 0
 after = "[ ... ]"
 fill = ""
 defers_to = [

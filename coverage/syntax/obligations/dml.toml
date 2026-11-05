@@ -11734,16 +11734,16 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "sf.dml.insert.o035"
+id = "sf.dml.insert.o052"
 kind = "alternative"
 required = true
-target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( {… → VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( {… → VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
-id = "sf.dml.insert.o036"
+id = "sf.dml.insert.o053"
 kind = "alternative"
 required = true
-target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ] | <query… → <query>"
+target = "{ VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] … → <query>"
 
 [[obligation]]
 id = "sf.dml.insert.o015"
@@ -11784,16 +11784,16 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
-id = "sf.dml.insert.o037"
+id = "sf.dml.insert.o054"
 kind = "option_present"
 required = true
-target = "[ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+target = "[ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
-id = "sf.dml.insert.o038"
+id = "sf.dml.insert.o055"
 kind = "option_absent"
 required = true
-target = "[ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+target = "[ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
 id = "sf.dml.insert.o039"
@@ -11814,10 +11814,10 @@ required = true
 target = "{ <value> | DEFAULT | NULL } → NULL #2"
 
 [[obligation]]
-id = "sf.dml.insert.o042"
+id = "sf.dml.insert.o056"
 kind = "operand_type_class"
 required = true
-target = "<value> in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+target = "<value> in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -11832,6 +11832,19 @@ id = "sf.dml.insert.o044"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #3"
+
+[[obligation]]
+id = "sf.dml.insert.o057"
+kind = "option_present"
+required = true
+target = "[ , ... ] #4"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.dml.insert.o058"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #4"
 
 [[obligation]]
 id = "sf.dml.insert.o023"
@@ -11878,28 +11891,28 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.dml.insert.o045"
+id = "sf.dml.insert.o059"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "the form without its required ( in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
-id = "sf.dml.insert.o046"
+id = "sf.dml.insert.o060"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <value> | DEFAULT | NULL } in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "the form without its required { <value> | DEFAULT | NULL } in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
-id = "sf.dml.insert.o047"
+id = "sf.dml.insert.o061"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ]"
+note = "the form without its required ) in [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ]"
 
 [[obligation]]
-id = "sf.dml.insert.o048"
+id = "sf.dml.insert.o062"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) ] | <query> }"
+note = "the form without its required { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ... ] ] | <query> }"
 
 [[obligation]]
 id = "sf.dml.insert.o031"
@@ -11932,6 +11945,13 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.dml.insert.o063"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.insert / Syntax"
+note = "a parenthesized row of values without the VALUES keyword"
 
 [[obligation]]
 id = "sf.dml.insert.o049"

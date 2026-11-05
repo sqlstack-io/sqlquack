@@ -7,44 +7,44 @@
 obligation = "sf.ddl.alter-database-catalog-linked.resume-discovery.o002"
 form = "sf.ddl.alter-database-catalog-linked.resume-discovery"
 construct = "ALTER DATABASE with IF EXISTS before RESUME DISCOVERY: ALTER DATABASE IF EXISTS v1 RESUME DISCOVERY"
-reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 3801589 on the re-run); no capture gives an established phase"
+reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 3801589 on the re-run); no capture gives an established phase; reproduced in ux-00 and on the one-time rerun r603-ux"
 cases = [
   { case_id = "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316", sql_sha256 = "55ecc27f13168ed0c12c2d164342050d0c922d3af914d62f74ba6b29b19d99c4" },
 ]
-runs = ["alt-00", "alt-00r"]
+runs = ["alt-00", "alt-00r", "ux-00", "r603-ux"]
 probes = []
 
 [[unobservable]]
 obligation = "sf.ddl.alter-database-catalog-linked.suspend-discovery.o002"
 form = "sf.ddl.alter-database-catalog-linked.suspend-discovery"
 construct = "ALTER DATABASE with IF EXISTS before SUSPEND DISCOVERY: ALTER DATABASE IF EXISTS v1 SUSPEND DISCOVERY"
-reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 2747531 on the re-run); no capture gives an established phase"
+reason = "internal error 603 (300016:1294561867) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 2747531 on the re-run); no capture gives an established phase; reproduced in ux-00 and on the one-time rerun r603-ux"
 cases = [
   { case_id = "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749", sql_sha256 = "8f5efb6ea74902b27dcc590f1930f0a40b8acc1d71517aad4526d423700a20a5" },
 ]
-runs = ["alt-00", "alt-00r"]
+runs = ["alt-00", "alt-00r", "ux-00", "r603-ux"]
 probes = []
 
 [[unobservable]]
 obligation = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o002"
 form = "sf.ddl.alter-semantic-view.set-comment-max-staleness"
 construct = "ALTER SEMANTIC VIEW with IF EXISTS before SET: ALTER SEMANTIC VIEW IF EXISTS v1 SET COMMENT = 'm'"
-reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 6210738 on the re-run); no capture gives an established phase"
+reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 6210738 on the re-run); no capture gives an established phase; reproduced in ux-03 and on the one-time rerun r603-ux"
 cases = [
   { case_id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e", sql_sha256 = "a405a658d50ee495d8abf308ca73249d0b54fff3ee7c2a17a89537728a3cf6d3" },
 ]
-runs = ["alt-00", "alt-00r"]
+runs = ["alt-00", "alt-00r", "ux-03", "r603-ux"]
 probes = []
 
 [[unobservable]]
 obligation = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.o002"
 form = "sf.ddl.alter-semantic-view.unset-comment-max-staleness"
 construct = "ALTER SEMANTIC VIEW with IF EXISTS before UNSET: ALTER SEMANTIC VIEW IF EXISTS v1 UNSET COMMENT"
-reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 9740529 on the re-run); no capture gives an established phase"
+reason = "internal error 603 (370001:4227142259) on the original capture and on an exact re-run with the same SQL, setup and session in a fresh run database (incident 9740529 on the re-run); no capture gives an established phase; reproduced in ux-03 and on the one-time rerun r603-ux"
 cases = [
   { case_id = "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a", sql_sha256 = "1ab62cc8923aabe7047e312d7006de2b0f97cac7cc250f48815f5cfe65a3df1b" },
 ]
-runs = ["alt-00", "alt-00r"]
+runs = ["alt-00", "alt-00r", "ux-03", "r603-ux"]
 probes = []
 
 # Never-submitted obligations (cause = "not_submitted"): every case citing the obligation was held
@@ -53178,97 +53178,276 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-or-alter-semantic.o078"
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-construct = "every independent option of one production together: CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-reason = "not submitted: held by the rr2-ddl runtime existing-name screen: names an existing account object: PUBLIC"
+obligation = "sf.ddl.alter-dynamic-table.clusteringaction.o002"
+form = "sf.ddl.alter-dynamic-table.clusteringaction"
+construct = "option_present: ALTER DYNAMIC TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-00 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24", sql_sha256 = "d7e6398c7b24c23d7061bef64056327cebec6d342e7db4465e989ea32f909b4b" },
+]
+runs = ["ux-00", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-dynamic-table.clusteringaction.o020"
+form = "sf.ddl.alter-dynamic-table.clusteringaction"
+construct = "the list continued at least once: ALTER DYNAMIC TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-00 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24", sql_sha256 = "d7e6398c7b24c23d7061bef64056327cebec6d342e7db4465e989ea32f909b4b" },
+]
+runs = ["ux-00", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-iceberg-table.clusteringaction.o002"
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+construct = "option_present: ALTER ICEBERG TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-01 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d", sql_sha256 = "cfd30145649df71e34af5479bff1a583cda06c5723bf65097e5cfae9e2a16d4b" },
+]
+runs = ["ux-01", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-iceberg-table.clusteringaction.o017"
+form = "sf.ddl.alter-iceberg-table.clusteringaction"
+construct = "the list continued at least once: ALTER ICEBERG TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-01 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d", sql_sha256 = "cfd30145649df71e34af5479bff1a583cda06c5723bf65097e5cfae9e2a16d4b" },
+]
+runs = ["ux-01", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-table.clusteringaction.o002"
+form = "sf.ddl.alter-table.clusteringaction"
+construct = "option_present: ALTER TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-03 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-table.clusteringaction.k4766deb8b18b", sql_sha256 = "4766deb8b18b0969d5c539e0487f7723a4b433336f41b3f47bf6b96d21d72474" },
+]
+runs = ["ux-03", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-table.clusteringaction.o019"
+form = "sf.ddl.alter-table.clusteringaction"
+construct = "the list continued at least once: ALTER TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-03 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-table.clusteringaction.k4766deb8b18b", sql_sha256 = "4766deb8b18b0969d5c539e0487f7723a4b433336f41b3f47bf6b96d21d72474" },
+]
+runs = ["ux-03", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.alter-table.clusteringaction.o040"
+form = "sf.ddl.alter-table.clusteringaction"
+construct = "every independent option of one production together: ALTER TABLE IF EXISTS v1 CLUSTER BY ( 1 , 1 ) ;"
+reason = "internal error 603 (XX000, internal code 300002) on the capture in ux-03 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.alter-table.clusteringaction.k4766deb8b18b", sql_sha256 = "4766deb8b18b0969d5c539e0487f7723a4b433336f41b3f47bf6b96d21d72474" },
+]
+runs = ["ux-03", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-function.create-function-returns-table.java-handler.o068"
+form = "sf.ddl.create-function.create-function-returns-table.java-handler"
+construct = "omit '<stage_path_and_directory_or_file_name_to_read>': CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA IMPORTS = ( ) HANDLER = 'm' ;"
+reason = "internal error 603 (XX000, internal code 300010) on the capture in ux-06 and again on the one-time rerun r603-ux; no capture gives an established phase"
+cases = [
+  { case_id = "sf.ddl.create-function.create-function-returns-table.java-handler.kcc6de9b401f3", sql_sha256 = "cc6de9b401f325f6cf6019aca796b28ebccedc8a35918996db5b0a070d62690b" },
+]
+runs = ["ux-06", "r603-ux"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o222"
+form = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams"
+construct = "alternative: CREATE STAGE v1 URL = 'azure://a1.blob.core.windows.net/c1/p1/' DIRECTORY = ( ENABLE = TRUE REFRESH_ON_CREATE = TRUE ) ;"
+reason = "statement timeout 630 (57014) in ux-07: the statement waited on the external azure:// stage URL until the bounded 30 s timeout cancelled it; no phase is established, and the run is not retried"
+cases = [
+  { case_id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.k3631b5db7233", sql_sha256 = "3631b5db7233b8b98c8c6da8f58056be5355b33abadeddd3cf9b50cebbc60acc" },
+]
+runs = ["ux-07"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o218"
+form = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams"
+construct = "alternative: CREATE STAGE v1 URL = 'azure://a1.blob.core.windows.net/c1/p1/' DIRECTORY = ( ENABLE = TRUE ) ;"
+reason = "statement timeout 630 (57014) in ux-07: the statement waited on the external azure:// stage URL until the bounded 30 s timeout cancelled it; no phase is established, and the run is not retried"
+cases = [
+  { case_id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967", sql_sha256 = "fa52041859670cbc1ae9ed6bb87239ebd377c6e1346ca8600a0f195146de8745" },
+]
+runs = ["ux-07"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o221"
+form = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams"
+construct = "option_absent: CREATE STAGE v1 URL = 'azure://a1.blob.core.windows.net/c1/p1/' DIRECTORY = ( ENABLE = TRUE ) ;"
+reason = "statement timeout 630 (57014) in ux-07: the statement waited on the external azure:// stage URL until the bounded 30 s timeout cancelled it; no phase is established, and the run is not retried"
+cases = [
+  { case_id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967", sql_sha256 = "fa52041859670cbc1ae9ed6bb87239ebd377c6e1346ca8600a0f195146de8745" },
+]
+runs = ["ux-07"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o225"
+form = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams"
+construct = "option_absent: CREATE STAGE v1 URL = 'azure://a1.blob.core.windows.net/c1/p1/' DIRECTORY = ( ENABLE = TRUE ) ;"
+reason = "statement timeout 630 (57014) in ux-07: the statement waited on the external azure:// stage URL until the bounded 30 s timeout cancelled it; no phase is established, and the run is not retried"
+cases = [
+  { case_id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967", sql_sha256 = "fa52041859670cbc1ae9ed6bb87239ebd377c6e1346ca8600a0f195146de8745" },
+]
+runs = ["ux-07"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o229"
+form = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams"
+construct = "option_absent: CREATE STAGE v1 URL = 'azure://a1.blob.core.windows.net/c1/p1/' DIRECTORY = ( ENABLE = TRUE ) ;"
+reason = "statement timeout 630 (57014) in ux-07: the statement waited on the external azure:// stage URL until the bounded 30 s timeout cancelled it; no phase is established, and the run is not retried"
+cases = [
+  { case_id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967", sql_sha256 = "fa52041859670cbc1ae9ed6bb87239ebd377c6e1346ca8600a0f195146de8745" },
+]
+runs = ["ux-07"]
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-cortex-base-models.o002"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_present: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-or-alter-semantic.k9e3061862029", sql_sha256 = "9e306186202926d3c63397054af52c6599d60e1e78bfd3f504b6748bac084b26" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-semantic-view-tables.o101"
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-construct = "every independent option of one production together: CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-reason = "not submitted: held by the rr2-ddl runtime existing-name screen: names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o005"
+form = "sf.ddl.show-cortex-base-models"
+construct = "a valid string_literal: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-semantic-view-tables.k65430399e766", sql_sha256 = "65430399e766da654ec20973412d567aa9c2fa09e3a9e0b7f52ce351a43dd388" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-or-alter-semantic.o492"
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-construct = "MAX_STALENESS = 119 against the documented minimum of 120: CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o007"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_present: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-or-alter-semantic.k124c8576d488", sql_sha256 = "124c8576d48811d46714a2e91c65cf5837ff097887c7150b6002b0cec7c5c827" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-or-alter-semantic.o493"
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-construct = "MAX_STALENESS = 120 against the documented minimum of 120: CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o009"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_present: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-or-alter-semantic.kbd61e81c4960", sql_sha256 = "bd61e81c49605bd1e34c7f69753df132214fa77e5b2e9262ea889e0a73a6a1b1" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-or-alter-semantic.o494"
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-construct = "MAX_STALENESS = 121 against the documented minimum of 120: CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o010"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_absent: SHOW CORTEX BASE MODELS IN SNOWFLAKE . MODELS ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-or-alter-semantic.k94a9f009657d", sql_sha256 = "94a9f009657d3ee3f40e16d133d7afb2f6d11096e1d8681a40f796ddbfe55feb" },
+  { case_id = "sf.ddl.show-cortex-base-models.kc7b7b3079691", sql_sha256 = "c7b7b307969195e5c4d56bff8648b45d258e1b1e6e6fb8db90916f750d2b63c3" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-semantic-view-tables.o515"
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-construct = "MAX_STALENESS = 119 against the documented minimum of 120: CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o011"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_present: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-semantic-view-tables.ka436bc4f98cf", sql_sha256 = "a436bc4f98cf063a59a011de55a1587707f6e3220360b53cb8fa892f75791a46" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-semantic-view-tables.o516"
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-construct = "MAX_STALENESS = 120 against the documented minimum of 120: CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o014"
+form = "sf.ddl.show-cortex-base-models"
+construct = "a valid string_literal: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-semantic-view-tables.k41e1e79603d1", sql_sha256 = "41e1e79603d1e1810c22e3d047c97943eb8265b68a394a1e6d358335f05f763c" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-semantic-view.create-semantic-view-tables.o517"
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-construct = "MAX_STALENESS = 121 against the documented minimum of 120: CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-reason = "not submitted: held by the existing-name screen in packet rr4-e96c458f (held without a run, same rule as rr2-ddl): names an existing account object: PUBLIC"
+obligation = "sf.ddl.show-cortex-base-models.o016"
+form = "sf.ddl.show-cortex-base-models"
+construct = "option_present: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-semantic-view.create-semantic-view-tables.kaa3bfd9576f4", sql_sha256 = "aa3bfd9576f4dae1854a4c55a54f07dda7060b5038cec6ed59186614a8ba8cdf" },
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-cortex-base-models.o019"
+form = "sf.ddl.show-cortex-base-models"
+construct = "a valid operand: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-cortex-base-models.o024"
+form = "sf.ddl.show-cortex-base-models"
+construct = "the form without its required MODELS in [ IN [ SCHEMA ] SNOWFLAKE . MODELS ]: SHOW CORTEX BASE MODELS IN SNOWFLAKE . ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-cortex-base-models.k862dbfb5d7ff", sql_sha256 = "862dbfb5d7ff30adfb18753613a4dbcef1d8cf41e7959d5e6ddec84d392d5af7" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-cortex-base-models.o026"
+form = "sf.ddl.show-cortex-base-models"
+construct = "every independent option of one production together: SHOW CORTEX BASE MODELS LIKE 'm' IN SCHEMA SNOWFLAKE . MODELS STARTS WITH 'm' LIMIT 1 ;"
+reason = "not submitted: held by the runtime screen in run ux-08: names an existing account object: SNOWFLAKE"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-cortex-base-models.ka098a8989536", sql_sha256 = "a098a89895368a2181a4eb38dca1f013b106121294cb36a9c644f45d33249810" },
 ]
 runs = []
 probes = []

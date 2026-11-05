@@ -4105,30 +4105,42 @@ target = "'<domain>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.budget.methods.add-shared-resource.o008"
+id = "sf.classes.budget.methods.add-shared-resource.o018"
 kind = "option_present"
 required = true
-target = "[ , '<instance>' ]"
+target = "[ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
-id = "sf.classes.budget.methods.add-shared-resource.o009"
+id = "sf.classes.budget.methods.add-shared-resource.o019"
 kind = "option_absent"
 required = true
-target = "[ , '<instance>' ]"
+target = "[ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
-id = "sf.classes.budget.methods.add-shared-resource.o010"
-kind = "required_operand_missing"
+id = "sf.classes.budget.methods.add-shared-resource.o020"
+kind = "alternative"
 required = true
-target = "'<instance>' in [ , '<instance>' ]"
-note = "omit '<instance>'"
+target = "{ '<instance>' | <reference_statement> } → '<instance>'"
 
 [[obligation]]
-id = "sf.classes.budget.methods.add-shared-resource.o011"
+id = "sf.classes.budget.methods.add-shared-resource.o021"
+kind = "alternative"
+required = true
+target = "{ '<instance>' | <reference_statement> } → <reference_statement>"
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-shared-resource.o022"
 kind = "operand_type_class"
 required = true
-target = "'<instance>' in [ , '<instance>' ]"
+target = "'<instance>' in [ , { '<instance>' | <reference_statement> } ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-shared-resource.o023"
+kind = "operand_type_class"
+required = true
+target = "<reference_statement> in [ , { '<instance>' | <reference_statement> } ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-shared-resource.o013"
@@ -4141,6 +4153,12 @@ id = "sf.classes.budget.methods.add-shared-resource.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-shared-resource.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { '<instance>' | <reference_statement> } in [ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-shared-resource.o015"
@@ -6049,6 +6067,20 @@ target = "<reference_statement>"
 note = "a valid expression"
 
 [[obligation]]
+id = "sf.classes.budget.methods.remove-resource-tag.o016"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>'"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-resource-tag.o017"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.classes.budget.methods.remove-resource-tag.o010"
 kind = "negative_neighbour"
 required = true
@@ -6116,30 +6148,42 @@ target = "'<domain>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-shared-resource.o008"
+id = "sf.classes.budget.methods.remove-shared-resource.o018"
 kind = "option_present"
 required = true
-target = "[ , '<instance>' ]"
+target = "[ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-shared-resource.o009"
+id = "sf.classes.budget.methods.remove-shared-resource.o019"
 kind = "option_absent"
 required = true
-target = "[ , '<instance>' ]"
+target = "[ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-shared-resource.o010"
-kind = "required_operand_missing"
+id = "sf.classes.budget.methods.remove-shared-resource.o020"
+kind = "alternative"
 required = true
-target = "'<instance>' in [ , '<instance>' ]"
-note = "omit '<instance>'"
+target = "{ '<instance>' | <reference_statement> } → '<instance>'"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-shared-resource.o011"
+id = "sf.classes.budget.methods.remove-shared-resource.o021"
+kind = "alternative"
+required = true
+target = "{ '<instance>' | <reference_statement> } → <reference_statement>"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-shared-resource.o022"
 kind = "operand_type_class"
 required = true
-target = "'<instance>' in [ , '<instance>' ]"
+target = "'<instance>' in [ , { '<instance>' | <reference_statement> } ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-shared-resource.o023"
+kind = "operand_type_class"
+required = true
+target = "<reference_statement> in [ , { '<instance>' | <reference_statement> } ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-shared-resource.o013"
@@ -6152,6 +6196,12 @@ id = "sf.classes.budget.methods.remove-shared-resource.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-shared-resource.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { '<instance>' | <reference_statement> } in [ , { '<instance>' | <reference_statement> } ]"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-shared-resource.o015"
@@ -6220,6 +6270,20 @@ kind = "operand_type_class"
 required = true
 target = "<reference_statement>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-tag.o016"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>'"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-tag.o017"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-tag.o010"
@@ -6426,6 +6490,13 @@ target = "'<notification_integration>' in [ '<notification_integration>' , ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-email-notifications.o015"
+kind = "operand_type_class"
+required = true
+target = "'<email_list>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-email-notifications.o010"
 kind = "negative_neighbour"
 required = true
@@ -6458,6 +6529,14 @@ required = true
 target = "<budget_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.methods.set-email-notifications.o016"
+kind = "required_operand_missing"
+required = true
+target = "'<email_list>'"
+anchor = "doc.classes.budget.methods.set_email_notifications / Syntax"
+note = "omit '<email_list>' with the integration present, observed"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-notification-mute-flag.o001"
@@ -11636,18 +11715,18 @@ target = "<series>"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o007"
+id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o028"
 kind = "required_operand_missing"
 required = true
-target = "<series_colname>"
-note = "omit <series_colname>"
+target = "'<series_colname>'"
+note = "omit '<series_colname>'"
 
 [[obligation]]
-id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o008"
+id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o029"
 kind = "operand_type_class"
 required = true
-target = "<series_colname>"
-note = "a valid identifier"
+target = "'<series_colname>'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o010"
