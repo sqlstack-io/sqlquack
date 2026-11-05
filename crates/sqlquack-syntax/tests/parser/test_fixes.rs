@@ -2,7 +2,7 @@ use serde_json::json;
 
 use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, cast_targets, projection_at, statement_at, statements};
+use crate::helpers::{accepted, cast_targets, kind, projection_at, statement_at, statements};
 use crate::test_types::{
     AcceptanceTestCase, CastTargetTestCase, ProjectionTestCase, StatementTestCase,
 };
@@ -2040,5 +2040,67 @@ fn given_a_snowflake_stage_command_when_parsing_then_its_stage_and_options_must_
     ];
     for sql in kept {
         assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_dynamic_table_when_parsing_then_each_action_is_checked() {
+    let rejected = [
+        ("ALTER DYNAMIC without TABLE", "ALTER DYNAMIC v1 SUSPEND ;"),
+        ("no action", "ALTER DYNAMIC TABLE v1 ;"),
+        ("SET with no property", "ALTER DYNAMIC TABLE v1 SET ;"),
+        (
+            "a string contact",
+            "ALTER DYNAMIC TABLE v1 SET CONTACT ( STEWARD = 'v1' ) ;",
+        ),
+        (
+            "FROZEN without WHERE",
+            "ALTER DYNAMIC TABLE v1 SET FROZEN ( 1 ) ;",
+        ),
+        (
+            "a string policy",
+            "ALTER DYNAMIC TABLE v1 ADD ROW ACCESS POLICY 'v1' ON ( v1 ) ;",
+        ),
+        (
+            "an empty clustering key",
+            "ALTER DYNAMIC TABLE v1 CLUSTER BY ( ) ;",
+        ),
+        (
+            "a string search target",
+            "ALTER DYNAMIC TABLE v1 RESUME SEARCH OPTIMIZATION ON 'v1' ;",
+        ),
+        (
+            "a second UNSET TAG with no column",
+            "ALTER DYNAMIC TABLE v1 ALTER v1 UNSET TAG v1 , UNSET TAG v1 ;",
+        ),
+        (
+            "a column comment that is not a string",
+            "ALTER DYNAMIC TABLE v1 ALTER v1 COMMENT m1 ;",
+        ),
+        (
+            "a name list on another action",
+            "ALTER DYNAMIC TABLE v1 , v1 SUSPEND ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "ALTER DYNAMIC TABLE IF EXISTS v1 , v1 REFRESH COPY SESSION ;",
+        "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = DOWNSTREAM CONTACT ( STEWARD = v1 ) ;",
+        "ALTER DYNAMIC TABLE v1 UNSET FROZEN WHERE , EXECUTE AS USER ;",
+        "ALTER DYNAMIC TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( v1 , v1 ) ;",
+        "ALTER DYNAMIC TABLE v1 SET AGGREGATION POLICY v1 ENTITY KEY ( v1 ) FORCE ;",
+        "ALTER DYNAMIC TABLE v1 DROP SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , v1 , 1 ;",
+        "ALTER DYNAMIC TABLE v1 ALTER v1 SET TAG v1 = 'm' , v2 = 'm' , COLUMN v3 SET TAG v1 = 'm' ;",
+        "ALTER DYNAMIC TABLE v1 MODIFY v1 UNSET TAG a.b , v2 UNSET COMMENT ;",
+        "ALTER DYNAMIC TABLE v1 ALTER v1 SET MASKING POLICY v1 USING ( v1 , v2 ) FORCE ;",
+    ];
+    for sql in kept {
+        let parsed = statements(sql, Dialect::Snowflake, CallMode::Faithful);
+        assert_eq!(kind(&parsed[0]), "alter_object", "Snowflake parses {sql}");
     }
 }

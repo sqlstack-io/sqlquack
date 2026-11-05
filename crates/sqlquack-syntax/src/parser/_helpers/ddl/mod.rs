@@ -9,6 +9,7 @@ pub(crate) mod explain;
 pub(crate) mod scripting;
 pub(crate) mod snowflake_alter;
 pub(crate) mod snowflake_alter_account;
+pub(crate) mod snowflake_alter_dynamic;
 pub(crate) mod snowflake_alter_objects;
 pub(crate) mod snowflake_alter_resources;
 pub(crate) mod snowflake_alter_tables;
