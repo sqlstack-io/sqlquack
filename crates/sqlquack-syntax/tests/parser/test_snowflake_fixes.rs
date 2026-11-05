@@ -919,3 +919,79 @@ fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_val
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_task_when_parsing_then_its_properties_follow_the_task_grammar() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "EXECUTE AS USER before the body's AS (recorded parse)",
+            sql: "CREATE OR ALTER TASK v1 EXECUTE AS USER \"v1 Q\" AS SELECT 1 ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "DEFINE TASK with a named predecessor (recorded errno 1622, task not found)",
+            sql: "DEFINE TASK d1.s1.v1 AFTER d1.s1.p1 AS SELECT 1 ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM task state word (recorded parse)",
+            sql: "DEFINE TASK d1.s1.v1 SUSPENDED AS SELECT 1 ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a task graph has properties and no body (recorded parse)",
+            sql: "CREATE TASK GRAPH v1 TASK_DEFAULTS ( USER_TASK_TIMEOUT_MS = 1 ) ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string predecessor (recorded errno 1003)",
+            sql: "CREATE TASK v1 AFTER 'v1' AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as a property value (recorded errno 1003)",
+            sql: "CREATE TASK v1 ERROR_INTEGRATION = SELECT AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as the task name (recorded errno 1003)",
+            sql: "CREATE TASK SELECT AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string contact (recorded errno 1003)",
+            sql: "CREATE TASK v1 WITH CONTACT ( STEWARD = 'v1' ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a tag without its value (recorded errno 1003)",
+            sql: "CREATE TASK v1 WITH TAG ( v1 = ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WHEN without a condition (recorded errno 1003)",
+            sql: "DEFINE TASK d1.s1.v1 WHEN AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXECUTE USER without AS (recorded errno 1003)",
+            sql: "DEFINE TASK d1.s1.v1 EXECUTE USER v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string task name (recorded errno 1003)",
+            sql: "DEFINE TASK 'd1.s1.v1' AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

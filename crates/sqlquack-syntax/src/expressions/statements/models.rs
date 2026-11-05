@@ -418,6 +418,9 @@ pub struct CreateTask {
     /// Source task of `CREATE TASK name CLONE source`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub clone_source: Option<TableRef>,
+    /// Whether this is a Snowflake `CREATE TASK GRAPH`, which has properties and no body
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub graph: bool,
 }
 
 /// Raw/unparsed SQL
