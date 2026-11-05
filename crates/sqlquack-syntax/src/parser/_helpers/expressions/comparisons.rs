@@ -395,7 +395,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -424,7 +424,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -446,7 +446,7 @@ impl Parser {
             self.skip();
             self.skip();
             let pattern = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -479,7 +479,7 @@ impl Parser {
             self.skip();
             self.skip();
             let pattern = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -496,7 +496,7 @@ impl Parser {
     fn parse_not_like_comparison(&mut self, left: Expression) -> Result<Expression> {
         Ok({
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -517,7 +517,7 @@ impl Parser {
     fn parse_not_ilike_comparison(&mut self, left: Expression) -> Result<Expression> {
         Ok({
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -640,6 +640,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,
@@ -717,7 +720,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -747,7 +750,7 @@ impl Parser {
                 None
             };
             let right = self.parse_bitwise_or()?;
-            let escape = if self.match_token(TokenType::Escape) {
+            let escape = if self.match_like_escape() {
                 Some(self.parse_primary()?)
             } else {
                 None
@@ -797,6 +800,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,
@@ -903,7 +909,7 @@ impl Parser {
             if self.match_token(TokenType::Any) || self.match_token(TokenType::Some) {
                 let was_any = self.previous_token_type() == Some(TokenType::Any);
                 self.expect_token(TokenType::LParen)?;
-                let inner = self.parse_statement()?;
+                let inner = self.parse_quantified_operand()?;
                 self.expect_token(TokenType::RParen)?;
                 let subquery = if was_any {
                     self.maybe_wrap_in_subquery(inner)
@@ -917,7 +923,7 @@ impl Parser {
                 }))
             } else if self.match_token(TokenType::All) {
                 self.expect_token(TokenType::LParen)?;
-                let inner = self.parse_statement()?;
+                let inner = self.parse_quantified_operand()?;
                 self.expect_token(TokenType::RParen)?;
                 let subquery = self.maybe_wrap_in_subquery(inner);
                 Expression::All(Box::new(QuantifiedExpr {
@@ -1439,7 +1445,9 @@ impl Parser {
                     inferred_type: None,
                     span: SourceSpan::default(),
                 }));
-            } else if self.check(TokenType::Arrow) || self.check(TokenType::DArrow) {
+            } else if self.check(TokenType::Arrow)
+                || (self.check(TokenType::DArrow) && !self.applies_snowflake_context_rules())
+            {
                 let scalar = self.match_token(TokenType::DArrow);
                 if !scalar {
                     self.skip();
@@ -1537,7 +1545,11 @@ impl Parser {
     #[inline(never)]
     pub(crate) fn parse_power_tail(&mut self, mut left: Expression) -> Result<Expression> {
         loop {
-            if self.match_token(TokenType::DStar) {
+            if !matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) && self.match_token(TokenType::DStar)
+            {
                 let right = self.parse_unary()?;
                 left = Expression::Power(Box::new(BinaryFunc {
                     original_name: Some("**".to_string()),
@@ -1601,10 +1613,12 @@ impl Parser {
                 | "DATERANGE"
         ) || self.config.dialect
             == Some(crate::tokens::models::DialectType::DuckDB)
-            && DataType::from_unsigned_name(&type_name).is_some();
+            && DataType::from_unsigned_name(&type_name).is_some()
+            || self.is_snowflake()
+                && crate::parser::constants::SNOWFLAKE_LITERAL_TYPES.contains(&type_name.as_str());
 
         if !is_type_literal_type {
-            return Ok(None);
+            return self.try_parse_snowflake_named_type_literal();
         }
 
         if self.current + 1 >= self.tokens.len() {
@@ -1788,7 +1802,7 @@ impl Parser {
     ) -> Result<Expression> {
         for token in prefixes.into_iter().rev() {
             expr = match token {
-                TokenType::Plus => expr,
+                TokenType::Plus => Expression::Pos(Box::new(UnaryOp::new(expr))),
                 TokenType::Dash => Expression::Neg(Box::new(UnaryOp::new(expr))),
                 TokenType::Not => Expression::Not(Box::new(UnaryOp::new(expr))),
                 TokenType::Tilde => Expression::BitwiseNot(Box::new(UnaryOp::new(expr))),
@@ -1925,7 +1939,9 @@ impl Parser {
             }
         }
 
-        while self.match_token(TokenType::Exclamation) {
+        while self.check(TokenType::Exclamation) {
+            self.refuse_snowflake_bang_call(&expr)?;
+            self.skip();
             let attr = self.parse_primary()?;
             expr = Expression::ModelAttribute(Box::new(ModelAttribute {
                 this: Box::new(expr),

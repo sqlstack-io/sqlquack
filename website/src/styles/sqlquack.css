@@ -1,0 +1,446 @@
+/* Starlight theme mapped onto the homepage tokens in public/styles.css. */
+:root {
+	--sl-font: 'Inter', system-ui, sans-serif;
+	--sl-font-mono: 'IBM Plex Mono', 'SQLQuack Box Drawing', ui-monospace, monospace;
+	--sl-nav-height: 80px;
+	--sl-content-width: 50rem;
+	--sl-sidebar-width: 18rem;
+	--sqq-toc-width: 16rem;
+	--sqq-frame-width: 1440px;
+	--sl-text-h1: 2rem;
+	--sl-text-h2: 1.45rem;
+	--sl-text-h3: 1.15rem;
+	--sl-text-h4: 1rem;
+	--sl-line-height-headings: 1.25;
+
+	/* Dark (Starlight's default) */
+	--sqq-bg: #0d0f12;
+	--sqq-panel: #171a1f;
+	--sqq-fg: #e9ebef;
+	--sqq-muted: #9ba1ac;
+	--sqq-faint: #626975;
+	--sqq-line: rgba(176, 184, 198, 0.1);
+	--sqq-line-strong: rgba(176, 184, 198, 0.18);
+	--sqq-primary: #ffe000;
+	--sqq-accent-soft: rgba(255, 224, 0, 0.12);
+	--sqq-code-bg: #111418;
+	--sqq-warning: #f0c267;
+
+	--sl-color-accent-low: #3d3600;
+	--sl-color-accent: #ffe000;
+	--sl-color-accent-high: #fff6a6;
+	--sl-color-white: #e9ebef;
+	--sl-color-gray-1: #d4d7dd;
+	--sl-color-gray-2: #b4b9c2;
+	--sl-color-gray-3: #9ba1ac;
+	--sl-color-gray-4: #626975;
+	--sl-color-gray-5: #2a2f37;
+	--sl-color-gray-6: #171a1f;
+	--sl-color-black: #0d0f12;
+}
+
+:root[data-theme='light'] {
+	--sqq-bg: #ffffff;
+	--sqq-panel: #ffffff;
+	--sqq-fg: #171a1f;
+	--sqq-muted: #626a76;
+	--sqq-faint: #98a0ad;
+	--sqq-line: rgba(28, 32, 38, 0.08);
+	--sqq-line-strong: rgba(28, 32, 38, 0.16);
+	--sqq-primary: #8f7400;
+	--sqq-accent-soft: rgba(143, 116, 0, 0.08);
+	--sqq-code-bg: #fbfcfe;
+	--sqq-warning: #aa6c16;
+
+	--sl-color-accent-low: #fbf3c8;
+	--sl-color-accent: #8f7400;
+	--sl-color-accent-high: #5c4b00;
+	--sl-color-white: #171a1f;
+	--sl-color-gray-1: #2b3038;
+	--sl-color-gray-2: #434a55;
+	--sl-color-gray-3: #626a76;
+	--sl-color-gray-4: #98a0ad;
+	--sl-color-gray-5: #dfe3e8;
+	--sl-color-gray-6: #f4f6f8;
+	--sl-color-gray-7: #fafbfc;
+	--sl-color-black: #ffffff;
+}
+
+:root {
+	--sl-color-bg: var(--sqq-bg);
+	--sl-color-bg-nav: var(--sqq-bg);
+	--sl-color-bg-sidebar: var(--sqq-bg);
+	--sl-color-bg-inline-code: var(--sqq-accent-soft);
+	--sl-color-hairline: var(--sqq-line);
+	--sl-color-hairline-light: var(--sqq-line);
+	--sl-color-hairline-shade: var(--sqq-line);
+	--sl-color-text: var(--sqq-fg);
+	--sl-color-text-accent: var(--sqq-primary);
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+site-search button[data-open-modal] {
+	border-radius: 2px;
+	border-color: var(--sqq-line-strong);
+	background: transparent;
+	color: var(--sqq-muted);
+}
+
+site-search button[data-open-modal]:hover {
+	border-color: var(--sqq-primary);
+	color: var(--sqq-fg);
+}
+
+/* Sidebar: bold top-level headings, nested groups styled like links (as in common docs sites). */
+.sidebar-content ul ul li {
+	margin-inline-start: 0;
+	padding-inline-start: 0;
+	border-inline-start: 0;
+}
+
+.sidebar-content .top-level > li + li {
+	margin-top: 1.1rem;
+}
+
+.sidebar-content .top-level > li > details > summary {
+	padding: 0.2rem 0.5rem 0.35rem;
+	pointer-events: none;
+}
+
+.sidebar-content .top-level > li > details > summary .caret {
+	display: none;
+}
+
+.sidebar-content .top-level > li > details > summary .large {
+	color: var(--sqq-fg);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.sidebar-content ul ul summary {
+	padding: 0.3rem 0.5rem;
+	border-radius: 2px;
+}
+
+.sidebar-content ul ul summary:hover {
+	background: var(--sqq-accent-soft);
+}
+
+.sidebar-content ul ul summary .large {
+	color: var(--sqq-muted);
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.sidebar-content ul ul summary:hover .large {
+	color: var(--sqq-fg);
+}
+
+.sidebar-content ul ul summary .caret {
+	width: 1rem;
+	height: 1rem;
+	color: var(--sqq-faint);
+}
+
+.sidebar-content ul ul ul {
+	margin-inline-start: 0.75rem;
+}
+
+.sidebar-content a {
+	padding: 0.3rem 0.5rem;
+	border-radius: 2px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--sqq-muted);
+}
+
+.sidebar-content a:hover {
+	background: var(--sqq-accent-soft);
+	color: var(--sqq-fg);
+}
+
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover {
+	background: var(--sqq-accent-soft);
+	color: var(--sqq-primary);
+	font-weight: 500;
+}
+
+/* Page title and on-this-page */
+.content-panel {
+	border-top-color: var(--sqq-line);
+}
+
+h1#_top {
+	font-weight: 650;
+	letter-spacing: -0.02em;
+}
+
+.sl-markdown-content :is(h2, h3, h4) {
+	font-weight: 620;
+	letter-spacing: -0.01em;
+	color: var(--sqq-fg);
+}
+
+.sl-markdown-content .sl-heading-wrapper.level-h2 {
+	margin-top: 2.75rem;
+}
+
+/* Title and body share one panel, with no dividing line. */
+.content-panel + .content-panel {
+	border-top: 0;
+	padding-top: 0;
+}
+
+.content-panel:first-of-type {
+	padding-bottom: 2.25rem;
+}
+
+.sl-markdown-content p,
+.sl-markdown-content li {
+	color: var(--sqq-muted);
+}
+
+.sl-markdown-content strong {
+	color: var(--sqq-fg);
+	font-weight: 600;
+}
+
+starlight-toc h2 {
+	margin-bottom: 0.5rem;
+	color: var(--sqq-fg);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+starlight-toc li:has(> a[href='#_top']) {
+	display: none;
+}
+
+starlight-toc a,
+mobile-starlight-toc a {
+	padding-block: 0.3rem;
+	font-size: 13.5px;
+	line-height: 1.4;
+	color: var(--sqq-muted);
+}
+
+starlight-toc a:hover {
+	color: var(--sqq-fg);
+}
+
+starlight-toc a[aria-current='true'],
+starlight-toc a[aria-current='true']:hover {
+	color: var(--sqq-primary);
+	font-weight: 500;
+}
+
+/* Links */
+.sl-markdown-content a:not(.sqq-card) {
+	color: var(--sqq-fg);
+	font-weight: 500;
+	text-decoration: underline;
+	text-decoration-color: var(--sqq-primary);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+.sl-markdown-content a:not(.sqq-card):hover {
+	color: var(--sqq-primary);
+	text-decoration-thickness: 2px;
+}
+
+/* Code blocks: a quiet copy icon that is always visible, as in common docs sites. */
+.expressive-code .copy button {
+	opacity: 0.6 !important;
+}
+
+.expressive-code .copy button:hover {
+	opacity: 1 !important;
+}
+
+/* Inline code */
+.sl-markdown-content :not(pre) > code {
+	border: 0;
+	border-radius: 2px;
+	padding: 0.1em 0.35em;
+	font-size: 0.86em;
+	color: var(--sqq-fg);
+}
+
+/* Tables */
+.sl-markdown-content table {
+	display: table;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+@media (max-width: 50rem) {
+	.sl-markdown-content table {
+		display: block;
+		overflow-x: auto;
+	}
+}
+
+.sl-markdown-content :is(th, td) {
+	border: 0;
+	border-bottom: 1px solid var(--sqq-line);
+	padding: 0.55rem 0.9rem 0.55rem 0;
+	vertical-align: top;
+}
+
+.sl-markdown-content th {
+	background: transparent;
+	color: var(--sqq-fg);
+	font-weight: 600;
+	white-space: nowrap;
+	border-bottom-color: var(--sqq-line-strong);
+}
+
+.sl-markdown-content tr:nth-child(2n) {
+	background: transparent;
+}
+
+.sl-markdown-content td {
+	color: var(--sqq-muted);
+}
+
+.sl-markdown-content td:first-child code {
+	white-space: nowrap;
+}
+
+/* Search */
+site-search {
+	--pagefind-ui-border-radius: 2px;
+}
+
+site-search dialog {
+	border-radius: 2px;
+}
+
+/* Callouts */
+.sqq-callout {
+	display: flex;
+	gap: 12px;
+	padding: 14px 16px;
+	border: 1px solid color-mix(in srgb, var(--sqq-callout) 30%, transparent);
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--sqq-callout) 8%, transparent);
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+.sqq-callout.note {
+	--sqq-callout: var(--sqq-primary);
+}
+
+.sqq-callout.warning {
+	--sqq-callout: var(--sqq-warning);
+}
+
+.sl-markdown-content .sqq-callout-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.sl-markdown-content .sqq-callout > .sqq-callout-body {
+	margin: 0;
+}
+
+.sqq-callout-icon {
+	flex: none;
+	margin-top: 4px;
+	color: var(--sqq-callout);
+}
+
+.sl-markdown-content .sqq-callout-body > * {
+	margin: 0;
+	color: var(--sqq-fg);
+}
+
+.sl-markdown-content .sqq-callout-body > * + * {
+	margin-top: 0.6rem;
+}
+
+/* Docs components: Card, CardGroup, Frame, Note and Warning */
+.sqq-card-group {
+	display: grid;
+	grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 1.25rem;
+}
+
+@media (max-width: 50rem) {
+	.sqq-card-group {
+		grid-template-columns: 1fr;
+	}
+}
+
+.sl-markdown-content .sqq-card {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 18px 20px;
+	border: 1px solid var(--sqq-line-strong);
+	border-radius: 2px;
+	background: var(--sqq-panel);
+	color: var(--sqq-muted);
+	text-decoration: none;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.sl-markdown-content a.sqq-card:hover {
+	border-color: var(--sqq-primary);
+}
+
+.sqq-card-icon {
+	margin-bottom: 12px;
+	color: var(--sqq-primary);
+}
+
+.sqq-card-title {
+	color: var(--sqq-fg);
+	font-weight: 600;
+	font-size: 15px;
+}
+
+.sqq-card-body {
+	margin-top: 4px;
+}
+
+.sqq-card-body > * {
+	margin: 0;
+}
+
+.sqq-frame {
+	margin: 1rem 0;
+	padding: 0;
+	border: 1px solid var(--sqq-line);
+}
+
+.sqq-frame img {
+	display: block;
+	width: 100%;
+}
+
+/* Mobile controls */
+.sl-menu-button {
+	border: 1px solid var(--sqq-line-strong) !important;
+	border-radius: 2px !important;
+	background: var(--sqq-bg) !important;
+	color: var(--sqq-muted) !important;
+	box-shadow: none !important;
+}
+
+mobile-starlight-toc summary .toggle {
+	border-radius: 2px;
+	border-color: var(--sqq-line-strong);
+}

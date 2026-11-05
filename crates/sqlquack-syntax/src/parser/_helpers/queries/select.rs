@@ -89,6 +89,7 @@ impl Parser {
                     && !self.check_text_seq(&["GROUP", "BY"])
                     && !self.check_text_seq(&["ORDER", "BY"])
                     && !self.check(TokenType::Qualify)
+                    && !self.is_snowflake_reserved_keyword()
                     && !(self.check(TokenType::Window)
                         && self.peek_nth(1).is_some_and(|token| {
                             matches!(token.token_type, TokenType::Var | TokenType::Identifier)
@@ -337,6 +338,7 @@ impl Parser {
         } else {
             vec![Expression::Star(crate::expressions::names::models::Star {
                 table: None,
+                ilike: None,
                 except: None,
                 replace: None,
                 rename: None,
@@ -444,6 +446,7 @@ impl Parser {
             limit_by: None,
             fetch: None,
             distinct: false,
+            all: false,
             distinct_on: None,
             top: None,
             with: None,
@@ -605,7 +608,9 @@ impl Parser {
             } else if self.match_token(TokenType::Lateral) {
                 self.parse_table_lateral_source()?
             } else if self.match_token(TokenType::LParen) {
-                self.parse_table_parenthesized_source()?
+                let source = self.parse_table_parenthesized_source()?;
+                self.refuse_snowflake_parenthesized_call(&source)?;
+                source
             } else if self.is_identifier_token()
                 || self.is_safe_keyword_as_identifier()
                 || self.can_be_alias_keyword()
@@ -649,6 +654,16 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 self.parse_table_qualified_source(first_ident, first_name)?
             } else if self.match_token(TokenType::LParen) {
+                if self.is_snowflake()
+                    && self.check_next(TokenType::FArrow)
+                    && ["TIMESTAMP", "OFFSET", "STATEMENT", "STREAM", "INFORMATION"]
+                        .iter()
+                        .any(|word| self.peek().text.eq_ignore_ascii_case(word))
+                {
+                    return Err(
+                        self.parse_error("Expected AT, BEFORE or CHANGES before the clause")
+                    );
+                }
                 self.parse_table_function_source(first_name)?
             } else {
                 let table_name = first_ident;

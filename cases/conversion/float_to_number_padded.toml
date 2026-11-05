@@ -1,0 +1,67 @@
+# FLOAT to NUMBER where few significant digits fill nine or more digits once scaled.
+category = "conversion"
+construct = "node:cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "float_to_number_padded_scale_6"
+description = "FLOAT to NUMBER(18,6) of values with up to six significant digits whose scaled value reaches 10^9 or more."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1649.73"],
+  ["4387.5"],
+  ["726"],
+  ["-1649.73"],
+  ["123456.789"],
+  ["99999.99"],
+  ["NULL"],
+]
+expression = "x::NUMBER(18,6)"
+expected_divergence = "float_decimal_digits"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "float_to_number_padded_scale_8"
+description = "FLOAT to NUMBER(38,8) of values with few significant digits at and above 10."
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["10.125"],
+  ["89.9"],
+  ["2.675"],
+  ["1000.1"],
+  ["-0.29"],
+  ["NULL"],
+]
+expression = "x::NUMBER(38,8)"
+expected_divergence = "float_decimal_digits"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "float_to_number_padded_products"
+description = "A whole NUMBER times a FLOAT rate, cast to NUMBER(18,2) and NUMBER(18,6) and rounded, as currency conversion does."
+columns = [{ name = "m", type = "NUMBER(38,0)" }, { name = "r", type = "FLOAT" }]
+rows = [
+  ["1299", "1.27"],
+  ["8990", "0.01"],
+  ["35100", "0.125"],
+  ["72600", "0.01"],
+  ["1", "0.1"],
+  ["NULL", "1.1"],
+]
+query = "SELECT (m * r)::NUMBER(18,2) AS c2, (m * r)::NUMBER(18,6) AS c6, ROUND(m * r, 2)::NUMBER(18,2) AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "invalid", "boundary"]
+
+[[case]]
+id = "float_to_number_exact_or_reading"
+description = "FLOATs whose exact double and shortest decimal reading round differently at scales 2, 6 and 8, beyond nine scaled digits."
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }, { name = "c", type = "FLOAT" }]
+rows = [
+  ["10000000.045", "1649.7300005", "12.345678905"],
+  ["12345678.045", "1234.5678905", "99.999999995"],
+  ["98765432.005", "9999.0000005", "10.000000005"],
+  ["55555555.025", "-1649.7300005", "-12.345678905"],
+]
+query = "SELECT a::NUMBER(18,2) AS s2, b::NUMBER(18,6) AS s6, c::NUMBER(38,8) AS s8 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "invalid", "null"]

@@ -16,6 +16,7 @@ use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
+use crate::conversion::_helpers::queries::pivot::pivot_subquery;
 use crate::conversion::_helpers::queries::query::{convert_query, require_distinct_names};
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
@@ -29,8 +30,8 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
     GENERATOR_NAME, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING,
-    LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PROJECT_TABLE_FUNCTION, TABLE_WRAPPER,
-    UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
+    LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PIVOT_RULE, PROJECT_TABLE_FUNCTION,
+    TABLE_WRAPPER, UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
 use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
@@ -412,6 +413,7 @@ fn asof_join(
                 converted.data_type,
                 SnowflakeType::Number { .. }
                     | SnowflakeType::Float
+                    | SnowflakeType::Date
                     | SnowflakeType::TimestampNtz { .. }
             ) {
                 return Err(refuse(&format!(
@@ -527,6 +529,7 @@ fn convert_source_kind(
         }
         Some(("function", _)) => table_function_source(source, None, context),
         Some(("alias", payload)) => aliased_source(payload, context),
+        Some(("pivot", payload)) => pivot_source(payload, earlier, context),
         Some((other, _)) => Err(missing(
             node_construct(other),
             format!("no rule converts node:{other} in FROM"),
@@ -727,6 +730,25 @@ fn aliased_source(
     )?;
     let alias = aliased.get("alias").and_then(identifier_name);
     table_function_source(field(aliased, "this", &construct)?, alias, context)
+}
+
+/// `source PIVOT(...) AS alias(columns)`, as the grouped subquery it equals over the source.
+fn pivot_source(
+    payload: &Value,
+    earlier: Earlier<'_, '_>,
+    context: &Context<'_>,
+) -> Result<(String, ScopeRelation), Refusal> {
+    let construct = node_construct("pivot");
+    let _rule = context.log.rule(PIVOT_RULE);
+    let pivot = payload_object(payload, &construct)?;
+    let source = field(pivot, "this", &construct)?;
+    let columns = {
+        let _muted = context.log.muted();
+        suspended(|| convert_source_kind(source, earlier, context))?
+            .1
+            .columns
+    };
+    subquery_source(&pivot_subquery(pivot, &columns)?, earlier, context)
 }
 
 fn subquery_source(

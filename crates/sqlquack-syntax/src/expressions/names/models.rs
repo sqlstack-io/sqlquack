@@ -383,11 +383,14 @@ impl TableRef {
     }
 }
 
-/// A star (`*`, `table.*`) with optional EXCEPT/EXCLUDE, REPLACE and RENAME modifiers.
+/// A star (`*`, `table.*`) with optional ILIKE or EXCEPT/EXCLUDE, then REPLACE and RENAME modifiers.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Star {
     /// Optional table qualifier (e.g. `t` in `t.*`).
     pub table: Option<Identifier>,
+    /// Snowflake's ILIKE pattern (`* ILIKE '%_ID'`), the string literal's value
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ilike: Option<String>,
     /// EXCLUDE / EXCEPT columns (DuckDB, BigQuery, Snowflake)
     pub except: Option<Vec<Identifier>>,
     /// REPLACE expressions (BigQuery, Snowflake)

@@ -46,6 +46,14 @@ pub(crate) fn projection_at(sql: &str, pointer: &str) -> Value {
         .unwrap_or_default()
 }
 
+/// The value at `pointer` in the faithful Snowflake parse of `sql`, or null.
+pub(crate) fn statement_at(sql: &str, pointer: &str) -> Value {
+    statements(sql, Dialect::Snowflake, CallMode::Faithful)
+        .pointer(pointer)
+        .cloned()
+        .unwrap_or_default()
+}
+
 /// The source text a located parse records for the node at `pointer`, or why there is none.
 pub(crate) fn located_text(sql: &str, pointer: &str) -> Result<String, String> {
     let tree = statements(sql, Dialect::Snowflake, CallMode::FaithfulLocated);
@@ -74,4 +82,24 @@ pub(crate) fn cast_targets(type_text: &str) -> (Value, Value) {
         target(format!("SELECT x::{type_text}")),
         target(format!("SELECT CAST(x AS {type_text})")),
     )
+}
+
+pub(crate) fn accepted(sql: &str, dialect: Dialect) -> bool {
+    parse_statements_with(sql, dialect, &ParseOptions::default(), CallMode::Faithful).is_ok()
+}
+
+/// The node kind of the first statement when Snowflake SQL parses, and `None` when it is rejected.
+pub(crate) fn snowflake_kind(sql: &str) -> Option<String> {
+    accepted(sql, Dialect::Snowflake)
+        .then(|| kind(&statements(sql, Dialect::Snowflake, CallMode::Faithful)[0]))
+}
+
+/// The string at `pointer` in each walked node that has one, sorted.
+pub(crate) fn sorted_strings<'a>(values: &'a [Value], pointer: &str) -> Vec<&'a str> {
+    let mut found: Vec<&str> = values
+        .iter()
+        .filter_map(|value| value.pointer(pointer).and_then(Value::as_str))
+        .collect();
+    found.sort_unstable();
+    found
 }

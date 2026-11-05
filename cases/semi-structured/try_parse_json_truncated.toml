@@ -1,0 +1,84 @@
+# TRY_PARSE_JSON and PARSE_JSON of text cut off part way through a document, and of markup and
+# plain words: text no JSON reader can finish.
+category = "json-text"
+construct = "fn:TRY_PARSE_JSON"
+session_profile = "utc-v1"
+
+[[case]]
+id = "try_parse_json_truncated_documents"
+description = "Whether TRY_PARSE_JSON is NULL for documents cut off inside a string, after a key, colon or comma, inside a nested value, or part way through a literal or number."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"tracking_number\": \"WF00000588\", \"status\": {\"code\": \"out_for_de'"],
+  ["'{\"summary\": '"],
+  ["'{\"a\":1,'"],
+  ["'{\"a\":'"],
+  ["'{\"a\"'"],
+  ["'{\"a'"],
+  ["'{'"],
+  ["'['"],
+  ["'[1,2'"],
+  ["'[1,2,'"],
+  ["'{\"a\":[1,2'"],
+  ["'{\"a\":{\"b\":1}'"],
+  ["'{\"a\":\"x\\\\'"],
+  ["'{\"a\":tru'"],
+  ["'{\"a\":nul'"],
+  ["'{\"a\":1.5e'"],
+  ["'{\"events\": [{\"id\": 1}, {\"id\": 2'"],
+  ["NULL"],
+]
+expression = "TRY_PARSE_JSON(s) IS NULL"
+tags = ["null", "invalid"]
+
+[[case]]
+id = "try_parse_json_markup_and_words"
+description = "Whether TRY_PARSE_JSON is NULL for HTML, XML and plain words."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'<html><body>503 Service Unavailable</body></html>'"],
+  ["'<?xml version=\"1.0\"?><a/>'"],
+  ["'<a>1</a>'"],
+  ["'Service Unavailable'"],
+  ["'OK'"],
+  ["'error: timeout'"],
+  ["NULL"],
+]
+expression = "TRY_PARSE_JSON(s) IS NULL"
+tags = ["null", "invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "try_parse_json_truncated_typeof"
+description = "TYPEOF and TO_JSON of TRY_PARSE_JSON over truncated documents beside valid ones, as a model filtering on IS NULL reads them."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1}'"],
+  ["'{\"a\":'"],
+  ["'[1,2'"],
+  ["'<html></html>'"],
+  ["'[1,2]'"],
+]
+expression = "ARRAY_CONSTRUCT(TYPEOF(TRY_PARSE_JSON(s)), TO_JSON(TRY_PARSE_JSON(s)))"
+tags = ["invalid"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "parse_json_truncated_document"
+description = "PARSE_JSON of a document cut off after a colon."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'{\"summary\": '"],
+]
+expression = "PARSE_JSON(s)"
+tags = ["invalid"]
+
+[[case]]
+id = "parse_json_markup"
+description = "PARSE_JSON of an HTML page."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'<html><body>503 Service Unavailable</body></html>'"],
+]
+expression = "PARSE_JSON(s)"
+tags = ["invalid"]

@@ -1,8 +1,12 @@
 //! The policy schema. Every struct rejects unknown keys.
 
 use std::collections::BTreeMap;
+use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
+
+use crate::policy::_helpers::parsing::parse_policy;
+use crate::policy::errors::PolicyError;
 
 /// The whole policy file.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -169,12 +173,24 @@ pub struct Divergence {
     pub strict: DivergenceMode,
     /// Why values differ and what stays consistent.
     pub reason: String,
+    /// Whether relying on it can return a different value, or only raise.
+    pub failure: DivergenceFailure,
     /// DuckDB's own errors that are this divergence's failure, as `*` patterns over a first line.
     #[serde(default)]
     pub native_errors: Vec<String>,
     /// A named assumption: relying on it gives a wrong value, not an error, where it does not hold.
     #[serde(default)]
     pub assumption: bool,
+}
+
+/// What relying on a known divergence can do where DuckDB and Snowflake differ.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DivergenceFailure {
+    /// The converted SQL raises wherever DuckDB could differ, and never returns a different value.
+    Loud,
+    /// The converted SQL can return a different value.
+    Value,
 }
 
 /// How a mode treats a known divergence.
@@ -203,4 +219,13 @@ pub enum PatternArgument {
     Literal(i64),
     /// A lower-case name bound by the first match.
     Variable(String),
+}
+
+/// A policy file's text, validated as `load_policy` validates a file; for callers without files.
+impl FromStr for Policy {
+    type Err = PolicyError;
+
+    fn from_str(text: &str) -> Result<Self, Self::Err> {
+        parse_policy(text)
+    }
 }

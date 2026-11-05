@@ -1,0 +1,45 @@
+category = "window"
+construct = "fn:RATIO_TO_REPORT"
+session_profile = "utc-v1"
+
+[[case]]
+id = "ratio_to_report_integers"
+description = "RATIO_TO_REPORT of integer counts per partition: uneven shares, a NULL value, a zero-sum partition and a single-row partition; the result type."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'a'", "1", "'p'"],
+  ["'a'", "2", "'q'"],
+  ["'a'", "4", "'r'"],
+  ["'a'", "NULL", "'s'"],
+  ["'b'", "0", "'t'"],
+  ["'b'", "0", "'u'"],
+  ["'c'", "7", "'v'"],
+  ["'d'", "NULL", "'w'"],
+]
+query = "SELECT k, RATIO_TO_REPORT(x) OVER (PARTITION BY g) AS r FROM input"
+order = "bag"
+tags = ["null", "boundary", "single-row-partition"]
+
+[[case]]
+id = "ratio_to_report_decimals"
+description = "RATIO_TO_REPORT of NUMBER(18,2) amounts with a negative value and one-third shares, rounded as the models round it."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(18,2)" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'a'", "10.00", "'p'"],
+  ["'a'", "10.00", "'q'"],
+  ["'a'", "10.00", "'r'"],
+  ["'b'", "-5.50", "'s'"],
+  ["'b'", "16.50", "'t'"],
+]
+query = "SELECT k, RATIO_TO_REPORT(x) OVER (PARTITION BY g) AS r, ROUND(RATIO_TO_REPORT(x) OVER (PARTITION BY g), 4) AS r4 FROM input"
+order = "bag"
+tags = ["ties", "boundary"]
+
+[[case]]
+id = "ratio_to_report_unpartitioned"
+description = "RATIO_TO_REPORT over the whole input, without PARTITION BY."
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [["1"], ["3"], ["NULL"]]
+query = "SELECT x, RATIO_TO_REPORT(x) OVER () AS r FROM input"
+order = "bag"
+tags = ["null"]

@@ -23,6 +23,7 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::text_to_zoned::text_to_zoned;
+use sqlquack_duckdb::temporal::main::utc_to_zone::utc_to_zone;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_text::time_text;
@@ -47,11 +48,11 @@ use crate::conversion::_helpers::expressions::temporal::{
     is_temporal, literal_date, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
     zoned_literal_utc,
 };
-use crate::conversion::_helpers::expressions::variants::to_variant;
+use crate::conversion::_helpers::expressions::variants::{to_variant, written_array};
 use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::shapes::type_family;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -65,7 +66,7 @@ use crate::conversion::constants::{
     SESSION_TIMEZONE_UTC, TARGET_FACET, TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST,
     TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING, TIMESTAMP_TIME_RULE, TIMESTAMP_TZ_OFFSET,
     TO_BOOLEAN_RULE, TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE,
-    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
+    VARIANT_CAST, VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -114,15 +115,32 @@ pub(crate) fn convert_cast(
     {
         let _rule = cast_rule(CAST_NUMERIC, log);
         let sql = number_literal_cast(&digits, target.data_type, log).map_err(refuse)?;
-        return Ok(Emitted::new(sql, target.data_type));
+        return Ok(Emitted::new(bounded(sql, target, log), target.data_type));
+    }
+    let trying = matches!(construct.name.as_str(), "try_cast");
+    if target.data_type == SnowflakeType::Varchar
+        && !trying
+        && let Some(written) = written_array(operand_node, None, site)
+    {
+        let _rule = cast_rule(VARIANT_CAST, log);
+        let written = written?;
+        return Ok(match target.max_length {
+            Some(max_length) => Emitted::new(
+                varchar_length_check(&written.sql, max_length, log),
+                SnowflakeType::Varchar,
+            ),
+            None => written,
+        });
     }
     let operand = convert_held(operand_node, site)?;
-    let trying = matches!(construct.name.as_str(), "try_cast");
     if operand.is_variant_held() {
-        if type_name == OBJECT_TYPE_NAME && !built_object(operand_node) {
+        if type_name == OBJECT_TYPE_NAME
+            && !built_object(operand_node)
+            && operand.root != VariantRoot::Element
+        {
             return Err(refuse(
-                "a VARIANT built from a FLOAT cast to OBJECT, other than an OBJECT_CONSTRUCT, \
-                 which Snowflake may reject as it compiles"
+                "a VARIANT built from a FLOAT cast to OBJECT, other than an OBJECT_CONSTRUCT or an \
+                 element read from one, which Snowflake may reject as it compiles"
                     .to_owned(),
             ));
         }
@@ -399,6 +417,22 @@ fn cast_sql(
                 (context, construct),
             )
         }
+        (
+            SnowflakeType::TimestampTz { precision },
+            SnowflakeType::TimestampNtz { .. } | SnowflakeType::Date,
+            _,
+        ) if operand.zone.is_some() => {
+            let _rule = cast_rule(CAST_UTC_ZONED, log);
+            let zone = operand.zone.as_deref().unwrap_or_default();
+            let wall = SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            };
+            temporal_cast(
+                &utc_to_zone(&utc_wall_time(&operand.sql, log), zone, wall, log),
+                (wall, to),
+                (context, construct),
+            )
+        }
         (from, _, _) if from != to && is_temporal(from) && is_temporal(to) => {
             let _rule = cast_rule(CAST_TEMPORAL, log);
             temporal_cast(&operand.sql, (from, to), (context, construct))
@@ -627,6 +661,12 @@ pub(crate) fn number_literal_text(node: &Value) -> Option<String> {
     }
 }
 
+/// An integer literal as Snowflake writes it as text: no plus sign, leading zero or negative zero.
+fn is_written_integer(text: &str) -> bool {
+    let digits = text.strip_prefix('-').unwrap_or(text);
+    is_unsigned_integer(digits) && !(digits.starts_with('0') && text.len() > 1)
+}
+
 fn is_plain_decimal(text: &str) -> bool {
     let body = text.strip_prefix(['+', '-']).unwrap_or(text);
     let (whole, fraction) = body.split_once('.').unwrap_or((body, ""));
@@ -668,6 +708,7 @@ fn number_literal_cast(
             cast(&with_leading_zero(text), to, log)
         }
         SnowflakeType::Float if is_float_spelling(text) => cast(&with_leading_zero(text), to, log),
+        SnowflakeType::Varchar if is_written_integer(text) => Ok(string_literal(text, log)),
         _ => Err(format!(
             "casting the literal {text} to {to} has no proven conversion"
         )),

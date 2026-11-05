@@ -1,0 +1,49 @@
+category = "window"
+construct = "fn:SUM"
+session_profile = "utc-v1"
+
+[[case]]
+id = "sum_range_interval_days_trailing"
+description = "SUM over RANGE BETWEEN INTERVAL '2 days' PRECEDING AND CURRENT ROW on a DATE key: gaps, peers on one date, a month end and a NULL key."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "x", type = "NUMBER(18,2)" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'2024-01-30'", "1.00", "'p'"],
+  ["'a'", "'2024-01-31'", "2.00", "'q'"],
+  ["'a'", "'2024-01-31'", "4.00", "'r'"],
+  ["'a'", "'2024-02-02'", "8.00", "'s'"],
+  ["'a'", "'2024-02-05'", "16.00", "'t'"],
+  ["'a'", "NULL", "32.00", "'u'"],
+  ["'b'", "'2024-03-01'", "NULL", "'v'"],
+]
+query = "SELECT k, SUM(x) OVER (PARTITION BY g ORDER BY d RANGE BETWEEN INTERVAL '2 days' PRECEDING AND CURRENT ROW) AS s FROM input"
+order = "bag"
+tags = ["null", "ties", "boundary", "single-row-partition"]
+
+[[case]]
+id = "sum_range_interval_days_offset_only"
+description = "SUM over RANGE BETWEEN INTERVAL '7 days' PRECEDING AND INTERVAL '7 days' PRECEDING: the same weekday a week earlier, empty where that date is missing."
+columns = [{ name = "d", type = "DATE" }, { name = "x", type = "NUMBER(18,2)" }]
+rows = [
+  ["'2024-01-01'", "1.00"],
+  ["'2024-01-08'", "2.00"],
+  ["'2024-01-09'", "4.00"],
+  ["'2024-01-15'", "8.00"],
+]
+query = "SELECT d, SUM(x) OVER (ORDER BY d RANGE BETWEEN INTERVAL '7 days' PRECEDING AND INTERVAL '7 days' PRECEDING) AS s FROM input"
+order = "bag"
+tags = ["ties", "boundary"]
+
+[[case]]
+id = "min_range_interval_days_trailing"
+description = "MIN over RANGE BETWEEN INTERVAL '30 days' PRECEDING AND CURRENT ROW per partition, across a leap day."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'2024-01-30'", "5"],
+  ["'a'", "'2024-02-29'", "9"],
+  ["'a'", "'2024-03-01'", "7"],
+  ["'a'", "'2024-03-30'", "8"],
+  ["'b'", "'2024-03-30'", "3"],
+]
+query = "SELECT g, d, MIN(x) OVER (PARTITION BY g ORDER BY d RANGE BETWEEN INTERVAL '30 days' PRECEDING AND CURRENT ROW) AS m FROM input"
+order = "bag"
+tags = ["ties", "boundary"]

@@ -18,6 +18,7 @@ use sqlquack_snowflake::typing::main::unify::unify;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::calls::convert_aggregate;
+use crate::conversion::_helpers::expressions::intervals::interval_literal;
 use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
@@ -33,10 +34,10 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
-    DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, PARTITION_FACET,
-    SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT,
-    VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
-    WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
+    CALL_KIND, DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, NTILE_NAME,
+    PARTITION_FACET, RATIO_TO_REPORT_NAME, SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES,
+    VARIANT_EQUALITY_BY_TEXT, VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE,
+    WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
     WINDOWED_NAMED_AGGREGATES,
 };
 
@@ -46,6 +47,9 @@ const WHOLE_PARTITION: &str = "ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FO
 const RUNNING_RANGE: &str = "RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW";
 /// Frame kinds and bounds as the parser names them.
 const ROWS: &str = "Rows";
+const RANGE: &str = "Range";
+/// The interval unit a RANGE frame offset over a DATE key is converted in.
+const DAY_UNIT: &str = "DAY";
 const UNBOUNDED_PRECEDING: &str = "UnboundedPreceding";
 const UNBOUNDED_FOLLOWING: &str = "UnboundedFollowing";
 const CURRENT_ROW: &str = "CurrentRow";
@@ -62,6 +66,7 @@ struct WindowKeys {
     partition: Vec<String>,
     order: Vec<String>,
     families: Vec<&'static str>,
+    ascending_date: bool,
 }
 
 /// The converted OVER clause.
@@ -69,6 +74,8 @@ struct Over<'a> {
     partition: Vec<String>,
     order: Vec<String>,
     frame: Option<&'a Value>,
+    /// Whether the window is ordered by one DATE key, ascending.
+    ascending_date: bool,
 }
 
 impl Over<'_> {
@@ -102,14 +109,20 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
             "a window function has an unexpected shape".to_owned(),
         ));
     };
+    if matches!(function, "function" | "aggregate_function")
+        && call_name(function_payload) == RATIO_TO_REPORT_NAME
+    {
+        return ratio_to_report(function_payload, payload, site);
+    }
     let rule = match function {
         "row_number" | "rank" | "dense_rank" => WINDOW_RANKING,
+        "function" if call_name(function_payload) == NTILE_NAME => WINDOW_RANKING,
         "lag" | "lead" => WINDOW_OFFSET,
         "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
             WINDOW_OFFSET
         }
         "first_value" | "last_value" => WINDOW_FIRST_LAST,
-        "count" | "sum" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
+        "count" | "sum" | "avg" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
         "function" | "aggregate_function"
             if WINDOWED_NAMED_AGGREGATES.contains(&call_name(function_payload).as_str()) =>
         {
@@ -155,12 +168,15 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
     let site = site.placed(Placement::GROUPED);
     let converted = match function {
         "row_number" | "rank" | "dense_rank" => ranking_window(function, &over, site),
+        "function" if call_name(function_payload) == NTILE_NAME => {
+            ntile_window(function_payload, &over, site)
+        }
         "lag" | "lead" => offset_window((function, false), function_payload, &over, site),
         "function" | "aggregate_function" if offset_name(function_payload).is_some() => {
             ignoring_nulls_offset(function_payload, &over, site)
         }
         "first_value" | "last_value" => first_last_window(function, function_payload, &over, site),
-        "count" | "sum" | "min" | "max" => {
+        "count" | "sum" | "avg" | "min" | "max" => {
             aggregate_window(function, function_payload, &over, site)
         }
         "within_group" => ordered_window(function_payload, &over, site),
@@ -210,6 +226,7 @@ fn convert_over<'a>(over: &'a Payload, site: Site<'_>) -> Result<Over<'a>, Refus
         partition,
         order,
         families,
+        ascending_date,
     } = keys?;
     log.facet(
         PARTITION_FACET,
@@ -223,6 +240,7 @@ fn convert_over<'a>(over: &'a Payload, site: Site<'_>) -> Result<Over<'a>, Refus
         partition,
         order,
         frame: over.get("frame").filter(|frame| !frame.is_null()),
+        ascending_date,
     })
 }
 
@@ -241,13 +259,21 @@ fn window_keys(
         partition.push(key.sql);
     }
     let mut order: Vec<String> = Vec::new();
+    let mut types: Vec<SnowflakeType> = Vec::new();
     for item in list(over, "order_by") {
-        order.push(order_item(item, site)?);
+        let (sql, data_type) = typed_order_item(item, site)?;
+        order.push(sql);
+        types.push(data_type);
     }
+    let ascending = list(over, "order_by").iter().all(|item| {
+        item.get("desc")
+            .is_none_or(|desc| desc != &Value::Bool(true))
+    });
     Ok(WindowKeys {
         partition,
         order,
         families,
+        ascending_date: ascending && types == [SnowflakeType::Date],
     })
 }
 
@@ -265,6 +291,56 @@ fn ranking_window(function: &str, over: &Over<'_>, site: Site<'_>) -> Result<Emi
     )
     .map_err(refuse)?;
     Ok(Emitted::new(sql, data_type))
+}
+
+/// NTILE(n) of a positive integer literal: the ORDER BY rows split into n buckets, as ranking is.
+fn ntile_window(payload: &Value, over: &Over<'_>, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = function_construct(NTILE_NAME);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let call = payload_object(payload, &construct)?;
+    require_understood(call, &["name", "args"], &construct)?;
+    let buckets = match list(call, "args") {
+        [count] => integer_literal(count).filter(|count| *count >= 1),
+        _ => None,
+    }
+    .ok_or_else(|| refuse("NTILE of other than one positive integer literal".to_owned()))?;
+    if over.order.is_empty() || over.frame.is_some() {
+        return Err(refuse("ranking needs an ORDER BY and no frame".to_owned()));
+    }
+    let log = site.context.log;
+    let data_type = ranking(log);
+    let sql = cast(
+        &format!("ntile({buckets}) OVER ({})", over.clause(None, site)),
+        data_type,
+        log,
+    )
+    .map_err(refuse)?;
+    Ok(Emitted::new(sql, data_type))
+}
+
+/// RATIO_TO_REPORT(x) as x / NULLIFZERO(SUM(x)) over its partitions, typed as that division.
+fn ratio_to_report(call: &Value, window: &Payload, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = function_construct(RATIO_TO_REPORT_NAME);
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let call = payload_object(call, &construct)?;
+    require_understood(call, &["name", "args"], &construct)?;
+    let [value] = list(call, "args") else {
+        return Err(refuse("RATIO_TO_REPORT of other than one argument"));
+    };
+    let over = field(window, "over", &construct)?;
+    if !list(payload_object(over, &construct)?, "order_by").is_empty()
+        || over.get("frame").is_some_and(|frame| !frame.is_null())
+    {
+        return Err(refuse(
+            "RATIO_TO_REPORT over an ordered or framed window, which Snowflake rejects",
+        ));
+    }
+    let _rule = site.context.log.rule(WINDOW_AGGREGATE);
+    let total =
+        json!({ "window_function": { "this": { "sum": { "this": value } }, "over": over } });
+    let divisor =
+        json!({ CALL_KIND: { "name": "NULLIFZERO", "args": [total], "distinct": false } });
+    convert_expression(&json!({ "div": { "left": value, "right": divisor } }), site)
 }
 
 /// `lag` or `lead` for a LAG or LEAD call the parser keeps generic, as it does with IGNORE NULLS.
@@ -431,7 +507,12 @@ fn aggregate_window(
         ));
     }
     let clause = aggregate_clause(over, site, &construct)?;
-    convert_aggregate(function, payload, site, Some(&clause))
+    convert_aggregate(
+        function,
+        payload,
+        site,
+        Some((&clause, over.frame.is_some() || over.order.is_empty())),
+    )
 }
 
 /// An aggregate's OVER clause: an explicit literal ROWS frame, or a running one when ordered.
@@ -441,12 +522,20 @@ fn aggregate_clause(
     construct: &Construct,
 ) -> Result<String, Refusal> {
     let frame = match over.frame {
-        Some(frame) => Some(explicit_frame(frame).ok_or_else(|| {
-            outside_conditions(
-                construct.clone(),
-                "only ROWS frames with literal bounds are converted".to_owned(),
-            )
-        })?),
+        Some(frame) => Some(
+            match explicit_frame(frame) {
+                Some(rows) => Some(rows),
+                None => day_range_frame(frame, over, site)?,
+            }
+            .ok_or_else(|| {
+                outside_conditions(
+                    construct.clone(),
+                    "only ROWS frames with literal bounds, and RANGE frames of whole days over \
+                     one ascending DATE key, are converted"
+                        .to_owned(),
+                )
+            })?,
+        ),
         None if !over.order.is_empty() => Some(RUNNING_RANGE.to_owned()),
         None => None,
     };
@@ -501,6 +590,44 @@ fn frame_bound(bound: &Value) -> Option<(String, i128)> {
         }
         _ => None,
     }
+}
+
+/// A RANGE frame whose offsets are literal intervals of whole days, over one ascending DATE key.
+fn day_range_frame(
+    frame: &Value,
+    over: &Over<'_>,
+    site: Site<'_>,
+) -> Result<Option<String>, Refusal> {
+    let range = frame.get("kind").and_then(Value::as_str) == Some(RANGE);
+    if !range || !over.ascending_date || !frame.get("exclude").is_none_or(Value::is_null) {
+        return Ok(None);
+    }
+    let bound = |bound: &Value| -> Result<Option<(String, i128)>, Refusal> {
+        let Some((side, offset)) = node_kind(bound).filter(|_| bound.is_object()) else {
+            return Ok(frame_bound(bound));
+        };
+        let days = match interval_literal(offset, site)? {
+            Some((days, DAY_UNIT)) => i128::from(days),
+            _ => return Ok(None),
+        };
+        Ok(match side {
+            "Preceding" => Some((format!("INTERVAL {days} DAY PRECEDING"), -days)),
+            "Following" => Some((format!("INTERVAL {days} DAY FOLLOWING"), days)),
+            _ => None,
+        })
+    };
+    let Some((start, from)) = frame.get("start").map(bound).transpose()?.flatten() else {
+        return Ok(None);
+    };
+    let (end, to) = match frame.get("end") {
+        Some(Value::Null) | None => ("CURRENT ROW".to_owned(), 0),
+        Some(end) => match bound(end)? {
+            Some(end) => end,
+            None => return Ok(None),
+        },
+    };
+    let inverted = from > to || from == i128::MAX || to == i128::MIN;
+    Ok((!inverted).then(|| format!("RANGE BETWEEN {start} AND {end}")))
 }
 
 fn explicit_frame(frame: &Value) -> Option<String> {
@@ -565,13 +692,20 @@ fn partition_key(
 
 /// One ORDER BY item's key, as it is compared when sorting.
 pub(crate) fn order_key(item: &Value, site: Site<'_>) -> Result<String, Refusal> {
+    Ok(typed_order_key(item, site)?.0)
+}
+
+/// An ORDER BY item's sort key and the type of the key as written.
+fn typed_order_key(item: &Value, site: Site<'_>) -> Result<(String, SnowflakeType), Refusal> {
     let construct = node_construct("ordered");
     let object = payload_object(item, &construct)?;
     let key = convert_expression(field(object, "this", &construct)?, site)?;
-    if key.data_type == SnowflakeType::SemiStructured && !key.is_variant_held() {
-        return Ok(variant_order_key(&key, &construct, site.context)?.sql);
+    let data_type = key.data_type;
+    if data_type == SnowflakeType::SemiStructured && !key.is_variant_held() {
+        let sql = variant_order_key(&key, &construct, site.context)?.sql;
+        return Ok((sql, data_type));
     }
-    Ok(grouping_key(key, &construct)?.sql)
+    Ok((grouping_key(key, &construct)?.sql, data_type))
 }
 
 /// A JSON-held VARIANT's sort key in ARRAY_SORT's recorded order of kinds.
@@ -591,14 +725,20 @@ pub(crate) fn variant_order_key(
 
 /// One ORDER BY item with Snowflake's NULL placement spelled out.
 pub(crate) fn order_item(item: &Value, site: Site<'_>) -> Result<String, Refusal> {
+    Ok(typed_order_item(item, site)?.0)
+}
+
+/// One ORDER BY item, and the type of its key as written.
+fn typed_order_item(item: &Value, site: Site<'_>) -> Result<(String, SnowflakeType), Refusal> {
     let construct = node_construct("ordered");
     let object = payload_object(item, &construct)?;
     require_understood(object, &["this", "desc", "nulls_first"], &construct)?;
-    let key = order_key(item, site)?;
-    Ok(explicit_null_order(
+    let (key, data_type) = typed_order_key(item, site)?;
+    let sql = explicit_null_order(
         &key,
         flag(object, "desc"),
         object.get("nulls_first").and_then(Value::as_bool),
         site.context.log,
-    ))
+    );
+    Ok((sql, data_type))
 }

@@ -7,6 +7,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::floats::main::exponential::exponential;
 use sqlquack_duckdb::floats::main::natural_logarithm::natural_logarithm;
+use sqlquack_duckdb::floats::main::power_of_ten::power_of_ten;
 use sqlquack_duckdb::floats::main::square_root::square_root;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -19,7 +20,8 @@ use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    BITWISE, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, NUMERIC_RANGE, ROUND_FUNCTION, ROUNDING,
+    BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION,
+    NUMERIC_RANGE, POWER_BASE, POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING,
     SIGN_RULE, SQRT_NAME,
 };
 
@@ -84,6 +86,34 @@ pub(crate) fn logarithm(
     Ok(Emitted::new(sql, SnowflakeType::Float))
 }
 
+/// POWER(10, n) of a whole NUMBER exponent, as the FLOAT nearest the power; other bases refuse.
+pub(crate) fn power(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(POWER_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [base, exponent] = arguments else {
+        return Err(refuse("POWER with these arguments".to_owned()));
+    };
+    let base = convert_expression(base, site)?;
+    if base.literal != Some(Literal::Number(POWER_BASE.to_owned())) {
+        return Err(refuse(
+            "POWER of a base other than the constant 10, whose rounding no recording shows"
+                .to_owned(),
+        ));
+    }
+    let exponent = convert_expression(exponent, site)?;
+    match exponent.data_type {
+        SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => Ok(Emitted::new(
+            power_of_ten(&exponent.sql, site.context.log),
+            SnowflakeType::Float,
+        )),
+        other => Err(refuse(format!("POWER(10, n) of a {other} exponent"))),
+    }
+}
+
 /// BITAND, BITOR and BITXOR of integer NUMBERs, as 128-bit two's complement.
 pub(crate) fn bitwise(
     name: &str,
@@ -144,24 +174,40 @@ pub(crate) fn rounding(
 ) -> Result<Emitted, Refusal> {
     let _rule = site.context.log.rule(ROUNDING);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    let (value, places) = match (name, arguments) {
-        (_, [value]) => (value, 0_i32),
+    let places_of = |places: &Value| {
+        literal_places(places)
+            .ok_or_else(|| refuse(format!("{name} to places other than a literal integer")))
+    };
+    let (value, places, half_to_even) = match (name, arguments) {
+        (_, [value]) => (value, 0_i32, false),
         ("TRUNC" | "TRUNCATE", [value, unit]) if text_literal(unit, site)? => {
             return date_trunc(unit, value, construct, site);
         }
-        ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (
-            value,
-            literal_places(places)
-                .ok_or_else(|| refuse(format!("{name} to places other than a literal integer")))?,
-        ),
+        ("ROUND" | "TRUNC" | "TRUNCATE", [value, places]) => (value, places_of(places)?, false),
+        ("ROUND", [value, places, mode]) => {
+            let half_to_even = match convert_expression(mode, site)?.literal {
+                Some(Literal::Text(mode)) if mode == HALF_TO_EVEN => true,
+                Some(Literal::Text(mode)) if mode == HALF_AWAY_FROM_ZERO => false,
+                _ => {
+                    return Err(refuse(
+                        "ROUND with a rounding mode no recording shows".to_owned(),
+                    ));
+                }
+            };
+            (value, places_of(places)?, half_to_even)
+        }
         _ => return Err(refuse(format!("{name} with these arguments"))),
     };
     let operand = convert_expression(value, site)?;
-    let function = match name {
-        "TRUNCATE" => "trunc".to_owned(),
-        _ => name.to_ascii_lowercase(),
+    let function = match (name, half_to_even) {
+        (_, true) => "round_even".to_owned(),
+        ("TRUNCATE", false) => "trunc".to_owned(),
+        (_, false) => name.to_ascii_lowercase(),
     };
     match operand.data_type {
+        SnowflakeType::Float if arguments.len() == ROUND_WITH_MODE_ARGUMENTS => Err(refuse(
+            "ROUND of a FLOAT with a rounding mode, which no recording shows".to_owned(),
+        )),
         SnowflakeType::Float if name == ROUND_FUNCTION && places != 0 => Ok(Emitted::new(
             format!(
                 "(round(CAST({} AS DOUBLE) * CAST(1e{places} AS DOUBLE)) / CAST(1e{places} AS DOUBLE) \

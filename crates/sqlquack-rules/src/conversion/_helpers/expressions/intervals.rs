@@ -82,7 +82,10 @@ pub(crate) fn interval_arithmetic(
 }
 
 /// The amount and canonical unit of `INTERVAL '<n> <unit>'` or `INTERVAL '<n>' <unit>`.
-fn interval_literal(node: &Value, site: Site<'_>) -> Result<Option<(i64, &'static str)>, Refusal> {
+pub(crate) fn interval_literal(
+    node: &Value,
+    site: Site<'_>,
+) -> Result<Option<(i64, &'static str)>, Refusal> {
     let Some(payload) = node_kind(node).and_then(|(_, payload)| payload.as_object()) else {
         return Ok(None);
     };

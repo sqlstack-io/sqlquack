@@ -225,12 +225,22 @@ impl Parser {
         self.expect_token(TokenType::Function)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let parameters = if self.match_token(TokenType::LParen) {
             let mut types: Vec<DataType> = Vec::new();
             if !self.check(TokenType::RParen) {
                 loop {
+                    if self.check(TokenType::Table)
+                        && self.check_next(TokenType::LParen)
+                        && self.tokens.get(self.current + 2).is_some_and(|token| {
+                            matches!(token.token_type, TokenType::RParen | TokenType::String)
+                        })
+                    {
+                        return Err(
+                            self.parse_error("A TABLE argument names at least one data type")
+                        );
+                    }
                     types.push(self.parse_data_type()?);
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -267,6 +277,7 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        self.check_snowflake_object_name()?;
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
@@ -288,7 +299,10 @@ impl Parser {
         let mut with_options: Vec<String> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.match_token(TokenType::Returns) {
+            if let Some(property) = self.parse_snowflake_routine_property()? {
+                with_options.push(property);
+            } else if self.match_token(TokenType::Returns) {
+                self.check_snowflake_table_columns()?;
                 return_type = Some(self.parse_data_type()?);
                 if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
                 } else {
@@ -302,6 +316,10 @@ impl Parser {
                         execute_as = Some("OWNER".to_string());
                     } else if self.match_identifier("SELF") {
                         execute_as = Some("SELF".to_string());
+                    } else if self.match_text_seq(&["RESTRICTED", "CALLER"]) {
+                        execute_as = Some("RESTRICTED CALLER".to_string());
+                    } else if self.is_snowflake() {
+                        return Err(self.parse_error("Expected OWNER, CALLER or RESTRICTED CALLER"));
                     }
                 }
             } else if self.match_token(TokenType::Language) {
@@ -350,6 +368,8 @@ impl Parser {
                     }
                     self.expect_token(TokenType::End)?;
                     body = Some(FunctionBody::Statements(statements));
+                } else if self.check(TokenType::DollarString) {
+                    body = Some(FunctionBody::Expression(self.parse_expression()?));
                 } else {
                     let stmt = self.parse_statement()?;
                     body = Some(FunctionBody::Expression(stmt));
@@ -373,6 +393,7 @@ impl Parser {
             with_options,
             has_parens,
             use_proc_keyword,
+            returns_table: None,
         })))
     }
 
@@ -381,7 +402,7 @@ impl Parser {
         self.expect_token(TokenType::Procedure)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let parameters = if self.match_token(TokenType::LParen) {
             let mut types: Vec<DataType> = Vec::new();
@@ -422,7 +443,11 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = if self.applies_snowflake_context_rules() {
+            self.parse_object_name()?
+        } else {
+            self.parse_table_ref()?
+        };
 
         let mut seq = CreateSequence {
             name,
@@ -614,17 +639,16 @@ impl Parser {
         self.expect_token(TokenType::Sequence)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSequence(Box::new(DropSequence {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 
@@ -944,11 +968,14 @@ impl Parser {
     }
 
     /// Parse CREATE TYPE statement
-    pub(crate) fn parse_create_type(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_create_type(&mut self, or_replace: bool) -> Result<Expression> {
         self.expect_token(TokenType::Type)?;
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        if self.is_snowflake() {
+            return self.parse_snowflake_create_type(or_replace, if_not_exists);
+        }
         let name = self.parse_table_ref()?;
 
         if !self.match_token(TokenType::As) {
@@ -960,6 +987,7 @@ impl Parser {
                     internallength: None,
                 },
                 if_not_exists,
+                or_replace,
             })));
         }
 
@@ -1041,6 +1069,33 @@ impl Parser {
             name,
             definition,
             if_not_exists,
+            or_replace,
+        })))
+    }
+
+    /// Snowflake CREATE TYPE after IF NOT EXISTS: a name, AS, a data type and an optional COMMENT string.
+    fn parse_snowflake_create_type(
+        &mut self,
+        or_replace: bool,
+        if_not_exists: bool,
+    ) -> Result<Expression> {
+        let name = self.parse_object_name()?;
+        self.expect_token(TokenType::As)?;
+        if self.check(TokenType::String) || self.check(TokenType::Semicolon) || self.is_at_end() {
+            return Err(self.parse_error("Expected a data type after AS"));
+        }
+        let data_type = self.parse_data_type()?;
+        let comment = if self.match_token(TokenType::Comment) {
+            self.expect_token(TokenType::Eq)?;
+            Some(self.expect_string()?)
+        } else {
+            None
+        };
+        Ok(Expression::CreateType(Box::new(CreateType {
+            name,
+            definition: TypeDefinition::Alias { data_type, comment },
+            if_not_exists,
+            or_replace,
         })))
     }
 
@@ -1102,6 +1157,7 @@ impl Parser {
                 constraints,
             },
             if_not_exists,
+            or_replace: false,
         })))
     }
 
@@ -1166,10 +1222,60 @@ impl Parser {
     /// Parses Snowflake CREATE [OR REPLACE] TASK [IF NOT EXISTS] name [...] AS statement.
     pub(crate) fn parse_create_task(&mut self, or_replace: bool) -> Result<Expression> {
         self.skip();
+        let graph = self.is_snowflake()
+            && self.check_identifier("GRAPH")
+            && self.peek_nth(1).is_some_and(|next| {
+                next.token_type == TokenType::If
+                    || !matches!(
+                        next.token_type,
+                        TokenType::As | TokenType::Dot | TokenType::Eq
+                    ) && self
+                        .peek_nth(2)
+                        .is_some_and(|after| after.token_type != TokenType::Eq)
+            });
+        if graph {
+            self.skip();
+            return self.parse_snowflake_create_task_graph(or_replace);
+        }
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
 
+        if self.is_snowflake() {
+            let start = self.current;
+            let target = self.parse_object_name();
+            if let (Ok(target), true) = (target, self.check_identifier("CLONE")) {
+                let name = [target.catalog, target.schema, Some(target.name)]
+                    .into_iter()
+                    .flatten()
+                    .map(|part| match part.quoted {
+                        true => format!("\"{}\"", part.name.replace('"', "\"\"")),
+                        false => part.name,
+                    })
+                    .collect::<Vec<_>>()
+                    .join(".");
+                self.skip();
+                let clone_source = self.parse_object_name()?;
+                return Ok(Expression::CreateTask(Box::new(
+                    crate::expressions::statements::models::CreateTask {
+                        or_replace,
+                        if_not_exists,
+                        name,
+                        properties: String::new(),
+                        body: None,
+                        clone_source: Some(clone_source),
+                        graph: false,
+                    },
+                )));
+            }
+            self.current = start;
+        }
+
+        if self.is_snowflake() {
+            let start = self.current;
+            self.skip_snowflake_name()?;
+            self.current = start;
+        }
         let mut name = String::new();
         if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
             name.push_str(&self.advance_text()?);
@@ -1183,6 +1289,9 @@ impl Parser {
         }
 
         let props_start = self.current;
+        if self.is_snowflake() {
+            self.check_snowflake_task_properties(false)?;
+        }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::As) {
             self.skip();
         }
@@ -1200,7 +1309,9 @@ impl Parser {
                 if_not_exists,
                 name,
                 properties,
-                body,
+                body: Some(body),
+                clone_source: None,
+                graph: false,
             },
         )))
     }
@@ -1235,7 +1346,7 @@ impl Parser {
         self.expect_token(TokenType::Type)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let cascade = self.match_token(TokenType::Cascade);
         if !cascade {
@@ -1303,7 +1414,9 @@ impl Parser {
             None
         };
 
-        if self.match_token(TokenType::Rename) {
+        if let Some(action) = self.parse_data_metric_function_action()? {
+            actions.push(AlterViewAction::DataMetricFunction(action));
+        } else if self.match_token(TokenType::Rename) {
             self.expect_token(TokenType::To)?;
             actions.push(AlterViewAction::Rename(Box::new(self.parse_table_ref()?)));
         } else if self.match_identifier("OWNER") {

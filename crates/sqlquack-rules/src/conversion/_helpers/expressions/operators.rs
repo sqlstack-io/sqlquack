@@ -335,7 +335,7 @@ fn exact_arithmetic(
             precision: right_precision,
             scale: right_scale,
         },
-        SnowflakeType::Number { scale, .. },
+        SnowflakeType::Number { .. },
     ) = (left.data_type, right.data_type, result)
     else {
         return Err("exact arithmetic needs NUMBER operands".to_owned());
@@ -344,7 +344,7 @@ fn exact_arithmetic(
         let (sql, guarded) = exact_decimal_divide(
             (&left.sql, left_precision, left_scale),
             (&right.sql, right_precision, right_scale),
-            result,
+            (result, false),
             log,
         )?;
         if guarded {
@@ -367,12 +367,9 @@ fn exact_arithmetic(
     let intermediate = u32::from(left_precision - left_scale)
         + u32::from(right_precision - right_scale)
         + u32::from(product_scale);
-    if operator == Arithmetic::Multiply
-        && scale < product_scale
-        && intermediate > u32::from(MAX_PRECISION)
-    {
+    if operator == Arithmetic::Multiply && product_scale > MAX_PRECISION {
         return Err(format!(
-            "the exact product needs {intermediate} digits before Snowflake cuts its scale"
+            "the exact product has {product_scale} decimal places, more than DuckDB holds"
         ));
     }
     if operator == Arithmetic::Multiply && intermediate > u32::from(MAX_PRECISION) {

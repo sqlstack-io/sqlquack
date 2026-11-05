@@ -60,6 +60,9 @@ impl Parser {
         name: &str,
         quoted: bool,
     ) -> Result<Expression> {
+        if self.is_snowflake() && !quoted && name.eq_ignore_ascii_case("IN") {
+            return Err(self.parse_error("IN is an operator, not a function"));
+        }
         let is_known_agg = self.is_aggregate_function(name);
 
         let (mut args, distinct) = if self.check(TokenType::RParen) {
@@ -434,6 +437,9 @@ impl Parser {
     }
 
     pub(crate) fn parse_method_arguments_for(&mut self, method: &str) -> Result<Vec<Expression>> {
+        if let Some(query) = self.parse_snowflake_query_argument()? {
+            return Ok(vec![query]);
+        }
         self.parse_function_arguments_in_context(Some(method), true)
     }
 
@@ -505,8 +511,8 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
-            while self.check(TokenType::Comma) {
-                self.skip();
+            if self.check(TokenType::Comma) {
+                return Err(self.parse_error("Expected a function argument between commas"));
             }
         }
 
@@ -903,6 +909,11 @@ impl Parser {
             } else if self.match_token(TokenType::Dot) {
                 expr = self.parse_subscript_dot_access(expr)?;
             } else if self.match_token(TokenType::Collate) {
+                if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                    && !self.check(TokenType::String)
+                {
+                    return Err(self.parse_error("Expected a collation specification string"));
+                }
                 let (collation, quoted, double_quoted) = if self.check(TokenType::String) {
                     (self.advance_text()?, true, false)
                 } else if self.check(TokenType::QuotedIdentifier) {
@@ -999,7 +1010,8 @@ impl Parser {
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
                     | Some(crate::tokens::models::DialectType::SQLite)
-            ) && self.match_token(TokenType::DArrow)
+            ) && !self.applies_snowflake_context_rules()
+                && self.match_token(TokenType::DArrow)
             {
                 let path = self.parse_json_path_operand()?;
                 expr = Expression::JsonExtractScalar(Box::new(JsonExtractFunc {
@@ -1106,6 +1118,11 @@ impl Parser {
     }
 
     fn parse_subscript_index_or_slice(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::RBracket)
+        {
+            return Err(self.parse_error("Expected an index in the brackets"));
+        }
         if self.check(TokenType::Colon) {
             self.skip();
             let end = self.parse_slice_element()?;
@@ -1158,6 +1175,11 @@ impl Parser {
     }
 
     fn parse_subscript_dot_access(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && matches!(&expr, Expression::Literal(_))
+        {
+            return Err(self.parse_error("A literal has no fields to read with a dot"));
+        }
         if self.match_token(TokenType::Star) {
             let mut table_name = match &expr {
                 Expression::Column(col) => {
@@ -1433,6 +1455,8 @@ impl Parser {
     pub(crate) fn parse_window_frame_bound(
         &mut self,
     ) -> Result<(WindowFrameBound, Option<String>)> {
+        let snowflake: bool =
+            self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake);
         if self.match_token(TokenType::Current) {
             self.expect_token(TokenType::Row)?;
             Ok((WindowFrameBound::CurrentRow, None))
@@ -1448,7 +1472,11 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Preceding) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BarePreceding, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
@@ -1456,20 +1484,34 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Following) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before FOLLOWING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BareFollowing, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
                 Ok((WindowFrameBound::Following(Box::new(expr)), Some(text)))
             }
         } else {
+            if snowflake && self.check(TokenType::String) {
+                return Err(self.parse_error("Snowflake frame bounds take a number, not a string"));
+            }
             let expr = self.parse_addition()?;
+            if self.applies_snowflake_context_rules()
+                && matches!(&expr, Expression::Literal(literal) if matches!(**literal, Literal::String(_)))
+            {
+                return Err(self.parse_error("A Snowflake frame bound value is not a string"));
+            }
             if self.match_token(TokenType::Preceding) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Preceding(Box::new(expr)), Some(text)))
             } else if self.match_token(TokenType::Following) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Following(Box::new(expr)), Some(text)))
+            } else if snowflake {
+                Err(self.parse_error("Expected PRECEDING or FOLLOWING after a frame bound value"))
             } else {
                 Ok((WindowFrameBound::Value(Box::new(expr)), None))
             }
@@ -1558,6 +1600,7 @@ impl Parser {
             return Ok(None);
         }
 
+        self.refuse_snowflake_interval_name(value.as_ref())?;
         let unit = self.try_parse_interval_unit()?;
 
         let is_generic = self.config.dialect.is_none()
@@ -1719,6 +1762,9 @@ impl Parser {
 
     /// Try to parse interval unit - returns None if no unit present
     pub(crate) fn try_parse_interval_unit(&mut self) -> Result<Option<IntervalUnitSpec>> {
+        if let Some(qualifier) = self.try_parse_snowflake_interval_qualifier()? {
+            return Ok(Some(qualifier));
+        }
         if self.is_function_start() {
             let start = self.parse_primary()?;
             if self.check_keyword_text("TO") {

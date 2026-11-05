@@ -345,6 +345,15 @@ impl Parser {
 
         loop {
             let (side, kind) = self.parse_set_operation_side_kind();
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) && (side.is_some() || kind.is_some())
+            {
+                return Err(self.parse_error(
+                    "Snowflake set operations take no LEFT, RIGHT, FULL, INNER or OUTER",
+                ));
+            }
 
             let set_op_leading_comments = if self.check_set_operation_start(TokenType::Union)
                 || self.check_set_operation_start(TokenType::Intersect)
@@ -380,7 +389,7 @@ impl Parser {
                     strict,
                     corresponding,
                     on_columns,
-                } = self.parse_set_operation_corresponding()?;
+                } = self.parse_set_operation_corresponding(true)?;
 
                 let kind = if corresponding && !strict && side.is_none() && kind.is_none() {
                     Some("INNER".to_string())
@@ -426,7 +435,7 @@ impl Parser {
                     strict,
                     corresponding,
                     on_columns,
-                } = self.parse_set_operation_corresponding()?;
+                } = self.parse_set_operation_corresponding(false)?;
 
                 let kind = if corresponding && !strict && side.is_none() && kind.is_none() {
                     Some("INNER".to_string())
@@ -475,7 +484,7 @@ impl Parser {
                     strict,
                     corresponding,
                     on_columns,
-                } = self.parse_set_operation_corresponding()?;
+                } = self.parse_set_operation_corresponding(false)?;
 
                 let kind = if corresponding && !strict && side.is_none() && kind.is_none() {
                     Some("INNER".to_string())
@@ -639,14 +648,32 @@ impl Parser {
     /// Parses [STRICT] CORRESPONDING or BY NAME after ALL/DISTINCT.
     pub(crate) fn parse_set_operation_corresponding(
         &mut self,
+        union: bool,
     ) -> Result<SetOperationCorresponding> {
         let mut by_name = false;
         let mut strict = false;
         let mut corresponding = false;
         let mut on_columns: Vec<Expression> = Vec::new();
 
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::By)
+            && !self
+                .peek_nth(1)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("NAME"))
+        {
+            return Err(self.parse_error("Expected NAME after BY"));
+        }
         if self.match_token(TokenType::By) && self.match_identifier("NAME") {
             by_name = true;
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) && (!union || self.check(TokenType::On))
+            {
+                return Err(self.parse_error(
+                    "Snowflake allows BY NAME only after UNION, without an ON column list",
+                ));
+            }
         } else if self.match_identifier("STRICT") {
             if self.match_identifier("CORRESPONDING") {
                 strict = true;
@@ -1331,6 +1358,8 @@ impl Parser {
                 comments: Vec::new(),
                 nesting_group: 0,
                 directed: false,
+                first_last: None,
+                first_last_alias: None,
                 span: SourceSpan::default(),
             });
         }

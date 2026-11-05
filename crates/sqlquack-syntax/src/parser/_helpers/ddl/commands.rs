@@ -33,6 +33,7 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::SetItem;
 use crate::expressions::statements::models::SetStatement;
+use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::tables::models::CollateProperty;
 use crate::expressions::tables::models::Property;
 use crate::expressions::tree::models::Expression;
@@ -50,6 +51,7 @@ use crate::tokens::types::Result;
 impl Parser {
     /// Parses Snowflake RM/REMOVE @stage.
     pub(crate) fn parse_rm_command(&mut self) -> Result<Expression> {
+        self.check_snowflake_stage_command(false)?;
         let command_token = self.advance()?;
         let command_name = command_token.text.to_ascii_uppercase();
 
@@ -66,6 +68,7 @@ impl Parser {
 
     /// Parses Snowflake GET @stage 'file:///path'.
     pub(crate) fn parse_get_command(&mut self) -> Result<Expression> {
+        self.check_snowflake_stage_command(true)?;
         let get_token = self.advance()?;
 
         let mut tokens = vec![("GET".to_string(), get_token.token_type)];
@@ -87,6 +90,12 @@ impl Parser {
     /// Parses CALL procedure(args, ...).
     pub(crate) fn parse_call(&mut self) -> Result<Expression> {
         let call_token = self.advance()?;
+        if let Some(call) = self.parse_snowflake_method_call()? {
+            return Ok(call);
+        }
+        if self.applies_snowflake_context_rules() {
+            return self.parse_call_target(None);
+        }
 
         let mut tokens = vec![("CALL".to_string(), call_token.token_type)];
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -156,6 +165,22 @@ impl Parser {
     /// Parses TSQL EXEC/EXECUTE [schema.]procedure [@param = value, ...].
     pub(crate) fn parse_execute(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Execute)?;
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            if let Some(statement) = self.parse_snowflake_execute_object()? {
+                return Ok(statement);
+            }
+            if self.applies_snowflake_context_rules()
+                && self.match_text_seq(&["USING", "POLICY_CONTEXT"])
+            {
+                return self.parse_execute_using_policy_context();
+            }
+            if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
+                return Err(self.parse_error("Expected an object kind and name after EXECUTE"));
+            }
+        }
 
         let return_status = { None };
 
@@ -264,6 +289,9 @@ impl Parser {
     pub(crate) fn parse_grant(&mut self) -> Result<Expression> {
         let statement_start = self.current;
         self.expect_token(TokenType::Grant)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_grant(false);
+        }
 
         let saved_pos = self.current;
         let mut depth = 0i32;
@@ -340,6 +368,7 @@ impl Parser {
             principals,
             grant_option,
             as_principal,
+            current_grants: None,
         })))
     }
 
@@ -347,6 +376,9 @@ impl Parser {
     pub(crate) fn parse_revoke(&mut self) -> Result<Expression> {
         let statement_start = self.current;
         self.expect_token(TokenType::Revoke)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_grant(true);
+        }
 
         let saved_pos = self.current;
         let mut depth = 0i32;
@@ -569,6 +601,7 @@ impl Parser {
                 is_role,
                 is_group,
                 is_share,
+                kind: None,
             });
             if !self.match_token(TokenType::Comma) {
                 break;
@@ -666,6 +699,7 @@ impl Parser {
 
             Expression::Identifier(Identifier::new(name_str))
         } else {
+            self.check_snowflake_comment_name()?;
             self.parse_qualified_name()?
         };
 
@@ -673,6 +707,13 @@ impl Parser {
             self.skip();
         } else {
             return Err(self.parse_error("Expected IS in COMMENT ON statement"));
+        }
+        if self.is_snowflake()
+            && !self.check(TokenType::String)
+            && !self.check(TokenType::DollarString)
+            && !self.check(TokenType::NationalString)
+        {
+            return Err(self.parse_error("Expected a string after IS"));
         }
 
         let expression = self.parse_primary()?;
@@ -683,6 +724,23 @@ impl Parser {
             expression,
             exists,
             materialized,
+        })))
+    }
+
+    /// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`.
+    pub(crate) fn parse_unset(&mut self) -> Result<Expression> {
+        self.skip();
+        let parenthesized = self.match_token(TokenType::LParen);
+        let mut names = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        while parenthesized && self.match_token(TokenType::Comma) {
+            names.push(self.expect_identifier_or_keyword_with_quoted()?);
+        }
+        if parenthesized {
+            self.expect_token(TokenType::RParen)?;
+        }
+        Ok(Expression::UnsetStatement(Box::new(UnsetStatement {
+            names,
+            parenthesized,
         })))
     }
 
@@ -1062,11 +1120,11 @@ impl Parser {
 
     /// Parse a qualified name (schema.table.column or just table)
     pub(crate) fn parse_qualified_name(&mut self) -> Result<Expression> {
-        let first = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+        let first = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
         let mut parts = vec![first];
 
         while self.match_token(TokenType::Dot) {
-            let next = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+            let next = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
             parts.push(next);
         }
 
@@ -1092,7 +1150,10 @@ impl Parser {
                 .map(|(start, end)| start.through(end));
             let table_name = parts
                 .iter()
-                .map(|id| id.name.as_str())
+                .map(|id| match id.quoted {
+                    true => format!("\"{}\"", id.name.replace('"', "\"\"")),
+                    false => id.name.clone(),
+                })
                 .collect::<Vec<_>>()
                 .join(".");
             let mut table = Identifier::new(table_name);
@@ -1112,6 +1173,7 @@ impl Parser {
     pub(crate) fn parse_create_schema(
         &mut self,
         leading_comments: Vec<String>,
+        or_replace: bool,
     ) -> Result<Expression> {
         self.expect_token(TokenType::Schema)?;
 
@@ -1125,49 +1187,10 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
-            let keyword = self.previous_text().to_ascii_uppercase();
-            self.expect_token(TokenType::LParen)?;
-            let mut result = format!("{} (", keyword);
-            let mut prev_token_type: Option<TokenType> = None;
-            let mut paren_depth = 1;
-            while !self.is_at_end() && paren_depth > 0 {
-                let token = self.advance()?;
-                if token.token_type == TokenType::LParen {
-                    paren_depth += 1;
-                } else if token.token_type == TokenType::RParen {
-                    paren_depth -= 1;
-                    if paren_depth == 0 {
-                        break;
-                    }
-                }
-                let needs_space = !result.ends_with('(')
-                    && prev_token_type != Some(TokenType::Arrow)
-                    && prev_token_type != Some(TokenType::Dash)
-                    && prev_token_type != Some(TokenType::LParen)
-                    && token.token_type != TokenType::LParen;
-                if needs_space
-                    && token.token_type != TokenType::RParen
-                    && token.token_type != TokenType::Comma
-                {
-                    result.push(' ');
-                }
-                if token.token_type == TokenType::String {
-                    result.push('\'');
-                    result.push_str(&token.text.replace('\'', "''"));
-                    result.push('\'');
-                } else {
-                    result.push_str(&token.text);
-                }
-                if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
-                    result.push(' ');
-                }
-                prev_token_type = Some(token.token_type);
-            }
-            result.push(')');
-            Some(Expression::Raw(Raw { sql: result }))
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
         } else {
-            None
+            self.parse_raw_at_clause()?
         };
 
         let authorization = if self.match_token(TokenType::Authorization) {
@@ -1176,7 +1199,7 @@ impl Parser {
             None
         };
 
-        let mut properties: Vec<Expression> = Vec::new();
+        let mut properties = self.parse_clone_container_properties(clone_from.is_some())?;
 
         if self.match_token(TokenType::With) {
             self.expect_token(TokenType::LParen)?;
@@ -1213,6 +1236,7 @@ impl Parser {
 
         Ok(Expression::CreateSchema(Box::new(CreateSchema {
             name,
+            or_replace,
             if_not_exists,
             authorization,
             clone_from,
@@ -1230,24 +1254,27 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSchema(Box::new(DropSchema {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 
     /// Parse CREATE DATABASE statement
-    pub(crate) fn parse_create_database(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_create_database(&mut self, or_replace: bool) -> Result<Expression> {
         self.expect_token(TokenType::Database)?;
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+        let name = if self.is_snowflake() {
+            self.parse_quoting_identifier(Self::expect_identifier)?
+        } else {
+            self.parse_unquoted_identifier(Self::expect_identifier)?
+        };
 
         let clone_from = if self.match_identifier("CLONE") {
             Some(self.expect_identifier_or_safe_keyword_with_quoted()?)
@@ -1255,53 +1282,15 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
-            let keyword = self.previous_text().to_ascii_uppercase();
-            self.expect_token(TokenType::LParen)?;
-            let mut result = format!("{} (", keyword);
-            let mut prev_token_type: Option<TokenType> = None;
-            let mut paren_depth = 1;
-            while !self.is_at_end() && paren_depth > 0 {
-                let token = self.advance()?;
-                if token.token_type == TokenType::LParen {
-                    paren_depth += 1;
-                } else if token.token_type == TokenType::RParen {
-                    paren_depth -= 1;
-                    if paren_depth == 0 {
-                        break;
-                    }
-                }
-                let needs_space = !result.ends_with('(')
-                    && prev_token_type != Some(TokenType::Arrow)
-                    && prev_token_type != Some(TokenType::Dash)
-                    && prev_token_type != Some(TokenType::LParen)
-                    && token.token_type != TokenType::LParen;
-                if needs_space
-                    && token.token_type != TokenType::RParen
-                    && token.token_type != TokenType::Comma
-                {
-                    result.push(' ');
-                }
-                if token.token_type == TokenType::String {
-                    result.push('\'');
-                    result.push_str(&token.text.replace('\'', "''"));
-                    result.push('\'');
-                } else {
-                    result.push_str(&token.text);
-                }
-                if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
-                    result.push(' ');
-                }
-                prev_token_type = Some(token.token_type);
-            }
-            result.push(')');
-            Some(Expression::Raw(Raw { sql: result }))
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
         } else {
-            None
+            self.parse_raw_at_clause()?
         };
 
         let _on_cluster = self.parse_on_cluster_clause()?;
 
+        let properties = self.parse_clone_container_properties(clone_from.is_some())?;
         let mut options: Vec<DatabaseOption> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1359,11 +1348,60 @@ impl Parser {
 
         Ok(Expression::CreateDatabase(Box::new(CreateDatabase {
             name,
+            or_replace,
             if_not_exists,
             options,
             clone_from,
             at_clause,
+            properties,
         })))
+    }
+
+    /// A schema or database clone's `AT | BEFORE ( ... )` kept as written, outside Snowflake.
+    fn parse_raw_at_clause(&mut self) -> Result<Option<Expression>> {
+        if !(self.match_identifier("AT") || self.match_token(TokenType::Before)) {
+            return Ok(None);
+        }
+        let keyword = self.previous_text().to_ascii_uppercase();
+        self.expect_token(TokenType::LParen)?;
+        let mut result = format!("{} (", keyword);
+        let mut prev_token_type: Option<TokenType> = None;
+        let mut paren_depth = 1;
+        while !self.is_at_end() && paren_depth > 0 {
+            let token = self.advance()?;
+            if token.token_type == TokenType::LParen {
+                paren_depth += 1;
+            } else if token.token_type == TokenType::RParen {
+                paren_depth -= 1;
+                if paren_depth == 0 {
+                    break;
+                }
+            }
+            let needs_space = !result.ends_with('(')
+                && prev_token_type != Some(TokenType::Arrow)
+                && prev_token_type != Some(TokenType::Dash)
+                && prev_token_type != Some(TokenType::LParen)
+                && token.token_type != TokenType::LParen;
+            if needs_space
+                && token.token_type != TokenType::RParen
+                && token.token_type != TokenType::Comma
+            {
+                result.push(' ');
+            }
+            if token.token_type == TokenType::String {
+                result.push('\'');
+                result.push_str(&token.text.replace('\'', "''"));
+                result.push('\'');
+            } else {
+                result.push_str(&token.text);
+            }
+            if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
+                result.push(' ');
+            }
+            prev_token_type = Some(token.token_type);
+        }
+        result.push(')');
+        Ok(Some(Expression::Raw(Raw { sql: result })))
     }
 
     /// Parse DROP DATABASE statement
@@ -1375,11 +1413,15 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let sync = { false };
+        let cascade = self.match_token(TokenType::Cascade);
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropDatabase(Box::new(DropDatabase {
             name,
             if_exists,
             sync,
+            cascade,
+            restrict,
         })))
     }
 
@@ -1395,7 +1437,10 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = match self.is_snowflake() {
+            true => self.parse_object_name()?,
+            false => self.parse_table_ref()?,
+        };
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
@@ -1448,6 +1493,7 @@ impl Parser {
             runtime_version: None,
             packages: None,
             parameter_style: None,
+            snowflake_properties: Vec::new(),
         };
         function = self.parse_create_function_properties(function)?;
 
@@ -1469,7 +1515,7 @@ impl Parser {
                 && self.current + 1 < self.tokens.len()
                 && self.tokens[self.current + 1].token_type == TokenType::Null
             {
-                function = self.parse_create_function_returns_null_on_null(function);
+                function = self.parse_create_function_returns_null_on_null(function)?;
             } else if self.match_token(TokenType::Returns) {
                 function.return_type = Some(self.parse_data_type()?);
             } else if self.match_token(TokenType::Language) {
@@ -1489,7 +1535,7 @@ impl Parser {
                 function.strict = true;
                 function = record_function_property(function, FunctionPropertyKind::NullInput);
             } else if self.match_identifier("CALLED") {
-                function = self.parse_create_function_called_on_null(function);
+                function = self.parse_create_function_called_on_null(function)?;
             } else if self.match_identifier("SECURITY") {
                 function = self.parse_create_function_security(function);
             } else if self.match_identifier("CONTAINS") {
@@ -1555,6 +1601,8 @@ impl Parser {
                 let stmt = self.parse_statement()?;
                 function.body = Some(FunctionBody::Expression(stmt));
                 function = record_function_property(function, FunctionPropertyKind::As);
+            } else if let Some(property) = self.parse_snowflake_routine_property()? {
+                function.snowflake_properties.push(property);
             } else {
                 break;
             }
@@ -1565,27 +1613,37 @@ impl Parser {
     fn parse_create_function_returns_null_on_null(
         &mut self,
         mut function: CreateFunction,
-    ) -> CreateFunction {
+    ) -> Result<CreateFunction> {
         self.skip();
         self.skip();
-        self.match_token(TokenType::On);
-        self.match_token(TokenType::Null);
-        self.match_token(TokenType::Input);
+        self.expect_on_null_input()?;
         function.returns_null_on_null_input = Some(true);
-        function = record_function_property(function, FunctionPropertyKind::NullInput);
-        function
+        Ok(record_function_property(
+            function,
+            FunctionPropertyKind::NullInput,
+        ))
     }
 
     fn parse_create_function_called_on_null(
         &mut self,
         mut function: CreateFunction,
-    ) -> CreateFunction {
-        self.match_token(TokenType::On);
-        self.match_token(TokenType::Null);
-        self.match_token(TokenType::Input);
+    ) -> Result<CreateFunction> {
+        self.expect_on_null_input()?;
         function.returns_null_on_null_input = Some(false);
-        function = record_function_property(function, FunctionPropertyKind::NullInput);
-        function
+        Ok(record_function_property(
+            function,
+            FunctionPropertyKind::NullInput,
+        ))
+    }
+
+    /// `ON NULL INPUT`, all three words in a Snowflake parse and any of them elsewhere.
+    fn expect_on_null_input(&mut self) -> Result<()> {
+        let words =
+            [TokenType::On, TokenType::Null, TokenType::Input].map(|word| self.match_token(word));
+        if self.is_snowflake() && words.contains(&false) {
+            return Err(self.parse_error("Expected ON NULL INPUT"));
+        }
+        Ok(())
     }
 
     fn parse_create_function_security(&mut self, mut function: CreateFunction) -> CreateFunction {
@@ -1634,6 +1692,12 @@ impl Parser {
         mut function: CreateFunction,
     ) -> Result<CreateFunction> {
         function = record_function_property(function, FunctionPropertyKind::As);
+        if self.is_snowflake()
+            && !self.check(TokenType::String)
+            && !self.check(TokenType::DollarString)
+        {
+            return Err(self.parse_error("Expected the function body as a string"));
+        }
         if self.match_identifier("RETURN") {
             let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                 self.parse_statement()?
@@ -1729,6 +1793,8 @@ impl Parser {
         if self.check(TokenType::String) {
             let tok = self.advance()?;
             function.handler = Some(tok.text.to_string());
+        } else if self.is_snowflake() {
+            return Err(self.parse_error("Expected the handler as a string"));
         }
         function = record_function_property(function, FunctionPropertyKind::Handler);
         Ok(function)

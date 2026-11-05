@@ -507,7 +507,12 @@ impl Parser {
 
                     loop {
                         self.expect_token(TokenType::LParen)?;
-                        let row = if self.check(TokenType::RParen) {
+                        let row = if self.check(TokenType::RParen)
+                            && self.config.dialect
+                                == Some(crate::tokens::models::DialectType::Snowflake)
+                        {
+                            return Err(self.parse_error("Expected a value in the VALUES row"));
+                        } else if self.check(TokenType::RParen) {
                             Vec::new()
                         } else {
                             self.parse_values_expression_list()?
@@ -524,6 +529,23 @@ impl Parser {
                 } else if self.check(TokenType::Table) {
                     (Vec::new(), None)
                 } else {
+                    if self.is_snowflake() && self.check(TokenType::LParen) {
+                        let mut offset = 1;
+                        while self
+                            .peek_nth(offset)
+                            .is_some_and(|token| token.token_type == TokenType::LParen)
+                        {
+                            offset += 1;
+                        }
+                        if !self.peek_nth(offset).is_some_and(|token| {
+                            matches!(
+                                token.token_type,
+                                TokenType::Select | TokenType::With | TokenType::Values
+                            )
+                        }) {
+                            return Err(self.parse_error("Expected a query in parentheses"));
+                        }
+                    }
                     (Vec::new(), Some(self.parse_statement()?))
                 }
             }

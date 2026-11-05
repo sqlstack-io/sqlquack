@@ -14,6 +14,7 @@ use crate::expressions::tables::models::RefreshTriggerProperty;
 use crate::expressions::tables::models::UniqueKeyProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::expressions::types::models::StructField;
 
 /// View column definition with optional COMMENT and OPTIONS (BigQuery)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -214,6 +215,7 @@ pub struct AlterView {
 pub enum AlterViewAction {
     /// Rename the view
     Rename(Box<TableRef>),
+    DataMetricFunction(crate::expressions::columns::models::DataMetricFunctionAction),
     /// Change owner
     OwnerTo(Identifier),
     /// Set schema
@@ -281,6 +283,9 @@ impl AlterIndex {
 pub struct CreateSchema {
     /// Schema name parts, possibly dot-qualified (e.g. [mydb, hr] for "mydb.hr")
     pub name: Vec<Identifier>,
+    /// OR REPLACE (Snowflake)
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
     pub if_not_exists: bool,
     pub authorization: Option<Identifier>,
     /// CLONE source parts, possibly dot-qualified
@@ -301,6 +306,7 @@ impl CreateSchema {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: vec![Identifier::new(name)],
+            or_replace: false,
             if_not_exists: false,
             authorization: None,
             clone_from: None,
@@ -317,6 +323,9 @@ pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSchema {
@@ -325,6 +334,7 @@ impl DropSchema {
             name: Identifier::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -351,6 +361,9 @@ impl DropNamespace {
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateDatabase {
     pub name: Identifier,
+    /// OR REPLACE (Snowflake)
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
     pub if_not_exists: bool,
     pub options: Vec<DatabaseOption>,
     /// Snowflake CLONE source
@@ -359,6 +372,9 @@ pub struct CreateDatabase {
     /// AT/BEFORE clause for time travel (Snowflake)
     #[serde(default)]
     pub at_clause: Option<Expression>,
+    /// Snowflake clone options, e.g. IGNORE HYBRID TABLES
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<Expression>,
 }
 
 /// Database option
@@ -376,10 +392,12 @@ impl CreateDatabase {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: Identifier::new(name),
+            or_replace: false,
             if_not_exists: false,
             options: Vec::new(),
             clone_from: None,
             at_clause: None,
+            properties: Vec::new(),
         }
     }
 }
@@ -392,6 +410,12 @@ pub struct DropDatabase {
     /// ClickHouse: SYNC modifier
     #[serde(default)]
     pub sync: bool,
+    /// Snowflake CASCADE, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub cascade: bool,
+    /// Snowflake RESTRICT, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropDatabase {
@@ -400,6 +424,8 @@ impl DropDatabase {
             name: Identifier::new(name),
             if_exists: false,
             sync: false,
+            cascade: false,
+            restrict: false,
         }
     }
 }
@@ -469,6 +495,9 @@ pub struct CreateFunction {
     /// PARAMETER STYLE clause (e.g., PANDAS for Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_style: Option<String>,
+    /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, each kept as its source text
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub snowflake_properties: Vec<String>,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -633,6 +662,7 @@ impl CreateFunction {
             runtime_version: None,
             packages: None,
             parameter_style: None,
+            snowflake_properties: Vec::new(),
         }
     }
 }
@@ -685,6 +715,9 @@ pub struct CreateProcedure {
     /// Whether the short form PROC was used (instead of PROCEDURE)
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub use_proc_keyword: bool,
+    /// Snowflake `RETURNS TABLE (...)` columns, possibly none; `return_type` is then absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns_table: Option<Vec<StructField>>,
 }
 
 impl CreateProcedure {
@@ -703,6 +736,7 @@ impl CreateProcedure {
             with_options: Vec::new(),
             has_parens: true,
             use_proc_keyword: false,
+            returns_table: None,
         }
     }
 }
@@ -859,6 +893,9 @@ pub struct DropSequence {
     pub name: TableRef,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSequence {
@@ -867,6 +904,7 @@ impl DropSequence {
             name: TableRef::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -1026,6 +1064,9 @@ pub struct CreateType {
     pub name: TableRef,
     pub definition: TypeDefinition,
     pub if_not_exists: bool,
+    /// OR REPLACE clause
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
 }
 
 /// Type definition
@@ -1046,6 +1087,11 @@ pub enum TypeDefinition {
         input: String,
         output: String,
         internallength: Option<i32>,
+    },
+    /// Snowflake user-defined type: CREATE TYPE name AS data_type [COMMENT = 'text']
+    Alias {
+        data_type: DataType,
+        comment: Option<String>,
     },
     /// Domain type
     Domain {
@@ -1076,6 +1122,7 @@ impl CreateType {
             name: TableRef::new(name),
             definition: TypeDefinition::Enum(values),
             if_not_exists: false,
+            or_replace: false,
         }
     }
 
@@ -1084,6 +1131,7 @@ impl CreateType {
             name: TableRef::new(name),
             definition: TypeDefinition::Composite(attributes),
             if_not_exists: false,
+            or_replace: false,
         }
     }
 }
@@ -1104,4 +1152,92 @@ impl DropType {
             cascade: false,
         }
     }
+}
+
+/// Snowflake ALTER of an object kind with no statement of its own, e.g. `ALTER TASK t1 RESUME`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AlterObject {
+    /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
+    pub kind: String,
+    /// The object name
+    pub name: TableRef,
+    /// The argument types that identify a function or procedure; a TABLE( ... ) argument is a tuple
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub arguments: Vec<Expression>,
+    /// IF EXISTS clause
+    #[serde(default)]
+    pub if_exists: bool,
+    /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"
+    pub action: String,
+    /// The action's operands in order: names, values, a condition or a statement
+    #[serde(default)]
+    pub operands: Vec<Expression>,
+    /// The properties the action sets or unsets; an unset property has no value
+    #[serde(default)]
+    pub properties: Vec<ObjectProperty>,
+}
+
+/// Snowflake CREATE of an object from another source, e.g. `CREATE DATABASE d1 FROM SHARE a1.s1`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CreateObject {
+    /// The object kind, e.g. "DATABASE", "SCHEMA", "TABLE", "DYNAMIC TABLE"
+    pub kind: String,
+    /// A modifier before the kind, e.g. "TRANSIENT"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modifier: Option<String>,
+    /// OR REPLACE clause
+    #[serde(default)]
+    pub or_replace: bool,
+    /// OR ALTER clause, also set by a Snowflake DCM `DEFINE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    /// IF NOT EXISTS clause
+    #[serde(default)]
+    pub if_not_exists: bool,
+    /// The object name
+    pub name: TableRef,
+    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"; empty without one
+    pub source: String,
+    /// The source's operands in order: names, an identifier string or a condition
+    #[serde(default)]
+    pub operands: Vec<Expression>,
+    /// The properties set after the source
+    #[serde(default)]
+    pub properties: Vec<ObjectProperty>,
+}
+
+/// One property of a Snowflake ALTER action, e.g. `SCHEDULE = '1 MINUTE'` or `TAG t1 = 'v'`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ObjectProperty {
+    /// The property's keywords, e.g. "SCHEDULE", "CONTACT", "TAG", "EXECUTE AS USER"
+    pub kind: String,
+    /// The name it qualifies: the tag name, the contact purpose or a TASK_DEFAULTS property
+    #[serde(default)]
+    pub name: Option<Identifier>,
+    /// The value, absent for an unset property
+    #[serde(default)]
+    pub value: Option<Expression>,
+}
+
+/// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteObject {
+    /// The object kind as written in upper case, such as `TASK GRAPH`.
+    pub kind: String,
+    pub name: TableRef,
+    /// The action words in upper case, such as `RETRY LAST` or `PURGE`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub action: Option<String>,
+    /// `RETRY GRAPH RUN GROUP '<id>'`: the graph run group.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group: Option<Expression>,
+    /// `PURGE AS "<alias>"`: the deployment alias.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub alias: Option<Identifier>,
+    /// `USING CONFIG = <configuration>`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub config: Option<Expression>,
+    /// The clauses and options of a job, notebook, dbt or code bundle, such as `IN COMPUTE POOL` or `ARGS`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<ObjectProperty>,
 }

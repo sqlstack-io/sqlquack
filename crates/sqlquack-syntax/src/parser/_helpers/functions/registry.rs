@@ -379,7 +379,10 @@ impl Parser {
                 self.parse_registry_log()
             }
             (crate::functions::typed::models::TypedParseKind::Variadic, "FLATTEN") => {
-                let args = self.parse_function_arguments()?;
+                let args = match self.check(TokenType::RParen) {
+                    true => Vec::new(),
+                    false => self.parse_function_arguments()?,
+                };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
                     on_error: None,

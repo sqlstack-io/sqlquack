@@ -85,6 +85,21 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             ),
         },
         PolicyTestCase {
+            description: "a divergence must declare how it fails",
+            replace: "failure = \"value\"\n",
+            with: "",
+            expected_error: Some("missing field `failure`"),
+        },
+        PolicyTestCase {
+            description: "an assumption, whose failure is a wrong value, cannot be loud",
+            replace: "failure = \"value\"",
+            with: "failure = \"loud\"\nassumption = true",
+            expected_error: Some(
+                "the policy file is invalid: divergence `hash` is an assumption, whose failure is \
+                 a wrong value, so it cannot be loud",
+            ),
+        },
+        PolicyTestCase {
             description: "an edge-case category must require something",
             replace: "required = [\"null\", \"zero\"]",
             with: "required = []",

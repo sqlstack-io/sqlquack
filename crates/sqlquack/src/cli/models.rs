@@ -1,21 +1,27 @@
 //! Command-line arguments.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
+use serde::{Deserialize, Serialize};
+use sqlquack_core::diagnostics::models::Diagnostic;
 
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,
 };
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
+use sqlquack_policy::policy::models::DivergenceFailure;
 
+use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
 use crate::census::models::CursorType;
+use crate::cli::constants::EXIT_STATUS_HELP;
 
 /// Snowflake-to-DuckDB SQL conversion that refuses to guess.
 #[derive(Debug, Parser)]
-#[command(name = "sqlquack", version)]
+#[command(name = "sqlquack", version, after_help = EXIT_STATUS_HELP)]
 pub struct Cli {
     /// The command to run.
     #[command(subcommand)]
@@ -41,6 +47,43 @@ pub enum Command {
     Function(FunctionArguments),
     /// Convert Snowflake SQL from a file or standard input into DuckDB SQL, or refuse it.
     Convert(ConvertArguments),
+    /// Check that Snowflake SQL parses and holds nothing Snowflake rejects, without converting it.
+    Check(CheckArguments),
+    /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
+    Compare(CompareArguments),
+    /// Explain a diagnostic code, such as `SQ0203`, with its help and an example.
+    Explain(ExplainArguments),
+}
+
+/// Arguments of `sqlquack explain`.
+#[derive(Debug, Args)]
+pub struct ExplainArguments {
+    /// The code, its snake_case name, or a guard's former `E_GUARD_*` name.
+    pub code: String,
+}
+
+/// Arguments of `sqlquack compare`.
+#[derive(Debug, Args)]
+pub struct CompareArguments {
+    /// A JSON list of comparisons; prints each one's outcome as JSON.
+    #[arg(long)]
+    pub manifest: PathBuf,
+    /// The policy file whose comparator and session profile the comparisons use.
+    #[arg(long, default_value = "sqlquack.toml")]
+    pub policy: PathBuf,
+    /// The session profile whose DuckDB time zone each replay runs in.
+    #[arg(long, default_value = "utc-v1")]
+    pub session_profile: String,
+}
+
+/// Arguments of `sqlquack check`.
+#[derive(Debug, Args)]
+pub struct CheckArguments {
+    /// The SQL file; standard input when absent or `-`.
+    pub path: Option<PathBuf>,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
 }
 
 /// Arguments of `sqlquack convert`.
@@ -51,24 +94,6 @@ pub struct ConvertArguments {
     /// A JSON file mapping relation names to `[column, Snowflake type]` pairs or column objects.
     #[arg(long)]
     pub schema: Option<PathBuf>,
-    /// The policy file whose known divergences conversion may rely on.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
-    /// Use the built-in default instead of a policy file: every known divergence is refused.
-    #[arg(long, conflicts_with = "policy")]
-    pub builtin_policy: bool,
-    /// Refuse every known divergence the policy refuses in strict mode.
-    #[arg(long)]
-    pub strict: bool,
-    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
-    #[arg(long)]
-    pub utc_session: bool,
-    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
-    #[arg(long)]
-    pub confirm_declared_offsets: bool,
-    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
-    #[arg(long)]
-    pub python_runtime: bool,
     /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
     #[arg(long)]
     pub overrides: Option<PathBuf>,
@@ -78,15 +103,18 @@ pub struct ConvertArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
-    /// Print the conversion, refusals and divergences as JSON on standard output.
-    #[arg(long)]
-    pub json: bool,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
+    /// The policy and what the caller confirms about its sessions.
+    #[command(flatten)]
+    pub conversion: PolicyArguments,
 }
 
 /// Arguments of `sqlquack function`.
 #[derive(Debug, Args)]
 pub struct FunctionArguments {
-    /// The file holding the function's body: a scalar's expression, or a table function's query.
+    /// The file holding the function's body (a scalar's expression or a table function's query), or `-` for standard input.
     pub body: PathBuf,
     /// The function's name, as the schema declares it.
     #[arg(long)]
@@ -94,27 +122,12 @@ pub struct FunctionArguments {
     /// The schema file declaring the function and the relations its body reads.
     #[arg(long)]
     pub schema: PathBuf,
-    /// The policy file whose known divergences conversion may rely on.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
-    /// Use the built-in default instead of a policy file: every known divergence is refused.
-    #[arg(long, conflicts_with = "policy")]
-    pub builtin_policy: bool,
-    /// Refuse every known divergence the policy refuses in strict mode.
-    #[arg(long)]
-    pub strict: bool,
-    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
-    #[arg(long)]
-    pub utc_session: bool,
-    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
-    #[arg(long)]
-    pub confirm_declared_offsets: bool,
-    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
-    #[arg(long)]
-    pub python_runtime: bool,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
+    /// The policy and what the caller confirms about its sessions.
+    #[command(flatten)]
+    pub conversion: PolicyArguments,
 }
 
 /// Arguments of `sqlquack review`.
@@ -159,9 +172,9 @@ pub struct VerifyArguments {
     /// Where evidence lives.
     #[command(flatten)]
     pub paths: EvidencePaths,
-    /// Print the report as JSON on standard output.
-    #[arg(long)]
-    pub json: bool,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
     /// Fail unless every equivalence and rule is relied on by at least one passed case.
     #[arg(long)]
     pub require_verified: bool,
@@ -174,6 +187,9 @@ pub struct VerifyArguments {
     /// A Python interpreter with the duckdb package, replaying cases that call Python functions.
     #[arg(long)]
     pub python: Option<PathBuf>,
+    /// Write each case's translation outcome and constructs as JSON, for `syntax-coverage results`.
+    #[arg(long)]
+    pub translation_statements: Option<PathBuf>,
     /// Where coverage is checked against.
     #[command(flatten)]
     pub coverage: CoverageArguments,
@@ -227,9 +243,9 @@ pub struct AuditArguments {
     /// Where the re-recorded results are.
     #[arg(long, default_value = AUDIT_RESULTS_DIR)]
     pub audit_results: PathBuf,
-    /// Print the comparison as JSON on standard output.
-    #[arg(long)]
-    pub json: bool,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
 }
 
 /// Arguments of `sqlquack index`.
@@ -237,33 +253,18 @@ pub struct AuditArguments {
 pub struct IndexArguments {
     /// Case directories (holding `.toml` case files) and SQL files or directories; default `cases`.
     pub paths: Vec<PathBuf>,
-    /// The policy file, which case loading checks cases against.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
-    /// Use the built-in default instead of a policy file: every known divergence is refused.
-    #[arg(long, conflicts_with = "policy")]
-    pub builtin_policy: bool,
-    /// Refuse every known divergence the policy refuses in strict mode.
-    #[arg(long)]
-    pub strict: bool,
-    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
-    #[arg(long)]
-    pub utc_session: bool,
-    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
-    #[arg(long)]
-    pub confirm_declared_offsets: bool,
-    /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
-    #[arg(long)]
-    pub python_runtime: bool,
-    /// Print the index as JSON on standard output.
-    #[arg(long)]
-    pub json: bool,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
     /// A JSON file mapping relation names to `[column, type]` pairs or column objects, for SQL files.
     #[arg(long)]
     pub schema: Option<PathBuf>,
     /// Treat each converted SQL file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
+    /// The policy and what the caller confirms about its sessions.
+    #[command(flatten)]
+    pub conversion: PolicyArguments,
 }
 
 /// Arguments of `sqlquack census`.
@@ -275,9 +276,9 @@ pub struct CensusArguments {
     /// The dialect the SQL is written in.
     #[arg(long, default_value = "snowflake")]
     pub dialect: String,
-    /// Print the report as JSON on standard output.
-    #[arg(long)]
-    pub json: bool,
+    /// How to print the report on standard output.
+    #[command(flatten)]
+    pub output: OutputArguments,
     /// Constructs listed in the text report.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
@@ -287,6 +288,29 @@ pub struct CensusArguments {
     /// Treat each converted file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
+    /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
+    #[arg(long)]
+    pub overrides: Option<PathBuf>,
+    /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
+    #[arg(long = "verified-override", value_name = "NAME=SHA256")]
+    pub verified_overrides: Vec<String>,
+    /// Print file, model and relation names in the slowest files and the blockers.
+    #[arg(long)]
+    pub names: bool,
+    /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
+    #[arg(long, value_enum)]
+    pub cursor_type: Option<CursorType>,
+    /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
+    #[arg(long, value_delimiter = ',')]
+    pub assume_supported: Vec<String>,
+    /// The policy and what the caller confirms about its sessions.
+    #[command(flatten)]
+    pub conversion: PolicyArguments,
+}
+
+/// The policy conversion relies on, and what the caller confirms about its sessions.
+#[derive(Debug, Args)]
+pub struct PolicyArguments {
     /// The policy file whose known divergences conversion may rely on.
     #[arg(long, default_value = POLICY_FILE_NAME)]
     pub policy: PathBuf,
@@ -305,19 +329,116 @@ pub struct CensusArguments {
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
-    /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
+    /// Refuse every known divergence that can return a different value rather than raise.
     #[arg(long)]
-    pub overrides: Option<PathBuf>,
-    /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
-    #[arg(long = "verified-override", value_name = "NAME=SHA256")]
-    pub verified_overrides: Vec<String>,
-    /// Print file, model and relation names in the slowest files and the blockers.
-    #[arg(long)]
-    pub names: bool,
-    /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
-    #[arg(long, value_enum)]
-    pub cursor_type: Option<CursorType>,
-    /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
-    #[arg(long, value_delimiter = ',')]
-    pub assume_supported: Vec<String>,
+    pub loud_divergences_only: bool,
+}
+
+/// How a report is printed.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, ValueEnum)]
+pub enum OutputFormat {
+    /// Text for people.
+    #[default]
+    Text,
+    /// JSON for programs.
+    Json,
+}
+
+/// The report format: `--format json`, or its short form `--json`.
+#[derive(Debug, Args)]
+pub struct OutputArguments {
+    /// Print the report as text or as JSON.
+    #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
+    pub format: OutputFormat,
+    /// Print the report as JSON; the same as `--format json`.
+    #[arg(long, conflicts_with = "format")]
+    pub json: bool,
+}
+
+impl OutputArguments {
+    /// Whether the report is printed as JSON.
+    pub fn json(&self) -> bool {
+        self.json || self.format == OutputFormat::Json
+    }
+}
+
+/// What `convert --json` prints.
+#[derive(Clone, Debug, Serialize)]
+pub struct ConvertReport {
+    /// Whether every statement converted.
+    pub converted: bool,
+    /// The session profile conversion ran under.
+    pub profile: String,
+    /// The DuckDB SQL, one statement after another; empty when refused.
+    pub sql: String,
+    /// Each refusal.
+    pub refusals: Vec<ConvertRefusal>,
+    /// Known divergences relied on, with the constructs relying on each.
+    pub divergences: BTreeMap<String, Vec<String>>,
+    /// Of those, the named assumptions.
+    pub assumptions: Vec<String>,
+    /// Each divergence relied on and its failure: `loud` raises, `value` can return another value.
+    pub divergence_failures: BTreeMap<String, DivergenceFailure>,
+    /// What the session parameters changed about conversion.
+    pub notes: Vec<String>,
+    /// The Python functions the SQL calls, which the caller registers before running it.
+    pub python_functions: Vec<PythonSignature>,
+    /// The macros of the user overrides the SQL calls, which the caller runs before it.
+    pub macros: Vec<String>,
+    /// Every user override loaded: its name, the function it replaces and its body's hash.
+    pub overrides: Vec<OverrideListing>,
+}
+
+/// A user override loaded for conversion.
+#[derive(Clone, Debug, Serialize)]
+pub struct OverrideListing {
+    /// The override's name.
+    pub name: String,
+    /// The function it replaces.
+    pub replaces: String,
+    /// The hash of its body.
+    pub sha256: String,
+}
+
+/// One refusal as `convert --json` prints it: the original fields, then its diagnostic's.
+#[derive(Clone, Debug, Serialize)]
+pub struct ConvertRefusal {
+    /// The refusal category, as reports name it.
+    pub category: String,
+    /// The refused construct, or `statement`.
+    pub construct: String,
+    /// The one-based line of the refusal, when placed.
+    pub line: Option<usize>,
+    /// The one-based column of the refusal, when placed.
+    pub column: Option<usize>,
+    /// Why it is refused.
+    pub reason: String,
+    /// The refusal's diagnostic, flattened into it.
+    #[serde(flatten)]
+    pub diagnostic: Option<Diagnostic>,
+}
+
+/// What `check --json` prints.
+#[derive(Clone, Debug, Serialize)]
+pub struct CheckReport {
+    /// Whether the SQL holds no problem.
+    pub ok: bool,
+    /// Each problem found.
+    pub diagnostics: Vec<Diagnostic>,
+}
+
+/// One `sqlquack compare` entry: a recording and the DuckDB SQL replayed over an inputs database.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Comparison {
+    /// Echoed in the outcome.
+    pub(crate) id: String,
+    /// The recorded result's sidecar, beside its `.arrow` file.
+    pub(crate) recorded: PathBuf,
+    /// The DuckDB database the SQL reads, attached read-only as `inputs`.
+    pub(crate) database: PathBuf,
+    /// The converted SQL file.
+    pub(crate) sql: PathBuf,
+    /// Whether the rows compare in order.
+    pub(crate) ordered: bool,
 }

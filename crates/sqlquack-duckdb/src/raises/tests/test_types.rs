@@ -10,3 +10,10 @@ pub(crate) struct ReadBackTestCase {
     pub(crate) sql: String,
     pub(crate) expected_read: Option<usize>,
 }
+
+pub(crate) struct ManyRaisesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    pub(crate) expected_ids: usize,
+    pub(crate) expected_budget_seconds: u64,
+}

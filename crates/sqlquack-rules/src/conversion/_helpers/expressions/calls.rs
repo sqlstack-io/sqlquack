@@ -16,6 +16,7 @@ use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
 use sqlquack_snowflake::typing::main::average::average;
 use sqlquack_snowflake::typing::main::count::count;
+use sqlquack_snowflake::typing::main::framed_average::framed_average;
 use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
@@ -31,7 +32,7 @@ use crate::conversion::_helpers::expressions::conditionals::{
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
 use crate::conversion::_helpers::expressions::numeric_functions::{
-    absolute, bitwise, logarithm, rounding, sign,
+    absolute, bitwise, logarithm, power, rounding, sign,
 };
 use crate::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
@@ -49,11 +50,12 @@ use crate::conversion::_helpers::expressions::strings::{
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
     convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
-    date_trunc, day_name, temporal_text, timestamp_from_parts_call, to_time, to_timestamp,
-    to_timestamp_tz,
+    date_trunc, day_name, last_day, temporal_text, timestamp_from_parts_call, to_time,
+    to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
-    left_right, pad, regexp, replace, split_part, translate,
+    left_right, pad, regexp, replace, split_part, stripped_type_name, suffixed_column,
+    system_typeof_call, translate, type_name,
 };
 use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
@@ -69,7 +71,8 @@ use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE,
-    SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
+    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT,
+    TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
@@ -213,6 +216,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DIV0NULL", parts) => div0(parts, true, &construct, site),
         ("NULLIFZERO", parts) => null_if_zero(parts, &construct, site),
         ("LN" | "EXP" | "SQRT", parts) => logarithm(&name, parts, &construct, site),
+        ("POWER", parts) => power(parts, &construct, site),
         ("EQUAL_NULL", parts) => equal_null(parts, &construct, site),
         ("ROUND" | "CEIL" | "FLOOR" | "TRUNC" | "TRUNCATE", parts) => {
             rounding(&name, parts, &construct, site)
@@ -222,13 +226,36 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("REPLACE", parts) if (2..=3).contains(&parts.len()) => replace(parts, &construct, site),
         ("TRANSLATE", parts) => translate(parts, &construct, site),
         ("SPLIT_PART", parts) => split_part(parts, &construct, site),
+        ("REGEXP_REPLACE", [typed, pattern, replacement])
+            if system_typeof_call(typed).is_some() || suffixed_column(typed, site) =>
+        {
+            stripped_type_name((typed, pattern, replacement), site)
+        }
+        ("SYSTEM$TYPEOF", [operand]) => type_name(operand, site),
+        ("SYSTEM$TYPEOF", _) => Err(outside_conditions(
+            construct,
+            "SYSTEM$TYPEOF with these arguments".to_owned(),
+        )),
         (
             "REGEXP_LIKE" | "REGEXP_REPLACE" | "REGEXP_SUBSTR" | "REGEXP_SUBSTR_ALL"
             | "REGEXP_COUNT" | "REGEXP_INSTR",
             parts,
         ) => regexp(&name, parts, &construct, site),
+        ("RLIKE", parts) => {
+            site.context.log.equivalence(RLIKE_PAIR);
+            regexp(REGEXP_LIKE_NAME, parts, &construct, site)
+        }
         ("DATE_PART", [unit, value]) => date_part(unit, value, &construct, site),
+        ("DAYOFWEEKISO", [value]) => {
+            site.context.log.equivalence(PART_FUNCTIONS_PAIR);
+            let unit = serde_json::json!({ "var": { "this": "DAYOFWEEKISO" } });
+            date_part(&unit, value, &construct, site)
+        }
         ("DATEDIFF", parts) => date_diff_call(parts, &construct, site),
+        ("TIMESTAMPDIFF", parts) => {
+            site.context.log.equivalence(TIMESTAMPDIFF_PAIR);
+            date_diff_call(parts, &construct, site)
+        }
         ("TO_TIME" | "TRY_TO_TIME" | "TIME", parts) => to_time(&name, parts, &construct, site),
         ("DATE_FROM_PARTS", parts) => date_from_parts_call(parts, &construct, site),
         ("TIMESTAMP_NTZ_FROM_PARTS", parts) => timestamp_from_parts_call(parts, &construct, site),
@@ -237,6 +264,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         }
         ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
         ("DAYNAME", parts) => day_name(parts, &construct, site),
+        ("LAST_DAY", parts) => last_day(parts, &construct, site),
         ("DATEADD" | "TIMEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
             date_add((unit, amount, value), &construct, site)
         }
@@ -260,6 +288,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             | "ARRAY_CONSTRUCT_COMPACT"
             | "ARRAY_TO_STRING"
             | "SPLIT"
+            | "PARSE_URL"
             | "TO_VARIANT"
             | "IS_OBJECT"
             | "IS_ARRAY"
@@ -276,9 +305,11 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("OBJECT_CONSTRUCT" | "OBJECT_CONSTRUCT_KEEP_NULL", parts) => {
             object_construct(&name, parts, &construct, site)
         }
-        ("TYPEOF" | "IS_NULL_VALUE" | "TO_JSON", parts) => {
-            variant_inspect(&name, parts, &construct, site)
-        }
+        (
+            "TYPEOF" | "IS_NULL_VALUE" | "STRIP_NULL_VALUE" | "TO_JSON" | "IS_DECIMAL"
+            | "IS_INTEGER",
+            parts,
+        ) => variant_inspect(&name, parts, &construct, site),
         (
             "TO_TIMESTAMP"
             | "TO_TIMESTAMP_NTZ"
@@ -344,12 +375,12 @@ fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     ))
 }
 
-/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause when used as a window function.
+/// COUNT, SUM, AVG, MIN and MAX; `window` is the OVER clause and whether it is not running.
 pub(crate) fn convert_aggregate(
     kind: &str,
     payload: &Value,
     site: Site<'_>,
-    window: Option<&str>,
+    window: Option<(&str, bool)>,
 ) -> Result<Emitted, Refusal> {
     let construct = node_construct(kind);
     let payload = payload_object(payload, &construct)?;
@@ -361,12 +392,13 @@ pub(crate) fn convert_aggregate(
     let call = AggregateCall {
         payload,
         site: site.placed(placement),
-        over: window.map_or_else(String::new, |window| format!(" OVER ({window})")),
+        over: window.map_or_else(String::new, |(window, _)| format!(" OVER ({window})")),
+        framed: window.is_some_and(|(_, framed)| framed),
     };
     match kind {
         "count" => call.count(),
         "sum" => call.sum(),
-        "avg" => call.average(window.is_some()),
+        "avg" => call.average(),
         _ => call.min_max(kind),
     }
 }
@@ -375,6 +407,8 @@ struct AggregateCall<'a> {
     payload: &'a Payload,
     site: Site<'a>,
     over: String,
+    /// Whether the OVER clause has an explicit frame or no order, rather than a running frame.
+    framed: bool,
 }
 
 impl AggregateCall<'_> {
@@ -446,16 +480,17 @@ impl AggregateCall<'_> {
         Ok(Emitted::new(sql, data_type))
     }
 
-    fn average(&self, windowed: bool) -> Result<Emitted, Refusal> {
+    fn average(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
-        if windowed {
-            return Err(refuse("AVG over a window".to_owned()));
-        }
         let argument = self.argument("avg")?;
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
-        let data_type = average(argument.data_type, log).map_err(refuse)?;
+        let data_type = match self.framed {
+            true => framed_average(argument.data_type, log),
+            false => average(argument.data_type, log),
+        }
+        .map_err(refuse)?;
         let SnowflakeType::Number { precision, scale } = total else {
             return Err(refuse(format!(
                 "AVG of {} has no exact conversion",
@@ -464,17 +499,21 @@ impl AggregateCall<'_> {
         };
         let distinct = self.distinct();
         let counted = cast(
-            &format!("count({distinct}{})", argument.sql),
+            &format!("count({distinct}{}){}", argument.sql, self.over),
             count(log),
             log,
         )
         .map_err(refuse)?;
-        let total_sql =
-            cast(&format!("sum({distinct}{})", argument.sql), total, log).map_err(refuse)?;
+        let total_sql = cast(
+            &format!("sum({distinct}{}){}", argument.sql, self.over),
+            total,
+            log,
+        )
+        .map_err(refuse)?;
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),
-            data_type,
+            (data_type, self.framed),
             log,
         )
         .map_err(refuse)?;

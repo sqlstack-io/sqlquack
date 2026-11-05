@@ -299,6 +299,11 @@ pub enum DataType {
         inner: Box<DataType>,
     },
 
+    /// An element or value type declared NOT NULL, as in Snowflake's `ARRAY ( INT NOT NULL )`.
+    NotNull {
+        inner: Box<DataType>,
+    },
+
     Custom {
         name: String,
     },
@@ -334,7 +339,7 @@ impl DataType {
             DataType::Array { element_type, .. } | DataType::List { element_type } => {
                 element_type.contains_unknown()
             }
-            DataType::Nullable { inner } => inner.contains_unknown(),
+            DataType::Nullable { inner } | DataType::NotNull { inner } => inner.contains_unknown(),
             DataType::Map {
                 key_type,
                 value_type,
@@ -362,8 +367,12 @@ impl DataType {
         }
         match (self, refined) {
             (DataType::Unknown, _) => true,
-            (DataType::Nullable { inner }, other) => inner.matches_shape_of(other),
-            (this, DataType::Nullable { inner }) => this.matches_shape_of(inner),
+            (DataType::Nullable { inner } | DataType::NotNull { inner }, other) => {
+                inner.matches_shape_of(other)
+            }
+            (this, DataType::Nullable { inner } | DataType::NotNull { inner }) => {
+                this.matches_shape_of(inner)
+            }
             (
                 DataType::Array { element_type, .. } | DataType::List { element_type },
                 DataType::Array {
@@ -455,6 +464,21 @@ pub enum IntervalUnitSpec {
     ExprSpan(IntervalSpanExpr),
     /// Expression as unit (e.g., CURRENT_DATE, CAST(GETDATE() AS DATE))
     Expr(Box<Expression>),
+    /// Snowflake qualifier with a field precision, such as `YEAR(9) TO MONTH` or `DAY TO SECOND(3)`.
+    Qualifier(IntervalQualifier),
+}
+
+/// Snowflake interval qualifier: fields with their leading and fractional seconds precisions.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct IntervalQualifier {
+    /// Leading field (e.g., DAY)
+    pub this: IntervalUnit,
+    /// Leading field precision, as 9 in `DAY(9)`
+    pub leading_precision: Option<u32>,
+    /// Trailing field after TO (e.g., SECOND)
+    pub expression: Option<IntervalUnit>,
+    /// Fractional seconds precision, as 3 in `DAY TO SECOND(3)`
+    pub fractional_precision: Option<u32>,
 }
 
 /// Interval span for ranges like HOUR TO SECOND

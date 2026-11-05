@@ -164,7 +164,11 @@ pub(crate) fn convert_set_operation(
         .iter()
         .map(|column| {
             let sql = quoted_identifier(&column.name, log);
-            (column.name.clone(), Emitted::new(sql, column.data_type))
+            let emitted = Emitted {
+                suffixed: column.suffixed,
+                ..Emitted::new(sql, column.data_type)
+            };
+            (column.name.clone(), emitted)
         })
         .collect();
     let site = Site {
@@ -207,6 +211,7 @@ fn unified_columns(
         columns.push(ColumnSpec {
             holding,
             unordered: left_column.unordered || right_column.unordered,
+            suffixed: left_column.suffixed || right_column.suffixed,
             ..ColumnSpec::new(left_column.name.clone(), data_type)
         });
     }
@@ -380,6 +385,10 @@ fn named_columns<'a>(
                 .into_iter()
                 .flatten()
                 .any(|column| column.unordered),
+            suffixed: [found(left), found(right)]
+                .into_iter()
+                .flatten()
+                .any(|column| column.suffixed),
             ..ColumnSpec::new(name, data_type)
         });
     }

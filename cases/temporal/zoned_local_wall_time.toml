@@ -1,0 +1,48 @@
+# TIMESTAMP_TZ operations that read each value's own offset: evidence for keeping offsets.
+category = "temporal"
+construct = "fn:DATEDIFF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "zoned_local_dates_and_parts"
+description = "TIMESTAMP_TZ values whose local date differs from their UTC date: ::DATE, YEAR, MONTH, HOUR and DATE_TRUNC DAY in each value's own offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2023-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00 +05:45'"],
+  ["'2024-02-29 23:59:59.999999999 +14:00'"],
+  ["'2024-03-01 00:00:00 -12:00'"],
+  ["'2024-06-30 12:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT t::DATE AS d, YEAR(t) AS y, MONTH(t) AS m, HOUR(t) AS h, DATE_TRUNC('DAY', t)::VARCHAR AS day_start FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "zoned_datediff_day_hour_mixed_offsets"
+description = "DATEDIFF DAY and HOUR between TIMESTAMP_TZ values at different offsets, where local and UTC boundaries disagree."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-01-01 23:30:00 +02:00'", "'2024-01-02 00:30:00 +02:00'"],
+  ["'2024-01-01 23:30:00 -08:00'", "'2024-01-02 08:00:00 +00:00'"],
+  ["'2024-01-02 00:10:00 +05:30'", "'2024-01-01 20:00:00 -03:00'"],
+  ["'2024-01-01 10:59:00 +05:45'", "'2024-01-01 11:01:00 +05:30'"],
+  ["NULL", "'2024-01-01 00:00:00 +00:00'"],
+]
+query = "SELECT DATEDIFF(DAY, a, b) AS days, DATEDIFF(HOUR, a, b) AS hours, DATEDIFF(MONTH, a, b) AS months FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "zoned_to_varchar_formats"
+description = "TO_VARCHAR of TIMESTAMP_TZ values with formats that show their local wall time and offset."
+columns = [{ name = "t", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2023-12-31 23:30:00 -08:00'"],
+  ["'2024-01-01 00:15:00.5 +05:45'"],
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(t, 'YYYY-MM') AS ym, TO_VARCHAR(t, 'YYYY-MM-DD HH24:MI') AS local_text, TO_VARCHAR(t, 'TZH:TZM') AS offset_text FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

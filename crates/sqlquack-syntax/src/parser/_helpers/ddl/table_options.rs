@@ -192,6 +192,12 @@ impl Parser {
         let mut constraints: Vec<TableConstraint> = Vec::new();
 
         loop {
+            if self.check(TokenType::RParen)
+                && self.is_snowflake()
+                && !(columns.is_empty() && constraints.is_empty())
+            {
+                return Err(self.parse_error("Expected a column or constraint after the comma"));
+            }
             if self.check(TokenType::RParen) {
                 break;
             }
@@ -287,6 +293,9 @@ impl Parser {
     pub(crate) fn parse_column_def(&mut self) -> Result<ColumnDef> {
         let name = { self.expect_identifier_or_safe_keyword_with_quoted()? };
 
+        if self.is_snowflake() && self.check(TokenType::As) {
+            return Err(self.parse_error("Expected a data type before AS"));
+        }
         if self.check(TokenType::As) {
             let mut col_def = ColumnDef::new(
                 name.name.clone(),
@@ -449,7 +458,10 @@ impl Parser {
             col_def.casespecific = Some(true);
         } else if self.match_text_seq(&["NOT", "FOR", "REPLICATION"]) {
             col_def.not_for_replication = true;
-        } else if self.match_token(TokenType::Not) && self.match_identifier("CASESPECIFIC") {
+        } else if match self.is_snowflake() {
+            true => self.match_text_seq(&["NOT", "CASESPECIFIC"]),
+            false => self.match_token(TokenType::Not) && self.match_identifier("CASESPECIFIC"),
+        } {
             col_def.casespecific = Some(false);
         } else if self.match_keyword("TAG")
             || self.match_token(TokenType::With) && self.match_keyword("TAG")
@@ -522,17 +534,17 @@ impl Parser {
         col_def.auto_increment = true;
         col_def.constraint_order.push(ConstraintType::AutoIncrement);
         if self.match_token(TokenType::LParen) {
-            col_def.auto_increment_start = Some(Box::new(self.parse_primary()?));
+            col_def.auto_increment_start = Some(Box::new(self.parse_identity_value()?));
             if self.match_token(TokenType::Comma) {
-                col_def.auto_increment_increment = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_increment = Some(Box::new(self.parse_identity_value()?));
             }
             self.expect_token(TokenType::RParen)?;
         }
         loop {
             if self.match_keyword("START") {
-                col_def.auto_increment_start = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_start = Some(Box::new(self.parse_identity_value()?));
             } else if self.match_keyword("INCREMENT") {
-                col_def.auto_increment_increment = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_increment = Some(Box::new(self.parse_identity_value()?));
             } else if self.match_token(TokenType::Order) {
                 col_def.auto_increment_order = Some(true);
             } else if self.match_identifier("NOORDER") {
@@ -544,7 +556,34 @@ impl Parser {
         Ok(col_def)
     }
 
+    /// An identity START or INCREMENT value; Snowflake takes only a number, possibly negative.
+    fn parse_identity_value(&mut self) -> Result<Expression> {
+        if self.is_snowflake()
+            && !self.check(TokenType::Number)
+            && !(self.check(TokenType::Dash)
+                && self
+                    .peek_nth(1)
+                    .is_some_and(|token| token.token_type == TokenType::Number))
+        {
+            return Err(self.parse_error("Expected a number"));
+        }
+        self.parse_unary()
+    }
+
     fn parse_column_collate(&mut self, mut col_def: ColumnDef) -> Result<ColumnDef> {
+        if self.is_snowflake() {
+            if !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a collation string after COLLATE"));
+            }
+            let text = self.advance_text()?;
+            col_def
+                .constraints
+                .push(ColumnConstraint::Collate(Identifier::new(format!(
+                    "'{text}'"
+                ))));
+            col_def.constraint_order.push(ConstraintType::Collate);
+            return Ok(col_def);
+        }
         let mut collation = self.expect_identifier_or_keyword_with_quoted()?;
         while self.match_token(TokenType::Dot) {
             let next = self.expect_identifier_or_keyword_with_quoted()?;
@@ -673,7 +712,7 @@ impl Parser {
         if self.match_identifier("UPPERCASE") || self.match_identifier("CASESPECIFIC") {
             return true;
         }
-        false
+        self.is_snowflake() && (self.match_identifier("RELY") || self.match_identifier("NORELY"))
     }
 
     /// Parses Teradata table options after CREATE TABLE AS.
@@ -1462,15 +1501,16 @@ impl Parser {
         Ok(properties)
     }
 
-    pub(crate) fn parse_snowflake_row_access_policy_clause(&mut self) -> Option<String> {
+    pub(crate) fn parse_snowflake_row_access_policy_clause(&mut self) -> Result<Option<String>> {
         let saved = self.current;
         let _ = self.match_token(TokenType::With);
         if !self.match_text_seq(&["ROW", "ACCESS", "POLICY"]) {
             self.current = saved;
-            return None;
+            return Ok(None);
         }
 
         let body_start = self.current;
+        self.check_snowflake_row_access_policy()?;
         let mut depth = 0usize;
         while !self.is_at_end() {
             if depth == 0
@@ -1497,11 +1537,11 @@ impl Parser {
         }
 
         let body = self.tokens_to_sql(body_start, self.current);
-        Some(if body.is_empty() {
+        Ok(Some(if body.is_empty() {
             "ROW ACCESS POLICY".to_string()
         } else {
             format!("ROW ACCESS POLICY {}", body)
-        })
+        }))
     }
 
     /// Parses table properties after the column list, currently TSQL SYSTEM_VERSIONING.
@@ -1512,7 +1552,7 @@ impl Parser {
             self.config.dialect,
             Some(crate::tokens::models::DialectType::Snowflake)
         ) {
-            if let Some(clause) = self.parse_snowflake_row_access_policy_clause() {
+            if let Some(clause) = self.parse_snowflake_row_access_policy_clause()? {
                 properties.push(Expression::Raw(Raw {
                     sql: format!("WITH {}", clause),
                 }));

@@ -1,4 +1,4 @@
-//! `exact_decimal_divide`: exact decimal division at the result scale, rounding half away from zero.
+//! `exact_decimal_divide`: exact decimal division at the result scale, rounded or truncated.
 
 use sqlquack_core::failures::constants::DIVISION_BY_ZERO;
 use sqlquack_core::provenance::models::ProvenanceLog;
@@ -9,11 +9,11 @@ use crate::blocks::constants::{EXACT_DECIMAL_DIVIDE, MAX_DECIMAL_PRECISION};
 use crate::blocks::main::cast::cast;
 use crate::raises::main::raised::raised;
 
-/// Exact division rounding half away from zero, and whether it raises beyond 128-bit intermediates.
+/// Exact division, rounded half away from zero or `truncated`, and whether it may raise for range.
 pub fn exact_decimal_divide(
     left: (&str, u8, u8),
     right: (&str, u8, u8),
-    result: SnowflakeType,
+    (result, truncated): (SnowflakeType, bool),
     log: &ProvenanceLog,
 ) -> Result<(String, bool), String> {
     log.building_block(EXACT_DECIMAL_DIVIDE);
@@ -48,11 +48,15 @@ pub fn exact_decimal_divide(
     let power = format!("CAST('1{}' AS HUGEINT)", "0".repeat(usize::from(shift)));
     let remainder = format!("(({dividend} % {divisor}) * {power})");
     let left_over = format!("abs({remainder} % {divisor})");
-    let rounded = format!(
-        "(({dividend} // {divisor}) * {power} + ({remainder} // {divisor}) + \
-         (CASE WHEN {left_over} >= abs({divisor}) - {left_over} \
-         THEN sign({remainder}) * sign({divisor}) ELSE 0 END))"
-    );
+    let rounding = match truncated {
+        true => "0".to_owned(),
+        false => format!(
+            "(CASE WHEN {left_over} >= abs({divisor}) - {left_over} \
+             THEN sign({remainder}) * sign({divisor}) ELSE 0 END)"
+        ),
+    };
+    let rounded =
+        format!("(({dividend} // {divisor}) * {power} + ({remainder} // {divisor}) + {rounding})");
     let unit = match result_scale {
         0 => "1".to_owned(),
         scale => format!("0.{}1", "0".repeat(usize::from(scale) - 1)),

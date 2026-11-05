@@ -554,7 +554,12 @@ impl Parser {
             None
         };
 
-        self.match_token(TokenType::RParen);
+        let closed = self.match_token(TokenType::RParen);
+        if self.is_snowflake() && (information.is_none() || !closed) {
+            return Err(
+                self.parse_error("Expected a value and ) in CHANGES ( INFORMATION => ... )")
+            );
+        }
 
         let at_before = self.parse_historical_data()?.map(Box::new);
 
@@ -1682,35 +1687,34 @@ impl Parser {
                 self.parse_assignment()?
             };
 
-            if let Some(expr) = expr {
-                {
-                    if self.match_token(TokenType::As) {
-                        let alias_token = self.advance()?;
-                        let alias_name = if alias_token.token_type == TokenType::QuotedIdentifier {
-                            let raw = alias_token.text.to_string();
-                            let mut ident = Identifier::new(raw);
-                            ident.quoted = true;
-                            ident
-                        } else {
-                            Identifier::new(alias_token.text.clone()).with_span(alias_token.span)
-                        };
-                        args.push(Expression::Alias(Box::new(
-                            crate::expressions::operators::models::Alias {
-                                span: SourceSpan::default(),
-                                this: expr,
-                                alias: alias_name,
-                                column_aliases: Vec::new(),
-                                alias_explicit_as: false,
-                                alias_keyword: None,
-                                pre_alias_comments: Vec::new(),
-                                trailing_comments: Vec::new(),
-                                inferred_type: None,
-                            },
-                        )));
-                    } else {
-                        args.push(expr);
-                    }
-                }
+            let Some(expr) = expr else {
+                return Err(self.parse_error("Expected a function argument"));
+            };
+            if self.match_token(TokenType::As) {
+                let alias_token = self.advance()?;
+                let alias_name = if alias_token.token_type == TokenType::QuotedIdentifier {
+                    let raw = alias_token.text.to_string();
+                    let mut ident = Identifier::new(raw);
+                    ident.quoted = true;
+                    ident
+                } else {
+                    Identifier::new(alias_token.text.clone()).with_span(alias_token.span)
+                };
+                args.push(Expression::Alias(Box::new(
+                    crate::expressions::operators::models::Alias {
+                        span: SourceSpan::default(),
+                        this: expr,
+                        alias: alias_name,
+                        column_aliases: Vec::new(),
+                        alias_explicit_as: false,
+                        alias_keyword: None,
+                        pre_alias_comments: Vec::new(),
+                        trailing_comments: Vec::new(),
+                        inferred_type: None,
+                    },
+                )));
+            } else {
+                args.push(expr);
             }
 
             if !self.match_token(TokenType::Comma) {

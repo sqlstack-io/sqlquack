@@ -166,3 +166,40 @@ fn given_quoted_path_keys_with_dots_when_parsing_then_they_stay_in_brackets() {
         );
     }
 }
+
+#[test]
+fn given_an_interval_qualifier_with_precisions_when_parsing_faithfully_then_both_are_kept() {
+    let qualifier = |this, leading, to, fraction| {
+        json!({"type": "qualifier", "this": this, "leading_precision": leading,
+            "expression": to, "fractional_precision": fraction})
+    };
+    let test_cases = [
+        ProjectionTestCase {
+            description: "YEAR(9) TO MONTH keeps the leading precision on its field",
+            sql: "SELECT INTERVAL '1' YEAR(9) TO MONTH",
+            pointer: "/interval/unit",
+            expected_value: qualifier("Year", json!(9), json!("Month"), json!(null)),
+        },
+        ProjectionTestCase {
+            description: "SECOND(9), (3) leaves (3) as the next select item",
+            sql: "SELECT INTERVAL '1' SECOND(9), (3)",
+            pointer: "/interval/unit",
+            expected_value: qualifier("Second", json!(9), json!(null), json!(null)),
+        },
+        ProjectionTestCase {
+            description: "DAY TO SECOND(3) keeps the fractional precision",
+            sql: "SELECT INTERVAL '1' DAY TO SECOND(3)",
+            pointer: "/interval/unit",
+            expected_value: qualifier("Day", json!(null), json!("Second"), json!(3)),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            projection_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

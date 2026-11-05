@@ -21,11 +21,12 @@ use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, identifier_name, integer_literal, list, node_construct, node_kind,
-    payload_object, require_understood,
+    Payload, field, flag, function_construct, identifier_name, integer_literal, list,
+    node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    AMBIGUOUS_SUFFIX, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, VARIANT_HELD_UNREAD,
+    AMBIGUOUS_SUFFIX, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, SYSTEM_TYPEOF_NAME,
+    TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
 };
 
 /// A clause's condition node, such as WHERE's.
@@ -213,11 +214,12 @@ pub(crate) fn order_and_limit(
         let order = payload_object(order, &construct)?;
         require_understood(order, &["expressions"], &construct)?;
         let grouped = query.get("group_by").is_some_and(|group| !group.is_null());
+        let suffixed = matches!(outputs, [(_, output)] if output.suffixed);
         let mut items: Vec<String> = Vec::new();
         for item in list(order, "expressions") {
             items.push(order_key(
                 item,
-                site.placed(Placement::PROJECTION),
+                site.placed(Placement::PROJECTION).suffix_free(suffixed),
                 (outputs, grouped),
             )?);
         }
@@ -272,6 +274,12 @@ fn order_key(
             .collect();
         let position_sql = position_key(position, &held, "ORDER BY")?;
         let ordered = outputs.iter().zip(1_u64..).find(|(_, at)| *at == position);
+        if ordered.is_some_and(|((_, output), _)| output.suffixed) && !site.placement.suffixed {
+            return Err(outside_conditions(
+                function_construct(SYSTEM_TYPEOF_NAME),
+                TYPE_SUFFIX_UNREMOVED.to_owned(),
+            ));
+        }
         if let Some(((_, output), _)) = ordered {
             grouping_key(output.clone(), &node_construct("ordered"))?;
         }
@@ -296,6 +304,14 @@ fn order_key(
         ));
     }
     let shadowing = shadowing_names(key, (site, outputs));
+    if site.placement.suffixed && shadowing.is_empty() && names_sole_output(key, outputs) {
+        return Ok(explicit_null_order(
+            "1",
+            flag(object, "desc"),
+            object.get("nulls_first").and_then(Value::as_bool),
+            site.context.log,
+        ));
+    }
     let Some(name) = shadowing.first() else {
         return order_item(item, site);
     };
@@ -364,6 +380,16 @@ fn shadowing_column(
         Ok(source) if emitted.sql != source.sql => Some(name),
         Ok(_) | Err(_) => None,
     }
+}
+
+/// Whether `key` is a bare name of the only output, which DuckDB orders by position, not as text.
+fn names_sole_output(key: &Value, outputs: &[(String, Emitted)]) -> bool {
+    let Some(("column", column)) = node_kind(key) else {
+        return false;
+    };
+    column.get("table").is_none_or(Value::is_null)
+        && matches!((column.get("name").and_then(identifier_name), outputs),
+            (Some(name), [(output, _)]) if *output == name)
 }
 
 /// A bare ORDER BY name that is a select alias and a column of more than one FROM relation.

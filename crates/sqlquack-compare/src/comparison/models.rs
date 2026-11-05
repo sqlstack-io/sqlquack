@@ -11,6 +11,8 @@ pub struct RecordedColumn {
     pub name: String,
     /// The Snowflake type as recorded.
     pub snowflake_type: String,
+    /// Whether the recorder proved a microsecond-held nanosecond column whole, so it compares exactly.
+    pub sub_microsecond_checked: bool,
 }
 
 /// A recorded warehouse result.

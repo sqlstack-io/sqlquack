@@ -352,6 +352,14 @@ pub struct ExecuteStatement {
     pub suffix: Option<String>,
 }
 
+/// Snowflake `EXECUTE USING POLICY_CONTEXT ( <name> => <value> , ... ) AS <query>`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteUsingPolicyContext {
+    /// The named arguments of POLICY_CONTEXT.
+    pub arguments: Vec<Expression>,
+    pub query: Expression,
+}
+
 /// Named parameter in EXEC statement: @name=value
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteParameter {
@@ -385,8 +393,14 @@ pub struct CreateTask {
     pub name: String,
     /// Raw text of properties between name and AS (WAREHOUSE, SCHEDULE, etc.)
     pub properties: String,
-    /// The SQL statement body after AS
-    pub body: Expression,
+    /// The SQL statement body after AS; absent for `CLONE source`
+    pub body: Option<Expression>,
+    /// Source task of `CREATE TASK name CLONE source`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub clone_source: Option<TableRef>,
+    /// Whether this is a Snowflake `CREATE TASK GRAPH`, which has properties and no body
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub graph: bool,
 }
 
 /// Raw/unparsed SQL
@@ -421,6 +435,9 @@ pub struct Truncate {
     /// Hive PARTITION clause: PARTITION(key=value, ...)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub partition: Option<Box<Expression>>,
+    /// Snowflake `ERROR_TABLE ( <table> )`: the table's error table; left out of the tree when false
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub error_table: bool,
 }
 
 /// A table entry in a TRUNCATE statement, with optional ONLY modifier and * suffix
@@ -471,6 +488,7 @@ impl Truncate {
             identity: None,
             restrict: false,
             partition: None,
+            error_table: false,
         }
     }
 }
@@ -482,6 +500,12 @@ pub struct Use {
     pub kind: Option<UseKind>,
     /// The name of the object
     pub this: Identifier,
+    /// Snowflake's secondary roles one by one, quoting kept; empty for ALL, NONE and other kinds.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub roles: Vec<Identifier>,
+    /// Snowflake's qualified name part by part, quoting kept; empty for a one-part name.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub parts: Vec<Identifier>,
 }
 
 /// Kind of USE statement
@@ -503,6 +527,16 @@ pub enum UseKind {
 pub struct SetStatement {
     /// The items being set
     pub items: Vec<SetItem>,
+}
+
+/// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`: drops session variables.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UnsetStatement {
+    /// The variables, in order.
+    pub names: Vec<Identifier>,
+    /// Whether the names were written in parentheses.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub parenthesized: bool,
 }
 
 /// A single SET item (variable assignment)
@@ -599,6 +633,9 @@ pub struct GrantPrincipal {
     /// Whether prefixed with SHARE keyword (Snowflake)
     #[serde(default)]
     pub is_share: bool,
+    /// Snowflake: the grantee kind, such as ROLE, DATABASE ROLE, APPLICATION or USER
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<String>,
 }
 
 /// GRANT statement
@@ -620,6 +657,9 @@ pub struct Grant {
     /// TSQL: AS principal (the grantor role)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub as_principal: Option<Identifier>,
+    /// Snowflake GRANT OWNERSHIP: COPY or REVOKE CURRENT GRANTS
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_grants: Option<String>,
 }
 
 /// REVOKE statement
@@ -1541,4 +1581,403 @@ pub struct VerticaProjectionColumn {
 pub struct VerticaParserCall {
     pub name: TableRef,
     pub parameters: Vec<VerticaParameter>,
+}
+
+/// `[DECLARE ...] BEGIN ... [EXCEPTION ...] END [label]`, with every member in written order.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingBlock {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub declarations: Vec<ScriptingDeclaration>,
+    pub body: Vec<ScriptingStatement>,
+    pub exception_handlers: Vec<ScriptingExceptionHandler>,
+    pub label: Option<Identifier>,
+}
+
+/// One DECLARE or LET member; LET-only and DECLARE-only forms are separated by the parser.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingDeclaration {
+    Variable(ScriptingVariable),
+    Cursor(ScriptingCursor),
+    Resultset(ScriptingResultset),
+    Exception(ScriptingException),
+    Procedure(Box<ScriptingProcedure>),
+}
+
+/// `name [type] [{DEFAULT | :=} expression]`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingVariable {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub data_type: Option<DataType>,
+    pub default: Option<ScriptingDefault>,
+}
+
+/// The written assignment spelling and its value.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingDefault {
+    pub operator: ScriptingAssignmentOperator,
+    pub value: Expression,
+}
+
+#[derive(
+    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingAssignmentOperator {
+    Default,
+    ColonEquals,
+}
+
+/// `name CURSOR FOR {query | resultset}`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingCursor {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub source: ScriptingCursorSource,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingCursorSource {
+    Query(Expression),
+    Resultset(Identifier),
+}
+
+/// `name RESULTSET [{DEFAULT | :=} [ASYNC] (statement)]`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingResultset {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub default: Option<ScriptingResultsetDefault>,
+}
+
+/// The statement is a child job only when ASYNC is written; it is never run here.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingResultsetDefault {
+    pub operator: ScriptingAssignmentOperator,
+    pub asynchronous: bool,
+    pub statement: Expression,
+}
+
+/// `name EXCEPTION [(number, 'message')]`; omitted values are not defaulted.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingException {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub number: Option<Expression>,
+    pub message: Option<Expression>,
+}
+
+/// `name PROCEDURE ( [<arg> <type>, ...] ) RETURNS { <type> | TABLE ( ... ) } AS <block>`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingProcedure {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    pub parameters: Vec<crate::expressions::schema_objects::models::FunctionParameter>,
+    pub return_type: Option<DataType>,
+    pub returns_table: Option<Vec<StructField>>,
+    pub body: ScriptingBlock,
+}
+
+/// One body member, terminated by its own semicolon.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingStatement {
+    Sql(ScriptingSql),
+    Block(ScriptingBlock),
+    Let(Box<ScriptingLet>),
+    Assignment(ScriptingAssignment),
+    If(ScriptingIf),
+    Case(ScriptingCase),
+    For(ScriptingFor),
+    While(ScriptingWhile),
+    Repeat(ScriptingRepeat),
+    Loop(ScriptingLoop),
+    Break(ScriptingJump),
+    Continue(ScriptingJump),
+    Open(ScriptingOpen),
+    Fetch(ScriptingFetch),
+    Close(ScriptingName),
+    Await(ScriptingAwait),
+    Cancel(ScriptingName),
+    Null(ScriptingNull),
+    Raise(ScriptingRaise),
+    Return(ScriptingReturn),
+}
+
+/// An ordinary SQL statement inside a block.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingSql {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub statement: Expression,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingLet {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub declaration: ScriptingDeclaration,
+}
+
+/// `name := expression`, without LET.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingAssignment {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub target: Identifier,
+    pub value: Expression,
+}
+
+/// `IF (c) THEN ... [ELSEIF (c) THEN ...] [ELSE ...] END IF`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingIf {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub branches: Vec<ScriptingBranch>,
+    pub else_branch: Option<ScriptingElse>,
+}
+
+/// A condition or WHEN value and the statements it guards.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingBranch {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub condition: Expression,
+    pub body: Vec<ScriptingStatement>,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingElse {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub body: Vec<ScriptingStatement>,
+}
+
+/// Simple (with operand) or searched CASE statement; `END CASE` versus bare `END` is kept.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingCase {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub operand: Option<Expression>,
+    pub branches: Vec<ScriptingBranch>,
+    pub else_branch: Option<ScriptingElse>,
+    pub end_case: bool,
+}
+
+/// `FOR name IN {source | [REVERSE] start TO end} {DO | LOOP} ... END {FOR | LOOP} [label]`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingFor {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub variable: Identifier,
+    pub iteration: ScriptingForIteration,
+    pub keyword: ScriptingLoopKeyword,
+    pub body: Vec<ScriptingStatement>,
+    pub label: Option<Identifier>,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingForIteration {
+    /// A cursor or RESULTSET name; which one is not resolved here.
+    Rows(Identifier),
+    Range(Box<ScriptingRange>),
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingRange {
+    pub reverse: bool,
+    pub start: Expression,
+    pub end: Expression,
+}
+
+/// The body keyword, which fixes the closing `END FOR`/`END WHILE` or `END LOOP`.
+#[derive(
+    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingLoopKeyword {
+    Do,
+    Loop,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingWhile {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub condition: Expression,
+    pub keyword: ScriptingLoopKeyword,
+    pub body: Vec<ScriptingStatement>,
+    pub label: Option<Identifier>,
+}
+
+/// `REPEAT ... UNTIL (c) END REPEAT [label]`: the condition follows the body.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingRepeat {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub body: Vec<ScriptingStatement>,
+    pub condition: Expression,
+    pub label: Option<Identifier>,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingLoop {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub body: Vec<ScriptingStatement>,
+    pub label: Option<Identifier>,
+}
+
+/// BREAK/EXIT or CONTINUE/ITERATE, keeping the synonym written.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingJump {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub keyword: ScriptingJumpKeyword,
+    pub label: Option<Identifier>,
+}
+
+#[derive(
+    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingJumpKeyword {
+    Break,
+    Exit,
+    Continue,
+    Iterate,
+}
+
+/// `OPEN cursor [USING (bind, ...)]`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingOpen {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub cursor: Identifier,
+    pub using: Option<Vec<Expression>>,
+}
+
+/// `FETCH cursor INTO variable, ...`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingFetch {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub cursor: Identifier,
+    pub targets: Vec<Identifier>,
+}
+
+/// A statement whose only operand is a cursor or RESULTSET name: CLOSE and CANCEL.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingName {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingAwait {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub target: ScriptingAwaitTarget,
+}
+
+/// Unquoted `ALL`; a quoted `"ALL"` names a RESULTSET.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingAwaitTarget {
+    All,
+    Resultset(Identifier),
+}
+
+/// The no-op `NULL;` statement, distinct from a NULL value.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingNull {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+}
+
+/// `RAISE [exception]`; without a name it re-raises inside a handler.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingRaise {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub exception: Option<Identifier>,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingReturn {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    /// Absent for a bare `RETURN;`, which returns NULL.
+    pub value: Option<ScriptingReturnValue>,
+}
+
+/// A scalar expression, or `TABLE(...)` returning the rows its argument names.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingReturnValue {
+    Scalar(Expression),
+    Table(Expression),
+}
+
+/// `WHEN {name [OR name ...] | OTHER} [EXIT | CONTINUE] THEN ...`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingExceptionHandler {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub exceptions: ScriptingHandledExceptions,
+    /// Absent when not written; EXIT is Snowflake's default, never filled in here.
+    pub action: Option<ScriptingHandlerAction>,
+    pub body: Vec<ScriptingStatement>,
+}
+
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingHandledExceptions {
+    Named(Vec<Identifier>),
+    Other,
+}
+
+#[derive(
+    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingHandlerAction {
+    Exit,
+    Continue,
 }

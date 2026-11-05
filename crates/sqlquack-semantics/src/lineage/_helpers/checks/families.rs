@@ -215,7 +215,7 @@ pub(crate) fn data_type_family(data_type: &DataType) -> Family {
         | DataType::Union { .. }
         | DataType::Geometry { .. }
         | DataType::Geography { .. } => Family::Struct,
-        DataType::Nullable { inner } => data_type_family(inner),
+        DataType::Nullable { inner } | DataType::NotNull { inner } => data_type_family(inner),
         DataType::Custom { name } => type_family(name),
         _ => Family::Unknown,
     }
@@ -261,7 +261,7 @@ fn written_family(
         Expression::Literal(literal) => literal_family(literal),
         Expression::Boolean(_) => Family::Boolean,
         Expression::Alias(alias) => family(&alias.this),
-        Expression::Neg(unary) => family(&unary.this),
+        Expression::Neg(unary) | Expression::Pos(unary) => family(&unary.this),
         Expression::Add(operation) | Expression::Sub(operation) | Expression::Mul(operation) => {
             arithmetic_family(family(&operation.left), family(&operation.right))
         }

@@ -551,9 +551,100 @@ pub enum ColumnPosition {
     After(Identifier),
 }
 
+/// Snowflake `{ ADD | DROP | MODIFY } DATA METRIC FUNCTION <name> ON ( ... ) [ <clause> ], ...`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricFunctionAction {
+    /// `ADD`, `DROP` or `MODIFY`.
+    pub kind: String,
+    pub items: Vec<DataMetricFunctionItem>,
+}
+
+/// Snowflake `{ CREATE | DEFINE } [ SECURE ] DATA METRIC FUNCTION`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CreateDataMetricFunction {
+    /// The leading keyword: "CREATE" or "DEFINE".
+    pub verb: String,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub secure: bool,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub if_not_exists: bool,
+    pub name: TableRef,
+    pub arguments: Vec<DataMetricTableArgument>,
+    pub return_type: DataType,
+    /// `NULL` as true or `NOT NULL` as false after the return type, absent without either.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub nullable: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub language: Option<Identifier>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment: Option<Expression>,
+    /// The `AS` body, a string literal.
+    pub body: Expression,
+}
+
+/// One `<name> TABLE ( <column> <type>, ... )` argument of a data metric function.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricTableArgument {
+    pub name: Identifier,
+    pub columns: Vec<DataMetricColumn>,
+}
+
+/// One `<column> <type>` of a data metric function's table argument.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricColumn {
+    pub name: Identifier,
+    pub data_type: DataType,
+}
+
+/// One `<name> ON ( <argument>, ... )` of a data metric function action, with its clauses.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricFunctionItem {
+    pub name: TableRef,
+    pub arguments: Vec<Expression>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub clauses: Vec<DataMetricFunctionClause>,
+}
+
+/// A clause after a data metric function's arguments.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum DataMetricFunctionClause {
+    /// `SENSITIVITY = <value>` or `ANOMALY_DETECTION = <value>`.
+    Property {
+        name: String,
+        value: Expression,
+    },
+    /// `[ ADD | DROP | MODIFY ] EXPECTATION <expectation>, ...`.
+    Expectations {
+        action: Option<String>,
+        expectations: Vec<DataMetricExpectation>,
+    },
+    /// `WITHIN GROUP ( <column>, ... ) [ GROUP LIMIT <n> ]`.
+    WithinGroup {
+        columns: Vec<Expression>,
+        limit: Option<Expression>,
+    },
+    ExecuteAsRole(Identifier),
+    /// `FILTER ( [ <condition> ] )`.
+    Filter(Option<Expression>),
+    /// `SUSPEND` or `RESUME`.
+    State(String),
+}
+
+/// A data metric function expectation: its name and, except under DROP, its condition.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricExpectation {
+    pub name: Identifier,
+    pub condition: Option<Expression>,
+}
+
 /// Actions for ALTER TABLE
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum AlterTableAction {
+    DataMetricFunction(DataMetricFunctionAction),
     AddColumn {
         column: ColumnDef,
         if_not_exists: bool,
@@ -738,6 +829,8 @@ pub enum AlterColumnAction {
     DropNotNull,
     /// Set column comment
     Comment(String),
+    /// Snowflake: UNSET COMMENT
+    UnsetComment,
     /// MySQL: SET VISIBLE
     SetVisible,
     /// MySQL: SET INVISIBLE

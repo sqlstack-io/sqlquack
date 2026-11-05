@@ -1,13 +1,13 @@
 use crate::helpers::{
-    convert_outcome, converted_column_names, converted_first_value, converted_run_error,
-    converted_value_over, override_failure, override_outcome, policy_free_exit_code,
-    python_outcome, python_report, python_rows, run_convert,
+    convert_outcome, convert_streams, converted_column_names, converted_first_value,
+    converted_run_error, converted_value_over, override_failure, override_outcome,
+    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert, run_with_input,
 };
 use crate::test_types::{
-    ColumnNameTestCase, ConvertOutcome, ConvertTestCase, ConvertedRunTestCase,
-    CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase, OverrideFailureTestCase,
-    OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase,
-    RunErrorTestCase, ValueTestCase,
+    ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
+    ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
+    FailureKindTestCase, OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase,
+    PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -71,6 +71,38 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
+            description: "SYSTEM$TYPEOF text that reaches the result with its storage suffix refuses",
+            sql: "WITH t AS (SELECT SYSTEM$TYPEOF(2.5) AS kind) SELECT kind FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "SYSTEM$TYPEOF text read by a function before its suffix is removed refuses",
+            sql: "WITH t AS (SELECT LENGTH(SYSTEM$TYPEOF(2.5)) AS n) SELECT n FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "ordering by SYSTEM$TYPEOF text beside another output before LIMIT refuses",
+            sql: "WITH s AS (SELECT 1 AS k, 2.5 AS v), \
+                  t AS (SELECT SYSTEM$TYPEOF(s.v) AS kind, s.k FROM s ORDER BY kind LIMIT 1) \
+                  SELECT REGEXP_REPLACE(t.kind, '\\\\[.*\\\\]$', '') AS kind, t.k FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "SYSTEM$TYPEOF text stripped in a later CTE converts",
+            sql: "WITH s AS (SELECT 2.5 AS v), \
+                  t AS (SELECT SYSTEM$TYPEOF(s.v) AS kind FROM s ORDER BY kind LIMIT 1) \
+                  SELECT REGEXP_REPLACE(t.kind, '\\\\[.*\\\\]$', '') AS kind FROM t",
+            flags: &[],
+            mention: "done, converted",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
             description: "a statement that converts prints DuckDB SQL and exits 0",
             sql: "SELECT 1 + 2 AS total",
             flags: &[],
@@ -85,10 +117,10 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "a refused statement prints no SQL, names the refusal and exits 1",
+            description: "a refused statement prints no SQL, renders the refusal at its place and exits 1",
             sql: QUOTED_ALIAS,
             flags: &[],
-            mention: "refused statement",
+            mention: " --> <stdin>:1:",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -156,8 +188,15 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a TIMESTAMP_TZ column without a declared offset keeps refusing",
             sql: "SELECT TO_DATE(shipped_at) AS shipped_on FROM orders",
             flags: &["--schema", DECLARED_SCHEMA],
-            mention: "casting TIMESTAMP_TZ(9) to DATE has no proven conversion",
+            mention: "casting to DATE of TIMESTAMP_TZ(9), which reads the local time of an offset",
             expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "the suggested rewrite through a zone column converts the local date",
+            sql: "SELECT CONVERT_TIMEZONE(ship_zone, shipped_at)::TIMESTAMP_NTZ::DATE AS shipped_on FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "relies on known divergence time_zone_spelling at fn:CONVERT_TIMEZONE",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "the declared offset carries through a CTE and COALESCE to DATE_TRUNC",
@@ -618,6 +657,12 @@ fn given_a_python_call_the_conversion_would_repeat_or_batch_when_converting_then
                 .to_string()
                 .contains(test_case.expected_mention),
             "{}",
+            test_case.description
+        );
+        assert_eq!(
+            report["refusals"][0]["span"]["line"].as_u64(),
+            Some(1),
+            "{}: the refusal points into the statement",
             test_case.description
         );
     }
@@ -1212,6 +1257,262 @@ fn given_a_union_of_a_float_variant_and_a_json_decimal_when_running_then_it_rais
             sql: "WITH b AS (SELECT 1 AS o, TO_VARIANT(1.5::FLOAT) AS v UNION ALL \
                   SELECT 2, PARSE_JSON('null')) SELECT o, TYPEOF(v) AS t FROM b",
             expected_mention: "json_fidelity",
+        },
+    ];
+    for test_case in test_cases {
+        assert!(
+            converted_run_error(test_case.sql)
+                .is_some_and(|error| error.contains(test_case.expected_mention)),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_diagnostic() {
+    let test_cases = [
+        ConvertDiagnosticTestCase {
+            description: "a parse failure is rendered at the parser's position with its code",
+            sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
+            flags: &[],
+            expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:26\n  |\n2 |   FROM \
+                orders WHERE (b = 1\n  |                          ^ Expected RParen, got end of input \
+                ('') near [b = 1]\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0001", "parse_fidelity", 2, 26),
+        },
+        ConvertDiagnosticTestCase {
+            description: "an unknown relation is underlined with the fix as help",
+            sql: "SELECT a FROM orders",
+            flags: &[],
+            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:15\n  |\n1 | SELECT a \
+                FROM orders\n  |               ^^^^^^ relation `ORDERS` has no known columns\n  |\n  \
+                = help: declare the relation and its columns in the schema (`--schema` on the command \
+                line)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0004", "unresolved_name", 1, 15),
+        },
+        ConvertDiagnosticTestCase {
+            description: "SQL Snowflake parses but rejects is refused with the rejection's code, at its clause",
+            sql: "SELECT 1 QUALIFY TRUE",
+            flags: &[],
+            expected_text: "error[SQ0203]: QUALIFY needs a window function\n --> <stdin>:1:10\n  |\n1 | \
+                SELECT 1 QUALIFY TRUE\n  |          ^^^^^^^ QUALIFY is used without a window \
+                function in the SELECT list or QUALIFY\n  |\n  = help: move the condition to WHERE or \
+                HAVING, or filter on a window function's result\nsqlquack convert: refused, 1 refusal \
+                under the built-in default\n",
+            expected_json: ("SQ0203", "qualify_without_window", 1, 10),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a divergence the policy refuses has its own code and help naming the policy",
+            sql: "SELECT HASH(1) AS h",
+            flags: &[],
+            expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
+                `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
+                needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
+                allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
+                --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
+                --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every \
+                one\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0008", "divergence_refused", 1, 8),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a TIMESTAMP_TZ local-time reading explains the dropped offset and suggests the rewrite",
+            sql: "SELECT DATEDIFF('day', shipped_at, paid_at) AS days FROM orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            expected_text: "error[SQ0003]: the operand types fall outside every rule's proven \
+                conditions: `fn:DATEDIFF`\n --> <stdin>:1:8\n  |\n1 | SELECT DATEDIFF('day', shipped_at, \
+                paid_at) AS days FROM orders\n  |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ DATEDIFF in \
+                DAY of TIMESTAMP_TZ(9), which reads the local time of an offset DuckDB's TIMESTAMPTZ \
+                drops\n  |\n  = note: a Snowflake TIMESTAMP_TZ stores each value's own UTC offset, and \
+                local dates, times, day boundaries and formats read that offset; DuckDB's TIMESTAMPTZ \
+                keeps only the instant, so SQLQuack cannot reproduce them and adds no columns or hidden \
+                state to keep the offset\n  = help: convert the value to a wall time first: \
+                `CONVERT_TIMEZONE('UTC', col)::TIMESTAMP_NTZ` for UTC, or `CONVERT_TIMEZONE(<zone \
+                column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone\nsqlquack \
+                convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0003", "type_condition", 1, 8),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a schema key matching only ignoring case says unquoted names fold to upper case",
+            sql: "SELECT order_id FROM orders",
+            flags: &["--schema", "tests/cli/fixtures/lowercase_relation.json"],
+            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:22\n  |\n1 | SELECT \
+                order_id FROM orders\n  |                      ^^^^^^ relation `ORDERS` matches `orders` \
+                only without regard to case\n  |\n  = help: Snowflake folds unquoted names to upper \
+                case, so declare the relation or column in the schema as the SQL resolves it (`ORDERS` \
+                for `FROM orders`), or quote the name in the SQL to keep its case\nsqlquack convert: \
+                refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0004", "unresolved_name", 1, 22),
+        },
+    ];
+    for test_case in test_cases {
+        let (stdout, stderr) = convert_streams(
+            test_case.sql,
+            &[&["--builtin-policy"], test_case.flags].concat(),
+        );
+        assert_eq!(stdout, "", "{}", test_case.description);
+        assert_eq!(
+            stderr.trim_start_matches("sqlquack convert: converting…\n"),
+            test_case.expected_text,
+            "{}",
+            test_case.description
+        );
+        let (json, _) = convert_streams(
+            test_case.sql,
+            &[&["--builtin-policy", "--json"], test_case.flags].concat(),
+        );
+        let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
+        let refusal = &report["refusals"][0];
+        assert_eq!(
+            (
+                refusal["code"].as_str(),
+                refusal["name"].as_str(),
+                refusal["span"]["line"].as_u64(),
+                refusal["span"]["column"].as_u64(),
+            ),
+            (
+                Some(test_case.expected_json.0),
+                Some(test_case.expected_json.1),
+                Some(test_case.expected_json.2),
+                Some(test_case.expected_json.3),
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_lists_exit_status() {
+    let test_cases = [
+        OutputFormatTestCase {
+            description: "--format json prints the JSON report",
+            arguments: &["convert", "--builtin-policy", "--format", "json"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "{\n  \"converted\": true,",
+        },
+        OutputFormatTestCase {
+            description: "--json is the short form and prints the same report",
+            arguments: &["convert", "--builtin-policy", "--json"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "{\n  \"converted\": true,",
+        },
+        OutputFormatTestCase {
+            description: "--format text prints the DuckDB SQL",
+            arguments: &["convert", "--builtin-policy", "--format", "text"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "SELECT",
+        },
+        OutputFormatTestCase {
+            description: "asking for both is a usage error",
+            arguments: &["convert", "--builtin-policy", "--format", "text", "--json"],
+            expected_exit_code: Some(2),
+            expected_stdout_prefix: "",
+        },
+        OutputFormatTestCase {
+            description: "the top-level help explains each exit status",
+            arguments: &["--help"],
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "Snowflake-to-DuckDB SQL conversion that refuses to guess",
+        },
+    ];
+    let directory = tempfile::tempdir().expect("temporary directory");
+    for test_case in test_cases {
+        let (exit_code, stdout, _) = run_with_input(
+            directory.path(),
+            test_case.arguments,
+            "SELECT 1 + 2 AS total",
+        );
+        assert_eq!(
+            (
+                exit_code,
+                stdout.starts_with(test_case.expected_stdout_prefix)
+            ),
+            (test_case.expected_exit_code, true),
+            "{}: {stdout}",
+            test_case.description
+        );
+        assert!(
+            test_case.arguments != ["--help"]
+                || stdout.contains("Exit status of convert, function, census and index:\n  0  the command succeeded"),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and_loud_ones_convert()
+{
+    let test_cases = [
+        FailureKindTestCase {
+            description: "CURRENT_DATE relies on value divergences, and --json says so",
+            sql: "SELECT CURRENT_DATE() AS d",
+            flags: &[],
+            expected_converted: true,
+            expected_failures: &[("current_time", "value"), ("session_timezone_utc", "value")],
+        },
+        FailureKindTestCase {
+            description: "--loud-divergences-only refuses CURRENT_DATE",
+            sql: "SELECT CURRENT_DATE() AS d",
+            flags: &["--loud-divergences-only"],
+            expected_converted: false,
+            expected_failures: &[],
+        },
+        FailureKindTestCase {
+            description: "HASH is refused by default, as its value is never Snowflake's",
+            sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
+            flags: &[],
+            expected_converted: false,
+            expected_failures: &[],
+        },
+        FailureKindTestCase {
+            description: "MODE relies only on loud divergences, so it still converts",
+            sql: "SELECT MODE(x) AS m FROM (SELECT 1 AS x) AS t",
+            flags: &["--loud-divergences-only"],
+            expected_converted: true,
+            expected_failures: &[("mode_of_no_rows", "loud"), ("mode_ties", "loud")],
+        },
+    ];
+    for test_case in test_cases {
+        let report = python_report(test_case.sql, test_case.flags);
+        let expected: serde_json::Map<String, serde_json::Value> = test_case
+            .expected_failures
+            .iter()
+            .map(|(id, failure)| ((*id).to_owned(), serde_json::json!(failure)))
+            .collect();
+        assert_eq!(
+            (
+                report["converted"].as_bool(),
+                report["divergence_failures"].clone()
+            ),
+            (
+                Some(test_case.expected_converted),
+                serde_json::Value::Object(expected)
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_numbers_beyond_38_digits_when_running_then_duckdb_raises_a_numeric_range_error() {
+    let test_cases = [
+        RunErrorTestCase {
+            description: "a SUM near 2^127 overflows DuckDB's HUGEINT addition",
+            sql: "SELECT SUM(x) AS s FROM (SELECT \
+                  CAST('99999999999999999999999999999999999999' AS NUMBER(38,0)) AS x \
+                  UNION ALL SELECT \
+                  CAST('99999999999999999999999999999999999999' AS NUMBER(38,0))) AS t",
+            expected_mention: "Out of Range Error: Overflow in HUGEINT addition",
+        },
+        RunErrorTestCase {
+            description: "NUMBER(38,0) compared with NUMBER(10,5) casts to DECIMAL(38,5), which raises",
+            sql: "SELECT a = b AS same FROM (SELECT \
+              CAST('99999999999999999999999999999999999999' AS NUMBER(38,0)) AS a, \
+              CAST('1.5' AS NUMBER(10,5)) AS b) AS t",
+            expected_mention: "to type DECIMAL(38,5) failed: value is out of range!",
         },
     ];
     for test_case in test_cases {

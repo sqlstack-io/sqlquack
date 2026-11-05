@@ -32,24 +32,25 @@ use crate::conversion::constants::{
     FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY, GROUP_BY_ALL_RULE,
     HASH_RULE, HAVING, HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY,
     INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE,
-    LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MEDIAN_RULE,
-    MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY, NULL_ARITHMETIC,
-    NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF, NUMBER_LITERAL,
-    NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE, OBJECT_DELETE_RULE,
-    OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY, PARENTHESES, PARSE_JSON_RULE,
-    PARSE_JSON_VARIANT, PERCENTILE_RULE, POSITIONAL_COLUMN, PROJECT_FUNCTION_CALL,
-    PROJECT_TABLE_FUNCTION, QUALIFY, REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING,
-    REGEXP_PARAMETERS, REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION,
-    SIGN_RULE, SPLIT_RULE, SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, TEMPORAL_TEXT_FORMAT,
-    TEXT_AFFIX, TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP,
-    TEXT_MD5, TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPEAT, TEXT_REPLACE,
+    LAST_DAY_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC,
+    MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
+    NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
+    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
+    OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
+    PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
+    POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
+    REDUCE_RULE, REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_COUNTING, REGEXP_PARAMETERS,
+    REGEXP_POSIX_SPACE, ROUNDING, SCALAR_SUBQUERY, SELECT, SET_OPERATION, SIGN_RULE, SPLIT_RULE,
+    SPLIT_TO_TABLE_RULE, STAR, SUM, SUM_FLOAT, SYSTEM_TYPE_NAME, TEMPORAL_TEXT_FORMAT, TEXT_AFFIX,
+    TEXT_BRANCHES, TEXT_CHR, TEXT_CONTAINS, TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5,
+    TEXT_NUMBER_COMPARISON, TEXT_PAD, TEXT_POSITION, TEXT_REPEAT, TEXT_REPLACE,
     TEXT_SEARCH_POSITION, TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
     TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
-    TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_VARIANT_RULE, TRIM, UNION_BY_NAME,
-    USER_OVERRIDE_RULE, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS, VARIANT_CAST,
-    VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT,
-    VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_ORDER_KEY, VARIANT_PARTITION,
-    VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
+    TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, TO_VARIANT_RULE, TRIM,
+    UNION_BY_NAME, USER_OVERRIDE_RULE, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS,
+    VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT,
+    VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_ORDER_KEY,
+    VARIANT_PARTITION, VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME,
     VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING,
     WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
@@ -114,13 +115,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ASOF_JOIN,
         constructs: &["join:asof"],
-        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing. Both sides of the comparison are NUMBER, FLOAT or TIMESTAMP_NTZ expressions, as Snowflake requires and as recorded; others refuse.",
+        conditions: "ASOF JOIN with a MATCH_CONDITION of one comparison (>, >=, < or <=) and an ON of equalities joined by AND: each left row with the nearest right row the comparison admits among those whose ON equalities hold, or NULLs where none does (DuckDB's ASOF LEFT JOIN). Rows whose compared values are NULL match nothing. Both sides of the comparison are NUMBER, FLOAT, DATE or TIMESTAMP_NTZ expressions, as Snowflake requires and as recorded; others refuse.",
         failures: &[],
     },
     RuleSpec {
         id: VALUES_ROWS,
         constructs: &["node:values"],
-        conditions: "VALUES rows of one width, as a query or FROM source: the UNION ALL of one SELECT per row, so each column takes the set operation's common type; columns are named COLUMN1, COLUMN2 and so on unless an alias list renames them.",
+        conditions: "VALUES rows of one width, as a query or FROM source: the UNION ALL of one SELECT per row, so each column takes the set operation's common type; columns are named COLUMN1, COLUMN2 and so on unless an alias list renames them. More than 1,000 rows refuse for now.",
         failures: &[],
     },
     RuleSpec {
@@ -180,7 +181,8 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: STAR,
         constructs: &["node:star"],
-        conditions: "No EXCLUDE, REPLACE or RENAME; expands to the known columns.",
+        conditions: "Expands to the known columns, without those an EXCLUDE list names; each EXCLUDE \
+                     name unquoted and read by the star. No REPLACE or RENAME.",
         failures: &[],
     },
     RuleSpec {
@@ -273,7 +275,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: DECIMAL_ARITHMETIC,
         constructs: &["node:add", "node:sub", "node:mul"],
-        conditions: "NUMBER operands; `+`, `-` and `*` whose exact result type needs more than 38 digits rely on `numeric_range`; `*` refuses when a scale cut would need more than 38 intermediate digits.",
+        conditions: "NUMBER operands; `+`, `-` and `*` whose exact result type needs more than 38 digits rely on `numeric_range`. A `*` whose exact product needs more than 38 digits before Snowflake cuts its scale is computed exactly at the summed scale and rounded half away from zero to Snowflake's scale, as recorded; DuckDB raises where the product's whole digits exceed what the summed scale leaves, which also relies on `numeric_range`. A `*` whose scales sum to more than 38 refuses.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -406,7 +408,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_NUMERIC,
         constructs: &["node:cast"],
-        conditions: "NUMBER to NUMBER or FLOAT; FLOAT to NUMBER of scale 0, or of scale 2, 6 or 8 rounded half away from zero from the double's exact binary value, as recorded, NaN and infinities raising 100046 and more than nine significant digits raising float_decimal_digits; not TRY_CAST.",
+        conditions: "NUMBER to NUMBER or FLOAT; FLOAT to NUMBER of scale 0, or of scale 2, 6 or 8 rounded half away from zero from the double's exact binary value, as recorded, NaN and infinities raising 100046 and more than ten digits once scaled raising float_decimal_digits; not TRY_CAST.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -457,7 +459,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_TEXT_LITERAL,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "A string literal in a form both engines read the same: plain decimal for NUMBER, decimal with exponent for FLOAT, true or false for BOOLEAN, YYYY-MM-DD for DATE; YYYY-MM-DD[ HH:MI:SS[.f]] for timestamps, with a ' ±HH:MM' offset for TIMESTAMP_TZ and TIMESTAMP_LTZ, and no more fractional digits than the target precision. An NTZ(7-9) literal outside 1677-09-22..2262-04-10 relies on timestamp_range; a zoned literal with a non-zero sub-microsecond part relies on timestamp_tz_submicro and raises.",
+        conditions: "A string literal in a form both engines read the same: plain decimal for NUMBER, decimal with exponent for FLOAT, true or false for BOOLEAN, YYYY-MM-DD for DATE; YYYY-MM-DD[ HH:MI:SS[.f]] for timestamps, with a ' ±HH:MM' offset for TIMESTAMP_TZ and TIMESTAMP_LTZ, and no more fractional digits than the target precision. An NTZ(7-9) literal outside 1677-09-22..2262-04-10 is refused, since DuckDB's nanosecond timestamp would always raise; a zoned literal with a non-zero sub-microsecond part relies on timestamp_tz_submicro and raises.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],
@@ -489,7 +491,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past.",
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past. Between two TIMESTAMP_TZ values at any offsets, MINUTE and SECOND boundaries are counted between their UTC instants, which every whole-minute offset shares, as recorded; other units of such values refuse, as Snowflake counts DAY boundaries in each value's own offset.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -504,7 +506,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: PARSE_JSON_RULE,
         constructs: &["fn:PARSE_JSON", "fn:TRY_PARSE_JSON"],
-        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, -0 with an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too. A number whose fraction is all zeros, such as 2.0, is read as the integer Snowflake reads it as, as recorded. A VARIANT column of a base table is guarded the same way.",
+        conditions: "One VARCHAR argument. Empty or blank text is NULL; text DuckDB does not read as JSON, numbers with an exponent, -0 with an all-zero fraction, six leading fraction zeros, more than 15 decimal digits or 39 integer digits, NaN, Infinity, undefined, trailing commas, surrogate escapes and repeated keys raise, relying on json_fidelity; for TRY_PARSE_JSON too, except that TRY_PARSE_JSON of markup, and of a document cut off before its first value closes with only double-quoted strings, is NULL, as recorded. A number whose fraction is all zeros, such as 2.0, is read as the integer Snowflake reads it as, as recorded. A VARIANT column of a base table is guarded the same way.",
         failures: &[FailureMode {
             kind: ErrorKind::JsonParse,
             snowflake: &[JSON_NOT_PARSED],
@@ -523,6 +525,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: SYSTEM_TYPE_NAME,
+        constructs: &["fn:SYSTEM$TYPEOF"],
+        conditions: "SYSTEM$TYPEOF(x) only where REGEXP_REPLACE(..., '\\\\[.*\\\\]$', '') removes the storage suffix Snowflake's plan decides, around the call or around a column of its text: until then the text passes only through projections, CTE and FROM subquery columns, UNION ALL branches and, as a SELECT's sole output, its own ORDER BY key, and refuses anywhere else that reads it. x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked; so do DATEADD of a timestamp below nanoseconds, which Snowflake was recorded widening to TIMESTAMP_NTZ(9), and a BOOLEAN predicate other than ILIKE with a NULL operand, which it was recorded typing NULL for ILIKE.",
+        failures: &[],
+    },
+    RuleSpec {
         id: VARIANT_TYPE_NAME,
         constructs: &["fn:TYPEOF"],
         conditions: "A VARIANT: INTEGER, DECIMAL, VARCHAR, BOOLEAN, OBJECT, ARRAY or NULL_VALUE.",
@@ -530,8 +538,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_INSPECT,
-        constructs: &["fn:IS_NULL_VALUE", "fn:TO_JSON"],
-        conditions: "A VARIANT. TO_JSON writes object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
+        constructs: &["fn:IS_NULL_VALUE", "fn:STRIP_NULL_VALUE", "fn:TO_JSON"],
+        conditions: "A VARIANT. STRIP_NULL_VALUE turns a JSON null value into SQL NULL and leaves every other value, including nulls inside objects and arrays, as it is. TO_JSON writes object keys in byte order at every depth; an object DuckDB could sort only by rewriting a number raises, relying on json_fidelity.",
         failures: &[],
     },
     RuleSpec {
@@ -578,13 +586,13 @@ pub const RULES: &[RuleSpec] = &[
             "fn:ARRAY_SIZE",
             "fn:ARRAY_SORT",
         ],
-        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself; rows tied on every key holding different values raise, relying on array_agg_order. ARRAY_AGG, also DISTINCT, without WITHIN GROUP, whose order neither engine defines: the same where at most one distinct value is non-NULL, otherwise raising, relying on array_agg_order, wherever its order can be observed. Of a value other than a VARIANT it is kept unordered, its values sorted, where only order-free readers take it: ARRAY_SIZE, ARRAY_CONTAINS's array, ARRAYS_OVERLAP, ARRAY_INTERSECTION, ARRAY_EXCEPT, ARRAY_CAT, ARRAY_DISTINCT, ARRAY_REMOVE and ARRAY_APPEND (the last five keeping it unordered), FLATTEN's VALUE (its INDEX, PATH and THIS refusing or raising), IFF and searched CASE branches, and columns of CTEs, FROM subqueries and UNION ALL, as recorded; SELECT DISTINCT keeping such a column raises where a row repeats and its array holds several distinct values, as Snowflake keeps arrays differing only in order apart; ARRAY_SIZE of it counts the non-NULL (distinct) values; ARRAY_SORT of it, of text or whole numbers, orders them ascending. DISTINCT of a VARIANT refuses, as DuckDB compares JSON as written, not as VARIANT equality does; without WITHIN GROUP, a VARIANT not proven free of DATEs and timestamps refuses where one entered the statement, as its one-value check compares text; one read from a source table or schema relation relies on source_variant_json.",
+        conditions: "ARRAY_AGG WITHIN GROUP (ORDER BY ...), not as a window function: the non-NULL values in order as an ARRAY, values written as TO_VARIANT writes them and a JSON null kept; an empty ARRAY when no value is non-NULL; DISTINCT only of text ordered by itself; rows tied on every key holding different values raise, relying on array_agg_order. ARRAY_AGG, also DISTINCT, without WITHIN GROUP, whose order neither engine defines: the same where at most one distinct value is non-NULL, otherwise raising, relying on array_agg_order, wherever its order can be observed. Of a value other than a VARIANT it is kept unordered, its values sorted, where only order-free readers take it: ARRAY_SIZE, ARRAY_CONTAINS's array, ARRAYS_OVERLAP, ARRAY_INTERSECTION, ARRAY_EXCEPT, ARRAY_CAT, ARRAY_DISTINCT, ARRAY_REMOVE and ARRAY_APPEND (the last five keeping it unordered), ARRAY_SORT, ARRAY_MAX and ARRAY_MIN, whose results depend only on the elements, FLATTEN's VALUE (its INDEX, PATH and THIS refusing or raising), IFF and searched CASE branches, and columns of CTEs, FROM subqueries and UNION ALL, as recorded; SELECT DISTINCT keeping such a column raises where a row repeats and its array holds several distinct values, as Snowflake keeps arrays differing only in order apart; ARRAY_SIZE of it counts the non-NULL (distinct) values; ARRAY_SORT of it, of text or whole numbers, orders them ascending. DISTINCT of a VARIANT refuses, as DuckDB compares JSON as written, not as VARIANT equality does; without WITHIN GROUP, a VARIANT not proven free of DATEs and timestamps refuses where one entered the statement, as its one-value check compares text; one read from a source table or schema relation relies on source_variant_json.",
         failures: &[],
     },
     RuleSpec {
         id: ARRAY_SIZE_RULE,
         constructs: &["fn:ARRAY_SIZE"],
-        conditions: "A VARIANT or ARRAY: an array's element count as NUMBER(9,0), as recorded; SQL NULL, JSON null and values other than arrays give NULL, as Snowflake documents.",
+        conditions: "A VARIANT or ARRAY: an array's element count as NUMBER(9,0), as recorded; SQL NULL, JSON null and values other than arrays give NULL, as Snowflake documents. Of ARRAY_CONSTRUCT, ARRAY_APPEND or ARRAY_CAT calls written directly in it, a SQL NULL element, which Snowflake keeps as undefined, counts as one element, as recorded.",
         failures: &[],
     },
     RuleSpec {
@@ -615,6 +623,12 @@ pub const RULES: &[RuleSpec] = &[
         ],
     },
     RuleSpec {
+        id: PARSE_URL_RULE,
+        constructs: &["fn:PARSE_URL"],
+        conditions: "PARSE_URL(text, 1) of VARCHAR, relying on json_fidelity: an OBJECT of fragment, host, parameters, path, port, query and scheme, as recorded, for a URL of printable ASCII without spaces written scheme://host[:port][/path][?query][#fragment], each part text or NULL where absent, the path without its leading slash, and parameters an OBJECT of the query's key=value and bare key pairs, the last of a repeated key kept and a bare key null, values not decoded; every part NULL for empty text, and {'error': 'scheme not specified'} for text without a colon; NULL text is NULL. Other URLs raise json_fidelity, and other modes refuse.",
+        failures: &[],
+    },
+    RuleSpec {
         id: SPLIT_RULE,
         constructs: &["fn:SPLIT"],
         conditions: "VARCHAR text and separator: an ARRAY of the parts between occurrences of the separator, empty parts kept; an empty separator keeps the text whole; NULL arguments give NULL.",
@@ -623,7 +637,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ARRAY_CONSTRUCT_RULE,
         constructs: &["fn:ARRAY_CONSTRUCT", "node:array_func"],
-        conditions: "A bracket literal [a, b] builds as ARRAY_CONSTRUCT(a, b) does, as recorded. VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity. NUMBER elements rely on json_fidelity.",
+        conditions: "A bracket literal [a, b] builds as ARRAY_CONSTRUCT(a, b) does, as recorded. VARIANT, text, boolean or NUMBER(p,0) elements; a SQL NULL element, which Snowflake keeps as undefined, raises, relying on json_fidelity, except where an ARRAY_CONSTRUCT call is written directly in a cast to VARCHAR, which writes it as undefined, or in ARRAY_TO_STRING, which writes it as empty text, as recorded. NUMBER elements rely on json_fidelity.",
         failures: &[],
     },
     RuleSpec {
@@ -653,8 +667,14 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: VARIANT_KIND_RULE,
-        constructs: &["fn:IS_OBJECT", "fn:IS_ARRAY", "fn:IS_BOOLEAN"],
-        conditions: "A VARIANT: whether it holds an object, an array or a boolean; JSON null is false and SQL NULL stays NULL.",
+        constructs: &[
+            "fn:IS_OBJECT",
+            "fn:IS_ARRAY",
+            "fn:IS_BOOLEAN",
+            "fn:IS_DECIMAL",
+            "fn:IS_INTEGER",
+        ],
+        conditions: "A VARIANT: whether it holds an object, an array or a boolean; JSON null is false and SQL NULL stays NULL. IS_DECIMAL of a VARIANT held as JSON is whether it holds a number, IS_INTEGER whether TYPEOF types it INTEGER, as recorded; numbers PARSE_JSON reads as doubles raise there. Where a NUMBER with a scale may have entered a VARIANT, or for a FLOAT held apart from JSON, they refuse.",
         failures: &[],
     },
     RuleSpec {
@@ -776,7 +796,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ROUNDING,
         constructs: &["fn:ROUND", "fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"],
-        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
+        conditions: "A NUMBER or FLOAT; ROUND to literal places (0 by default, possibly negative), half away from zero, or for a NUMBER with the rounding mode 'HALF_TO_EVEN', half to even, as recorded, 'HALF_AWAY_FROM_ZERO' as without a mode; CEIL and FLOOR to whole numbers; TRUNC and TRUNCATE to literal places (0 by default, possibly negative), toward zero, a FLOAT multiplied by 10^p (or divided by 10^-p), truncated and divided back, as recorded (TRUNC(0.29, 2) is 0.28 in both), and TRUNC or TRUNCATE of a temporal value and a literal unit as DATE_TRUNC of the unit and the value. A NUMBER(p,s) whose scale drops to d is NUMBER(min(38, p + 1), max(d, 0)), else its own type, as recorded; a FLOAT stays FLOAT, a zero result positive, and ROUND of a FLOAT to places p multiplies by 10^p, rounds and divides by 10^p, as recorded, so it overflows to infinity where that product does. A result beyond NUMBER(38,0) raises, as Snowflake does.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -823,7 +843,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TO_TIMESTAMP",
             "fn:TO_TIMESTAMP_NTZ",
         ],
-        conditions: "TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two, AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9); a field out of range or an impossible date is NULL under the TRY_ forms and raises 100096 otherwise; NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL under the TRY_ forms, and empty text raises 100096 otherwise, as recorded. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
+        conditions: "TO_TIMESTAMP_NTZ, TO_TIMESTAMP or their TRY_ forms of text with a literal format of YYYY, MM, DD, HH24, or HH12 with AM or PM, MI and SS, in any case, with punctuation (- : . / ,), quoted literals and letters that begin no format element as literal text: YYYY reads four digits, the other numbers one or two; under the TRY_ forms YY reads two digits, 00 to 69 as 2000 to 2069 and 70 to 99 as 1970 to 1999, and MON an English month name or abbreviation in any case, and text with a four-digit year in place of YY is NULL, as recorded; AM and PM either in any case, a space in the format any run of spaces, including none, and everything else itself, case-sensitively, as recorded. Text so spelled is its TIMESTAMP_NTZ(9); a field out of range or an impossible date is NULL under the TRY_ forms and raises 100096 otherwise; NULL is NULL, and empty text and text without an ASCII digit (words such as now or epoch, and other scripts' digits, as recorded) are NULL under the TRY_ forms, and empty text raises 100096 otherwise, as recorded. Any other text raises, relying on date_text_spelling; timestamps rely on timestamp_range.",
         failures: &[FailureMode {
             kind: ErrorKind::TimestampText,
             snowflake: &[TIMESTAMP_FORMAT_MISMATCH],
@@ -880,6 +900,12 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &["fn:LN", "fn:EXP", "fn:SQRT"],
         conditions: "LN, EXP and SQRT of a NUMBER or FLOAT, as a FLOAT computed in double precision. LN of zero or a negative number fails with error 100043 and SQRT of a negative number with error 100044, as recorded; EXP beyond the double range raises numeric_range, as no recording shows what Snowflake returns.",
         failures: LOGARITHM_FAILURES,
+    },
+    RuleSpec {
+        id: POWER_RULE,
+        constructs: &["fn:POWER"],
+        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
+        failures: &[],
     },
     RuleSpec {
         id: FLOAT_TO_DOUBLE,
@@ -977,6 +1003,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: PIVOT_RULE,
+        constructs: &["node:pivot"],
+        conditions: "A FROM source PIVOT(SUM or MAX(an unqualified column) FOR an unqualified column IN (distinct text literals)) with an alias column list naming every output column: one row per distinct combination of the source's other columns, NULL a group like any value, then for each listed key the aggregate over that group's rows whose key equals it exactly, NULL when none do; rows whose key is NULL or not listed only form their group. Over no rows, no rows. Without an alias column list, with another aggregate, a computed key or measure, or no other column to group by, it is not converted.",
+        failures: &[],
+    },
+    RuleSpec {
         id: GENERATOR_RULE,
         constructs: &["fn:GENERATOR", "fn:SEQ4", "fn:SEQ8"],
         conditions: "TABLE(GENERATOR(ROWCOUNT => n)) for a literal n from 0 to 100000, the recorded range, as the only source of its query level: n rows, where SEQ4() numbers them from 0 as NUMBER(10,0) and SEQ8() as NUMBER(19,0) without gaps. SEQ4 and SEQ8 elsewhere, TIMELIMIT and a ROWCOUNT other than a literal are not converted.",
@@ -1030,7 +1062,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "node:regexp_like",
         ],
-        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t and \\r. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
+        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t, \\r and, outside a bracket expression, the ASCII word boundary \\b, as recorded beside digits, underscores, punctuation and non-ASCII letters. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
         failures: &[],
     },
     RuleSpec {
@@ -1042,7 +1074,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: MEDIAN_RULE,
         constructs: &["fn:MEDIAN"],
-        conditions: "MEDIAN as an aggregate, NULLs skipped, NULL over none: the middle value or the average of the two middle values. Of NUMBER(p,s) it is NUMBER(p+3,s+3), exact where both middles stay below 10^(12-s), as recorded; wider middles, where Snowflake's double average was recorded losing digits, raise percentile_interpolation. Scales above 12 refuse. Of FLOAT, the double average.",
+        conditions: "MEDIAN as an aggregate, NULLs skipped, NULL over none: the middle value or the average of the two middle values. Of NUMBER(p,s) it is NUMBER(p+3,s+3), its precision capped at 38, exact where both middles stay below 10^(12-s), as recorded; wider middles, where Snowflake's double average was recorded losing digits, raise percentile_interpolation. Scales above 12 refuse. Of FLOAT, the double average.",
         failures: &[],
     },
     RuleSpec {
@@ -1152,7 +1184,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_UTC_ZONED,
         constructs: &["node:cast"],
-        conditions: "A TIMESTAMP_TZ known to hold the UTC offset, +00:00, cast to TIMESTAMP_NTZ, DATE or TIME(9) (TIME as TO_TIME of its UTC wall time): from CONVERT_TIMEZONE('UTC', x) of two arguments or a cast of a DATE or naive timestamp in the UTC session, carried through columns, CTEs, subqueries, set operations and stored models, and chosen by COALESCE, NVL, IFF, CASE, MIN, MAX, LAG, LEAD, FIRST_VALUE or LAST_VALUE from such values or NULL; and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. Zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
+        conditions: "A TIMESTAMP_TZ known to hold the UTC offset, +00:00, cast to TIMESTAMP_NTZ, DATE or TIME(9) (TIME as TO_TIME of its UTC wall time): from CONVERT_TIMEZONE('UTC', x) of two arguments or a cast of a DATE or naive timestamp in the UTC session, carried through columns, CTEs, subqueries, set operations and stored models, and chosen by COALESCE, NVL, IFF, CASE, MIN, MAX, LAG, LEAD, FIRST_VALUE or LAST_VALUE from such values or NULL; and a TIMESTAMP_LTZ, whose session zone is UTC, cast to TIMESTAMP_NTZ: its UTC wall time, then as a TIMESTAMP_NTZ cast; precision 7-9 relies on timestamp_range. A TIMESTAMP_TZ straight from CONVERT_TIMEZONE(zone, x) of two arguments, whose offset is its zone's at each instant, cast to TIMESTAMP_NTZ or DATE: its wall time in that zone, as CONVERT_TIMEZONE computes it. Other zoned values of unknown offset are refused, since DuckDB keeps instants without their offsets.",
         failures: &[],
     },
     RuleSpec {
@@ -1254,9 +1286,10 @@ pub const RULES: &[RuleSpec] = &[
             "fn:ROW_NUMBER",
             "fn:RANK",
             "fn:DENSE_RANK",
+            "fn:NTILE",
             "node:window_function",
         ],
-        conditions: "An ORDER BY and no frame; typed NUMBER(18,0).",
+        conditions: "An ORDER BY and no frame, and NTILE of one positive integer literal; typed NUMBER(18,0).",
         failures: &[],
     },
     RuleSpec {
@@ -1285,11 +1318,13 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "fn:COUNT",
             "fn:SUM",
+            "fn:AVG",
             "fn:MIN",
             "fn:MAX",
+            "fn:RATIO_TO_REPORT",
             "node:window_function",
         ],
-        conditions: "The aggregate's own conditions; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them.",
+        conditions: "The aggregate's own conditions, AVG as SUM divided by COUNT over the same rows, NULL without values: over an ordered window without a frame typed and rounded as the aggregate, over an explicit ROWS or RANGE frame or a whole unordered partition with 3 more decimal places and 12 more leading digits, truncated toward zero, as recorded; without a frame, a running RANGE frame when ordered. In a query with GROUP BY its argument may be an aggregate, as recorded. BOOLOR_AGG and BOOLAND_AGG only over an unordered window, as Snowflake accepts them. A RANGE frame whose offsets are literal intervals of whole days over one ascending DATE key, peers and NULL keys framed together, as recorded. RATIO_TO_REPORT(x) over an unordered window is x divided by its partition's SUM, typed and rounded as that division, NULL where the sum is zero, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1335,6 +1370,12 @@ pub const RULES: &[RuleSpec] = &[
         id: DAY_NAME_RULE,
         constructs: &["fn:DAYNAME"],
         conditions: "A DATE or TIMESTAMP_NTZ, or a TIMESTAMP_TZ known to hold UTC: the day's three-letter English name, Mon to Sun, as recorded; NULL for NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: LAST_DAY_RULE,
+        constructs: &["fn:LAST_DAY"],
+        conditions: "A DATE or TIMESTAMP_NTZ, or a TIMESTAMP_TZ known to hold UTC, with no unit or MONTH: the last DATE of its month, as recorded; NULL for NULL.",
         failures: &[],
     },
     RuleSpec {
@@ -1536,6 +1577,12 @@ pub const RULES: &[RuleSpec] = &[
         id: TO_DATE_TEMPORAL,
         constructs: &["fn:TO_DATE"],
         conditions: "A DATE, TIMESTAMP_NTZ, TIMESTAMP_LTZ or TIMESTAMP_TZ operand without a format, cast to DATE as CAST does; a TIMESTAMP_TZ only where it is known to hold the UTC offset.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: TO_TIMESTAMP_TEMPORAL,
+        constructs: &["fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ"],
+        conditions: "A DATE or TIMESTAMP_NTZ(p) operand without a scale, cast to TIMESTAMP_NTZ(9) as CAST does, as recorded: a DATE is its midnight, a timestamp keeps its value, and the result is TIMESTAMP_NTZ(9) whatever p is; values outside DuckDB's nanosecond range rely on timestamp_range. TRY_ forms of these operands are not converted, as Snowflake rejects them (error 1065).",
         failures: &[],
     },
     RuleSpec {

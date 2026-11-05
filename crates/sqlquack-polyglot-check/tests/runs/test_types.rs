@@ -29,6 +29,13 @@ pub(crate) struct RejectionTestCase {
     pub(crate) expected_differences: usize,
 }
 
+pub(crate) struct KeptNodeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_kept_nodes: usize,
+    pub(crate) expected_differences: usize,
+}
+
 pub(crate) struct KeptQuotingTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
@@ -41,5 +48,13 @@ pub(crate) struct QuotingTreesTestCase {
     pub(crate) sql: &'static str,
     pub(crate) polyglot: String,
     pub(crate) sqlquack: String,
+    pub(crate) expected_match: bool,
+}
+
+pub(crate) struct StructuredTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) polyglot: &'static str,
+    pub(crate) sqlquack: &'static str,
     pub(crate) expected_match: bool,
 }

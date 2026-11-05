@@ -9,7 +9,7 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
         AnalyzeTestCase {
             description: "a declared Python function is refused where no Python runtime registers it",
             sql: "SELECT is_gift(note) AS gift FROM customers",
-            expected_summary: refused(RefusalCategory::TypeCondition),
+            expected_summary: refused(RefusalCategory::DivergenceRefused),
         },
         AnalyzeTestCase {
             description: "a SQL function named by its reference placeholder is a typed call",
@@ -24,7 +24,7 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
         AnalyzeTestCase {
             description: "a VARIANT crossing into Python is refused until recordings prove it",
             sql: "SELECT payload_size(payload) AS size FROM events",
-            expected_summary: refused(RefusalCategory::TypeCondition),
+            expected_summary: refused(RefusalCategory::DivergenceRefused),
         },
         AnalyzeTestCase {
             description: "a table function argument of another type than declared is refused",
@@ -169,7 +169,7 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: AnalysisSummary {
                 parsed: true,
                 statements: 1,
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
                 converted: false,
             },
         },
@@ -204,12 +204,12 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
-            description: "operand types outside a rule's conditions are a type-condition refusal",
+            description: "comparing a NUMBER with text needs a divergence this mode refuses",
             sql: "SELECT customer_id = note AS same FROM customers",
             expected_summary: AnalysisSummary {
                 parsed: true,
                 statements: 1,
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
                 converted: false,
             },
         },

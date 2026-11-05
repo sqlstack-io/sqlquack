@@ -51,6 +51,7 @@ pub fn convert_statement(
         typed: &typed,
         order: &order,
         free_projections: false,
+        fixture_body: false,
     };
     let (sql, columns) = checked(&typed, convert_query(&tree, None, &context, true))
         .map_err(|refusal| locator.placed(refusal, &tree))?;

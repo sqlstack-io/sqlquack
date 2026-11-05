@@ -21,6 +21,7 @@ use crate::parser::constants::ROW;
 use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
 use crate::tokens::errors::Error;
+use crate::tokens::models::DialectType;
 use crate::tokens::models::ParserToken;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
@@ -120,6 +121,68 @@ pub(crate) fn convert_name_is_known_custom(name: &str) -> bool {
 }
 
 impl Parser {
+    /// `<unreserved name> [ ( ... ) ] '<string>'` as a cast to that named type in Snowflake, or none.
+    pub(crate) fn try_parse_snowflake_named_type_literal(&mut self) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules()
+            || !self.check(TokenType::Var)
+            || self.is_snowflake_reserved_keyword()
+        {
+            return Ok(None);
+        }
+        let Some(end) = self.named_type_literal_end() else {
+            return Ok(None);
+        };
+        let parts: Vec<String> = self.tokens[self.current..end]
+            .iter()
+            .map(|token| match token.token_type {
+                TokenType::String => format!("'{}'", token.text),
+                _ => token.text.to_string(),
+            })
+            .collect();
+        self.current = end;
+        let string_token = self.advance()?;
+        Ok(Some(Expression::Cast(Box::new(
+            crate::expressions::operators::models::Cast {
+                this: Expression::Literal(Box::new(
+                    crate::expressions::names::models::Literal::String(
+                        string_token.text.to_string(),
+                    ),
+                )),
+                to: DataType::Custom {
+                    name: parts.join(" "),
+                },
+                trailing_comments: Vec::new(),
+                double_colon_syntax: false,
+                format: None,
+                default: None,
+                inferred_type: None,
+                span: SourceSpan::default(),
+            },
+        ))))
+    }
+
+    /// The position of the string after a type name and its non-empty balanced parameters, or none.
+    fn named_type_literal_end(&self) -> Option<usize> {
+        let mut end = self.current + 1;
+        if self.tokens.get(end)?.token_type == TokenType::LParen {
+            if self.tokens.get(end + 1)?.token_type == TokenType::RParen {
+                return None;
+            }
+            let mut depth = 0usize;
+            loop {
+                match self.tokens.get(end)?.token_type {
+                    TokenType::LParen => depth += 1,
+                    TokenType::RParen if depth == 1 => break,
+                    TokenType::RParen => depth -= 1,
+                    _ => {}
+                }
+                end += 1;
+            }
+            end += 1;
+        }
+        (self.tokens.get(end)?.token_type == TokenType::String).then_some(end)
+    }
+
     #[inline(never)]
     pub(crate) fn parse_data_type_for_cast_inner(&mut self) -> Result<DataType> {
         if let Some(data_type) = self.parse_vertica_data_type()? {
@@ -470,6 +533,9 @@ impl Parser {
             DataType::Nullable { inner } => {
                 format!("Nullable({})", self.data_type_to_string(inner))
             }
+            DataType::NotNull { inner } => {
+                format!("{} NOT NULL", self.data_type_to_string(inner))
+            }
             DataType::Custom { name } => name.clone(),
             _ => format!("{:?}", dt),
         }
@@ -783,9 +849,21 @@ impl Parser {
         })
     }
 
-    /// Parses star modifiers EXCLUDE/EXCEPT, REPLACE and RENAME in each dialect's syntax.
+    /// Parses star modifiers ILIKE 'pattern' (a string literal) or EXCLUDE/EXCEPT, then REPLACE and RENAME.
     pub(crate) fn parse_star_modifiers(&mut self, table: Option<Identifier>) -> Result<Star> {
         self.parse_star_modifiers_with_comments(table, Vec::new())
+    }
+
+    /// One EXCLUDE name; Snowflake names columns there, never strings.
+    fn parse_star_exclude_name(&mut self) -> Result<String> {
+        if self.config.dialect == Some(DialectType::Snowflake) && self.check(TokenType::String) {
+            return Err(self.parse_error("Snowflake EXCLUDE names columns, not strings"));
+        }
+        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
+            self.advance_text()
+        } else {
+            self.expect_identifier()
+        }
     }
 
     /// Parse star modifiers with explicit trailing comments from the star token
@@ -794,23 +872,22 @@ impl Parser {
         table: Option<Identifier>,
         star_trailing_comments: Vec<String>,
     ) -> Result<Star> {
+        let mut ilike = None;
         let mut except = None;
         let mut replace = None;
         let mut rename = None;
 
-        if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
+        if self.check(TokenType::ILike) && self.check_next(TokenType::String) {
+            self.skip();
+            ilike = Some(self.advance_text()?);
+        } else if self.match_token(TokenType::Exclude) || self.match_token(TokenType::Except) {
             let _ = self.match_text_seq(&["STRICT"]);
             let mut columns: Vec<Identifier> = Vec::new();
             if self.match_token(TokenType::LParen) {
                 loop {
                     let start = self.peek().span;
                     let quoted = self.check(TokenType::QuotedIdentifier);
-                    let col =
-                        if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                            self.advance_text()?
-                        } else {
-                            self.expect_identifier()?
-                        };
+                    let col = self.parse_star_exclude_name()?;
                     if self.match_token(TokenType::Dot) {
                         let subcol = if self.is_safe_keyword_as_identifier() {
                             self.advance_text()?
@@ -835,11 +912,7 @@ impl Parser {
             } else {
                 let start = self.peek().span;
                 let quoted = self.check(TokenType::QuotedIdentifier);
-                let col = if self.check(TokenType::String) || self.is_safe_keyword_as_identifier() {
-                    self.advance_text()?
-                } else {
-                    self.expect_identifier()?
-                };
+                let col = self.parse_star_exclude_name()?;
                 let mut column =
                     Identifier::new(col).with_span(start.through(self.previous().span));
                 column.quoted = quoted;
@@ -873,9 +946,9 @@ impl Parser {
             let mut renames: Vec<(Identifier, Identifier)> = Vec::new();
             if self.match_token(TokenType::LParen) {
                 loop {
-                    let old_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                    let old_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                     self.expect_token(TokenType::As)?;
-                    let new_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                    let new_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                     renames.push((old_name, new_name));
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -883,9 +956,9 @@ impl Parser {
                 }
                 self.expect_token(TokenType::RParen)?;
             } else {
-                let old_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                let old_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                 self.expect_token(TokenType::As)?;
-                let new_name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                let new_name = self.parse_quoting_identifier(Self::expect_identifier)?;
                 renames.push((old_name, new_name));
             }
             rename = Some(renames);
@@ -893,6 +966,7 @@ impl Parser {
 
         Ok(Star {
             table,
+            ilike,
             except,
             replace,
             rename,

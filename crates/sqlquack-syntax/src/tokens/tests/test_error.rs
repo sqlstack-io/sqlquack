@@ -45,6 +45,12 @@ fn given_an_error_when_reading_its_position_then_line_column_and_offsets_are_kep
             expected_position: (Some(1), Some(14), Some(12), Some(13)),
             expected_message_parts: &["line 1"],
         },
+        ErrorPositionTestCase {
+            description: "an unterminated block comment fails at its opening, never parsing on",
+            error: parse_error("SELECT /* never closed"),
+            expected_position: (Some(1), Some(23), Some(7), Some(22)),
+            expected_message_parts: &["Unterminated block comment"],
+        },
     ];
 
     for test_case in test_cases {

@@ -21,6 +21,7 @@ use crate::expressions::columns::models::Comprehension;
 use crate::expressions::columns::models::CompressColumnConstraint;
 use crate::expressions::columns::models::ComputedColumnConstraint;
 use crate::expressions::columns::models::Constraint;
+use crate::expressions::columns::models::CreateDataMetricFunction;
 use crate::expressions::columns::models::DateFormatColumnConstraint;
 use crate::expressions::columns::models::DefaultColumnConstraint;
 use crate::expressions::columns::models::EphemeralColumnConstraint;
@@ -321,6 +322,7 @@ use crate::expressions::queries::models::PreWhere;
 use crate::expressions::queries::models::Prior;
 use crate::expressions::queries::models::Pseudocolumn;
 use crate::expressions::queries::models::Qualify;
+use crate::expressions::queries::models::Resample;
 use crate::expressions::queries::models::Select;
 use crate::expressions::queries::models::SortBy;
 use crate::expressions::queries::models::Stream;
@@ -334,10 +336,12 @@ use crate::expressions::queries::models::WindowSpec;
 use crate::expressions::queries::models::With;
 use crate::expressions::queries::models::XmlNamespace;
 use crate::expressions::schema_objects::models::AlterIndex;
+use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::AlterSequence;
 use crate::expressions::schema_objects::models::AlterView;
 use crate::expressions::schema_objects::models::CreateDatabase;
 use crate::expressions::schema_objects::models::CreateFunction;
+use crate::expressions::schema_objects::models::CreateObject;
 use crate::expressions::schema_objects::models::CreateProcedure;
 use crate::expressions::schema_objects::models::CreateSchema;
 use crate::expressions::schema_objects::models::CreateSequence;
@@ -354,6 +358,7 @@ use crate::expressions::schema_objects::models::DropSequence;
 use crate::expressions::schema_objects::models::DropTrigger;
 use crate::expressions::schema_objects::models::DropType;
 use crate::expressions::schema_objects::models::DropView;
+use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -383,6 +388,7 @@ use crate::expressions::statements::models::Describe;
 use crate::expressions::statements::models::Detach;
 use crate::expressions::statements::models::DropPartition;
 use crate::expressions::statements::models::ExecuteStatement;
+use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
 use crate::expressions::statements::models::Grant;
 use crate::expressions::statements::models::GrantPrincipal;
@@ -411,6 +417,7 @@ use crate::expressions::statements::models::ReplacePartition;
 use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::Rollback;
 use crate::expressions::statements::models::Schema;
+use crate::expressions::statements::models::ScriptingBlock;
 use crate::expressions::statements::models::SequenceProperties;
 use crate::expressions::statements::models::SessionParameter;
 use crate::expressions::statements::models::Set;
@@ -429,6 +436,7 @@ use crate::expressions::statements::models::TruncateTable;
 use crate::expressions::statements::models::TryCatch;
 use crate::expressions::statements::models::Uncache;
 use crate::expressions::statements::models::UnpivotColumns;
+use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::statements::models::Update;
 use crate::expressions::statements::models::Use;
 use crate::expressions::statements::models::UserDefinedFunction;
@@ -462,6 +470,7 @@ use crate::expressions::tables::models::DistKeyProperty;
 use crate::expressions::tables::models::DistStyleProperty;
 use crate::expressions::tables::models::DistributedByProperty;
 use crate::expressions::tables::models::DropIndex;
+use crate::expressions::tables::models::DropObject;
 use crate::expressions::tables::models::DropTable;
 use crate::expressions::tables::models::DuplicateKeyProperty;
 use crate::expressions::tables::models::EncodeProperty;
@@ -805,6 +814,8 @@ pub enum Expression {
 
     Not(Box<UnaryOp>),
     Neg(Box<UnaryOp>),
+    /// Unary `+`, kept so the tree records the operator as written.
+    Pos(Box<UnaryOp>),
     BitwiseNot(Box<UnaryOp>),
 
     In(Box<In>),
@@ -853,6 +864,7 @@ pub enum Expression {
     ConnectByRoot(Box<ConnectByRoot>),
 
     MatchRecognize(Box<MatchRecognize>),
+    Resample(Box<Resample>),
 
     Ordered(Box<Ordered>),
 
@@ -1161,6 +1173,7 @@ pub enum Expression {
     CreateTable(Box<CreateTable>),
     DropTable(Box<DropTable>),
     Undrop(Box<Undrop>),
+    DropObject(Box<DropObject>),
     AlterTable(Box<AlterTable>),
     SplitTable(Box<SplitTable>),
     FlashbackTable(Box<FlashbackTable>),
@@ -1169,6 +1182,9 @@ pub enum Expression {
     CreateView(Box<CreateView>),
     DropView(Box<DropView>),
     AlterView(Box<AlterView>),
+    AlterObject(Box<AlterObject>),
+    CreateObject(Box<CreateObject>),
+    CreateDataMetricFunction(Box<CreateDataMetricFunction>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),
@@ -1180,6 +1196,7 @@ pub enum Expression {
     Revoke(Box<Revoke>),
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
+    UnsetStatement(Box<UnsetStatement>),
     CreateSchema(Box<CreateSchema>),
     DropSchema(Box<DropSchema>),
     DropNamespace(Box<DropNamespace>),
@@ -1201,11 +1218,14 @@ pub enum Expression {
     Show(Box<Show>),
 
     Command(Box<Command>),
+    ScriptingBlock(Box<ScriptingBlock>),
     Kill(Box<Kill>),
     /// PREPARE statement (PostgreSQL/generic prepared statement definition)
     Prepare(Box<PrepareStatement>),
     /// EXEC/EXECUTE statement (TSQL stored procedure call)
     Execute(Box<ExecuteStatement>),
+    ExecuteObject(Box<ExecuteObject>),
+    ExecuteUsingPolicyContext(Box<ExecuteUsingPolicyContext>),
 
     /// Snowflake CREATE TASK statement
     CreateTask(Box<CreateTask>),

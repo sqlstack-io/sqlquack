@@ -1,0 +1,88 @@
+# DATEDIFF between TIMESTAMP_TZ values at different offsets: whether boundaries are counted in UTC or
+# in each value's own offset.
+category = "temporal"
+construct = "fn:DATEDIFF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "datediff_tz_second_minute"
+description = "DATEDIFF('second') and ('minute') between TIMESTAMP_TZ values at different offsets."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:59.9 +00:00'", "'2024-06-01 10:01:00.1 +00:00'"],
+  ["'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:30 +00:00'"],
+  ["'2024-06-01 15:29:59 +05:30'", "'2024-06-01 10:00:01 +00:00'"],
+  ["'2024-06-01 10:00:00 -08:00'", "'2024-06-01 10:00:00 +05:45'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(DATEDIFF('second', a, b), DATEDIFF('minute', a, b))"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_tz_hour_half_hour_offsets"
+description = "DATEDIFF('hour') across offsets that are not whole hours, where UTC and local hour boundaries differ."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:59:00 +05:30'", "'2024-06-01 11:01:00 +05:30'"],
+  ["'2024-06-01 10:20:00 +05:30'", "'2024-06-01 10:40:00 +05:30'"],
+  ["'2024-06-01 10:50:00 +05:45'", "'2024-06-01 05:10:00 +00:00'"],
+  ["'2024-06-01 10:00:00 -03:30'", "'2024-06-01 14:00:00 +00:00'"],
+  ["'2024-06-01 23:59:00 +00:00'", "'2024-06-02 00:01:00 +00:00'"],
+]
+expression = "DATEDIFF('hour', a, b)"
+tags = ["boundary"]
+
+[[case]]
+id = "datediff_tz_day"
+description = "DATEDIFF('day') between TIMESTAMP_TZ values whose local and UTC dates differ."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 23:30:00 -05:00'", "'2024-06-02 01:00:00 -05:00'"],
+  ["'2024-06-01 23:30:00 -05:00'", "'2024-06-02 05:00:00 +00:00'"],
+  ["'2024-06-02 01:00:00 +09:00'", "'2024-06-01 20:00:00 +00:00'"],
+  ["'2024-06-01 00:00:00 +14:00'", "'2024-06-01 00:00:00 -12:00'"],
+  ["'2024-06-01 12:00:00 +00:00'", "'2024-06-01 12:00:00 +00:00'"],
+]
+expression = "DATEDIFF('day', a, b)"
+tags = ["boundary"]
+
+[[case]]
+id = "datediff_tz_and_ntz"
+description = "DATEDIFF('minute') and ('day') from a TIMESTAMP_NTZ to a TIMESTAMP_TZ under a UTC session."
+columns = [{ name = "a", type = "TIMESTAMP_NTZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'"],
+  ["'2024-06-01 23:00:00'", "'2024-06-02 01:00:00 +05:00'"],
+]
+expression = "ARRAY_CONSTRUCT(DATEDIFF('minute', a, b), DATEDIFF('day', a, b))"
+tags = ["boundary"]
+
+[[case]]
+id = "datediff_tz_seconds"
+description = "DATEDIFF('second') between TIMESTAMP_TZ values at whole-hour, half-hour and 45-minute offsets, crossing a second at a fraction."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:59.9 +00:00'", "'2024-06-01 10:01:00.1 +00:00'"],
+  ["'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:30 +00:00'"],
+  ["'2024-06-01 15:29:59.999 +05:30'", "'2024-06-01 10:00:00.001 +00:00'"],
+  ["'2024-06-01 10:00:00 -08:00'", "'2024-06-01 10:00:00 +05:45'"],
+  ["'2024-12-31 23:59:59 -03:30'", "'2025-01-01 03:30:00 +00:00'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "DATEDIFF('second', a, b)"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_tz_minutes"
+description = "DATEDIFF('minute') between TIMESTAMP_TZ values at offsets that are not whole hours, either side of a minute boundary."
+columns = [{ name = "a", type = "TIMESTAMP_TZ(9)" }, { name = "b", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 15:29:59 +05:30'", "'2024-06-01 10:00:01 +00:00'"],
+  ["'2024-06-01 15:44:59.5 +05:45'", "'2024-06-01 10:00:00.5 +00:00'"],
+  ["'2024-06-01 10:00:00 -08:00'", "'2024-06-01 10:00:00 +05:45'"],
+  ["'2024-06-01 23:59:30 +14:00'", "'2024-06-01 00:00:30 -12:00'"],
+  ["'2024-06-01 10:00:00 +00:00'", "NULL"],
+]
+expression = "DATEDIFF('minute', a, b)"
+tags = ["null", "boundary"]

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+public/playground/engine/
+wasm/target/
+public/playground/duckdb/
+public/playground/duckdb-version.js
+public/playground/sqlquack.toml

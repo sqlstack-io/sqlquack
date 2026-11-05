@@ -1,0 +1,69 @@
+# Arrays holding undefined elements, from SQL NULLs given to ARRAY_CONSTRUCT, ARRAY_APPEND and
+# ARRAY_CAT, read by ARRAY_SIZE, ARRAY_TO_STRING and as text.
+category = "semi-structured-array"
+construct = "fn:ARRAY_APPEND"
+session_profile = "utc-v1"
+
+[[case]]
+id = "array_size_counts_undefined"
+description = "ARRAY_SIZE of ARRAY_APPEND, ARRAY_CONSTRUCT and ARRAY_CAT where an element is a SQL NULL, and of a NULL array."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,0)" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["'01'", "7", "'G-1'"],
+  ["'1,2'", "NULL", "'G-1'"],
+  ["NULL", "99", "'G-2'"],
+  ["'a'", "NULL", "NULL"],
+  ["''", "NULL", "NULL"],
+  ["'a,a'", "NULL", "'a'"],
+]
+query = "SELECT ARRAY_SIZE(ARRAY_APPEND(SPLIT(s, ','), n)) AS appended, ARRAY_SIZE(ARRAY_CONSTRUCT(s, t)) AS built, ARRAY_SIZE(ARRAY_CAT(ARRAY_CONSTRUCT(t), ARRAY_CONSTRUCT(n))) AS joined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "duplicates"]
+
+[[case]]
+id = "undefined_elements_as_text"
+description = "Arrays with undefined elements written by ARRAY_TO_STRING and cast to VARCHAR."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "t", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'G-2'"],
+  ["'gift'", "NULL"],
+  ["NULL", "NULL"],
+  ["'a'", "'b'"],
+]
+query = "SELECT ARRAY_CONSTRUCT(s, t)::VARCHAR AS v, ARRAY_TO_STRING(ARRAY_CONSTRUCT(s, t), '|') AS j FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "array_size_of_non_array"
+description = "ARRAY_SIZE of VARIANTs that are not arrays, beside an array with an undefined element."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'x'"],
+  ["NULL"],
+]
+query = "SELECT ARRAY_SIZE(TO_VARIANT(s)) AS scalar_size, ARRAY_SIZE(ARRAY_CONSTRUCT(s, NULL)) AS with_undefined FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["invalid", "null"]
+
+[[case]]
+id = "undefined_elements_distinct_union"
+description = "Pairs built by ARRAY_CONSTRUCT from a self-join, both orders combined by UNION ALL, then DISTINCT: arrays with undefined elements group together, and are read by ARRAY_TO_STRING over the column, as an ARRAY column, and by ARRAY_SIZE."
+columns = [{ name = "basket_id", type = "VARCHAR" }, { name = "line_no", type = "NUMBER(10,0)" }, { name = "tag", type = "VARCHAR" }]
+rows = [
+  ["'b-1'", "1", "'gift'"],
+  ["'b-1'", "2", "NULL"],
+  ["'b-1'", "3", "'sale'"],
+  ["'b-2'", "1", "NULL"],
+  ["'b-2'", "2", "'gift'"],
+  ["'b-3'", "1", "NULL"],
+  ["'b-3'", "2", "NULL"],
+  ["'b-4'", "1", "'sale'"],
+  ["'b-4'", "2", "'gift'"],
+  ["'b-5'", "1", "''"],
+  ["'b-5'", "2", "NULL"],
+]
+query = "WITH pairs AS (SELECT ARRAY_CONSTRUCT(a.tag, b.tag) AS tag_pair FROM input AS a INNER JOIN input AS b ON a.basket_id = b.basket_id AND a.line_no < b.line_no UNION ALL SELECT ARRAY_CONSTRUCT(b.tag, a.tag) AS tag_pair FROM input AS a INNER JOIN input AS b ON a.basket_id = b.basket_id AND a.line_no < b.line_no), distinct_pairs AS (SELECT DISTINCT p.tag_pair FROM pairs AS p) SELECT ARRAY_TO_STRING(d.tag_pair, '|')::VARCHAR AS tag_pair_text, d.tag_pair::ARRAY AS tag_pair, ARRAY_SIZE(d.tag_pair)::NUMBER(38, 0) AS pair_size FROM distinct_pairs AS d"
+order = "bag"
+expected_divergence = "json_fidelity"
+tags = ["null", "duplicates", "empty"]

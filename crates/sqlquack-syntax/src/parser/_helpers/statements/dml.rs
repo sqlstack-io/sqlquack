@@ -1,12 +1,15 @@
 //! Parser statements: dml.
 
+use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
+use crate::expressions::operators::models::ConditionalInsert;
+use crate::expressions::operators::models::MultitableInserts;
 use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::Where;
 use crate::expressions::schema_objects::models::FunctionSecurity;
-use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Delete;
+use crate::expressions::statements::models::Insert;
 use crate::expressions::statements::models::Paren;
 use crate::expressions::statements::models::Raw;
 use crate::expressions::tree::models::Expression;
@@ -261,11 +264,34 @@ impl Parser {
     /// Parse a CREATE statement
     pub(crate) fn parse_create(&mut self) -> Result<Expression> {
         let create_pos = self.current;
-        let create_token = self.expect_token(TokenType::Create)?;
+        let define = self.is_snowflake() && self.check(TokenType::Define);
+        let create_token = if define {
+            self.advance()?
+        } else {
+            self.expect_token(TokenType::Create)?
+        };
         let leading_comments = create_token.comments;
 
-        let or_replace = self.match_keywords(&[TokenType::Or, TokenType::Replace]);
-        let or_alter = !or_replace && self.match_text_seq(&["OR", "ALTER"]);
+        let or_replace = !define && self.match_keywords(&[TokenType::Or, TokenType::Replace]);
+        let or_alter = define || (!or_replace && self.match_text_seq(&["OR", "ALTER"]));
+        if self.is_snowflake() && self.check(TokenType::Or) {
+            return Err(self.parse_error("Expected REPLACE or ALTER after CREATE OR"));
+        }
+        if self.is_snowflake() {
+            if let Some(create) = self.parse_snowflake_create_properties(or_replace, or_alter)? {
+                return Ok(create);
+            }
+            if let Some(create) = self.parse_snowflake_create_body_policy(or_replace, or_alter)? {
+                return Ok(create);
+            }
+            if let Some(create) = self.parse_snowflake_create_data_metric_function(
+                if define { "DEFINE" } else { "CREATE" },
+                or_replace,
+                or_alter && !define,
+            )? {
+                return Ok(create);
+            }
+        }
 
         let hana_modifier: Option<String> = None;
         let temporary = hana_modifier
@@ -288,6 +314,21 @@ impl Parser {
                 leading_comments,
                 table_modifier.as_deref(),
             );
+        }
+
+        if self.is_snowflake() && !or_alter && !temporary && !materialized && !secure {
+            if let Some(create) =
+                self.parse_snowflake_create_from(or_replace, table_modifier.as_deref())?
+            {
+                return Ok(create);
+            }
+        }
+        if self.is_snowflake() && !or_alter && !materialized && !secure {
+            if let Some(create) =
+                self.parse_snowflake_create_clone(or_replace, temporary, table_modifier.as_deref())?
+            {
+                return Ok(create);
+            }
         }
 
         match self.peek().token_type {
@@ -340,8 +381,8 @@ impl Parser {
                 }
             }
             TokenType::Index => self.parse_create_index_with_clustered(false, None),
-            TokenType::Schema => self.parse_create_schema(leading_comments),
-            TokenType::Database => self.parse_create_database(),
+            TokenType::Schema => self.parse_create_schema(leading_comments, or_replace),
+            TokenType::Database => self.parse_create_database(or_replace),
             TokenType::Function => {
                 self.parse_create_function(or_replace, or_alter, temporary, false)
             }
@@ -354,9 +395,9 @@ impl Parser {
                 self.skip();
                 self.parse_create_trigger(or_replace, or_alter, true, create_pos)
             }
-            TokenType::Type => self.parse_create_type(),
+            TokenType::Type => self.parse_create_type(or_replace),
             TokenType::Domain => self.parse_create_domain(),
-            _ => self.parse_create_other_object(materialized, or_replace, temporary),
+            _ => self.parse_create_other_object(materialized, or_replace, or_alter, temporary),
         }
     }
 
@@ -364,8 +405,16 @@ impl Parser {
         &mut self,
         materialized: bool,
         or_replace: bool,
+        or_alter: bool,
         temporary: bool,
     ) -> Result<Expression> {
+        if self.is_snowflake() && !materialized {
+            if let Some(create) =
+                self.parse_snowflake_create_stage_or_format(or_replace, or_alter, temporary)?
+            {
+                return Ok(create);
+            }
+        }
         if self.check_identifier("CLUSTERED") || self.check_identifier("NONCLUSTERED") {
             let clustered_text = self.advance_text()?.to_ascii_uppercase();
             let clustered = if self.check_identifier("COLUMNSTORE") {
@@ -429,6 +478,15 @@ impl Parser {
             return Ok(Expression::Raw(Raw { sql: prefix }));
         }
         {
+            if self.is_snowflake()
+                && self.tokens.get(self.current + 1).is_some_and(|t| {
+                    ["CLONE", "FROM", "AS", "USING", "LIKE", "("]
+                        .iter()
+                        .any(|word| t.text.eq_ignore_ascii_case(word))
+                })
+            {
+                return Err(self.parse_error("Expected an object kind and a name"));
+            }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 self.skip();
@@ -518,51 +576,127 @@ impl Parser {
         }
     }
 
+    /// In Snowflake every DECLARE opens a scripting block; there is no standalone DECLARE.
     pub(crate) fn check_snowflake_scripting_block(&self) -> bool {
         self.check(TokenType::Declare)
-            && (1..self.tokens.len().saturating_sub(self.current))
-                .take(128)
-                .any(|i| {
-                    self.peek_nth(i)
-                        .is_some_and(|t| t.token_type == TokenType::Begin)
-                })
     }
 
+    /// The structured block, parsed by its own owner.
     pub(crate) fn parse_raw_scripting_block(&mut self) -> Result<Expression> {
-        let start = self.current;
-        let start_pos = self.peek().span.start;
-        let mut depth = 0usize;
-        let mut seen_begin = false;
+        self.parse_scripting_block()
+    }
 
-        while !self.is_at_end() {
-            if self.check(TokenType::Begin) {
-                seen_begin = true;
-                depth += 1;
-            } else if self.check(TokenType::End) && seen_begin {
-                depth = depth.saturating_sub(1);
-                self.skip();
-                if depth == 0 {
-                    break;
+    /// Parses Oracle INSERT ALL|FIRST [WHEN cond THEN] INTO table ... multi-table inserts.
+    pub(crate) fn parse_multitable_inserts(
+        &mut self,
+        leading_comments: Vec<String>,
+        overwrite: bool,
+    ) -> Result<Option<Expression>> {
+        let kind = self.previous_text().to_ascii_uppercase();
+
+        let mut expressions: Vec<Expression> = Vec::new();
+
+        loop {
+            let condition = if self.match_token(TokenType::When) {
+                if self.check(TokenType::Then) {
+                    return Err(self.parse_error("Expected a condition after WHEN"));
                 }
-                continue;
+                let cond = self.parse_or()?;
+                self.expect_token(TokenType::Then)?;
+                Some(cond)
+            } else {
+                None
+            };
+
+            let is_else = self.match_token(TokenType::Else);
+
+            if !self.match_token(TokenType::Into) {
+                if condition.is_some() || is_else || expressions.is_empty() {
+                    return Err(self.parse_error("Expected INTO and a target table"));
+                }
+                break;
             }
 
-            self.skip();
+            let table_ref = if self.is_snowflake() {
+                self.parse_object_name()?
+            } else if let Some(Expression::Table(t)) = self.parse_table_parts()? {
+                *t
+            } else {
+                TableRef::new("")
+            };
+
+            let columns = if self.match_token(TokenType::LParen) {
+                let cols = self.parse_identifier_list()?;
+                self.expect_token(TokenType::RParen)?;
+                cols
+            } else {
+                Vec::new()
+            };
+
+            let values = if self.match_token(TokenType::Values) {
+                self.expect_token(TokenType::LParen)?;
+                let row = self.parse_expression_list()?;
+                self.expect_token(TokenType::RParen)?;
+                vec![row]
+            } else {
+                Vec::new()
+            };
+
+            let insert_expr = Expression::Insert(Box::new(Insert {
+                table: table_ref,
+                columns,
+                values,
+                query: None,
+                overwrite: false,
+                partition: Vec::new(),
+                directory: None,
+                returning: Vec::new(),
+                output: None,
+                on_conflict: None,
+                leading_comments: Vec::new(),
+                if_exists: false,
+                with: None,
+                ignore: false,
+                source_alias: None,
+                alias: None,
+                alias_explicit_as: false,
+                default_values: false,
+                by_name: false,
+                conflict_action: None,
+                is_replace: false,
+                replace_where: None,
+                source: None,
+                hint: None,
+                function_target: None,
+                partition_by: None,
+                settings: Vec::new(),
+            }));
+
+            let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {
+                this: Box::new(insert_expr),
+                expression: condition.map(Box::new),
+                else_: if is_else {
+                    Some(Box::new(Expression::Boolean(BooleanLiteral {
+                        value: true,
+                    })))
+                } else {
+                    None
+                },
+            }));
+
+            expressions.push(conditional_insert);
         }
 
-        let command_text = if self.source.is_some() {
-            let end_pos = if self.current > start {
-                self.tokens[self.current - 1].span.end
-            } else {
-                start_pos
-            };
-            self.source_text_range(start_pos, end_pos)
-        } else {
-            self.tokens_to_sql(start, self.current)
-        };
+        let source = self.parse_statement()?;
 
-        Ok(Expression::Command(Box::new(Command {
-            this: command_text,
-        })))
+        Ok(Some(Expression::MultitableInserts(Box::new(
+            MultitableInserts {
+                kind,
+                expressions,
+                source: Some(Box::new(source)),
+                leading_comments,
+                overwrite,
+            },
+        ))))
     }
 }

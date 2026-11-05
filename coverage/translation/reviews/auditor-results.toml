@@ -1,0 +1,109 @@
+# The auditor's sign-offs of the result-matching measure's link map and not-translatable groups.
+
+[[signoff]]
+subject = "not-translatable:access-control-and-account-administration"
+sha256 = "a6d523e6dc63ebd5898f965b53b6155fe5a8327506651fb06e4b9c504ca8ab1d"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:snowflake-hosted-classes-and-ml"
+sha256 = "907d82f454b6bb6151204ea606a250996aed213568ebb1e9550c1e2ceb3e7135"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:snowflake-scripting"
+sha256 = "8e3cd85c297bc455ac76421f410fbc4abf4da8fa9f684ca458074e8e7ff71d5a"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:stored-procedures-and-hosted-execution"
+sha256 = "e457970e1fa4bb59c243dad019fba2905260a8fd12f36cf3e25ca8bb99d1b536"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:warehouses-sessions-and-query-history"
+sha256 = "ead94d8bac2a2be129879c934cc0738d5a8651b89cbcd98979fd1f94115878c8"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:system-functions"
+sha256 = "f50ae0ed35995d60b459e5dd072c53917e2a267c7d0c21a27a131f6723cd69c1"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:ai-and-ml-functions"
+sha256 = "9bb46908426611b1cfbf42bdbf253274f70c61583f00e857ce675d1876f5188d"
+scope = "full"
+reviewed_utc = "2026-11-05T14:58:16Z"
+
+[[signoff]]
+subject = "not-translatable:stages-and-files"
+sha256 = "b9199df8df3891cd07949257523db030589d2461b1eb71e0047a2d901d278824"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:time-travel-and-change-tracking"
+sha256 = "bd6472179059d00e19c165ec9f331b3fb0ea14f0fe859784483735877411603b"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:snowflake-object-kinds"
+sha256 = "d423d5cde3cad9d35a5404006d72a1e7cfa7ff4d72449a4e628eb8cd2ba29aa2"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:metadata-listings"
+sha256 = "803d5ab344a459c6652c4e07c140f37428274889993ffccbeab073035e223bd5"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:account-context-functions"
+sha256 = "ce6decea1a0001e022e334aaa2ae6c9f8922d65f3ff6a966efbb9a4cd582a408"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:account-usage-table-functions"
+sha256 = "89a70f7484fe9f052c8eba222a0b6328c13edd376c763932f6a4474ac76060cf"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-quality-services-and-privacy"
+sha256 = "07e1c2c4ef4c20eeb82403450b2d5c99d96e0ff6fbcfd379a60305c8f06644e6"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-metrics-evaluated-at-a-time"
+sha256 = "b96dd82d2f2e1b0bcf7b95cd26e572e744629e3ba86cbd9c637ed12d7959b856"
+scope = "full"
+reviewed_utc = "2026-11-05T15:51:05Z"
+
+[[signoff]]
+subject = "not-translatable:data-metrics-approximate-or-parser-defined"
+sha256 = "7da5bbabf8f258ab46bda0d9e87c5fe05d06d626be31980d869e2e9aabef0940"
+scope = "full"
+reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "function-links"
+sha256 = "dec5f7f2b0b775bca605e1a5913294263df46ec07df5c6ee4e6db8566ab13da7"
+scope = "full"
+reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "form-links"
+sha256 = "bd474c2b292ecea6a0a0167c15e9a08de9ff93b1f59667a2f9827263f5eec2b7"
+scope = "full"
+reviewed_utc = "2026-11-05T16:45:00Z"

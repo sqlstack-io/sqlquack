@@ -1,6 +1,7 @@
 //! Timestamp literals and casts between DATE and timestamps.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::diagnostics::constants::ZONED_LOCAL_TIME;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::SUBMICRO_MESSAGE;
@@ -17,9 +18,10 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Literal};
 
 use crate::conversion::constants::{
-    HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTES_PER_HOUR,
-    NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON, OFFSET_WITHOUT_COLON,
-    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO, ZERO_OFFSETS,
+    HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTE_TEXT_LENGTH,
+    MINUTES_PER_HOUR, NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON,
+    OFFSET_WITHOUT_COLON, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
+    ZERO_OFFSETS,
 };
 
 /// A timestamp literal in the recorded ISO form: `YYYY-MM-DD[ HH:MI:SS[.f]][ ±HH:MM]`.
@@ -55,10 +57,20 @@ pub(crate) fn timestamp_literal(
     let log = context.log;
     match to {
         SnowflakeType::TimestampNtz { precision } => {
-            let parsed = parse_timestamp(text, false).ok_or_else(unproven)?;
+            let with_seconds = without_seconds(text).then(|| format!("{text}:00"));
+            let parsed = parse_timestamp(with_seconds.as_deref().unwrap_or(text), false)
+                .ok_or_else(unproven)?;
             fits(&parsed, precision).ok_or_else(unproven)?;
             if precision > MICROSECOND_DIGITS && !in_nanosecond_range(parsed.date) {
-                diverge(context, TIMESTAMP_RANGE, construct).map_err(|refusal| refusal.reason)?;
+                if context.fixture_body {
+                    diverge(context, TIMESTAMP_RANGE, construct)
+                        .map_err(|refusal| refusal.reason)?;
+                } else {
+                    return Err(format!(
+                        "the text '{text}' cast to {to} lies outside DuckDB's nanosecond timestamp range, \
+                     1677-09-22 to 2262-04-10, so the converted cast would always raise"
+                    ));
+                }
             }
             let spelled = match parsed.fraction.is_empty() {
                 true => parsed.whole.replacen('T', " ", 1),
@@ -91,6 +103,11 @@ pub(crate) fn timestamp_literal(
         }
         _ => Err(unproven()),
     }
+}
+
+/// Why `operation` of a `zoned` TIMESTAMP_TZ value, which reads its offset's local time, is refused.
+pub(crate) fn zoned_local(operation: &str, zoned: SnowflakeType) -> String {
+    format!("{operation} of {zoned}, {ZONED_LOCAL_TIME}")
 }
 
 /// The DuckDB SQL of a cast between DATE and timestamp types, or why it is unproven.
@@ -147,6 +164,10 @@ pub(crate) fn temporal_cast(
             diverge(context, SESSION_TIMEZONE_UTC, construct).map_err(|refusal| refusal.reason)?;
             cast(sql, to, log)
         }
+        (
+            SnowflakeType::TimestampTz { .. },
+            SnowflakeType::Date | SnowflakeType::TimestampNtz { .. },
+        ) => Err(zoned_local(&format!("casting to {to}"), from)),
         _ => Err(format!("casting {from} to {to} has no proven conversion")),
     }
 }
@@ -173,6 +194,13 @@ fn fits(parsed: &TimestampText<'_>, precision: u8) -> Option<()> {
 
 fn in_nanosecond_range(date: (u16, u16, u16)) -> bool {
     (NANOSECOND_RANGE_START..NANOSECOND_RANGE_END).contains(&date)
+}
+
+/// Whether `text` is `YYYY-MM-DD HH:MI` or `YYYY-MM-DDTHH:MI`, which Snowflake reads with zero seconds.
+fn without_seconds(text: &str) -> bool {
+    text.len() == MINUTE_TEXT_LENGTH
+        && text.as_bytes()[MINUTE_TEXT_LENGTH - 3] == b':'
+        && parse_timestamp(text, false).is_none()
 }
 
 fn parse_timestamp(text: &str, zoned: bool) -> Option<TimestampText<'_>> {

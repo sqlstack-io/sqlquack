@@ -1,0 +1,55 @@
+category = "semi-structured"
+construct = "fn:STRIP_NULL_VALUE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "strip_null_value_path"
+description = "STRIP_NULL_VALUE of a path: JSON null becomes SQL NULL; other values, a missing key and nested nulls stay as they are."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":\"\"}')"],
+  ["PARSE_JSON('{\"a\":\"null\"}')"],
+  ["PARSE_JSON('{\"a\":12}')"],
+  ["PARSE_JSON('{\"a\":true}')"],
+  ["PARSE_JSON('{\"a\":null}')"],
+  ["PARSE_JSON('{}')"],
+  ["PARSE_JSON('{\"a\":[null]}')"],
+  ["PARSE_JSON('{\"a\":{\"b\":null}}')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT STRIP_NULL_VALUE(v:a)::VARCHAR AS a_text, STRIP_NULL_VALUE(v:a) IS NULL AS a_stripped, v:a IS NULL AS a_missing FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested"]
+
+[[case]]
+id = "strip_null_value_root"
+description = "STRIP_NULL_VALUE of a whole VARIANT: a JSON null root becomes SQL NULL."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('null')"],
+  ["PARSE_JSON('\"null\"')"],
+  ["PARSE_JSON('0')"],
+  ["PARSE_JSON('[]')"],
+  ["NULL"],
+]
+query = "SELECT STRIP_NULL_VALUE(v) IS NULL AS stripped, v IS NULL AS sql_null FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null"]
+
+[[case]]
+id = "strip_null_value_index_and_case"
+description = "STRIP_NULL_VALUE of an array element and of a key that differs from another only in case."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('[null,1]')"],
+  ["PARSE_JSON('[\"x\",null]')"],
+  ["PARSE_JSON('[]')"],
+  ["PARSE_JSON('{\"a\":null,\"A\":\"x\"}')"],
+  ["PARSE_JSON('{\"a\":\"x\",\"A\":null}')"],
+  ["NULL"],
+]
+query = "SELECT STRIP_NULL_VALUE(v[0]) IS NULL AS first_stripped, STRIP_NULL_VALUE(v[1])::VARCHAR AS second_text, STRIP_NULL_VALUE(v:A) IS NULL AS upper_stripped FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "array-index", "case-sensitive-key"]

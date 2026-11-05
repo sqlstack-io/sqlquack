@@ -1,75 +1,42 @@
-//! `sqlquack convert`: Snowflake SQL as DuckDB SQL, or the refusals and why.
+//! `sqlquack convert`, `check` and `explain`: Snowflake SQL as DuckDB SQL, what is wrong with it, and what each code means.
 
-use std::collections::{BTreeMap, BTreeSet};
 use std::io::{Read, Write};
+use std::path::Path;
 use std::process::ExitCode;
 
-use serde::Serialize;
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::explain_code::explain_code;
+use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_semantics::types::models::Schema;
+use std::collections::{BTreeMap, BTreeSet};
 
-use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::assumption_id::assumption_id;
+use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::override_macros::override_macros;
-use crate::analysis::main::parse_session::parse_session;
 use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
-use crate::analysis::main::session_conversion_options::session_conversion_options;
 use crate::analysis::main::with_overrides::with_overrides;
-use crate::analysis::models::PythonSignature;
-use crate::cli::_helpers::evidence::chosen_policy;
-use crate::cli::_helpers::evidence::confirmed_offsets;
-use crate::cli::_helpers::schema::load_schema;
-use crate::cli::models::ConvertArguments;
+use crate::analysis::models::Analysis;
+use crate::cli::_helpers::evidence::caller_choices;
+use crate::cli::models::{
+    CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
+    OverrideListing,
+};
+
+use crate::cli::main::convert_report::convert_report;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
-
-/// What `convert --json` prints.
-#[derive(Serialize)]
-struct ConvertReport {
-    /// Whether every statement converted.
-    converted: bool,
-    /// The session profile conversion ran under.
-    profile: String,
-    /// The DuckDB SQL, one statement after another; empty when refused.
-    sql: String,
-    /// Each refusal.
-    refusals: Vec<ConvertRefusal>,
-    /// Known divergences relied on, with the constructs relying on each.
-    divergences: BTreeMap<String, Vec<String>>,
-    /// Of those, the named assumptions.
-    assumptions: Vec<String>,
-    /// What the session parameters changed about conversion.
-    notes: Vec<String>,
-    /// The Python functions the SQL calls, which the caller registers before running it.
-    python_functions: Vec<PythonSignature>,
-    /// The macros of the user overrides the SQL calls, which the caller runs before it.
-    macros: Vec<String>,
-    /// Every user override loaded: its name, the function it replaces and its body's hash.
-    overrides: Vec<OverrideListing>,
-}
-
-#[derive(Serialize)]
-struct OverrideListing {
-    name: String,
-    replaces: String,
-    sha256: String,
-}
-
-/// One refusal as `convert --json` prints it.
-#[derive(Serialize)]
-struct ConvertRefusal {
-    category: String,
-    construct: String,
-    line: Option<usize>,
-    column: Option<usize>,
-    reason: String,
-}
+/// How diagnostics name standard input.
+const STDIN_NAME: &str = "<stdin>";
 
 pub(crate) fn convert_command(
     arguments: &ConvertArguments,
@@ -77,14 +44,17 @@ pub(crate) fn convert_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack convert: converting…");
-    let report = match converted(arguments) {
+    let report = match read_sql(arguments.path.as_deref())
+        .and_then(|sql| convert_report(arguments, &sql).map(|report| (report, sql)))
+    {
         Ok(report) => report,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack convert: failed: {error}");
             return ExitCode::from(2);
         }
     };
-    let rendered = match arguments.json {
+    let (report, sql) = report;
+    let rendered = match arguments.output.json() {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
         false if report.converted => {
             report
@@ -114,16 +84,14 @@ pub(crate) fn convert_command(
             constructs.join(", ")
         );
     }
-    for refusal in &report.refusals {
-        let at = match (refusal.line, refusal.column) {
-            (Some(line), Some(column)) => format!(" at {line}:{column}"),
-            _ => String::new(),
-        };
-        let _ = writeln!(
-            stderr,
-            "sqlquack convert: refused {}{at} ({}): {}",
-            refusal.construct, refusal.category, refusal.reason
-        );
+    let diagnostics: Vec<Diagnostic> = report
+        .refusals
+        .iter()
+        .filter_map(|refusal| refusal.diagnostic.clone())
+        .collect();
+    if !diagnostics.is_empty() {
+        let path = source_name(arguments.path.as_deref());
+        let _ = write!(stderr, "{}", render_diagnostics(&diagnostics, &sql, &path));
     }
     match report.converted {
         true => {
@@ -139,77 +107,158 @@ pub(crate) fn convert_command(
                 true => "no matching session profile".to_owned(),
                 false => report.profile.clone(),
             };
+            let count = report.refusals.len();
+            let noun = match count {
+                1 => "refusal",
+                _ => "refusals",
+            };
             let _ = writeln!(
                 stderr,
-                "sqlquack convert: refused, {} refusals under {profile}",
-                report.refusals.len()
+                "sqlquack convert: refused, {count} {noun} under {profile}"
             );
             ExitCode::FAILURE
         }
     }
 }
 
-fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
-    let sql = read_sql(arguments)?;
-    let schema = arguments
-        .schema
-        .as_deref()
-        .map(load_schema)
-        .transpose()?
-        .unwrap_or_default();
-    let policy = chosen_policy(&arguments.policy, arguments.builtin_policy)?;
-    let parameters = parse_session(&arguments.session)?;
-    let (options, profile) = match session_conversion_options(
-        policy.as_ref(),
-        (arguments.strict, arguments.utc_session),
-        &parameters,
-    ) {
-        Ok(matched) => matched,
-        Err(reason) => {
-            return Ok(ConvertReport {
-                converted: false,
-                profile: String::new(),
-                sql: String::new(),
-                refusals: vec![ConvertRefusal {
-                    category: "session parameters".to_owned(),
-                    construct: "statement".to_owned(),
-                    line: None,
-                    column: None,
-                    reason,
-                }],
-                divergences: BTreeMap::new(),
-                assumptions: Vec::new(),
-                notes: Vec::new(),
-                python_functions: Vec::new(),
-                macros: Vec::new(),
-                overrides: Vec::new(),
-            });
+/// The SQL from the file, or from standard input when there is none or it is `-`.
+fn read_sql(path: Option<&Path>) -> Result<String, String> {
+    match path {
+        Some(path) if path.as_os_str() != STDIN_PATH => std::fs::read_to_string(path)
+            .map_err(|error| format!("cannot read {}: {error}", path.display())),
+        _ => {
+            let mut sql = String::new();
+            std::io::stdin()
+                .read_to_string(&mut sql)
+                .map_err(|error| format!("cannot read standard input: {error}"))?;
+            Ok(sql)
         }
+    }
+}
+
+/// How diagnostics name the input at `path`.
+fn source_name(path: Option<&Path>) -> String {
+    match path {
+        Some(path) if path.as_os_str() != STDIN_PATH => path.display().to_string(),
+        _ => STDIN_NAME.to_owned(),
+    }
+}
+
+/// `sqlquack check`: exit 0 when the SQL holds no problem, 1 with diagnostics, 2 without SQL.
+pub(crate) fn explain_command(
+    arguments: &ExplainArguments,
+    stdout: &mut dyn Write,
+    stderr: &mut dyn Write,
+) -> ExitCode {
+    match explain_code(&arguments.code) {
+        Some(text) => {
+            let _ = write!(stdout, "{text}");
+            ExitCode::SUCCESS
+        }
+        None => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack explain: no diagnostic code, name or former name is `{}`",
+                arguments.code
+            );
+            ExitCode::from(2)
+        }
+    }
+}
+
+pub(crate) fn check_command(
+    arguments: &CheckArguments,
+    stdout: &mut dyn Write,
+    stderr: &mut dyn Write,
+) -> ExitCode {
+    let _ = writeln!(stderr, "sqlquack check: checking…");
+    let path = arguments.path.as_deref();
+    let (sql, diagnostics) =
+        match read_sql(path).and_then(|sql| check_source(&sql).map(|found| (sql, found))) {
+            Ok(checked) => checked,
+            Err(error) => {
+                let _ = writeln!(stderr, "sqlquack check: failed: {error}");
+                return ExitCode::from(2);
+            }
+        };
+    let report = CheckReport {
+        ok: diagnostics.is_empty(),
+        diagnostics,
     };
-    let options = match &policy {
-        Some(policy) => confirmed_offsets(
-            options,
-            policy,
-            (arguments.confirm_declared_offsets, arguments.python_runtime),
-        ),
+    if arguments.output.json() {
+        let json = serde_json::to_string_pretty(&report).unwrap_or_default() + "\n";
+        if stdout.write_all(json.as_bytes()).is_err() {
+            return ExitCode::FAILURE;
+        }
+    }
+    let rendered = render_diagnostics(&report.diagnostics, &sql, &source_name(path));
+    let _ = write!(stderr, "{rendered}");
+    match report.diagnostics.len() {
+        0 => {
+            let _ = writeln!(stderr, "sqlquack check: done, no problems");
+            ExitCode::SUCCESS
+        }
+        count => {
+            let noun = match count {
+                1 => "problem",
+                _ => "problems",
+            };
+            let _ = writeln!(stderr, "sqlquack check: found {count} {noun}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+/// The report when the session parameters match no recorded profile.
+pub(crate) fn refused_session(reason: String) -> ConvertReport {
+    ConvertReport {
+        converted: false,
+        profile: String::new(),
+        sql: String::new(),
+        refusals: vec![ConvertRefusal {
+            category: "session parameters".to_owned(),
+            construct: "statement".to_owned(),
+            line: None,
+            column: None,
+            diagnostic: unplaced_diagnostic(SESSION_PARAMETERS, reason.clone()),
+            reason,
+        }],
+        divergences: BTreeMap::new(),
+        assumptions: Vec::new(),
+        divergence_failures: BTreeMap::new(),
+        notes: Vec::new(),
+        python_functions: Vec::new(),
+        macros: Vec::new(),
+        overrides: Vec::new(),
+    }
+}
+
+/// The session's options with what the caller confirms and the user overrides applied.
+pub(crate) fn chosen_options(
+    arguments: &ConvertArguments,
+    policy: Option<&Policy>,
+    options: ConversionOptions,
+) -> Result<ConversionOptions, String> {
+    let options = match policy {
+        Some(policy) => caller_choices(options, policy, &arguments.conversion),
         None => options,
     };
-    let options = with_overrides(
+    with_overrides(
         options,
         (
             arguments.overrides.as_deref(),
             &arguments.verified_overrides,
         ),
-    )?;
-    let analysis = analyze(
-        &sql,
-        SourceDialect::Snowflake,
-        &builtin_catalogue(),
-        (&schema, &options),
-    );
-    if analysis.parsed && analysis.statements == 0 {
-        return Err("the input holds no SQL statement".to_owned());
-    }
+    )
+}
+
+/// The report of a finished analysis of `sql`.
+pub(crate) fn analysis_report(
+    analysis: &Analysis,
+    sql: &str,
+    (schema, options, policy): (&Schema, &ConversionOptions, Option<&Policy>),
+    (parameters, profile): (&BTreeMap<String, String>, String),
+) -> Result<ConvertReport, String> {
     let converted = analysis.parsed && analysis.refusals.is_empty();
     let provenance = merge_provenance(analysis.conversions.iter().map(|done| &done.provenance));
     let assumptions: Vec<String> = provenance
@@ -217,12 +266,12 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
         .keys()
         .filter(|id| {
             policy
-                .as_ref()
                 .and_then(|policy| policy.divergences.get(assumption_id(id)))
                 .is_some_and(|divergence| divergence.assumption)
         })
         .cloned()
         .collect();
+    let divergence_failures = divergence_failures(policy, &provenance.divergences);
     let notes: Vec<String> = parameters
         .get(TIMEZONE_PARAMETER)
         .filter(|zone| *zone != SESSION_TIME_ZONE)
@@ -247,24 +296,48 @@ fn converted(arguments: &ConvertArguments) -> Result<ConvertReport, String> {
                 .join(";\n"),
             false => String::new(),
         },
-        refusals: analysis.refusals.iter().map(convert_refusal).collect(),
-        python_functions: python_functions(&provenance.divergences, &schema)?,
-        macros: override_macros(&provenance.divergences, &options),
-        overrides: override_listings(&options),
+        refusals: analysis
+            .refusals
+            .iter()
+            .zip(diagnose(&analysis.refusals, sql))
+            .map(convert_refusal)
+            .collect(),
+        python_functions: python_functions(&provenance.divergences, schema)?,
+        macros: override_macros(&provenance.divergences, options),
+        overrides: override_listings(options),
         divergences: listed(provenance.divergences),
         assumptions,
+        divergence_failures,
     })
 }
 
-/// A refusal as `convert` reports it.
-fn convert_refusal(refusal: &Refusal) -> ConvertRefusal {
+/// A refusal as `convert` reports it, with its diagnostic.
+fn convert_refusal((refusal, diagnostic): (&Refusal, Diagnostic)) -> ConvertRefusal {
     ConvertRefusal {
+        diagnostic: Some(diagnostic),
         category: refusal.category.label().to_owned(),
         construct: refused_construct(refusal),
         line: refusal.location.map(|location| location.line),
         column: refusal.location.map(|location| location.column),
         reason: refusal.reason.clone(),
     }
+}
+
+/// Each relied-on divergence's failure, as the policy declares it.
+fn divergence_failures(
+    policy: Option<&Policy>,
+    divergences: &BTreeMap<String, BTreeSet<String>>,
+) -> BTreeMap<String, DivergenceFailure> {
+    let Some(policy) = policy else {
+        return BTreeMap::new();
+    };
+    let mut failures: BTreeMap<String, DivergenceFailure> = BTreeMap::new();
+    for id in divergences.keys() {
+        if let Some(divergence) = policy.divergences.get(assumption_id(id)) {
+            failures.insert(id.clone(), divergence.failure);
+        }
+    }
+    failures
 }
 
 /// Each divergence with its constructs listed.
@@ -276,21 +349,7 @@ fn listed(divergences: BTreeMap<String, BTreeSet<String>>) -> BTreeMap<String, V
     listed
 }
 
-/// The SQL from the file, or from standard input when there is none or it is `-`.
-fn read_sql(arguments: &ConvertArguments) -> Result<String, String> {
-    match arguments.path.as_deref() {
-        Some(path) if path.as_os_str() != STDIN_PATH => std::fs::read_to_string(path)
-            .map_err(|error| format!("cannot read {}: {error}", path.display())),
-        _ => {
-            let mut sql = String::new();
-            std::io::stdin()
-                .read_to_string(&mut sql)
-                .map_err(|error| format!("cannot read standard input: {error}"))?;
-            Ok(sql)
-        }
-    }
-}
-
+/// Every user override loaded, as the report lists it.
 fn override_listings(options: &ConversionOptions) -> Vec<OverrideListing> {
     options
         .overrides

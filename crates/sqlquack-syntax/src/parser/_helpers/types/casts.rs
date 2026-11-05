@@ -5,6 +5,9 @@ use crate::expressions::operators::models::Case;
 use crate::expressions::operators::models::Cast;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::expressions::types::models::IntervalQualifier;
+use crate::expressions::types::models::IntervalUnit;
+use crate::expressions::types::models::IntervalUnitSpec;
 use crate::parser::_helpers::types::data_types::convert_name_is_known_custom;
 use crate::parser::constants::CHAR;
 use crate::parser::constants::CHARACTER;
@@ -13,6 +16,7 @@ use crate::parser::constants::NATIONAL;
 use crate::parser::constants::NCHAR;
 use crate::parser::constants::NVARCHAR;
 use crate::parser::constants::REAL;
+use crate::parser::constants::TABLE_TYPE;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
 use crate::tokens::models::SourceSpan;
@@ -147,7 +151,7 @@ impl Parser {
                 fmt_expr
             };
             Some(Box::new(fmt_with_tz))
-        } else if self.match_token(TokenType::Comma) {
+        } else if !self.applies_snowflake_context_rules() && self.match_token(TokenType::Comma) {
             Some(Box::new(self.parse_expression()?))
         } else {
             None
@@ -231,9 +235,130 @@ impl Parser {
         name.eq_ignore_ascii_case("INT128") || name.eq_ignore_ascii_case("HUGEINT")
     }
 
-    /// Vertica interval qualifiers may carry a seconds precision: `SECOND(3)`.
+    /// Reads Snowflake's `( n )` after an interval field; Vertica's `SECOND(3)` is read elsewhere.
     pub(crate) fn parse_interval_field_precision(&mut self, unit: String) -> Result<String> {
-        Ok(unit)
+        use crate::parser::constants::{
+            SECOND_PREVIOUS_OFFSET, SNOWFLAKE_INTERVAL_FRACTION, SNOWFLAKE_INTERVAL_LEADING,
+            SNOWFLAKE_INTERVAL_SECOND,
+        };
+        if !self.is_snowflake() || !self.check(TokenType::LParen) {
+            return Ok(unit);
+        }
+        let after_to = self.current >= SECOND_PREVIOUS_OFFSET
+            && self.tokens[self.current - SECOND_PREVIOUS_OFFSET].token_type == TokenType::To;
+        let range = match after_to && unit == SNOWFLAKE_INTERVAL_SECOND {
+            true => SNOWFLAKE_INTERVAL_FRACTION,
+            false => SNOWFLAKE_INTERVAL_LEADING,
+        };
+        self.skip();
+        let number = self.check(TokenType::Number);
+        match self.peek_text().parse::<u8>() {
+            Ok(digits) if number && range.contains(&digits) => {
+                self.skip();
+                self.expect_token(TokenType::RParen)?;
+                Ok(format!("{unit}({digits})"))
+            }
+            _ => Err(self.parse_error(format!(
+                "Expected an interval precision from {} to {}",
+                range.start(),
+                range.end()
+            ))),
+        }
+    }
+
+    /// Reads Snowflake's interval literal qualifier when a field has a precision, as `DAY(9) TO SECOND(3)`.
+    pub(crate) fn try_parse_snowflake_interval_qualifier(
+        &mut self,
+    ) -> Result<Option<IntervalUnitSpec>> {
+        let precise = self.is_type_at(1, TokenType::LParen)
+            || self.is_to_at(1)
+                && self.interval_field_at(2).is_some()
+                && self.is_type_at(3, TokenType::LParen);
+        let Some(this) = self
+            .interval_field_at(0)
+            .filter(|_| precise && self.applies_snowflake_context_rules())
+        else {
+            return Ok(None);
+        };
+        self.skip();
+        let leading_precision = self.parse_snowflake_interval_precision()?;
+        let mut qualifier = IntervalQualifier {
+            this,
+            leading_precision,
+            expression: None,
+            fractional_precision: None,
+        };
+        if let Some(end) = self.interval_field_at(1).filter(|_| self.is_to_at(0)) {
+            self.skip();
+            self.skip();
+            qualifier.expression = Some(end);
+            if end == IntervalUnit::Second {
+                qualifier.fractional_precision = self.parse_snowflake_interval_precision()?;
+            }
+        }
+        Ok(Some(IntervalUnitSpec::Qualifier(qualifier)))
+    }
+
+    /// Whether the token `offset` ahead has type `token_type`.
+    fn is_type_at(&self, offset: usize, token_type: TokenType) -> bool {
+        self.tokens
+            .get(self.current + offset)
+            .is_some_and(|token| token.token_type == token_type)
+    }
+
+    /// Whether the token `offset` ahead is TO.
+    fn is_to_at(&self, offset: usize) -> bool {
+        self.tokens
+            .get(self.current + offset)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case("TO"))
+    }
+
+    /// The Snowflake interval field `offset` ahead: YEAR, MONTH, DAY, HOUR, MINUTE or SECOND.
+    fn interval_field_at(&self, offset: usize) -> Option<IntervalUnit> {
+        let text = self
+            .tokens
+            .get(self.current + offset)?
+            .text
+            .to_ascii_uppercase();
+        match text.as_str() {
+            "YEAR" => Some(IntervalUnit::Year),
+            "MONTH" => Some(IntervalUnit::Month),
+            "DAY" => Some(IntervalUnit::Day),
+            "HOUR" => Some(IntervalUnit::Hour),
+            "MINUTE" => Some(IntervalUnit::Minute),
+            "SECOND" => Some(IntervalUnit::Second),
+            _ => None,
+        }
+    }
+
+    /// Reads an optional `( n )` interval field precision.
+    fn parse_snowflake_interval_precision(&mut self) -> Result<Option<u32>> {
+        if !self.match_token(TokenType::LParen) {
+            return Ok(None);
+        }
+        let number = self.check(TokenType::Number);
+        let digits = match self.peek_text().parse::<u32>() {
+            Ok(digits) if number => digits,
+            _ => return Err(self.parse_error("Expected an interval precision")),
+        };
+        self.skip();
+        self.expect_token(TokenType::RParen)?;
+        Ok(Some(digits))
+    }
+
+    /// Refuses Snowflake's INTERVAL type without a field, or with TO and no field after it.
+    pub(crate) fn refuse_snowflake_bare_interval(
+        &self,
+        unit: &Option<String>,
+        to: &Option<String>,
+    ) -> Result<()> {
+        let dangling_to = to.is_none() && self.previous().token_type == TokenType::To;
+        match self.is_snowflake() && (unit.is_none() || dangling_to) {
+            true => {
+                Err(self.parse_error("Expected an interval field such as DAY or YEAR TO MONTH"))
+            }
+            false => Ok(()),
+        }
     }
 
     /// Parse a data type.
@@ -361,6 +486,13 @@ impl Parser {
                 }
             }
             "STRING" => {
+                let empty = self.is_snowflake()
+                    && self.check(TokenType::LParen)
+                    && self.check_next(TokenType::RParen);
+                if empty {
+                    self.skip();
+                    self.skip();
+                }
                 let length = if self.match_token(TokenType::LParen) {
                     let n = self.expect_number()? as u32;
                     self.expect_token(TokenType::RParen)?;
@@ -505,6 +637,9 @@ impl Parser {
     }
 
     fn parse_int_data_type(&mut self, name: String) -> Result<DataType> {
+        if self.is_snowflake() && self.check(TokenType::LParen) {
+            return Err(self.parse_error("Snowflake's INT and INTEGER take no precision"));
+        }
         let length = if self.match_token(TokenType::LParen) {
             if self.check(TokenType::RParen) {
                 self.skip();
@@ -737,14 +872,9 @@ impl Parser {
 
     fn parse_time_data_type(&mut self) -> Result<DataType> {
         let precision = if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                None
-            } else {
-                let p = self.expect_number()? as u32;
-                self.expect_token(TokenType::RParen)?;
-                Some(p)
-            }
+            let p = self.expect_number()? as u32;
+            self.expect_token(TokenType::RParen)?;
+            Some(p)
         } else {
             None
         };
@@ -775,26 +905,20 @@ impl Parser {
         };
         if self.match_token(TokenType::With) {
             if self.match_token(TokenType::Local) {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Custom {
                     name: "TIMESTAMPLTZ".to_string(),
                 })
             } else {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Timestamp {
                     precision,
                     timezone: true,
                 })
             }
         } else if self.match_keyword("WITHOUT") {
-            self.match_keyword("TIME");
-            self.match_keyword("ZONE");
-            Ok(DataType::Timestamp {
-                precision,
-                timezone: false,
-            })
+            self.match_time_zone_words()?;
+            Ok(self.timestamp_without_time_zone(precision))
         } else {
             Ok(DataType::Timestamp {
                 precision,
@@ -877,6 +1001,7 @@ impl Parser {
         } else {
             None
         };
+        self.refuse_snowflake_bare_interval(&unit, &to)?;
         Ok(DataType::Interval { unit, to })
     }
 
@@ -907,10 +1032,7 @@ impl Parser {
 
     fn parse_varbinary_data_type(&mut self) -> Result<DataType> {
         if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                Ok(DataType::VarBinary { length: None })
-            } else if self.check_identifier("MAX") {
+            if self.check_identifier("MAX") {
                 self.skip();
                 self.expect_token(TokenType::RParen)?;
                 Ok(DataType::Custom {
@@ -963,6 +1085,7 @@ impl Parser {
                     dimension: Some(dimension),
                 })
             } else {
+                self.expect_snowflake_vector_element()?;
                 let element_type = self.parse_data_type()?;
                 self.expect_token(TokenType::Comma)?;
                 let dimension = self.expect_number()? as u32;
@@ -994,7 +1117,9 @@ impl Parser {
                     };
                     let field_type = self.parse_data_type()?;
                     let not_null = if self.match_keyword("NOT") {
-                        self.match_keyword("NULL");
+                        if !self.match_keyword("NULL") {
+                            return Err(self.parse_error("Expected NULL after NOT"));
+                        }
                         true
                     } else {
                         false
@@ -1114,6 +1239,17 @@ impl Parser {
     }
 
     fn parse_named_data_type(&mut self, name: String, raw_name: String) -> Result<DataType> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && self.previous().token_type != TokenType::QuotedIdentifier
+            && name != TABLE_TYPE
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&name.as_str())
+        {
+            return Err(self.parse_error(format!(
+                "Reserved word {name} cannot be an unquoted type name"
+            )));
+        }
         let is_known = convert_name_is_known_custom(&name);
         let custom_name = if is_known {
             name.clone()
@@ -1126,7 +1262,13 @@ impl Parser {
                 let mut after_comma = true;
                 loop {
                     if self.check(TokenType::RParen) {
+                        if after_comma && !(args.is_empty() && name == TABLE_TYPE) {
+                            return Err(self.parse_error("Expected a type parameter"));
+                        }
                         break;
+                    }
+                    if self.is_snowflake() && self.check(TokenType::String) {
+                        return Err(self.parse_error("Expected a type parameter, not a string"));
                     }
                     let token = self.advance()?;
                     if !after_comma && !args.is_empty() {
@@ -1176,6 +1318,7 @@ impl Parser {
             });
         }
         let mut element = self.parse_data_type()?;
+        element = self.parse_snowflake_not_null(element);
         while let Some(close) = closes.pop() {
             if close == TokenType::Gt {
                 self.expect_gt()?;
@@ -1192,6 +1335,21 @@ impl Parser {
             }
         }
         Ok(element)
+    }
+
+    /// `inner` with a trailing Snowflake `NOT NULL` on a structured type's element or value.
+    fn parse_snowflake_not_null(&mut self, inner: DataType) -> DataType {
+        let not_null = self.applies_snowflake_context_rules()
+            && self.check(TokenType::Not)
+            && self.check_next(TokenType::Null);
+        if !not_null {
+            return inner;
+        }
+        self.skip();
+        self.skip();
+        DataType::NotNull {
+            inner: Box::new(inner),
+        }
     }
 
     #[inline(never)]
@@ -1217,7 +1375,8 @@ impl Parser {
         } else if self.match_token(TokenType::LParen) {
             let key_type = self.parse_data_type()?;
             self.expect_token(TokenType::Comma)?;
-            let value_type = self.parse_data_type()?;
+            let parsed_value = self.parse_data_type()?;
+            let value_type = self.parse_snowflake_not_null(parsed_value);
             self.expect_token(TokenType::RParen)?;
             Ok(DataType::Map {
                 key_type: Box::new(key_type),
@@ -1296,6 +1455,8 @@ impl Parser {
         let collation_start = self.current;
         if self.check(TokenType::String) {
             self.skip();
+        } else if self.is_snowflake() {
+            return Err(self.parse_error("Expected a collation string after COLLATE"));
         } else {
             self.expect_identifier_or_keyword()?;
             while self.match_token(TokenType::Dot) {

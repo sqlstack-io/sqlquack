@@ -7,8 +7,9 @@ use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySett
 use walkdir::WalkDir;
 
 use crate::test_types::{
-    CommandOutcome, ConvertOutcome, CoverageOutcome, DivergenceOutcome, ErrorCheckOutcome,
-    FunctionMacroOutcome, ReviewOutcome, ReviewedRepository,
+    CommandOutcome, CompareTestCase, ConvertOutcome, CoverageOutcome, DivergenceOutcome,
+    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ReviewOutcome,
+    ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -500,7 +501,8 @@ pub(crate) fn run_function_macro(
 ) -> FunctionMacroOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let schema = format!(
-        "{{\"functions\": {{\"DOUBLED\": {{\"language\": \"sql\", \
+        "{{\"relations\": {{\"__SQLQUACK_RELATION__FEES\": [[\"AMOUNT\", \"NUMBER(10,2)\"]]}}, \
+         \"functions\": {{\"DOUBLED\": {{\"language\": \"sql\", \
          \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": {returns}}}}}}}"
     );
     std::fs::write(directory.path().join("schema.json"), schema).expect("schema written");
@@ -545,7 +547,9 @@ fn macro_values(converted: &serde_json::Value, macro_body: &str, call: &str) -> 
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
     connection
         .execute_batch(&format!(
-            "CREATE MACRO \"DOUBLED\"({}) AS {macro_body}",
+            "CREATE TABLE \"__SQLQUACK_RELATION__FEES\" AS \
+             SELECT CAST(amount AS DECIMAL(10,2)) AS \"AMOUNT\" FROM (VALUES (1.00), (2.00)) AS t(amount); \
+             CREATE MACRO \"DOUBLED\"({}) AS {macro_body}",
             parameters.join(", ")
         ))
         .expect("the macro is created");
@@ -842,4 +846,186 @@ pub(crate) fn convert_outcome(exit_code: i32, printed_sql: bool) -> ConvertOutco
         json_converted: None,
         stderr_mentions: true,
     }
+}
+
+/// The standard output and standard error of `sqlquack convert` on `sql` from standard input.
+pub(crate) fn convert_streams(sql: &str, flags: &[&str]) -> (String, String) {
+    use std::io::Write;
+    let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .arg("convert")
+        .args(flags)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("sqlquack runs");
+    child
+        .stdin
+        .take()
+        .expect("standard input")
+        .write_all(sql.as_bytes())
+        .expect("SQL written");
+    let output = child.wait_with_output().expect("sqlquack finishes");
+    (
+        String::from_utf8_lossy(&output.stdout).into_owned(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}
+
+/// Exit code, standard output and standard error of `sqlquack arguments` in `directory` on `input`.
+pub(crate) fn run_with_input(
+    directory: &std::path::Path,
+    arguments: &[&str],
+    input: &str,
+) -> (Option<i32>, String, String) {
+    use std::io::Write;
+    let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(arguments)
+        .current_dir(directory)
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("sqlquack runs");
+    child
+        .stdin
+        .take()
+        .expect("standard input")
+        .write_all(input.as_bytes())
+        .expect("input written");
+    let output = child.wait_with_output().expect("sqlquack finishes");
+    (
+        output.status.code(),
+        String::from_utf8_lossy(&output.stdout).into_owned(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}
+
+/// How `sqlquack function` ends on `body` from standard input, the schema declaring `DOUBLED`.
+pub(crate) fn function_from_stdin(name: &str, body: &str) -> FunctionStdinOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::write(
+        directory.path().join("schema.json"),
+        "{\"functions\": {\"DOUBLED\": {\"language\": \"sql\", \
+         \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": \"BOOLEAN\"}}}",
+    )
+    .expect("schema written");
+    let (exit_code, stdout, stderr) = run_with_input(
+        directory.path(),
+        &[
+            "function",
+            "-",
+            "--name",
+            name,
+            "--schema",
+            "schema.json",
+            "--builtin-policy",
+        ],
+        body,
+    );
+    let report: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
+    FunctionStdinOutcome {
+        exit_code,
+        converted: report["converted"].as_bool(),
+        first_code: report["refusals"][0]["code"].as_str().map(str::to_owned),
+        stderr_lines: stderr
+            .lines()
+            .filter(|line| {
+                line.starts_with("error[") || line.contains(" --> ") || line.contains("failed:")
+            })
+            .map(str::to_owned)
+            .collect(),
+    }
+}
+
+/// A committed recording of `I` NUMBER(38,0) and `X` TEXT: rows (0, 'fig') and (1, 'pear').
+const FRUIT_RECORDING: &str =
+    "evidence/results/1707ba43b41cc7c6da39bc8bc7c4825e471d14c66d8a30e3d1495b25be170e8f";
+
+/// The outcome `sqlquack compare` prints for one case over the fruit recording and its inputs.
+pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let database = directory.path().join("inputs.duckdb");
+    duckdb::Connection::open(&database)
+        .expect("DuckDB opens")
+        .execute_batch(
+            "CREATE TABLE fruit (i INTEGER, x VARCHAR); INSERT INTO fruit VALUES (0, 'fig'), (1, 'pear');",
+        )
+        .expect("inputs written");
+    let recording = repository_root().join(FRUIT_RECORDING);
+    let mut sidecar: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(recording.with_extension("json")).expect("sidecar read"),
+    )
+    .expect("sidecar parses");
+    sidecar["arrow_sha256"] = test_case
+        .arrow_sha256
+        .map_or(sidecar["arrow_sha256"].clone(), serde_json::Value::from);
+    let recorded = directory.path().join("recorded.json");
+    std::fs::write(&recorded, sidecar.to_string()).expect("sidecar written");
+    std::fs::copy(
+        recording.with_extension("arrow"),
+        recorded.with_extension("arrow"),
+    )
+    .expect("Arrow file copied");
+    let sql = directory.path().join("converted.sql");
+    std::fs::write(&sql, test_case.sql).expect("SQL written");
+    let entry = serde_json::json!({
+        "id": "fruit",
+        "recorded": recorded,
+        "database": database,
+        "sql": sql,
+        "ordered": test_case.ordered,
+    });
+    let manifest = directory.path().join("manifest.json");
+    std::fs::write(&manifest, serde_json::json!([entry]).to_string()).expect("manifest written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .current_dir(repository_root())
+        .args(["compare", "--manifest"])
+        .arg(&manifest)
+        .output()
+        .expect("sqlquack runs");
+    let outcomes: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("outcomes are JSON");
+    format!("{} {}", outcomes[0]["id"], outcomes[0]["outcome"])
+}
+
+/// Each statement `verify --translation-statements` writes for the batch-2 aggregates and fidelity.
+pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let root = repository_root();
+    std::fs::copy(
+        root.join("sqlquack.toml"),
+        directory.path().join("sqlquack.toml"),
+    )
+    .expect("policy copied");
+    copy_files(
+        &root.join("cases/fidelity"),
+        &directory.path().join("cases/fidelity"),
+    );
+    let cases = directory.path().join("cases/aggregate");
+    std::fs::create_dir_all(&cases).expect("cases directory");
+    std::fs::copy(
+        root.join("cases/aggregate/aggregates_batch2.toml"),
+        cases.join("aggregates_batch2.toml"),
+    )
+    .expect("case copied");
+    copy_files(
+        &root.join("evidence/results"),
+        &directory.path().join("evidence/results"),
+    );
+    let status = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["verify", "--translation-statements", "statements.json"])
+        .current_dir(directory.path())
+        .status()
+        .expect("sqlquack runs");
+    assert!(status.success(), "verify fails: {status}");
+    let written: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(directory.path().join("statements.json")).expect("written"),
+    )
+    .expect("statements parse");
+    assert_eq!(written["format"], "sqlquack-translation-statements/1");
+    written["statements"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
 }

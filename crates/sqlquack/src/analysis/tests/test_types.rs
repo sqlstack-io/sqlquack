@@ -70,6 +70,13 @@ pub(crate) struct GuardedConditionTestCase {
     pub(crate) expected_gated: bool,
 }
 
+pub(crate) struct LargeLiteralTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    pub(crate) expected_converted: bool,
+    pub(crate) expected_budget_seconds: u64,
+}
+
 pub(crate) struct CompositionTestCase {
     pub(crate) description: &'static str,
     pub(crate) columns: usize,
@@ -151,6 +158,14 @@ pub(crate) struct CollectionIsolationTestCase {
 pub(crate) struct FirstValueTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
+    /// The first value as text, or a fragment of the refusal reason or DuckDB error.
+    pub(crate) expected_outcome: Result<&'static str, &'static str>,
+}
+
+/// A `FirstValueTestCase` whose SQL is built from shared parts.
+pub(crate) struct BuiltFirstValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
     /// The first value as text, or a fragment of the refusal reason or DuckDB error.
     pub(crate) expected_outcome: Result<&'static str, &'static str>,
 }

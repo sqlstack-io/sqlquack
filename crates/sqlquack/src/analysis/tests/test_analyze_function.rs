@@ -1,4 +1,6 @@
-use crate::analysis::tests::helpers::{event_results, function_body_results};
+use crate::analysis::tests::helpers::{
+    event_results, event_results_allowing, function_body_results,
+};
 use crate::analysis::tests::test_types::{EventResultTestCase, FunctionBodyTestCase};
 
 #[test]
@@ -79,7 +81,7 @@ fn given_hash_when_running_the_conversion_then_equal_values_hash_equally_and_ord
     ];
     for test_case in test_cases {
         assert_eq!(
-            event_results(test_case.sql, test_case.payload),
+            event_results_allowing(test_case.sql, test_case.payload, &["hash"]),
             test_case.expected_values,
             "{}",
             test_case.description

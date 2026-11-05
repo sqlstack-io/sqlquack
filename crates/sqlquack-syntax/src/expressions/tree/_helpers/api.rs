@@ -79,6 +79,7 @@ impl Expression {
             Expression::ExtendsRight(_) => "extends_right",
             Expression::Not(_) => "not",
             Expression::Neg(_) => "neg",
+            Expression::Pos(_) => "pos",
             Expression::BitwiseNot(_) => "bitwise_not",
             Expression::In(_) => "in",
             Expression::Between(_) => "between",
@@ -119,6 +120,7 @@ impl Expression {
             Expression::Prior(_) => "prior",
             Expression::ConnectByRoot(_) => "connect_by_root",
             Expression::MatchRecognize(_) => "match_recognize",
+            Expression::Resample(_) => "resample",
             Expression::Ordered(_) => "ordered",
             Expression::Window(_) => "window",
             Expression::Over(_) => "over",
@@ -395,6 +397,7 @@ impl Expression {
             Expression::CreateTable(_) => "create_table",
             Expression::DropTable(_) => "drop_table",
             Expression::Undrop(_) => "undrop",
+            Expression::DropObject(_) => "drop_object",
             Expression::AlterTable(_) => "alter_table",
             Expression::SplitTable(_) => "split_table",
             Expression::FlashbackTable(_) => "flashback_table",
@@ -403,6 +406,9 @@ impl Expression {
             Expression::CreateView(_) => "create_view",
             Expression::DropView(_) => "drop_view",
             Expression::AlterView(_) => "alter_view",
+            Expression::AlterObject(_) => "alter_object",
+            Expression::CreateObject(_) => "create_object",
+            Expression::CreateDataMetricFunction(_) => "create_data_metric_function",
             Expression::AlterIndex(_) => "alter_index",
             Expression::Truncate(_) => "truncate",
             Expression::Use(_) => "use",
@@ -414,6 +420,7 @@ impl Expression {
             Expression::Revoke(_) => "revoke",
             Expression::Comment(_) => "comment",
             Expression::SetStatement(_) => "set_statement",
+            Expression::UnsetStatement(_) => "unset_statement",
             Expression::CreateSchema(_) => "create_schema",
             Expression::DropSchema(_) => "drop_schema",
             Expression::DropNamespace(_) => "drop_namespace",
@@ -434,10 +441,13 @@ impl Expression {
             Expression::Describe(_) => "describe",
             Expression::Show(_) => "show",
             Expression::Command(_) => "command",
+            Expression::ScriptingBlock(_) => "scripting_block",
             Expression::TryCatch(_) => "try_catch",
             Expression::Kill(_) => "kill",
             Expression::Prepare(_) => "prepare",
             Expression::Execute(_) => "execute",
+            Expression::ExecuteObject(_) => "execute_object",
+            Expression::ExecuteUsingPolicyContext(_) => "execute_using_policy_context",
             Expression::Raw(_) => "raw",
             Expression::CreateTask(_) => "create_task",
             Expression::Paren(_) => "paren",
@@ -960,7 +970,10 @@ impl Expression {
             Expression::JSONColumnDef(j) => j.this.as_deref(),
             Expression::Hierarchy(hierarchy) => Some(&hierarchy.source),
             Expression::Upsert(upsert) => Some(&upsert.source),
-            Expression::Not(u) | Expression::Neg(u) | Expression::BitwiseNot(u) => Some(&u.this),
+            Expression::Not(u)
+            | Expression::Neg(u)
+            | Expression::Pos(u)
+            | Expression::BitwiseNot(u) => Some(&u.this),
             Expression::Upper(f)
             | Expression::Lower(f)
             | Expression::Length(f)

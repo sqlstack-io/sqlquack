@@ -54,6 +54,8 @@ pub const FILTER_FUNCTION: &str = "FILTER";
 pub const TEXT_PARAMETER_TYPES: &[&str] = &["var_char", "string", "text"];
 /// The type name TO_DATE casts to.
 pub const DATE_NAME: &str = "DATE";
+/// The type name TO_TIMESTAMP_NTZ casts a DATE to.
+pub const TIMESTAMP_NTZ_NAME: &str = "TIMESTAMP_NTZ(9)";
 /// The node kind of a lambda.
 pub const LAMBDA_KIND: &str = "lambda";
 /// What a lambda parameter's DuckDB name starts with.
@@ -84,6 +86,8 @@ pub const OFFSET_WITH_COLON: usize = 7;
 pub const OFFSET_WITHOUT_COLON: usize = 6;
 /// Fractional-second digits a Snowflake timestamp holds at most.
 pub const MAX_FRACTION_DIGITS: usize = 9;
+/// The length of `YYYY-MM-DD HH:MI`, a timestamp text without seconds.
+pub const MINUTE_TEXT_LENGTH: usize = 16;
 /// LEFT, RIGHT, SUBSTR and LENGTH.
 pub const TEXT_POSITION: &str = "rule.text_position";
 /// REPLACE and SPLIT_PART.
@@ -116,6 +120,10 @@ pub(crate) const HIERARCHY_NESTED_QUERIES: &[&str] = &[
     "exists",
     "with",
 ];
+/// PIVOT in FROM as a grouped aggregate of each listed key.
+pub const PIVOT_RULE: &str = "rule.pivot";
+/// The aggregates a PIVOT converts, each as itself over the rows of one key.
+pub(crate) const PIVOT_AGGREGATES: &[&str] = &["SUM", "MAX"];
 /// TABLE(GENERATOR(ROWCOUNT => n)) and SEQ4 / SEQ8 over it.
 pub const GENERATOR_RULE: &str = "rule.generator";
 /// The table function GENERATOR.
@@ -273,6 +281,8 @@ pub const ZONED_PARTS: &str = "rule.zoned_parts";
 pub const UTC_OFFSET_ARITHMETIC: &str = "rule.utc_offset_arithmetic";
 /// TO_DATE of dates and timestamps.
 pub const TO_DATE_TEMPORAL: &str = "rule.to_date_temporal";
+/// TO_TIMESTAMP and TO_TIMESTAMP_NTZ of dates and naive timestamps.
+pub const TO_TIMESTAMP_TEMPORAL: &str = "rule.to_timestamp_temporal";
 /// CONVERT_TIMEZONE with zone columns.
 pub const ZONE_COLUMNS: &str = "rule.zone_columns";
 /// MOD and % with a FLOAT and a literal divisor.
@@ -339,6 +349,8 @@ pub const DATE_FORMAT_RULE: &str = "rule.date_format";
 pub const TIMESTAMP_FORMAT_RULE: &str = "rule.timestamp_format";
 /// The function DATE(x) converts as.
 pub const TO_DATE_NAME: &str = "TO_DATE";
+/// TRY_PARSE_JSON, whose text no JSON reader can finish is NULL.
+pub const TRY_PARSE_JSON_NAME: &str = "TRY_PARSE_JSON";
 /// The type name of a cast to VARIANT.
 pub const VARIANT_NAME: &str = "VARIANT";
 /// PARSE_JSON and TRY_PARSE_JSON.
@@ -347,7 +359,23 @@ pub const PARSE_JSON_RULE: &str = "rule.parse_json";
 pub const VARIANT_PATH: &str = "rule.variant_path";
 /// TYPEOF of a VARIANT.
 pub const VARIANT_TYPE_NAME: &str = "rule.variant_typeof";
-/// IS_NULL_VALUE and TO_JSON of a VARIANT.
+/// ROUND's rounding mode to the nearest even digit.
+pub const HALF_TO_EVEN: &str = "HALF_TO_EVEN";
+/// ROUND's rounding mode away from zero, its default.
+pub const HALF_AWAY_FROM_ZERO: &str = "HALF_AWAY_FROM_ZERO";
+/// The argument count of ROUND with a rounding mode.
+pub const ROUND_WITH_MODE_ARGUMENTS: usize = 3;
+/// The node kind of a NULL literal.
+pub const NULL_KIND: &str = "null";
+/// Functions whose timestamp result Snowflake was recorded widening to nanoseconds.
+pub const WIDENING_DATE_ADDS: &[&str] = &["DATEADD", "TIMEADD", "TIMESTAMPADD"];
+/// SYSTEM$TYPEOF with its storage suffix removed by REGEXP_REPLACE.
+pub const SYSTEM_TYPE_NAME: &str = "rule.system_typeof";
+/// SYSTEM$TYPEOF, the static type of an expression with a storage suffix such as `[SB1]`.
+pub const SYSTEM_TYPEOF_NAME: &str = "SYSTEM$TYPEOF";
+/// The REGEXP_REPLACE pattern that removes SYSTEM$TYPEOF's storage suffix.
+pub const STORAGE_SUFFIX_PATTERN: &str = r"\[.*\]$";
+/// IS_NULL_VALUE, STRIP_NULL_VALUE and TO_JSON of a VARIANT.
 pub const VARIANT_INSPECT: &str = "rule.variant_inspect";
 /// Casts of a VARIANT to scalar types.
 pub const VARIANT_CAST: &str = "rule.variant_cast";
@@ -395,6 +423,8 @@ pub const ARRAY_CONSTRUCT_COMPACT_RULE: &str = "rule.array_construct_compact";
 pub const ARRAY_TO_STRING_RULE: &str = "rule.array_to_string";
 /// SPLIT.
 pub const SPLIT_RULE: &str = "rule.split";
+/// PARSE_URL in permissive mode.
+pub const PARSE_URL_RULE: &str = "rule.parse_url";
 /// ARRAY_EXCEPT.
 pub const ARRAY_EXCEPT_RULE: &str = "rule.array_except";
 /// TO_VARIANT, and casts of text, booleans and whole numbers to VARIANT.
@@ -894,7 +924,7 @@ pub const NOT_SNOWFLAKE_FUNCTIONS: &[&str] = &[
     "ENDS_WITH",
     "DATE_DIFF",
 ];
-/// The pair behind converting `t RLIKE p` through the `REGEXP_LIKE` rule.
+/// The pair behind converting `t RLIKE p` and `RLIKE(t, p)` through the `REGEXP_LIKE` rule.
 pub const RLIKE_PAIR: &str = "rlike_to_regexp_like";
 /// A computed `v[i]` spelled as GET.
 pub const SUBSCRIPT_PAIR: &str = "subscript_to_get";
@@ -948,7 +978,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: RLIKE_PAIR,
-        source: "t RLIKE p",
+        source: "t RLIKE p, RLIKE(t, p [, flags])",
         canonical: "REGEXP_LIKE(t, p)",
         cases: "fidelity/rlike.toml",
     },
@@ -1002,7 +1032,7 @@ pub const SPELLING_PAIRS: &[SpellingPair] = &[
     },
     SpellingPair {
         id: PART_FUNCTIONS_PAIR,
-        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x)",
+        source: "YEAR(x), QUARTER(x), MONTH(x), DAY(x), HOUR(x), MINUTE(x), SECOND(x), DAYOFWEEKISO(x)",
         canonical: "DATE_PART(unit, x)",
         cases: "fidelity/part_functions.toml",
     },
@@ -1169,8 +1199,16 @@ pub(crate) const TEXT_POSITION_LIMIT: &str = "2147483647";
 pub(crate) const ROUND_FUNCTION: &str = "ROUND";
 /// The node kind of a function call.
 pub(crate) const FUNCTION_KIND: &str = "function";
+/// ARRAY_CONSTRUCT, whose undefined elements text and ARRAY_TO_STRING write when it is direct.
+pub(crate) const ARRAY_CONSTRUCT_NAME: &str = "ARRAY_CONSTRUCT";
 /// Array builders whose ARRAY OBJECT_PICK was recorded picking by its elements.
 pub(crate) const PICKED_ARRAY_FUNCTIONS: [&str; 2] = ["ARRAY_CONSTRUCT", "ARRAY_EXCEPT"];
+/// The array builders ARRAY_SIZE reads through, counting a SQL NULL element as Snowflake does.
+pub(crate) const COUNTED_ARRAY_FUNCTIONS: [&str; 3] =
+    ["ARRAY_APPEND", "ARRAY_CAT", "ARRAY_CONSTRUCT"];
+/// Why SYSTEM$TYPEOF text refuses where its storage suffix would be read.
+pub(crate) const TYPE_SUFFIX_UNREMOVED: &str = "SYSTEM$TYPEOF text read before \
+    REGEXP_REPLACE(..., '\\[.*\\]$', '') removes its storage suffix, which depends on Snowflake's plan";
 /// Why a construct that reads VARIANTs only as JSON refuses a VARIANT built from a FLOAT.
 pub(crate) const VARIANT_HELD_UNREAD: &str = "a VARIANT built from a FLOAT, which this construct \
                                                reads only as JSON, where the FLOAT's type is lost";
@@ -1188,6 +1226,16 @@ pub(crate) const DOLLAR_PARAMETER: &str = "Dollar";
 pub const VALUES_ROWS: &str = "rule.values_rows";
 /// The column names Snowflake gives VALUES rows: COLUMN1, COLUMN2 and so on.
 pub(crate) const VALUES_COLUMN_PREFIX: &str = "COLUMN";
+/// NTILE, which the parser keeps as a generic call.
+pub(crate) const NTILE_NAME: &str = "NTILE";
+/// RATIO_TO_REPORT, which the parser keeps as a generic call.
+pub(crate) const RATIO_TO_REPORT_NAME: &str = "RATIO_TO_REPORT";
+/// IS_INTEGER, which reads TYPEOF's INTEGER where IS_DECIMAL also reads DECIMAL.
+pub(crate) const IS_INTEGER_NAME: &str = "IS_INTEGER";
+/// The most VALUES rows converted.
+pub(crate) const VALUES_ROWS_LIMIT: usize = 1000;
+/// DATEDIFF units whose boundaries every whole-minute UTC offset shares, counted on UTC instants.
+pub(crate) const OFFSET_FREE_UNITS: [&str; 2] = ["MINUTE", "SECOND"];
 /// JOIN ... USING.
 pub const JOIN_USING: &str = "rule.join_using";
 /// ASOF JOIN ... MATCH_CONDITION.
@@ -1222,6 +1270,10 @@ pub(crate) const DAY_UNIT: &str = "DAY";
 pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
 /// LN and EXP of a NUMBER or FLOAT.
 pub const LOGARITHM: &str = "rule.logarithm";
+/// POWER(10, n) of a whole exponent.
+pub const POWER_RULE: &str = "rule.power";
+/// The one base POWER converts, as its literal is written.
+pub(crate) const POWER_BASE: &str = "10";
 /// The natural logarithm's name, beside EXP.
 pub(crate) const LN_NAME: &str = "LN";
 /// ARRAY_SORT of one array.
@@ -1263,6 +1315,8 @@ pub(crate) const TRYING_HEX_DECODE: &str = "TRY_HEX_DECODE_STRING";
 pub(crate) const HEX_DECODE_MESSAGE: &str = "The following string is not a legal hex-encoded value";
 /// DAYNAME.
 pub const DAY_NAME_RULE: &str = "rule.day_name";
+/// LAST_DAY of a DATE or TIMESTAMP_NTZ in its month.
+pub const LAST_DAY_RULE: &str = "rule.last_day";
 /// SQRT's name, beside LN and EXP.
 pub(crate) const SQRT_NAME: &str = "SQRT";
 /// TRY_TO_DOUBLE of a FLOAT, the value itself.
@@ -1279,7 +1333,7 @@ pub const OBJECT_TYPE_NAME: &str = "OBJECT";
 pub const DIV0_RULE: &str = "rule.div0";
 /// MEDIAN.
 pub const MEDIAN_RULE: &str = "rule.median";
-/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), as recorded.
+/// MEDIAN of NUMBER(p,s) is NUMBER(p+3,s+3), its precision capped at 38, as recorded.
 pub const MEDIAN_EXTRA_DIGITS: u8 = 3;
 /// Significant digits at the result scale up to which a double average rounds back exactly.
 pub const MEDIAN_EXACT_DIGITS: u8 = 15;

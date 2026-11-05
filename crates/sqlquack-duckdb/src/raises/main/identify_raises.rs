@@ -2,7 +2,7 @@
 
 use sqlquack_core::failures::constants::RAISE_ID_MARKER;
 
-use crate::raises::_helpers::slots::{content_id, raise_slots};
+use crate::raises::_helpers::slots::{content_hash, content_id, raise_slots};
 
 /// `sql` with each unidentified raise given the hash of its tag and the ID-free SQL, and the IDs.
 pub fn identify_raises(sql: &str) -> (String, Vec<String>) {
@@ -17,11 +17,21 @@ pub fn identify_raises(sql: &str) -> (String, Vec<String>) {
         copied = slot.marker.end;
     }
     content.push_str(&sql[copied..]);
+    let content = content_hash(&content);
+    let mut tagged: Vec<(&str, String)> = Vec::new();
     let mut identified = String::with_capacity(sql.len());
     let mut ids: Vec<String> = Vec::new();
     copied = 0;
     for slot in slots.iter().filter(|slot| slot.unidentified) {
-        let id = content_id(&content, &sql[slot.tag.clone()]);
+        let tag = &sql[slot.tag.clone()];
+        let id = match tagged.iter().find(|(seen, _)| *seen == tag) {
+            Some((_, id)) => id.clone(),
+            None => {
+                let id = content_id(content, tag);
+                tagged.push((tag, id.clone()));
+                id
+            }
+        };
         identified.push_str(&sql[copied..slot.marker.start]);
         identified.push(RAISE_ID_MARKER);
         identified.push_str(&id);

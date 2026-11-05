@@ -1,0 +1,1121 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "sql": "DECLARE\n  floor_amount NUMBER DEFAULT 20;\n  first_amount NUMBER;\n  orders_cursor CURSOR FOR SELECT column1 FROM VALUES (17), (31), (43) WHERE column1 > ? ORDER BY column1;\nBEGIN\n  OPEN orders_cursor USING (floor_amount);\n  FETCH orders_cursor INTO first_amount;\n  CLOSE orders_cursor;\n  RETURN first_amount;\nEND;",
+   "sql_sha256": "0175bdaaf7b3afe233148508a0204311f6a29427810568c735640789a2e176dd"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 AS id, 7 AS region UNION ALL BY NAME SELECT 11 AS region, 13 AS id",
+   "sql_sha256": "03f9e286ee8f0d6831d84429660e2cdca95735a25166c77d398227e11b1dc05a"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id INTERSECT ALL BY NAME SELECT 2 AS id",
+   "sql_sha256": "051892649980e47fcf291acd1d073b9849514f47b3ec09e032947ce44dca46dd"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders RESULTSET DEFAULT (SELECT column1 AS order_id, column2 AS region FROM VALUES (17, 'west'), (31, 'é'));\nBEGIN\n  RETURN TABLE(orders);\nEND;",
+   "sql_sha256": "0795e4a15228da6428666719edf15b6664676d01eb7937268dda4708da774703"
+  },
+  {
+   "setup": [],
+   "sql": "WITH recent AS (SELECT 1) WITH prior AS (SELECT 2) SELECT * FROM recent",
+   "sql_sha256": "09acdac582c9e0f0a5ab42845ef3a36689b8c61acb1ee6ea2d1566436b4c365a"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  adjust PROCEDURE (amount NUMBER) RETURNS NUMBER AS BEGIN RETURN amount + 17; END;\nBEGIN\n  RETURN 31;\nEND;\n",
+   "sql_sha256": "0cf3e0c97d25516c0e583b5a9cc42fb4aa93238cb329ebb5e8e25bd82281325b"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LOOP\n    BREAK;\n  END WHILE;\nEND;",
+   "sql_sha256": "0dcb393fcb1a8ca2739152d1488f34f5f45256045b47002d1c38dd7e2d81e249"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 EXCEPT ALL SELECT 2",
+   "sql_sha256": "0e7924a8e3f28e12cd3df205bd77bedc7a3791fb227e0275f4a2b6752cd3519b"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  work NUMBER DEFAULT 0;\nBEGIN\n  work := 17;\n  RETURN work;\nEND;",
+   "sql_sha256": "0e9227a300460a154e250820d19a5f0fad3ee4bf53c922eed12224a3a00418b0"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-03-01' AS DATE) AS d\n  UNION ALL\n  SELECT 2 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-02-29' AS DATE) AS d\n  UNION ALL\n  SELECT 3 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-02-28' AS DATE) AS d\n  UNION ALL\n  SELECT 4 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('b' AS VARCHAR) AS k, CAST('2024-03-01' AS DATE) AS d\n  UNION ALL\n  SELECT 5 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST(NULL AS DATE) AS d\n  UNION ALL\n  SELECT 6 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-03-01' AS DATE) AS d\n  UNION ALL\n  SELECT 7 AS ordinal, CAST('r' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-02-29' AS DATE) AS d\n  UNION ALL\n  SELECT 8 AS ordinal, CAST('r' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST('2024-03-01' AS DATE) AS d\n  UNION ALL\n  SELECT 9 AS ordinal, CAST('r' AS VARCHAR) AS side, CAST('a' AS VARCHAR) AS k, CAST(NULL AS DATE) AS d\n), l AS (SELECT ordinal AS o, k, d FROM input WHERE side = 'l'), r AS (SELECT k, d FROM input WHERE side = 'r') SELECT l.o, r.d AS matched FROM l ASOF JOIN r MATCH_CONDITION (l.d >= r.d) ON l.k = r.k ORDER BY l.o",
+   "sql_sha256": "0fad03ce727a9dbae7544ad99e139b6b038877887c0486ab9affe67864bc8a57"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17\nEND;",
+   "sql_sha256": "101e501673ddf59d2f97b727fccf4e5ad069de8c3d1fa2f85ce1cbb3ca974507"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST('1969-12-31 23:59:59.999999999' AS TIMESTAMP_NTZ(9)) AS t\n  UNION ALL\n  SELECT 2 AS ordinal, CAST('2024-02-29 13:45:01.000000001' AS TIMESTAMP_NTZ(9)) AS t\n  UNION ALL\n  SELECT 3 AS ordinal, CAST('2024-02-29 13:45:01.000000002' AS TIMESTAMP_NTZ(9)) AS t\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(NULL AS TIMESTAMP_NTZ(9)) AS t\n)\nSELECT TO_TIMESTAMP_NTZ(t) AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "10e314d7ea74c64eb610f62170bbc4ab69a041f19c9f62b4b7187daa49ba4eb5"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET region := 'west';\n  CASE (region)\n    WHEN 'east' THEN\n      RETURN 17;\n    WHEN 'west' THEN\n      RETURN 31;\n    ELSE\n      RETURN 43;\n  END CASE;\nEND;",
+   "sql_sha256": "12dd035b394c5b6fe286a3054f0c494d38f45079c2f8a12657ce8bb0e3021fdc"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders_cursor CURSOR FOR SELECT 17 AS amount;\nBEGIN\n  FOR order_row IN orders_cursor LOOP\n    NULL;\n  END FOR;\n  RETURN 17;\nEND;",
+   "sql_sha256": "14cf6b8dc09839f9cac9e4f25daf7c631747b4f01f4acf2e8189fb08e58216af"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders o INNER DIRECTED JOIN customers c USING (id) LAST(o, c)",
+   "sql_sha256": "14eb17cf5831275bcd8855eeff5a08aa7ed6ba7263ff222aa905244dddf8a8d0"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  steps VARCHAR DEFAULT '';\nBEGIN\n  FOR i IN REVERSE 1 TO 3 DO\n    steps := steps || i::VARCHAR;\n  END FOR;\n  FOR j IN 1 TO 2 LOOP\n    steps := steps || '-' || j::VARCHAR;\n  END LOOP;\n  RETURN steps;\nEND;",
+   "sql_sha256": "173321d429e95edd815d8480e494c6f7657971a1b71ac15a8ced084b2dfc7ab1"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST('{' AS VARCHAR) AS s\n)\nSELECT GET(PARSE_JSON(s), '') AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "1858e2b36cbcc364e141122c55e98204cacc6db209431e58f1e4df76f3aa4331"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-1, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "185d0c666f2bc1ace46f60927b4e9a31f9f4e0a0131d4d64d381bc1ad547e5ed"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(-1 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(-2 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(-3 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(2 AS NUMBER(38,0)) AS b, CAST(-1 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 5 AS ordinal, CAST(-2 AS NUMBER(38,0)) AS b, CAST(-3 AS NUMBER(38,0)) AS e\n)\nSELECT POWER(b, e) AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "18a7baca66a7d6ffb362188cdfc4a04800cc21d268801c932d6f96b3ebd40e57"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  x;\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "1d0a948776d35046afef6c994d03e5e84fa10f958aa4c88da081bfe3dc1e9338"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN\nEND;",
+   "sql_sha256": "1d7d5b1bb2fab114c44d374a333eab0f26c0fd0cb2208ecd0e0026beb341146d"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT amount FROM orders ORDER BY amount NULLS",
+   "sql_sha256": "1f5bdc0a765e121fc97f0d3a26ffbaabbae7aefb4ff7ee53fea3662329560b13"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"total é\" NUMBER DEFAULT 17;\nBEGIN\n  DECLARE\n    nested NUMBER DEFAULT 31;\n  BEGIN\n    \"total é\" := \"total é\" + nested;\n  END;\n  RETURN \"total é\";\nEND;",
+   "sql_sha256": "200a9977e21efa8bbed52e0f787a53b7da71ea79a7de2dd59710a92b94d1067c"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (20001, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "216c9f17fbdd3a1406ffc0ae27947700e5ab845ba450d5126991037c269a1fe8"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT amount FROM orders LIMIT 1",
+   "sql_sha256": "21ee6aee07509a45275e3b7f746eba49e3c110b55b5f79e4cf1fb35a32ed92b5"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM SEMANTIC_VIEW(orders METRICS orders.total, DIMENSIONS orders.region)",
+   "sql_sha256": "25ba165a75765a814d953901083df9097a0acb3afcd1e9c5a1e214c3bf83073c"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 'orders",
+   "sql_sha256": "25bba70d60766a56e1ff07d64dd639e01029dea7ca5f3a6fa4118bd26efa2799"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  x NUMBER;\nBEGIN\n  x DEFAULT 17;\n  RETURN x;\nEND;",
+   "sql_sha256": "27104157116dd8afa4f2a5f25391a3babe6b0e89f73d1fd2b18d2ef6610ecdab"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RAISE not_declared;\nEND;",
+   "sql_sha256": "297d4977a1adf40e1200c6b6417bd53039dd3bbf0c52b3a53db540de9c869df2"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND IF;",
+   "sql_sha256": "2b62ee0e27ce011ebd707dabba275049952795b6efc40ba073187b46c107362e"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  IF 1 < 2 THEN\n    RETURN 17;\n  END IF;\nEND;",
+   "sql_sha256": "2d1f04d353952383e896ce4819d8fa8586a827e33691cb5532b616e33f4e204a"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  FOR i IN 1 TO 2 DO\n    NULL;\n  END FOR IF;\n  RETURN 17;\nEND;",
+   "sql_sha256": "2deb919f650a38663f65fccf479742cb2cedc872e584037de31b109538c65cd9"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT COALESCE(17)",
+   "sql_sha256": "2e457a6d4f9e6d81ab4f9a4a60b3f39dd4a189bd1e2a62329d473e67e6c2f6bb"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LOOP\n    BREAK;\n  END LOOP FOR;\n  RETURN 17;\nEND;",
+   "sql_sha256": "2e61b72410323a96a5fbf0db7c893ea3fa1b19e765e3c26f60b8fb3276d22dee"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET amount NUMBER;\n  amount := 31;\n  CASE amount\n    WHEN 31 THEN\n      RETURN;\n  END;\nEND;\n",
+   "sql_sha256": "30a25a88982c8ab0a8a85f6db3c80ee964a144e03979abff100d47a2f2f2e451"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM TABLE('orders')",
+   "sql_sha256": "30e1e6a49f5570e889582e41c30fe55f903dba6274685b05ffc4bf9d63bc0506"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-20000, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "31d569c2579d8191f45855c8576ffb8c67008db9f4851f18cf1ece7abc36fdf9"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT amount FROM orders LIMIT",
+   "sql_sha256": "32d4371f9eec357e5dc6a99c6c14db73febcad075ea539bea6ebdafb4e206fd1"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET r := 'west';\n  CASE r\n    WHEN 'west' THEN\n      RETURN 31;\n  END CASE;\nEND;",
+   "sql_sha256": "338915c30b0e7d07fda89b540bbe2ee96ae6d826cc8ba977a7c5ed05c55afd27"
+  },
+  {
+   "setup": [],
+   "sql": "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT NULL",
+   "sql_sha256": "3436e5b30a19ac55c938b97a06341bc510c31164dee72498a4af6a6d78775b28"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  BREAK;\nEND;",
+   "sql_sha256": "3721c8ca2852de1977bd9cd41523b64fdcee976fcba792561f4aea526af56843"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  counter NUMBER DEFAULT 0;\nBEGIN\n  REPEAT\n    counter := counter + 1;\n  UNTIL counter > 3\n  END REPEAT;\n  RETURN counter;\nEND;",
+   "sql_sha256": "378f16e767e673f23af7f126e897be85ae26f4383e627f3926b88c587425877d"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-20001, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "37ed4f290b700ef9b7dc2fe1a15f5eeb7a7f95bc765a5c18c0a7401843a55b4e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 UNION ALL SELECT 7",
+   "sql_sha256": "39c243de1678e1ecad44a0e0bc5344f5275f0c67c511ccc6045e4b6d75771f44"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  low_bound EXCEPTION (-20999, 'low bound');\nBEGIN\n  RAISE low_bound;\nEXCEPTION\n  WHEN low_bound THEN\n    RETURN 17;\nEND;",
+   "sql_sha256": "3a24174f9afae460ef333c1da88bf33ca0a043aa9b0dd87d381341bf285f6685"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"total é\" NUMBER DEFAULT 17;\nBEGIN\n  \"total é\" := 31;\n  RETURN 43;\nEND;",
+   "sql_sha256": "3b783967f57208432a7ced0ee2badc8c22d1e29164dc053a2dcb187b50ad011c"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\nEND;",
+   "sql_sha256": "3c539d5ffeaddb67af7fd5a0b97ceafc8f5f82706c5dfc32b6e129ee7be64c4c"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LOOP\n    BREAK FOR;\n  END LOOP;\n  RETURN 17;\nEND;",
+   "sql_sha256": "3c5d29f0fe838942138f38ab7e4feebfd96db57889270f73c73fe7421031afd4"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  FOR i IN 1 TO 3 LOOP\n    NULL;\n  END FOR;\n  RETURN 17;\nEND;",
+   "sql_sha256": "3d8c5c72c9c5507199c611a3161b574a94642a2d623993bf99837b58f276f7b1"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders_missing EXCEPTION (-20031, 'orders missing');\n  counter NUMBER DEFAULT 0;\nBEGIN\n  RAISE orders_missing;\n  counter := counter + 10;\n  RETURN counter;\nEXCEPTION\n  WHEN orders_missing CONTINUE THEN\n    counter := counter + 1;\nEND;",
+   "sql_sha256": "3d8c844083069fb2a98ea6433d64423eab6fc66ced989e7d607e658349b14f3e"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET orders RESULTSET;\n  RETURN 17;\nEND;",
+   "sql_sha256": "427de362d5596215d1ff69c8200956c55f9313b2df163fff40e09dcebcd89af8"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 NOT IN (2, ** :items, 31, ** [43, 59])",
+   "sql_sha256": "431921594d0a297fba7bb9d7ba5134b3093a94920f96db441d7fc9fad6f114f5"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  hits NUMBER DEFAULT 0;\nBEGIN\n  FOR outer_index IN 1 TO 3 DO\n    FOR inner_index IN 1 TO 3 DO\n      hits := hits + 1;\n      IF (inner_index = 2) THEN\n        CONTINUE outer_loop;\n      END IF;\n      IF (outer_index = 3) THEN\n        BREAK outer_loop;\n      END IF;\n    END FOR inner_loop;\n  END FOR outer_loop;\n  RETURN hits;\nEND;",
+   "sql_sha256": "43d8dd8dbd9a60446de48f33640660476219f7538f50a61c1ff25179ebe7da78"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  IF (TRUE) THEN\n    RETURN 17;\n  ELSE IF (FALSE) THEN\n    RETURN 31;\n  END IF;\nEND;",
+   "sql_sha256": "45fdc0b58c8ea6f44db4c57e3e1854d82500a5977091bc3f1ed08bcb9b062381"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEXCEPTION\n  WHEN OTHER EXIT THEN\n    RETURN 31;\nEND;",
+   "sql_sha256": "463e1c1922e100ef03c45cd34dc720564ff14ef6e90ba0e08a6a8dddc69dffcd"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(PARSE_JSON('{}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(PARSE_JSON('{\"a\":null,\"A\":1,\"items\":[null,2]}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(PARSE_JSON('{\"a\":\"null\",\"items\":[] }') AS VARIANT) AS v\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(NULL AS VARIANT) AS v\n)\nSELECT ordinal, STRIP_NULL_VALUE(v:a) AS value, STRIP_NULL_VALUE(v:a) IS NULL AS absent, STRIP_NULL_VALUE(v:A) AS upper_key, STRIP_NULL_VALUE(v:items[0]) AS first_item, STRIP_NULL_VALUE(v:items[1]) AS second_item FROM input ORDER BY ordinal",
+   "sql_sha256": "46cd93dff918e8c3c83fa0edbd589530d232a1d29aff6a8d3be7d0ed1d14b9b5"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT region ILIKE FROM orders",
+   "sql_sha256": "47a5e64a0f0e473c3f11cf9e8db8517c903ca703c36b8cfcbd9fd65e8bc079d9"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-21000, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "47f80fe309213014516dfae066f95b8b29f30416bafd5910c6433f7ffdc5f35d"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT (17",
+   "sql_sha256": "4bebb0d060ac4ead1b8bfc4a9b55b3957060cae75a90cb76b15d016b81d4d5cb"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  first_job RESULTSET DEFAULT ASYNC (SELECT 17 AS amount);\nBEGIN\n  LET second_job RESULTSET := ASYNC (SELECT 31 AS amount);\n  LET third_job RESULTSET := ASYNC (SELECT 43 AS amount);\n  AWAIT first_job;\n  CANCEL third_job;\n  AWAIT ALL;\n  RETURN TABLE(second_job);\nEND;",
+   "sql_sha256": "4c31efb4601ab4ae4b0e12897714fe374fc681889df1a870b7fc3b0a258fb03e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id INTERSECT SELECT 2 AS id",
+   "sql_sha256": "4d7ddb7ec977346eee471b2376b06339aea1139a6a434d87cee8e4d69ec212ed"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  first_amount NUMBER;\n  orders_cursor CURSOR FOR SELECT 17;\nBEGIN\n  OPEN orders_cursor;\n  FETCH orders_cursor first_amount;\n  RETURN first_amount;\nEND;",
+   "sql_sha256": "548e0296d3e7b1a8d4f3db3ff3efa88313962250e0954c14fc8c9872268a6060"
+  },
+  {
+   "setup": [],
+   "sql": "WITH recent AS (SELECT 1), WITH prior AS (SELECT 2) SELECT * FROM recent",
+   "sql_sha256": "54c67b482318408eeca41eefffba7a99276f2267ba6289e218e8be2b5a202491"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  rs RESULTSET DEFAULT (SELECT 17 AS a);\nBEGIN\n  AWAIT rs;\n  RETURN 17;\nEND;",
+   "sql_sha256": "55b30bf22a9082db7dd2f6985ffdcbd0c8f0102de3e8b9e03082629abed3a7a2"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 UNION SELECT 7 INTERSECT SELECT 11",
+   "sql_sha256": "56a8e2237f5b39b827959d831fa62f5f346ea53bbf6040278167d5a8044a377e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders o INNER DIRECTED JOIN customers c ON o.id = c.id FIRST()",
+   "sql_sha256": "57b1d29ebbf3e4fa8e1116577eee354a212118a56ecca3fc7c2a99d6e6becd65"
+  },
+  {
+   "setup": [],
+   "sql": "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT 1",
+   "sql_sha256": "57dbda11b9ffb8cd48375da9e2140321bcb0a43f781751aac24247f002cfe0a7"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  pending RESULTSET;\nBEGIN\n  LET later RESULTSET;\n  later := (SELECT column1 AS amount FROM VALUES (17), (31));\n  RETURN TABLE(later);\nEND;",
+   "sql_sha256": "5806955186db7b75351a09b3fdf3d9c1f3095576f3cb4baa3617462ea8d14368"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 UNION DISTINCT SELECT 7",
+   "sql_sha256": "58110301aae0c59a118e7e4db16957fcf08457d94c0a59682e9b448e1d245cb0"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST('19.995' AS VARCHAR) AS price, CAST(1999 AS NUMBER(38,0)) AS amount, CAST(2 AS NUMBER(38,0)) AS e, CAST(1.0 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 2 AS ordinal, CAST('0.105' AS VARCHAR) AS price, CAST(105 AS NUMBER(38,0)) AS amount, CAST(2 AS NUMBER(38,0)) AS e, CAST(0.7931 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 3 AS ordinal, CAST('1234.565' AS VARCHAR) AS price, CAST(1234565 AS NUMBER(38,0)) AS amount, CAST(3 AS NUMBER(38,0)) AS e, CAST(1.25 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 4 AS ordinal, CAST('7' AS VARCHAR) AS price, CAST(7 AS NUMBER(38,0)) AS amount, CAST(0 AS NUMBER(38,0)) AS e, CAST(0.5 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 5 AS ordinal, CAST('-2.345' AS VARCHAR) AS price, CAST(-2345 AS NUMBER(38,0)) AS amount, CAST(3 AS NUMBER(38,0)) AS e, CAST(1.1 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 6 AS ordinal, CAST(NULL AS VARCHAR) AS price, CAST(NULL AS NUMBER(38,0)) AS amount, CAST(2 AS NUMBER(38,0)) AS e, CAST(1.0 AS FLOAT) AS rate\n  UNION ALL\n  SELECT 7 AS ordinal, CAST('1.5' AS VARCHAR) AS price, CAST(15 AS NUMBER(38,0)) AS amount, CAST(NULL AS NUMBER(38,0)) AS e, CAST(1.0 AS FLOAT) AS rate\n)\nSELECT ROUND(TO_DECIMAL(price, 18, 3) * POWER(10, e))::NUMBER(38, 0) AS minor, ROUND(amount / POWER(10, e)::NUMBER(38, 0), 6)::NUMBER(38, 6) AS major, ROUND(amount / POWER(10, e) * rate, 2)::NUMBER(18, 2) AS usd FROM input ORDER BY ordinal",
+   "sql_sha256": "58ee31f61cb81d3754e18d9d4e0e36e127b5d9e10d629f57cc91ef532836ec4d"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 INTERSECT ALL SELECT 7",
+   "sql_sha256": "595114c87c190fec5e7ce0eb3748943182629d1b664bc0dd803752662174b0fe"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders o INNER DIRECTED JOIN customers c ON o.id = c.id FIRST(c) LAST(o)",
+   "sql_sha256": "5a60e7c7468059b7c567d5d4ebc54a1219bfb196163f7f915d0ed701d1e4d17d"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders_missing EXCEPTION ('17', 'orders missing');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "5a7485621f1be66819e2c4545b941b9d3b94a5892652f5af148c0ee2ee672d11"
+  },
+  {
+   "setup": [],
+   "sql": "(SELECT 3 UNION SELECT 7 ORDER BY 1 LIMIT 2) INTERSECT SELECT 11",
+   "sql_sha256": "5b774bc8728b2c0d83a7fe1ace6f06c45d831998e291db4a6728436d9dd627a7"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  total NUMBER DEFAULT 0;\n  orders_cursor CURSOR FOR SELECT column1 AS amount FROM VALUES (17), (31);\nBEGIN\n  FOR order_row IN orders_cursor DO\n    total := total + order_row.amount;\n  END FOR;\n  RETURN total;\nEND;",
+   "sql_sha256": "5baebf2c08bc8765bbcf6f2ecdfae840be4f2ac4087e0e18949ec64f7c7a4739"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT OBJECT_CONSTRUCT('orders', 17):orders::NUMBER",
+   "sql_sha256": "5d235531be226aed7e904fa1d56ff5376428227700edd8e8603db0a52df2a215"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id UNION BY NAME SELECT 2 AS id",
+   "sql_sha256": "5e1c13d36872c72490d721cd1d67b53f5aa713e44c0f88afd66061a7c29cd98e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id INTERSECT BY NAME SELECT 2 AS id",
+   "sql_sha256": "5e47c0b2d1ce103e2cb4065d7145996013a0bd30bffc23f555cfbbbe4842d586"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (- 20017, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "5f4fa092b83f922d3c7faee7f3bd936c62ce5619fbf4ac4dddf1f106532ec101"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  IF (1 > 2) THEN\n    RETURN 17;\n  ELSEIF 1 < 2 THEN\n    RETURN 31;\n  END IF;\nEND;",
+   "sql_sha256": "5f7053be2d65e022abd5f2dc061344dac88f2768383528d01a401d6508757f30"
+  },
+  {
+   "setup": [],
+   "sql": "begin\n  if (true) then\n    return 17;\n  end if;\nend;",
+   "sql_sha256": "603f5886be289c6978daaef8fb097a4c0a3531718ff914e4f9c0f6fd8b1140d6"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 + OBJECT_CONSTRUCT('orders', 31)",
+   "sql_sha256": "613d3e0af69bbae76a1b50b42e63528846988c5f9a912242e6c46823b3a828ba"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  n NUMBER DEFAULT 0;\nBEGIN\n  WHILE (n < 1) DO\n    n := n + 1;\n  END WHILE FOR;\n  RETURN n;\nEND;",
+   "sql_sha256": "62fcf090ab7ef3c482041629aee4bd2d64feca968db23c484702cad861484373"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT amount BETWEEN 2 AND FROM orders",
+   "sql_sha256": "638c9f6db86fc2960463eb486fe84b0d07b5452dd24d6f35f7387572f478ef3f"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 AS n",
+   "sql_sha256": "640abbb38a68cd5d1cf912d056553c330f952117cf0b1a7dd3fc6a43c761adf9"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 'é' UNION ALL SELECT 'west'",
+   "sql_sha256": "64755c8296da2fc43396df158482c9ac08a9fce597d4fbd178b027fab5869d44"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT SUM(amount) OVER (ORDER BY created_at ROWS FOLLOWING 3) FROM orders",
+   "sql_sha256": "653280cdbd4ccc1b9aca5b1f390a0b14261e0559a73128fd7cd19ac366950e5e"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(0 AS NUMBER(38,0)) AS b, CAST(-1 AS NUMBER(38,0)) AS e\n)\nSELECT POWER(b, e) AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "655f1d9785114ab3dbfe52a68bc37b0d584b3b93d1e5018855d15660e95cef44"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND FOR;",
+   "sql_sha256": "672bf695566afcce02cbd83b52f2669e722f777b6dd31c647909907650e93d67"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 LIMIT",
+   "sql_sha256": "68050e2d75b85da8b31c6a3e373b133d91017be469577f61dbdfbfab074ff7b3"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  IF (TRUE) THEN\n    RETURN 17;\n  END;\nEND;",
+   "sql_sha256": "6961075b59313223ddcf343f537857fd84c15e0cfabe7a23851703f0b0972303"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET amount := 31;\n  CASE\n    WHEN amount < 17 THEN\n      RETURN 'low';\n    ELSE\n      RETURN 'other';\n  END;\nEND;",
+   "sql_sha256": "6b9484f7571dd456e4cf40691db3d7407765215c82907c43afbf3ebc7769aead"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT",
+   "sql_sha256": "6e4261695ad1aa36aac75303151674266d135fc12c26f8dc64bba0546d4238f2"
+  },
+  {
+   "setup": [],
+   "sql": "WITH RECURSIVE recent(id, depth) AS (SELECT 3, 0 UNION ALL SELECT id + 2, depth + 1 FROM recent WHERE depth < 4) SELECT id FROM recent",
+   "sql_sha256": "6f9f45f1f526db18aaeb272765758d49772dee909bc17945721cf15ef6fb9619"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  high_bound EXCEPTION (-20001, 'high bound');\nBEGIN\n  RAISE high_bound;\nEXCEPTION\n  WHEN high_bound THEN\n    RETURN 31;\nEND;",
+   "sql_sha256": "70e4e948fc6ae73feefb8254645fbd93683cb317f579949797eb952818d6ed28"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN TABLE(SELECT 17 AS a);\nEND;",
+   "sql_sha256": "717c3fc012ed470224b88a11247fa15e15e4d10e1c88a2f930d79c737eb741cf"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"total é\" NUMBER DEFAULT 17;\n  result_amount NUMBER DEFAULT 0;\nBEGIN\n  result_amount := \"total é\";\n  RETURN result_amount;\nEND;",
+   "sql_sha256": "718b421d601af6f3b7d2d14c21f449b603a7a8a6d28293fdfb9954779db99900"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  x NUMBER;\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "7273bd8f928577998c18cc78d8ac82d0bec20e72db6409b2cb1dc5233d915849"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 31;\nEND;",
+   "sql_sha256": "7294377a87a00537b0d3f5a9e78b7c1dd4115b13cbaf89766978d0a62ae5b195"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND;\nBEGIN\n  RETURN 31;\nEND;",
+   "sql_sha256": "732b45605f15acddef0e61e99fa03d8f39337fa019c2c5d1476f837116ccb646"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-020017, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "77655bc43a9d3570769cf85e79c69f5b5a4abbba7b4c1d05277e6d0293d48355"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT SUM(amount) OVER (ORDER BY) FROM orders",
+   "sql_sha256": "782c5414b46bb74f663eb1cc01c10fdf5d061a7497acda9c4d1b99413f64c3ba"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  counter NUMBER DEFAULT 0;\nBEGIN\n  WHILE counter < 3 DO\n    counter := counter + 1;\n  END WHILE;\n  RETURN counter;\nEND;",
+   "sql_sha256": "7a04e14d022235d721b48ee264f7130f1a293053b00c731b609e560eec05ab65"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  first_job RESULTSET DEFAULT ASYNC (SELECT 17 AS amount);\nBEGIN\n  LET second_job RESULTSET := ASYNC (SELECT 31 AS amount);\n  AWAIT first_job;\n  AWAIT ALL;\n  RETURN TABLE(second_job);\nEND;",
+   "sql_sha256": "7a5013f8fd2b9f13a59713bc845dfce26065ebf4514dc5f60d5f447ead4c184a"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders PIVOT(SUM(amount) FOR region IN ('north') DEFAULT ON NULL)",
+   "sql_sha256": "7bfd94964f15efcbc3b1cf0b5601fa5e998e6a69fdf0a10f06e01d84626aa923"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND TABLE;",
+   "sql_sha256": "7dfd4c2c0589e14ace12c9e3b9983486854210d72d5bf83ef6ce321f4f84223b"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(309 AS NUMBER(38,0)) AS e\n)\nSELECT POWER(b, e) AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "7e87839ce5da12ad04edf7366a913f2a3953d9c75da564bfe047eaf2fec2b4c5"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders PIVOT(FOR region IN ('north'))",
+   "sql_sha256": "7ef84ac0674039e4b6fdcd682e548a758fb6a11828d1876200d596ec567fe2a7"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET c CURSOR FOR (SELECT 17);\n  RETURN 17;\nEND;",
+   "sql_sha256": "80adf9ac7a2395078a795dc71b0bdec694bdc133708eb864569bb7a8c14e45e2"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 'é 🦆' AS label",
+   "sql_sha256": "827694e4c80f8c4cacc15ec1158d5f6a5bdfbec13cf2517a31b1f3591da6fd23"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 11",
+   "sql_sha256": "8345a3cc4eef615e094a5afc649c6da459ced057da1c5b38a92075c90ca2dc8d"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(PARSE_JSON('null') AS VARIANT) AS v\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(NULL AS VARIANT) AS v\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(PARSE_JSON('false') AS VARIANT) AS v\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(PARSE_JSON('0') AS VARIANT) AS v\n  UNION ALL\n  SELECT 5 AS ordinal, CAST(PARSE_JSON('\"null\"') AS VARIANT) AS v\n  UNION ALL\n  SELECT 6 AS ordinal, CAST(PARSE_JSON('[null,{\"a\":null}]') AS VARIANT) AS v\n  UNION ALL\n  SELECT 7 AS ordinal, CAST(PARSE_JSON('{}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 8 AS ordinal, CAST(PARSE_JSON('[]') AS VARIANT) AS v\n)\nSELECT ordinal, STRIP_NULL_VALUE(v) AS value, STRIP_NULL_VALUE(v) IS NULL AS absent FROM input ORDER BY ordinal",
+   "sql_sha256": "839a8bb85b67cb8378ad4d59aa4c73af1af947600ac1048099b60cdc61e66438"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT value FROM TABLE(FLATTEN(INPUT => PARSE_JSON('[17,null]')))",
+   "sql_sha256": "8507ee0293035b4de9e0ef37e19ab609acf9c5e0c576a78a7b7f391598127d1c"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  rs RESULTSET DEFAULT (SELECT 17 AS a);\n  c CURSOR FOR rs;\n  t NUMBER DEFAULT 0;\nBEGIN\n  FOR r IN c LOOP\n    t := t + r.a;\n  END LOOP;\n  RETURN t;\nEND;",
+   "sql_sha256": "85c27386e63192e94592d44d1a8b5dfa528a5bdddf8799f0181f0a00f2e2b43c"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT column1 FROM VALUES (1) LIMIT",
+   "sql_sha256": "87de981f2cba8e80ebba16e42fdb3c1f77a4bbc8003860a7836c0352e5240dd1"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 INTERSECT ALL SELECT 2",
+   "sql_sha256": "88259bf6317b28fb9035ce81f091822701bb3b6b57f36c13a6ab8d9cc523e092"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  IF (TRUE) THEN\n    RETURN 17;\n  END IF lbl;\nEND;",
+   "sql_sha256": "8a5ebfcba308c8f787d6cfd5ae18b5f0e0266fe989ce03f3e9d7cd95a2bbcaa2"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  c CURSOR FOR SELECT 17 AS a;\n  t NUMBER DEFAULT 0;\nBEGIN\n  FOR r IN c DO\n    t := t + r.a;\n  END FOR;\n  RETURN t;\nEND;",
+   "sql_sha256": "8c482933426e7cb0905c4cdc5bff671530c707451ccabe99cdbfe1d62ab55d27"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT $3, $items, :threshold, :7, ?",
+   "sql_sha256": "8e2c08a173ef30358435ad950649cb1d7e726ab9c4f1376c17d2b8cf10e72533"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN NAME t1;",
+   "sql_sha256": "8ed1954b1073fa9de6ccead076e504d6aa5ca4af4a00cb313c88fe54e41f5142"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(0 AS NUMBER(10,2)) AS x\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(-17 AS NUMBER(10,2)) AS x\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(1.25 AS NUMBER(10,2)) AS x\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(NULL AS NUMBER(10,2)) AS x\n)\nSELECT IS_INTEGER(TO_VARIANT(x)) AS i, IS_DECIMAL(TO_VARIANT(x)) AS d, IS_DOUBLE(TO_VARIANT(x)) AS f FROM input ORDER BY ordinal",
+   "sql_sha256": "8f18c42089c5cbaa2468c09ec14a03ee422baf85eab53951b701d28d8854f98d"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET read := 17;\n  RETURN read;\nEND;",
+   "sql_sha256": "8f92789a380030b6072dfc6e1db4c5eff06f0420f9463b921877c653283bea56"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 AS id UNION SELECT 7 AS id",
+   "sql_sha256": "8f95fdc8d70c2facf3416c6093cc08129c23977ef4dbf5e21fa1cfab110c664e"
+  },
+  {
+   "setup": [],
+   "sql": "WITH \"récent\"(id) AS (SELECT 7) SELECT id FROM \"récent\"",
+   "sql_sha256": "907dc8f45d7b28ff7bfacc05a39cde0db691d20f417d27db0511111c7c9a72de"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(0 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(2 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(3 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(15 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 5 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(16 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 6 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(22 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 7 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(23 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 8 AS ordinal, CAST(2 AS NUMBER(38,0)) AS b, CAST(53 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 9 AS ordinal, CAST(3 AS NUMBER(38,0)) AS b, CAST(33 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 10 AS ordinal, CAST(-2 AS NUMBER(38,0)) AS b, CAST(3 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 11 AS ordinal, CAST(-2 AS NUMBER(38,0)) AS b, CAST(2 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 12 AS ordinal, CAST(0 AS NUMBER(38,0)) AS b, CAST(0 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 13 AS ordinal, CAST(1 AS NUMBER(38,0)) AS b, CAST(1000 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 14 AS ordinal, CAST(NULL AS NUMBER(38,0)) AS b, CAST(2 AS NUMBER(38,0)) AS e\n  UNION ALL\n  SELECT 15 AS ordinal, CAST(10 AS NUMBER(38,0)) AS b, CAST(NULL AS NUMBER(38,0)) AS e\n)\nSELECT POWER(b, e) AS value\nFROM input\nORDER BY ordinal",
+   "sql_sha256": "910134ecec69c5e7d4aea6c2aa5daa2fc83bb363ecb0264c14e74ecd3f33855f"
+  },
+  {
+   "setup": [],
+   "sql": "WITH recent(order_id, area) AS (WITH recent AS (SELECT 7 AS id, 'west' AS region) SELECT id, region FROM recent) SELECT order_id FROM recent",
+   "sql_sha256": "915c0719f7dde523371f63a2dcaede0131825ce29f1ff18c94f115710c74cfd8"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET orders RESULTSET := (SELECT column1 AS amount FROM VALUES (17), (31));\n  LET orders_cursor CURSOR FOR orders;\n  LET total := 0;\n  FOR order_row IN orders_cursor DO\n    total := total + order_row.amount;\n  END FOR;\n  RETURN total;\nEND;",
+   "sql_sha256": "94f8f9d61fc5a706e6404a8a86e028b0b47fdae59c97bdff96c9992dc3079104"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  c CURSOR FOR SELECT 1 AS a;\nBEGIN\n  FOR r IN REVERSE 1 TO 2 DO\n    NULL;\n  END FOR;\n  RETURN 17;\nEND;",
+   "sql_sha256": "98b125d0558988e774c4ec5388067873ec8679801d489872ae48abc6c4697c1e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id UNION DISTINCT BY NAME SELECT 2 AS id",
+   "sql_sha256": "98b3d1a3a9e7f9b7ec13e5160d2fafb317997cf3c9c8141d7decf8b6969a2821"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET slow_job RESULTSET := ASYNC (SELECT 43 AS amount);\n  CANCEL slow_job;\n  RETURN 17;\nEND;",
+   "sql_sha256": "98ded0fdd7ff2740da14ac365607003fc2f1a0d82f5e68ea807b64dc43fedf57"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders NATURAL JOIN customers JOIN products ON customers.id = products.id ON orders.id = customers.id",
+   "sql_sha256": "998bc6448fe62ee176e1f4bc4cb3b84494b98138111c12f6e923bc71a3f0ec1d"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  rs RESULTSET DEFAULT (SELECT 17 AS a);\n  t NUMBER DEFAULT 0;\nBEGIN\n  FOR r IN rs DO\n    t := t + r.a;\n  END FOR;\n  RETURN t;\nEND;",
+   "sql_sha256": "9d9974860d748be1f958c703bd557e0f53ba783a700dcacc5e20db82ba04d52f"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  counter NUMBER DEFAULT 0;\n  skipped NUMBER DEFAULT 0;\nBEGIN\n  LOOP\n    counter := counter + 1;\n    IF (counter > 6) THEN\n      BREAK;\n    END IF;\n    IF (counter = 2) THEN\n      CONTINUE;\n    END IF;\n    IF (counter = 4) THEN\n      ITERATE;\n    END IF;\n    skipped := skipped + 1;\n  END LOOP;\n  LOOP\n    EXIT;\n  END LOOP;\n  RETURN counter * 100 + skipped;\nEND;",
+   "sql_sha256": "9e343868534c1ba923c379c03d9ea210fb49882cf775667600f93320756baa0a"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id UNION ALL BY NAME SELECT 2 AS id",
+   "sql_sha256": "a0732d3f27fb18f7ae769437f8b2c1ec62a56ab9894677be2d4c9e8d97258638"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  c CURSOR FOR SELECT 17 AS a;\n  t NUMBER DEFAULT 0;\nBEGIN\n  FOR r IN c LOOP\n    t := t + r.a;\n  END LOOP;\n  RETURN t;\nEND;",
+   "sql_sha256": "a25e2d02bdbe65de0bcf452a0e7db9dfd80db1a939d50b5992c740a41795f7fd"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND CASE;",
+   "sql_sha256": "a4d06eec51411752288dbac681f9616b444dcb0f5a13aa84628ff5ed9a183071"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(0 AS FLOAT) AS x\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(-17 AS FLOAT) AS x\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(1.25 AS FLOAT) AS x\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(NULL AS FLOAT) AS x\n)\nSELECT IS_INTEGER(TO_VARIANT(x)) AS i, IS_DECIMAL(TO_VARIANT(x)) AS d, IS_DOUBLE(TO_VARIANT(x)) AS f, IS_REAL(TO_VARIANT(x)) AS r FROM input ORDER BY ordinal",
+   "sql_sha256": "a64bbab7daf34e2acbf7fa2b5dfa1e0c4a8df6e116ffeeccfc794b9a89c2f698"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  ;\n  RETURN 17;\nEND;",
+   "sql_sha256": "a67fb5337df8ec4bbfeed0db7ffbd1bbe3d9fd32af4a55c1a93622a6980d0786"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"Total\" NUMBER DEFAULT 17;\nBEGIN\n  \"Total\" := \"Total\" + 31;\n  RETURN \"Total\";\nEND;",
+   "sql_sha256": "a6df509f4ad7fccee9e9cd9fe6b791279059180d12db926c7d24c31da7290c3f"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LOOP\n    BREAK;\n  END LOOP WHILE;\n  RETURN 17;\nEND;",
+   "sql_sha256": "a80fc35f1cde16d91035b5df9640f70d2ad8f2ab65e0e380da0a806970181aea"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM TABLE(orders_for_region('west', 7))",
+   "sql_sha256": "a94e9589ec96fd1e470c510361a5bf04643a07ca39f9171d8d55a9ba34e45e6a"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id MINUS BY NAME SELECT 2 AS id",
+   "sql_sha256": "aa42c81b01f565e140be2a877e1d19b8b201fcf87de4826b94f7b13787e1000e"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT a FROM (SELECT 1 AS a) LIMIT",
+   "sql_sha256": "ac03de04fec2e3f376dfb6b2d36bd458c073e84336608c75209c9b69a4d5e892"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 EXCEPT SELECT 7",
+   "sql_sha256": "ac4fe80b02f2045a780f7bc8697add9ae2cb455c24bf1c484d56d3cc67afef99"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET x NUMBER;\n  RETURN 17;\nEND;",
+   "sql_sha256": "ac85afe508e28facfc2d8427f0b908eebb94519db857d28d7fa6337c9a4f32cc"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET orders RESULTSET :=;\n  RETURN 17;\nEND;\n",
+   "sql_sha256": "ad36fa65991a71341140ad6c79612721b5d674d17f3592756f3264ad625af711"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id EXCEPT ALL BY NAME SELECT 2 AS id",
+   "sql_sha256": "ad8bdef65e134d5f0cca21005b7f622e5b7be7a174914381f352c07b33c205cd"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders_missing EXCEPTION (-20043, 'inner');\nBEGIN\n  BEGIN\n    RAISE orders_missing;\n  EXCEPTION\n    WHEN orders_missing THEN\n      RAISE;\n  END inner_block;\nEXCEPTION\n  WHEN OTHER THEN\n    NULL;\nEND;",
+   "sql_sha256": "b09a41f5ce66e92f8552fce23125b1e7f5fb25ccab7f53535fc555e7c58a9b03"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 INTERSECT DISTINCT SELECT 2",
+   "sql_sha256": "b0b20408064af477619e3ec044effe2c62e60ceb7024dbfcc9c420aa45668f13"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-20999, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "b0cbe790c83e39470530e6346e7359a2c4ea4146a0fad8319928a2244e1cffe4"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND \"FOR\";",
+   "sql_sha256": "b1342ba663341a6d86d2026f9009d967e91fe5215c152364a90d7750ed1de44d"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id EXCEPT BY NAME SELECT 2 AS id",
+   "sql_sha256": "b368b8d8895d64ca8ff93375103fe2941e1a76e591b7974f784216a7c969d192"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  orders_missing EXCEPTION (-20017, 'orders missing');\n  orders_late EXCEPTION;\nBEGIN\n  RAISE orders_missing;\n  RETURN 'not reached';\nEXCEPTION\n  WHEN orders_late OR orders_missing EXIT THEN\n    RETURN SQLCODE::VARCHAR || ' ' || SQLERRM;\n  WHEN OTHER THEN\n    RETURN 'other';\nEND;",
+   "sql_sha256": "b4718c0de0944eb9ad11d4c7f277b9f48ca636eb52742b5632b21d92e00af147"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 IN (2, ** :items, 31)",
+   "sql_sha256": "bc603fc6eff07af36acf45426bdd1cfa1dad0d04cc7ba2392fd6fb12f2b369c1"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders CHANGES(INFORMATION => DEFAULT AT(OFFSET => -7)",
+   "sql_sha256": "beb2393b68f606a0da095496da98935e01af4159c3284c8c6cabbde5d9181e72"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT [2, 5, 7]::VECTOR(FLOAT,3), 'POINT(1 2)'::GEOGRAPHY, 'POINT(3 4)'::GEOMETRY",
+   "sql_sha256": "bf20254950d2c231ae8bbef371be8fad6e35909ca35a57124d11663163cdc406"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND WHERE;",
+   "sql_sha256": "c25ab40d5057f7461f1ce690b440a5011edb971e398f3bb44145ad1f47391f6a"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"total é\" NUMBER DEFAULT 17;\nBEGIN\n  RETURN \"total é\";\nEND;",
+   "sql_sha256": "c279e055cf4ab4bb3dc9d949bf4c297ea3f6e0972e375c0be47b8644970c50ca"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN;\nEND;",
+   "sql_sha256": "c4d1c1a405a5201d99853ac87e056dac3cd1016f525ebe909904348b968f5bbd"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  total NUMBER(38, 2) DEFAULT 17.5;\n  label_text := 'west';\nBEGIN\n  LET extra NUMBER(38, 2) := 31;\n  LET note DEFAULT 'é';\n  total := total + extra;\n  RETURN total || ' ' || label_text || note;\nEND;",
+   "sql_sha256": "c671c8560c822d50e33f4f4a1682f659e506f07beaa06bf72fe3983e55e34fdb"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-20998, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "c7ae27c6e57d3768f5e98b96e95bdb20489f8b6d2a2aa51cc435e73bc4b7928b"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  read NUMBER DEFAULT 0;\nBEGIN\n  read := 17;\n  RETURN read;\nEND;",
+   "sql_sha256": "c9d94beb4cccb645c218c54421d38950e54c24b59f595132ba7db591c9255cf1"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id MINUS DISTINCT SELECT 2 AS id",
+   "sql_sha256": "ca65df4ce928494cce3ba77cc4fbb1783c67cbb45dfa688ebdfd900381203338"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND my_block;",
+   "sql_sha256": "cbf5cebfbfc603d986a612df1c311081ccddfe0ec6a300e608ad5527a8583014"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (SELECT 17 AS n) SELECT n + 31 AS adjusted FROM input",
+   "sql_sha256": "cbf798efe7d7da636ae62fa797f62d2bd91042d675cdee05d9d056b5a648985e"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(PARSE_JSON('-17') AS VARIANT) AS v\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(PARSE_JSON('1.25') AS VARIANT) AS v\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(PARSE_JSON('0.0') AS VARIANT) AS v\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(PARSE_JSON('null') AS VARIANT) AS v\n  UNION ALL\n  SELECT 5 AS ordinal, CAST(PARSE_JSON('true') AS VARIANT) AS v\n  UNION ALL\n  SELECT 6 AS ordinal, CAST(PARSE_JSON('\"17\"') AS VARIANT) AS v\n  UNION ALL\n  SELECT 7 AS ordinal, CAST(PARSE_JSON('{}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 8 AS ordinal, CAST(PARSE_JSON('[]') AS VARIANT) AS v\n  UNION ALL\n  SELECT 9 AS ordinal, CAST(PARSE_JSON('{}'):qty AS VARIANT) AS v\n  UNION ALL\n  SELECT 10 AS ordinal, CAST(NULL AS VARIANT) AS v\n)\nSELECT IS_INTEGER(v) AS i, IS_DECIMAL(v) AS d, IS_DOUBLE(v) AS f, IS_REAL(v) AS r FROM input ORDER BY ordinal",
+   "sql_sha256": "ce751ce7846c119c0ff4dac1bf9a8c027b8540e36b1fa8bdfefe39746e9c507d"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEXCEPTION\n  WHEN OTHER THEN\n    RETURN 31;\n  WHEN STATEMENT_ERROR THEN\n    RETURN 43;\nEND;",
+   "sql_sha256": "d13c083fedb2f75254cb92b39e1f151a4bee1774d7a1bcb18984fe20da82dabc"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id EXCEPT DISTINCT SELECT 2 AS id",
+   "sql_sha256": "d4f7ac0c7b4b3c85b69b6d1e405d735a14270613f58d6e7fcd95cef819cb8c70"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 +",
+   "sql_sha256": "d6545d82231f3a93eaddb21ef3e98c4020b22fa96e5e2740662e9acd2fb6402b"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 2 + 3 * 5 = 17 OR 7 < 11 AND NOT 13 = 19",
+   "sql_sha256": "d764bd295d2c5882311a1a991f21652cf124744267c8cdf19264478bcd11444d"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "d8954bad56b70dcb3a939e1911772a33ade0e80b807ddf979e12f14ef6d1d0a4"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET amount := 31;\n  IF (amount > 40) THEN\n    RETURN 'high';\n  ELSEIF (amount > 17) THEN\n    RETURN 'middle';\n  ELSE\n    RETURN 'low';\n  END IF;\nEND;",
+   "sql_sha256": "d8c88dd150e3322a5d91195aef88a16f61a439586f6446326ff56af7b353a5ac"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEXCEPTION\n  WHEN OTHER THEN\nEND;",
+   "sql_sha256": "d9b53855c03b1f37d1f5bcb5ce3f98e7e786e248bba9241fbf844c1b42b57a86"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  total NUMBER DEFAULT 17;\nBEGIN\n  RETURN total;\nEND",
+   "sql_sha256": "da4723600bbb2d008c2246811845095e44d00f027919219c1c6c6e4b10619867"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 17 / 0",
+   "sql_sha256": "dac2abf6166f19719a6966c73c9cbe34389cf86420a31bea49e924a04810fc3c"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET x NUMBER DEFAULT 1;\n  RETURN x;\nEND;",
+   "sql_sha256": "db470e833d2fe599649d1793cc82dbc0ac5da6b90ce34c2f26d1e055aad494d7"
+  },
+  {
+   "setup": [],
+   "sql": "-- é 🦆\nSELECT 17 +",
+   "sql_sha256": "dd07d36c5b50d37a63b155b838e634cb937bc2e217b6050ccca519d6b7c41922"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (-20017.0, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "ddd3ea620309d9cae4fa263aad1857c4d84cd0f54bb002fe759cd066dfa912eb"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET r := 'west';\n  CASE (r) || ''\n    WHEN 'west' THEN\n      RETURN 31;\n  END CASE;\nEND;",
+   "sql_sha256": "e1dcddc902a69b7b52016cd4772d3084ea59627d7fbcb3cb10a94512f8dc87b3"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND LOOP;",
+   "sql_sha256": "e214fddbb434eac536e198926c5ad21ead089ff3b25641c3f84594f0542557de"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET x;\n  RETURN 17;\nEND;",
+   "sql_sha256": "e3649073855a9a9d0060faceec70968f773553ecb23b143107c7bb7b69051088"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id MINUS ALL SELECT 2 AS id",
+   "sql_sha256": "e3b6c9624fa5f0ea38a4998a58825e23cce03dc96e635f259110c97327749498"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN TRANSACTION;",
+   "sql_sha256": "e5615afbef8f97eaa0f9cdc204133f4bf74e677481e0f5454d9fd1ec145a495d"
+  },
+  {
+   "setup": [],
+   "sql": "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT OFFSET 1",
+   "sql_sha256": "e8765a39b4837e4d9d325aa7f8bf3f4e75a3edc3116c9eb0a378c2421ac9234f"
+  },
+  {
+   "setup": [],
+   "sql": "WITH t AS (SELECT 1 AS a) SELECT a FROM t LIMIT",
+   "sql_sha256": "e891e094b2cf4e08dbe04413c27a8465a6c459fa356d63dced1459b3a4e319fd"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders AT (OFFSET => -7",
+   "sql_sha256": "e92381eaff35996aa3d73b685b6ba0c3d4589872b34e4f9e9117bd4b7bbaf9eb"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  \"total é\" NUMBER DEFAULT 17;\n  result_amount NUMBER DEFAULT 0;\nBEGIN\n  result_amount := \"total é\" + 1;\n  RETURN result_amount;\nEND;",
+   "sql_sha256": "e99a6e264894c90db00c5c302b987306936ce8160477c108aacf755befaa8ede"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 3 EXCEPT ALL SELECT 7",
+   "sql_sha256": "eb9bf82342e5b3411fa6d4176f6d32422db67cb42bd96bb2f0e54f235a5980e5"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET amount;\n  RETURN amount;\nEND;",
+   "sql_sha256": "ecfe0d5561cfa5f8f12e27569e3f8adfa704836c061ba0fdbee299ceef728028"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  rs RESULTSET DEFAULT (SELECT 17 AS a);\n  c CURSOR FOR rs;\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "ed3677b04c0f4da187aace95638ad3d53659e23c7e12402aca71241016de5ecb"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM orders o JOIN customers c ON o.id = c.id FIRST(c)",
+   "sql_sha256": "eedc4e4f4c60d165757b98bed94ad74eee634b0d9e6ed91fe5d08094d0ff767b"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  e EXCEPTION (+20001, 'm');\nBEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "f27b679a652f18033f2f0210a2217fbcbcc16ab69316180af03f419a90de6506"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET r := 'west';\n  CASE UPPER(r)\n    WHEN 'WEST' THEN\n      RETURN 31;\n  END CASE;\nEND;",
+   "sql_sha256": "f2ebfd7b06b71eed40200a481aae4609eb6dc57c4b9a14fa4a4b5dcd43364d48"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND;",
+   "sql_sha256": "f3412161fc5230f2d23841c35fd9c6e8b1803ff7927732f6d911c795b12b53d2"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT 1 AS id MINUS SELECT 2 AS id",
+   "sql_sha256": "f3c9659a0e4cd02ecc88b6f572bd51969bb06145e5426bbcb9aa9daf3c9d04fe"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST(PARSE_JSON('{\"\":5,\"*\":8,\"a\":1}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 2 AS ordinal, CAST(PARSE_JSON('{\"\":5,\"*\":8,\"a\":1}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 3 AS ordinal, CAST(PARSE_JSON('{\"\":null,\"*\":null}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 4 AS ordinal, CAST(PARSE_JSON('{\"a\":1}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 5 AS ordinal, CAST(PARSE_JSON('{}') AS VARIANT) AS v\n  UNION ALL\n  SELECT 6 AS ordinal, CAST(PARSE_JSON('[]') AS VARIANT) AS v\n  UNION ALL\n  SELECT 7 AS ordinal, CAST(PARSE_JSON('17') AS VARIANT) AS v\n  UNION ALL\n  SELECT 8 AS ordinal, CAST(PARSE_JSON('null') AS VARIANT) AS v\n  UNION ALL\n  SELECT 9 AS ordinal, CAST(NULL AS VARIANT) AS v\n)\nSELECT GET(v, '') AS e, v[''] AS es, GET(v, '*') AS s, v['*'] AS ss FROM input ORDER BY ordinal",
+   "sql_sha256": "f4694ad1b9c13a456e3edeb0f69a87952ff9d32442f34b59cdf9949dca08212a"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  LET rs RESULTSET;\n  rs := (SELECT 17 AS a);\n  RETURN TABLE(rs);\nEND;",
+   "sql_sha256": "f46aa1d4cefd4d7518cbbf951410633d0f59385e112fea00bd3500415fabf570"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  FOR i IN 1 TO 3 DO\n    NULL;\n  END LOOP;\nEND;",
+   "sql_sha256": "f7034360aedf52dddb8fd38c0375c0deed738077c9786122d713e7128ee7292e"
+  },
+  {
+   "setup": [],
+   "sql": "WITH input AS (\n  SELECT 1 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST('2024-02-29' AS DATE) AS d\n  UNION ALL\n  SELECT 2 AS ordinal, CAST('l' AS VARCHAR) AS side, CAST(NULL AS DATE) AS d\n), l AS (SELECT ordinal AS o, d FROM input WHERE side = 'l'), r AS (SELECT d FROM input WHERE side = 'r') SELECT l.o, r.d AS matched FROM l ASOF JOIN r MATCH_CONDITION (l.d >= r.d) ORDER BY l.o",
+   "sql_sha256": "fa290e86b2098d95ae92eecb23860c72be1c9bc6287bdf49cb2c394c279d2b6f"
+  },
+  {
+   "setup": [],
+   "sql": "SELECT * FROM VALUES (3, 'a'), (7, 'b') AS v(id, label)",
+   "sql_sha256": "fd544a62f243259ed95384f6d62e86f798e3e19c3cd35000a34fd81e28c91810"
+  },
+  {
+   "setup": [],
+   "sql": "DECLARE\n  counter NUMBER DEFAULT 0;\nBEGIN\n  WHILE (counter < 3) DO\n    counter := counter + 1;\n  END WHILE;\n  WHILE (counter < 5) LOOP\n    counter := counter + 1;\n  END LOOP;\n  REPEAT\n    counter := counter + 10;\n  UNTIL (counter > 30)\n  END REPEAT;\n  RETURN counter;\nEND;",
+   "sql_sha256": "fe26223d37b18865ddbfa75a70f4e26154fb0f3b2a4b5cedb93389f653179918"
+  },
+  {
+   "setup": [],
+   "sql": "BEGIN\n  RETURN 17;\nEND SELECT;",
+   "sql_sha256": "fff72d9d014910bd79fbaf7d79fc9f66afc9ad22f1fab9635c0f760461460318"
+  }
+ ],
+ "receipts": 202,
+ "receipts_file_sha256": "7c1f9ceb7e687c4ac849d1e90c491eaf8f8a10041e781d8a5f279315af8c4135",
+ "refusals": [
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_0",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_1",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "row_id": "*",
+   "run_id": "history-audit-20261103"
+  }
+ ],
+ "refused": 3,
+ "runs": [
+  {
+   "audit_sha256": "6650db4655a2b7a3b2709b670f49ed8cb59008ae3db92a7696501f729db9ac51",
+   "receipts": 33,
+   "refused_rows": 0,
+   "run_id": "b5-packet1-20261103T191328Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6e3d606d5205bcadb4c2ff1462ab5cb8389f6078ee2d21303ceabf86d51b5f7",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet2-20261103T201614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de897c46ab04353e2ce87e7ebc9cb11dff827f44fcb6a34b6ac5beecc2e154f2",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet3-20261103T214211Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "65224a8faa8839aa7d6922f336712ce64f1452d680d83f1663cd6c87cbc22f18",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "b5-packet4-20261103T224644Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a4d5f5807afe9406047e03d658836b016f4db94aa3e9930c60696cc5177fd6b",
+   "receipts": 42,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-2-20261103T204317Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "79e22c19c053689aeee5d498abd229571bc0029aee80785eca7f2f1931fc37ff",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-4-20261103T224526Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ee188fc38fa9acdbc015a304c0eb86c7e77a0e1d2a69802cc50f35d46d65016b",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "current10-20261103T173608Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "27252ee02a868f9e0d355323ef880fd623549235ef14fe1ee8601988b8d2ef8b",
+   "receipts": 12,
+   "refused_rows": 2,
+   "run_id": "diagnostic-20261103T173725Z",
+   "status": "imported"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "history-audit-20261103",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "c77d3f564bca6bfb69676bce3aab16c902c4bc093b81e8f3795a84f8f2a3c4ea",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "power5-20261103T211556Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "86fdde0a1d42fef66d65138ca5ccbe0c29e623b1fe4038cfd21b6c382eeecfc6",
+   "receipts": 46,
+   "refused_rows": 0,
+   "run_id": "query-packet1-20261103T2115Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a2ebb4837e2d1fbbf3f09fbe973fe7b5b1db4d76b740b62facae298ff3f5c7fd",
+   "receipts": 19,
+   "refused_rows": 0,
+   "run_id": "query-packet2-20261103T211816Z",
+   "status": "imported"
+  }
+ ]
+}

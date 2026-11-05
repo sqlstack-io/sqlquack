@@ -298,6 +298,18 @@ impl Parser {
         false
     }
 
+    /// Whether the current token is an unquoted Snowflake reserved keyword in a Snowflake parse.
+    pub(crate) fn is_snowflake_reserved_keyword(&self) -> bool {
+        matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && !self.is_at_end()
+            && self.peek().token_type != TokenType::QuotedIdentifier
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                .iter()
+                .any(|keyword| self.peek().text.eq_ignore_ascii_case(keyword))
+    }
+
     /// Whether a keyword may be a table alias; LEFT, RIGHT, OUTER and FULL may.
     pub(crate) fn can_be_alias_keyword(&self) -> bool {
         if self.is_at_end() {
@@ -478,6 +490,17 @@ impl Parser {
         let start = self.peek().span;
         let name = parse_name(self)?;
         Ok(Identifier::new(name).with_span(start.through(self.previous().span)))
+    }
+
+    /// An identifier parsed by `parse_name` that keeps its span and whether it was quoted.
+    pub(crate) fn parse_quoting_identifier(
+        &mut self,
+        parse_name: fn(&mut Self) -> Result<String>,
+    ) -> Result<Identifier> {
+        let quoted = self.check(TokenType::QuotedIdentifier);
+        let mut identifier = self.parse_unquoted_identifier(parse_name)?;
+        identifier.quoted = quoted;
+        Ok(identifier)
     }
 
     /// A column whose range comes only from source-backed identifier parts.
@@ -1282,10 +1305,21 @@ impl Parser {
         }
 
         if self.match_text_seq(&["UNSET"]) {
+            let snowflake = matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            );
             let mut expressions: Vec<Expression> = Vec::new();
             loop {
-                if let Some(var) = self.parse_id_var()? {
-                    expressions.push(var);
+                if snowflake && self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected a session parameter name"));
+                }
+                match self.parse_id_var()? {
+                    Some(var) => expressions.push(var),
+                    None if snowflake => {
+                        return Err(self.parse_error("Expected a session parameter name"));
+                    }
+                    None => {}
                 }
                 if !self.match_token(TokenType::Comma) {
                     break;

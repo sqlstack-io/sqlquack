@@ -69,7 +69,10 @@ impl Parser {
             )
         );
 
-        let name = self.parse_table_ref()?;
+        let name = match self.is_snowflake() {
+            true => self.parse_object_name()?,
+            false => self.parse_table_ref()?,
+        };
 
         let uuid = { None };
 
@@ -162,11 +165,7 @@ impl Parser {
 
         let copy_grants = self.match_text_seq(&["COPY", "GRANTS"]);
 
-        let using_template = if self.match_text_seq(&["USING", "TEMPLATE"]) {
-            Some(Box::new(self.parse_primary()?))
-        } else {
-            None
-        };
+        let using_template = self.parse_using_template()?;
 
         if using_template.is_some() {
             return self.parse_create_table_using_template(
@@ -220,7 +219,8 @@ impl Parser {
             );
         }
 
-        if !self.check(TokenType::LParen) && is_special_modifier {
+        let snowflake_hybrid = self.check_snowflake_hybrid_body(table_modifier)?;
+        if !self.check(TokenType::LParen) && is_special_modifier && !snowflake_hybrid {
             return self.parse_create_table_special_without_columns(
                 CreateTableHead {
                     name,
@@ -399,11 +399,11 @@ impl Parser {
             snowflake_inline_properties,
         )?;
 
-        let as_select = if !no_column_defs && self.match_token(TokenType::As) {
-            Some(self.parse_statement()?)
-        } else {
-            None
-        };
+        let as_select = self.parse_create_table_column_list_query(
+            no_column_defs,
+            &columns,
+            table_modifier == Some("EXTERNAL"),
+        )?;
 
         table_properties = self.parse_create_table_partitioning(table_properties)?;
 
@@ -566,6 +566,28 @@ impl Parser {
             }
         }
         Ok(table_properties)
+    }
+
+    /// The `AS <query>` after a column list; Snowflake requires one when a non-external table's column has no type.
+    fn parse_create_table_column_list_query(
+        &mut self,
+        no_column_defs: bool,
+        columns: &[ColumnDef],
+        external: bool,
+    ) -> Result<Option<Expression>> {
+        let as_select = if !no_column_defs && self.match_token(TokenType::As) {
+            Some(self.parse_statement()?)
+        } else {
+            None
+        };
+        if self.is_snowflake()
+            && !external
+            && as_select.is_none()
+            && columns.iter().any(|c| c.no_type)
+        {
+            return Err(self.parse_error("Expected a data type for the column"));
+        }
+        Ok(as_select)
     }
 
     fn parse_create_table_columns(
@@ -1537,5 +1559,37 @@ impl Parser {
         }
 
         Ok(options)
+    }
+}
+
+impl Parser {
+    /// Parses `USING TEMPLATE`; Snowflake takes only a string or a parenthesized query.
+    fn parse_using_template(&mut self) -> Result<Option<Box<Expression>>> {
+        if !self.match_text_seq(&["USING", "TEMPLATE"]) {
+            return Ok(None);
+        }
+        let query = self.check(TokenType::String)
+            || self.check(TokenType::LParen)
+                && matches!(
+                    self.peek_nth(1).map(|token| token.token_type),
+                    Some(TokenType::Select | TokenType::With)
+                );
+        if self.is_snowflake() && !query {
+            return Err(
+                self.parse_error("Expected a string or a parenthesized query after USING TEMPLATE")
+            );
+        }
+        Ok(Some(Box::new(self.parse_primary()?)))
+    }
+
+    /// Reports whether this is a Snowflake hybrid table, which needs columns, AS or LIKE.
+    fn check_snowflake_hybrid_body(&mut self, table_modifier: Option<&str>) -> Result<bool> {
+        let hybrid = self.is_snowflake() && matches!(table_modifier, Some("HYBRID"));
+        if hybrid && !self.check(TokenType::LParen) && !self.check(TokenType::Like) {
+            return Err(
+                self.parse_error("Expected columns, AS or LIKE after the hybrid table name")
+            );
+        }
+        Ok(hybrid)
     }
 }
