@@ -364,6 +364,9 @@ pub struct CreateDatabase {
     /// AT/BEFORE clause for time travel (Snowflake)
     #[serde(default)]
     pub at_clause: Option<Expression>,
+    /// Snowflake clone options, e.g. IGNORE HYBRID TABLES
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<Expression>,
 }
 
 /// Database option
@@ -385,6 +388,7 @@ impl CreateDatabase {
             options: Vec::new(),
             clone_from: None,
             at_clause: None,
+            properties: Vec::new(),
         }
     }
 }

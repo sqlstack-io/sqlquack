@@ -1222,49 +1222,10 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
-            let keyword = self.previous_text().to_ascii_uppercase();
-            self.expect_token(TokenType::LParen)?;
-            let mut result = format!("{} (", keyword);
-            let mut prev_token_type: Option<TokenType> = None;
-            let mut paren_depth = 1;
-            while !self.is_at_end() && paren_depth > 0 {
-                let token = self.advance()?;
-                if token.token_type == TokenType::LParen {
-                    paren_depth += 1;
-                } else if token.token_type == TokenType::RParen {
-                    paren_depth -= 1;
-                    if paren_depth == 0 {
-                        break;
-                    }
-                }
-                let needs_space = !result.ends_with('(')
-                    && prev_token_type != Some(TokenType::Arrow)
-                    && prev_token_type != Some(TokenType::Dash)
-                    && prev_token_type != Some(TokenType::LParen)
-                    && token.token_type != TokenType::LParen;
-                if needs_space
-                    && token.token_type != TokenType::RParen
-                    && token.token_type != TokenType::Comma
-                {
-                    result.push(' ');
-                }
-                if token.token_type == TokenType::String {
-                    result.push('\'');
-                    result.push_str(&token.text.replace('\'', "''"));
-                    result.push('\'');
-                } else {
-                    result.push_str(&token.text);
-                }
-                if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
-                    result.push(' ');
-                }
-                prev_token_type = Some(token.token_type);
-            }
-            result.push(')');
-            Some(Expression::Raw(Raw { sql: result }))
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
         } else {
-            None
+            self.parse_raw_at_clause()?
         };
 
         let authorization = if self.match_token(TokenType::Authorization) {
@@ -1273,7 +1234,7 @@ impl Parser {
             None
         };
 
-        let mut properties: Vec<Expression> = Vec::new();
+        let mut properties = self.parse_clone_container_properties(clone_from.is_some())?;
 
         if self.match_token(TokenType::With) {
             self.expect_token(TokenType::LParen)?;
@@ -1351,53 +1312,15 @@ impl Parser {
             None
         };
 
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
-            let keyword = self.previous_text().to_ascii_uppercase();
-            self.expect_token(TokenType::LParen)?;
-            let mut result = format!("{} (", keyword);
-            let mut prev_token_type: Option<TokenType> = None;
-            let mut paren_depth = 1;
-            while !self.is_at_end() && paren_depth > 0 {
-                let token = self.advance()?;
-                if token.token_type == TokenType::LParen {
-                    paren_depth += 1;
-                } else if token.token_type == TokenType::RParen {
-                    paren_depth -= 1;
-                    if paren_depth == 0 {
-                        break;
-                    }
-                }
-                let needs_space = !result.ends_with('(')
-                    && prev_token_type != Some(TokenType::Arrow)
-                    && prev_token_type != Some(TokenType::Dash)
-                    && prev_token_type != Some(TokenType::LParen)
-                    && token.token_type != TokenType::LParen;
-                if needs_space
-                    && token.token_type != TokenType::RParen
-                    && token.token_type != TokenType::Comma
-                {
-                    result.push(' ');
-                }
-                if token.token_type == TokenType::String {
-                    result.push('\'');
-                    result.push_str(&token.text.replace('\'', "''"));
-                    result.push('\'');
-                } else {
-                    result.push_str(&token.text);
-                }
-                if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
-                    result.push(' ');
-                }
-                prev_token_type = Some(token.token_type);
-            }
-            result.push(')');
-            Some(Expression::Raw(Raw { sql: result }))
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
         } else {
-            None
+            self.parse_raw_at_clause()?
         };
 
         let _on_cluster = self.parse_on_cluster_clause()?;
 
+        let properties = self.parse_clone_container_properties(clone_from.is_some())?;
         let mut options: Vec<DatabaseOption> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1459,7 +1382,55 @@ impl Parser {
             options,
             clone_from,
             at_clause,
+            properties,
         })))
+    }
+
+    /// A schema or database clone's `AT | BEFORE ( ... )` kept as written, outside Snowflake.
+    fn parse_raw_at_clause(&mut self) -> Result<Option<Expression>> {
+        if !(self.match_identifier("AT") || self.match_token(TokenType::Before)) {
+            return Ok(None);
+        }
+        let keyword = self.previous_text().to_ascii_uppercase();
+        self.expect_token(TokenType::LParen)?;
+        let mut result = format!("{} (", keyword);
+        let mut prev_token_type: Option<TokenType> = None;
+        let mut paren_depth = 1;
+        while !self.is_at_end() && paren_depth > 0 {
+            let token = self.advance()?;
+            if token.token_type == TokenType::LParen {
+                paren_depth += 1;
+            } else if token.token_type == TokenType::RParen {
+                paren_depth -= 1;
+                if paren_depth == 0 {
+                    break;
+                }
+            }
+            let needs_space = !result.ends_with('(')
+                && prev_token_type != Some(TokenType::Arrow)
+                && prev_token_type != Some(TokenType::Dash)
+                && prev_token_type != Some(TokenType::LParen)
+                && token.token_type != TokenType::LParen;
+            if needs_space
+                && token.token_type != TokenType::RParen
+                && token.token_type != TokenType::Comma
+            {
+                result.push(' ');
+            }
+            if token.token_type == TokenType::String {
+                result.push('\'');
+                result.push_str(&token.text.replace('\'', "''"));
+                result.push('\'');
+            } else {
+                result.push_str(&token.text);
+            }
+            if token.token_type == TokenType::Arrow || token.token_type == TokenType::Comma {
+                result.push(' ');
+            }
+            prev_token_type = Some(token.token_type);
+        }
+        result.push(')');
+        Ok(Some(Expression::Raw(Raw { sql: result })))
     }
 
     /// Parse DROP DATABASE statement

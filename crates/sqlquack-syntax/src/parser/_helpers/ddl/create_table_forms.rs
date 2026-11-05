@@ -8,6 +8,7 @@ use crate::expressions::statements::models::Version;
 use crate::expressions::tables::models::CreateTable;
 use crate::expressions::tables::models::PartitionedOfProperty;
 use crate::expressions::tree::models::Expression;
+use crate::parser::_helpers::ddl::snowflake_create_clone::CloneOptions;
 use crate::parser::models::CreateTableCloneKind;
 use crate::parser::models::CreateTableHead;
 use crate::parser::models::CreateTableLeadingOptions;
@@ -180,8 +181,23 @@ impl Parser {
 
         self.skip();
 
-        let source = self.parse_table_ref()?;
-        let at_clause = if self.match_identifier("AT") || self.match_token(TokenType::Before) {
+        let snowflake = self.is_snowflake();
+        if snowflake {
+            for part in [&name.catalog, &name.schema, &Some(name.name.clone())]
+                .into_iter()
+                .flatten()
+            {
+                self.reject_reserved_name_part(part)?;
+            }
+        }
+        let source = if snowflake {
+            self.parse_object_name()?
+        } else {
+            self.parse_table_ref()?
+        };
+        let at_clause = if self.is_snowflake() {
+            self.parse_clone_time_travel()?
+        } else if self.match_identifier("AT") || self.match_token(TokenType::Before) {
             let keyword = self.previous_text().to_ascii_uppercase();
             self.expect_token(TokenType::LParen)?;
             let mut result = format!("{} (", keyword);
@@ -259,6 +275,11 @@ impl Parser {
         } else {
             None
         };
+        let properties = if snowflake {
+            Self::clone_options_as_properties(self.parse_clone_options(CloneOptions::Copy)?)
+        } else {
+            Vec::new()
+        };
         Ok(Expression::CreateTable(Box::new(CreateTable {
             name,
             on_cluster: on_cluster.clone(),
@@ -284,7 +305,7 @@ impl Parser {
             with_statistics: None,
             teradata_indexes: Vec::new(),
             with_cte: None,
-            properties: Vec::new(),
+            properties,
             partition_of: None,
             post_table_properties: Vec::new(),
             mysql_table_options: Vec::new(),
