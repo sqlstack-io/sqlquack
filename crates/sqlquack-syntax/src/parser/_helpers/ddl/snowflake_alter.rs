@@ -278,7 +278,7 @@ impl Parser {
                 } else {
                     None
                 };
-                properties.push(property(&name.name.to_ascii_uppercase(), None, value));
+                properties.push(property(&property_kind(&name), None, value));
             }
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
@@ -710,7 +710,7 @@ impl Parser {
             } else {
                 self.parse_object_value()?
             };
-            properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+            properties.push(property(&property_kind(&name), None, Some(value)));
             self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
@@ -758,6 +758,14 @@ pub(super) fn alter_object(
         operands,
         properties,
     }))
+}
+
+/// A property's kind from its name: upper-cased when unquoted, as written when quoted.
+pub(super) fn property_kind(name: &Identifier) -> String {
+    match name.quoted {
+        true => name.name.clone(),
+        false => name.name.to_ascii_uppercase(),
+    }
 }
 
 /// One property of kind `kind`.

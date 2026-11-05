@@ -613,6 +613,12 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Parse error",
         },
         ParseErrorTestCase {
+            description: "a reserved word is not a procedure option value",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA HANDLER = SELECT CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
             description: "an anonymous procedure is followed by CALL",
             dialect: Some(DialectType::Snowflake),
             sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVASCRIPT AS 'm' SELECT 1",
@@ -758,6 +764,13 @@ fn given_neighbours_of_rejected_snowflake_sql_when_parsing_then_they_parse() {
             sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = '11' PACKAGES = ('com.snowflake:snowpark:1.14.0') HANDLER = 'm' CALL p1()",
             pointer: "/0",
             expected_kind: Ok("call"),
+        },
+        ParseKindTestCase {
+            description: "untyped parts, name option values and an expression CTE after a procedure parse",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE (v1) RETURNS TABLE (c1) LANGUAGE JAVA RUNTIME_VERSION = r1 IMPORTS = (m1) HANDLER = h1, c2 AS (1) CALL p1()",
+            pointer: "/0/call/with/ctes/1/this",
+            expected_kind: Ok("literal"),
         },
     ];
 

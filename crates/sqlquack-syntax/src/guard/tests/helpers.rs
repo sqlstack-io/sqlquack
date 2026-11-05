@@ -61,3 +61,15 @@ pub(crate) fn limit_json_problems(field: &str) -> Vec<String> {
 pub(crate) fn guard_json_accepted(json: &str) -> bool {
     serde_json::from_str::<ComplexityGuardOptions>(json).is_ok()
 }
+
+/// The default-guarded Snowflake parse of `sql`, or its error message.
+pub(crate) fn guarded_parse(sql: &str) -> Result<(), String> {
+    crate::parse_statements_with(
+        sql,
+        crate::Dialect::Snowflake,
+        &crate::ParseOptions::default(),
+        crate::CallMode::Faithful,
+    )
+    .map(|_| ())
+    .map_err(|error| error.to_string())
+}

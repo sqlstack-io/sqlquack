@@ -6,6 +6,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -374,7 +375,7 @@ impl Parser {
             return Err(self.parse_error("Expected a literal value"));
         }
         let value = self.parse_object_value()?;
-        Ok(property(&name.name.to_ascii_uppercase(), None, Some(value)))
+        Ok(property(&property_kind(&name), None, Some(value)))
     }
 
     /// Parse a listing's ADD VERSION after its keywords: `[ [ IF NOT EXISTS ] <version> ] FROM <location>` and properties.
@@ -649,7 +650,7 @@ impl Parser {
                     self.expect_token(TokenType::Eq)?;
                     self.parse_resource_value()?
                 };
-                properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+                properties.push(property(&property_kind(&name), None, Some(value)));
                 self.match_token(TokenType::Comma);
             }
         }
@@ -677,7 +678,7 @@ impl Parser {
                 }
             } else {
                 let name = self.parse_simple_name()?;
-                properties.push(property(&name.name.to_ascii_uppercase(), None, None));
+                properties.push(property(&property_kind(&name), None, None));
             }
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);

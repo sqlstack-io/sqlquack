@@ -17,6 +17,7 @@ use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::{
     clause_condition, condition_sql, group_by, group_positions, order_and_limit, variant_group_keys,
 };
+use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::queries::hierarchy::hierarchy;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
@@ -24,13 +25,14 @@ use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, identifier_name, list, node_construct, node_kind, payload_object,
-    require_understood,
+    Payload, field, flag, function_construct, identifier_name, list, node_construct, node_kind,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
-    HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
+    HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, SYSTEM_TYPEOF_NAME, TYPE_SUFFIX_UNREMOVED,
+    USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
 };
 use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
@@ -278,16 +280,21 @@ fn convert_select(
     let group_positions = group_positions(select);
     let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
+    let mut suffixed_item: Option<&Value> = None;
     for item in list(select, "expressions") {
         let site = Site {
             scope: &scope,
             context: &context,
             placement: Placement {
                 order_free: context.free_projections,
+                suffixed: true,
                 ..Placement::PROJECTION
             },
         };
         for (name, emitted) in convert_projection(item, site, named)? {
+            if emitted.suffixed {
+                suffixed_item.get_or_insert(item);
+            }
             outputs.push((name.clone().unwrap_or_default(), emitted));
             names.push(name);
         }
@@ -327,11 +334,30 @@ fn convert_select(
             declared_offsets: emitted.declared.clone(),
             not_null: plain && (emitted.not_null || emitted.literal.is_some()),
             unordered: emitted.unordered,
+            suffixed: emitted.suffixed,
             ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
     if named {
         require_distinct_names(&columns)?;
+    }
+    let grouped_all = match select.get("group_by").and_then(Value::as_object) {
+        Some(group) if flag(group, "all") => group_all_positions(select).unwrap_or_default(),
+        _ => Vec::new(),
+    };
+    let suffix_read = (!context.free_projections || flag(select, "distinct"))
+        || outputs.iter().zip(1_u64..).any(|((_, emitted), position)| {
+            emitted.suffixed
+                && (group_positions.contains(&position) || grouped_all.contains(&position))
+        });
+    if let Some(item) = suffixed_item.filter(|_| suffix_read) {
+        return Err(context.locator.placed(
+            outside_conditions(
+                function_construct(SYSTEM_TYPEOF_NAME),
+                TYPE_SUFFIX_UNREMOVED.to_owned(),
+            ),
+            item,
+        ));
     }
     let distinct = match flag(select, "distinct") {
         true if outputs.iter().any(|(_, emitted)| emitted.is_variant_held()) => {
@@ -571,7 +597,7 @@ fn convert_projection(
     named: bool,
 ) -> Result<Vec<Projected>, Refusal> {
     match node_kind(item) {
-        Some(("star", payload)) => star(payload, site, false),
+        Some(("star", payload)) => star(payload, site),
         Some(("annotated", payload)) => {
             let construct = node_construct("annotated");
             let _rule = site.context.log.rule(COMMENT);
@@ -610,21 +636,13 @@ fn convert_projection(
     }
 }
 
-/// The columns `*` or `alias.*` names, without those an EXCLUDE list names where `excluding`.
-pub(crate) fn star(
-    payload: &Value,
-    site: Site<'_>,
-    excluding: bool,
-) -> Result<Vec<Projected>, Refusal> {
+/// The columns `*` or `alias.*` names, without those its EXCLUDE list names.
+pub(crate) fn star(payload: &Value, site: Site<'_>) -> Result<Vec<Projected>, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(STAR);
     let construct = node_construct("star");
     let star = payload_object(payload, &construct)?;
-    let understood: &[&str] = match excluding {
-        true => &["table", "except"],
-        false => &["table"],
-    };
-    require_understood(star, understood, &construct)?;
+    require_understood(star, &["table", "except"], &construct)?;
     let qualifier = star.get("table").and_then(identifier_name);
     let excluded: Vec<String> = list(star, "except")
         .iter()
@@ -681,6 +699,15 @@ pub(crate) fn star(
                 format!("EXCLUDE names `{name}`, which the star does not read"),
             ));
         }
+        if read.iter().filter(|column| **column == name).count() > 1 {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!(
+                    "EXCLUDE names `{name}`, which several of the star's sources hold: Snowflake \
+                     was recorded rejecting it as ambiguous"
+                ),
+            ));
+        }
     }
     let mut expanded: Vec<Projected> = Vec::new();
     for relation in relations {
@@ -699,6 +726,7 @@ pub(crate) fn star(
                 declared: column.declared_offsets.clone(),
                 not_null: column.not_null,
                 unordered: column.unordered,
+                suffixed: column.suffixed,
                 ..Emitted::new(sql, column.data_type)
             };
             let emitted =

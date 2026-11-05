@@ -31,3 +31,10 @@ pub(crate) struct GuardKeyTestCase {
     pub(crate) json: &'static str,
     pub(crate) expected_accepted: bool,
 }
+
+pub(crate) struct AstDepthTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: fn() -> String,
+    /// None when the default guard accepts the query; otherwise a fragment of the error.
+    pub(crate) expected_error: Option<&'static str>,
+}

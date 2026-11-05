@@ -71,6 +71,38 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
+            description: "SYSTEM$TYPEOF text that reaches the result with its storage suffix refuses",
+            sql: "WITH t AS (SELECT SYSTEM$TYPEOF(2.5) AS kind) SELECT kind FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "SYSTEM$TYPEOF text read by a function before its suffix is removed refuses",
+            sql: "WITH t AS (SELECT LENGTH(SYSTEM$TYPEOF(2.5)) AS n) SELECT n FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "ordering by SYSTEM$TYPEOF text beside another output before LIMIT refuses",
+            sql: "WITH s AS (SELECT 1 AS k, 2.5 AS v), \
+                  t AS (SELECT SYSTEM$TYPEOF(s.v) AS kind, s.k FROM s ORDER BY kind LIMIT 1) \
+                  SELECT REGEXP_REPLACE(t.kind, '\\\\[.*\\\\]$', '') AS kind, t.k FROM t",
+            flags: &[],
+            mention: "SYSTEM$TYPEOF text read before",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "SYSTEM$TYPEOF text stripped in a later CTE converts",
+            sql: "WITH s AS (SELECT 2.5 AS v), \
+                  t AS (SELECT SYSTEM$TYPEOF(s.v) AS kind FROM s ORDER BY kind LIMIT 1) \
+                  SELECT REGEXP_REPLACE(t.kind, '\\\\[.*\\\\]$', '') AS kind FROM t",
+            flags: &[],
+            mention: "done, converted",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
             description: "a statement that converts prints DuckDB SQL and exits 0",
             sql: "SELECT 1 + 2 AS total",
             flags: &[],

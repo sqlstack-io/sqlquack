@@ -1954,7 +1954,7 @@ impl Parser {
                 )));
             }
             let query_start = self.current;
-            let query = self.parse_statement()?;
+            let query = self.parse_cte_body(has_procedure)?;
             let query = self.spanned(query_start, query);
             self.expect_token(TokenType::RParen)?;
 

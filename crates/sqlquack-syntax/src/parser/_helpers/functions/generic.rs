@@ -1762,6 +1762,9 @@ impl Parser {
 
     /// Try to parse interval unit - returns None if no unit present
     pub(crate) fn try_parse_interval_unit(&mut self) -> Result<Option<IntervalUnitSpec>> {
+        if let Some(qualifier) = self.try_parse_snowflake_interval_qualifier()? {
+            return Ok(Some(qualifier));
+        }
         if self.is_function_start() {
             let start = self.parse_primary()?;
             if self.check_keyword_text("TO") {
