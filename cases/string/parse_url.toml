@@ -1,0 +1,42 @@
+# PARSE_URL's object and the fields read from it.
+category = "json-text"
+construct = "fn:PARSE_URL"
+session_profile = "utc-v1"
+
+[[case]]
+id = "parse_url_permissive_fields"
+description = "PARSE_URL(u, 1) of URLs with a port, mixed-case host and scheme, repeated, encoded, valueless and absent parameters, a fragment, no scheme, no path, empty text, text that is not a URL and NULL: the whole object as text and its host and one parameter."
+columns = [{ name = "u", type = "VARCHAR" }]
+rows = [
+  ["'https://Shop.Example.com:8443/a/b?utm_source=News&x=1#top'"],
+  ["'http://example.com'"],
+  ["'https://example.com/'"],
+  ["'HTTPS://EXAMPLE.COM/Path/Index.html'"],
+  ["'https://example.com/p?utm_source=a&utm_source=b'"],
+  ["'https://example.com/p?utm_source=spring%20sale+x&y=%2F'"],
+  ["'https://example.com/p?flag&utm_source='"],
+  ["'https://example.com/p#frag?x=1'"],
+  ["'example.com/landing?utm_source=mail'"],
+  ["'//example.com/landing'"],
+  ["''"],
+  ["'not a url'"],
+  ["NULL"],
+]
+query = "SELECT PARSE_URL(u, 1)::VARCHAR AS whole, PARSE_URL(u, 1)['host']::VARCHAR AS host, PARSE_URL(u, 1)['parameters']['utm_source']::VARCHAR AS source FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "empty", "invalid", "duplicates"]
+
+[[case]]
+id = "parse_url_lowered_hosts_aggregated"
+description = "LOWER of PARSE_URL(u, 1)['host'] collected by ARRAY_AGG(DISTINCT ...) WITHIN GROUP ordered by itself, a NULL URL skipped."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "u", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'https://Shop.Example.com/x'"],
+  ["'a'", "'https://shop.example.com/y?z=1'"],
+  ["'a'", "'http://help.example.com'"],
+  ["'a'", "NULL"],
+  ["'b'", "'https://example.com:8080/'"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT LOWER(PARSE_URL(u, 1)['host']::VARCHAR)) WITHIN GROUP (ORDER BY LOWER(PARSE_URL(u, 1)['host']::VARCHAR)) AS hosts FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]

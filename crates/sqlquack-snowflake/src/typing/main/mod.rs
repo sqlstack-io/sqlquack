@@ -2,6 +2,7 @@ pub mod average;
 pub mod cast_target;
 pub mod comparison;
 pub mod count;
+pub mod framed_average;
 pub mod literal_digits;
 pub mod number_literal;
 pub mod numeric_add_subtract;

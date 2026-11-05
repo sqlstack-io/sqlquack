@@ -1,0 +1,13 @@
+# SYSTEM$TYPEOF with its storage suffix stripped, as models read it.
+category = "temporal"
+construct = "fn:SYSTEM$TYPEOF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "system_typeof_temporal_stripped"
+description = "SYSTEM$TYPEOF of DATEADD on a TIME and a TIMESTAMP_NTZ, a TIME(3) cast, TO_TIMESTAMP of a NUMBER(13,3) and a bare TIMESTAMP cast, its [...] suffix removed."
+columns = [{ name = "t", type = "TIME" }, { name = "w", type = "TIMESTAMP_NTZ(9)" }, { name = "w3", type = "TIMESTAMP_NTZ(3)" }]
+rows = [["'10:15:00'", "'2026-03-01 10:15:00.123456789'", "'2026-03-01 10:15:00.123'"], ["NULL", "NULL", "NULL"]]
+query = '''SELECT REGEXP_REPLACE(SYSTEM$TYPEOF(DATEADD('minute', 30, t)), '\\[.*\\]$', '')::VARCHAR AS time_add, REGEXP_REPLACE(SYSTEM$TYPEOF(w::TIME(3)), '\\[.*\\]$', '')::VARCHAR AS time_cast, REGEXP_REPLACE(SYSTEM$TYPEOF(DATEADD('day', 1, w)), '\\[.*\\]$', '')::VARCHAR AS ntz_add, REGEXP_REPLACE(SYSTEM$TYPEOF(DATEADD('day', 1, w3)), '\\[.*\\]$', '')::VARCHAR AS ntz3_add, REGEXP_REPLACE(SYSTEM$TYPEOF(TO_TIMESTAMP(1772359200.123::NUMBER(13, 3))), '\\[.*\\]$', '')::VARCHAR AS epoch_millis, REGEXP_REPLACE(SYSTEM$TYPEOF('2026-03-01 10:15:00'::TIMESTAMP), '\\[.*\\]$', '')::VARCHAR AS bare_timestamp FROM input ORDER BY ordinal'''
+order = "ordered"
+tags = ["null", "boundary"]

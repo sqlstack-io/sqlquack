@@ -1,0 +1,31 @@
+# SYSTEM$TYPEOF with its storage suffix stripped, as models read it.
+category = "numeric"
+construct = "fn:SYSTEM$TYPEOF"
+session_profile = "utc-v1"
+
+[[case]]
+id = "system_typeof_numeric_stripped"
+description = "SYSTEM$TYPEOF of arithmetic with NULL, a COALESCE with a decimal, exponent literals, remainders, NULLIF, ILIKE NULL and ROW_NUMBER, its [...] suffix removed."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "amount", type = "NUMBER(12,2)" }, { name = "ratio", type = "FLOAT" }, { name = "key_text", type = "VARCHAR" }]
+rows = [["7", "10.50", "0.25", "'k-7'"], ["0", "0.00", "0", "''"], ["-12", "-3.25", "-1.5", "'k-12'"], ["12", "NULL", "NULL", "NULL"]]
+query = '''SELECT REGEXP_REPLACE(SYSTEM$TYPEOF(NULL / amount), '\\[.*\\]$', '')::VARCHAR AS null_over, REGEXP_REPLACE(SYSTEM$TYPEOF(ratio / NULL), '\\[.*\\]$', '')::VARCHAR AS ratio_over_null, REGEXP_REPLACE(SYSTEM$TYPEOF(amount::NUMBER(38, 2) * NULL), '\\[.*\\]$', '')::VARCHAR AS wide_times_null, REGEXP_REPLACE(SYSTEM$TYPEOF(COALESCE(amount, 1.5)), '\\[.*\\]$', '')::VARCHAR AS amount_or_decimal, REGEXP_REPLACE(SYSTEM$TYPEOF(1e5), '\\[.*\\]$', '')::VARCHAR AS exponent, REGEXP_REPLACE(SYSTEM$TYPEOF(amount * 1e-12), '\\[.*\\]$', '')::VARCHAR AS small_exponent_product, REGEXP_REPLACE(SYSTEM$TYPEOF(7 % 3), '\\[.*\\]$', '')::VARCHAR AS remainder, REGEXP_REPLACE(SYSTEM$TYPEOF(n % 3), '\\[.*\\]$', '')::VARCHAR AS key_remainder, REGEXP_REPLACE(SYSTEM$TYPEOF(NULLIF(amount, 1)), '\\[.*\\]$', '')::VARCHAR AS nullif_type, REGEXP_REPLACE(SYSTEM$TYPEOF(key_text ILIKE NULL), '\\[.*\\]$', '')::VARCHAR AS ilike_null, REGEXP_REPLACE(SYSTEM$TYPEOF(ROW_NUMBER() OVER (ORDER BY n)), '\\[.*\\]$', '')::VARCHAR AS row_number_type FROM input ORDER BY ordinal'''
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "system_typeof_through_ctes_stripped"
+description = "SYSTEM$TYPEOF read from finished CTE columns, then stripped: a COUNT, a UNION ALL of a NUMBER(12,2) column and 1.5, and a UNION ALL of two NULLs."
+columns = [{ name = "amount", type = "NUMBER(12,2)" }]
+rows = [["10.50"], ["0.00"], ["-3.25"], ["NULL"]]
+query = '''WITH counted AS (SELECT COUNT(amount) AS c FROM input), count_typed AS (SELECT SYSTEM$TYPEOF(k.c) AS t FROM counted AS k), mixed AS (SELECT amount AS m FROM input UNION ALL SELECT 1.5 AS m), mixed_typed AS (SELECT SYSTEM$TYPEOF(x.m) AS t FROM mixed AS x ORDER BY t LIMIT 1), nulls AS (SELECT NULL AS v UNION ALL SELECT NULL AS v), null_typed AS (SELECT SYSTEM$TYPEOF(z.v) AS t FROM nulls AS z ORDER BY t LIMIT 1) SELECT REGEXP_REPLACE(a.t, '\\[.*\\]$', '')::VARCHAR AS count_type, REGEXP_REPLACE(b.t, '\\[.*\\]$', '')::VARCHAR AS union_decimal_type, REGEXP_REPLACE(c.t, '\\[.*\\]$', '')::VARCHAR AS all_null_type FROM count_typed AS a CROSS JOIN mixed_typed AS b CROSS JOIN null_typed AS c'''
+order = "bag"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "system_typeof_typed_operands_stripped"
+description = "SYSTEM$TYPEOF of arithmetic with NULL, COALESCE with a decimal, exponents, remainders, NULLIF, ROW_NUMBER, a TIME cast and TO_TIMESTAMP of a NUMBER(13,3), its [...] suffix removed."
+columns = [{ name = "n", type = "NUMBER(10,0)" }, { name = "amount", type = "NUMBER(12,2)" }, { name = "ratio", type = "FLOAT" }, { name = "w", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["7", "10.50", "0.25", "'2026-03-01 10:15:00.123456789'"], ["0", "0.00", "0", "NULL"], ["-12", "-3.25", "-1.5", "'2026-03-01 00:00:00'"], ["12", "NULL", "NULL", "NULL"]]
+query = '''SELECT REGEXP_REPLACE(SYSTEM$TYPEOF(NULL / amount), '\\[.*\\]$', '')::VARCHAR AS null_over, REGEXP_REPLACE(SYSTEM$TYPEOF(ratio / NULL), '\\[.*\\]$', '')::VARCHAR AS ratio_over_null, REGEXP_REPLACE(SYSTEM$TYPEOF(COALESCE(amount, 1.5)), '\\[.*\\]$', '')::VARCHAR AS amount_or_decimal, REGEXP_REPLACE(SYSTEM$TYPEOF(1e5), '\\[.*\\]$', '')::VARCHAR AS exponent, REGEXP_REPLACE(SYSTEM$TYPEOF(amount * 1e-12), '\\[.*\\]$', '')::VARCHAR AS small_exponent_product, REGEXP_REPLACE(SYSTEM$TYPEOF(n % 3), '\\[.*\\]$', '')::VARCHAR AS key_remainder, REGEXP_REPLACE(SYSTEM$TYPEOF(NULLIF(amount, 1)), '\\[.*\\]$', '')::VARCHAR AS nullif_type, REGEXP_REPLACE(SYSTEM$TYPEOF(ROW_NUMBER() OVER (ORDER BY n)), '\\[.*\\]$', '')::VARCHAR AS row_number_type, REGEXP_REPLACE(SYSTEM$TYPEOF(w::TIME(3)), '\\[.*\\]$', '')::VARCHAR AS time_cast, REGEXP_REPLACE(SYSTEM$TYPEOF(DATEADD('day', 1, w)), '\\[.*\\]$', '')::VARCHAR AS ntz_add, REGEXP_REPLACE(SYSTEM$TYPEOF(TO_TIMESTAMP(1772359200.123::NUMBER(13, 3))), '\\[.*\\]$', '')::VARCHAR AS epoch_millis FROM input ORDER BY ordinal'''
+order = "ordered"
+tags = ["null", "zero", "negative", "boundary"]
