@@ -13,6 +13,11 @@ from scripts.syntax_obligations.constants import (
     CASE_CAPTURE_DCM,
     CASE_CAPTURE_RUN_DATABASE,
     COUNTED_RUN_STATUSES,
+    D113_MARK,
+    D133_ACCEPT_STAGES,
+    D133_MARKS,
+    D133_NEVER_ACCEPT_ERRNO,
+    D133_REJECT_ERRNOS,
     DCM_DEFINITION_FORM,
     DIGEST_WIDTH,
     DOUBLE_QUOTE,
@@ -33,7 +38,7 @@ from scripts.syntax_obligations.constants import (
     SYNTAX_ERROR_PHASE,
 )
 from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, Node, Rendered
+from scripts.syntax_obligations.models import Draft, Node, ReceiptView, Rendered
 from scripts.syntax_obligations.types import Row
 
 
@@ -293,6 +298,44 @@ def receipt_phases(directory: Path) -> dict[tuple[str, str], str]:
     }
 
 
+def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tuple[str, str]]:
+    """D133: the expect and stage each (case, sql, setup, session) settles to, where it settles."""
+    gone: set[str] = set()
+    for path in directory.glob("*.report.json"):
+        gone |= {
+            str(x["receipt_sha256"]) for x in json.loads(path.read_text()).get("withdrawn", [])
+        }
+    answers: dict[tuple[str, str, str, str], set[tuple[str, str]]] = {}
+    lines: list[tuple[str, Row]] = []
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            receipt: Row = json.loads(line)
+            gone.add(str(receipt.get("supersedes_receipt_sha256", "")))
+            if MEASURE_KEY not in receipt:
+                lines.append((digest(line), receipt))
+    for sha, r in lines:
+        if sha in gone:
+            continue
+        key = (
+            str(r["case_id"]),
+            str(r["sql_sha256"]),
+            str(r.get("setup_sha256", "")),
+            str(r.get("session_sha256", "")),
+        )
+        errno = r.get("errno")
+        answers.setdefault(key, set()).add((str(r["phase"]), "" if errno is None else str(errno)))
+    settled: dict[tuple[str, str, str, str], tuple[str, str]] = {}
+    for key, found in answers.items():
+        if len(found) != 1:
+            continue
+        phase, errno = next(iter(found))
+        if errno in D133_REJECT_ERRNOS or phase == SYNTAX_ERROR_PHASE:
+            settled[key] = (EXPECT_REJECT, "")
+        elif errno != D133_NEVER_ACCEPT_ERRNO and phase in D133_ACCEPT_STAGES:
+            settled[key] = (EXPECT_ACCEPT, D133_ACCEPT_STAGES[phase])
+    return settled
+
+
 def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
     """Every receipted (case_id, sql_sha256), withdrawn too: recording it again would repeat it."""
     recorded: set[tuple[str, str]] = set()
@@ -304,10 +347,17 @@ def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
 
 
 def observed_stage(
-    *, case: Row, phase: str | None, extreme: bool = True, documented: bool = False
+    *,
+    case: Row,
+    phase: str | None,
+    extreme: bool = True,
+    documented: bool = False,
+    settlement: tuple[str, str] | None = None,
 ) -> Row:
     """Give an accepted case its receipt's later stage, reporting a contradicted declared one."""
     stage: str | None = STAGE_BY_RECEIPT_PHASE.get(phase or "")
+    if case["expect"] == EXPECT_OBSERVE and not extreme and not documented:
+        return _settled(case=case, settlement=settlement)
     if case["expect"] == EXPECT_OBSERVE:
         return _observed_outcome(
             case=case, phase=phase, stage=stage, extreme=extreme, documented=documented
@@ -323,13 +373,20 @@ def observed_stage(
     return case
 
 
+def _settled(*, case: Row, settlement: tuple[str, str] | None) -> Row:
+    """D133: an observed case takes the expect its agreeing receipts settle, or stays observed."""
+    if settlement is not None:
+        case["expect"], stage = settlement
+        if stage:
+            case[STAGE_KEY] = stage
+    return case
+
+
 def _observed_outcome(
     *, case: Row, phase: str | None, stage: str | None, extreme: bool, documented: bool
 ) -> Row:
     """An extreme's outcome (D92); an observed negative settles only on a syntax error (D97)."""
     if not extreme:
-        if phase == SYNTAX_ERROR_PHASE and not documented:
-            case["expect"] = EXPECT_REJECT
         return case
     if phase == SYNTAX_ERROR_PHASE:
         print(f"observed implementation limit, undocumented: {case['case_id']}")
@@ -345,11 +402,11 @@ def settled_cases(
     *,
     root: Path,
     family: str,
-    phases: dict[tuple[str, str], str],
+    receipts: ReceiptView,
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
-) -> tuple[list[Row], list[Row]]:
-    """The merged cases with the stages their receipts show, and the unscored arity cases."""
+) -> tuple[list[Row], list[Row], list[Row]]:
+    """The merged cases with their receipts' stages, unscored arity cases, D113/D133 marks."""
     generated, expected, arity, extremes, documented, disputed = family_cases(
         root=root, family=family, setups=setups, held=held
     )
@@ -358,17 +415,45 @@ def settled_cases(
     )
     for problem in problems:
         print(f"mapped case left out: {problem}")
-    settled: list[Row] = [
-        observed_stage(
-            case=case,
-            phase=phases.get((case["case_id"], case["sql_sha256"])),
-            extreme=bool(extremes & set(case["obligations"])),
-            documented=case["sql"] in documented
-            or _cites_disputed_form(obligations=case["obligations"], disputed=disputed),
+    settled: list[Row] = []
+    marked: list[Row] = []
+    for case in cases:
+        extreme: bool = bool(extremes & set(case["obligations"]))
+        is_documented: bool = case["sql"] in documented or _cites_disputed_form(
+            obligations=case["obligations"], disputed=disputed
         )
-        for case in cases
-    ]
-    return settled, arity
+        by_receipts: bool = case["expect"] == EXPECT_OBSERVE and not extreme and not is_documented
+        settled.append(
+            observed_stage(
+                case=case,
+                phase=receipts.phases.get((case["case_id"], case["sql_sha256"])),
+                extreme=extreme,
+                documented=is_documented,
+                settlement=receipts.settlements.get(
+                    (
+                        case["case_id"],
+                        case["sql_sha256"],
+                        case["setup_sha256"],
+                        case["session_sha256"],
+                    )
+                ),
+            )
+        )
+        mark: str = (
+            D113_MARK
+            if is_documented and case["expect"] == EXPECT_OBSERVE
+            else (D133_MARKS.get(case["expect"], "") if by_receipts else "")
+        )
+        if mark:
+            marked.append(
+                {
+                    "case_id": case["case_id"],
+                    "sql_sha256": case["sql_sha256"],
+                    "obligations": case["obligations"],
+                    "mark": mark,
+                }
+            )
+    return settled, arity, marked
 
 
 def _cites_disputed_form(*, obligations: list[str], disputed: set[str]) -> bool:

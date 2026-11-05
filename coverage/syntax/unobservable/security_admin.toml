@@ -223,18 +223,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-connection.connection-as-replica-of.o004"
-form = "sf.security_admin.create-connection.connection-as-replica-of"
-construct = "omit <name>: CREATE CONNECTION AS REPLICA OF v1 . v1 . v1 ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-21: billable or out-of-account: replication or failover"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-connection.connection-as-replica-of.k761344aa04d6", sql_sha256 = "761344aa04d6f6d00bcd6b71d820285d9ba13afc716144add4d0dd8ffec879bf" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.security_admin.create-connection.connection-as-replica-of.o005"
 form = "sf.security_admin.create-connection.connection-as-replica-of"
 construct = "a valid identifier: CREATE CONNECTION v1 AS REPLICA OF v1 . v1 . v1 ;"

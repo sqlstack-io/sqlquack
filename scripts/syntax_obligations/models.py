@@ -73,3 +73,11 @@ class Rendered:
     expect: str
     stage: str = ""
     documented: bool = False
+
+
+@dataclass(frozen=True)
+class ReceiptView:
+    """Receipt phases by (case_id, sql_sha256) and D133 settlements by case, sql, setup, session."""
+
+    phases: dict[tuple[str, str], str]
+    settlements: dict[tuple[str, str, str, str], tuple[str, str]]

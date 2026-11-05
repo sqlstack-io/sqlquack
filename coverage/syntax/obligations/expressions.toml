@@ -5408,18 +5408,18 @@ depths = [
 note = "query operands nested; no documented bound"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.in.o013"
+id = "sf.expressions.operators-subquery.in.o015"
 kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
-note = "IN subqueries nested 50 levels deep; no documented bound"
+note = "IN subqueries nested 12 levels deep; no documented bound (50 levels timed out at 30 s, errno 630, import 142)"
 
 [[obligation]]
-id = "sf.expressions.operators-subquery.in.o014"
+id = "sf.expressions.operators-subquery.in.o016"
 kind = "extreme"
 required = true
 anchor = "doc.operators-subquery / [ NOT ] IN / Syntax"
-note = "IN subqueries nested 100 levels deep; no documented bound"
+note = "IN subqueries nested 24 levels deep; no documented bound (100 levels timed out at 30 s, errno 630, import 142)"
 
 [[obligation]]
 id = "sf.expressions.schema-variables.o019"

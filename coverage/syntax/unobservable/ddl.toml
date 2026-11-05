@@ -16396,18 +16396,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-application.application-package-using-version.o002"
-form = "sf.ddl.create-application.application-package-using-version"
-construct = "omit <name>: CREATE APPLICATION FROM APPLICATION PACKAGE v1 USING VERSION v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: CREATE of an account-level or unvetted kind (APPLICATION FROM APPLICATION)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-application.application-package-using-version.k66ab899fa107", sql_sha256 = "66ab899fa107c480fd9da44a54119d39e769d46aaa075fe09d8c00cd182d3c44" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-application.application-package-using-version.o003"
 form = "sf.ddl.create-application.application-package-using-version"
 construct = "a valid identifier: CREATE APPLICATION v1 FROM APPLICATION PACKAGE v1 USING VERSION v1 ;"
@@ -17337,18 +17325,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-application.application-package-using.o002"
-form = "sf.ddl.create-application.application-package-using"
-construct = "omit <name>: CREATE APPLICATION FROM APPLICATION PACKAGE v1 USING '@d1.s1.st1/p1' ;"
-reason = "not submitted: held by the capture guard in chunk ux-04: CREATE of an account-level or unvetted kind (APPLICATION FROM APPLICATION)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-application.application-package-using.k08aece7628ed", sql_sha256 = "08aece7628ed118cbb8156e425f8f59d0b9380c57b60b8d55d84a9c7c87cee56" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-application.application-package-using.o003"
 form = "sf.ddl.create-application.application-package-using"
 construct = "a valid identifier: CREATE APPLICATION v1 FROM APPLICATION PACKAGE v1 USING '@d1.s1.st1/p1' ;"
@@ -18181,18 +18157,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-application.application-package.o002"
-form = "sf.ddl.create-application.application-package"
-construct = "omit <name>: CREATE APPLICATION FROM APPLICATION PACKAGE v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-04: CREATE of an account-level or unvetted kind (APPLICATION FROM APPLICATION)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-application.application-package.kb9d386fa57d7", sql_sha256 = "b9d386fa57d7f13067fd0f557153d2639589e869393acfd3b552c4e9fddfebd0" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-application.application-package.o003"
 form = "sf.ddl.create-application.application-package"
 construct = "a valid identifier: CREATE APPLICATION v1 FROM APPLICATION PACKAGE v1 ;"
@@ -19020,18 +18984,6 @@ reason = "not submitted: held by the capture guard in chunk ux-04: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-application.listing.k0593a7a28959", sql_sha256 = "0593a7a28959c5b82ed3869a6fe8a1d05352e0d45db283d0200f795fb4973822" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-application.listing.o002"
-form = "sf.ddl.create-application.listing"
-construct = "omit <name>: CREATE APPLICATION FROM LISTING v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-04: CREATE of an account-level or unvetted kind (APPLICATION FROM LISTING)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-application.listing.k8b6f4cd9ac4e", sql_sha256 = "8b6f4cd9ac4e900ca8d9393ec7ec81942f6bbabf3e02847001acbb822eb2f3a4" },
 ]
 runs = []
 probes = []
@@ -32513,18 +32465,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-listing.as.o004"
-form = "sf.ddl.create-listing.as"
-construct = "omit <name>: CREATE EXTERNAL LISTING AS 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (LISTING AS '')"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-listing.as.kae449b8958c3", sql_sha256 = "ae449b8958c3006a7b91b57030db9e72d89465e9b3032d108808312926730bdb" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-listing.as.o005"
 form = "sf.ddl.create-listing.as"
 construct = "a valid identifier: CREATE EXTERNAL LISTING v1 AS 'm' ;"
@@ -33063,18 +33003,6 @@ reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-listing.from.k778be1c0f68e", sql_sha256 = "778be1c0f68e57a6e857b0b8df86f460368fc02bc0d0723ffc54e3aef5ed9835" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-listing.from.o004"
-form = "sf.ddl.create-listing.from"
-construct = "omit <name>: CREATE EXTERNAL LISTING FROM 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (LISTING FROM '')"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-listing.from.kc87cca7bdd99", sql_sha256 = "c87cca7bdd99951dda6485d733310efc591b68c2f9ea670b9dc492d9faf1c51d" },
 ]
 runs = []
 probes = []

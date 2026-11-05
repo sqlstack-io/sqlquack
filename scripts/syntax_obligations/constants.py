@@ -88,6 +88,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
     (re.compile(r"number$|^n$|^num|_count$|^count$|position$"), "integer_literal"),
     (re.compile(r"message|string|pattern|comment"), "string_literal"),
+    (re.compile(r"^value_column$"), "identifier"),
     (re.compile(r"expr|expression|condition|predicate|value|start|end|default"), "expression"),
     (
         re.compile(r"name|label|variable|alias|cursor|resultset|identifier|^[a-z_]*col"),
@@ -314,6 +315,22 @@ PAIR_SIZE: int = 2
 DIGEST_WIDTH: int = 12
 MEASURE_KEY: str = "measure"
 STAGE_KEY: str = "stage"
+# D133 (D97b, amended by D133a): an observed, undocumented, non-extreme case settles from its
+# receipts when every current receipt for its SQL, setup and session agrees on phase and errno.
+D133_REJECT_ERRNOS: frozenset[str] = frozenset({"921"})
+D133_NEVER_ACCEPT_ERRNO: str = "1003"
+D133_ACCEPT_STAGES: dict[str, str] = {
+    "accepted": "",
+    "semantic_error": "semantic",
+    "runtime_error": "runtime",
+    "unsupported_feature": "error",
+}
+D133_MARKS: dict[str, str] = {
+    "accept": "settled accept (D133)",
+    "reject": "settled reject (D133)",
+}
+D113_MARK: str = "documented (D113)"
+MARKS_DIR: str = "marks"
 PACKET_KEYS: tuple[str, ...] = ("case_id", "sql", "sql_sha256", "capture", "expect")
 GRAMMAR_DEFINITION: re.Pattern[str] = re.compile(r"^\s*<[^<>]+>\s*::=\s*")
 QUOTED_PLACEHOLDER: re.Pattern[str] = re.compile(r"'<([^<>]+)>'")
@@ -1367,9 +1384,7 @@ CLASS_PROCEDURE_REFERENCE: str = (
 CLASS_TABLE_REFERENCE: str = (
     "( SELECT SYSTEM$REFERENCE ( 'TABLE' , 't1' , 'SESSION' , 'APPLYBUDGET' ) )"
 )
-CLASS_AGENT_REFERENCE: str = (
-    "( SELECT SYSTEM$REFERENCE ( 'CORTEX AGENT' , 'ag1' ) )"
-)
+CLASS_AGENT_REFERENCE: str = "( SELECT SYSTEM$REFERENCE ( 'CORTEX AGENT' , 'ag1' ) )"
 CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.add-custom-action": {
         "reference_statement": CLASS_PROCEDURE_REFERENCE
@@ -1382,7 +1397,9 @@ CLASSES_PAGE_FILLS: dict[str, dict[str, str]] = {
     "sf.classes.budget.methods.add-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
     "sf.classes.budget.methods.remove-resource-tag": {"reference_statement": CLASS_TAG_REFERENCE},
     "sf.classes.budget.methods.add-shared-resource": {"reference_statement": CLASS_AGENT_REFERENCE},
-    "sf.classes.budget.methods.remove-shared-resource": {"reference_statement": CLASS_AGENT_REFERENCE},
+    "sf.classes.budget.methods.remove-shared-resource": {
+        "reference_statement": CLASS_AGENT_REFERENCE
+    },
     "sf.classes.classification-profile.commands.create-classification-profile": {
         "config_object": "OBJECT_CONSTRUCT ( 'auto_tag' , FALSE )"
     },

@@ -6965,11 +6965,18 @@ target = "<value_column>"
 note = "omit <value_column>"
 
 [[obligation]]
-id = "sf.query.pivot.o014"
+id = "sf.query.pivot.o057"
 kind = "operand_type_class"
 required = true
 target = "<value_column>"
-note = "a valid expression"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.pivot.o058"
+kind = "negative_neighbour"
+required = true
+target = "<value_column>"
+note = "a string literal in place of <value_column>"
 
 [[obligation]]
 id = "sf.query.pivot.o015"
@@ -7230,6 +7237,22 @@ id = "sf.query.pivot.o051"
 kind = "identifier_class"
 required = true
 target = "<alias>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.pivot.o059"
+kind = "identifier_class"
+required = true
+target = "<value_column>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.pivot.o060"
+kind = "identifier_class"
+required = true
+target = "<value_column>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -9593,11 +9616,18 @@ target = "<value_column>"
 note = "omit <value_column>"
 
 [[obligation]]
-id = "sf.query.unpivot.o007"
+id = "sf.query.unpivot.o038"
 kind = "operand_type_class"
 required = true
 target = "<value_column>"
-note = "a valid expression"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.unpivot.o039"
+kind = "negative_neighbour"
+required = true
+target = "<value_column>"
+note = "a string literal in place of <value_column>"
 
 [[obligation]]
 id = "sf.query.unpivot.o008"
@@ -9751,6 +9781,22 @@ id = "sf.query.unpivot.o027"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.query.unpivot.o040"
+kind = "identifier_class"
+required = true
+target = "<value_column>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.unpivot.o041"
+kind = "identifier_class"
+required = true
+target = "<value_column>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.query.unpivot.o028"

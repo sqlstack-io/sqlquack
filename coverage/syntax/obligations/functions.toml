@@ -52103,6 +52103,14 @@ anchor = "doc.functions.reduce / Syntax"
 note = "each lambda parameter with its optional data type"
 
 [[obligation]]
+id = "sf.functions.reduce.o012"
+kind = "option_absent"
+required = true
+target = "[ <datatype> ] in <lambda_expression>"
+anchor = "doc.functions.reduce / Syntax"
+note = "each lambda parameter without its optional data type"
+
+[[obligation]]
 id = "sf.functions.reduce.o011"
 kind = "negative_neighbour"
 required = true

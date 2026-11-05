@@ -110302,13 +110302,6 @@ target = "<role_name>"
 note = "a string literal in place of <role_name>"
 
 [[obligation]]
-id = "sf.security_admin.grant-service-role.o011"
-kind = "required_operand_missing"
-required = true
-target = "<application_role_name>"
-note = "omit <application_role_name>"
-
-[[obligation]]
 id = "sf.security_admin.grant-service-role.o055"
 kind = "operand_type_class"
 required = true
@@ -110321,13 +110314,6 @@ kind = "negative_neighbour"
 required = true
 target = "<application_role_name>"
 note = "a string literal in place of <application_role_name>"
-
-[[obligation]]
-id = "sf.security_admin.grant-service-role.o014"
-kind = "required_operand_missing"
-required = true
-target = "<database_role_name>"
-note = "omit <database_role_name>"
 
 [[obligation]]
 id = "sf.security_admin.grant-service-role.o056"
@@ -110446,6 +110432,22 @@ required = true
 target = "<database_role_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o068"
+kind = "required_operand_missing"
+required = true
+target = "<application_role_name>"
+anchor = "doc.sql.grant-service-role / Syntax"
+note = "omit <application_role_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-service-role.o069"
+kind = "required_operand_missing"
+required = true
+target = "<database_role_name>"
+anchor = "doc.sql.grant-service-role / Syntax"
+note = "omit <database_role_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-application-role.application-role-application-user.o001"
@@ -123026,13 +123028,6 @@ target = "<role_name>"
 note = "a string literal in place of <role_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-service-role.o011"
-kind = "required_operand_missing"
-required = true
-target = "<application_role_name>"
-note = "omit <application_role_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-service-role.o055"
 kind = "operand_type_class"
 required = true
@@ -123045,13 +123040,6 @@ kind = "negative_neighbour"
 required = true
 target = "<application_role_name>"
 note = "a string literal in place of <application_role_name>"
-
-[[obligation]]
-id = "sf.security_admin.revoke-service-role.o014"
-kind = "required_operand_missing"
-required = true
-target = "<database_role_name>"
-note = "omit <database_role_name>"
 
 [[obligation]]
 id = "sf.security_admin.revoke-service-role.o056"
@@ -123170,6 +123158,22 @@ required = true
 target = "<database_role_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o068"
+kind = "required_operand_missing"
+required = true
+target = "<database_role_name>"
+anchor = "doc.sql.revoke-service-role / Syntax"
+note = "omit <database_role_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-service-role.o069"
+kind = "required_operand_missing"
+required = true
+target = "<application_role_name>"
+anchor = "doc.sql.revoke-service-role / Syntax"
+note = "omit <application_role_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-accounts.o001"
@@ -131884,6 +131888,39 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
 
 [[obligation]]
+id = "sf.security_admin.show-shares.o018"
+kind = "option_present"
+required = true
+target = "[ STARTS WITH '<name_string>' ]"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o019"
+kind = "option_absent"
+required = true
+target = "[ STARTS WITH '<name_string>' ]"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o020"
+kind = "required_operand_missing"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "omit '<name_string>'"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o021"
+kind = "operand_type_class"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o022"
+kind = "negative_neighbour"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "an unquoted identifier in place of '<name_string>'"
+
+[[obligation]]
 id = "sf.security_admin.show-shares.o007"
 kind = "option_present"
 required = true
@@ -131947,6 +131984,12 @@ id = "sf.security_admin.show-shares.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SHARES"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required WITH in [ STARTS WITH '<name_string>' ]"
 
 [[obligation]]
 id = "sf.security_admin.show-shares.o017"
