@@ -65,7 +65,7 @@ pub(crate) fn tree_spellings(statement: &Expression) -> BTreeSet<String> {
     keys
 }
 
-/// The key one node adds: its call shape, CASE form, subscript kind, literal kind or parameter style.
+/// The key one node adds: its call shape (qualified or not), CASE form, subscript, literal or parameter.
 fn node_key(node: &Expression, windowed: bool) -> Option<String> {
     let spelling = match node {
         Expression::Function(function) => {
@@ -78,6 +78,19 @@ fn node_key(node: &Expression, windowed: bool) -> Option<String> {
         }
         Expression::AggregateFunction(function) => {
             return Some(call_key(&function.name, &function.args, windowed, false));
+        }
+        Expression::MethodCall(call) => {
+            let Expression::Column(path) = &call.this else {
+                return None;
+            };
+            let name = path
+                .table
+                .iter()
+                .chain([&path.name, &call.method])
+                .map(|part| part.name.as_str())
+                .collect::<Vec<_>>()
+                .join(".");
+            return Some(call_key(&name, &call.args, windowed, false));
         }
         Expression::Case(case) if case.operand.is_some() => "case_simple",
         Expression::Case(_) => "case_searched",
