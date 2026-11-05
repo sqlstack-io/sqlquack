@@ -334,10 +334,7 @@ impl Parser {
         let definition = self.parse_create()?;
         let unchecked_kind = matches!(
             definition,
-            Expression::CreateTable(_)
-                | Expression::CreateView(_)
-                | Expression::CreateFunction(_)
-                | Expression::CreateProcedure(_)
+            Expression::CreateTable(_) | Expression::CreateView(_)
         );
         if unchecked_kind
             || definition

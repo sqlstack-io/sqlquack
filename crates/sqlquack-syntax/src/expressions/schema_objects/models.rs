@@ -495,6 +495,9 @@ pub struct CreateFunction {
     /// PARAMETER STYLE clause (e.g., PANDAS for Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_style: Option<String>,
+    /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, each kept as its source text
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub snowflake_properties: Vec<String>,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -659,6 +662,7 @@ impl CreateFunction {
             runtime_version: None,
             packages: None,
             parameter_style: None,
+            snowflake_properties: Vec::new(),
         }
     }
 }

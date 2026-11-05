@@ -1444,6 +1444,7 @@ impl Parser {
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
+            self.check_snowflake_routine_arguments(&params)?;
             (params, true)
         } else {
             (Vec::new(), false)
@@ -1492,6 +1493,7 @@ impl Parser {
             runtime_version: None,
             packages: None,
             parameter_style: None,
+            snowflake_properties: Vec::new(),
         };
         function = self.parse_create_function_properties(function)?;
 
@@ -1513,7 +1515,7 @@ impl Parser {
                 && self.current + 1 < self.tokens.len()
                 && self.tokens[self.current + 1].token_type == TokenType::Null
             {
-                function = self.parse_create_function_returns_null_on_null(function);
+                function = self.parse_create_function_returns_null_on_null(function)?;
             } else if self.match_token(TokenType::Returns) {
                 function.return_type = Some(self.parse_data_type()?);
             } else if self.match_token(TokenType::Language) {
@@ -1533,7 +1535,7 @@ impl Parser {
                 function.strict = true;
                 function = record_function_property(function, FunctionPropertyKind::NullInput);
             } else if self.match_identifier("CALLED") {
-                function = self.parse_create_function_called_on_null(function);
+                function = self.parse_create_function_called_on_null(function)?;
             } else if self.match_identifier("SECURITY") {
                 function = self.parse_create_function_security(function);
             } else if self.match_identifier("CONTAINS") {
@@ -1599,6 +1601,8 @@ impl Parser {
                 let stmt = self.parse_statement()?;
                 function.body = Some(FunctionBody::Expression(stmt));
                 function = record_function_property(function, FunctionPropertyKind::As);
+            } else if let Some(property) = self.parse_snowflake_routine_property()? {
+                function.snowflake_properties.push(property);
             } else {
                 break;
             }
@@ -1609,27 +1613,37 @@ impl Parser {
     fn parse_create_function_returns_null_on_null(
         &mut self,
         mut function: CreateFunction,
-    ) -> CreateFunction {
+    ) -> Result<CreateFunction> {
         self.skip();
         self.skip();
-        self.match_token(TokenType::On);
-        self.match_token(TokenType::Null);
-        self.match_token(TokenType::Input);
+        self.expect_on_null_input()?;
         function.returns_null_on_null_input = Some(true);
-        function = record_function_property(function, FunctionPropertyKind::NullInput);
-        function
+        Ok(record_function_property(
+            function,
+            FunctionPropertyKind::NullInput,
+        ))
     }
 
     fn parse_create_function_called_on_null(
         &mut self,
         mut function: CreateFunction,
-    ) -> CreateFunction {
-        self.match_token(TokenType::On);
-        self.match_token(TokenType::Null);
-        self.match_token(TokenType::Input);
+    ) -> Result<CreateFunction> {
+        self.expect_on_null_input()?;
         function.returns_null_on_null_input = Some(false);
-        function = record_function_property(function, FunctionPropertyKind::NullInput);
-        function
+        Ok(record_function_property(
+            function,
+            FunctionPropertyKind::NullInput,
+        ))
+    }
+
+    /// `ON NULL INPUT`, all three words in a Snowflake parse and any of them elsewhere.
+    fn expect_on_null_input(&mut self) -> Result<()> {
+        let words =
+            [TokenType::On, TokenType::Null, TokenType::Input].map(|word| self.match_token(word));
+        if self.is_snowflake() && words.contains(&false) {
+            return Err(self.parse_error("Expected ON NULL INPUT"));
+        }
+        Ok(())
     }
 
     fn parse_create_function_security(&mut self, mut function: CreateFunction) -> CreateFunction {
@@ -1779,6 +1793,8 @@ impl Parser {
         if self.check(TokenType::String) {
             let tok = self.advance()?;
             function.handler = Some(tok.text.to_string());
+        } else if self.is_snowflake() {
+            return Err(self.parse_error("Expected the handler as a string"));
         }
         function = record_function_property(function, FunctionPropertyKind::Handler);
         Ok(function)

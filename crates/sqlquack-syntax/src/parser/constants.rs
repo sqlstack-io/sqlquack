@@ -929,3 +929,44 @@ pub(crate) const SNOWFLAKE_INTERVAL_LEADING: std::ops::RangeInclusive<u8> = 1..=
 
 /// Snowflake's recorded fractional-second precisions after TO, as in `DAY TO SECOND ( 0 )`.
 pub(crate) const SNOWFLAKE_INTERVAL_FRACTION: std::ops::RangeInclusive<u8> = 0..=9;
+
+/// Snowflake function and procedure properties whose value is a string.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_PROPERTIES: &[&str] = &[
+    "COMMENT",
+    "HANDLER",
+    "LOG_LEVEL",
+    "METRIC_LEVEL",
+    "RUNTIME_VERSION",
+    "TARGET_PATH",
+    "TRACE_LEVEL",
+];
+
+/// Snowflake function and procedure properties whose value is a name.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_PROPERTIES: &[&str] = &[
+    "API_INTEGRATION",
+    "ARTIFACT_REPOSITORY",
+    "COMPRESSION",
+    "ENDPOINT",
+    "ON_BATCH_FAILURE",
+    "REQUEST_TRANSLATOR",
+    "RESPONSE_TRANSLATOR",
+    "SERVICE",
+];
+
+/// Snowflake function and procedure properties whose value is a number.
+pub(crate) const SNOWFLAKE_ROUTINE_NUMBER_PROPERTIES: &[&str] =
+    &["BATCH_TIMEOUT_SECS", "MAX_BATCH_RETRIES", "MAX_BATCH_ROWS"];
+
+/// Snowflake function and procedure properties whose value is a parenthesized string list.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES: &[&str] =
+    &["ARTIFACT_REPOSITORY_PACKAGES", "IMPORTS", "PACKAGES"];
+
+/// Snowflake function and procedure properties whose value is a parenthesized name list.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES: &[&str] =
+    &["CONTEXT_HEADERS", "EXTERNAL_ACCESS_INTEGRATIONS"];
+
+/// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["SECRETS"];
+
+/// Snowflake function and procedure properties whose value is a `( '<key>' = '<value>' , ... )` map.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_MAP_PROPERTIES: &[&str] = &["HEADERS"];

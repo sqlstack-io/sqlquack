@@ -995,3 +995,68 @@ fn given_a_snowflake_task_when_parsing_then_its_properties_follow_the_task_gramm
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_function_or_procedure_when_parsing_then_its_properties_are_typed() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a staged Python handler with IMPORTS and no body (recorded parse)",
+            sql: "CREATE FUNCTION v1 ( \"v1Q\" INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a Java procedure with PACKAGES and no body (recorded parse)",
+            sql: "CREATE PROCEDURE v1 ( v1 INT DEFAULT 1 ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' ;",
+            expected_kind: Some("create_procedure"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a service function (recorded parse)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT SERVICE = \"v1 Q\" ENDPOINT = e1 AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXECUTE AS RESTRICTED CALLER (recorded parse)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT EXECUTE AS RESTRICTED CALLER AS 'm' ;",
+            expected_kind: Some("create_procedure"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CALLED ON INPUT without NULL (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT CALLED ON INPUT AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "HANDLER = with no string (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXECUTE AS with no principal (recorded errno 1003)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT EXECUTE AS AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an argument with a type and no name (recorded errno 1003)",
+            sql: "DEFINE PROCEDURE d1.s1.v1 ( INT ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a returned table column with no type (recorded errno 1003)",
+            sql: "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved procedure name (recorded errno 1003)",
+            sql: "CREATE PROCEDURE SELECT ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;",
+            expected_kind: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

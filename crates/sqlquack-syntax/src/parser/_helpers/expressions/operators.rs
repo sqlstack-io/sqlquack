@@ -277,11 +277,13 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        self.check_snowflake_routine_name()?;
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
+            self.check_snowflake_routine_arguments(&params)?;
             (params, true)
         } else if self.check(TokenType::Var) && !self.check(TokenType::As) {
             let params = self.parse_tsql_procedure_params()?;
@@ -298,7 +300,10 @@ impl Parser {
         let mut with_options: Vec<String> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.match_token(TokenType::Returns) {
+            if let Some(property) = self.parse_snowflake_routine_property()? {
+                with_options.push(property);
+            } else if self.match_token(TokenType::Returns) {
+                self.check_snowflake_table_columns()?;
                 return_type = Some(self.parse_data_type()?);
                 if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
                 } else {
@@ -312,6 +317,10 @@ impl Parser {
                         execute_as = Some("OWNER".to_string());
                     } else if self.match_identifier("SELF") {
                         execute_as = Some("SELF".to_string());
+                    } else if self.match_text_seq(&["RESTRICTED", "CALLER"]) {
+                        execute_as = Some("RESTRICTED CALLER".to_string());
+                    } else if self.is_snowflake() {
+                        return Err(self.parse_error("Expected OWNER, CALLER or RESTRICTED CALLER"));
                     }
                 }
             } else if self.match_token(TokenType::Language) {

@@ -17,6 +17,7 @@ pub(crate) mod snowflake_commands;
 pub(crate) mod snowflake_create_clone;
 pub(crate) mod snowflake_create_from;
 pub(crate) mod snowflake_data_metric;
+pub(crate) mod snowflake_routines;
 pub(crate) mod snowflake_show;
 pub(crate) mod snowflake_statements;
 pub(crate) mod table_options;
