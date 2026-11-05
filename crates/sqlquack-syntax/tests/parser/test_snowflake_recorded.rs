@@ -362,6 +362,18 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a structured ARRAY's element may be NOT NULL (recorded success)",
+            sql: "SELECT CAST ( NULL AS ARRAY ( INT NOT NULL ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a structured MAP's value may be NOT NULL (recorded success)",
+            sql: "SELECT CAST ( NULL AS MAP ( VARCHAR , INT NOT NULL ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {

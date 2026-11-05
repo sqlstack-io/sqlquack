@@ -215,7 +215,7 @@ pub(crate) fn data_type_family(data_type: &DataType) -> Family {
         | DataType::Union { .. }
         | DataType::Geometry { .. }
         | DataType::Geography { .. } => Family::Struct,
-        DataType::Nullable { inner } => data_type_family(inner),
+        DataType::Nullable { inner } | DataType::NotNull { inner } => data_type_family(inner),
         DataType::Custom { name } => type_family(name),
         _ => Family::Unknown,
     }

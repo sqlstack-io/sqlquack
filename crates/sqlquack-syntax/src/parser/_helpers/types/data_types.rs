@@ -471,6 +471,9 @@ impl Parser {
             DataType::Nullable { inner } => {
                 format!("Nullable({})", self.data_type_to_string(inner))
             }
+            DataType::NotNull { inner } => {
+                format!("{} NOT NULL", self.data_type_to_string(inner))
+            }
             DataType::Custom { name } => name.clone(),
             _ => format!("{:?}", dt),
         }

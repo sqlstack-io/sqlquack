@@ -1232,6 +1232,7 @@ impl Parser {
             });
         }
         let mut element = self.parse_data_type()?;
+        element = self.parse_snowflake_not_null(element);
         while let Some(close) = closes.pop() {
             if close == TokenType::Gt {
                 self.expect_gt()?;
@@ -1248,6 +1249,20 @@ impl Parser {
             }
         }
         Ok(element)
+    }
+
+    /// `inner` with a trailing Snowflake `NOT NULL` on a structured type's element or value.
+    fn parse_snowflake_not_null(&mut self, inner: DataType) -> DataType {
+        let not_null =
+            self.is_snowflake() && self.check(TokenType::Not) && self.check_next(TokenType::Null);
+        if !not_null {
+            return inner;
+        }
+        self.skip();
+        self.skip();
+        DataType::NotNull {
+            inner: Box::new(inner),
+        }
     }
 
     #[inline(never)]
@@ -1273,7 +1288,8 @@ impl Parser {
         } else if self.match_token(TokenType::LParen) {
             let key_type = self.parse_data_type()?;
             self.expect_token(TokenType::Comma)?;
-            let value_type = self.parse_data_type()?;
+            let parsed_value = self.parse_data_type()?;
+            let value_type = self.parse_snowflake_not_null(parsed_value);
             self.expect_token(TokenType::RParen)?;
             Ok(DataType::Map {
                 key_type: Box::new(key_type),
