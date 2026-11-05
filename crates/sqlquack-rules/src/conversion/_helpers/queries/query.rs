@@ -673,6 +673,15 @@ pub(crate) fn star(payload: &Value, site: Site<'_>) -> Result<Vec<Projected>, Re
                 format!("EXCLUDE names `{name}`, which the star does not read"),
             ));
         }
+        if read.iter().filter(|column| **column == name).count() > 1 {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!(
+                    "EXCLUDE names `{name}`, which several of the star's sources hold: Snowflake \
+                     was recorded rejecting it as ambiguous"
+                ),
+            ));
+        }
     }
     let mut expanded: Vec<Projected> = Vec::new();
     for relation in relations {

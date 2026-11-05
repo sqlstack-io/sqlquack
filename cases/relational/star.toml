@@ -84,7 +84,8 @@ tags = ["null"]
 
 [[case]]
 id = "star_exclude_join_shared_name"
-description = "An unqualified * EXCLUDE over a join naming a column both sides have."
+compile_error = true
+description = "An unqualified * EXCLUDE over a join naming a column both sides have: Snowflake rejects the name as ambiguous."
 columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
 rows = [
   ["'l'", "1", "'l1'"],
@@ -93,6 +94,20 @@ rows = [
   ["'r'", "NULL", "'rn'"],
 ]
 query = "SELECT * EXCLUDE (k) FROM (SELECT k, v FROM input WHERE side = 'l') l INNER JOIN (SELECT k, v AS w FROM input WHERE side = 'r') r ON l.k = r.k"
+order = "bag"
+tags = ["invalid"]
+
+[[case]]
+id = "qualified_star_exclude_join_shared_name"
+description = "l.* EXCLUDE naming a column both join sides have, beside r.*: only the left side's copy is dropped."
+columns = [{ name = "side", type = "VARCHAR" }, { name = "k", type = "NUMBER(10,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["'l'", "1", "'l1'"],
+  ["'l'", "2", "'l2'"],
+  ["'r'", "1", "'r1'"],
+  ["'r'", "NULL", "'rn'"],
+]
+query = "SELECT l.* EXCLUDE (k), r.* FROM (SELECT k, v FROM input WHERE side = 'l') l INNER JOIN (SELECT k, v AS w FROM input WHERE side = 'r') r ON l.k = r.k"
 order = "bag"
 tags = ["null"]
 
