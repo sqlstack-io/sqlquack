@@ -46,6 +46,9 @@ pub struct ColumnSpec {
     /// Whether the column is held at a narrower NUMBER than its type, so reads cast it up.
     #[serde(skip)]
     pub widened: bool,
+    /// Whether the column holds SYSTEM$TYPEOF text whose plan-dependent storage suffix is still on.
+    #[serde(skip)]
+    pub suffixed: bool,
 }
 
 impl ColumnSpec {
@@ -64,6 +67,7 @@ impl ColumnSpec {
             not_null: false,
             unordered: false,
             widened: false,
+            suffixed: false,
         }
     }
 }

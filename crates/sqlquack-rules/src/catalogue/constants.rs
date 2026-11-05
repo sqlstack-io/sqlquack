@@ -527,7 +527,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SYSTEM_TYPE_NAME,
         constructs: &["fn:SYSTEM$TYPEOF"],
-        conditions: "SYSTEM$TYPEOF(x) only as the subject of REGEXP_REPLACE(..., '\\\\[.*\\\\]$', ''), which removes the storage suffix Snowflake's plan decides: x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked; so do DATEADD of a timestamp below nanoseconds, which Snowflake was recorded widening to TIMESTAMP_NTZ(9), and a BOOLEAN predicate with a NULL operand, which it was recorded typing NULL.",
+        conditions: "SYSTEM$TYPEOF(x) only where REGEXP_REPLACE(..., '\\\\[.*\\\\]$', '') removes the storage suffix Snowflake's plan decides, around the call or around a column of its text: until then the text passes only through projections, CTE and FROM subquery columns, UNION ALL branches and, as a SELECT's sole output, its own ORDER BY key, and refuses anywhere else that reads it. x's Snowflake type as text, NUMBER(p,s), FLOAT, BOOLEAN, DATE, TIME(p), TIMESTAMP_NTZ(p), TIMESTAMP_LTZ(p), TIMESTAMP_TZ(p) or NULL, as recorded; x is typed, not evaluated, so a cast whose conversion is unproven is typed as its target. Text and semi-structured types refuse, as their length and kind are not tracked; so do DATEADD of a timestamp below nanoseconds, which Snowflake was recorded widening to TIMESTAMP_NTZ(9), and a BOOLEAN predicate other than ILIKE with a NULL operand, which it was recorded typing NULL for ILIKE.",
         failures: &[],
     },
     RuleSpec {

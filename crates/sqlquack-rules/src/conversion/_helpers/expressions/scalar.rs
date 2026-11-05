@@ -50,7 +50,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, IFF_NAME, OBJECT_CONSTANT_KIND, RLIKE_PAIR,
-    VARIANT_HELD_UNREAD,
+    SYSTEM_TYPEOF_NAME, TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
 };
 
 /// One scalar expression, located; VARIANT-held values refused, collected refusals as placeholders.
@@ -72,8 +72,11 @@ fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusa
         && !(site.scope.grouped
             && site.placement.aggregates
             && matches!(node_kind(node), Some(("column", _))));
-    let inner = site.order_free(free && keeps_order(node));
-    let emitted = converted_checked(node, inner, held).map(|emitted| {
+    let suffixed = site.placement.suffixed;
+    let inner = site
+        .order_free(free && keeps_order(node))
+        .suffix_free(suffixed && keeps_suffix(node));
+    let emitted = converted_checked(node, inner, (held, suffixed)).map(|emitted| {
         let (untainted, sourced) = typed.since(reads);
         Emitted {
             untainted,
@@ -98,6 +101,11 @@ fn keeps_order(node: &Value) -> bool {
     matches!(node_kind(node), Some(("column", _))) || passes_order(node)
 }
 
+/// Whether `node` passes SYSTEM$TYPEOF text up whole: a column read or parentheses.
+fn keeps_suffix(node: &Value) -> bool {
+    matches!(node_kind(node), Some(("column" | "paren", _)))
+}
+
 /// Whether `node` chooses among values without reading them: parentheses, IFF and searched CASE.
 fn passes_order(node: &Value) -> bool {
     match node_kind(node) {
@@ -108,14 +116,31 @@ fn passes_order(node: &Value) -> bool {
     }
 }
 
-fn converted_checked(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusal> {
+/// `node` converted, refusing a VARIANT-held value unless `held` and suffixed SYSTEM$TYPEOF text
+/// unless `suffixed`.
+fn converted_checked(
+    node: &Value,
+    site: Site<'_>,
+    (held, suffixed): (bool, bool),
+) -> Result<Emitted, Refusal> {
     let checked = |node: &Value| {
-        located(node, site).and_then(|emitted| match held || !emitted.is_variant_held() {
-            true => Ok(emitted),
-            false => Err(site.context.locator.placed(
-                outside_conditions(held_construct(node), VARIANT_HELD_UNREAD.to_owned()),
-                node,
-            )),
+        located(node, site).and_then(|emitted| {
+            if !held && emitted.is_variant_held() {
+                return Err(site.context.locator.placed(
+                    outside_conditions(held_construct(node), VARIANT_HELD_UNREAD.to_owned()),
+                    node,
+                ));
+            }
+            match suffixed || !emitted.suffixed {
+                true => Ok(emitted),
+                false => Err(site.context.locator.placed(
+                    outside_conditions(
+                        function_construct(SYSTEM_TYPEOF_NAME),
+                        TYPE_SUFFIX_UNREMOVED.to_owned(),
+                    ),
+                    node,
+                )),
+            }
         })
     };
     if !collecting() {

@@ -10,6 +10,9 @@ pub(crate) struct Placement {
     pub(crate) filter: bool,
     /// Whether an unordered array may pass up unchecked, as only order-free readers take it.
     pub(crate) order_free: bool,
+    /// Whether SYSTEM$TYPEOF text with its storage suffix on may pass up, as only readers that
+    /// keep it whole take it.
+    pub(crate) suffixed: bool,
 }
 
 impl Placement {
@@ -18,24 +21,28 @@ impl Placement {
         windows: false,
         filter: false,
         order_free: false,
+        suffixed: false,
     };
     pub(crate) const FILTER: Self = Self {
         aggregates: false,
         windows: false,
         filter: true,
         order_free: false,
+        suffixed: false,
     };
     pub(crate) const PROJECTION: Self = Self {
         aggregates: true,
         windows: true,
         filter: false,
         order_free: false,
+        suffixed: false,
     };
     pub(crate) const GROUPED: Self = Self {
         aggregates: true,
         windows: false,
         filter: false,
         order_free: false,
+        suffixed: false,
     };
 }
 
@@ -58,6 +65,17 @@ impl<'a> Site<'a> {
         Self {
             placement: Placement {
                 order_free: free,
+                ..self.placement
+            },
+            ..self
+        }
+    }
+
+    /// The same site where SYSTEM$TYPEOF text with its suffix on may pass up, or with `free` false not.
+    pub(crate) fn suffix_free(self, free: bool) -> Self {
+        Self {
+            placement: Placement {
+                suffixed: free,
                 ..self.placement
             },
             ..self
