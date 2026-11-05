@@ -265,6 +265,9 @@ impl Parser {
 
         let or_replace = self.match_keywords(&[TokenType::Or, TokenType::Replace]);
         let or_alter = !or_replace && self.match_text_seq(&["OR", "ALTER"]);
+        if self.is_snowflake() && self.check(TokenType::Or) {
+            return Err(self.parse_error("Expected REPLACE or ALTER after CREATE OR"));
+        }
 
         let hana_modifier: Option<String> = None;
         let temporary = hana_modifier
@@ -428,6 +431,14 @@ impl Parser {
             return Ok(Expression::Raw(Raw { sql: prefix }));
         }
         {
+            if self.is_snowflake()
+                && self
+                    .tokens
+                    .get(self.current + 1)
+                    .is_some_and(|t| t.text.eq_ignore_ascii_case("CLONE"))
+            {
+                return Err(self.parse_error("Expected an object kind and name before CLONE"));
+            }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 self.skip();

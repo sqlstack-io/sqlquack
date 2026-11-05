@@ -1224,6 +1224,24 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "CREATE TASK clones without an AS body (recorded success)",
+            sql: "CREATE OR REPLACE TASK v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a clone needs a kind and a name (recorded errno 1003)",
+            sql: "CREATE v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR needs REPLACE or ALTER (recorded errno 1003)",
+            sql: "CREATE OR TASK v1 CLONE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -1795,6 +1813,18 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             sql: "USE SECONDARY ROLES v1 , \"v2\"",
             pointer: "/0/use/roles/1/quoted",
             expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a cloned task keeps its source",
+            sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
+            pointer: "/0/create_task/clone_source/schema/name",
+            expected_value: json!("db"),
+        },
+        ProjectionTestCase {
+            description: "a cloned task keeps its name's quoting",
+            sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
+            pointer: "/0/create_task/name",
+            expected_value: json!("\"v1 Q\""),
         },
     ];
 

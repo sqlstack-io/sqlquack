@@ -1172,6 +1172,35 @@ impl Parser {
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
 
+        if self.is_snowflake() {
+            let start = self.current;
+            let target = self.parse_object_name();
+            if let (Ok(target), true) = (target, self.check_identifier("CLONE")) {
+                let name = [target.catalog, target.schema, Some(target.name)]
+                    .into_iter()
+                    .flatten()
+                    .map(|part| match part.quoted {
+                        true => format!("\"{}\"", part.name.replace('"', "\"\"")),
+                        false => part.name,
+                    })
+                    .collect::<Vec<_>>()
+                    .join(".");
+                self.skip();
+                let clone_source = self.parse_object_name()?;
+                return Ok(Expression::CreateTask(Box::new(
+                    crate::expressions::statements::models::CreateTask {
+                        or_replace,
+                        if_not_exists,
+                        name,
+                        properties: String::new(),
+                        body: None,
+                        clone_source: Some(clone_source),
+                    },
+                )));
+            }
+            self.current = start;
+        }
+
         let mut name = String::new();
         if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
             name.push_str(&self.advance_text()?);
@@ -1202,7 +1231,8 @@ impl Parser {
                 if_not_exists,
                 name,
                 properties,
-                body,
+                body: Some(body),
+                clone_source: None,
             },
         )))
     }
