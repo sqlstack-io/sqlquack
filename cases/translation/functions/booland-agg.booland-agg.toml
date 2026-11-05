@@ -36,9 +36,9 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t003_float"
-description = "A small non-zero FLOAT. Catches: the value rounded to 0 first (as the scalar BOOL functions do)"
-columns = [{ name = "x", type = "FLOAT" }]
+id = "t003_decimal"
+description = "A small non-zero decimal. Catches: the value rounded to 0 first (as the scalar BOOL functions do)"
+columns = [{ name = "x", type = "NUMBER(10,1)" }]
 rows = [
   ["0.2"],
   ["1"],
@@ -72,3 +72,16 @@ rows = [
 query = "SELECT BOOLAND_AGG(b) AS r FROM input WHERE b IS NULL"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "t006_float"
+compile_error = true
+description = "A FLOAT, which Snowflake refuses at compile although the page says numeric values convert. Catches: the FLOAT converted instead of the error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.2"],
+  ["1"],
+]
+query = "SELECT BOOLAND_AGG(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]

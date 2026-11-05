@@ -59,7 +59,8 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_distinct"
-description = "DISTINCT on a group with repeated 4s and 5s. Catches: DISTINCT ignored"
+compile_error = true
+description = "DISTINCT on a group with repeated 4s and 5s. Snowflake refuses VARIANCE(DISTINCT) as an unsupported feature. Catches: a variance returned instead of the error"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'p'", "2"],

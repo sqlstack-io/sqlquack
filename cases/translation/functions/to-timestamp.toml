@@ -63,12 +63,13 @@ tags = ["null"]
 
 [[case]]
 id = "t006_null_scale"
-description = "NULL scale. The constant argument is a literal per call, as Snowflake requires. Catches: NULL read as 0"
+compile_error = true
+description = "A literal NULL scale. Snowflake needs an integer constant there and refuses NULL. Catches: NULL read as 0 instead of the error"
 columns = [{ name = "k", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],
 ]
-query = "SELECT TO_TIMESTAMP(1700000000123, NULL) AS r1, TO_TIMESTAMP(1700000000123, 3) AS r2 FROM input ORDER BY ordinal"
+query = "SELECT TO_TIMESTAMP(1700000000123, NULL) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
 

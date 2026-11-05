@@ -4,14 +4,14 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "TO_TIME of strings with fractional seconds. Catches: fractional seconds dropped or rounded"
+description = "TO_TIME of strings with fractional seconds. The result is formatted with TO_VARCHAR(..., 'HH24:MI:SS.FF9') because the connector returns TIME in microseconds and the session TIME_OUTPUT_FORMAT has no fraction. Catches: fractional seconds dropped or rounded"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'13:14:15.123'"],
   ["'00:00:00'"],
   ["'23:59:59.999999999'"],
 ]
-query = "SELECT TO_TIME(a) AS r FROM input ORDER BY ordinal"
+query = "SELECT TO_VARCHAR(TO_TIME(a), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
