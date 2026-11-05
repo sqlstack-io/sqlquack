@@ -8981,3 +8981,67 @@ cases = [
 ]
 runs = []
 probes = []
+
+# D149b (auditor known-gaps-cd8d4f4f): ALTER ORGANIZATION USER SET negatives the capture guard (f9a86b9)
+# holds because they name no target it can check; the form stays unverified in the denominator.
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.set.o004"
+form = "sf.security_admin.alter-organization-user.set"
+construct = "omit <name>: ALTER ORGANIZATION USER SET COMMENT = 'm' ;"
+reason = "negatives held by the capture guard (D149): no checkable target"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.set.kc92ed983931f", sql_sha256 = "c92ed983931fbb0bd5c03c987b2cacb9254d701e46a1a83ca6337264e56a441d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.set.o006"
+form = "sf.security_admin.alter-organization-user.set"
+construct = "a string literal in place of <name>: ALTER ORGANIZATION USER 'v1' SET COMMENT = 'm' ;"
+reason = "negatives held by the capture guard (D149): no checkable target"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.set.k24e5e5ec234a", sql_sha256 = "24e5e5ec234a9f324b9eb85813e8f64a986bd51ddb7edb5708204332ecb04940" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.set.o044"
+form = "sf.security_admin.alter-organization-user.set"
+construct = "the form without its required USER: ALTER ORGANIZATION v1 SET COMMENT = 'm' ;"
+reason = "negatives held by the capture guard (D149): no checkable target"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.set.k4614b5f6b6ce", sql_sha256 = "4614b5f6b6cea83bd35a23fa777f952df2e4bd5ce9597a350eaf56f754cec9be" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.set.o045"
+form = "sf.security_admin.alter-organization-user.set"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER ORGANIZATION USER IF v1 SET COMMENT = 'm' ;"
+reason = "negatives held by the capture guard (D149): no checkable target"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.set.k3a9c9a0dec99", sql_sha256 = "3a9c9a0dec99d4c6f47661dd6b2d0dae1594c779bfa3dd84b5e6a41aa306b3bf" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.security_admin.alter-organization-user.set.o050"
+form = "sf.security_admin.alter-organization-user.set"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER ORGANIZATION USER SELECT SET COMMENT = 'm' ; | ALTER ORGANIZATION USER \"SELECT\" SET COMMENT = 'm' ;"
+reason = "negatives held by the capture guard (D149): no checkable target"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.security_admin.alter-organization-user.set.k4186c9a9f9ae", sql_sha256 = "4186c9a9f9ae8ccbb6fda0dbda04f0304273897b13114fc52f599e2d8b416b77" },
+  { case_id = "sf.security_admin.alter-organization-user.set.kf25689c93d98", sql_sha256 = "f25689c93d98c594a25dac07a3c8d43f6afb65b1ce1f9a08fb5f6dee0ae67d8e" },
+]
+runs = []
+probes = []
+
