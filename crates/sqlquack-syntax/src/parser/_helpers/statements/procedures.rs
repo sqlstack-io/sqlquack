@@ -50,6 +50,18 @@ impl Parser {
         Ok(Expression::CreateProcedure(Box::new(procedure)))
     }
 
+    /// A CTE body: a statement, or after an anonymous procedure also an expression, as `v1 AS ( 1 )`.
+    pub(crate) fn parse_cte_body(&mut self, after_procedure: bool) -> Result<Expression> {
+        if after_procedure
+            && !self.check(TokenType::Select)
+            && !self.check(TokenType::With)
+            && !self.check(TokenType::LParen)
+        {
+            return self.parse_expression();
+        }
+        self.parse_statement()
+    }
+
     /// `RETURNS { <type> [[NOT] NULL] | TABLE ( ... ) }` after the parameters.
     pub(crate) fn parse_procedure_returns(
         &mut self,
@@ -67,7 +79,7 @@ impl Parser {
         Ok((Some(data_type), None))
     }
 
-    /// `( [<name> <type> [DEFAULT <expr>]] [, ...] )` with no empty or trailing entries.
+    /// `( [<name> [<type> [DEFAULT <expr>]]] [, ...] )` with no empty or trailing entries.
     pub(crate) fn parse_anonymous_procedure_parameters(
         &mut self,
     ) -> Result<Vec<FunctionParameter>> {
@@ -78,7 +90,7 @@ impl Parser {
                 self.expect_token(TokenType::Comma)?;
             }
             let name = self.expect_procedure_part_name()?;
-            let data_type = self.parse_data_type()?;
+            let data_type = self.parse_procedure_part_type()?;
             let default = if self.match_token(TokenType::Default) {
                 Some(self.parse_expression()?)
             } else {
@@ -96,7 +108,7 @@ impl Parser {
         Ok(parameters)
     }
 
-    /// `( [<column> <type>] [, ...] )` after `RETURNS TABLE`.
+    /// `( [<column> [<type>]] [, ...] )` after `RETURNS TABLE`.
     fn parse_procedure_table_columns(&mut self) -> Result<Vec<StructField>> {
         self.expect_token(TokenType::LParen)?;
         let mut columns: Vec<StructField> = Vec::new();
@@ -105,10 +117,33 @@ impl Parser {
                 self.expect_token(TokenType::Comma)?;
             }
             let name = self.expect_procedure_part_name()?;
-            columns.push(StructField::new(name.name, self.parse_data_type()?));
+            columns.push(StructField::new(
+                name.name,
+                self.parse_procedure_part_type()?,
+            ));
         }
         self.expect_token(TokenType::RParen)?;
         Ok(columns)
+    }
+
+    /// A parameter or column type, unknown when the name stands alone, as Snowflake parses `( v1 )`.
+    fn parse_procedure_part_type(&mut self) -> Result<DataType> {
+        if self.check(TokenType::Comma) || self.check(TokenType::RParen) {
+            return Ok(DataType::Unknown);
+        }
+        self.parse_data_type()
+    }
+
+    /// A handler option value: a string, or a name that is quoted or not a reserved word.
+    fn parse_procedure_option_value(&mut self) -> Result<String> {
+        if self.check(TokenType::String) {
+            return Ok(format!("'{}'", self.expect_string()?));
+        }
+        let name = self.expect_procedure_part_name()?;
+        Ok(match name.quoted {
+            true => format!("\"{}\"", name.name),
+            false => name.name,
+        })
     }
 
     /// A parameter or column name: an identifier, quoted or not a reserved word.
@@ -136,7 +171,7 @@ impl Parser {
             {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
-                format!("{key} = '{}'", self.expect_string()?)
+                format!("{key} = {}", self.parse_procedure_option_value()?)
             } else if self.match_identifier("PACKAGES") || self.match_identifier("IMPORTS") {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
@@ -169,7 +204,7 @@ impl Parser {
         }
     }
 
-    /// `( '<value>' [, ...] )`, possibly empty.
+    /// `( <value> [, ...] )`, possibly empty, where each value is a string or a name.
     fn parse_procedure_string_list(&mut self) -> Result<Vec<String>> {
         self.expect_token(TokenType::LParen)?;
         let mut values: Vec<String> = Vec::new();
@@ -177,7 +212,7 @@ impl Parser {
             if !values.is_empty() {
                 self.expect_token(TokenType::Comma)?;
             }
-            values.push(format!("'{}'", self.expect_string()?));
+            values.push(self.parse_procedure_option_value()?);
         }
         self.expect_token(TokenType::RParen)?;
         Ok(values)
