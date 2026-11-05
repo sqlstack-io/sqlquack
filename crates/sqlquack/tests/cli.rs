@@ -14,6 +14,8 @@ mod test_divergence;
 mod test_error_check;
 #[path = "cli/test_evidence_commands.rs"]
 mod test_evidence_commands;
+#[path = "cli/test_explain.rs"]
+mod test_explain;
 #[path = "cli/test_function.rs"]
 mod test_function;
 #[path = "cli/test_review.rs"]
