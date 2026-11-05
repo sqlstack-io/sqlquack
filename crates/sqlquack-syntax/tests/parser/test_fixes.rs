@@ -2150,3 +2150,58 @@ fn given_a_snowflake_grant_of_a_role_when_parsing_then_its_role_and_grantee_kind
         assert_eq!(kind(&parsed[0]), expected, "Snowflake parses {sql}");
     }
 }
+
+#[test]
+fn given_a_snowflake_show_of_grants_or_policies_when_parsing_then_its_clauses_are_checked() {
+    let rejected = [
+        ("FUTURE without GRANTS", "SHOW FUTURE IN DATABASE v1 ;"),
+        ("FUTURE GRANTS in a bare name", "SHOW FUTURE GRANTS IN v1 ;"),
+        ("GRANTS in a database", "SHOW GRANTS IN DATABASE v1 ;"),
+        ("ON with a string kind", "SHOW GRANTS ON 'TABLE' v1 ;"),
+        ("ON with no name", "SHOW GRANTS ON TABLE ;"),
+        ("OF with no grantee", "SHOW GRANTS OF ;"),
+        ("ON with no kind", "SHOW FEATURE POLICIES ON v1 ;"),
+        (
+            "ACCOUNT without ON or IN",
+            "SHOW MAINTENANCE POLICIES ACCOUNT ;",
+        ),
+        ("RULES without NETWORK", "SHOW RULES ;"),
+        ("USER with no kind", "SHOW USER ;"),
+        ("FOR without USER", "SHOW USER KEY PAIRS FOR v1 ;"),
+        (
+            "a string consumer",
+            "SHOW USER PATS FOR EXTERNAL CONSUMER 'v1' ;",
+        ),
+        (
+            "an incomplete routing table",
+            "SHOW EVENT ROUTING TABLE ON ORGANIZATION FOR ALL LISTINGS ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "SHOW GRANTS ;",
+        "SHOW GRANTS ON ACCOUNT LIMIT 1 ;",
+        "SHOW GRANTS ON EXTERNAL TABLE \"v1 Q\" ;",
+        "SHOW GRANTS TO SERVICE ROLE v1!\"v1 Q\" ;",
+        "SHOW GRANTS TO \"SELECT\" ROLE v1!v1 ;",
+        "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
+        "SHOW GRANTS OF APPLICATION ROLE v1 LIMIT 1 ;",
+        "SHOW GRANTS IN DCM PROJECT v1 ;",
+        "SHOW FUTURE GRANTS TO DATABASE ROLE \"v1 Q\" ;",
+        "SHOW FEATURE POLICIES ON DATABASE \"SELECT\" ;",
+        "SHOW MAINTENANCE POLICIES ON ACCOUNT ;",
+        "SHOW MULTI PARTY APPROVAL POLICIES ON ACCOUNT ;",
+        "SHOW USER PROGRAMMATIC ACCESS TOKENS FOR EXTERNAL CONSUMER \"v1 Q\" ;",
+        "SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS FOR USER \"SELECT\" ;",
+        "SHOW EVENT ROUTING TABLE ON ORGANIZATION FOR ALL APPLICATION LISTINGS ;",
+    ];
+    for sql in kept {
+        let parsed = statements(sql, Dialect::Snowflake, CallMode::Faithful);
+        assert_eq!(kind(&parsed[0]), "show", "Snowflake parses {sql}");
+    }
+}

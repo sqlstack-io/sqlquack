@@ -576,6 +576,23 @@ pub(crate) const SHARED_DESCRIBE_KINDS: &[&str] = &["TABLE", "VIEW", "FUNCTION",
 
 /// Snowflake SHOW kinds, each before any kind it prefixes.
 pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
+    &[
+        "EVENT",
+        "ROUTING",
+        "TABLE",
+        "ON",
+        "ORGANIZATION",
+        "FOR",
+        "ALL",
+        "APPLICATION",
+        "LISTINGS",
+    ],
+    &["USER", "WORKLOAD", "IDENTITY", "AUTHENTICATION", "METHODS"],
+    &["USER", "PROGRAMMATIC", "ACCESS", "TOKENS"],
+    &["USER", "KEY", "PAIRS"],
+    &["USER", "PATS"],
+    &["FEATURE", "POLICIES"],
+    &["MAINTENANCE", "POLICIES"],
     &["COMPUTE", "POOL", "INSTANCE", "FAMILIES"],
     &["DELEGATED", "AUTHORIZATIONS", "BY", "USER"],
     &["MULTI", "PARTY", "APPROVAL", "POLICIES"],
@@ -762,16 +779,11 @@ pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["PRIMARY", "KEYS"],
     &["UNIQUE", "KEYS"],
     &["AVAILABLE", "LISTINGS"],
-    &["EVENT", "ROUTING", "TABLE", "ON"],
-    &["FEATURE", "POLICIES"],
-    &["FUTURE"],
-    &["GRANTS"],
     &["JOB"],
-    &["MAINTENANCE"],
     &["PARAMETERS"],
-    &["RULES"],
     &["SERVICES"],
-    &["USER"],
+    &["USER", "FUNCTIONS"],
+    &["USER", "PROCEDURES"],
 ];
 
 /// The containers a Snowflake SHOW ... IN names, each before any container it prefixes.
