@@ -1216,6 +1216,18 @@ footer a {
 	font-size: 12px;
 }
 
+.pg-caption {
+	padding: 8px 10px;
+	border-left: 2px solid var(--primary);
+	background: var(--accent-soft);
+	color: var(--muted-foreground);
+	font-size: 13px;
+}
+
+.pg-caption[hidden] {
+	display: none;
+}
+
 .pg-note label {
 	margin-right: 16px;
 	cursor: pointer;
@@ -1269,8 +1281,16 @@ footer a {
 
 .pg-stage .pg-sub {
 	margin-left: auto;
-	color: var(--faint);
+	color: var(--muted-foreground);
 	font-size: 12px;
+}
+
+/* A note under a stage's body, inside the panel, in the same grey as the stage subtitles. */
+.pg-stage .pg-stage-note {
+	margin: 0;
+	padding: 0 16px 12px;
+	color: var(--muted-foreground);
+	line-height: 1.5;
 }
 
 .pg-status {
@@ -1293,6 +1313,26 @@ footer a {
 .pg-status.fail {
 	background: rgba(244, 112, 137, 0.14);
 	color: var(--error);
+}
+
+.pg-status.refused {
+	background: rgba(226, 165, 74, 0.16);
+	color: var(--warning);
+}
+
+.pg-verdict {
+	margin: 0;
+	padding: 10px 14px;
+	border: 1px solid rgba(226, 165, 74, 0.35);
+	border-left: 3px solid var(--warning);
+	border-radius: var(--radius);
+	background: rgba(226, 165, 74, 0.08);
+	color: var(--foreground);
+	font-size: 13px;
+}
+
+.pg-verdict[hidden] {
+	display: none;
 }
 
 .terminal .warn {

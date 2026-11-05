@@ -423,6 +423,7 @@ pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["API", "INTEGRATION"],
     &["APPLICATION", "PACKAGE"],
     &["APPLICATION", "SERVICE"],
+    &["APPLICATION", "ROLE"],
     &["APPLICATION"],
     &["ARTIFACT", "REPOSITORY"],
     &["AUTHENTICATION", "POLICY"],
@@ -470,11 +471,15 @@ pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["OPENFLOW", "DEPLOYMENT"],
     &["OPENFLOW", "RUNTIME"],
     &["ORGANIZATION", "USER", "GROUP"],
+    &["ORGANIZATION", "USER"],
+    &["ORGANIZATION", "PROFILE"],
+    &["ORGANIZATION"],
     &["PACKAGES", "POLICY"],
     &["PASSWORD", "POLICY"],
     &["PIPE"],
     &["POSTGRES", "INSTANCE"],
     &["PRIVACY", "POLICY"],
+    &["PROFILE"],
     &["PROJECTION", "POLICY"],
     &["REPLICATION", "GROUP"],
     &["RESOURCE", "MONITOR"],
@@ -488,6 +493,7 @@ pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["SERVICE"],
     &["SESSION", "POLICY"],
     &["SHARE"],
+    &["SNAPSHOT", "POLICY"],
     &["SNAPSHOT", "SET"],
     &["SNAPSHOT"],
     &["STAGE"],
@@ -547,6 +553,8 @@ pub(crate) const SNOWFLAKE_DESCRIBE_KINDS: &[&[&str]] = &[
     &["OPENFLOW", "DEPLOYMENT"],
     &["OPENFLOW", "RUNTIME"],
     &["ORGANIZATION", "PROFILE"],
+    &["ORGANIZATION"],
+    &["PROFILE"],
     &["PIPE"],
     &["POSTGRES", "INSTANCE"],
     &["RESTRICTED", "SESSION", "SCOPE"],
@@ -624,6 +632,8 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["DELEGATED", "AUTHORIZATIONS", "BY", "USER"],
     &["MULTI", "PARTY", "APPROVAL", "POLICIES"],
     &["OPENFLOW", "DATA", "PLANE", "INTEGRATIONS"],
+    &["USER", "FUNCTIONS"],
+    &["USER", "PROCEDURES"],
     &["AVAILABLE", "ORGANIZATION", "PROFILES"],
     &["CORTEX", "BASE", "MODELS"],
     &["DATA", "METRIC", "FUNCTIONS"],
@@ -799,7 +809,6 @@ pub(crate) const SNOWFLAKE_UNDROP_KINDS: &[&str] = &[
 
 /// SHOW kinds the shared SHOW still reads for Snowflake, by their leading words.
 pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
-    &["CALLER"],
     &["CORTEX", "SEARCH", "SERVICES"],
     &["EXPORTED", "KEYS"],
     &["IMPORTED", "KEYS"],
@@ -809,8 +818,6 @@ pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["JOB"],
     &["PARAMETERS"],
     &["SERVICES"],
-    &["USER", "FUNCTIONS"],
-    &["USER", "PROCEDURES"],
 ];
 
 /// The containers a Snowflake SHOW ... IN names, each before any container it prefixes.
@@ -828,6 +835,7 @@ pub(crate) const SNOWFLAKE_SHOW_CONTAINERS: &[&[&str]] = &[
     &["IMAGE", "REPOSITORY"],
     &["OPENFLOW", "CONNECTOR"],
     &["ORGANIZATION", "PROFILE"],
+    &["ORGANIZATION"],
     &["REPLICATION", "GROUP"],
     &["SNAPSHOT", "SET"],
     &["ACCOUNT"],
@@ -872,10 +880,10 @@ pub(crate) const SNOWFLAKE_SHOW_EXTRA_CONTAINERS: &[(&str, &[&str])] = &[
 
 /// Snowflake SHOW kinds that need IN and one of these containers; "" is a bare name.
 pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
-    ("APPLICATION ROLES", &["APPLICATION"]),
+    ("APPLICATION ROLES", &["APPLICATION", ""]),
     ("AVAILABLE OFFERS", &["LISTING"]),
     ("BACKUPS", &["BACKUP SET"]),
-    ("DATABASE ROLES", &["DATABASE"]),
+    ("DATABASE ROLES", &["DATABASE", ""]),
     ("DEPLOYMENTS", &["DCM PROJECT"]),
     ("ENDPOINTS", &["SERVICE"]),
     ("ENTITIES", &["DCM PROJECT"]),
@@ -911,6 +919,7 @@ pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
             "MODEL",
             "OPENFLOW CONNECTOR",
             "ORGANIZATION PROFILE",
+            "ORGANIZATION",
         ],
     ),
 ];

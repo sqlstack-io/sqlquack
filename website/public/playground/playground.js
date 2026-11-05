@@ -1,6 +1,7 @@
 // The SQLQuack playground: each edit runs the engine (SQLQuack compiled to WebAssembly, in a
 // worker) and shows its stages; translated SQL runs in DuckDB-WASM.
 
+import { CAPTIONS, EXAMPLES, ROWS, SCHEMA } from './examples.js';
 import { escape, rendered, underlined } from './spans.js';
 
 // The engine's worker; `engine(op, fields)` resolves with its reply.
@@ -23,49 +24,6 @@ function engine(op, fields) {
 }
 
 
-const SCHEMA = `{
-  "ORDERS": [
-    ["ORDER_ID", "NUMBER(38,0)"],
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["STATUS", "VARCHAR"],
-    ["TOTAL", "NUMBER(12,2)"],
-    ["ORDERED_AT", "TIMESTAMP_NTZ"]
-  ]
-}`;
-
-const ROWS = `INSERT INTO "ORDERS" VALUES
-  (1, 10, 'shipped', 120.50, TIMESTAMP '2026-10-01 09:30:00'),
-  (2, 10, 'shipped', 80.00, TIMESTAMP '2026-10-03 14:00:00'),
-  (3, 11, 'pending', 45.25, TIMESTAMP '2026-10-04 11:15:00'),
-  (4, 12, 'shipped', 310.00, TIMESTAMP '2026-10-05 16:45:00'),
-  (5, 12, NULL, 12.99, TIMESTAMP '2026-10-06 08:05:00');`;
-
-const EXAMPLES = {
-	valid: `SELECT customer_id,
-       SUM(total) AS revenue,
-       IFF(COUNT(*) > 1, 'repeat', 'new') AS segment
-FROM orders
-WHERE status = 'shipped'
-GROUP BY customer_id
-ORDER BY revenue DESC`,
-	decimal: `SELECT order_id, total / 3 AS third
-FROM orders
-ORDER BY order_id`,
-	syntax: `SELECT customer_id, SUM(total) AS revenue
-FROM orders
-WHERE status = 'shipped' AND
-GROUP BY customer_id`,
-	rejected: `SELECT customer_id, SUM(total) AS revenue
-FROM orders
-GROUP BY customer_id
-QUALIFY revenue > 100`,
-	unknown: `SELECT order_id, discount
-FROM orders`,
-	refused: `SELECT order_id,
-       HASH(customer_id) AS bucket
-FROM orders`,
-};
-
 const $ = (selector) => document.querySelector(selector);
 const sqlBox = $('#pg-sql');
 const schemaBox = $('#pg-schema');
@@ -76,14 +34,17 @@ const strictBox = $('#pg-strict');
 const utcBox = $('#pg-utc');
 const settings = () =>
 	JSON.stringify({ policy: policyBox.value, session: sessionBox.value, strict: strictBox.checked, utc_session: utcBox.checked });
+const caption = $('#pg-caption');
+const verdict = $('#pg-verdict');
 const marks = $('#pg-marks');
 const tip = $('#pg-tip');
 
-function setStage(id, status, body, sub) {
+// `label` overrides the pill's text, which is otherwise the status.
+function setStage(id, status, body, sub, label) {
 	const stage = $(`#stage-${id}`);
 	const pill = stage.querySelector('.pg-status');
 	pill.className = `pg-status ${status}`;
-	pill.textContent = status;
+	pill.textContent = label ?? status;
 	stage.querySelector('.pg-body').innerHTML = body ?? '';
 	if (sub !== undefined) stage.querySelector('.pg-sub').textContent = sub;
 }
@@ -98,6 +59,11 @@ function underline(chars, items) {
 	marks.scrollTop = sqlBox.scrollTop;
 }
 
+function showCaption(example) {
+	caption.textContent = CAPTIONS[example] ?? '';
+	caption.hidden = !CAPTIONS[example];
+}
+
 let latest = null;
 let current = 0;
 
@@ -110,6 +76,7 @@ async function run() {
 	const chars = Array.from(sql);
 	const report = JSON.parse(reply.result);
 	latest = null;
+	verdict.hidden = true;
 	if (report.schema_error || report.settings_error) {
 		underline(chars, []);
 		const what = report.schema_error ? 'The schema is not valid' : 'The policy or session is not valid';
@@ -151,13 +118,23 @@ async function run() {
 	);
 
 	const translate = report.translate;
-	add(translate.diagnostics, 'error');
+	// Valid SQL that SQLQuack declines to translate is not an error in the SQL: shown in amber, not red.
+	const refused = parse.status === 'pass' && checks.status === 'pass' && translate.status === 'fail';
+	const tone = (html) => (refused ? html.replace('class="bad"', 'class="warn"') : html);
+	for (const diagnostic of translate.diagnostics ?? [])
+		spans.push({ kind: refused ? 'warn' : 'error', span: diagnostic.span, text: tone(rendered(diagnostic, chars)) });
 	let body = '';
 	if (translate.status !== 'skipped') {
 		body = (translate.statements ?? []).map((s) => terminal(escape(s.sql))).join('');
-		body += (translate.diagnostics ?? []).map((d) => terminal(rendered(d, chars))).join('');
+		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
-	setStage('translate', translate.status, body, translate.profile ? `policy: ${translate.profile}` : '');
+	const policy = translate.profile ? `policy: ${translate.profile}` : '';
+	if (refused) {
+		const reason = translate.diagnostics?.[0]?.message ?? 'no supported conversion';
+		verdict.innerHTML = `<strong>Valid Snowflake SQL.</strong> Not translated to DuckDB: ${escape(reason)}`;
+		verdict.hidden = false;
+		setStage('translate', 'refused', body, policy, 'not translated');
+	} else setStage('translate', translate.status, body, policy);
 	underline(chars, spans);
 
 	const statements = translate.statements ?? [];
@@ -167,7 +144,7 @@ async function run() {
 		else setStage('run', 'ready', '<button class="button primary" type="button" id="pg-run">Run in DuckDB-WASM</button>', 'loads DuckDB-WASM (about 8 MB compressed)');
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
-	} else setStage('run', 'skipped', '');
+	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
 }
 
 // DuckDB-WASM, loaded on first use.
@@ -228,7 +205,10 @@ const schedule = () => {
 document.addEventListener('click', (event) => {
 	if (event.target.id === 'pg-run') execute();
 });
-sqlBox.addEventListener('input', schedule);
+sqlBox.addEventListener('input', () => {
+	showCaption(null);
+	schedule();
+});
 schemaBox.addEventListener('input', schedule);
 for (const box of [policyBox, sessionBox, strictBox, utcBox]) box.addEventListener('input', schedule);
 $('#pg-load-policy').addEventListener('click', async () => {
@@ -240,6 +220,7 @@ sqlBox.addEventListener('scroll', () => (marks.scrollTop = sqlBox.scrollTop));
 $('#pg-example').addEventListener('change', (event) => {
 	if (!EXAMPLES[event.target.value]) return;
 	sqlBox.value = EXAMPLES[event.target.value];
+	showCaption(event.target.value);
 	event.target.value = '';
 	run();
 });
@@ -263,6 +244,7 @@ sqlBox.addEventListener('mouseleave', () => (tip.hidden = true));
 
 const params = new URLSearchParams(location.search);
 sqlBox.value = params.get('sql') ?? EXAMPLES[params.get('example')] ?? EXAMPLES.valid;
+if (!params.get('sql')) showCaption(params.get('example'));
 schemaBox.value = SCHEMA;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine');

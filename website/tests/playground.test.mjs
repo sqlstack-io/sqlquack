@@ -81,3 +81,24 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 	assert.equal(report.translate.diagnostics[0].code, 'SQ0006');
 	assert.match(report.translate.diagnostics[0].label, /beyond the budget of 0 ms/);
 });
+
+test('every example stops at the stage it is meant to, and the default translates cleanly', async () => {
+	const { EXAMPLES, CAPTIONS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const expected = {
+		valid: ['pass', 'pass', 'pass'],
+		decimal: ['pass', 'pass', 'pass'],
+		syntax: ['fail', 'skipped', 'skipped'],
+		rejected: ['pass', 'fail', 'skipped'],
+		unknown: ['pass', 'fail', 'fail'],
+		refused: ['pass', 'pass', 'fail'],
+	};
+	assert.deepEqual(Object.keys(EXAMPLES).sort(), Object.keys(expected).sort());
+	for (const [name, sql] of Object.entries(EXAMPLES)) {
+		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
+		assert.deepEqual(['parse', 'checks', 'translate'].map((stage) => report[stage].status), expected[name], name);
+	}
+	// The one deliberate refusal is a known divergence, explained by its caption.
+	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
+	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
+	assert.ok(CAPTIONS.refused);
+});

@@ -225,4 +225,12 @@ impl Parser {
             self.parse_method_call_expression(schema, method, args),
         ))
     }
+
+    /// Reads the OVER clause of a schema-qualified Snowflake call, `<schema>.<function>( ... ) OVER ( ... )`.
+    pub(crate) fn parse_qualified_window(&mut self, call: Expression) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() && self.check(TokenType::Over) {
+            return self.maybe_parse_over(call);
+        }
+        Ok(call)
+    }
 }
