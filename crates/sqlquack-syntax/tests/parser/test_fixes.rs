@@ -1275,6 +1275,42 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a database role renames (recorded errno 2003, after parsing)",
+            sql: "ALTER DATABASE ROLE v1 RENAME TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database role unsets a tag (recorded errno 2003, after parsing)",
+            sql: "ALTER DATABASE ROLE \"SELECT\" UNSET TAG v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an application role sets a comment (recorded accepted)",
+            sql: "ALTER APPLICATION ROLE IF EXISTS v1 SET COMMENT = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "with no role name, ROLE names the database (recorded errno 2003)",
+            sql: "ALTER DATABASE ROLE RENAME TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an application role needs a property to unset (recorded errno 1003)",
+            sql: "ALTER APPLICATION ROLE v1 UNSET ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a database role name is no string (recorded errno 1003)",
+            sql: "ALTER DATABASE ROLE 'v1' RENAME TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {

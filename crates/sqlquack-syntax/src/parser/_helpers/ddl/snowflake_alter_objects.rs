@@ -25,6 +25,18 @@ type Parts = (Vec<Expression>, Vec<ObjectProperty>);
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_objects(&mut self) -> Result<Option<Expression>> {
+        for kind in ["APPLICATION", "DATABASE"] {
+            if self.check_text_seq(&[kind, "ROLE"])
+                && !self
+                    .text_at(2)
+                    .is_some_and(|word| matches!(word.as_str(), "RENAME" | "SET" | "UNSET"))
+            {
+                self.current += 2;
+                return self
+                    .parse_alter_scoped_role(&format!("{kind} ROLE"))
+                    .map(Some);
+            }
+        }
         if self.match_text_seq(&["APPLICATION", "PACKAGE"]) {
             return self.parse_alter_application_package().map(Some);
         }
@@ -673,6 +685,18 @@ impl Parser {
             _ => (vec![], vec![]),
         };
         Ok(alter_object("BACKUP SET", head, action, parts))
+    }
+
+    /// Parse ALTER APPLICATION ROLE or ALTER DATABASE ROLE after its kind.
+    fn parse_alter_scoped_role(&mut self, kind: &str) -> Result<Expression> {
+        let head = self.parse_alter_object_head()?;
+        let action = self.expect_alter_words(&[&["RENAME"], &["SET"], &["UNSET"]])?;
+        let parts = match action.as_str() {
+            "RENAME" => self.parse_alter_target("TO")?,
+            "SET" => self.parse_alter_set(true)?,
+            _ => self.parse_alter_set(false)?,
+        };
+        Ok(alter_object(kind, head, action, parts))
     }
 
     /// Consume the first of `words` that comes next and return it.
