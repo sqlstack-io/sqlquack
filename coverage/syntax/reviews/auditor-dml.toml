@@ -1,0 +1,60 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "auditor-dml-001"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T23:15:00Z"
+verdict = "approved"
+forms = [
+  "sf.dml.truncate-table.truncate",
+  "sf.dml.update",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.truncate-table.truncate" = "be965aa85fef785b8bfcd313d604627aa47e645a9f7318000bc95b5d6c0669c4"
+"sf.dml.update" = "795ef76fe9b532e322b088d2ce0bce0640fe525f72f7e00774e142b9f1ac7109"
+
+[review.definitions]
+"sf.dml.truncate-table.truncate" = "e91ad3b3117d5e217a6d14f53300d7196afbe5a20f88f08010c7359e0a0958e7"
+"sf.dml.update" = "a5314f47ac9dfa96e2f21726d86ee85b8b37dc4c80d11badbf885e0e206b0984"
+
+[[review]]
+id = "auditor-dml-002"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "8067a98cd6e46bf4aa559f564d592abcc74b18c5"
+reviewed_utc = "2026-11-05T03:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.dml.truncate-table.truncate-error-table",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 174f4f1af7cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.truncate-table.truncate-error-table" = "e2e48adea4d85e4340630dc10b31b58e79f82d537f97b9b0d51a896ed769c46c"
+
+[review.definitions]
+"sf.dml.truncate-table.truncate-error-table" = "da3e8ee80278a76d3a84234d5ad66302a6145623f3054fe6331b35da8a19709e"
+
+[[review]]
+id = "auditor-dml-003"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T23:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.dml.insert",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.insert" = "ca16c15e071d0a38568e33bbb5681b7015ed13f13964f6f287d984d57968e028"
+
+[review.definitions]
+"sf.dml.insert" = "bad9b5d87ae130a845de65c5f83951140610f12c8fc401de7ce02655598fe694"
