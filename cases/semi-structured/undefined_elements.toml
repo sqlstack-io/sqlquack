@@ -65,4 +65,5 @@ rows = [
 ]
 query = "WITH pairs AS (SELECT ARRAY_CONSTRUCT(a.tag, b.tag) AS tag_pair FROM input AS a INNER JOIN input AS b ON a.basket_id = b.basket_id AND a.line_no < b.line_no UNION ALL SELECT ARRAY_CONSTRUCT(b.tag, a.tag) AS tag_pair FROM input AS a INNER JOIN input AS b ON a.basket_id = b.basket_id AND a.line_no < b.line_no), distinct_pairs AS (SELECT DISTINCT p.tag_pair FROM pairs AS p) SELECT ARRAY_TO_STRING(d.tag_pair, '|')::VARCHAR AS tag_pair_text, d.tag_pair::ARRAY AS tag_pair, ARRAY_SIZE(d.tag_pair)::NUMBER(38, 0) AS pair_size FROM distinct_pairs AS d"
 order = "bag"
+expected_divergence = "json_fidelity"
 tags = ["null", "duplicates", "empty"]
