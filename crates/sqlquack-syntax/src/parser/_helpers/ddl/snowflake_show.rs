@@ -179,6 +179,7 @@ impl Parser {
             "ACCOUNT" => !groups,
             "DATABASE" | "SCHEMA" => !matches!(kind, "DATABASE ROLES" | "SCHEMA VARIABLES"),
             "TABLE" | "VIEW" => true,
+            "REPLICATION GROUP" => matches!(kind, "DATABASES" | "SHARES"),
             _ => false,
         };
         let ends = self.is_at_end()
