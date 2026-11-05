@@ -126,6 +126,17 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ),
                     ("snowflake_bare_interval_type_cast_window".to_owned(), 1),
                     ("snowflake_bare_interval_type_cast_string".to_owned(), 1),
+                    ("snowflake_int_precision_default_uuid".to_owned(), 1),
+                    ("snowflake_int_precision_default_null_comment".to_owned(), 1),
+                    ("snowflake_int_precision_not_null_default".to_owned(), 1),
+                    (
+                        "snowflake_int_precision_not_null_default_negative".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_int_precision_collate_auto_increment".to_owned(),
+                        1,
+                    ),
                 ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),

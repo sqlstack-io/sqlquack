@@ -1331,3 +1331,38 @@ sql = "SHOW GRANTS FOR foo"
 dialects = ["Snowflake"]
 sqlquack_error = "Invalid expression / Unexpected token"
 note = "SHOW GRANTS FOR <user> is MySQL's; Snowflake's SHOW GRANTS takes ON, TO, OF or IN, so FOR is refused"
+
+[[rejection]]
+id = "snowflake_int_precision_default_uuid"
+sql = "CREATE TABLE z (a INT(11) DEFAULT UUID())"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake's INT and INTEGER take no precision"
+note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_int_precision_default_null_comment"
+sql = "CREATE TABLE z (a INT(11) DEFAULT NULL COMMENT '客户id')"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake's INT and INTEGER take no precision"
+note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_int_precision_not_null_default"
+sql = "CREATE TABLE z (a INT(11) NOT NULL DEFAULT 1)"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake's INT and INTEGER take no precision"
+note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_int_precision_not_null_default_negative"
+sql = "CREATE TABLE z (a INT(11) NOT NULL DEFAULT -1)"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake's INT and INTEGER take no precision"
+note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_int_precision_collate_auto_increment"
+sql = "CREATE TABLE z (a INT(11) NOT NULL COLLATE utf8_bin AUTO_INCREMENT)"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake's INT and INTEGER take no precision"
+note = "Snowflake's INT is NUMBER(38, 0) with no precision: it refuses CREATE TABLE v1 ( v1 INT ( 1 ) ) ; with syntax error 1003"
