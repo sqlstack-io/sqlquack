@@ -1,0 +1,94 @@
+---
+title: "Quickstart"
+description: "Build SQLQuack, check a file and convert it to DuckDB SQL."
+---
+
+## Install
+
+SQLQuack builds from source with Rust. The repository pins its toolchain in `rust-toolchain.toml`,
+which `rustup` installs on first use.
+
+```bash
+git clone https://github.com/sqlstack-io/sqlquack
+cd sqlquack
+cargo build --release -p sqlquack
+```
+
+The binary links DuckDB's prebuilt shared library, which the build downloads to
+`target/duckdb-download/<target triple>/<DuckDB version>`. `cargo run` puts it on the library path
+for you:
+
+```bash
+cargo run --release -p sqlquack -- check query.sql
+```
+
+To run `target/release/sqlquack` directly, point the library path at that directory:
+
+```bash
+LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack check query.sql
+```
+
+Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. For the Python package, see
+[Python](/docs/python/).
+
+## Check a file
+
+`check` needs no schema. It parses the SQL and reports what Snowflake would reject.
+
+```sql
+-- orders.sql
+SELECT customer_id, SUM(total) AS revenue
+FROM orders
+WHERE status = 'shipped'
+GROUP BY customer_id
+QUALIFY revenue > 100
+```
+
+```console
+$ sqlquack check orders.sql
+error[SQ0203]: QUALIFY needs a window function
+ --> orders.sql:5:1
+  |
+5 | QUALIFY revenue > 100
+  | ^^^^^^^^^^^^^^^^^^^^^ QUALIFY is used without a window function in the SELECT list or QUALIFY
+  |
+  = help: move the condition to WHERE or HAVING, or filter on a window function's result
+sqlquack check: found 1 problem
+```
+
+Move the condition to `HAVING SUM(total) > 100` and `check` reports no problems.
+
+## Convert a file
+
+Conversion types every expression, so it needs the columns and Snowflake types of the relations a
+statement reads. Declare them in a [schema file](/docs/schema/):
+
+```json
+{
+  "ORDERS": [
+    ["ORDER_ID", "NUMBER(38,0)"],
+    ["CUSTOMER_ID", "NUMBER(38,0)"],
+    ["STATUS", "VARCHAR"],
+    ["TOTAL", "NUMBER(12,2)"],
+    ["ORDERED_AT", "TIMESTAMP_NTZ"]
+  ]
+}
+```
+
+```console
+$ sqlquack convert revenue.sql --schema schema.json --builtin-policy
+SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID", CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE" FROM "ORDERS" AS "ORDERS" WHERE ("ORDERS"."STATUS" = 'shipped') GROUP BY "ORDERS"."CUSTOMER_ID"
+sqlquack convert: done, converted under the built-in default
+```
+
+The DuckDB SQL goes to standard output and the progress lines to standard error, so
+`sqlquack convert revenue.sql … > revenue.duckdb.sql` keeps only the SQL.
+
+`--builtin-policy` refuses every known divergence. Without it, `convert` reads `sqlquack.toml`
+from the current directory, or the file `--policy` names. See [Policy and sessions](/docs/policy/).
+
+## Next steps
+
+- [Reading diagnostics](/docs/diagnostics/overview/): the output format and JSON fields.
+- [`sqlquack census`](/docs/cli/census/): measure how much of a project converts.
+- [Playground](/playground/): try SQL in the browser.

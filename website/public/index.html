@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>SQLQuack · Snowflake SQL on DuckDB, or a clear no</title>
+		<meta
+			name="description"
+			content="SQLQuack is a Snowflake SQL compiler written in Rust. It parses Snowflake SQL, reports what Snowflake would reject with rustc-style diagnostics, and translates the rest into DuckDB SQL, or refuses it with a code, a span and a reason."
+		/>
+		<meta property="og:title" content="SQLQuack · Snowflake SQL on DuckDB, or a clear no" />
+		<meta property="og:description" content="A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer." />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content="/assets/og-sqlquack.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="SQLQuack: a Snowflake SQL compiler that translates to DuckDB, or refuses to guess." />
+		<meta name="twitter:card" content="summary_large_image" />
+		<link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
+		<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="stylesheet" href="/styles.css" />
+		<script>
+			(function () {
+				var stored = localStorage.getItem('sqlquack-theme');
+				var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+				document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+			})();
+		</script>
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="wrap">
+				<div class="brand-lockup">
+					<a class="brand" href="/" aria-label="SQLQuack home">
+						<img class="logo-for-light" src="/assets/logo-light.png" alt="SQLQuack" width="133" height="30" />
+						<img class="logo-for-dark" src="/assets/logo-dark.png" alt="SQLQuack" width="133" height="30" />
+					</a>
+					<a class="brand-byline" href="https://sqlstack.io">by SQLStack</a>
+				</div>
+				<nav class="nav" aria-label="Main">
+					<a class="hide-sm" href="/#how">How it works</a>
+					<a href="/docs/">Docs</a>
+					<a class="hide-sm" href="/playground/">Playground</a>
+					<a class="nav-icon" href="https://github.com/sqlstack-io/sqlquack" aria-label="SQLQuack on GitHub">
+						<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>
+					</a>
+					<button class="theme-toggle" type="button" aria-label="Toggle dark mode" data-theme-toggle>
+						<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+						<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+					</button>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<div class="hero wrap">
+				<div class="hero-text">
+					<p class="eyebrow">Rust-powered · Free and open source · Apache-2.0</p>
+					<h1>Same answer, or a clear no</h1>
+					<p class="tagline">A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer.</p>
+					<p class="lede">
+						SQLQuack checks Snowflake SQL with Rust-style diagnostics and converts it to DuckDB only where rules
+						checked against recorded Snowflake results cover the types involved. Everything else is refused, with
+						the exact span and the reason.
+					</p>
+					<div class="actions">
+						<div class="install">
+							<span><span class="prompt">$</span> git clone https://github.com/sqlstack-io/sqlquack</span>
+							<button class="copy" type="button" data-copy="git clone https://github.com/sqlstack-io/sqlquack">Copy</button>
+						</div>
+						<span class="actions-break" aria-hidden="true"></span>
+						<a class="button primary" href="/playground/">Try the playground</a>
+						<a class="button primary" href="/docs/quickstart/">Read the docs</a>
+						<a class="button" href="https://github.com/sqlstack-io/sqlquack">View on GitHub</a>
+					</div>
+				</div>
+<pre class="terminal hero-visual" aria-label="sqlquack check reports a QUALIFY clause without a window function, with the span underlined and a fix."><span class="cmd">sqlquack check orders.sql</span>
+<span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
+ --&gt; orders.sql:5:1
+  |
+5 | QUALIFY revenue &gt; 100
+  | <span class="bad">^^^^^^^^^^^^^^^^^^^^^</span> QUALIFY is used without a window
+  |   function in the SELECT list or QUALIFY
+  |
+  <span class="dim">= help:</span> move the condition to WHERE or HAVING
+
+<span class="cmd">sqlquack convert revenue.sql --schema schema.json</span>
+SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+  CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+WHERE ("ORDERS"."STATUS" = 'shipped')
+GROUP BY "ORDERS"."CUSTOMER_ID"
+<span class="ok">sqlquack convert: done</span></pre>
+			</div>
+
+			<section>
+				<div class="wrap">
+					<div class="section-head">
+						<h2>Where SQL translation goes wrong</h2>
+					</div>
+					<div class="problem">
+						<div class="card">
+							<h3>It transpiles, runs, and differs</h3>
+							<p>NULL handling, decimal arithmetic and implicit casts behave differently on DuckDB, with no error.</p>
+						</div>
+						<div class="card">
+							<h3>Tests pass for the wrong engine</h3>
+							<p>Local tests pass for behaviour your warehouse doesn't have.</p>
+						</div>
+						<div class="card">
+							<h3>"Supported" isn't one fact</h3>
+							<p>A function can convert for one precision and overflow on another. Support depends on the types involved.</p>
+						</div>
+						<div class="card">
+							<h3>Two kinds of error, mixed up</h3>
+							<p>SQL that is invalid on Snowflake and valid SQL that can't be translated safely need different fixes.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="how">
+				<div class="wrap">
+					<div class="section-head">
+						<h2>From Snowflake SQL to DuckDB SQL</h2>
+						<p>Check it, convert it, and know exactly what was refused and why.</p>
+					</div>
+
+					<div class="steps">
+						<div class="step">
+							<div class="step-text">
+								<span class="num">01 · Check</span>
+								<h3>Catch what Snowflake would reject</h3>
+								<p>
+									<code>sqlquack check</code> parses Snowflake SQL and reports what Snowflake rejects, without a schema
+									or a conversion. Each problem has an <code>SQ</code> code, the exact span and a fix.
+								</p>
+								<p class="more"><a href="/docs/cli/check/">How checking works →</a></p>
+							</div>
+<pre class="terminal"><span class="cmd">sqlquack check</span>
+<span class="bad">error[SQ0201]</span>: Snowflake does not support INTERSECT, EXCEPT or MINUS with ALL
+ --&gt; &lt;stdin&gt;:1:29
+  |
+1 | SELECT order_id FROM orders INTERSECT ALL SELECT order_id FROM orders
+  |                             <span class="bad">^^^^^^^^^^^^^</span> Snowflake does not support INTERSECT with ALL
+  |
+  <span class="dim">= help:</span> drop ALL to compare distinct rows; only UNION accepts ALL in Snowflake</pre>
+						</div>
+
+						<div class="step">
+							<div class="step-text">
+								<span class="num">02 · Convert</span>
+								<h3>DuckDB SQL that keeps Snowflake's meaning</h3>
+								<p>
+									<code>sqlquack convert</code> types every expression from your schema and applies only verified
+									rules. Here a NUMBER(12,2) divided by 3 keeps Snowflake's scale of 8, and division by zero still raises.
+									DuckDB parses and binds every converted statement before it is printed.
+								</p>
+								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
+							</div>
+<pre class="terminal"><span class="cmd">sqlquack convert div.sql --schema schema.json</span>
+SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID",
+  (CASE WHEN "ORDERS"."TOTAL" IS NULL OR … THEN NULL
+        WHEN CAST(3 AS DECIMAL(1,0)) = 0
+        THEN CAST(CAST('sqlquack:100051#e539322555ff: Division by zero' AS INTEGER) AS "NULL")
+        ELSE CAST(… AS DECIMAL(18,8)) END) AS "THIRD",
+  (CASE WHEN ("ORDERS"."STATUS" = 'shipped')
+        THEN CAST(CAST(1 AS DECIMAL(1,0)) AS DECIMAL(1,0))
+        ELSE CAST(CAST(0 AS DECIMAL(1,0)) AS DECIMAL(1,0)) END) AS "SHIPPED"
+FROM "ORDERS" AS "ORDERS"
+<span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
+						</div>
+
+						<div class="step">
+							<div class="step-text">
+								<span class="num">03 · Refuse precisely</span>
+								<h3>A refusal you can act on</h3>
+								<p>
+									When no verified rule covers a construct, or DuckDB would only approximate it, SQLQuack refuses the
+									statement instead of guessing. The refusal names the construct, underlines it and says what to change.
+								</p>
+								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
+							</div>
+<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json</span>
+<span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
+ --&gt; due.sql:2:8
+  |
+2 |        HASH(customer_id) AS bucket
+  |        <span class="bad">^^^^^^^^^^^^^^^^^</span> fn:HASH needs known divergence `hash`,
+  |          which the policy refuses in this mode
+  |
+  <span class="dim">= help:</span> allow the divergence under [divergences.&lt;id&gt;] in the policy file <span class="dim">…</span>
+sqlquack convert: refused, 1 refusal under the built-in default</pre>
+						</div>
+
+						<div class="step">
+							<div class="step-text">
+								<span class="num">04 · Decide what to accept</span>
+								<h3>Known divergences are opt-in</h3>
+								<p>
+									Some conversions are exact except for a documented difference, such as <code>HASH</code>, which
+									DuckDB computes with its own function. The policy file lists each one, and nothing that relies on
+									one converts until you allow it.
+								</p>
+								<p class="more"><a href="/docs/policy/">Configure the policy →</a></p>
+							</div>
+<pre class="terminal"><span class="cm"># sqlquack.toml (excerpt)</span>
+[divergences.hash]
+<span class="arg">default</span> = <span class="str">&quot;warn&quot;</span>
+
+<span class="cmd">sqlquack convert due.sql --schema schema.json</span>
+SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID", <span class="dim">…</span> AS "BUCKET" FROM "ORDERS" AS "ORDERS"
+sqlquack convert: relies on known divergence hash at fn:HASH
+<span class="ok">sqlquack convert: done, converted under utc-v1</span></pre>
+						</div>
+
+						<div class="step">
+							<div class="step-text">
+								<span class="num">05 · Measure a project</span>
+								<h3>See what a whole project needs</h3>
+								<p>
+									<code>sqlquack census</code> reads a directory of SQL files or compiled models, counts the constructs
+									they use and reports how many convert, which refusals block the rest, and what to support next.
+								</p>
+								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
+							</div>
+<pre class="terminal"><span class="cmd">sqlquack census models --schema schema.json</span>
+Census of 3 snowflake SQL files
+  parsed 3 (3 statements), unparsed 0, empty 0
+  distinct constructs 15 (2 clause, 4 fn, 9 node)
+  files refused: missing rule 0, outside type conditions 0, unresolved name 0,
+    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 1
+  convertible: strict 2 <span class="dim">…</span>, unit-testable 2 <span class="dim">…</span>
+
+Refusals by category and construct (top 50)
+       1  a known divergence the policy refuses: fn:HASH</pre>
+						</div>
+
+						<div class="step">
+							<div class="step-text">
+								<span class="num">06 · Use it from Python</span>
+								<h3>The same engine, as a library</h3>
+								<p>
+									The <code>sqlquack</code> Python package runs the same code as the command line and returns frozen
+									results with typed diagnostics.
+								</p>
+								<p class="more"><a href="/docs/python/">Python API →</a></p>
+							</div>
+<pre class="terminal"><span class="kw">import</span> sqlquack
+
+result = sqlquack.check(<span class="arg">sql</span>=<span class="str">&quot;SELECT 1 QUALIFY TRUE&quot;</span>)
+result.diagnostics[<span class="num">0</span>].code   <span class="cm"># "SQ0203"</span>
+
+conversion = sqlquack.convert(
+    <span class="arg">sql</span>=<span class="str">&quot;SELECT 1 AS total&quot;</span>,
+    <span class="arg">options</span>=sqlquack.<span class="ty">ConvertOptions</span>(<span class="arg">builtin_policy</span>=<span class="kw">True</span>),
+)
+conversion.converted          <span class="cm"># True</span></pre>
+						</div>
+					</div>
+					<p class="caption">Each panel shows actual <code>sqlquack</code> output on a small orders example, cut down where marked <code>…</code>.</p>
+				</div>
+			</section>
+
+			<section>
+				<div class="wrap">
+					<div class="section-head">
+						<h2>Checked under stated conditions</h2>
+						<p>"Checked under these conditions" or "we don't know", never "every input is proven". <a href="/docs/coverage/">How each figure is measured →</a></p>
+					</div>
+					<div class="grid">
+						<div class="item">
+							<h3>{{TRANSLATION_PCT}} of Snowflake statements translate</h3>
+							<p>{{TRANSLATION_BASIS}} The rest are refused with a reason, never translated by guesswork.</p>
+						</div>
+						<div class="item">
+							<h3>{{SYNTAX_PCT}} of documented syntax verified</h3>
+							<p>Out of 3,348 documented Snowflake syntax forms. {{SYNTAX_BASIS}}</p>
+						</div>
+						<div class="item">
+							<h3>Rules checked against Snowflake</h3>
+							<p>Each rule converts only the shapes that cases recorded on Snowflake and replayed on DuckDB cover. Everything else is refused.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="start">
+				<div class="wrap start">
+					<div>
+						<h2>Start in a minute</h2>
+						<p class="lede">
+							Build it from source, then check a file or convert it with a schema of your relations.
+						</p>
+						<ul>
+							<li>Snowflake to DuckDB, for running warehouse SQL against small fixtures locally or in CI.</li>
+							<li>No account, server or Snowflake connection needed. SQLBuild isn't required.</li>
+							<li>One binary for the command line, and a Python package with the same engine.</li>
+							<li>Free and open source, Apache-2.0.</li>
+						</ul>
+					</div>
+<pre class="terminal"><span class="cmd">git clone https://github.com/sqlstack-io/sqlquack && cd sqlquack</span>
+<span class="cmd">echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check</span>
+<span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
+<span class="dim">…</span>
+<span class="cmd">echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --builtin-policy</span>
+SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
+<span class="ok strong">sqlquack convert: done, converted under the built-in default</span></pre>
+				</div>
+			</section>
+
+			<section class="closing">
+				<div class="wrap">
+					<h2>Try it on your own SQL</h2>
+					<p>Paste Snowflake SQL into the playground, or read the docs for the command line, Python and every diagnostic.</p>
+					<div class="actions">
+						<a class="button primary" href="/playground/">Try the playground</a>
+						<a class="button" href="/docs/">Read the docs</a>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<footer>
+			<div class="wrap">
+				<span>SQLQuack · Apache-2.0</span>
+				<span>
+					<a href="/docs/">Docs</a> ·
+					<a href="/playground/">Playground</a> ·
+					<a href="/docs/credits/">Credits</a> ·
+					<a href="https://github.com/sqlstack-io/sqlquack">GitHub</a>
+				</span>
+			</div>
+			<div class="wrap sqlstack-family">
+				<a class="sqlstack-parent" href="https://sqlstack.io">
+					<img class="sqlstack-for-light" src="/assets/sqlstack.png" alt="" width="28" height="23" />
+					<img class="sqlstack-for-dark" src="/assets/sqlstack-dark.png" alt="" width="28" height="23" />
+					<span>Part of SQLStack</span>
+				</a>
+				<nav class="sqlstack-tools" aria-label="SQLStack tools">
+					<a href="https://sqlbuild.com">SQLBuild</a>
+					<a href="https://sqlclean.io">SQLClean</a>
+					<a href="/">SQLQuack</a>
+					<a href="https://docs.streambuild.dev">SQLTide</a>
+					<a href="https://fensu.io">Fensu</a>
+				</nav>
+			</div>
+		</footer>
+
+		<script>
+			document.querySelector('[data-theme-toggle]').addEventListener('click', function () {
+				var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+				document.documentElement.dataset.theme = next;
+				localStorage.setItem('sqlquack-theme', next);
+			});
+			document.querySelectorAll('[data-copy]').forEach(function (button) {
+				button.addEventListener('click', function () {
+					navigator.clipboard.writeText(button.dataset.copy).then(function () {
+						button.textContent = 'Copied';
+						setTimeout(function () {
+							button.textContent = 'Copy';
+						}, 1500);
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
