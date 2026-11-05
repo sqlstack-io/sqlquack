@@ -2196,10 +2196,10 @@ required = true
 [[obligation]]
 id = "sf.functions.array-to-string.t003"
 form = "sf.functions.array-to-string"
-kind = "type_combination"
-target = "ARRAY, VARCHAR"
-note = "A JSON null element; the page does not say; the recording decides whether it gives \"null\" or an empty string."
-catches = "the JSON null converted the other way than in Snowflake"
+kind = "error_parity"
+target = "error"
+note = "A JSON null element. The page covers only SQL NULL elements; the recording shows Snowflake raising 100071 (failed to cast variant value to string) for this input."
+catches = "the JSON null converted to \"null\" or to an empty string, instead of the error"
 reading = "the page: the elements converted to text and joined by the separator; a NULL element becomes an empty string; a NULL argument gives NULL"
 cases = ["cases/translation/functions/array-to-string.toml#t003_json_null_element"]
 required = true
