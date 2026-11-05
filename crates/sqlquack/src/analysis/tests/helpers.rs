@@ -32,6 +32,7 @@ use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
     AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus, EverydayQuery,
 };
+use crate::cli::_helpers::schema::load_schema;
 use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
@@ -928,7 +929,11 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
 
 /// What SQLQuack does with `sql`: its first check diagnostic, first refusal, or `translated`.
 fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> String {
-    let diagnostics = check_source(sql).expect("the query holds a statement");
+    let schema = arguments
+        .schema
+        .as_deref()
+        .map(|path| load_schema(path).expect("the corpus schema loads"));
+    let diagnostics = check_source(sql, schema.as_ref()).expect("the query holds a statement");
     diagnostics.first().map_or_else(
         || {
             let report = convert_report(arguments, sql).expect("the query converts or refuses");

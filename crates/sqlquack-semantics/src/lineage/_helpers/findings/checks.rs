@@ -7,11 +7,12 @@ use sqlquack_syntax::expressions::queries::models::Select;
 
 use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
+use crate::lineage::_helpers::tracing::queries::unannotated;
 use crate::lineage::_helpers::tracing::resolution::key;
-use crate::lineage::_helpers::tracing::sources::item_sources;
+use crate::lineage::_helpers::tracing::sources::{item_sources, relation_name, written_name};
 use crate::lineage::constants::{
     ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, CONNECT_BY_LEVEL, NAME_PHASE, UNKNOWN_COLUMN_CODE,
-    UNKNOWN_QUALIFIER_CODE,
+    UNKNOWN_QUALIFIER_CODE, UNKNOWN_TABLE_CODE,
 };
 use crate::lineage::constants::{
     DUCKDB_PROFILE, DUCKDB_ROWID, METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS,
@@ -230,6 +231,44 @@ pub(crate) fn using_findings(
 /// Whether a closed side of a join offers no column named `wanted`.
 fn lacks(side: &[ScopeSource], wanted: &str, context: LineageContext<'_>) -> bool {
     !side.iter().any(unjudged) && !side.iter().any(|source| offers(source, wanted, context))
+}
+
+/// A FROM item reading a stored relation a closed schema does not declare, as polyglot reports it.
+pub(crate) fn unknown_relation_findings(
+    item: &Expression,
+    ctes: &[NamedQuery],
+    context: LineageContext<'_>,
+) -> Vec<NameFinding> {
+    let table = match unannotated(item) {
+        Expression::Table(table) => table,
+        Expression::Alias(alias) => match unannotated(&alias.this) {
+            Expression::Table(table) => table,
+            _ => return Vec::new(),
+        },
+        _ => return Vec::new(),
+    };
+    let name: String = key(&table.name, context);
+    let cte: bool = table.schema.is_none()
+        && table.catalog.is_none()
+        && ctes
+            .iter()
+            .any(|cte| context.profile.same_identifier(&cte.key, &name));
+    let relation: String = relation_name(table, context);
+    if !context.schema.closed()
+        || cte
+        || context.schema.columns(&relation).is_some()
+        || context.schema.open_columns(&relation).is_some()
+    {
+        return Vec::new();
+    }
+    vec![NameFinding {
+        code: UNKNOWN_TABLE_CODE,
+        message: format!("Unknown table '{}'", written_name(table)),
+        span: table.name.span,
+        written: table.name.name.clone(),
+        phase: NAME_PHASE,
+        ..NameFinding::default()
+    }]
 }
 
 /// UNPIVOT operands its closed input does not offer.

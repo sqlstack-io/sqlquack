@@ -89,11 +89,11 @@ fn given_refused_sql_when_analyzing_then_each_refusal_is_placed_at_its_construct
             expected_places: vec![(RefusalCategory::NotExpressible, "NOSUCHFN(amount)", [2, 3])],
         },
         LocationTestCase {
-            description: "SQL that does not parse is placed at the failure",
+            description: "SQL that does not parse at end of input is placed at its end",
             sql: "SELECT amount\nFROM orders WHERE (",
             declared: None,
             budget: None,
-            expected_places: vec![(RefusalCategory::ParseFidelity, "(", [2, 19])],
+            expected_places: vec![(RefusalCategory::ParseFidelity, "", [2, 20])],
         },
         LocationTestCase {
             description: "a join no rule converts is placed at the join",

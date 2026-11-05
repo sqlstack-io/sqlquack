@@ -361,7 +361,7 @@ fn table_source(
 }
 
 /// The relation's name as written, its parts joined by dots, in lower case.
-fn written_name(table: &TableRef) -> String {
+pub(crate) fn written_name(table: &TableRef) -> String {
     [
         table.catalog.as_ref(),
         table.schema.as_ref(),
@@ -375,7 +375,7 @@ fn written_name(table: &TableRef) -> String {
 }
 
 /// The relation's name, its parts resolved and joined by dots.
-fn relation_name(table: &TableRef, context: LineageContext<'_>) -> String {
+pub(crate) fn relation_name(table: &TableRef, context: LineageContext<'_>) -> String {
     [
         table.catalog.as_ref(),
         table.schema.as_ref(),

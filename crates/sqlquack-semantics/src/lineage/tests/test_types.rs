@@ -149,3 +149,14 @@ pub(crate) struct QueryFindingsTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
 }
+
+pub(crate) struct ClosedSchemaTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_codes: &'static [&'static str],
+}
+
+pub(crate) struct FunctionListTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_differences: (Vec<String>, Vec<String>),
+}

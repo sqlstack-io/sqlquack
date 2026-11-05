@@ -11,7 +11,7 @@ use crate::bindings::models::Rendered;
 /// The check report of `sql` as JSON, naming the source `path`; `ValueError` without SQL.
 #[pyfunction]
 pub(crate) fn check_json(sql: &str, path: &str) -> PyResult<String> {
-    let diagnostics = check_source(sql).map_err(PyValueError::new_err)?;
+    let diagnostics = check_source(sql, None).map_err(PyValueError::new_err)?;
     let rendered = render_diagnostics(&diagnostics, sql, path);
     let report = CheckReport {
         ok: diagnostics.is_empty(),

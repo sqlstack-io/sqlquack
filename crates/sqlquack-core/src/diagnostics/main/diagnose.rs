@@ -3,10 +3,12 @@
 use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
+use crate::diagnostics::_helpers::unparsed::unparsed;
 use crate::diagnostics::constants::{
-    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, GUARD_PREFIX,
-    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION, UNPARSED_PREFIX,
-    UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
+    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, DOUBLE_QUOTE,
+    GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, QUOTED_VALUE_HELP, TYPE_CONDITION,
+    UNPARSED_PREFIX, UNRESOLVED_COLUMN_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME,
+    ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -19,10 +21,19 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         let (code, label) = code_and_label(refusal);
         let mut diagnostic = coded(code, label);
         diagnostic.span = refusal.location.map(|location| lines.span(location));
+        if code == PARSE_FIDELITY {
+            let worded = unparsed(&diagnostic.label, refusal.location, source);
+            diagnostic.label = worded.label;
+            diagnostic.span = worded.location.map(|location| lines.span(location));
+            diagnostic.help = worded.help;
+        }
         if refusal.category == RefusalCategory::UnresolvedName
             && refusal.reason.contains(CASE_ONLY_MATCH)
         {
             diagnostic.help = Some(CASE_ONLY_MATCH_HELP.to_owned());
+        }
+        if let Some(help) = quoted_value_help(refusal, source) {
+            diagnostic.help = Some(help);
         }
         if refusal.category == RefusalCategory::TypeCondition
             && refusal.reason.contains(ZONED_LOCAL_TIME)
@@ -40,6 +51,22 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         diagnostics.push(diagnostic);
     }
     diagnostics
+}
+
+/// The fix for a double-quoted name that resolves to no column: a string literal was likely meant.
+fn quoted_value_help(refusal: &Refusal, source: &str) -> Option<String> {
+    let location = refusal.location?;
+    let written: String = source
+        .chars()
+        .skip(location.start)
+        .take(location.end.saturating_sub(location.start))
+        .collect();
+    let value = written
+        .strip_prefix(DOUBLE_QUOTE)?
+        .strip_suffix(DOUBLE_QUOTE)?;
+    (refusal.category == RefusalCategory::UnresolvedName
+        && refusal.reason.starts_with(UNRESOLVED_COLUMN_PREFIX))
+    .then(|| format!("{QUOTED_VALUE_HELP} '{}'", value.replace('\'', "''")))
 }
 
 /// The code a refusal maps to, and the label left once its code's own wording is removed.

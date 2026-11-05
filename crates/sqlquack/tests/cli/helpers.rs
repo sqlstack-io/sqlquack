@@ -29,6 +29,12 @@ fn copy_files(from: &Path, to: &Path) {
     }
 }
 
+/// The everyday corpus's schema file.
+pub(crate) const EVERYDAY_SCHEMA: &str = concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../corpora/everyday/schema.json"
+);
+
 /// Runs a command in a copy of the repository's policy and cases, with no recorded results.
 pub(crate) fn run_on_repository_cases(arguments: &[&str], mention: &str) -> CommandOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");

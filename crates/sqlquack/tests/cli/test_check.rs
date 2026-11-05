@@ -1,4 +1,4 @@
-use crate::helpers::run_with_input;
+use crate::helpers::{EVERYDAY_SCHEMA, run_with_input};
 use crate::test_types::CheckCommandTestCase;
 
 #[test]
@@ -75,6 +75,38 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_exit_code: Some(1),
             expected_stdout_prefix: "",
             expected_stderr_mention: "Expected a statement, not an expression",
+        },
+        CheckCommandTestCase {
+            description: "with a schema, a relation it does not declare is SQ0004 at the name",
+            arguments: &["check", "--schema", EVERYDAY_SCHEMA],
+            sql: "SELECT order_id FROM orderz",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "  |                      ^^^^^^ relation `orderz` is not in the schema",
+        },
+        CheckCommandTestCase {
+            description: "without a schema, relations are not checked",
+            arguments: &["check"],
+            sql: "SELECT order_id FROM orderz",
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "sqlquack check: done, no problems",
+        },
+        CheckCommandTestCase {
+            description: "with a schema, a function neither Snowflake nor the schema declares is SQ0205",
+            arguments: &["check", "--schema", EVERYDAY_SCHEMA],
+            sql: "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "error[SQ0205]: Snowflake has no function of this name",
+        },
+        CheckCommandTestCase {
+            description: "a recursive CTE reading itself is no unknown relation",
+            arguments: &["check", "--schema", EVERYDAY_SCHEMA],
+            sql: "WITH RECURSIVE n AS (SELECT 1 AS i UNION ALL SELECT i + 1 FROM n WHERE i < 10) SELECT i FROM n",
+            expected_exit_code: Some(0),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "sqlquack check: done, no problems",
         },
         CheckCommandTestCase {
             description: "input holding no statement cannot be checked and exits 2",

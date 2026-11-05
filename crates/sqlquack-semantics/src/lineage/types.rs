@@ -40,6 +40,11 @@ pub trait LineageSchema: std::fmt::Debug + Sync {
         None
     }
 
+    /// Whether the schema declares every relation and function the SQL may name, so an unknown one is wrong.
+    fn closed(&self) -> bool {
+        false
+    }
+
     /// Whether the project declares the type `name`, which a cast may name.
     fn known_type(&self, name: &str) -> bool {
         let _ = name;

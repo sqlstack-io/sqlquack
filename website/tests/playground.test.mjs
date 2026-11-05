@@ -28,14 +28,24 @@ test('spans after non-ASCII text underline the characters the diagnostic names',
 });
 
 test('a parse failure on a later line renders at its line and column', () => {
-	const sql = "SELECT '日本' AS note\nFROM orders\nWHERE";
+	const sql = "SELECT '日本' AS note\nFROM orders\nWHERE x = = 1";
 	const report = JSON.parse(analyze(sql, SCHEMA));
 	assert.equal(report.parse.status, 'fail');
 	const [failure] = report.parse.diagnostics;
 	assert.equal(failure.code, 'SQ0001');
-	assert.equal(Array.from(sql).slice(failure.span.start, failure.span.end).join(''), 'WHERE');
-	assert.match(rendered(failure, Array.from(sql)), /--> query\.sql:3:1\n/);
-	assert.deepEqual(marked(underlined(Array.from(sql), [{ kind: 'error', span: failure.span }]).html), ['WHERE']);
+	assert.equal(failure.label, 'unexpected `=`');
+	assert.equal(Array.from(sql).slice(failure.span.start, failure.span.end).join(''), '=');
+	assert.match(rendered(failure, Array.from(sql)), /--> query\.sql:3:11\n/);
+	assert.deepEqual(marked(underlined(Array.from(sql), [{ kind: 'error', span: failure.span }]).html), ['=']);
+});
+
+test('with a schema, an unknown relation or function fails the checks', () => {
+	const checks = (sql) => JSON.parse(analyze(sql, SCHEMA)).checks;
+	assert.deepEqual(checks('SELECT order_id FROM orderz').findings.map((finding) => finding.code), ['E200']);
+	assert.deepEqual(checks('SELECT NOSUCHFUNCTION(order_id) AS x FROM orders').findings.map((finding) => finding.code), ['E202']);
+	const [quoted] = checks('SELECT order_id FROM orders WHERE note = "shipped"').findings;
+	assert.equal(quoted.help, "use single quotes for a string literal: 'shipped'");
+	assert.equal(checks('SELECT order_id FROM orders').status, 'pass');
 });
 
 test('each stage reports pass, fail or skipped', () => {

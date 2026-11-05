@@ -32,6 +32,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0202`](#sq0202) | `lock_wait` | Snowflake does not support WAIT in FOR UPDATE |
 | [`SQ0203`](#sq0203) | `qualify_without_window` | QUALIFY needs a window function |
 | [`SQ0204`](#sq0204) | `star_filter_drops_named_column` | REPLACE or RENAME names a column the star's ILIKE pattern removed |
+| [`SQ0205`](#sq0205) | `unknown_function` | Snowflake has no function of this name |
 
 ## Conversion
 
@@ -305,4 +306,18 @@ In `* ILIKE 'pattern' REPLACE (...)` or `RENAME (...)`, Snowflake applies the pa
 
 ```sh
 echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check
+```
+
+### SQ0205
+
+**Snowflake has no function of this name** (`unknown_function`)
+
+The call names a function that is neither one of Snowflake's documented functions nor a function the schema declares, so Snowflake rejects the statement (Snowflake error 2140, unknown function). SQLQuack checks calls only when a schema is given, because a user-defined function can only be told apart from a misspelled one by the schema's `functions`. Calls qualified with a database or schema are not checked.
+
+**Help:** check the function's spelling, or declare a user-defined function under `functions` in the schema
+
+**Example:**
+
+```sh
+echo "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders" | sqlquack check --schema schema.json
 ```

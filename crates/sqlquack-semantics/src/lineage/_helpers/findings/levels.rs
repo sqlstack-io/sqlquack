@@ -11,13 +11,15 @@ use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
 use crate::lineage::_helpers::checks::sets::{Branches, set_findings};
 use crate::lineage::_helpers::findings::checks::{
-    Level, alias_count_findings, column_finding, unpivot_findings, using_findings,
+    Level, alias_count_findings, column_finding, unknown_relation_findings, unpivot_findings,
+    using_findings,
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
     level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::constants::UNKNOWN_TABLE_CODE;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
 
@@ -68,7 +70,14 @@ fn visited_ctes<'a>(
 ) -> (Cow<'a, [NamedQuery]>, Vec<NameFinding>) {
     let mut found: Vec<NameFinding> = Vec::new();
     let reach = with_ctes_visiting(with, (ctes, outer), context, &mut |cte, reach| {
-        found.extend(query_findings(&cte.this, (reach, outer, aliases), context));
+        found.extend(
+            query_findings(&cte.this, (reach, outer, aliases), context)
+                .into_iter()
+                .filter(|finding| {
+                    finding.code != UNKNOWN_TABLE_CODE
+                        || !finding.written.eq_ignore_ascii_case(&cte.alias.name)
+                }),
+        );
     });
     (reach, found)
 }
@@ -103,6 +112,7 @@ fn select_findings(
             (&ctes, reads, aliases),
             context,
         ));
+        own.extend(unknown_relation_findings(item, &ctes, context));
         own.extend(unpivot_findings(item, &ctes, context));
     }
     let mut outputs: Vec<String> = aliases.to_vec();

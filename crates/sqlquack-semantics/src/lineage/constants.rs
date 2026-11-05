@@ -310,6 +310,14 @@ pub(crate) const DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
     ("DATE_TRUNC", 0),
     ("LAST_DAY", 1),
 ];
+/// The code of a stored relation a closed schema does not declare.
+pub(crate) const UNKNOWN_TABLE_CODE: &str = "E200";
+/// The code of a call to a function neither Snowflake nor a closed schema declares.
+pub(crate) const UNKNOWN_FUNCTION_CODE: &str = "E202";
+/// What separates the parts of a qualified name.
+pub(crate) const NAME_SEPARATOR: char = '.';
+/// Snowflake's documented function names, one per line and sorted, from the syntax catalogue.
+pub(crate) const SNOWFLAKE_FUNCTION_NAMES: &str = include_str!("snowflake_functions.txt");
 /// The code of a column no FROM item offers.
 pub(crate) const UNKNOWN_COLUMN_CODE: &str = "E201";
 /// The code of a FROM item with more column aliases than columns.

@@ -2,11 +2,19 @@ use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
 
 use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
 use crate::lineage::_helpers::findings::statement::statement_findings;
-use crate::lineage::models::LineageContext;
+use crate::lineage::constants::SNOWFLAKE_FUNCTION_NAMES;
+use crate::lineage::models::{LineageContext, SchemaCatalog};
 use crate::lineage::tests::helpers::{
-    duckdb_shop_schema, found_findings, owned_findings, shop_schema,
+    catalogue_function_names, duckdb_shop_schema, found_findings, owned_findings, shop_schema,
 };
-use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::lineage::tests::test_types::{
+    ClosedSchemaTestCase, FunctionListTestCase, QueryFindingsTestCase,
+};
+use crate::types::models::{
+    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
+};
+use sqlquack_snowflake::typing::models::SnowflakeType;
+use std::collections::BTreeSet;
 
 #[test]
 fn given_a_query_when_resolving_its_names_then_unknown_ambiguous_and_unqualifiable_ones_are_found()
@@ -375,6 +383,104 @@ fn given_a_duckdb_lateral_star_over_an_earlier_item_when_resolving_names_then_it
                 .iter()
                 .map(|(code, message, start)| (*code, (*message).to_owned(), *start))
                 .collect::<Vec<(&str, String, usize)>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_closed_schema_when_checking_names_then_undeclared_relations_and_functions_are_found() {
+    let mut schema = Schema::default();
+    schema.relations.insert(
+        "ORDERS".to_owned(),
+        vec![
+            ColumnSpec::new(
+                "ORDER_ID",
+                SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            ),
+            ColumnSpec::new("NOTE", SnowflakeType::Varchar),
+        ],
+    );
+    schema.functions.insert(
+        "IS_GIFT".to_owned(),
+        FunctionSpec {
+            language: FunctionLanguage::Python,
+            arguments: vec![ColumnSpec::new("NOTE", SnowflakeType::Varchar)],
+            returns: FunctionReturns::Scalar(SnowflakeType::Boolean),
+            traits: FunctionTraits::default(),
+        },
+    );
+    let catalog = SchemaCatalog::new(&schema);
+    let test_cases = [
+        ClosedSchemaTestCase {
+            description: "a relation the schema does not declare",
+            sql: "SELECT order_id FROM orderz",
+            expected_codes: &["E200"],
+        },
+        ClosedSchemaTestCase {
+            description: "a CTE is no stored relation",
+            sql: "WITH recent AS (SELECT order_id FROM orders) SELECT order_id FROM recent",
+            expected_codes: &[],
+        },
+        ClosedSchemaTestCase {
+            description: "a recursive CTE reads itself",
+            sql: "WITH RECURSIVE n AS (SELECT 1 AS i UNION ALL SELECT i + 1 FROM n WHERE i < 3) SELECT i FROM n",
+            expected_codes: &[],
+        },
+        ClosedSchemaTestCase {
+            description: "a function neither Snowflake nor the schema declares",
+            sql: "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders",
+            expected_codes: &["E202"],
+        },
+        ClosedSchemaTestCase {
+            description: "a function the schema declares, called in lower case",
+            sql: "SELECT is_gift(note) AS g FROM orders",
+            expected_codes: &[],
+        },
+        ClosedSchemaTestCase {
+            description: "a Snowflake function named only in a documented alternative",
+            sql: "SELECT TO_TIMESTAMP_NTZ(note) AS t FROM orders",
+            expected_codes: &[],
+        },
+    ];
+    for test_case in test_cases {
+        let codes: Vec<&str> =
+            found_findings(test_case.sql, (Dialect::Snowflake, &SNOWFLAKE, &catalog))
+                .into_iter()
+                .map(|(code, _, _)| code)
+                .collect();
+        assert_eq!(codes, test_case.expected_codes, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_the_syntax_catalogue_when_listing_snowflake_functions_then_the_list_matches_it() {
+    let test_cases = [FunctionListTestCase {
+        description: "snowflake_functions.txt lists exactly the names the catalogue's grammars call",
+        expected_differences: (Vec::new(), Vec::new()),
+    }];
+    let catalogued: BTreeSet<String> = catalogue_function_names();
+    let listed: BTreeSet<String> = SNOWFLAKE_FUNCTION_NAMES
+        .lines()
+        .map(str::to_owned)
+        .collect();
+    for test_case in test_cases {
+        assert_eq!(
+            (
+                catalogued
+                    .difference(&listed)
+                    .cloned()
+                    .collect::<Vec<String>>(),
+                listed
+                    .difference(&catalogued)
+                    .cloned()
+                    .collect::<Vec<String>>()
+            ),
+            test_case.expected_differences,
             "{}",
             test_case.description
         );

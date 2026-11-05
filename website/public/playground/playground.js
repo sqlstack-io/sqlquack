@@ -129,7 +129,7 @@ async function run() {
 	const checks = report.checks;
 	add(checks.diagnostics, 'error');
 	const findings = (checks.findings ?? []).map((finding) => {
-		const text = rendered({ code: finding.code, message: finding.message, span: finding.span }, chars).replace('class="bad"', 'class="warn"');
+		const text = rendered({ code: finding.code, message: finding.message, span: finding.span, help: finding.help }, chars).replace('class="bad"', 'class="warn"');
 		spans.push({ kind: 'warn', span: finding.span, text });
 		return terminal(text);
 	});

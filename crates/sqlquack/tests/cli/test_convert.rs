@@ -1,7 +1,8 @@
 use crate::helpers::{
-    convert_outcome, convert_streams, converted_column_names, converted_first_value,
-    converted_run_error, converted_value_over, override_failure, override_outcome,
-    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert, run_with_input,
+    EVERYDAY_SCHEMA, convert_outcome, convert_streams, converted_column_names,
+    converted_first_value, converted_run_error, converted_value_over, override_failure,
+    override_outcome, policy_free_exit_code, python_outcome, python_report, python_rows,
+    run_convert, run_with_input,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
@@ -1273,13 +1274,25 @@ fn given_a_union_of_a_float_variant_and_a_json_decimal_when_running_then_it_rais
 fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_diagnostic() {
     let test_cases = [
         ConvertDiagnosticTestCase {
-            description: "a parse failure is rendered at the parser's position with its code",
+            description: "a parse failure is rendered at the unclosed parenthesis with its code",
             sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
             flags: &[],
-            expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:26\n  |\n2 |   FROM \
-                orders WHERE (b = 1\n  |                          ^ Expected RParen, got end of input \
-                ('') near [b = 1]\nsqlquack convert: refused, 1 refusal under the built-in default\n",
-            expected_json: ("SQ0001", "parse_fidelity", 2, 26),
+            expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:21\n  |\n2 |   FROM \
+                orders WHERE (b = 1\n  |                     ^ this `(` is never closed\n  |\n  = help: \
+                add the missing `)` where the bracketed part ends\nsqlquack convert: refused, 1 refusal \
+                under the built-in default\n",
+            expected_json: ("SQ0001", "parse_fidelity", 2, 21),
+        },
+        ConvertDiagnosticTestCase {
+            description: "a double-quoted name used as a value suggests a string literal",
+            sql: "SELECT order_id FROM orders WHERE status = \"shipped\"",
+            flags: &["--schema", EVERYDAY_SCHEMA],
+            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:44\n  |\n1 | SELECT \
+                order_id FROM orders WHERE status = \"shipped\"\n  |\
+                \x20                                           ^^^^^^^^^ column `shipped` does not \
+                resolve\n  |\n  = help: use single quotes for a string literal: 'shipped'\n\
+                sqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_json: ("SQ0004", "unresolved_name", 1, 44),
         },
         ConvertDiagnosticTestCase {
             description: "an unknown relation is underlined with the fix as help",

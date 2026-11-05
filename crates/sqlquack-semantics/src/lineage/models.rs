@@ -1,6 +1,6 @@
 //! Column lineage of a query: each output column, the source columns it reads, and how.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::rc::Rc;
 
 use sqlquack_syntax::expressions::names::models::Column;
@@ -8,6 +8,7 @@ use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::types::{LineageSchema, SharedColumns};
+use crate::types::models::{ColumnSpec, Schema};
 
 /// How an output column is derived from its source columns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -225,4 +226,55 @@ pub struct NameFinding {
     pub phase: u8,
     /// The node the finding is about, as an address: findings of a phase follow tree order.
     pub(crate) node: usize,
+}
+
+/// A schema file's relations and functions, closed: a name it does not declare is a finding.
+#[derive(Debug, Default)]
+pub struct SchemaCatalog {
+    relations: BTreeMap<String, Vec<SchemaColumn>>,
+    functions: BTreeSet<String>,
+}
+
+impl SchemaCatalog {
+    /// The catalog of `schema`, its columns typed as the schema declares them.
+    pub fn new(schema: &Schema) -> Self {
+        let relations: BTreeMap<String, Vec<SchemaColumn>> = schema
+            .relations
+            .iter()
+            .map(|(relation, columns)| (relation.clone(), Self::named_columns(columns)))
+            .collect();
+        Self {
+            relations,
+            functions: schema.functions.keys().cloned().collect(),
+        }
+    }
+
+    /// A relation's declared columns as the name checks read them.
+    fn named_columns(columns: &[ColumnSpec]) -> Vec<SchemaColumn> {
+        columns
+            .iter()
+            .map(|column| SchemaColumn {
+                name: column.name.clone(),
+                quoted: false,
+                data_type: Some(column.data_type.to_string()),
+                nullability: Nullability::Unknown,
+            })
+            .collect()
+    }
+}
+
+impl LineageSchema for SchemaCatalog {
+    fn columns(&self, relation: &str) -> Option<&[SchemaColumn]> {
+        self.relations.get(relation).map(Vec::as_slice)
+    }
+
+    fn known_function(&self, name: &str) -> bool {
+        self.functions
+            .iter()
+            .any(|function| function.eq_ignore_ascii_case(name))
+    }
+
+    fn closed(&self) -> bool {
+        true
+    }
 }

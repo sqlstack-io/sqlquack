@@ -5,8 +5,9 @@ sidebar:
   label: "check"
 ---
 
-`sqlquack check` parses Snowflake SQL and reports what Snowflake would reject. It needs no schema
-and no policy, and it converts nothing.
+`sqlquack check` parses Snowflake SQL and reports what Snowflake would reject. It needs no policy
+and converts nothing. A schema is optional: with one, `check` also reports relations and functions
+the schema does not declare.
 
 ## Usage
 
@@ -35,17 +36,22 @@ sqlquack check: found 1 problem
 
 ## What it reports
 
-- SQL that does not parse: [`SQ0001`](/docs/diagnostics/reference/#sq0001), with the span where
-  the parser stopped.
+- SQL that does not parse: [`SQ0001`](/docs/diagnostics/reference/#sq0001), at the point where the
+  parser stopped (or at a `(` that is never closed), with what it expected there.
 - Input beyond the parser's limits: the `SQ01xx` codes.
 - SQL that parses but that Snowflake rejects, such as `INTERSECT ALL`, `FOR UPDATE WAIT`,
   `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of a column the
   pattern removes: the `SQ02xx` codes.
+- With `--schema`, a relation the schema does not declare:
+  [`SQ0004`](/docs/diagnostics/reference/#sq0004); and a call to a function that is neither a
+  documented Snowflake function nor one the schema declares:
+  [`SQ0205`](/docs/diagnostics/reference/#sq0205). Without a schema, names are not checked.
 
 ## Options
 
 | Option | Meaning |
 |--------|---------|
+| `--schema FILE` | A [schema file](/docs/schema/); report relations and functions it does not declare. |
 | `--format text\|json` | Print the report as text for people or JSON for programs. Default `text`. |
 | `--json` | The same as `--format json`. |
 

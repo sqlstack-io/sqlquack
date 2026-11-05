@@ -16,5 +16,8 @@ sqlquack-syntax.workspace = true
 sqlquack-core.workspace = true
 sqlquack-snowflake.workspace = true
 
+[dev-dependencies]
+toml.workspace = true
+
 [lints]
 workspace = true

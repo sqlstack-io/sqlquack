@@ -26,3 +26,11 @@ pub(crate) struct GuardNameTestCase {
     pub(crate) roots: &'static [&'static str],
     pub(crate) expected_unregistered: Vec<String>,
 }
+
+pub(crate) struct UnparsedTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) source: &'static str,
+    pub(crate) expected_label: &'static str,
+    pub(crate) expected_column: usize,
+    pub(crate) expected_help: Option<&'static str>,
+}

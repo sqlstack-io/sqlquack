@@ -1011,12 +1011,17 @@ impl Parser {
         if let Some(error) = self.recursion.error() {
             return error;
         }
-        let span = self
-            .tokens
-            .get(self.current)
-            .or_else(|| self.tokens.last())
-            .map(|token| token.span)
-            .unwrap_or_default();
+        let span = match self.tokens.get(self.current) {
+            Some(token) => token.span,
+            None => self
+                .tokens
+                .last()
+                .map(|token| Span {
+                    start: token.span.end,
+                    ..token.span
+                })
+                .unwrap_or_default(),
+        };
         Error::parse(message, span)
     }
 

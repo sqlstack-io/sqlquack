@@ -81,6 +81,9 @@ pub struct CompareArguments {
 pub struct CheckArguments {
     /// The SQL file; standard input when absent or `-`.
     pub path: Option<PathBuf>,
+    /// A schema file; with one, relations and functions it does not declare are reported.
+    #[arg(long)]
+    pub schema: Option<PathBuf>,
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,

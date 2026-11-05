@@ -34,8 +34,7 @@ use sqlquack_rules::session::main::parse_session::parse_session;
 use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
-use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
-use sqlquack_semantics::lineage::types::LineageSchema;
+use sqlquack_semantics::lineage::models::{LineageContext, SchemaCatalog};
 use sqlquack_semantics::types::main::parse_schema::parse_schema;
 use sqlquack_semantics::types::models::Schema;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
@@ -82,17 +81,14 @@ pub fn fixture_tables(schema: &str) -> String {
     json!({ "tables": tables }).to_string()
 }
 
+/// The name check's code for a column no FROM item offers.
+const UNKNOWN_COLUMN_FINDING: &str = "E201";
+
 /// The schema's relations as conversion types them, and as name checks resolve them.
 #[derive(Debug, Default)]
 struct Catalog {
     schema: Schema,
-    columns: BTreeMap<String, Vec<SchemaColumn>>,
-}
-
-impl LineageSchema for Catalog {
-    fn columns(&self, relation: &str) -> Option<&[SchemaColumn]> {
-        self.columns.get(relation).map(Vec::as_slice)
-    }
+    names: SchemaCatalog,
 }
 
 /// The schema file `text`, read by the same parser as `sqlquack convert --schema`.
@@ -101,23 +97,8 @@ fn catalog(text: &str) -> Result<Catalog, String> {
         return Ok(Catalog::default());
     }
     let schema = parse_schema(text).map_err(|error| error.to_string())?;
-    let columns = schema
-        .relations
-        .iter()
-        .map(|(relation, columns)| {
-            let named = columns
-                .iter()
-                .map(|column| SchemaColumn {
-                    name: column.name.clone(),
-                    quoted: false,
-                    data_type: Some(column.data_type.to_string()),
-                    nullability: Nullability::Unknown,
-                })
-                .collect();
-            (relation.clone(), named)
-        })
-        .collect();
-    Ok(Catalog { schema, columns })
+    let names = SchemaCatalog::new(&schema);
+    Ok(Catalog { schema, names })
 }
 
 /// The playground's policy and session settings.
@@ -237,36 +218,43 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
         .iter()
         .flat_map(|statement| snowflake_rejections(statement, (sql, &lines)))
         .collect();
-    let findings: Vec<Value> = match (catalog.columns.is_empty(), statements.len()) {
-        (false, 1) => {
+    let names_checked = !catalog.schema.relations.is_empty() && statements.len() == 1;
+    let findings: Vec<Value> = match names_checked {
+        true => {
             let context = LineageContext {
                 profile: &SNOWFLAKE,
-                schema: &catalog,
+                schema: &catalog.names,
                 sql: Some(sql),
             };
             query_name_findings(sql, Dialect::Snowflake, &ParseOptions::default(), context)
                 .unwrap_or_default()
                 .into_iter()
                 .map(|finding| {
+                    let written: Option<String> = finding
+                        .span
+                        .map(|span| sql.chars().skip(span.start).take(span.end - span.start).collect());
+                    let help = written
+                        .as_deref()
+                        .and_then(|written| written.strip_prefix('"')?.strip_suffix('"'))
+                        .filter(|_| finding.code == UNKNOWN_COLUMN_FINDING)
+                        .map(|value| format!("use single quotes for a string literal: '{}'", value.replace('\'', "''")));
                     json!({
                         "code": finding.code,
                         "message": finding.message,
                         "span": finding.span.map(|span| json!({ "start": span.start, "end": span.end })),
+                        "help": help,
                     })
                 })
                 .collect()
         }
-        _ => Vec::new(),
+        false => Vec::new(),
     };
     let mut checks = Stage::new(
         rejections.is_empty() && findings.is_empty(),
         diagnostics(&rejections, sql),
     );
     checks.extra.insert("findings", json!(findings));
-    checks.extra.insert(
-        "names_checked",
-        json!(!catalog.columns.is_empty() && statements.len() == 1),
-    );
+    checks.extra.insert("names_checked", json!(names_checked));
     // SQL Snowflake rejects is not translated, as the native check would refuse it at DuckDB's
     // bind, which the browser does not run. Warnings (W codes) do not stop translation.
     let erred = findings.iter().any(|finding| {

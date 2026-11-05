@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::types::models::DataType;
+use sqlquack_syntax::tokens::models::Span;
 
 use crate::lineage::_helpers::checks::coercion::{
     Engine, arithmetic, comparable, invalid_literal_for, invalid_temporal_literal, literal_coerces,
@@ -19,7 +20,10 @@ use crate::lineage::_helpers::checks::relational::{
 use crate::lineage::_helpers::checks::signatures::{
     argument_finding, check_call, dispatch_name, has_signature, located, unify,
 };
-use crate::lineage::constants::{DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, TYPE_PHASE};
+use crate::lineage::constants::{
+    DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, NAME_SEPARATOR, SNOWFLAKE_FUNCTION_NAMES,
+    TYPE_PHASE, UNKNOWN_FUNCTION_CODE,
+};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
 /// COALESCE without arguments, which polyglot checks against the catalog under this name.
@@ -55,6 +59,29 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     if let Expression::Function(function) = node
         && level.context.schema.known_function(&function.name)
     {
+        return findings;
+    }
+    if let Expression::Function(function) = node
+        && level.engine() == Engine::Snowflake
+        && level.context.schema.closed()
+        && !function.name.contains(NAME_SEPARATOR)
+        && !function.name.contains(char::is_whitespace)
+        && !SNOWFLAKE_FUNCTION_NAMES
+            .lines()
+            .any(|known| known.eq_ignore_ascii_case(&function.name))
+    {
+        findings.push(NameFinding {
+            written: function.name.clone(),
+            ..issue(
+                (UNKNOWN_FUNCTION_CODE, NAME_PHASE),
+                format!("Unknown function '{}' for dialect Snowflake", function.name),
+                function.span.0.map(|span| Span {
+                    end: span.start + function.name.chars().count(),
+                    ..span
+                }),
+                node,
+            )
+        });
         return findings;
     }
     let family = |expression: &Expression| level.family(expression);

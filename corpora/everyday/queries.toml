@@ -3134,14 +3134,14 @@ expect_repository = "refused SQ0004 statement"
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM order'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "check SQ0004"
+expect_repository = "check SQ0004"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orderz'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "check SQ0004"
+expect_repository = "check SQ0004"
 
 [[query]]
 category = "invalid_semantics"
@@ -3245,8 +3245,8 @@ snowflake = "rejects 939"
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT NOSUCHFUNCTION(order_id) AS x FROM orders'''
-expect = "refused SQ0002 fn:NOSUCHFUNCTION"
-expect_repository = "refused SQ0002 fn:NOSUCHFUNCTION"
+expect = "check SQ0205"
+expect_repository = "check SQ0205"
 
 [[query]]
 category = "invalid_semantics"

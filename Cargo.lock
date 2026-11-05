@@ -1477,6 +1477,7 @@ dependencies = [
  "sqlquack-core",
  "sqlquack-snowflake",
  "sqlquack-syntax",
+ "toml",
 ]
 
 [[package]]

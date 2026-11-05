@@ -3,6 +3,11 @@
 /// The key recorded for a refusal that names no construct.
 pub const STATEMENT_REFUSAL: &str = "statement";
 
+/// The name check's code for a relation the schema does not declare.
+pub const UNKNOWN_TABLE_FINDING: &str = "E200";
+/// The name check's code for a call to a function neither Snowflake nor the schema declares.
+pub const UNKNOWN_FUNCTION_FINDING: &str = "E202";
+
 /// The column a scalar SQL function body is converted as.
 pub const SCALAR_RESULT_COLUMN: &str = "RESULT";
 

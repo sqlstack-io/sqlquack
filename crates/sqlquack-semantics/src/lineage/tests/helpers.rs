@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
+use std::path::Path;
 
 use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
@@ -357,3 +358,111 @@ const CANONICAL_DUCKDB_NAMES: [(&[&str], &str); 19] = [
     (&["TIMETZ", "TIME WITH TIME ZONE"], "TIMETZ"),
     (&["BLOB", "BYTEA", "VARBINARY"], "BLOB"),
 ];
+
+/// Every upper-case name the syntax catalogue's function, expression and query grammars call.
+pub(crate) fn catalogue_function_names() -> BTreeSet<String> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../coverage/syntax/catalogue");
+    std::fs::read_dir(root)
+        .expect("the catalogue reads")
+        .map(|entry| entry.expect("a catalogue file").path())
+        .map(|path| std::fs::read_to_string(path).expect("a catalogue file reads"))
+        .map(|text| toml::from_str::<toml::Table>(&text).expect("a catalogue file parses"))
+        .flat_map(|catalogue| file_function_names(&catalogue))
+        .collect()
+}
+
+/// The names one catalogue file's call grammars and function definitions name.
+fn file_function_names(catalogue: &toml::Table) -> Vec<String> {
+    let entries = |key: &str| -> Vec<toml::Value> {
+        catalogue
+            .get(key)
+            .and_then(toml::Value::as_array)
+            .cloned()
+            .unwrap_or_default()
+    };
+    let text = |entry: &toml::Value, key: &str| -> String {
+        entry
+            .get(key)
+            .and_then(toml::Value::as_str)
+            .unwrap_or_default()
+            .to_owned()
+    };
+    let called: Vec<String> = entries("form")
+        .iter()
+        .filter(|form| CALLING_FAMILIES.contains(&text(form, "family").as_str()))
+        .flat_map(|form| {
+            form.get("grammar")
+                .and_then(toml::Value::as_array)
+                .cloned()
+                .unwrap_or_default()
+        })
+        .flat_map(|grammar| called_names(grammar.as_str().unwrap_or_default()))
+        .collect();
+    let alternatives: Vec<String> = entries("definition")
+        .iter()
+        .filter(|definition| text(definition, "source").starts_with(FUNCTION_PAGE_PREFIX))
+        .flat_map(|definition| definition_names(&text(definition, "grammar")))
+        .collect();
+    called.into_iter().chain(alternatives).collect()
+}
+
+/// The names a `name ::= A | B` definition offers as alternatives.
+fn definition_names(grammar: &str) -> Vec<String> {
+    grammar
+        .split_once(DEFINES)
+        .map(|(_, alternatives)| alternatives)
+        .unwrap_or_default()
+        .split(ALTERNATIVE)
+        .map(str::trim)
+        .filter(|alternative| upper_name(alternative))
+        .map(str::to_owned)
+        .collect()
+}
+
+/// The upper-case names a grammar line calls: each directly followed by `(`.
+fn called_names(grammar: &str) -> Vec<String> {
+    grammar
+        .match_indices(CALL_OPEN)
+        .filter_map(|(at, _)| called_before(&grammar[..at]))
+        .collect()
+}
+
+/// The upper-case name that ends `before`, ignoring trailing spaces, when there is one.
+fn called_before(before: &str) -> Option<String> {
+    let before: &str = before.trim_end();
+    let start: usize = before
+        .char_indices()
+        .rev()
+        .find(|(_, character)| !name_character(*character))
+        .map_or(0, |(at, character)| at + character.len_utf8());
+    let name: &str = &before[start..];
+    upper_name(name).then(|| name.to_owned())
+}
+
+/// Whether `character` can be part of a Snowflake name as the catalogue writes it.
+fn name_character(character: char) -> bool {
+    character.is_ascii_alphanumeric() || NAME_SYMBOLS.contains(&character)
+}
+
+/// Whether `name` is an upper-case identifier, as the catalogue writes Snowflake's names.
+fn upper_name(name: &str) -> bool {
+    name.starts_with(|character: char| character.is_ascii_uppercase())
+        && name.chars().all(|character| {
+            character.is_ascii_uppercase()
+                || character.is_ascii_digit()
+                || NAME_SYMBOLS.contains(&character)
+        })
+}
+
+/// The catalogue families whose grammars name functions.
+const CALLING_FAMILIES: [&str; 3] = ["functions", "expressions", "query"];
+/// How the catalogue's source ids for function pages start.
+const FUNCTION_PAGE_PREFIX: &str = "doc.functions.";
+/// What separates a definition's name from its alternatives.
+const DEFINES: &str = "::=";
+/// What separates a definition's alternatives.
+const ALTERNATIVE: char = '|';
+/// What follows a called name.
+const CALL_OPEN: char = '(';
+/// The symbols a Snowflake name may hold besides letters and digits.
+const NAME_SYMBOLS: [char; 2] = ['_', '$'];

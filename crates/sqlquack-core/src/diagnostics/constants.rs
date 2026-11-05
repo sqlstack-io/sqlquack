@@ -24,6 +24,47 @@ pub const ZONED_LOCAL_TIME_HELP: &str = "convert the value to a wall time first:
     `CONVERT_TIMEZONE(<zone column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone";
 /// The prefix of a complexity guard's message, before the rest of its `E_GUARD_*` name.
 pub const GUARD_PREFIX: &str = "E_GUARD_";
+/// How the parser's own messages start when it names what it expected, and what it found.
+pub const EXPECTED_PREFIX: &str = "Expected ";
+/// What separates the expected token from the found one in such a message.
+pub const FOUND_SEPARATOR: &str = ", got ";
+/// How the parser names the end of the input as the found token.
+pub const END_OF_INPUT: &str = "end of input";
+/// Where the parser's message starts quoting the tokens around the failure.
+pub const NEAR_SUFFIX: &str = " near [";
+/// What the parser's message says when it names only the token it did not expect.
+pub const UNEXPECTED_TOKEN: &str = "Unexpected token";
+/// A closing parenthesis as an expected token is shown.
+pub const CLOSING_PAREN: &str = "`)`";
+/// Each token name the parser expects, and its text in SQL.
+pub const TOKEN_TEXTS: &[(&str, &str)] = &[
+    ("LParen", "("),
+    ("RParen", ")"),
+    ("LBracket", "["),
+    ("RBracket", "]"),
+    ("LBrace", "{"),
+    ("RBrace", "}"),
+    ("Comma", ","),
+    ("Dot", "."),
+    ("Colon", ":"),
+    ("DColon", "::"),
+    ("Semicolon", ";"),
+    ("Eq", "="),
+    ("Star", "*"),
+    ("Arrow", "->"),
+];
+/// The help for a `(` the SQL never closes.
+pub const UNCLOSED_PAREN_HELP: &str = "add the missing `)` where the bracketed part ends";
+/// Text that marks a dbt or Jinja template, which is not SQL until rendered.
+pub const TEMPLATE_MARKERS: [&str; 4] = ["{{", "}}", "{%", "%}"];
+/// The help for SQL that still holds template markers.
+pub const TEMPLATE_HELP: &str = "render dbt/Jinja templates before checking";
+/// How an unresolved column's reason starts.
+pub const UNRESOLVED_COLUMN_PREFIX: &str = "column `";
+/// The quote around a quoted identifier in Snowflake SQL.
+pub const DOUBLE_QUOTE: char = '"';
+/// The help for a double-quoted name used as a value, before the name as a string literal.
+pub const QUOTED_VALUE_HELP: &str = "use single quotes for a string literal:";
 /// The longest source line shown in full; longer lines show a window around the span.
 pub const MAX_SHOWN_LINE: usize = 120;
 /// How many columns a tab takes when a source line is shown.
@@ -35,6 +76,8 @@ pub const PARSE_FIDELITY: &str = "SQ0001";
 pub const MISSING_RULE: &str = "SQ0002";
 /// The construct's operand types fall outside every rule's proven conditions.
 pub const TYPE_CONDITION: &str = "SQ0003";
+/// The name of the code of a call to a function neither Snowflake nor the schema declares.
+pub const UNKNOWN_FUNCTION: &str = "unknown_function";
 /// A relation or column name does not resolve.
 pub const UNRESOLVED_NAME: &str = "SQ0004";
 /// DuckDB cannot express the construct's meaning.
@@ -283,5 +326,22 @@ pub const CODES: &[CodeEntry] = &[
             pattern did not keep (Snowflake error 1431). A name that fails the pattern ignoring \
             case fails it whatever the table holds, so no schema is needed to see it.",
         example: r#"echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check"#,
+    },
+    CodeEntry {
+        code: "SQ0205",
+        name: UNKNOWN_FUNCTION,
+        alias: None,
+        title: "Snowflake has no function of this name",
+        help: Some(
+            "check the function's spelling, or declare a user-defined function under `functions` \
+             in the schema",
+        ),
+        explanation: "The call names a function that is neither one of Snowflake's documented \
+            functions nor a function the schema declares, so Snowflake rejects the statement \
+            (Snowflake error 2140, unknown function). SQLQuack checks calls only when a schema is \
+            given, because a user-defined function can only be told apart from a misspelled one \
+            by the schema's `functions`. Calls qualified with a database or schema are not \
+            checked.",
+        example: r#"echo "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders" | sqlquack check --schema schema.json"#,
     },
 ];
