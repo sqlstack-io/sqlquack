@@ -140,7 +140,7 @@ def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str
         counted_runs |= {
             str(run["run_id"])
             for run in report.get("runs", [])
-            if run.get("status") in COUNTED_RUN_STATUSES
+            if isinstance(run, dict) and run.get("status") in COUNTED_RUN_STATUSES
         }
     latest: dict[tuple[str, str], tuple[str, list[str]]] = {}
     classes: dict[tuple[str, str], set[bool]] = {}

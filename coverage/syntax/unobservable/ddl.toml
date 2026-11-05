@@ -53451,3 +53451,63 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-models.o002"
+form = "sf.ddl.show-models"
+construct = "option_present: SHOW MODELS LIKE 'm' IN ACCOUNT ;"
+reason = "not submitted: held by the offline screen, run cat71-ddl: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-models.ke9ead81ecc83", sql_sha256 = "e9ead81ecc83fae0a609e6473046539b4c728143a93b3bee7af88151d7fa32dd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-models.o005"
+form = "sf.ddl.show-models"
+construct = "a valid string_literal: SHOW MODELS LIKE 'm' IN ACCOUNT ;"
+reason = "not submitted: held by the offline screen, run cat71-ddl: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-models.ke9ead81ecc83", sql_sha256 = "e9ead81ecc83fae0a609e6473046539b4c728143a93b3bee7af88151d7fa32dd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-models.o021"
+form = "sf.ddl.show-models"
+construct = "every independent option of one production together: SHOW MODELS LIKE 'm' IN ACCOUNT ;"
+reason = "not submitted: held by the offline screen, run cat71-ddl: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-models.ke9ead81ecc83", sql_sha256 = "e9ead81ecc83fae0a609e6473046539b4c728143a93b3bee7af88151d7fa32dd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-models.o026"
+form = "sf.ddl.show-models"
+construct = "option_present: SHOW MODELS LIKE 'm' IN ACCOUNT ;"
+reason = "not submitted: held by the offline screen, run cat71-ddl: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-models.ke9ead81ecc83", sql_sha256 = "e9ead81ecc83fae0a609e6473046539b4c728143a93b3bee7af88151d7fa32dd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.show-models.o028"
+form = "sf.ddl.show-models"
+construct = "alternative: SHOW MODELS IN ACCOUNT ;"
+reason = "not submitted: held by the offline screen, run cat71-ddl: account-level statement"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.show-models.kffd2f4ef7c79", sql_sha256 = "ffd2f4ef7c7980c5da33344d8b57886c3d2f3a5ebf9d4f3bb7f9477590a16614" },
+]
+runs = []
+probes = []

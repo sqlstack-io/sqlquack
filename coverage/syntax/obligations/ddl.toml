@@ -30783,13 +30783,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.ddl.alter-external-table.set.o004"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.ddl.alter-external-table.set.o005"
 kind = "operand_type_class"
 required = true
@@ -30814,12 +30807,6 @@ id = "sf.ddl.alter-external-table.set.o010"
 kind = "alternative"
 required = true
 target = "{ TRUE | FALSE } → FALSE"
-
-[[obligation]]
-id = "sf.ddl.alter-external-table.set.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
 
 [[obligation]]
 id = "sf.ddl.alter-external-table.set.o011"
@@ -30866,6 +30853,21 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.set.o021"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-external-table / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-external-table.set.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-table / Syntax"
+note = "the form without its required EXTERNAL, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o001"
@@ -40734,13 +40736,6 @@ target = "<old_col_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o032"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name>"
-note = "a string literal in place of <old_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o033"
 kind = "required_operand_missing"
 required = true
@@ -40755,13 +40750,6 @@ target = "<num_buckets>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o035"
-kind = "negative_neighbour"
-required = true
-target = "<num_buckets>"
-note = "a string literal in place of <num_buckets>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o036"
 kind = "required_operand_missing"
 required = true
@@ -40774,13 +40762,6 @@ kind = "operand_type_class"
 required = true
 target = "<old_col_name> #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o038"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #2"
-note = "a string literal in place of <old_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o039"
@@ -40811,39 +40792,11 @@ target = "<old_col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o043"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #3"
-note = "a string literal in place of <old_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o044"
-kind = "required_operand_missing"
-required = true
-target = "<old_col_name> #4"
-note = "omit <old_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o045"
 kind = "operand_type_class"
 required = true
 target = "<old_col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o046"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #4"
-note = "a string literal in place of <old_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o047"
-kind = "required_operand_missing"
-required = true
-target = "<old_col_name> #5"
-note = "omit <old_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o048"
@@ -40853,20 +40806,6 @@ target = "<old_col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o049"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #5"
-note = "a string literal in place of <old_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o050"
-kind = "required_operand_missing"
-required = true
-target = "<old_col_name> #6"
-note = "omit <old_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o051"
 kind = "operand_type_class"
 required = true
@@ -40874,32 +40813,11 @@ target = "<old_col_name> #6"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o052"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #6"
-note = "a string literal in place of <old_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o053"
-kind = "required_operand_missing"
-required = true
-target = "<old_col_name> #7"
-note = "omit <old_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o054"
 kind = "operand_type_class"
 required = true
 target = "<old_col_name> #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o055"
-kind = "negative_neighbour"
-required = true
-target = "<old_col_name> #7"
-note = "a string literal in place of <old_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o056"
@@ -40951,13 +40869,6 @@ target = "<new_col_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o064"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name>"
-note = "a string literal in place of <new_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o065"
 kind = "required_operand_missing"
 required = true
@@ -40972,13 +40883,6 @@ target = "<num_buckets> #2"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o067"
-kind = "negative_neighbour"
-required = true
-target = "<num_buckets> #2"
-note = "a string literal in place of <num_buckets>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o068"
 kind = "required_operand_missing"
 required = true
@@ -40991,13 +40895,6 @@ kind = "operand_type_class"
 required = true
 target = "<new_col_name> #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o070"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #2"
-note = "a string literal in place of <new_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o071"
@@ -41028,39 +40925,11 @@ target = "<new_col_name> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o075"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #3"
-note = "a string literal in place of <new_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o076"
-kind = "required_operand_missing"
-required = true
-target = "<new_col_name> #4"
-note = "omit <new_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o077"
 kind = "operand_type_class"
 required = true
 target = "<new_col_name> #4"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o078"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #4"
-note = "a string literal in place of <new_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o079"
-kind = "required_operand_missing"
-required = true
-target = "<new_col_name> #5"
-note = "omit <new_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o080"
@@ -41070,20 +40939,6 @@ target = "<new_col_name> #5"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o081"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #5"
-note = "a string literal in place of <new_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o082"
-kind = "required_operand_missing"
-required = true
-target = "<new_col_name> #6"
-note = "omit <new_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o083"
 kind = "operand_type_class"
 required = true
@@ -41091,32 +40946,11 @@ target = "<new_col_name> #6"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o084"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #6"
-note = "a string literal in place of <new_col_name>"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o085"
-kind = "required_operand_missing"
-required = true
-target = "<new_col_name> #7"
-note = "omit <new_col_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o086"
 kind = "operand_type_class"
 required = true
 target = "<new_col_name> #7"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o087"
-kind = "negative_neighbour"
-required = true
-target = "<new_col_name> #7"
-note = "a string literal in place of <new_col_name>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o011"
@@ -41259,6 +41093,198 @@ required = true
 target = "<new_col_name>"
 anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
 note = "an identity column replaced by a transform of another column, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o096"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o097"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o098"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o099"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #2"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o100"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o101"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #2"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o102"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <num_buckets>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o103"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o104"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o105"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #3"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o106"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o107"
+kind = "negative_neighbour"
+required = true
+target = "<num_buckets> #2"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <num_buckets>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o108"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o109"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #5"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o110"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #3"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o111"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o112"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o113"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o114"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o115"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name> #7"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o116"
+kind = "negative_neighbour"
+required = true
+target = "<new_col_name>"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <new_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o117"
+kind = "required_operand_missing"
+required = true
+target = "<old_col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o118"
+kind = "negative_neighbour"
+required = true
+target = "<old_col_name> #4"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "a string literal in place of <old_col_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with.o119"
+kind = "required_operand_missing"
+required = true
+target = "<new_col_name> #6"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+note = "omit <new_col_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table-refresh.refresh.o001"
@@ -47986,6 +48012,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o012"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+note = "omit <name>"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o007"
 kind = "operand_type_class"
 required = true
@@ -48032,14 +48065,6 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.alter-materialized-view.unset-data-metric-schedule.o011"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-anchor = "doc.sql.alter-materialized-view / Syntax"
-note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-model-add-version.internalstage.o001"
@@ -201179,12 +201204,6 @@ required = true
 note = "the form without its required ) in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST… #2"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o078"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o079"
 kind = "identifier_class"
 required = true
@@ -201457,20 +201476,20 @@ anchor = "doc.sql.create-semantic-view / Parameters"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o493"
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o516"
 kind = "boundary_at"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 120 against the documented minimum of 120"
+note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o494"
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o517"
 kind = "boundary_above"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 121 against the documented minimum of 120"
+note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o497"
@@ -201575,6 +201594,13 @@ required = true
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
 anchor = "doc.sql.create-semantic-view / Variant syntax / CREATE OR ALTER SEMANTIC VIEW"
 note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o518"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.create-semantic-view / Variant syntax / CREATE OR ALTER SEMANTIC VIEW"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o001"
@@ -204384,12 +204410,6 @@ required = true
 note = "the form without its required GRANTS in [ COPY GRANTS ]"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o101"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o102"
 kind = "identifier_class"
 required = true
@@ -204662,20 +204682,20 @@ anchor = "doc.sql.create-semantic-view / Parameters"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o516"
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o539"
 kind = "boundary_at"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 120 against the documented minimum of 120"
+note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o517"
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o540"
 kind = "boundary_above"
 required = true
 target = "MAX_STALENESS = <integer>"
 anchor = "doc.sql.create-semantic-view / Parameters"
-note = "MAX_STALENESS = 121 against the documented minimum of 120"
+note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o520"
@@ -204780,6 +204800,13 @@ required = true
 target = "<windowFrameClause> in [ <windowFrameClause> ]"
 anchor = "doc.sql.create-semantic-view / Syntax"
 note = "a valid operand, observed"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o541"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.create-semantic-view / Syntax"
+note = "every independent option of one production together, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o001"

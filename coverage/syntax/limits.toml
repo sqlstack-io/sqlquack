@@ -1309,6 +1309,23 @@ grammar_sha256 = "62de9f758a7e6943989174d25476b02701f185710fa6746e7dc36fa5b81734
 grammar = ["ALTER EXTERNAL TABLE [ IF EXISTS ] <name> SET AUTO_REFRESH = { TRUE | FALSE }"]
 reason = "SET names at least one property, and AUTO_REFRESH is its only property, so it is required"
 
+[[suppress]]
+form = "sf.ddl.alter-external-table.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D97: Snowflake answers the form without <name> with errno 926 'External table identifier cannot be empty' (import-20261104-129 refused the row: error phase not established), a name check rather than a syntax error; the hand row below observes it"
+
+[[limit]]
+form = "sf.ddl.alter-external-table.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-external-table / Syntax"
+sql = "ALTER EXTERNAL TABLE SET AUTO_REFRESH = TRUE ;"
+expect = "observe"
+context = "raw"
+
 [[reading]]
 form = "sf.ddl.show-models"
 grammar_sha256 = "b176f9708e129cc27cdaf40934f77531fb68b93d552deaa85e17676891fe57e2"
@@ -10528,24 +10545,28 @@ sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 120 against the documented minimum of 120"
+note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 121 against the documented minimum of 120"
+note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
 [[limit]]
@@ -10558,24 +10579,28 @@ sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMAR
 expect = "observe"
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 120 against the documented minimum of 120"
+note = "MAX_STALENESS = 120 against the documented minimum of 120, observed"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
+# D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject
 [[limit]]
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
-note = "MAX_STALENESS = 121 against the documented minimum of 120"
+note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
 anchor = "doc.sql.create-semantic-view / Parameters"
 sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
-expect = "accept"
+expect = "observe"
+documented = true
 context = "raw"
 
 [[limit]]
@@ -21567,23 +21592,6 @@ target = "<name>"
 note = "omit <name>, observed"
 anchor = "doc.sql.alter-materialized-view / Syntax"
 sql = "ALTER MATERIALIZED VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>"
-reason = "D97: the page's own block omits <name>, and Snowflake answers it with errno 926 'MATERIALIZED_VIEW identifier cannot be empty' (sweep 510fb2fd), a name check rather than a syntax error; the hand row below observes it"
-
-[[limit]]
-form = "sf.ddl.alter-materialized-view.unset-data-metric-schedule"
-kind = "required_operand_missing"
-target = "<name>"
-note = "omit <name>, observed"
-anchor = "doc.sql.alter-materialized-view / Syntax"
-sql = "ALTER MATERIALIZED VIEW UNSET DATA_METRIC_SCHEDULE ;"
 expect = "observe"
 context = "raw"
 
@@ -70312,5 +70320,2275 @@ target = "'<email_list>'"
 note = "omit '<email_list>' with the integration present, observed"
 anchor = "doc.classes.budget.methods.set_email_notifications / Syntax"
 sql = "CALL v1!SET_EMAIL_NOTIFICATIONS ( 'm' , ) ;"
+expect = "observe"
+context = "raw"
+
+# D113 ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.ddl.alter-external-table.set"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2 SQLSTATE 0A000, phase unsupported_feature, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-external-table.set"
+kind = "negative_neighbour"
+note = "the form without its required EXTERNAL, observed"
+anchor = "doc.sql.alter-external-table / Syntax"
+sql = "ALTER TABLE v1 SET AUTO_REFRESH = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name>"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name>"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( 'v1' ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #5"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #5"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( MONTH ( 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #5"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #5"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( MONTH ( 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #2"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #2"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( BUCKET ( 1 , 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #7"
+note = "omit <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #7"
+note = "omit <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( HOUR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #2"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #2"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( BUCKET ( 1 , 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<num_buckets>"
+note = "a string literal in place of <num_buckets>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( BUCKET ( 'x' , v1 ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #7"
+note = "omit <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #7"
+note = "omit <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( HOUR ( ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #5"
+note = "omit <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #5"
+note = "omit <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( MONTH ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #3"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #3"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( TRUNCATE ( 10 , 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #7"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #7"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( HOUR ( 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<num_buckets> #2"
+note = "a string literal in place of <num_buckets>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<num_buckets> #2"
+note = "a string literal in place of <num_buckets>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( BUCKET ( 'x' , v1 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #6"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #6"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( DAY ( 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #5"
+note = "omit <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #5"
+note = "omit <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( MONTH ( ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #3"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #3"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( TRUNCATE ( 10 , 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #4"
+note = "omit <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #4"
+note = "omit <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( YEAR ( ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #4"
+note = "omit <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #4"
+note = "omit <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( YEAR ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #4"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #4"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( YEAR ( 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #6"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #6"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( DAY ( 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #7"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name> #7"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( HOUR ( 'v1' ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name>"
+note = "a string literal in place of <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<new_col_name>"
+note = "a string literal in place of <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #6"
+note = "omit <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<old_col_name> #6"
+note = "omit <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( DAY ( ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #4"
+note = "a string literal in place of <old_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "negative_neighbour"
+target = "<old_col_name> #4"
+note = "a string literal in place of <old_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( YEAR ( 'v1' ) ) WITH ( v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #6"
+note = "omit <new_col_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-128), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
+kind = "required_operand_missing"
+target = "<new_col_name> #6"
+note = "omit <new_col_name>, observed"
+anchor = "doc.sql.alter-iceberg-table-partition-evolution / Syntax"
+sql = "ALTER ICEBERG TABLE v1 REPLACE PARTITION BY ( v1 ) WITH ( DAY ( ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.create-semantic-view / Variant syntax / CREATE OR ALTER SEMANTIC VIEW"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-128); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
+kind = "interaction_all_options"
+note = "every independent option of one production together, observed"
+anchor = "doc.sql.create-semantic-view / Syntax"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+# D113 security_admin receipt triage: remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_type_to_mask>"
+note = "omit <arg_type_to_mask>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-126), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_type_to_mask>"
+note = "omit <arg_type_to_mask>, observed"
+anchor = "doc.sql.create-masking-policy / Syntax"
+sql = "CREATE MASKING POLICY v1 AS ( v1 ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_name_to_mask>"
+note = "omit <arg_name_to_mask>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-126), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_name_to_mask>"
+note = "omit <arg_name_to_mask>, observed"
+anchor = "doc.sql.create-masking-policy / Syntax"
+sql = "CREATE MASKING POLICY v1 AS ( VARCHAR ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_type_to_mask>"
+note = "omit <arg_type_to_mask>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-126), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_type_to_mask>"
+note = "omit <arg_type_to_mask>, observed"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+sql = "CREATE OR ALTER MASKING POLICY v1 AS ( v1 ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_name_to_mask>"
+note = "omit <arg_name_to_mask>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261104-126), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_name_to_mask>"
+note = "omit <arg_name_to_mask>, observed"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+sql = "CREATE OR ALTER MASKING POLICY v1 AS ( VARCHAR ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required TARGET"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required TARGET, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT MANAGE SHARE ON ACCOUNT TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE SNOWFLAKE . . ANOMALY_DETECTION ON SCHEMA v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.grant-privilege / Syntax"
+sql = "GRANT CREATE DATABASE ON USER v1 TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE \"v1 Q\" TO ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<database_role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<database_role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO DATABASE ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE \"SELECT\" TO ROLE v1 ;"
+expect = "observe"
+documented = true
+also_sql = "GRANT SERVICE ROLE SELECT TO ROLE v1 ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<application_role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "operand_type_class"
+target = "<application_role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO APPLICATION ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-122); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.grant-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.grant-service-role / Syntax"
+sql = "GRANT SERVICE ROLE v1 TO ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "GRANT SERVICE ROLE v1 TO ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-application-role.application-role-application-user"
+kind = "required_operand_missing"
+target = "<application_role>"
+note = "omit <application_role>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-application-role.application-role-application-user"
+kind = "required_operand_missing"
+target = "<application_role>"
+note = "omit <application_role>, observed"
+anchor = "doc.sql.revoke-application-role / Syntax"
+sql = "REVOKE APPLICATION ROLE v1 FROM APPLICATION ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL CALLER PRIVILEGES ON TABLE v1 FROM DATABASE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL CALLER PRIVILEGES ON v1 FROM ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL CALLER PRIVILEGES ON TABLE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "required_operand_missing"
+target = "<grantee_name>"
+note = "omit <grantee_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "required_operand_missing"
+target = "<grantee_name>"
+note = "omit <grantee_name>, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL CALLER PRIVILEGES ON TABLE v1 FROM ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required CALLER"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-caller-privileges-on"
+kind = "negative_neighbour"
+note = "the form without its required CALLER, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL PRIVILEGES ON TABLE v1 FROM ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "required_operand_missing"
+target = "<app_pkg_name>"
+note = "omit <app_pkg_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "required_operand_missing"
+target = "<app_pkg_name>"
+note = "omit <app_pkg_name>, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN APPLICATION PACKAGE FROM ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN ACCOUNT FROM DATABASE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required CALLER"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required CALLER, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL INHERITED PRIVILEGES ON ALL TABLES IN ACCOUNT FROM ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "required_operand_missing"
+target = "<grantee_name>"
+note = "omit <grantee_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "required_operand_missing"
+target = "<grantee_name>"
+note = "omit <grantee_name>, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN ACCOUNT FROM ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.all-inherited-caller-privileges"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.caller-on-from-role"
+kind = "negative_neighbour"
+note = "the form without its required CALLER"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.caller-on-from-role"
+kind = "negative_neighbour"
+note = "the form without its required CALLER, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE USAGE ON TABLE v1 FROM ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-caller.caller-on-from-role"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-122), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-caller.caller-on-from-role"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }, observed"
+anchor = "doc.sql.revoke-caller / Syntax"
+sql = "REVOKE CALLER USAGE ON TABLE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MONITOR ON v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { EXECUTION | SECURITY | USAGE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { EXECUTION | SECURITY | USAGE }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MONITOR ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { CORTEX EXTENSIONS | EXECUTION | SECURITY | USAGE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { CORTEX EXTENSIONS | EXECUTION | SECURITY | USAGE }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MONITOR ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MODIFY ON v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MODIFY ON v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required LISTING"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required LISTING, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE PURCHASE DATA EXCHANGE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON RESOURCE MONITOR v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON RESOURCE MONITOR v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<database_role_name>"
+note = "omit <database_role_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<database_role_name>"
+note = "omit <database_role_name>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SCHEMA ON DATABASE v1 FROM DATABASE ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE EXECUTE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE APPLICATION ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SESSION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SESSION, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE READ ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE OVERRIDE SHARE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE APPLY ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { CORTEX EXTENSIONS | EXECUTION | SECURITY | USAGE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { CORTEX EXTENSIONS | EXECUTION | SECURITY | USAGE }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MONITOR ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required TARGET"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required TARGET, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE SHARE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | EXTERNAL VOLUME }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | EXTERNAL VOLUME }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE ATTACH LISTING ON v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-123); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+note = "alternative { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE CORTEX EXTENSION SECURITY SCAN ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SCHEMA ON DATABASE FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required CASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required CASES, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ACCOUNT SUPPORT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE DATABASE ON RESOURCE MONITOR v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LISTING"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required LISTING, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ORGANIZATION ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ORGANIZATION ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON DATABASE v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON RESOURCE MONITOR v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { SHARE | ORGANIZATION LISTING }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { SHARE | ORGANIZATION LISTING }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE IMPORT ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-123), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MODIFY ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE READ ERROR TABLE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE ADD SEARCH OPTIMIZATION ON SCHEMA FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SCHEMA ON v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ALL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ALL, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE RESOLVE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required CORE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required CORE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . BUDGET ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MODIFY ON v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required VIEW"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required VIEW, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE BIND SERVICE ON ACCOUNT FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . CLASSIFICATION_PROFILE ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . ANOMALY_DETECTION ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VIEW"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VIEW, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON SCHEMA v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET | STAGE | STREAM | STREAMLIT | SNOWFLAKE . CORE . BUDGET | SNOWFLAKE . DATA_PRIVACY . CLASSIFICATION_PROFILE | SNOWFLAKE . DATA_PRIVACY . CUSTOM_CLASSIFIER | SNOWFLAKE . ML . ANOMALY_DETECTION | SNOWFLAKE . ML . CLASSIFICATION | SNOWFLAKE . ML . FORECAST | SNOWFLAKE . ML . TOP_INSIGHTS | SNOWFLAKE . ML . DOCUMENT_INTELLIGENCE | [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] TABLE | TAG | TASK | TYPE | WORKSPACE | [ { MATERIALIZED | SEMANTIC } ] VIEW }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON SCHEMA v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required TARGET"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required TARGET, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE SHARE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CORE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CORE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . BUDGET ON SCHEMA v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-124), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required UNREDACTED, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE READ ERROR TABLE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required LISTING"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required LISTING, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ORGANIZATION ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required PROFILE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ORGANIZATION ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required DATA_PRIVACY, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . CLASSIFICATION_PROFILE ON SCHEMA v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE DATABASE ON RESOURCE MONITOR v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "alternative"
+target = "{ ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN"
+note = "alternative { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN … → CORTEX EXTENSION SECURITY SCAN, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE CORTEX EXTENSION SECURITY SCAN ON ACCOUNT FROM v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT | APPLICATION | APPLICATION PACKAGE | COMPUTE POOL | LISTING | DATABASE | EXTERNAL VOLUME | FAILOVER GROUP | INTEGRATION | NETWORK POLICY | ORGANIZATION LISTING | ORGANIZATION PROFILE | PREVIEW APPLICATION | REPLICATION GROUP | ROLE | SHARE | USER | WAREHOUSE }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required VERSIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON RESOURCE MONITOR v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RELEASES, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON RESOURCE MONITOR v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE ON RESOURCE MONITOR v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE ATTACH LISTING ON v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ML"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ML, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE CREATE SNOWFLAKE . . ANOMALY_DETECTION ON SCHEMA v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SPECIFICATIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE APPLICATION ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE \"SELECT\" FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+also_sql = "REVOKE SERVICE ROLE SELECT FROM ROLE v1 ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "positive"
+note = "the documented form with every required part and no optional part"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "positive"
+note = "the documented form with every required part and no optional part, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <database_role_name> } → ROLE <role_name>, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "REVOKE SERVICE ROLE v1 FROM ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROL… → APPLICATION ROLE <application_role_name>, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<application_role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<application_role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "alternative"
+target = "{ ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>"
+note = "alternative { ROLE <role_name> | APPLICATION ROLE <application_role_name> | DATABASE ROLE <dat… → DATABASE ROLE <database_role_name>, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<database_role_name>"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "operand_type_class"
+target = "<database_role_name>"
+note = "a valid identifier, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<database_role_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "REVOKE SERVICE ROLE v1 FROM DATABASE ROLE SELECT ;"
+also_expect = "observe"
+also_documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<application_role_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE v1 FROM APPLICATION ROLE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-125); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.revoke-service-role"
+kind = "identifier_class"
+target = "<name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.revoke-service-role / Syntax"
+sql = "REVOKE SERVICE ROLE \"v1 Q\" FROM ROLE v1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-application-roles"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-application-roles"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-application-roles / Syntax"
+sql = "SHOW APPLICATION ROLES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-application-roles"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2041 SQLSTATE 42601, phase semantic_error, import-20261104-125), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-application-roles"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION, observed"
+anchor = "doc.sql.show-application-roles / Syntax"
+sql = "SHOW ROLES IN APPLICATION v1 ;"
 expect = "observe"
 context = "raw"

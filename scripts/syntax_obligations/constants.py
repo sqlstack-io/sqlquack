@@ -1280,6 +1280,7 @@ DDL_LITERAL_FILLS: dict[str, str] = {
     "'<num> { seconds | minutes | hours | days }'": "'1 minute'",
     "'<num> { HOURS | MINUTES | SECONDS }'": "'1 MINUTES'",
     "'USING CRON <expr> <time_zone>'": "'USING CRON 0 9 * * * UTC'",
+    "'USING CRON <cron_spec> <timezone>'": "'USING CRON 0 9 * * * UTC'",
     "'{ AUTO | 16MB | 32MB | 64MB | 128MB }'": "'AUTO'",
     "'<path>/[<filename>]'": "'p1/f1.csv'",
     "'<path>/[<filename>'": "'p1/f1.csv'",
