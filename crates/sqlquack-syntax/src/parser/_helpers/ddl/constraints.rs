@@ -758,7 +758,7 @@ impl Parser {
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
 
-        let name = self.parse_table_ref()?;
+        let name = self.parse_view_name()?;
 
         let on_cluster = self.parse_on_cluster_clause()?;
 
@@ -769,7 +769,7 @@ impl Parser {
         };
 
         let copy_grants = self.match_text_seq(&["COPY", "GRANTS"]);
-        let mut row_access_policy = self.parse_snowflake_row_access_policy_clause();
+        let mut row_access_policy = self.parse_snowflake_row_access_policy_clause()?;
         let mut table_properties: Vec<Expression> = Vec::new();
         if matches!(
             self.config.dialect,
@@ -787,7 +787,7 @@ impl Parser {
 
         let copy_grants = copy_grants || self.match_text_seq(&["COPY", "GRANTS"]);
         if row_access_policy.is_none() {
-            row_access_policy = self.parse_snowflake_row_access_policy_clause();
+            row_access_policy = self.parse_snowflake_row_access_policy_clause()?;
         }
 
         let mut security = security;
@@ -859,7 +859,7 @@ impl Parser {
 
         let clickhouse_population = { None };
 
-        let has_as = self.match_token(TokenType::As);
+        let has_as = self.match_view_as()?;
         if !has_as && !self.check(TokenType::Select) && !self.check(TokenType::With) {
             return Ok(Expression::CreateView(Box::new(CreateView {
                 name,

@@ -192,6 +192,12 @@ impl Parser {
         let mut constraints: Vec<TableConstraint> = Vec::new();
 
         loop {
+            if self.check(TokenType::RParen)
+                && self.is_snowflake()
+                && !(columns.is_empty() && constraints.is_empty())
+            {
+                return Err(self.parse_error("Expected a column or constraint after the comma"));
+            }
             if self.check(TokenType::RParen) {
                 break;
             }
@@ -452,7 +458,10 @@ impl Parser {
             col_def.casespecific = Some(true);
         } else if self.match_text_seq(&["NOT", "FOR", "REPLICATION"]) {
             col_def.not_for_replication = true;
-        } else if self.match_token(TokenType::Not) && self.match_identifier("CASESPECIFIC") {
+        } else if match self.is_snowflake() {
+            true => self.match_text_seq(&["NOT", "CASESPECIFIC"]),
+            false => self.match_token(TokenType::Not) && self.match_identifier("CASESPECIFIC"),
+        } {
             col_def.casespecific = Some(false);
         } else if self.match_keyword("TAG")
             || self.match_token(TokenType::With) && self.match_keyword("TAG")
@@ -1492,15 +1501,16 @@ impl Parser {
         Ok(properties)
     }
 
-    pub(crate) fn parse_snowflake_row_access_policy_clause(&mut self) -> Option<String> {
+    pub(crate) fn parse_snowflake_row_access_policy_clause(&mut self) -> Result<Option<String>> {
         let saved = self.current;
         let _ = self.match_token(TokenType::With);
         if !self.match_text_seq(&["ROW", "ACCESS", "POLICY"]) {
             self.current = saved;
-            return None;
+            return Ok(None);
         }
 
         let body_start = self.current;
+        self.check_snowflake_row_access_policy()?;
         let mut depth = 0usize;
         while !self.is_at_end() {
             if depth == 0
@@ -1527,11 +1537,11 @@ impl Parser {
         }
 
         let body = self.tokens_to_sql(body_start, self.current);
-        Some(if body.is_empty() {
+        Ok(Some(if body.is_empty() {
             "ROW ACCESS POLICY".to_string()
         } else {
             format!("ROW ACCESS POLICY {}", body)
-        })
+        }))
     }
 
     /// Parses table properties after the column list, currently TSQL SYSTEM_VERSIONING.
@@ -1542,7 +1552,7 @@ impl Parser {
             self.config.dialect,
             Some(crate::tokens::models::DialectType::Snowflake)
         ) {
-            if let Some(clause) = self.parse_snowflake_row_access_policy_clause() {
+            if let Some(clause) = self.parse_snowflake_row_access_policy_clause()? {
                 properties.push(Expression::Raw(Raw {
                     sql: format!("WITH {}", clause),
                 }));

@@ -1,5 +1,6 @@
-//! Snowflake function and procedure properties that the shared routine parsers do not read.
+//! Snowflake function, procedure and object-name rules that the shared parsers do not apply.
 
+use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::models::FunctionParameter;
 use crate::parser::constants::{
     SNOWFLAKE_RESERVED_KEYWORDS, SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES,
@@ -86,8 +87,8 @@ impl Parser {
         self.expect_routine_text()
     }
 
-    /// In a Snowflake parse, refuses a routine name with a reserved word or a string as a part.
-    pub(crate) fn check_snowflake_routine_name(&mut self) -> Result<()> {
+    /// In a Snowflake parse, refuses an object name with a reserved word or a string as a part.
+    pub(crate) fn check_snowflake_object_name(&mut self) -> Result<()> {
         if self.is_snowflake() {
             let start = self.current;
             self.skip_snowflake_name()?;
@@ -144,5 +145,33 @@ impl Parser {
             return Err(self.parse_error("Expected a name and a type for each argument"));
         }
         Ok(())
+    }
+
+    /// In a Snowflake parse, refuses a ROW ACCESS POLICY body that is not `<name> ON ( <column> , ... )`.
+    pub(crate) fn check_snowflake_row_access_policy(&mut self) -> Result<()> {
+        if !self.is_snowflake() {
+            return Ok(());
+        }
+        let start = self.current;
+        self.skip_snowflake_name()?;
+        self.expect_token(TokenType::On)?;
+        self.skip_routine_list(Self::skip_snowflake_name)?;
+        self.current = start;
+        Ok(())
+    }
+
+    /// A view's name, whose parts may not be strings or Snowflake reserved words in a Snowflake parse.
+    pub(crate) fn parse_view_name(&mut self) -> Result<TableRef> {
+        self.check_snowflake_object_name()?;
+        self.parse_table_ref()
+    }
+
+    /// Whether AS follows; a Snowflake view always needs AS before its query.
+    pub(crate) fn match_view_as(&mut self) -> Result<bool> {
+        let has_as = self.match_token(TokenType::As);
+        if !has_as && self.is_snowflake() {
+            return Err(self.parse_error("Expected AS and the view's query"));
+        }
+        Ok(has_as)
     }
 }

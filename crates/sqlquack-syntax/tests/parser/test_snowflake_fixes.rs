@@ -1060,3 +1060,48 @@ fn given_a_snowflake_function_or_procedure_when_parsing_then_its_properties_are_
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_table_or_view_when_parsing_then_its_clauses_are_complete() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a view without AS (recorded errno 1003)",
+            sql: "DEFINE VIEW d1.s1.v1 SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a view named AS (recorded errno 1003)",
+            sql: "DEFINE VIEW AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a row access policy without ON (recorded errno 1003)",
+            sql: "CREATE VIEW v1 ROW ACCESS POLICY v1 ( v1 ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string row access policy name (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT ) ROW ACCESS POLICY 'v1' ON ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma in the column list (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NOT with nothing after it (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT NOT ) ;",
+            expected_kind: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

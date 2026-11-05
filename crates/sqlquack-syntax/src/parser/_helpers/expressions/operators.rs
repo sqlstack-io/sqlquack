@@ -277,7 +277,7 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        self.check_snowflake_routine_name()?;
+        self.check_snowflake_object_name()?;
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {

@@ -332,10 +332,7 @@ impl Parser {
     /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely.
     pub(crate) fn parse_snowflake_define(&mut self) -> Result<Expression> {
         let definition = self.parse_create()?;
-        let unchecked_kind = matches!(
-            definition,
-            Expression::CreateTable(_) | Expression::CreateView(_)
-        );
+        let unchecked_kind = matches!(definition, Expression::CreateTable(_));
         if unchecked_kind
             || definition
                 .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
