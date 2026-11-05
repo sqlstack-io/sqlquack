@@ -747,6 +747,7 @@ impl Parser {
         if self.is_snowflake()
             && !self.check(TokenType::String)
             && !self.check(TokenType::DollarString)
+            && !self.check(TokenType::NationalString)
         {
             return Err(self.parse_error("Expected a string after IS"));
         }

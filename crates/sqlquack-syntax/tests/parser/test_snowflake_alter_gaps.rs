@@ -69,6 +69,12 @@ fn given_snowflake_comment_drop_and_call_statements_when_parsing_then_only_docum
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "a national string is a string (sqlglot's Snowflake identity fixture)",
+            sql: "COMMENT ON TABLE my_schema.my_table IS N'National String'",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "a quoted reserved word is a column",
             sql: "COMMENT ON COLUMN v1 . \"SELECT\" IS 'm' ;",
             dialect: Dialect::Snowflake,
