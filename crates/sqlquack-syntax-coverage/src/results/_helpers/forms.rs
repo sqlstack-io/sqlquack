@@ -6,7 +6,7 @@ use crate::results::models::{
     FormResult, FormTally, RecordedStatement, ResultState, StatementOutcome, StatementTally,
 };
 
-/// A form's state: listed, then any statement that differs, then any refused, then any match.
+/// A form's state: listed, then any statement that differs, then any refused, then matching rows.
 pub(crate) fn form_state(listed: bool, outcomes: &[StatementOutcome]) -> ResultState {
     if listed {
         return ResultState::NotTranslatable;
@@ -20,7 +20,7 @@ pub(crate) fn form_state(listed: bool, outcomes: &[StatementOutcome]) -> ResultS
     if outcomes.iter().any(|outcome| outcome.refused()) {
         return ResultState::Refused;
     }
-    match outcomes.iter().any(|outcome| outcome.matches()) {
+    match outcomes.contains(&StatementOutcome::Matching) {
         true => ResultState::Matching,
         false => ResultState::SyntaxOnly,
     }
@@ -93,6 +93,7 @@ pub(crate) fn statement_tally(
         }
         tally.recorded += 1;
         tally.matching += usize::from(outcome.matches());
+        tally.matching_rows += usize::from(outcome == StatementOutcome::Matching);
         tally.matching_errors += usize::from(outcome == StatementOutcome::MatchingError);
         tally.unlinked += usize::from(!linked.contains(statement.reference.as_str()));
     }

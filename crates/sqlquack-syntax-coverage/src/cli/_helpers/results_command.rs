@@ -73,12 +73,14 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
             report.forms.unmeasured,
         ),
         format!(
-            "statements: {} of {} recorded Snowflake statements translate with matching results \
-             ({}), {} of them matching errors; {} link to no form",
-            statements.matching,
+            "statements (our recorded Snowflake statements, not a sample of real-world SQL): {} of \
+             {} return rows matching Snowflake ({}); {} more raise the same kind of error on both \
+             sides ({}); {} link to no form",
+            statements.matching_rows,
             statements.recorded,
-            percent(statements.matching, statements.recorded),
+            percent(statements.matching_rows, statements.recorded),
             statements.matching_errors,
+            percent(statements.matching_errors, statements.recorded),
             statements.unlinked,
         ),
         format!(
@@ -101,11 +103,17 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
     lines.push(format!("signed off: {}", report.signed_off.join(", ")));
     lines.push(format!("not signed off: {}", report.unsigned.join(", ")));
     lines.push(format!(
-        "capture queue: {} forms need a recorded statement with values, {} statements need a \
-         recorded result",
+        "capture queue: {} function, expression and query forms need a recorded statement with \
+         values, {} statements need a recorded result",
         report.capture_forms.len(),
         report.capture_statements.len()
     ));
+    lines.push(format!(
+        "effect receipt gap: {} DDL, DML, session and utility forms need a receipt of a \
+         statement's effect, which is not built",
+        report.effect_receipt_forms.len()
+    ));
+
     lines.extend(report.worklist.iter().take(WORK_PRINTED).map(|item| {
         format!(
             "  {} {}: {} forms, {} statements, such as {}",

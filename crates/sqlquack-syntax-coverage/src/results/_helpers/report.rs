@@ -7,7 +7,7 @@ use crate::results::_helpers::files::{group_sha256, signed, subjects};
 use crate::results::_helpers::forms::{family_tallies, form_result, statement_tally};
 use crate::results::_helpers::links::{FunctionIndex, link_statement};
 use crate::results::_helpers::worklist::worklist;
-use crate::results::constants::{NOT_TRANSLATABLE_SUBJECT, QUEUE_ORDER};
+use crate::results::constants::{NOT_TRANSLATABLE_SUBJECT, QUERY_FAMILIES};
 use crate::results::models::{
     FormResult, RecordedStatement, ResultState, ResultsFiles, ResultsReport, StatementOutcome,
 };
@@ -111,10 +111,10 @@ pub(crate) fn form_results(
     }
 }
 
-/// The translatable forms a capture would measure first: unmeasured or syntax-only, by family.
-fn capture_forms(forms: &[FormResult]) -> Vec<String> {
-    let rank = |family: &str| QUEUE_ORDER.iter().position(|name| *name == family);
-    let mut queue: Vec<&FormResult> = forms
+/// Forms with no matching or refused statement: the capture queue, and the effect-receipt gap.
+fn needing_forms(forms: &[FormResult]) -> (Vec<String>, Vec<String>) {
+    let rank = |family: &str| QUERY_FAMILIES.iter().position(|name| *name == family);
+    let mut needing: Vec<&FormResult> = forms
         .iter()
         .filter(|form| {
             matches!(
@@ -123,8 +123,12 @@ fn capture_forms(forms: &[FormResult]) -> Vec<String> {
             )
         })
         .collect();
-    queue.sort_by_key(|form| (rank(&form.family), form.id.as_str()));
-    queue.into_iter().map(|form| form.id.clone()).collect()
+    needing.sort_by_key(|form| (rank(&form.family), form.id.as_str()));
+    let (queue, effect): (Vec<&FormResult>, Vec<&FormResult>) = needing
+        .into_iter()
+        .partition(|form| rank(&form.family).is_some());
+    let ids = |forms: Vec<&FormResult>| forms.into_iter().map(|form| form.id.clone()).collect();
+    (ids(queue), ids(effect))
 }
 
 /// The references of `statements` that pass `keep`.
@@ -160,6 +164,7 @@ pub(crate) fn assemble(
             .collect()
     };
     let (forms, families) = family_tallies(&form_results);
+    let (capture_forms, effect_receipt_forms) = needing_forms(&form_results);
     ResultsReport {
         forms,
         families,
@@ -168,7 +173,8 @@ pub(crate) fn assemble(
         unsigned: named(false),
         not_translatable: files.not_translatable.groups.clone(),
         worklist: worklist(statements, links, &form_results),
-        capture_forms: capture_forms(&form_results),
+        capture_forms,
+        effect_receipt_forms,
         capture_statements: references(statements, |statement| {
             statement.outcome == StatementOutcome::UnrecordedTranslates
         }),

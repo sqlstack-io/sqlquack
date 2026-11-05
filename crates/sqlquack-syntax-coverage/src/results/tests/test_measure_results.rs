@@ -53,6 +53,14 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             expected_translatable: 4,
         },
         FormStateTestCase {
+            description: "only a matching error: no rows compared, so not matching",
+            outcomes: &[StatementOutcome::MatchingError],
+            list: nothing,
+            review: nothing,
+            expected_state: ResultState::SyntaxOnly,
+            expected_translatable: 4,
+        },
+        FormStateTestCase {
             description: "types only: syntax only, never matching",
             outcomes: &[StatementOutcome::ShapeOnly],
             list: nothing,

@@ -147,9 +147,9 @@ pub struct ResultsFiles {
 pub enum ResultState {
     /// Listed with a reason and signed off: outside the denominator.
     NotTranslatable,
-    /// None of its statements is refused or differs, and at least one matches Snowflake's results.
+    /// None of its statements is refused or differs, and at least one returns Snowflake's rows.
     Matching,
-    /// None refused or differs, and none has a compared DuckDB result.
+    /// None refused or differs, and none returns compared rows: only types or matching errors.
     SyntaxOnly,
     /// A statement's refusal or guard raise names it, or a statement linked to it cannot be judged.
     Refused,
@@ -190,8 +190,11 @@ pub struct FormTally {
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
 pub struct StatementTally {
     pub recorded: usize,
+    /// Rows or errors matching Snowflake: the sum of the next two.
     pub matching: usize,
-    /// Of `matching`, those where both sides raised the same kind of error.
+    /// DuckDB returned Snowflake's recorded rows.
+    pub matching_rows: usize,
+    /// Both sides raised the same kind of error.
     pub matching_errors: usize,
     pub by_outcome: BTreeMap<StatementOutcome, usize>,
     /// Recorded statements that link to no catalogue form.
@@ -223,8 +226,10 @@ pub struct ResultsReport {
     pub unsigned: Vec<String>,
     pub not_translatable: Vec<NotTranslatableGroup>,
     pub worklist: Vec<WorkItem>,
-    /// Translatable forms with no recorded statement, the capture queue's forms.
+    /// Translatable query-result forms with no matching or refused statement: the capture queue.
     pub capture_forms: Vec<String>,
+    /// Translatable DDL, DML, session and utility forms with none, needing an effect receipt.
+    pub effect_receipt_forms: Vec<String>,
     /// Statements that convert but have no compared result, the queue's re-captures.
     pub capture_statements: Vec<String>,
     pub unlinked_statements: Vec<String>,

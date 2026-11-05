@@ -28,19 +28,8 @@ pub const WORK_EXAMPLES: usize = 3;
 pub const WORK_PRINTED: usize = 25;
 /// Problems of one kind printed before the rest are counted.
 pub const PROBLEMS_PRINTED: usize = 40;
-/// The capture queue's family order: the families queries use most come first.
-pub const QUEUE_ORDER: [&str; 10] = [
-    "functions",
-    "expressions",
-    "query",
-    "dml",
-    "ddl",
-    "transaction_session",
-    "utility",
-    "scripting",
-    "classes",
-    "security_admin",
-];
+/// Families whose forms a query-result receipt can measure, in the capture queue's order.
+pub const QUERY_FAMILIES: [&str; 3] = ["functions", "expressions", "query"];
 /// The construct of a window function call, which a function's OVER form needs.
 pub const WINDOW_FUNCTION: &str = "node:window_function";
 /// The construct of a named argument, which a function's `=>` form needs.

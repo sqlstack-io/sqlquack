@@ -41,15 +41,19 @@ forms when it names none. Any other statement counts for every form it links to.
 | `not_translatable` | Listed in a signed-off group. Outside the denominator. |
 | `differs` | Any linked statement differs. |
 | `refused` | Any linked statement is refused for it, raised a guard for it, or cannot be judged. |
-| `matching` | Otherwise, at least one linked statement matches. |
-| `syntax_only` | Otherwise, linked statements exist but none has a compared DuckDB result. |
+| `matching` | Otherwise, at least one linked statement returns Snowflake's rows. |
+| `syntax_only` | Otherwise, linked statements exist but none returns compared rows: only types or matching errors. |
 | `unmeasured` | No recorded statement links to it. |
 
 ## Figures
 
 - Forms: `matching` forms out of all catalogued forms less the signed-off not-translatable ones.
-- Statements: `matching` and `matching_error` statements out of all recorded statements.
+- Statements, over the statements recorded as evidence (not a sample of real-world SQL): `matching`
+  statements out of all recorded ones, and, as a separate line, `matching_error` statements.
 - Syntax only: a separate count, never part of either figure.
+- Capture queue: translatable function, expression and query forms with no matching or refused
+  statement. DDL, DML, session and utility forms without one are a separate gap: measuring them
+  needs a receipt of a statement's effect, which is not built.
 
 ## Commands
 
@@ -65,5 +69,4 @@ from `results-baseline.json`. Against the target branch's baseline it prints the
 statement or form drops out of matching, or becomes `differs`.
 
 The report's worklist lists differences first, then refusals by how many forms each keeps from
-matching, then forms that need a recorded result. Its capture queue lists the translatable forms with
-no matching or refused statement, which need a new recorded statement.
+matching, then forms that need a recorded result.
