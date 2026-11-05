@@ -11,7 +11,7 @@ use crate::formats::_helpers::records::{
     check_obligation, check_reading, check_receipt, check_restatements, check_review, check_source,
     check_unobservable,
 };
-use crate::formats::_helpers::retired::{retire, withdrawn_receipts};
+use crate::formats::_helpers::retired::{read_reports, retire};
 use crate::formats::constants::{
     ALIASES_FILE, CASES_DIR, CATALOGUE_DIR, INDEXES_FILE, LIMITS_FILE, MARKS, MARKS_DIR,
     OBLIGATIONS_DIR, RECEIPT_REPORT_SUFFIX, RECEIPTS_DIR, REVIEWS_DIR, SOURCES_FILE,
@@ -22,7 +22,7 @@ use crate::formats::models::{
     Obligation, ObligationsFile, Reading, Receipt, Review, ReviewsFile, Source, SourcesFile,
     Unobservable, UnobservableFile,
 };
-use crate::formats::types::FamilyCatalogue;
+use crate::formats::types::{FamilyCatalogue, LoadedReceipts};
 
 /// What one section of the tree yields.
 pub(crate) struct Section<T> {
@@ -206,8 +206,8 @@ pub(crate) fn load_marks(root: &Path) -> Section<Vec<Mark>> {
     Section::of(records, declared, problems)
 }
 
-/// Every receipts file, less the receipts superseded or withdrawn by the run reports beside them.
-pub(crate) fn load_receipts(root: &Path) -> Section<(Vec<Receipt>, Vec<String>)> {
+/// Every receipts file, less those superseded or withdrawn, with the SQL its run reports give by hash.
+pub(crate) fn load_receipts(root: &Path) -> Section<LoadedReceipts> {
     let (paths, others) = listed(&root.join(RECEIPTS_DIR), "jsonl");
     let mut problems: Vec<String> = others
         .iter()
@@ -226,11 +226,11 @@ pub(crate) fn load_receipts(root: &Path) -> Section<(Vec<Receipt>, Vec<String>)>
         );
         published.extend(receipts);
     }
-    let (withdrawn, report_problems) = withdrawn_receipts(&reports);
+    let (withdrawn, statements, report_problems) = read_reports(&reports);
     problems.extend(report_problems);
     let (kept, retired, retire_problems) = retire(published, &withdrawn);
     problems.extend(retire_problems);
-    Section::of((kept, retired), Vec::new(), problems)
+    Section::of((kept, retired, statements), Vec::new(), problems)
 }
 
 /// `unobservable/<family>.toml`: optional, and each obligation listed at most once.
@@ -316,7 +316,7 @@ pub(crate) struct Sections {
     pub(crate) catalogue: Section<FamilyCatalogue>,
     pub(crate) obligations: Section<BTreeMap<String, Vec<Obligation>>>,
     pub(crate) cases: Section<BTreeMap<String, Vec<Case>>>,
-    pub(crate) receipts: Section<(Vec<Receipt>, Vec<String>)>,
+    pub(crate) receipts: Section<LoadedReceipts>,
     pub(crate) reviews: Section<Vec<Review>>,
     pub(crate) unobservable: Section<(Vec<Unobservable>, Vec<Diagnostic>)>,
     pub(crate) readings: Section<Vec<Reading>>,

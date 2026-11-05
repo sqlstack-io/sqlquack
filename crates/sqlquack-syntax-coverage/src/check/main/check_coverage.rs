@@ -2,6 +2,7 @@
 
 use std::collections::BTreeSet;
 
+use crate::check::_helpers::contradictions::receipt_contradictions;
 use crate::check::_helpers::forms::form_result;
 use crate::check::_helpers::join::join;
 use crate::check::_helpers::references::reference_problems;
@@ -31,10 +32,14 @@ pub fn check_coverage(
             forms.push(form_result(form, family, &context));
         }
     }
+    let (contradicted, unjudged): (BTreeSet<String>, BTreeSet<String>) =
+        receipt_contradictions(coverage, &joined.cases, parse);
     CheckResult {
         parser_tree: parser_tree.map(str::to_owned),
         forms,
         unexcluded_pages: unexcluded_pages(&coverage.sources, &excluded_sources),
         problems: reference_problems(coverage, &joined.forms),
+        receipt_contradictions: contradicted,
+        unjudged_receipts: unjudged,
     }
 }

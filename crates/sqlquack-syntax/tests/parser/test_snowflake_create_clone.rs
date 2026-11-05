@@ -9,6 +9,18 @@ use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_are_accepted() {
     let test_cases = [
         AcceptanceTestCase {
+            description: "a dynamic table clone names its warehouse as a string (recorded semantic error)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = '1 minute' WAREHOUSE = 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW DATABASES IN REPLICATION GROUP may leave the group out (recorded semantic error)",
+            sql: "SHOW DATABASES IN REPLICATION GROUP ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "an alert clones (recorded success)",
             sql: "CREATE OR REPLACE ALERT v1 CLONE v1 ;",
             dialect: Dialect::Snowflake,

@@ -339,8 +339,16 @@ fn read_snapshot(path: &Path) -> Result<Snapshot, ExitCode> {
 
 /// Lines naming each non-empty list of the diff.
 fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
-    let lists: [(&str, &Vec<String>); 10] = [
+    let lists: [(&str, &Vec<String>); 12] = [
         ("REGRESSION forms lost", &diff.forms_lost),
+        (
+            "REGRESSION receipts the parser now contradicts, cited by a form or not (D141)",
+            &diff.receipts_contradicted,
+        ),
+        (
+            "DOCUMENTED (D113) receipts the parser now contradicts, for the auditor",
+            &diff.documented_receipts_contradicted,
+        ),
         ("REGRESSION obligations lost", &diff.obligations_lost),
         (
             "REGRESSION Snowflake-parsed cases the parser now rejects",
@@ -360,11 +368,28 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
         ("forms gained", &diff.forms_gained),
         ("obligations gained", &diff.obligations_gained),
     ];
-    lists
+    let mut lines: Vec<String> = lists
         .iter()
         .filter(|(_, ids)| !ids.is_empty())
         .map(|(label, ids)| format!("{label} ({}): {}", ids.len(), ids.join(" ")))
-        .collect()
+        .collect();
+    let counted: [(&str, usize); 2] = [
+        (
+            "receipts the parser already contradicted, not failing",
+            diff.receipts_still_contradicted.len(),
+        ),
+        (
+            "receipts without SQL to judge, not failing",
+            diff.unjudged_receipts.len(),
+        ),
+    ];
+    lines.extend(
+        counted
+            .iter()
+            .filter(|(_, count)| *count > 0)
+            .map(|(label, count)| format!("{label}: {count} (listed in --json)")),
+    );
+    lines
 }
 
 /// BASE against HEAD, or against the current tree; fails on a regression or catalogue change.
@@ -389,6 +414,7 @@ pub(crate) fn diff(
     let failing: bool = [
         &diff.forms_lost,
         &diff.obligations_lost,
+        &diff.receipts_contradicted,
         &diff.parsed_cases_refused,
         &diff.syntax_error_cases_accepted,
         &diff.catalogue_files_changed,

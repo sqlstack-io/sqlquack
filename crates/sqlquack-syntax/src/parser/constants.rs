@@ -924,6 +924,9 @@ pub(crate) const SNOWFLAKE_INTERVAL_LEADING: std::ops::RangeInclusive<u8> = 1..=
 /// Snowflake's recorded fractional-second precisions after TO, as in `DAY TO SECOND ( 0 )`.
 pub(crate) const SNOWFLAKE_INTERVAL_FRACTION: std::ops::RangeInclusive<u8> = 0..=9;
 
+/// The backtick that quotes identifiers in other dialects but not in Snowflake.
+pub(crate) const BACKTICK: &str = "`";
+
 /// Snowflake function and procedure properties whose value is a string.
 pub(crate) const SNOWFLAKE_ROUTINE_TEXT_PROPERTIES: &[&str] = &[
     "COMMENT",

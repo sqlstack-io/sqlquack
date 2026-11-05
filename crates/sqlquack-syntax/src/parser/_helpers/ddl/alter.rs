@@ -1486,6 +1486,7 @@ impl Parser {
                         true => listed,
                         false => Vec::new(),
                     },
+                    parts: Vec::new(),
                 })));
             }
         }
@@ -1517,10 +1518,14 @@ impl Parser {
 
         let mut ident = self.expect_identifier_or_keyword_with_quoted()?;
         self.reject_reserved_name_part(&ident)?;
+        let mut parts: Vec<Identifier> = Vec::new();
 
         if self.match_token(TokenType::Dot) {
             let second_part = self.expect_identifier_or_keyword_with_quoted()?;
             self.reject_reserved_name_part(&second_part)?;
+            if self.applies_snowflake_context_rules() {
+                parts = vec![ident.clone(), second_part.clone()];
+            }
             ident.name = format!("{}.{}", ident.name, second_part.name);
         }
 
@@ -1528,6 +1533,7 @@ impl Parser {
             kind,
             this: ident,
             roles: Vec::new(),
+            parts,
         })))
     }
 

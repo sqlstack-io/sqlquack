@@ -34,6 +34,8 @@ pub(crate) fn base() -> Snapshot {
         syntax_error_cases_rejected: BTreeSet::from(["sf.query.select.k3".to_owned()]),
         syntax_error_cases_accepted: BTreeSet::new(),
         documented_cases: BTreeSet::new(),
+        receipt_contradictions: Some(BTreeSet::new()),
+        unjudged_receipts: Some(BTreeSet::new()),
     }
 }
 

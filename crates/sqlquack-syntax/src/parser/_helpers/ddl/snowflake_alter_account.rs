@@ -207,7 +207,7 @@ impl Parser {
     }
 
     /// Parse `<org_name>.<account_name> [ , ... ]`, refusing a reserved keyword as either part.
-    fn parse_account_names(&mut self) -> Result<Vec<Expression>> {
+    pub(super) fn parse_account_names(&mut self) -> Result<Vec<Expression>> {
         let mut accounts: Vec<Expression> = Vec::new();
         loop {
             let mut parts: Vec<Identifier> = vec![self.parse_simple_name()?];

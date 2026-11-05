@@ -12,6 +12,25 @@ impl Parser {
             && !self.config.record_call_spans
     }
 
+    /// Refuses a backtick-quoted identifier, which Snowflake does not tokenize, in its faithful modes.
+    pub(crate) fn reject_snowflake_backticks(&mut self) -> Result<()> {
+        if !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        let backtick = self.tokens.iter().position(|token| {
+            token.token_type == crate::tokens::models::TokenType::QuotedIdentifier
+                && self.source_text_range(token.span.start, token.span.start + 1)
+                    == crate::parser::constants::BACKTICK
+        });
+        match backtick {
+            Some(index) => {
+                self.current = index;
+                Err(self.parse_error("Snowflake does not quote identifiers with backticks"))
+            }
+            None => Ok(()),
+        }
+    }
+
     /// Refuses TABLE( ) or IDENTIFIER( ) around nothing or a bare name, except a named argument's TABLE(name).
     pub(crate) fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
         use crate::traversal::types::ExpressionWalk;

@@ -52,7 +52,7 @@ impl Parser {
                     let service = self.parse_grant_securable()?;
                     self.expect_token(TokenType::Exclamation)?;
                     let role = self.parse_grant_name_part()?;
-                    Identifier::new(format!("{}!{}", service.name, role.name))
+                    Identifier::new(format!("{}!{}", written(&service), written(&role)))
                 } else {
                     self.parse_grant_securable()?
                 };
@@ -70,6 +70,7 @@ impl Parser {
                 while self.match_token(TokenType::Comma) {
                     privileges.push(self.parse_snowflake_privilege()?);
                 }
+                qualify_privileges(&mut privileges);
                 self.expect_token(TokenType::On)?;
                 let inherited = privileges
                     .iter()
@@ -233,7 +234,11 @@ impl Parser {
                         .is_some_and(|first| kind.contains(' ') && self.check_identifier(first))
                 });
             generic.then(|| {
-                let word = self.peek_text().to_ascii_uppercase();
+                let word = if self.check(TokenType::QuotedIdentifier) {
+                    format!("\"{}\"", self.peek_text())
+                } else {
+                    self.peek_text().to_ascii_uppercase()
+                };
                 self.skip();
                 word
             })
@@ -374,5 +379,37 @@ fn privilege(name: String) -> Privilege {
     Privilege {
         name,
         columns: Vec::new(),
+    }
+}
+
+/// A name part as written: a quoted part keeps its quotes, so its case and blanks stay distinct.
+fn written(part: &Identifier) -> String {
+    if part.quoted {
+        format!("\"{}\"", part.name)
+    } else {
+        part.name.clone()
+    }
+}
+
+/// INHERITED and CALLER qualify the whole privilege list, so every later privilege takes the first one's qualifier.
+fn qualify_privileges(privileges: &mut [Privilege]) {
+    let Some((first, rest)) = privileges.split_first_mut() else {
+        return;
+    };
+    let words: Vec<&str> = first.name.split(' ').collect();
+    let mut qualifiers: Vec<&str> = Vec::new();
+    for word in ["INHERITED", "CALLER"] {
+        if words.contains(&word) {
+            qualifiers.push(word);
+        }
+    }
+    let qualifier: String = qualifiers.join(" ");
+    if qualifier.is_empty() || first.name.starts_with("ALL ") {
+        return;
+    }
+    for privilege in rest {
+        if !privilege.name.starts_with(&qualifier) {
+            privilege.name = format!("{qualifier} {}", privilege.name);
+        }
     }
 }

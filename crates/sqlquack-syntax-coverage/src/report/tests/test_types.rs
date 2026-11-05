@@ -10,6 +10,14 @@ pub(crate) struct DiffTestCase {
     pub(crate) expected_diff: SnapshotDiff,
 }
 
+/// A change to both snapshots, and the diff it must produce.
+pub(crate) struct BaseDiffTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) base: fn(Snapshot) -> Snapshot,
+    pub(crate) head: fn(Snapshot) -> Snapshot,
+    pub(crate) expected_diff: SnapshotDiff,
+}
+
 /// Receipts and expectations set by `mutate`, a base and a head parser, and what the diff must flag.
 pub(crate) struct ParserChangeTestCase {
     pub(crate) description: &'static str,
