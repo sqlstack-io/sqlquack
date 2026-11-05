@@ -2,8 +2,8 @@
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::Call;
+use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::statements::models::CreateTask;
-use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
@@ -131,14 +131,21 @@ impl Parser {
             "ALERT"
         } else if self.match_text_seq(&["DCM", "PROJECT"]) {
             EXECUTE_DCM_PROJECT
-        } else if self.match_text_seq(&["TASK", "GRAPH"]) {
+        } else if self.check_text_seq(&["TASK", "GRAPH"])
+            && !matches!(
+                self.text_at(2).as_deref(),
+                None | Some(";" | "RETRY" | "USING")
+            )
+        {
+            self.skip();
+            self.skip();
             "TASK GRAPH"
         } else if self.match_text_seq(&["TASK"]) {
             "TASK"
         } else if self.match_text_seq(&["EXPERIMENT"]) {
             "EXPERIMENT"
         } else {
-            return Ok(None);
+            return self.parse_snowflake_execute_job();
         };
         let name = match kind {
             "EXPERIMENT" => self.parse_object_name()?,
@@ -151,6 +158,7 @@ impl Parser {
             group: None,
             alias: None,
             config: None,
+            properties: Vec::new(),
         };
         if kind.starts_with("TASK") {
             if self.match_text_seq(&["RETRY", "LAST"]) {

@@ -21,6 +21,7 @@ use crate::expressions::columns::models::Comprehension;
 use crate::expressions::columns::models::CompressColumnConstraint;
 use crate::expressions::columns::models::ComputedColumnConstraint;
 use crate::expressions::columns::models::Constraint;
+use crate::expressions::columns::models::CreateDataMetricFunction;
 use crate::expressions::columns::models::DateFormatColumnConstraint;
 use crate::expressions::columns::models::DefaultColumnConstraint;
 use crate::expressions::columns::models::EphemeralColumnConstraint;
@@ -357,6 +358,7 @@ use crate::expressions::schema_objects::models::DropSequence;
 use crate::expressions::schema_objects::models::DropTrigger;
 use crate::expressions::schema_objects::models::DropType;
 use crate::expressions::schema_objects::models::DropView;
+use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -385,7 +387,6 @@ use crate::expressions::statements::models::Delete;
 use crate::expressions::statements::models::Describe;
 use crate::expressions::statements::models::Detach;
 use crate::expressions::statements::models::DropPartition;
-use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
@@ -1183,6 +1184,7 @@ pub enum Expression {
     AlterView(Box<AlterView>),
     AlterObject(Box<AlterObject>),
     CreateObject(Box<CreateObject>),
+    CreateDataMetricFunction(Box<CreateDataMetricFunction>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),

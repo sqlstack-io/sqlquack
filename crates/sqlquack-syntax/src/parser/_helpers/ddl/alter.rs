@@ -781,6 +781,9 @@ impl Parser {
                 let id_val = self.parse_expression()?;
                 partitions.push(vec![(Identifier::new("ID".to_string()), id_val)]);
             } else {
+                if self.applies_snowflake_context_rules() && self.check_next(TokenType::String) {
+                    return Err(self.parse_error("Expected a partition, not a typed string"));
+                }
                 let expr = self.parse_expression()?;
                 partitions.push(vec![(Identifier::new("__expr__".to_string()), expr)]);
             }
@@ -1487,7 +1490,16 @@ impl Parser {
             }
         }
 
-        let kind = if self.match_token(TokenType::Database) {
+        let kind_is_name = self.applies_snowflake_context_rules()
+            && matches!(
+                self.tokens
+                    .get(self.current + 1)
+                    .map(|token| token.token_type),
+                None | Some(TokenType::Semicolon | TokenType::Dot)
+            );
+        let kind = if kind_is_name {
+            None
+        } else if self.match_token(TokenType::Database) {
             Some(UseKind::Database)
         } else if self.match_token(TokenType::Schema) {
             Some(UseKind::Schema)
