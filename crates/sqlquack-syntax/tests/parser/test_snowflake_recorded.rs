@@ -296,6 +296,36 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "ALL takes a list of values (recorded semantic error)",
+            sql: "SELECT 1 = ALL ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "STRING takes empty parentheses (recorded success)",
+            sql: "SELECT CAST ( NULL AS STRING ( ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "statements chain with the flow operator (recorded success)",
+            sql: "SELECT 1 ->> SELECT 2 ->> SELECT 3 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a block chains with the flow operator (recorded success)",
+            sql: "BEGIN BEGIN NULL ; END ; END ->> SELECT 2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "the flow operator needs a statement after it (recorded errno 1003)",
+            sql: "SELECT 1 ->> 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -358,6 +388,12 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "SELECT SNOWFLAKE . CORE . NULL_COUNT ( SELECT c1 FROM t1 )",
             pointer: "/0/select/expressions/0/method_call/args/0/subquery/this/select/from/expressions/0/table/name/name",
             expected_value: json!("t1"),
+        },
+        ProjectionTestCase {
+            description: "the flow operator keeps the statement after it",
+            sql: "SELECT 1 ->> SELECT 2",
+            pointer: "/0/operator/expression/select/expressions/0/literal/value",
+            expected_value: json!("2"),
         },
     ];
 

@@ -909,7 +909,7 @@ impl Parser {
             if self.match_token(TokenType::Any) || self.match_token(TokenType::Some) {
                 let was_any = self.previous_token_type() == Some(TokenType::Any);
                 self.expect_token(TokenType::LParen)?;
-                let inner = self.parse_statement()?;
+                let inner = self.parse_quantified_operand()?;
                 self.expect_token(TokenType::RParen)?;
                 let subquery = if was_any {
                     self.maybe_wrap_in_subquery(inner)
@@ -923,7 +923,7 @@ impl Parser {
                 }))
             } else if self.match_token(TokenType::All) {
                 self.expect_token(TokenType::LParen)?;
-                let inner = self.parse_statement()?;
+                let inner = self.parse_quantified_operand()?;
                 self.expect_token(TokenType::RParen)?;
                 let subquery = self.maybe_wrap_in_subquery(inner);
                 Expression::All(Box::new(QuantifiedExpr {
@@ -1445,7 +1445,9 @@ impl Parser {
                     inferred_type: None,
                     span: SourceSpan::default(),
                 }));
-            } else if self.check(TokenType::Arrow) || self.check(TokenType::DArrow) {
+            } else if self.check(TokenType::Arrow)
+                || (self.check(TokenType::DArrow) && !self.is_snowflake())
+            {
                 let scalar = self.match_token(TokenType::DArrow);
                 if !scalar {
                     self.skip();

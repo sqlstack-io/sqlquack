@@ -227,6 +227,9 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
     crate::tokens::models::TokenType::Match,
 ];
 
+/// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
+pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
+
 /// Snowflake's fully reserved keywords; its position-limited keywords are not listed.
 pub(crate) const SNOWFLAKE_RESERVED_KEYWORDS: &[&str] = &[
     "ALL",

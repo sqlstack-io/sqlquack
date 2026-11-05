@@ -10,6 +10,25 @@ use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// The operand of `ANY`/`ALL`, which Snowflake also reads as a list of values, as in `1 = ALL ( 1 )`.
+    pub(crate) fn parse_quantified_operand(&mut self) -> Result<Expression> {
+        let query = self.check(TokenType::Select)
+            || self.check(TokenType::With)
+            || self.check(TokenType::LParen);
+        if !self.is_snowflake() || query {
+            return self.parse_statement();
+        }
+        let mut values = self.parse_expression_list()?;
+        match values.len() {
+            1 => Ok(values.remove(0)),
+            _ => Ok(Expression::Tuple(Box::new(
+                crate::expressions::types::models::Tuple {
+                    expressions: values,
+                },
+            ))),
+        }
+    }
+
     /// Consumes a pattern's `ESCAPE`, which Snowflake reads as an alias when nothing follows it.
     pub(crate) fn match_like_escape(&mut self) -> bool {
         let alias = self.is_snowflake()
@@ -123,7 +142,7 @@ impl Parser {
     pub(crate) fn refuse_snowflake_reserved_part(&self) -> Result<()> {
         let word = self.peek_text().to_ascii_uppercase();
         let reserved = !self.check(TokenType::QuotedIdentifier)
-            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&word.as_str());
+            && crate::parser::constants::SNOWFLAKE_REFUSED_NAME_PARTS.contains(&word.as_str());
         match self.is_snowflake() && reserved {
             true => Err(self.parse_error(format!(
                 "Reserved word {word} cannot be an unquoted name part"

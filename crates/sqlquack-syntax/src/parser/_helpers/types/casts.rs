@@ -403,6 +403,13 @@ impl Parser {
                 }
             }
             "STRING" => {
+                let empty = self.is_snowflake()
+                    && self.check(TokenType::LParen)
+                    && self.check_next(TokenType::RParen);
+                if empty {
+                    self.skip();
+                    self.skip();
+                }
                 let length = if self.match_token(TokenType::LParen) {
                     let n = self.expect_number()? as u32;
                     self.expect_token(TokenType::RParen)?;

@@ -1156,3 +1156,143 @@ sql = "SELECT @`a b`"
 dialects = ["Snowflake"]
 sqlquack_error = "Expected a stage name after @"
 note = "Snowflake refuses a stage reference whose quoted name holds a blank (recorded syntax_error); backticks are no Snowflake quote either"
+
+[[rejection]]
+id = "snowflake_stage_string_name"
+sql = "SELECT @JOIN, @'foo'"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a stage name after @"
+note = "Snowflake reads @ as a stage reference and refuses a string as the stage name (recorded syntax_error for @'v1')"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_double_colon"
+sql = "SELECT interval '00:00:01'::interval AS foo"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast"
+sql = "SELECT CAST(INTERVAL '00:00:01' AS INTERVAL) AS foo"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_double_colon_window"
+sql = "SELECT ROW_NUMBER() OVER(PARTITION BY event_time + interval '00:00:01'::interval) AS foo FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast_window"
+sql = "SELECT ROW_NUMBER() OVER (PARTITION BY event_time + CAST(INTERVAL '00:00:01' AS INTERVAL)) AS foo FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_bare_interval_type_cast_string"
+sql = "CAST('1 DAY' AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_1"
+sql = "SELECT col FROM t WHERE NOT (col ->> '$.id') IN ('b')"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected RParen, got DArrow"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_2"
+sql = "SELECT '[' || 1 || ']' ->> 0"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_3"
+sql = "SELECT '[' || 1 || ']' -> 0 ->> 0"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_4"
+sql = "SELECT '[1]' ->> 0 || 'x'"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_5"
+sql = "SELECT payload ->> 0 + 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_6"
+sql = "SELECT payload ->> 'a' || 'b'"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_7"
+sql = "SELECT payload ->> 0 + 1 = other"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_8"
+sql = "SELECT payload -> 'a' ->> 0"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_9"
+sql = "SELECT payload -> 'a' || 'b' ->> 0"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a statement, not an expression"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_10"
+sql = "SELECT payload -> ('a' || ('b' ->> 0))"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected RParen, got DArrow"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_flow_operator_in_expression_11"
+sql = "SELECT payload -> concat('a', other ->> 0)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected RParen, got DArrow"
+note = "Snowflake reads ->> only as the flow operator between statements, not as a JSON operator (recorded syntax_error for SELECT 1 ->> 1)"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_cast"
+sql = "SELECT CAST(x AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_try_cast"
+sql = "SELECT TRY_CAST(x AS INTERVAL)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"
+
+[[rejection]]
+id = "snowflake_type_bare_interval_double_colon"
+sql = "SELECT x::INTERVAL"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an interval field such as DAY or YEAR TO MONTH"
+note = "Snowflake's INTERVAL type needs a field (recorded errno 1003 for CAST ( NULL AS INTERVAL ))"

@@ -1010,6 +1010,7 @@ impl Parser {
                 self.config.dialect,
                 Some(crate::tokens::models::DialectType::DuckDB)
                     | Some(crate::tokens::models::DialectType::SQLite)
+                    | Some(crate::tokens::models::DialectType::Snowflake)
             ) && self.match_token(TokenType::DArrow)
             {
                 let path = self.parse_json_path_operand()?;
