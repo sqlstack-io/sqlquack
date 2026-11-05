@@ -1,6 +1,7 @@
 //! Timestamp literals and casts between DATE and timestamps.
 
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::diagnostics::constants::ZONED_LOCAL_TIME;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::SUBMICRO_MESSAGE;
@@ -101,6 +102,11 @@ pub(crate) fn timestamp_literal(
     }
 }
 
+/// Why `operation` of a `zoned` TIMESTAMP_TZ value, which reads its offset's local time, is refused.
+pub(crate) fn zoned_local(operation: &str, zoned: SnowflakeType) -> String {
+    format!("{operation} of {zoned}, {ZONED_LOCAL_TIME}")
+}
+
 /// The DuckDB SQL of a cast between DATE and timestamp types, or why it is unproven.
 pub(crate) fn temporal_cast(
     sql: &str,
@@ -155,6 +161,10 @@ pub(crate) fn temporal_cast(
             diverge(context, SESSION_TIMEZONE_UTC, construct).map_err(|refusal| refusal.reason)?;
             cast(sql, to, log)
         }
+        (
+            SnowflakeType::TimestampTz { .. },
+            SnowflakeType::Date | SnowflakeType::TimestampNtz { .. },
+        ) => Err(zoned_local(&format!("casting to {to}"), from)),
         _ => Err(format!("casting {from} to {to} has no proven conversion")),
     }
 }

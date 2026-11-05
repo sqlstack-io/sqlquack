@@ -31,6 +31,8 @@ pub struct RunSummary {
     pub kept_quoting: BTreeMap<String, usize>,
     /// Entries whose trees differ only by wrapper nodes polyglot drops, as a reviewed entry explains.
     pub kept_nodes: BTreeMap<String, usize>,
+    /// Entries whose trees differ only by a field kept as written, as a reviewed entry explains.
+    pub kept_fields: BTreeMap<String, usize>,
     /// Entries polyglot keeps as a command and SQLQuack structures, as a reviewed entry explains.
     pub structured: BTreeMap<String, usize>,
     /// Entries whose results differ.
