@@ -33,7 +33,8 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_distinct"
-description = "DISTINCT, which has no effect, on a group with a repeated value. Catches: DISTINCT rejected"
+compile_error = true
+description = "DISTINCT, which the page says has no effect. Snowflake rejects the keyword at parse. Catches: DISTINCT accepted instead of the error"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
 rows = [
   ["'p'", "1", "'x'"],

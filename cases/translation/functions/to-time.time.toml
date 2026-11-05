@@ -4,14 +4,14 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_varchar"
-description = "TIME of strings with fractional seconds. Catches: fractional seconds dropped or rounded"
+description = "TIME of strings with fractional seconds. The result is cast to VARCHAR because the connector returns TIME in microseconds. Catches: fractional seconds dropped or rounded"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'13:14:15.123'"],
   ["'00:00:00'"],
   ["'23:59:59.999999999'"],
 ]
-query = "SELECT TIME(a) AS r FROM input ORDER BY ordinal"
+query = "SELECT CAST(TIME(a) AS VARCHAR) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
