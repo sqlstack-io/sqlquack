@@ -37,7 +37,8 @@ fn given_snowflake_table_sequence_and_share_actions_when_parsing_then_only_docum
         AcceptanceTestCase { description: "a file is no name (recorded syntax error)", sql: "ALTER EXTERNAL TABLE v1 REMOVE FILES ( m1 ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a share unsets its comment (recorded semantic error)", sql: "ALTER SHARE v1 UNSET COMMENT ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "a share keeps its ADD action", sql: "ALTER SHARE v1 ADD ACCOUNTS = a1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
-        AcceptanceTestCase { description: "a share unsets COMMENT or TAG only", sql: "ALTER SHARE v1 UNSET m1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a share unsets any named property (recorded semantic error 1420)", sql: "ALTER SHARE v1 UNSET v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "UNSET names a property (catalogued reject)", sql: "ALTER SHARE v1 UNSET ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a user group is an organization user group (recorded syntax error)", sql: "ALTER USER GROUP v1 ADD ORGANIZATION USERS v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "an organization user group adds users", sql: "ALTER ORGANIZATION USER GROUP IF EXISTS v1 ADD ORGANIZATION USERS v1 , v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
     ];
