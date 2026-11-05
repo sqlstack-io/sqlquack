@@ -1,8 +1,10 @@
 //! Expected differences.
 
-use crate::expected::_helpers::nodes::{differ_only_by_kept_field, differ_only_by_kept_node};
+use crate::expected::_helpers::nodes::{
+    differ_only_by_kept_field, differ_only_by_kept_node, is_opaque,
+};
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
-use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX};
+use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
 
 use serde::Deserialize;
@@ -34,7 +36,7 @@ pub struct ExpectedFile {
     pub structured: Vec<StructuredStatement>,
 }
 
-/// A statement polyglot parses into an opaque command and SQLQuack parses into a structured node.
+/// A statement polyglot keeps as an opaque command or raw SQL and SQLQuack parses into a structured node.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct StructuredStatement {
@@ -225,7 +227,7 @@ impl ExpectedDifferences {
     ) -> Option<&StructuredStatement> {
         let compact = compact(sql);
         self.structured.iter().find(|entry| {
-            polyglot.starts_with(&format!("{OK_PREFIX}{COMMAND_TREE}"))
+            is_opaque(polyglot)
                 && sqlquack.starts_with(&format!("{OK_PREFIX}[{{\"{}\":", entry.sqlquack_node))
                 && compact.contains(&entry.marker.to_ascii_uppercase())
         })

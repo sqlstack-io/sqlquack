@@ -150,6 +150,12 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("APPLICATION ROLE"),
         },
         ProjectionTestCase {
+            description: "a bare grantee before RESTRICT is the name, not the USER kind",
+            sql: "REVOKE INSERT ON TABLE t1 FROM user RESTRICT",
+            pointer: "/0/revoke/principals/0/name/name",
+            expected_value: json!("user"),
+        },
+        ProjectionTestCase {
             description: "a future grant keeps its plural and container",
             sql: "GRANT SELECT ON FUTURE TABLES IN SCHEMA s1 TO ROLE r1",
             pointer: "/0/grant/kind",

@@ -109,6 +109,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("SECURITY INTEGRATION"),
         },
         ProjectionTestCase {
+            description: "a storage integration's location list is one property value",
+            sql: "CREATE STORAGE INTEGRATION s1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( 's3://b1/p1/' , 's3://b2/p2/' )",
+            pointer: "/0/create_object/properties/3/kind",
+            expected_value: json!("STORAGE_ALLOWED_LOCATIONS"),
+        },
+        ProjectionTestCase {
             description: "a property keeps its name",
             sql: "CREATE USER u1 DEFAULT_ROLE = r1",
             pointer: "/0/create_object/properties/0/kind",

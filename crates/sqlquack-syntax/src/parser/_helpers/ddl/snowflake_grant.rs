@@ -49,12 +49,12 @@ impl Parser {
         let (privileges, kind, securable, function_params, grantees, bare) = match role {
             Some((kind, grantees)) => {
                 let securable = if matches!(*kind, "SERVICE ROLE") {
-                    let service = self.parse_grant_name()?;
+                    let service = self.parse_grant_securable()?;
                     self.expect_token(TokenType::Exclamation)?;
                     let role = self.parse_grant_name_part()?;
                     Identifier::new(format!("{}!{}", service.name, role.name))
                 } else {
-                    self.parse_grant_name()?
+                    self.parse_grant_securable()?
                 };
                 (
                     Vec::new(),
@@ -221,7 +221,7 @@ impl Parser {
                 return Err(self.parse_error("Expected DATABASE or SCHEMA"));
             };
             words.push(container);
-            return Ok((Some(words.join(" ")), self.parse_grant_name()?));
+            return Ok((Some(words.join(" ")), self.parse_grant_securable()?));
         }
         let kind = self.match_grant_kind(SNOWFLAKE_GRANT_KINDS).or_else(|| {
             let generic = self.check_grant_name_start(0)
@@ -238,7 +238,7 @@ impl Parser {
                 word
             })
         });
-        Ok((kind, self.parse_grant_name()?))
+        Ok((kind, self.parse_grant_securable()?))
     }
 
     /// The grantee after TO or FROM: one of `kinds` and its name, or a bare role name when `bare`.
@@ -248,7 +248,10 @@ impl Parser {
             .map(|kind| kind.split(' ').collect::<Vec<_>>())
             .find(|parts| self.check_text_seq(parts));
         let (kind, name) = match found {
-            Some(parts) if self.check_grant_name_start(parts.len()) => {
+            Some(parts)
+                if self.check_grant_name_start(parts.len())
+                    && !self.check_revoke_option_end(parts.len()) =>
+            {
                 self.match_text_seq(&parts);
                 (Some(parts.join(" ")), self.parse_grant_name()?)
             }
@@ -259,12 +262,14 @@ impl Parser {
             Some(_) | None if bare => (None, self.parse_grant_name()?),
             _ => return Err(self.parse_error("Expected a grantee kind and name")),
         };
+        let is_role = matches!(kind.as_deref(), Some("ROLE"));
+        let is_share = matches!(kind.as_deref(), Some("SHARE"));
         Ok(GrantPrincipal {
             name,
-            is_role: matches!(kind.as_deref(), Some("ROLE")),
+            is_role,
             is_group: false,
-            is_share: matches!(kind.as_deref(), Some("SHARE")),
-            kind,
+            is_share,
+            kind: kind.filter(|_| !is_role && !is_share),
         })
     }
 
@@ -277,6 +282,14 @@ impl Parser {
             .max_by_key(Vec::len)?;
         self.match_text_seq(&parts);
         Some(parts.join(" "))
+    }
+
+    /// A securable name; like polyglot's securable it carries no source span.
+    fn parse_grant_securable(&mut self) -> Result<Identifier> {
+        Ok(Identifier {
+            span: None,
+            ..self.parse_grant_name()?
+        })
     }
 
     /// A possibly dotted object name; each part is an identifier, not a string or reserved word.
@@ -337,6 +350,15 @@ impl Parser {
     /// Whether the token `offset` ahead is TO or FROM.
     fn check_grant_end(&self, offset: usize) -> bool {
         self.check_at(offset, TokenType::To) || self.check_at(offset, TokenType::From)
+    }
+
+    /// Whether the token `offset` ahead is a closing CASCADE or RESTRICT, which no name follows.
+    fn check_revoke_option_end(&self, offset: usize) -> bool {
+        (self.check_at(offset, TokenType::Cascade) || self.check_at(offset, TokenType::Restrict))
+            && self
+                .tokens
+                .get(self.current + offset + 1)
+                .is_none_or(|token| token.token_type == TokenType::Semicolon)
     }
 
     /// Whether the token `offset` ahead has the given type.

@@ -51,6 +51,32 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("snowflake_show_create_table".to_owned(), 1),
                     ("snowflake_stage_reserved_name".to_owned(), 1),
                     ("snowflake_stage_quoted_blank_name".to_owned(), 1),
+                    ("snowflake_role_grant_without_role".to_owned(), 1),
+                    (
+                        "snowflake_role_grant_without_role_quoted_user".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_role_grant_without_role_admin_option".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_role_grant_without_role_lists".to_owned(), 1),
+                    ("snowflake_role_grant_without_role_user_list".to_owned(), 1),
+                    ("snowflake_role_grant_quoted_roles".to_owned(), 1),
+                    (
+                        "snowflake_role_grant_without_role_after_select".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_role_grant_without_role_unterminated".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_role_revoke_without_role".to_owned(), 1),
+                    (
+                        "snowflake_role_revoke_admin_option_without_role".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_role_revoke_without_role_lists".to_owned(), 1),
                 ]),
                 differences: Vec::new(),
                 tokens_lost: Vec::new(),
