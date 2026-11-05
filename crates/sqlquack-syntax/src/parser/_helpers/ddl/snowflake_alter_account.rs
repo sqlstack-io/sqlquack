@@ -384,16 +384,14 @@ impl Parser {
             "SET" => (vec![], self.parse_integration_set()?),
             "UNSET" => (vec![], self.parse_group_unset()?),
             _ => {
-                while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                    let key = self.expect_alter_words(&[
-                        &["OAUTH_CLIENT_SECRET_2"],
-                        &["OAUTH_CLIENT_SECRET"],
-                        &["SAML2_SNOWFLAKE_PRIVATE_KEY"],
-                        &["METADATA_URL"],
-                    ])?;
-                    action.push(' ');
-                    action.push_str(&key);
-                }
+                let key = self.expect_alter_words(&[
+                    &["OAUTH_CLIENT_SECRET_2"],
+                    &["OAUTH_CLIENT_SECRET"],
+                    &["SAML2_SNOWFLAKE_PRIVATE_KEY"],
+                    &["METADATA_URL"],
+                ])?;
+                action.push(' ');
+                action.push_str(&key);
                 (vec![], vec![])
             }
         };
@@ -497,6 +495,16 @@ impl Parser {
                 action,
                 (vec![], properties),
             ));
+        }
+        let renames = self
+            .tokens
+            .get(self.current + 1)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case("RENAME"));
+        if renames {
+            let head = self.parse_alter_object_head()?;
+            let action = self.expect_alter_words(&[&["RENAME", "TO"]])?;
+            let parts: ActionParts = (vec![self.parse_group_name()?], vec![]);
+            return Ok(alter_object("ORGANIZATION", head, action, parts));
         }
         if self.match_identifier("PROFILE") {
             return self.parse_alter_organization_profile();

@@ -24,6 +24,9 @@ impl Parser {
             }
             return self.parse_snowflake_show_grants(future).map(Some);
         }
+        if self.match_text_seq(&["CALLER", "GRANTS"]) {
+            return self.parse_snowflake_show_caller_grants().map(Some);
+        }
         let class = self.applies_snowflake_context_rules() && self.check_next(TokenType::Dot);
         let shared = SHARED_SHOW_KINDS
             .iter()
@@ -45,6 +48,9 @@ impl Parser {
         show.target = target;
         show.terse = terse;
         show.history = self.match_identifier("HISTORY");
+        if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
+            return Ok(Some(Expression::Show(Box::new(show))));
+        }
         if matches!(kind.as_str(), "DELEGATED AUTHORIZATIONS BY USER") {
             show.for_target = Some(self.parse_show_name()?);
             return Ok(Some(Expression::Show(Box::new(show))));
@@ -74,11 +80,12 @@ impl Parser {
         if self.match_token(TokenType::Like) {
             show.like = Some(self.parse_show_string("LIKE")?);
         }
+        let mut show = self.parse_show_on_user(&kind, show)?;
         let required = SNOWFLAKE_SHOW_REQUIRED_CONTAINERS
             .iter()
             .find(|(name, _)| *name == kind)
             .map(|(_, containers)| *containers);
-        if required.is_some() || self.check(TokenType::In) {
+        if show.scope_kind.is_none() && (required.is_some() || self.check(TokenType::In)) {
             self.expect_token(TokenType::In)?;
             let (container, name) = self.parse_show_container(&kind)?;
             let allowed = |container: &str| match required {
@@ -113,11 +120,6 @@ impl Parser {
             if self.match_token(TokenType::From) {
                 show.from = Some(self.parse_show_string("FROM")?);
             }
-        }
-        if show.scope_kind.is_none() && show.scope.is_none() && self.match_token(TokenType::In) {
-            let (container, name) = self.parse_show_container(&kind)?;
-            show.scope_kind = container;
-            show.scope = name;
         }
         if self.match_token(TokenType::With) {
             show = self.parse_show_with(&kind, show)?;
@@ -160,6 +162,11 @@ impl Parser {
         }
     }
 
+    /// Whether a LIMIT ends the statement after ACCOUNT, where Snowflake reads it as the account's name.
+    fn is_limit_name(&self) -> bool {
+        self.check(TokenType::Limit) && self.is_statement_end_at(1)
+    }
+
     /// An object name, kept as written.
     fn parse_show_name(&mut self) -> Result<Expression> {
         Ok(Expression::Table(Box::new(self.parse_object_name()?)))
@@ -177,9 +184,16 @@ impl Parser {
         let groups = matches!(kind, "FAILOVER GROUPS" | "REPLICATION GROUPS");
         let optional = match container.as_str() {
             "ACCOUNT" => !groups,
-            "DATABASE" | "SCHEMA" => !matches!(kind, "DATABASE ROLES" | "SCHEMA VARIABLES"),
+            "DATABASE" | "SCHEMA" => !matches!(kind, "SCHEMA VARIABLES"),
+            "APPLICATION" => !matches!(
+                kind,
+                "PRIVILEGES" | "REFERENCES" | "TELEMETRY EVENT DEFINITIONS"
+            ),
             "TABLE" | "VIEW" => true,
-            "REPLICATION GROUP" => matches!(kind, "DATABASES" | "SHARES"),
+            "REPLICATION GROUP" | "FAILOVER GROUP" => matches!(kind, "DATABASES" | "SHARES"),
+            "SERVICE" => matches!(kind, "ROLES" | "ENDPOINTS"),
+            "CLASS" => matches!(kind, "ROLES" | "FUNCTIONS" | "PROCEDURES"),
+            "ORGANIZATION PROFILE" => true,
             _ => false,
         };
         let ends = self.is_at_end()
@@ -188,6 +202,7 @@ impl Parser {
             || self.check(TokenType::Limit)
             || self.check_identifier("STARTS");
         let name = match (container.as_str(), optional && ends) {
+            ("ACCOUNT", _) if self.is_limit_name() => Some(self.parse_show_name()?),
             (_, true) => None,
             ("ACCOUNT", _) if !groups => None,
             _ => Some(self.parse_show_name()?),
@@ -241,6 +256,48 @@ impl Parser {
                 return Ok(show);
             }
         }
+    }
+
+    /// `[ ON ACCOUNT | ON USER <name> ]` after LIKE, for the policy kinds a user can be shown with.
+    fn parse_show_on_user(&mut self, kind: &str, mut show: Show) -> Result<Show> {
+        let on_user = matches!(
+            kind,
+            "AUTHENTICATION POLICIES"
+                | "INGRESS POLICIES"
+                | "PASSWORD POLICIES"
+                | "SESSION POLICIES"
+        );
+        if on_user && self.match_token(TokenType::On) {
+            let on = self.expect_alter_words(&[&["ACCOUNT"], &["USER"]])?;
+            if on == USER {
+                show.scope = Some(self.parse_show_name()?);
+            }
+            show.scope_kind = Some(format!("ON {on}"));
+        }
+        Ok(show)
+    }
+
+    /// SHOW CALLER GRANTS: ON as for SHOW GRANTS; TO takes ROLE, DATABASE ROLE, DATABASE or a name.
+    fn parse_snowflake_show_caller_grants(&mut self) -> Result<Expression> {
+        if !self.match_token(TokenType::To) {
+            let mut grants = self.parse_snowflake_show_grants(false)?;
+            if let Expression::Show(show) = &mut grants {
+                show.this = "CALLER GRANTS".to_owned();
+            }
+            return Ok(grants);
+        }
+        let mut show = Show::new("CALLER GRANTS".to_owned());
+        let kinds: &[&[&str]] = &[&["DATABASE", "ROLE"], &["ROLE"], &["DATABASE"]];
+        let kind = kinds.iter().find(|words| self.match_text_seq(words));
+        show.scope_kind = Some(match kind {
+            Some(words) => format!("TO {}", words.join(" ")),
+            None => "TO".to_owned(),
+        });
+        let bare_role = kind.is_some_and(|words| words == &["ROLE"]) && self.is_statement_end_at(0);
+        if !bare_role {
+            show.scope = Some(self.parse_show_name()?);
+        }
+        Ok(Expression::Show(Box::new(show)))
     }
 
     /// SHOW [ FUTURE ] GRANTS after GRANTS: its one ON, TO, OF or IN clause, then LIMIT.
@@ -332,6 +389,9 @@ impl Parser {
     /// The clause after SHOW GRANTS ON: ACCOUNT, or an object kind of one or more words and the object's name.
     fn parse_show_grants_on(&mut self, mut show: Show) -> Result<(String, Show)> {
         if self.match_identifier(ACCOUNT) {
+            if self.is_limit_name() {
+                show.scope = Some(self.parse_show_name()?);
+            }
             return Ok((ON_ACCOUNT.to_owned(), show));
         }
         let mut kind: Vec<String> = Vec::new();
