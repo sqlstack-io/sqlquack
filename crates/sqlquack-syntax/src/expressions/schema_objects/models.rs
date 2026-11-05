@@ -1189,7 +1189,7 @@ pub struct CreateObject {
     pub if_not_exists: bool,
     /// The object name
     pub name: TableRef,
-    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"
+    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"; empty without one
     pub source: String,
     /// The source's operands in order: names, an identifier string or a condition
     #[serde(default)]
