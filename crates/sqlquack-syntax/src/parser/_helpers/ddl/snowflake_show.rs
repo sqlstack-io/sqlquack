@@ -261,14 +261,14 @@ impl Parser {
             let (clause, show) = self.parse_show_grants_to(show)?;
             (Some(clause), show)
         } else if self.match_text_seq(&["OF"]) {
-            let words = self.expect_alter_words(&[
+            let words = self.parse_show_grants_kind(&[
                 &["APPLICATION", "ROLE"],
                 &["SERVICE", "ROLE"],
                 &["DATABASE", "ROLE"],
                 &["ROLE"],
                 &["SHARE"],
             ])?;
-            (Some(format!("OF {words}")), show)
+            (Some(format!("OF {words}").trim_end().to_owned()), show)
         } else if self.match_token(TokenType::In) {
             self.expect_alter_words(&[&["DCM", "PROJECT"]])?;
             (Some("IN DCM PROJECT".to_owned()), show)
@@ -319,14 +319,14 @@ impl Parser {
         {
             kind.push(self.advance_text()?.to_ascii_uppercase());
         }
-        if kind.is_empty() {
+        if kind.is_empty() && !self.ends_show_grants_clause(1) {
             return Err(self.parse_error("Expected an object kind after ON"));
         }
         show.scope = Some(self.parse_show_name()?);
         if self.check(TokenType::LParen) {
             show.privileges = self.parse_function_param_types()?;
         }
-        Ok((format!("ON {}", kind.join(" ")), show))
+        Ok((format!("ON {}", kind.join(" ")).trim_end().to_owned(), show))
     }
 
     /// The grantee after SHOW GRANTS TO; a class instance role names its class as the target.
@@ -340,13 +340,39 @@ impl Parser {
             &["SHARE"],
             &["USER"],
         ];
-        if let Some(words) = GRANTEES.iter().find(|words| self.match_text_seq(words)) {
-            return Ok((format!("TO {}", words.join(" ")), show));
+        if GRANTEES.iter().any(|words| self.check_text_seq(words)) {
+            let words = self.parse_show_grants_kind(GRANTEES)?;
+            return Ok((format!("TO {words}").trim_end().to_owned(), show));
         }
         show.target = Some(self.parse_show_name()?);
         self.expect_alter_words(&[&["ROLE"]])?;
         show.scope = Some(self.parse_show_instance_role()?);
         Ok(("TO INSTANCE ROLE".to_owned(), show))
+    }
+
+    /// One of `kinds`; in Snowflake its last word is the name when nothing follows and the rest is a kind, as `OF ROLE ;`.
+    fn parse_show_grants_kind(&mut self, kinds: &[&[&str]]) -> Result<String> {
+        if self.ends_show_grants_clause(1) {
+            return Ok(String::new());
+        }
+        let words = self.expect_alter_words(kinds)?;
+        let shorter: Vec<&str> = words.split(' ').collect();
+        let rest: &[&str] = &shorter[..shorter.len() - 1];
+        if self.ends_show_grants_clause(0) && kinds.contains(&rest) {
+            self.current -= 1;
+            return Ok(rest.join(" "));
+        }
+        Ok(words)
+    }
+
+    /// Whether the statement or its LIMIT starts `offset` tokens on, in a faithful Snowflake parse.
+    fn ends_show_grants_clause(&self, offset: usize) -> bool {
+        self.applies_snowflake_context_rules()
+            && (self.is_statement_end_at(offset)
+                || self
+                    .tokens
+                    .get(self.current + offset)
+                    .is_some_and(|token| token.token_type == TokenType::Limit))
     }
 
     /// `<instance_name>!<role_name>`, as a pair.

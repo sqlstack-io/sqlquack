@@ -265,6 +265,7 @@ impl Parser {
     /// Parses every remaining statement, split on semicolons, one `Expression` each.
     pub(crate) fn parse(&mut self) -> Result<Vec<Expression>> {
         self.ensure_complexity_guards()?;
+        self.reject_snowflake_backticks()?;
         let mut statements: Vec<Expression> = Vec::new();
 
         while !self.is_at_end() {
