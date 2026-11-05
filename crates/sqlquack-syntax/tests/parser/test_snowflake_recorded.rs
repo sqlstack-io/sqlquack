@@ -749,6 +749,24 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             pointer: "/0/select/expressions/0/cast/to/name",
             expected_value: json!("PERIOD ( INT )"),
         },
+        ProjectionTestCase {
+            description: "USE SCHEMA keeps the database part's quoting",
+            sql: "USE SCHEMA \"v1 Q\" . v1",
+            pointer: "/0/use/parts/0/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "USE SCHEMA keeps the schema part apart from the database",
+            sql: "USE SCHEMA \"v1 Q\" . v1",
+            pointer: "/0/use/parts/1/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "USE SCHEMA with a quoted dotted name has one part",
+            sql: "USE SCHEMA \"v1 Q.v1\"",
+            pointer: "/0/use/parts",
+            expected_value: json!(null),
+        },
     ];
 
     for test_case in test_cases {
