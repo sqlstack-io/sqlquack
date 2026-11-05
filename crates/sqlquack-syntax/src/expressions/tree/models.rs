@@ -340,6 +340,7 @@ use crate::expressions::schema_objects::models::AlterSequence;
 use crate::expressions::schema_objects::models::AlterView;
 use crate::expressions::schema_objects::models::CreateDatabase;
 use crate::expressions::schema_objects::models::CreateFunction;
+use crate::expressions::schema_objects::models::CreateObject;
 use crate::expressions::schema_objects::models::CreateProcedure;
 use crate::expressions::schema_objects::models::CreateSchema;
 use crate::expressions::schema_objects::models::CreateSequence;
@@ -1180,6 +1181,7 @@ pub enum Expression {
     DropView(Box<DropView>),
     AlterView(Box<AlterView>),
     AlterObject(Box<AlterObject>),
+    CreateObject(Box<CreateObject>),
     AlterIndex(Box<AlterIndex>),
     Truncate(Box<Truncate>),
     Use(Box<Use>),

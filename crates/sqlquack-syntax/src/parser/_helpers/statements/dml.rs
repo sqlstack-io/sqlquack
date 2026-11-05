@@ -292,6 +292,14 @@ impl Parser {
             );
         }
 
+        if self.is_snowflake() && !or_alter && !temporary && !materialized && !secure {
+            if let Some(create) =
+                self.parse_snowflake_create_from(or_replace, table_modifier.as_deref())?
+            {
+                return Ok(create);
+            }
+        }
+
         match self.peek().token_type {
             TokenType::Table => {
                 if self.current + 1 < self.tokens.len()
@@ -432,12 +440,13 @@ impl Parser {
         }
         {
             if self.is_snowflake()
-                && self
-                    .tokens
-                    .get(self.current + 1)
-                    .is_some_and(|t| t.text.eq_ignore_ascii_case("CLONE"))
+                && self.tokens.get(self.current + 1).is_some_and(|t| {
+                    ["CLONE", "FROM", "AS"]
+                        .iter()
+                        .any(|word| t.text.eq_ignore_ascii_case(word))
+                })
             {
-                return Err(self.parse_error("Expected an object kind and name before CLONE"));
+                return Err(self.parse_error("Expected an object kind and a name"));
             }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
