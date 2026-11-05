@@ -20,3 +20,6 @@ SQ0202 lock_wait
 SQ0203 qualify_without_window
 SQ0204 star_filter_drops_named_column
 SQ0205 unknown_function
+SQ0206 duplicate_alias
+SQ0207 too_many_arguments
+SQ0208 pivot_consumed_column

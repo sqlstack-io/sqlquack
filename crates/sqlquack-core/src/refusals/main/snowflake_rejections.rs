@@ -24,7 +24,8 @@ pub fn snowflake_rejections(
             let text = characters.get_or_init(|| source.chars().collect());
             Some(Refusal {
                 construct: Some(Construct::new(ConstructFamily::Syntax, name)),
-                location: clause_location(node, text, lines).or_else(|| node_location(node, lines)),
+                location: clause_location((node, name), text, lines)
+                    .or_else(|| node_location(node, lines)),
                 category: RefusalCategory::SnowflakeRejects,
                 reason,
             })

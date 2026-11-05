@@ -29,6 +29,22 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_stderr_mention: "error[SQ0204]",
         },
         CheckCommandTestCase {
+            description: "SQ0206 points at the alias written the second time",
+            arguments: &["check"],
+            sql: "SELECT order_id FROM orders o, orders o",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "1 | SELECT order_id FROM orders o, orders o\n  |                                       ^ ",
+        },
+        CheckCommandTestCase {
+            description: "SQ0207 points at the call passing too many arguments",
+            arguments: &["check"],
+            sql: "SELECT LENGTH(order_id, 2) AS x FROM orders",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "1 | SELECT LENGTH(order_id, 2) AS x FROM orders\n  |        ^^^^^^^^^^^^^^^^^^^ the most arguments LENGTH takes is 1, and this call passes 2",
+        },
+        CheckCommandTestCase {
             description: "SQ0203 points at the QUALIFY clause, not the statement's first line",
             arguments: &["check"],
             sql: "SELECT o.id, SUM(o.price) AS total, 'qualify' AS note\nFROM orders AS o\nGROUP BY o.id\nQUALIFY total > 3",

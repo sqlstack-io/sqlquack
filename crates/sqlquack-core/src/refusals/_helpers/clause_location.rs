@@ -1,9 +1,11 @@
-//! Where a rejected node's offending clause is: a set operator with ALL, or a QUALIFY clause.
+//! Where a rejected node's offending part is: a set operator with ALL, QUALIFY, an alias or a column.
 
 use sqlquack_syntax::Expression;
 
+use crate::diagnostics::constants::{DUPLICATE_ALIAS, PIVOT_CONSUMED_COLUMN};
 use crate::parsing::main::node_location::node_location;
 use crate::parsing::models::{SourceLines, SourceLocation};
+use crate::refusals::_helpers::rejections::{duplicate_alias, pivot_consumed_column};
 
 /// The keyword that starts a QUALIFY clause.
 const QUALIFY_KEYWORD: &str = "QUALIFY";
@@ -12,13 +14,21 @@ const SET_OPERATORS: &[&str] = &["INTERSECT", "EXCEPT", "MINUS"];
 /// The keyword after a set operator that keeps duplicates.
 const ALL_KEYWORD: &str = "ALL";
 
-/// The offending clause of a rejected node: a set operation's keywords, or a whole QUALIFY clause.
+/// The offending part of a node rejected as `name`: set operation keywords, QUALIFY, or an alias.
 pub(crate) fn clause_location(
-    node: &Expression,
+    (node, name): (&Expression, &str),
     text: &[char],
     lines: &SourceLines,
 ) -> Option<SourceLocation> {
     match node {
+        Expression::Select(select) if name == DUPLICATE_ALIAS => duplicate_alias(select)?
+            .span
+            .map(|span| lines.location(span.start, span.end)),
+        Expression::Select(select) if name == PIVOT_CONSUMED_COLUMN => {
+            pivot_consumed_column(select)?
+                .span
+                .map(|span| lines.location(span.start, span.end))
+        }
         Expression::Intersect(operation) => {
             operator_location(node, (&operation.left, &operation.right), (text, lines))
         }

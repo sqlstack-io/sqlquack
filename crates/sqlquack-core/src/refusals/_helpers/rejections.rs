@@ -1,7 +1,14 @@
 //! The constructs Snowflake parses but then rejects, recognised one node at a time.
 
-use sqlquack_syntax::expressions::names::models::Star;
+use std::collections::HashSet;
+
+use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::names::models::{Column, Identifier, Star};
+use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::{Expression, ExpressionWalk};
+
+use crate::diagnostics::constants::{DUPLICATE_ALIAS, PIVOT_CONSUMED_COLUMN, TOO_MANY_ARGUMENTS};
+use crate::refusals::constants::SNOWFLAKE_FUNCTION_ARITIES;
 
 /// The registry name of the rejection a node causes, with the reason, if it causes one.
 pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
@@ -27,6 +34,36 @@ pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
                     .to_owned(),
             ))
         }
+        Expression::Select(select) => duplicate_alias(select)
+            .map(|alias| {
+                (
+                    DUPLICATE_ALIAS,
+                    format!("the alias `{}` names two FROM items", alias.name),
+                )
+            })
+            .or_else(|| {
+                pivot_consumed_column(select).map(|column| {
+                    (
+                        PIVOT_CONSUMED_COLUMN,
+                        format!(
+                            "`{}` is aggregated or pivoted by the PIVOT, so its output has no such column",
+                            column.name.name
+                        ),
+                    )
+                })
+            }),
+        Expression::Function(function) => most_arguments(function)
+            .filter(|most| function.args.len() > *most)
+            .map(|most| {
+                (
+                    TOO_MANY_ARGUMENTS,
+                    format!(
+                        "the most arguments {} takes is {most}, and this call passes {}",
+                        function.name.to_uppercase(),
+                        function.args.len()
+                    ),
+                )
+            }),
         Expression::Star(star) => filtered_out_name(star).map(|name| {
             (
                 "star_filter_drops_named_column",
@@ -35,6 +72,113 @@ pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
         }),
         _ => None,
     }
+}
+
+/// The first alias written again on a later FROM item or join, compared as Snowflake stores it.
+pub(crate) fn duplicate_alias(select: &Select) -> Option<&Identifier> {
+    let mut seen: HashSet<String> = HashSet::new();
+    let items = select.from.iter().flat_map(|from| from.expressions.iter());
+    items
+        .chain(select.joins.iter().map(|join| &join.this))
+        .filter_map(|item| match item {
+            Expression::Table(table) => table.alias.as_ref(),
+            Expression::Subquery(subquery) => subquery.alias.as_ref(),
+            Expression::Alias(alias) => Some(&alias.alias),
+            _ => None,
+        })
+        .find(|alias| !seen.insert(stored_name(alias)))
+}
+
+/// The first column a lone PIVOT aggregates or pivots on that its query still reads by that name.
+pub(crate) fn pivot_consumed_column(select: &Select) -> Option<&Column> {
+    let [Expression::Pivot(pivot)] = select.from.as_ref()?.expressions.as_slice() else {
+        return None;
+    };
+    let consumed: HashSet<String> = pivot
+        .expressions
+        .iter()
+        .chain(&pivot.fields)
+        .flat_map(own_columns)
+        .map(|column| stored_name(&column.name))
+        .collect();
+    let aliases: HashSet<String> = select
+        .expressions
+        .iter()
+        .filter_map(|projection| match projection {
+            Expression::Alias(alias) => Some(stored_name(&alias.alias)),
+            _ => None,
+        })
+        .collect();
+    let pivot_name = pivot.alias.as_ref().map(stored_name);
+    let clauses = select
+        .where_clause
+        .iter()
+        .map(|clause| &clause.this)
+        .chain(select.group_by.iter().flat_map(|group| &group.expressions))
+        .chain(select.having.iter().map(|clause| &clause.this))
+        .chain(select.qualify.iter().map(|clause| &clause.this))
+        .chain(
+            select
+                .order_by
+                .iter()
+                .flat_map(|order| &order.expressions)
+                .map(|ordered| &ordered.this),
+        );
+    select
+        .expressions
+        .iter()
+        .chain(clauses)
+        .flat_map(own_columns)
+        .filter(|_| select.joins.is_empty() && !pivot.unpivot)
+        .find(|column| {
+            let name = stored_name(&column.name);
+            consumed.contains(&name)
+                && !aliases.contains(&name)
+                && column
+                    .table
+                    .as_ref()
+                    .is_none_or(|table| pivot_name.as_ref() == Some(&stored_name(table)))
+        })
+}
+
+/// The columns an expression reads outside any nested query.
+fn own_columns(expression: &Expression) -> Vec<&Column> {
+    match expression {
+        Expression::Column(column) => vec![column],
+        Expression::Select(_)
+        | Expression::Subquery(_)
+        | Expression::Union(_)
+        | Expression::Intersect(_)
+        | Expression::Except(_) => Vec::new(),
+        _ => expression
+            .children()
+            .into_iter()
+            .flat_map(own_columns)
+            .collect(),
+    }
+}
+
+/// An identifier as Snowflake stores it: as written when quoted, else in upper case.
+fn stored_name(identifier: &Identifier) -> String {
+    match identifier.quoted {
+        true => identifier.name.clone(),
+        false => identifier.name.to_uppercase(),
+    }
+}
+
+/// The most arguments a call without named arguments may pass, when the catalogue bounds it; a malformed limit bounds nothing.
+fn most_arguments(function: &Function) -> Option<usize> {
+    let named = function
+        .args
+        .iter()
+        .any(|argument| matches!(argument, Expression::NamedArgument(_)));
+    let name = function.name.to_uppercase();
+    SNOWFLAKE_FUNCTION_ARITIES
+        .lines()
+        .filter(|_| !named)
+        .filter_map(|line| line.split_once(' '))
+        .find(|(listed, _)| *listed == name)
+        .map(|(_, most)| most.parse().unwrap_or(usize::MAX))
 }
 
 /// A REPLACE or RENAME name the ILIKE pattern removes ignoring case; backslashes and non-ASCII skip.

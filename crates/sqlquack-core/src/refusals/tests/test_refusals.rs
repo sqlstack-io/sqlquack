@@ -1,9 +1,11 @@
+use crate::refusals::constants::SNOWFLAKE_FUNCTION_ARITIES;
 use crate::refusals::models::RefusalCategory;
 use crate::refusals::tests::helpers::{
-    not_expressible_reasons, rejection_codes, rejection_names, unmatched_refusals, unparsed_refusal,
+    catalogue_function_arities, not_expressible_reasons, rejection_codes, rejection_names,
+    unmatched_refusals, unparsed_refusal,
 };
 use crate::refusals::tests::test_types::{
-    ConstructRefusalTestCase, RejectionTestCase, UnparsedTestCase,
+    ArityListTestCase, ConstructRefusalTestCase, RejectionTestCase, UnparsedTestCase,
 };
 
 #[test]
@@ -115,6 +117,53 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec!["SQ0204", "SQ0204"],
         },
         RejectionTestCase {
+            description: "two FROM items under one alias are rejected, a quoted upper-case one too",
+            sql: "SELECT order_id FROM orders o, orders o; \
+                  SELECT 1 FROM orders o JOIN (SELECT 1 AS a) \"O\" ON TRUE",
+            expected_rejections: vec!["duplicate_alias", "duplicate_alias"],
+            expected_codes: vec!["SQ0206", "SQ0206"],
+        },
+        RejectionTestCase {
+            description: "distinct aliases, a quoted lower-case one, unaliased items and nested scopes are not",
+            sql: "SELECT 1 FROM orders o, orders p; \
+                  SELECT 1 FROM orders o JOIN orders \"o\" ON TRUE; \
+                  SELECT 1 FROM orders JOIN orders ON TRUE; \
+                  SELECT 1 FROM orders o WHERE EXISTS (SELECT 1 FROM orders o)",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
+            description: "a call with more arguments than any signature takes is rejected",
+            sql: "SELECT LENGTH(order_id, 2) AS x FROM orders; \
+                  SELECT hex_encode(status, 1, 2) FROM orders",
+            expected_rejections: vec!["too_many_arguments", "too_many_arguments"],
+            expected_codes: vec!["SQ0207", "SQ0207"],
+        },
+        RejectionTestCase {
+            description: "calls within their limits, with named arguments, unbounded or unknown are not",
+            sql: "SELECT LENGTH(order_id), SUBSTR(status, 1, 2), COALESCE(a, b, c, d, e) FROM orders; \
+                  SELECT AI_EXTRACT(file => f, responseFormat => r, scores => TRUE) FROM orders; \
+                  SELECT NOSUCHFUNCTION(1, 2, 3, 4) FROM orders",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
+            description: "a column a lone PIVOT aggregates or pivots on is rejected when read after it",
+            sql: "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('a', 'b')) AS p; \
+                  SELECT order_id FROM orders PIVOT (SUM(total) FOR status IN ('a')) AS p WHERE p.status = 'a'",
+            expected_rejections: vec!["pivot_consumed_column", "pivot_consumed_column"],
+            expected_codes: vec!["SQ0208", "SQ0208"],
+        },
+        RejectionTestCase {
+            description: "pivoted values, aliases, joins and nested queries are not",
+            sql: "SELECT order_id, \"'a'\" FROM orders PIVOT (SUM(total) FOR status IN ('a')) AS p; \
+                  SELECT order_id AS total FROM orders PIVOT (SUM(total) FOR status IN ('a')) AS p ORDER BY total; \
+                  SELECT total FROM orders PIVOT (SUM(total) FOR status IN ('a')) AS p JOIN totals ON TRUE; \
+                  SELECT (SELECT total FROM totals) FROM orders PIVOT (SUM(total) FOR status IN ('a')) AS p",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
             description: "a star without ILIKE, or ILIKE without REPLACE or RENAME, is left to conversion",
             sql: "SELECT * REPLACE (price * 2 AS price) FROM orders; \
                   SELECT * ILIKE '%_id' FROM orders",
@@ -139,6 +188,22 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
         assert_eq!(
             rejection_codes(test_case.sql),
             test_case.expected_codes,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_the_syntax_catalogue_when_listing_function_arities_then_the_list_matches_its_grammars() {
+    let test_cases = [ArityListTestCase {
+        description: "snowflake_function_arities.txt holds each function every call grammar bounds",
+        expected_arities: SNOWFLAKE_FUNCTION_ARITIES,
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            catalogue_function_arities(),
+            test_case.expected_arities,
             "{}",
             test_case.description
         );

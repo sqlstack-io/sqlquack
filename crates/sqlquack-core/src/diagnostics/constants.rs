@@ -82,6 +82,12 @@ pub const MISSING_RULE: &str = "SQ0002";
 pub const TYPE_CONDITION: &str = "SQ0003";
 /// The name of the code of a call to a function neither Snowflake nor the schema declares.
 pub const UNKNOWN_FUNCTION: &str = "unknown_function";
+/// The name of the code of two FROM items under one alias.
+pub const DUPLICATE_ALIAS: &str = "duplicate_alias";
+/// The name of the code of a call with more arguments than its Snowflake function takes.
+pub const TOO_MANY_ARGUMENTS: &str = "too_many_arguments";
+/// The name of the code of a read of a column a PIVOT consumed.
+pub const PIVOT_CONSUMED_COLUMN: &str = "pivot_consumed_column";
 /// A relation or column name does not resolve.
 pub const UNRESOLVED_NAME: &str = "SQ0004";
 /// DuckDB cannot express the construct's meaning.
@@ -347,5 +353,45 @@ pub const CODES: &[CodeEntry] = &[
             by the schema's `functions`. Calls qualified with a database or schema are not \
             checked.",
         example: r#"echo "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders" | sqlquack check --schema schema.json"#,
+    },
+    CodeEntry {
+        code: "SQ0206",
+        name: DUPLICATE_ALIAS,
+        alias: None,
+        title: "Two FROM items share one alias",
+        help: Some("give each FROM item its own alias"),
+        explanation: "Each table, subquery or call in one FROM clause and its joins needs a \
+            distinct alias, so Snowflake rejects a query that gives two of them the same one \
+            (Snowflake error 2027, duplicate alias). Unquoted aliases compare in upper case, as \
+            Snowflake stores them. Only aliases written with the items are compared.",
+        example: r#"echo "SELECT order_id FROM orders o, orders o" | sqlquack check"#,
+    },
+    CodeEntry {
+        code: "SQ0207",
+        name: TOO_MANY_ARGUMENTS,
+        alias: None,
+        title: "The call passes more arguments than the function takes",
+        help: Some("remove the extra arguments; Snowflake's documentation lists each signature"),
+        explanation: "The call passes more arguments than any documented signature of the \
+            Snowflake function accepts, so Snowflake rejects the statement (Snowflake error 939, \
+            too many arguments). The limits come from the syntax catalogue's call grammars, and \
+            only functions whose every signature has a fixed number of plain arguments are \
+            checked. Calls with named arguments, and calls with too few arguments, are not \
+            checked.",
+        example: r#"echo "SELECT LENGTH(order_id, 2) AS x FROM orders" | sqlquack check"#,
+    },
+    CodeEntry {
+        code: "SQ0208",
+        name: PIVOT_CONSUMED_COLUMN,
+        alias: None,
+        title: "The query reads a column its PIVOT consumed",
+        help: Some(
+            "read the pivoted value columns, or select the column in a subquery before pivoting",
+        ),
+        explanation: "PIVOT replaces the column it aggregates and the column after FOR with one \
+            column per listed value, so a query that still reads either by name fails in \
+            Snowflake (Snowflake error 904, invalid identifier). This is checked when the PIVOT \
+            is the only item in FROM, for names the SELECT list does not define as aliases.",
+        example: r#"echo "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p" | sqlquack check"#,
     },
 ];

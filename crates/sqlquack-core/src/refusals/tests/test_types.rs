@@ -42,3 +42,8 @@ pub(crate) struct RejectionTestCase {
     pub(crate) expected_rejections: Vec<&'static str>,
     pub(crate) expected_codes: Vec<&'static str>,
 }
+
+pub(crate) struct ArityListTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_arities: &'static str,
+}

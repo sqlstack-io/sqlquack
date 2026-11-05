@@ -33,6 +33,9 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0203`](#sq0203) | `qualify_without_window` | QUALIFY needs a window function |
 | [`SQ0204`](#sq0204) | `star_filter_drops_named_column` | REPLACE or RENAME names a column the star's ILIKE pattern removed |
 | [`SQ0205`](#sq0205) | `unknown_function` | Snowflake has no function of this name |
+| [`SQ0206`](#sq0206) | `duplicate_alias` | Two FROM items share one alias |
+| [`SQ0207`](#sq0207) | `too_many_arguments` | The call passes more arguments than the function takes |
+| [`SQ0208`](#sq0208) | `pivot_consumed_column` | The query reads a column its PIVOT consumed |
 
 ## Conversion
 
@@ -320,4 +323,46 @@ The call names a function that is neither one of Snowflake's documented function
 
 ```sh
 echo "SELECT NOSUCHFUNCTION(order_id) AS x FROM orders" | sqlquack check --schema schema.json
+```
+
+### SQ0206
+
+**Two FROM items share one alias** (`duplicate_alias`)
+
+Each table, subquery or call in one FROM clause and its joins needs a distinct alias, so Snowflake rejects a query that gives two of them the same one (Snowflake error 2027, duplicate alias). Unquoted aliases compare in upper case, as Snowflake stores them. Only aliases written with the items are compared.
+
+**Help:** give each FROM item its own alias
+
+**Example:**
+
+```sh
+echo "SELECT order_id FROM orders o, orders o" | sqlquack check
+```
+
+### SQ0207
+
+**The call passes more arguments than the function takes** (`too_many_arguments`)
+
+The call passes more arguments than any documented signature of the Snowflake function accepts, so Snowflake rejects the statement (Snowflake error 939, too many arguments). The limits come from the syntax catalogue's call grammars, and only functions whose every signature has a fixed number of plain arguments are checked. Calls with named arguments, and calls with too few arguments, are not checked.
+
+**Help:** remove the extra arguments; Snowflake's documentation lists each signature
+
+**Example:**
+
+```sh
+echo "SELECT LENGTH(order_id, 2) AS x FROM orders" | sqlquack check
+```
+
+### SQ0208
+
+**The query reads a column its PIVOT consumed** (`pivot_consumed_column`)
+
+PIVOT replaces the column it aggregates and the column after FOR with one column per listed value, so a query that still reads either by name fails in Snowflake (Snowflake error 904, invalid identifier). This is checked when the PIVOT is the only item in FROM, for names the SELECT list does not define as aliases.
+
+**Help:** read the pivoted value columns, or select the column in a subquery before pivoting
+
+**Example:**
+
+```sh
+echo "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p" | sqlquack check
 ```
