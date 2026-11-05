@@ -173,6 +173,85 @@ cases = ["cases/translation/functions/acosh.toml#t005_below_one"]
 required = true
 
 [[obligation]]
+id = "sf.functions.add-months.t001"
+form = "sf.functions.add-months"
+kind = "type_combination"
+target = "DATE, NUMBER"
+note = "Positive and negative month counts."
+catches = "months added as 30 days, or arguments swapped"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t002"
+form = "sf.functions.add-months"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, NUMBER"
+note = "A timestamp keeps its time and type."
+catches = "a DATE returned, or the time dropped"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t003"
+form = "sf.functions.add-months"
+kind = "type_combination"
+target = "TIMESTAMP_TZ, NUMBER"
+note = "A TIMESTAMP_TZ keeps its offset."
+catches = "the offset dropped or the month of the UTC instant used"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t004"
+form = "sf.functions.add-months"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t005"
+form = "sf.functions.add-months"
+kind = "null_argument"
+target = "num_months_expr"
+note = "NULL count."
+catches = "NULL read as 0"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t005_null_num_months_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t006"
+form = "sf.functions.add-months"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Last-day-of-month inputs, which stay at the month end."
+catches = "DATEADD semantics (2023-03-28 from 2023-02-28 instead of 2023-03-31)"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t006_month_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.add-months.t007"
+form = "sf.functions.add-months"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Fractional counts, which the page says round to the nearest integer."
+catches = "truncation (1 month for 1.6) or half-to-even (2 for 2.5 instead of 3)"
+reading = "the page: the result has the input's type; a non-integer count rounds to the nearest integer; a month end gives the result month's end (unlike DATEADD)"
+cases = ["cases/translation/functions/add-months.toml#t007_fractional"]
+required = true
+
+[[obligation]]
 id = "sf.functions.ascii.t001"
 form = "sf.functions.ascii"
 kind = "type_combination"
@@ -1450,6 +1529,96 @@ cases = ["cases/translation/functions/contains.toml#t004_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.convert-timezone.t001"
+form = "sf.functions.convert-timezone"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR, TIMESTAMP_NTZ"
+note = "Conversions between zones with whole and half-hour offsets."
+catches = "source and target swapped, or offsets applied with the wrong sign"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t001_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t002"
+form = "sf.functions.convert-timezone"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR, TIMESTAMP_NTZ"
+note = "Zone names in another case, and a fixed-offset name."
+catches = "zone names compared case-sensitively"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t002_offset_names"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t003"
+form = "sf.functions.convert-timezone"
+kind = "null_argument"
+target = "source_tz"
+note = "NULL source zone."
+catches = "NULL read as UTC"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t003_null_source_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t004"
+form = "sf.functions.convert-timezone"
+kind = "null_argument"
+target = "target_tz"
+note = "NULL target zone."
+catches = "NULL read as UTC"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t004_null_target_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t005"
+form = "sf.functions.convert-timezone"
+kind = "null_argument"
+target = "source_timestamp_ntz"
+note = "NULL timestamp."
+catches = "NULL read as the epoch"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t005_null_source_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t006"
+form = "sf.functions.convert-timezone"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Wall clocks in the spring gap and the autumn overlap of America/New_York, and either side."
+catches = "a fixed standard offset all year, or the overlap resolved to the other offset"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t006_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t007"
+form = "sf.functions.convert-timezone"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "A conversion that crosses into 29 February."
+catches = "a skipped leap day"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.convert-timezone.t008"
+form = "sf.functions.convert-timezone"
+kind = "error_parity"
+target = "error"
+note = "An unknown zone."
+catches = "UTC or NULL instead of an error"
+reading = "the page: three arguments convert a TIMESTAMP_NTZ wall clock from source_tz to target_tz and return TIMESTAMP_NTZ; NULL if any argument is NULL"
+cases = ["cases/translation/functions/convert-timezone.toml#t008_bad_zone"]
+required = true
+
+[[obligation]]
 id = "sf.functions.cos.t001"
 form = "sf.functions.cos"
 kind = "type_combination"
@@ -1594,6 +1763,647 @@ note = "COT at or outside its domain: records what Snowflake returns there (NaN,
 catches = "NaN, Infinity, NULL or an error differing from Snowflake"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/cot.toml#t005_pole"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t001"
+form = "sf.functions.date-from-parts"
+kind = "type_combination"
+target = "NUMBER, NUMBER, NUMBER"
+note = "Normal dates in year-month-day order."
+catches = "month and day swapped"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t002"
+form = "sf.functions.date-from-parts"
+kind = "type_combination"
+target = "NUMBER, NUMBER, NUMBER"
+note = "Day and month values outside their ranges, which carry."
+catches = "an error or NULL instead of carrying (2024-02-30 is 2024-03-01)"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t002_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t003"
+form = "sf.functions.date-from-parts"
+kind = "null_argument"
+target = "year"
+note = "NULL year."
+catches = "NULL read as 0"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t003_null_year"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t004"
+form = "sf.functions.date-from-parts"
+kind = "null_argument"
+target = "month"
+note = "NULL month."
+catches = "NULL read as 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t004_null_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t005"
+form = "sf.functions.date-from-parts"
+kind = "null_argument"
+target = "day"
+note = "NULL day."
+catches = "NULL read as 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t005_null_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t006"
+form = "sf.functions.date-from-parts"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative and zero months and days, which the page calls not intuitive."
+catches = "month 0 read as January, or a negative day counted from the month start"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t006_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-from-parts.t007"
+form = "sf.functions.date-from-parts"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in leap and common years."
+catches = "an error for 2023-02-29 instead of carrying to 03-01"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed"
+cases = ["cases/translation/functions/date-from-parts.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t001"
+form = "sf.functions.date-part.date-part"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t002"
+form = "sf.functions.date-part.date-part"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, nanosecond scaled to milliseconds, or epoch counted in local wall time"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t003"
+form = "sf.functions.date-part.date-part"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t004"
+form = "sf.functions.date-part.date-part"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error or the parts of a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t005"
+form = "sf.functions.date-part.date-part"
+kind = "type_combination"
+target = "'part' string"
+note = "The part given as a string literal."
+catches = "a quoted part rejected"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t005_quoted_part"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t006"
+form = "sf.functions.date-part.date-part"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t007"
+form = "sf.functions.date-part.date-part"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part.t008"
+form = "sf.functions.date-part.date-part"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part.toml#t008_pre_epoch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t001"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t002"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, nanosecond scaled to milliseconds, or epoch counted in local wall time"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t003"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t004"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error or the parts of a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t005"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "'part' string"
+note = "The part given as a string literal."
+catches = "a quoted part rejected"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t005_quoted_part"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t006"
+form = "sf.functions.date-part.date-part-from"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t007"
+form = "sf.functions.date-part.date-part-from"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t008"
+form = "sf.functions.date-part.date-part-from"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t008_pre_epoch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t001"
+form = "sf.functions.date-trunc"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar parts of a Sunday in a leap year."
+catches = "week truncated to Sunday, quarter to the wrong month, or a TIMESTAMP returned for a DATE"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t002"
+form = "sf.functions.date-trunc"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "rounding instead of truncation (12:00 for 11:59:59.999)"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t003"
+form = "sf.functions.date-trunc"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ truncated in its own offset."
+catches = "truncation in UTC (2025-01-01) instead of the wall clock (2024-12-31 00:00 -0800), or the offset dropped"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t004"
+form = "sf.functions.date-trunc"
+kind = "type_combination"
+target = "TIME"
+note = "A TIME truncated to hour and minute."
+catches = "an error for a TIME, or a timestamp returned"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t005"
+form = "sf.functions.date-trunc"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t005_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t006"
+form = "sf.functions.date-trunc"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "TIMESTAMP_TZ values on both sides of a DST change."
+catches = "the offset re-derived from a zone rule (or UTC) instead of kept"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t006_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-trunc.t007"
+form = "sf.functions.date-trunc"
+kind = "error_parity"
+target = "error"
+note = "A TIME truncated to day, which the page says is an error."
+catches = "midnight returned instead of an error"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/date-trunc.toml#t007_time_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t001"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "part, NUMBER, DATE"
+note = "Days, months and years added to dates, including negatives."
+catches = "value and expression swapped, or months added as 30 days"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t002"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "hour, NUMBER, DATE"
+note = "Hours added to a DATE, which the page says gives a TIMESTAMP."
+catches = "a DATE result (the hours dropped) or an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t002_date_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t003"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_NTZ"
+note = "Sub-second and minute parts on a timestamp."
+catches = "milliseconds read as microseconds, or minutes as months (mm)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t003_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t004"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "part, NUMBER, TIME"
+note = "Hours added to a TIME past midnight."
+catches = "an error or a timestamp instead of wrapping to 01:30"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t005"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_TZ"
+note = "A day added to a TIMESTAMP_TZ."
+catches = "the offset dropped or converted to UTC"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t005_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t006"
+form = "sf.functions.dateadd"
+kind = "null_argument"
+target = "value"
+note = "NULL value."
+catches = "NULL read as 0 (the date unchanged)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t006_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t007"
+form = "sf.functions.dateadd"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t007_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t008"
+form = "sf.functions.dateadd"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Month and year steps from month ends and 29 February."
+catches = "overflow into the next month (2024-03-02) instead of clamping to 2024-02-29, or 2025-03-01 from 2024-02-29"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t008_month_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t009"
+form = "sf.functions.dateadd"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A fractional value: records how Snowflake rounds it."
+catches = "truncation (1 day) where Snowflake rounds 1.7 to 2, or the reverse"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t009_fractional_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t010"
+form = "sf.functions.dateadd"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours added across a DST change, in a TIMESTAMP_TZ and through CONVERT_TIMEZONE."
+catches = "wall-clock arithmetic (02:30, which does not exist) instead of elapsed time"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t010_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dateadd.t011"
+form = "sf.functions.dateadd"
+kind = "error_parity"
+target = "error"
+note = "Days added to a TIME, which the page says is an error."
+catches = "a wrapped TIME instead of an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t011_time_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t001"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "part, DATE, DATE"
+note = "Year, month, day and week boundaries crossed by one day."
+catches = "elapsed whole units (0 years for 31 Dec to 1 Jan) instead of crossed boundaries, or the sign reversed"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t002"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "part, TIMESTAMP_NTZ, TIMESTAMP_NTZ"
+note = "Hour, minute and millisecond counts."
+catches = "elapsed time (0 hours for 10:59 to 11:00) instead of crossed boundaries, or seconds counted in milliseconds"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t003"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "part, TIME, TIME"
+note = "Differences between TIMEs."
+catches = "an error for TIME arguments"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t003_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t004"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "part, DATE, TIMESTAMP_NTZ"
+note = "A DATE against a TIMESTAMP."
+catches = "an error, or the date read as end of day"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t004_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t005"
+form = "sf.functions.datediff.datediff"
+kind = "null_argument"
+target = "date_or_time_expr1"
+note = "NULL first expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t005_null_date_or_time_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t006"
+form = "sf.functions.datediff.datediff"
+kind = "null_argument"
+target = "date_or_time_expr2"
+note = "NULL second expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t006_null_date_or_time_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t007"
+form = "sf.functions.datediff.datediff"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day counts across 29 February."
+catches = "a 365-day year"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t008"
+form = "sf.functions.datediff.datediff"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours between TIMESTAMP_TZ values across a DST change."
+catches = "wall-clock difference (2) instead of elapsed hours (1)"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t008_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t009"
+form = "sf.functions.datediff.datediff"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A later first argument."
+catches = "an absolute value"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t009_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.syntax.t001"
+form = "sf.functions.datediff.syntax"
+kind = "type_combination"
+target = "DATE - DATE"
+note = "Day differences in both directions and across a leap day."
+catches = "an INTERVAL instead of an integer, or the sign reversed"
+reading = "the page: date_expr2 - date_expr1 gives the days between two DATEs; \"Returns an error if date_expr2 or date_expr1 is NULL\""
+cases = ["cases/translation/functions/datediff.syntax.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.syntax.t002"
+form = "sf.functions.datediff.syntax"
+kind = "null_argument"
+target = "date_expr1"
+note = "NULL first date: the page says this is an error; records what Snowflake returns."
+catches = "NULL where Snowflake raises an error, or the reverse"
+reading = "the page: date_expr2 - date_expr1 gives the days between two DATEs; \"Returns an error if date_expr2 or date_expr1 is NULL\""
+cases = ["cases/translation/functions/datediff.syntax.toml#t002_null_date_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.syntax.t003"
+form = "sf.functions.datediff.syntax"
+kind = "null_argument"
+target = "date_expr2"
+note = "NULL second date: the page says this is an error; records what Snowflake returns."
+catches = "NULL where Snowflake raises an error, or the reverse"
+reading = "the page: date_expr2 - date_expr1 gives the days between two DATEs; \"Returns an error if date_expr2 or date_expr1 is NULL\""
+cases = ["cases/translation/functions/datediff.syntax.toml#t003_null_date_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.syntax.t004"
+form = "sf.functions.datediff.syntax"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "A year containing 29 February."
+catches = "a fixed 365-day year"
+reading = "the page: date_expr2 - date_expr1 gives the days between two DATEs; \"Returns an error if date_expr2 or date_expr1 is NULL\""
+cases = ["cases/translation/functions/datediff.syntax.toml#t004_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dayname.t001"
+form = "sf.functions.dayname"
+kind = "type_combination"
+target = "DATE"
+note = "DAYNAME of several dates."
+catches = "full names (Monday), upper case, or a Sunday-based index"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/dayname.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dayname.t002"
+form = "sf.functions.dayname"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAYNAME of a TIMESTAMP_TZ whose UTC instant is a day later."
+catches = "the name of the UTC instant (Wed / Jan) instead of the wall clock (Tue / Dec)"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/dayname.toml#t002_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dayname.t003"
+form = "sf.functions.dayname"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/dayname.toml#t003_null_date_or_timestamp_expr"]
 required = true
 
 [[obligation]]
@@ -2097,6 +2907,186 @@ note = "Past the double range."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT or DECFLOAT.\" DECFLOAT returns DECFLOAT, otherwise FLOAT"
 cases = ["cases/translation/functions/exp.toml#t005_overflow_inf"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t001"
+form = "sf.functions.extract.extract"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t002"
+form = "sf.functions.extract.extract"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, nanosecond scaled to milliseconds, or epoch counted in local wall time"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t003"
+form = "sf.functions.extract.extract"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t004"
+form = "sf.functions.extract.extract"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error or the parts of a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t005"
+form = "sf.functions.extract.extract"
+kind = "type_combination"
+target = "'part' string"
+note = "The part given as a string literal."
+catches = "a quoted part rejected"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t005_quoted_part"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t006"
+form = "sf.functions.extract.extract"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t007"
+form = "sf.functions.extract.extract"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract.t008"
+form = "sf.functions.extract.extract"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract.toml#t008_pre_epoch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t001"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t002"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, nanosecond scaled to milliseconds, or epoch counted in local wall time"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t003"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t004"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error or the parts of a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t005"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "'part' string"
+note = "The part given as a string literal."
+catches = "a quoted part rejected"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t005_quoted_part"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t006"
+form = "sf.functions.extract.extract-from"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t007"
+form = "sf.functions.extract.extract-from"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t008"
+form = "sf.functions.extract.extract-from"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t008_pre_epoch"]
 required = true
 
 [[obligation]]
@@ -2613,6 +3603,171 @@ cases = ["cases/translation/functions/hex-encode.toml#t007_bad_case"]
 required = true
 
 [[obligation]]
+id = "sf.functions.hour-minute-second.hour.t001"
+form = "sf.functions.hour-minute-second.hour"
+kind = "type_combination"
+target = "TIME"
+note = "HOUR of times with fractional seconds."
+catches = "fractional seconds rounded up, or a 12-hour clock"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.hour.toml#t001_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.hour.t002"
+form = "sf.functions.hour-minute-second.hour"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "HOUR of a timestamp."
+catches = "the date part leaking into the result"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.hour.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.hour.t003"
+form = "sf.functions.hour-minute-second.hour"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "HOUR of TIMESTAMP_TZ values with whole and half-hour offsets."
+catches = "the hour of the UTC instant (7) instead of the wall clock (23)"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.hour.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.hour.t004"
+form = "sf.functions.hour-minute-second.hour"
+kind = "type_combination"
+target = "INTERVAL DAY TO SECOND"
+note = "HOUR of a day-time interval."
+catches = "an error, or the days folded into hours"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.hour.toml#t004_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.hour.t005"
+form = "sf.functions.hour-minute-second.hour"
+kind = "null_argument"
+target = "time_interval_or_timestamp_expr"
+note = "NULL next to a set time."
+catches = "NULL read as midnight (0)"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.hour.toml#t005_null_time_interval_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.minute.t001"
+form = "sf.functions.hour-minute-second.minute"
+kind = "type_combination"
+target = "TIME"
+note = "MINUTE of times with fractional seconds."
+catches = "fractional seconds rounded up, or a 12-hour clock"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.minute.toml#t001_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.minute.t002"
+form = "sf.functions.hour-minute-second.minute"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "MINUTE of a timestamp."
+catches = "the date part leaking into the result"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.minute.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.minute.t003"
+form = "sf.functions.hour-minute-second.minute"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "MINUTE of TIMESTAMP_TZ values with whole and half-hour offsets."
+catches = "the minute of the UTC instant for a half-hour offset zone"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.minute.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.minute.t004"
+form = "sf.functions.hour-minute-second.minute"
+kind = "type_combination"
+target = "INTERVAL DAY TO SECOND"
+note = "MINUTE of a day-time interval."
+catches = "an error, or the days folded into hours"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.minute.toml#t004_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.minute.t005"
+form = "sf.functions.hour-minute-second.minute"
+kind = "null_argument"
+target = "time_interval_or_timestamp_expr"
+note = "NULL next to a set time."
+catches = "NULL read as midnight (0)"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.minute.toml#t005_null_time_interval_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.second.t001"
+form = "sf.functions.hour-minute-second.second"
+kind = "type_combination"
+target = "TIME"
+note = "SECOND of times with fractional seconds."
+catches = "fractional seconds rounded up, or a 12-hour clock"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.second.toml#t001_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.second.t002"
+form = "sf.functions.hour-minute-second.second"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "SECOND of a timestamp."
+catches = "the date part leaking into the result"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.second.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.second.t003"
+form = "sf.functions.hour-minute-second.second"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "SECOND of TIMESTAMP_TZ values with whole and half-hour offsets."
+catches = "fractional seconds rounded (57) instead of truncated (56)"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.second.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.second.t004"
+form = "sf.functions.hour-minute-second.second"
+kind = "type_combination"
+target = "INTERVAL DAY TO SECOND"
+note = "SECOND of a day-time interval."
+catches = "an error, or the days folded into hours"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.second.toml#t004_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hour-minute-second.second.t005"
+form = "sf.functions.hour-minute-second.second"
+kind = "null_argument"
+target = "time_interval_or_timestamp_expr"
+note = "NULL next to a set time."
+catches = "NULL read as midnight (0)"
+reading = "the page: a time, a day-time interval or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/hour-minute-second.second.toml#t005_null_time_interval_or_timestamp_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.ilike-any.t001"
 form = "sf.functions.ilike-any"
 kind = "type_combination"
@@ -3067,6 +4222,73 @@ note = "Two empty strings, which the example shows as 0."
 catches = "100 for two identical empty strings"
 reading = "the page's examples: an integer 0-100, 0 for two empty strings, NULL for NULL"
 cases = ["cases/translation/functions/jarowinkler-similarity.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t001"
+form = "sf.functions.last-day"
+kind = "type_combination"
+target = "DATE"
+note = "The default month part."
+catches = "the first day of the next month, or day 30/31 regardless of month"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t002"
+form = "sf.functions.last-day"
+kind = "type_combination"
+target = "DATE, part"
+note = "Year, quarter and week parts."
+catches = "the part ignored, or week ending on Saturday instead of Sunday under WEEK_START 0"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t002_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t003"
+form = "sf.functions.last-day"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "A timestamp input, which the page says returns a DATE."
+catches = "a TIMESTAMP result"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t004"
+form = "sf.functions.last-day"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ whose UTC instant is in the next month."
+catches = "the month of the UTC instant (2025-01-31)"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t004_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t005"
+form = "sf.functions.last-day"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t005_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.last-day.t006"
+form = "sf.functions.last-day"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "February in leap and common years, including 1900 and 2000."
+catches = "a fixed 28 or a Julian leap rule (1900-02-29)"
+reading = "the page: returns a DATE even for a timestamp; date_part year, quarter, month (default) or week, which follows WEEK_START"
+cases = ["cases/translation/functions/last-day.toml#t006_february"]
 required = true
 
 [[obligation]]
@@ -4190,6 +5412,196 @@ cases = ["cases/translation/functions/mod.toml#t009_zero_divisor"]
 required = true
 
 [[obligation]]
+id = "sf.functions.monthname.t001"
+form = "sf.functions.monthname"
+kind = "type_combination"
+target = "DATE"
+note = "MONTHNAME of several dates."
+catches = "full names (January) or upper case"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/monthname.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.monthname.t002"
+form = "sf.functions.monthname"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "MONTHNAME of a TIMESTAMP_TZ whose UTC instant is a day later."
+catches = "the name of the UTC instant (Wed / Jan) instead of the wall clock (Tue / Dec)"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/monthname.toml#t002_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.monthname.t003"
+form = "sf.functions.monthname"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a date or timestamp; returns a three-letter VARCHAR"
+cases = ["cases/translation/functions/monthname.toml#t003_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t001"
+form = "sf.functions.months-between"
+kind = "type_combination"
+target = "DATE, DATE"
+note = "The page's pairs: equal days, two month ends, and a fraction."
+catches = "a DATEDIFF-style integer, a fraction from real month lengths, or the month-end rule missed (0.9 for 31 Mar / 28 Feb)"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t002"
+form = "sf.functions.months-between"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, TIMESTAMP_NTZ"
+note = "Timestamps whose time of day changes the fraction, and equal days that ignore it."
+catches = "the time of day ignored, or applied even on equal days"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t003"
+form = "sf.functions.months-between"
+kind = "type_combination"
+target = "DATE, TIMESTAMP_NTZ"
+note = "A DATE against a TIMESTAMP, which the page allows."
+catches = "an error for mixed types"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t003_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t004"
+form = "sf.functions.months-between"
+kind = "null_argument"
+target = "date_expr1"
+note = "NULL first date."
+catches = "NULL read as a default date"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t004_null_date_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t005"
+form = "sf.functions.months-between"
+kind = "null_argument"
+target = "date_expr2"
+note = "NULL second date."
+catches = "NULL read as a default date"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t005_null_date_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t006"
+form = "sf.functions.months-between"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "An earlier first date."
+catches = "an absolute value"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t006_reversed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.months-between.t007"
+form = "sf.functions.months-between"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February against month ends."
+catches = "the leap day not treated as a month end"
+reading = "the page: a FLOAT; whole months from year and month; the fraction uses 31-day months, except that equal days of month or two month ends give a whole number; swapping the arguments flips the sign"
+cases = ["cases/translation/functions/months-between.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t001"
+form = "sf.functions.next-day"
+kind = "type_combination"
+target = "DATE, VARCHAR"
+note = "NEXT_DAY from a Friday to Friday, Monday and Sunday."
+catches = "the same day returned when it already is that weekday, or a weekday index off by one"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t002"
+form = "sf.functions.next-day"
+kind = "type_combination"
+target = "DATE, VARCHAR"
+note = "Names with leading spaces, trailing text and mixed case."
+catches = "the full name required, or leading spaces rejected"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t002_day_name_forms"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t003"
+form = "sf.functions.next-day"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, VARCHAR"
+note = "A timestamp input, which returns a DATE."
+catches = "a TIMESTAMP result keeping the time"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t004"
+form = "sf.functions.next-day"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t005"
+form = "sf.functions.next-day"
+kind = "null_argument"
+target = "dow_string"
+note = "NULL day name."
+catches = "NULL read as a default weekday"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t005_null_dow_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t006"
+form = "sf.functions.next-day"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Steps across 29 February."
+catches = "a skipped or doubled leap day"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t006_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.next-day.t007"
+form = "sf.functions.next-day"
+kind = "error_parity"
+target = "error"
+note = "A string that names no weekday."
+catches = "NULL or a default weekday instead of an error"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/next-day.toml#t007_bad_name"]
+required = true
+
+[[obligation]]
 id = "sf.functions.octet-length.t001"
 form = "sf.functions.octet-length"
 kind = "type_combination"
@@ -4714,6 +6126,84 @@ note = "A negative base with a fractional exponent: records what Snowflake retur
 catches = "NaN, NULL or an error differing from Snowflake"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
 cases = ["cases/translation/functions/pow.power.toml#t009_neg_frac"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t001"
+form = "sf.functions.previous-day"
+kind = "type_combination"
+target = "DATE, VARCHAR"
+note = "PREVIOUS_DAY from a Friday to Friday, Monday and Sunday."
+catches = "the same day returned when it already is that weekday, or a weekday index off by one"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t002"
+form = "sf.functions.previous-day"
+kind = "type_combination"
+target = "DATE, VARCHAR"
+note = "Names with leading spaces, trailing text and mixed case."
+catches = "the full name required, or leading spaces rejected"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t002_day_name_forms"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t003"
+form = "sf.functions.previous-day"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, VARCHAR"
+note = "A timestamp input, which returns a DATE."
+catches = "a TIMESTAMP result keeping the time"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t004"
+form = "sf.functions.previous-day"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t005"
+form = "sf.functions.previous-day"
+kind = "null_argument"
+target = "dow_string"
+note = "NULL day name."
+catches = "NULL read as a default weekday"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t005_null_dow_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t006"
+form = "sf.functions.previous-day"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Steps across 29 February."
+catches = "a skipped or doubled leap day"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t006_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.previous-day.t007"
+form = "sf.functions.previous-day"
+kind = "error_parity"
+target = "error"
+note = "A string that names no weekday."
+catches = "NULL or a default weekday instead of an error"
+reading = "the page: the day name needs its first two letters, case-insensitive, with leading spaces and trailing characters ignored; returns a DATE"
+cases = ["cases/translation/functions/previous-day.toml#t007_bad_name"]
 required = true
 
 [[obligation]]
@@ -7949,6 +9439,1624 @@ cases = ["cases/translation/functions/tanh.toml#t004_saturate"]
 required = true
 
 [[obligation]]
+id = "sf.functions.time-from-parts.t001"
+form = "sf.functions.time-from-parts"
+kind = "type_combination"
+target = "NUMBER, NUMBER, NUMBER"
+note = "Normal times."
+catches = "hour and second swapped, or a 12-hour clock"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t002"
+form = "sf.functions.time-from-parts"
+kind = "type_combination"
+target = "NUMBER, NUMBER, NUMBER, NUMBER"
+note = "Nanoseconds that need all nine digits."
+catches = "nanoseconds read as milliseconds or truncated to microseconds"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t002_nanoseconds"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t003"
+form = "sf.functions.time-from-parts"
+kind = "type_combination"
+target = "NUMBER, NUMBER, NUMBER"
+note = "Values beyond their ranges, which carry and wrap the day."
+catches = "an error instead of carrying (25:70:70 is 02:11:10)"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t003_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t004"
+form = "sf.functions.time-from-parts"
+kind = "null_argument"
+target = "hour"
+note = "NULL hour."
+catches = "NULL read as 0"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t004_null_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t005"
+form = "sf.functions.time-from-parts"
+kind = "null_argument"
+target = "minute"
+note = "NULL minute."
+catches = "NULL read as 0"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t005_null_minute"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t006"
+form = "sf.functions.time-from-parts"
+kind = "null_argument"
+target = "second"
+note = "NULL second."
+catches = "NULL read as 0"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t006_null_second"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-from-parts.t007"
+form = "sf.functions.time-from-parts"
+kind = "null_argument"
+target = "nanoseconds"
+note = "NULL nanoseconds."
+catches = "NULL read as 0"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; nanoseconds is a 9-digit integer"
+cases = ["cases/translation/functions/time-from-parts.toml#t007_null_nanoseconds"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t001"
+form = "sf.functions.time-slice"
+kind = "type_combination"
+target = "DATE, NUMBER, part, START/END"
+note = "The page's 4-month slice, and a 3-day slice."
+catches = "slices aligned to the year start or to the date itself, or END returning the last day inside the slice"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t002"
+form = "sf.functions.time-slice"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ, NUMBER, part"
+note = "The page's 8-hour slices and a 15-minute slice."
+catches = "slices aligned to the day start for minutes, or the fraction kept"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t003"
+form = "sf.functions.time-slice"
+kind = "type_combination"
+target = "DATE, NUMBER, WEEK"
+note = "Two-week slices, aligned to the week that holds 1970-01-01."
+catches = "week slices aligned to 1970-01-01 itself (a Thursday)"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t003_week"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t004"
+form = "sf.functions.time-slice"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL date."
+catches = "NULL read as 1970-01-01"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t004_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t005"
+form = "sf.functions.time-slice"
+kind = "null_argument"
+target = "slice_length"
+note = "NULL length."
+catches = "NULL read as 1"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t005_null_slice_length"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t006"
+form = "sf.functions.time-slice"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Dates before 1970, which the page says are valid."
+catches = "truncation toward 1970 instead of floor"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t006_pre_1970"]
+required = true
+
+[[obligation]]
+id = "sf.functions.time-slice.t007"
+form = "sf.functions.time-slice"
+kind = "error_parity"
+target = "error"
+note = "A slice length of 0, below the documented minimum of 1."
+catches = "a division by zero yielding NULL instead of an error"
+reading = "the page: DATE or TIMESTAMP_NTZ; slices aligned to 1970-01-01 (weeks to the week holding it); slice_length >= 1; START (default) or END; the result has the input type"
+cases = ["cases/translation/functions/time-slice.toml#t007_zero_length"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t001"
+form = "sf.functions.timeadd"
+kind = "type_combination"
+target = "part, NUMBER, DATE"
+note = "Days, months and years added to dates, including negatives."
+catches = "value and expression swapped, or months added as 30 days"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t002"
+form = "sf.functions.timeadd"
+kind = "type_combination"
+target = "hour, NUMBER, DATE"
+note = "Hours added to a DATE, which the page says gives a TIMESTAMP."
+catches = "a DATE result (the hours dropped) or an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t002_date_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t003"
+form = "sf.functions.timeadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_NTZ"
+note = "Sub-second and minute parts on a timestamp."
+catches = "milliseconds read as microseconds, or minutes as months (mm)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t003_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t004"
+form = "sf.functions.timeadd"
+kind = "type_combination"
+target = "part, NUMBER, TIME"
+note = "Hours added to a TIME past midnight."
+catches = "an error or a timestamp instead of wrapping to 01:30"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t005"
+form = "sf.functions.timeadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_TZ"
+note = "A day added to a TIMESTAMP_TZ."
+catches = "the offset dropped or converted to UTC"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t005_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t006"
+form = "sf.functions.timeadd"
+kind = "null_argument"
+target = "value"
+note = "NULL value."
+catches = "NULL read as 0 (the date unchanged)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t006_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t007"
+form = "sf.functions.timeadd"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t007_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t008"
+form = "sf.functions.timeadd"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Month and year steps from month ends and 29 February."
+catches = "overflow into the next month (2024-03-02) instead of clamping to 2024-02-29, or 2025-03-01 from 2024-02-29"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t008_month_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t009"
+form = "sf.functions.timeadd"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A fractional value: records how Snowflake rounds it."
+catches = "truncation (1 day) where Snowflake rounds 1.7 to 2, or the reverse"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t009_fractional_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t010"
+form = "sf.functions.timeadd"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours added across a DST change, in a TIMESTAMP_TZ and through CONVERT_TIMEZONE."
+catches = "wall-clock arithmetic (02:30, which does not exist) instead of elapsed time"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t010_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timeadd.t011"
+form = "sf.functions.timeadd"
+kind = "error_parity"
+target = "error"
+note = "Days added to a TIME, which the page says is an error."
+catches = "a wrapped TIME instead of an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timeadd.toml#t011_time_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t001"
+form = "sf.functions.timediff"
+kind = "type_combination"
+target = "part, DATE, DATE"
+note = "Year, month, day and week boundaries crossed by one day."
+catches = "elapsed whole units (0 years for 31 Dec to 1 Jan) instead of crossed boundaries, or the sign reversed"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t002"
+form = "sf.functions.timediff"
+kind = "type_combination"
+target = "part, TIMESTAMP_NTZ, TIMESTAMP_NTZ"
+note = "Hour, minute and millisecond counts."
+catches = "elapsed time (0 hours for 10:59 to 11:00) instead of crossed boundaries, or seconds counted in milliseconds"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t003"
+form = "sf.functions.timediff"
+kind = "type_combination"
+target = "part, TIME, TIME"
+note = "Differences between TIMEs."
+catches = "an error for TIME arguments"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t003_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t004"
+form = "sf.functions.timediff"
+kind = "type_combination"
+target = "part, DATE, TIMESTAMP_NTZ"
+note = "A DATE against a TIMESTAMP."
+catches = "an error, or the date read as end of day"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t004_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t005"
+form = "sf.functions.timediff"
+kind = "null_argument"
+target = "date_or_time_expr1"
+note = "NULL first expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t005_null_date_or_time_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t006"
+form = "sf.functions.timediff"
+kind = "null_argument"
+target = "date_or_time_expr2"
+note = "NULL second expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t006_null_date_or_time_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t007"
+form = "sf.functions.timediff"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day counts across 29 February."
+catches = "a 365-day year"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t008"
+form = "sf.functions.timediff"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours between TIMESTAMP_TZ values across a DST change."
+catches = "wall-clock difference (2) instead of elapsed hours (1)"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t008_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timediff.t009"
+form = "sf.functions.timediff"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A later first argument."
+catches = "an absolute value"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timediff.toml#t009_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t001"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "TIMESTAMP_FROM_PARTS of a normal timestamp."
+catches = "parts in the wrong order, or a DATE/other timestamp type returned"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t002"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "type_combination"
+target = "seven NUMBERs"
+note = "A nanosecond part."
+catches = "nanoseconds read as milliseconds"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t002_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t003"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "Parts beyond their ranges, which carry."
+catches = "an error instead of carrying across a year end"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t003_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t004"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "year"
+note = "NULL year."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t004_null_year"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t005"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "month"
+note = "NULL month."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t005_null_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t006"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "day"
+note = "NULL day."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t006_null_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t007"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "hour"
+note = "NULL hour."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t007_null_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t008"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "minute"
+note = "NULL minute."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t008_null_minute"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t009"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "second"
+note = "NULL second."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t009_null_second"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t010"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "nanosecond"
+note = "NULL nanosecond."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t010_null_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t011"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a common year, which carries."
+catches = "an error instead of 1 March"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t011_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t012"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "type_combination"
+target = "six NUMBERs, nanosecond, VARCHAR"
+note = "An explicit time zone."
+catches = "the zone ignored (UTC offset), or the wall clock shifted instead of the offset set"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t012_time_zone"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t013"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "null_argument"
+target = "time_zone"
+note = "NULL time zone."
+catches = "NULL read as the session zone"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t013_null_time_zone"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t014"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Wall clocks inside the spring gap and the autumn overlap."
+catches = "a gap time kept as is, or the overlap resolved to the other offset"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t014_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-from-parts.t015"
+form = "sf.functions.timestamp-from-parts.timestamp-from-parts"
+kind = "type_combination"
+target = "DATE, TIME"
+note = "The date_expr, time_expr form, which the page allows under the NTZ mapping."
+catches = "an error, or the time's fraction dropped"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-from-parts.toml#t015_date_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t001"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "TIMESTAMP_LTZ_FROM_PARTS of a normal timestamp."
+catches = "parts in the wrong order, or a DATE/other timestamp type returned"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t002"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "type_combination"
+target = "seven NUMBERs"
+note = "A nanosecond part."
+catches = "nanoseconds read as milliseconds"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t002_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t003"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "Parts beyond their ranges, which carry."
+catches = "an error instead of carrying across a year end"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t003_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t004"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "year"
+note = "NULL year."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t004_null_year"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t005"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "month"
+note = "NULL month."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t005_null_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t006"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "day"
+note = "NULL day."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t006_null_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t007"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "hour"
+note = "NULL hour."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t007_null_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t008"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "minute"
+note = "NULL minute."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t008_null_minute"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t009"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "second"
+note = "NULL second."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t009_null_second"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t010"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "null_argument"
+target = "nanosecond"
+note = "NULL nanosecond."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t010_null_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts.t011"
+form = "sf.functions.timestamp-from-parts.timestamp-ltz-from-parts"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a common year, which carries."
+catches = "an error instead of 1 March"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ltz-from-parts.toml#t011_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t001"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "TIMESTAMP_NTZ_FROM_PARTS of a normal timestamp."
+catches = "parts in the wrong order, or a DATE/other timestamp type returned"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t002"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "type_combination"
+target = "seven NUMBERs"
+note = "A nanosecond part."
+catches = "nanoseconds read as milliseconds"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t002_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t003"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "Parts beyond their ranges, which carry."
+catches = "an error instead of carrying across a year end"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t003_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t004"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "year"
+note = "NULL year."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t004_null_year"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t005"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "month"
+note = "NULL month."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t005_null_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t006"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "day"
+note = "NULL day."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t006_null_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t007"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "hour"
+note = "NULL hour."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t007_null_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t008"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "minute"
+note = "NULL minute."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t008_null_minute"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t009"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "second"
+note = "NULL second."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t009_null_second"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t010"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "null_argument"
+target = "nanosecond"
+note = "NULL nanosecond."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t010_null_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts.t011"
+form = "sf.functions.timestamp-from-parts.timestamp-ntz-from-parts"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a common year, which carries."
+catches = "an error instead of 1 March"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-ntz-from-parts.toml#t011_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t001"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "TIMESTAMP_TZ_FROM_PARTS of a normal timestamp."
+catches = "parts in the wrong order, or a DATE/other timestamp type returned"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t002"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "type_combination"
+target = "seven NUMBERs"
+note = "A nanosecond part."
+catches = "nanoseconds read as milliseconds"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t002_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t003"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs"
+note = "Parts beyond their ranges, which carry."
+catches = "an error instead of carrying across a year end"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t003_carry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t004"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "year"
+note = "NULL year."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t004_null_year"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t005"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "month"
+note = "NULL month."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t005_null_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t006"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "day"
+note = "NULL day."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t006_null_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t007"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "hour"
+note = "NULL hour."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t007_null_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t008"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "minute"
+note = "NULL minute."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t008_null_minute"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t009"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "second"
+note = "NULL second."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t009_null_second"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t010"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "nanosecond"
+note = "NULL nanosecond."
+catches = "NULL read as 0 or 1"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t010_null_nanosecond"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t011"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a common year, which carries."
+catches = "an error instead of 1 March"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t011_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t012"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "type_combination"
+target = "six NUMBERs, nanosecond, VARCHAR"
+note = "An explicit time zone."
+catches = "the zone ignored (UTC offset), or the wall clock shifted instead of the offset set"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t012_time_zone"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t013"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "null_argument"
+target = "time_zone"
+note = "NULL time zone."
+catches = "NULL read as the session zone"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t013_null_time_zone"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts.t014"
+form = "sf.functions.timestamp-from-parts.timestamp-tz-from-parts"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Wall clocks inside the spring gap and the autumn overlap."
+catches = "a gap time kept as is, or the overlap resolved to the other offset"
+reading = "the page: integer parts, usually in their normal range, but values outside it carry into the next unit (the N-th day of a year); negative values are allowed; TIMESTAMP_FROM_PARTS follows TIMESTAMP_TYPE_MAPPING (NTZ here); a time_zone argument gives TIMESTAMP_TZ"
+cases = ["cases/translation/functions/timestamp-from-parts.timestamp-tz-from-parts.toml#t014_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t001"
+form = "sf.functions.timestampadd"
+kind = "type_combination"
+target = "part, NUMBER, DATE"
+note = "Days, months and years added to dates, including negatives."
+catches = "value and expression swapped, or months added as 30 days"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t002"
+form = "sf.functions.timestampadd"
+kind = "type_combination"
+target = "hour, NUMBER, DATE"
+note = "Hours added to a DATE, which the page says gives a TIMESTAMP."
+catches = "a DATE result (the hours dropped) or an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t002_date_hour"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t003"
+form = "sf.functions.timestampadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_NTZ"
+note = "Sub-second and minute parts on a timestamp."
+catches = "milliseconds read as microseconds, or minutes as months (mm)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t003_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t004"
+form = "sf.functions.timestampadd"
+kind = "type_combination"
+target = "part, NUMBER, TIME"
+note = "Hours added to a TIME past midnight."
+catches = "an error or a timestamp instead of wrapping to 01:30"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t005"
+form = "sf.functions.timestampadd"
+kind = "type_combination"
+target = "part, NUMBER, TIMESTAMP_TZ"
+note = "A day added to a TIMESTAMP_TZ."
+catches = "the offset dropped or converted to UTC"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t005_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t006"
+form = "sf.functions.timestampadd"
+kind = "null_argument"
+target = "value"
+note = "NULL value."
+catches = "NULL read as 0 (the date unchanged)"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t006_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t007"
+form = "sf.functions.timestampadd"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL date."
+catches = "NULL read as a default date"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t007_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t008"
+form = "sf.functions.timestampadd"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Month and year steps from month ends and 29 February."
+catches = "overflow into the next month (2024-03-02) instead of clamping to 2024-02-29, or 2025-03-01 from 2024-02-29"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t008_month_end"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t009"
+form = "sf.functions.timestampadd"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A fractional value: records how Snowflake rounds it."
+catches = "truncation (1 day) where Snowflake rounds 1.7 to 2, or the reverse"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t009_fractional_value"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t010"
+form = "sf.functions.timestampadd"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours added across a DST change, in a TIMESTAMP_TZ and through CONVERT_TIMEZONE."
+catches = "wall-clock arithmetic (02:30, which does not exist) instead of elapsed time"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t010_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampadd.t011"
+form = "sf.functions.timestampadd"
+kind = "error_parity"
+target = "error"
+note = "Days added to a TIME, which the page says is an error."
+catches = "a wrapped TIME instead of an error"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/timestampadd.toml#t011_time_day"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t001"
+form = "sf.functions.timestampdiff"
+kind = "type_combination"
+target = "part, DATE, DATE"
+note = "Year, month, day and week boundaries crossed by one day."
+catches = "elapsed whole units (0 years for 31 Dec to 1 Jan) instead of crossed boundaries, or the sign reversed"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t002"
+form = "sf.functions.timestampdiff"
+kind = "type_combination"
+target = "part, TIMESTAMP_NTZ, TIMESTAMP_NTZ"
+note = "Hour, minute and millisecond counts."
+catches = "elapsed time (0 hours for 10:59 to 11:00) instead of crossed boundaries, or seconds counted in milliseconds"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t003"
+form = "sf.functions.timestampdiff"
+kind = "type_combination"
+target = "part, TIME, TIME"
+note = "Differences between TIMEs."
+catches = "an error for TIME arguments"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t003_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t004"
+form = "sf.functions.timestampdiff"
+kind = "type_combination"
+target = "part, DATE, TIMESTAMP_NTZ"
+note = "A DATE against a TIMESTAMP."
+catches = "an error, or the date read as end of day"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t004_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t005"
+form = "sf.functions.timestampdiff"
+kind = "null_argument"
+target = "date_or_time_expr1"
+note = "NULL first expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t005_null_date_or_time_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t006"
+form = "sf.functions.timestampdiff"
+kind = "null_argument"
+target = "date_or_time_expr2"
+note = "NULL second expression."
+catches = "NULL read as a default date"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t006_null_date_or_time_expr2"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t007"
+form = "sf.functions.timestampdiff"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day counts across 29 February."
+catches = "a 365-day year"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t008"
+form = "sf.functions.timestampdiff"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "Hours between TIMESTAMP_TZ values across a DST change."
+catches = "wall-clock difference (2) instead of elapsed hours (1)"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t008_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.timestampdiff.t009"
+form = "sf.functions.timestampdiff"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A later first argument."
+catches = "an absolute value"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/timestampdiff.toml#t009_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t001"
+form = "sf.functions.to-date.date"
+kind = "type_combination"
+target = "VARCHAR"
+note = "DATE of ISO strings."
+catches = "a timestamp result, or month and day swapped"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t002"
+form = "sf.functions.to-date.date"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "An explicit day-first format."
+catches = "the format ignored (an error or 2024-12-01)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t003"
+form = "sf.functions.to-date.date"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "A timestamp late in the day."
+catches = "the date rounded to the next day"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t004"
+form = "sf.functions.to-date.date"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ whose UTC date is the next day."
+catches = "the date of the UTC instant (2025-01-01)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t004_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t005"
+form = "sf.functions.to-date.date"
+kind = "type_combination"
+target = "'integer'"
+note = "Integer strings of seconds and milliseconds."
+catches = "every integer read as seconds, or as days since the epoch"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t005_integer_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t006"
+form = "sf.functions.to-date.date"
+kind = "null_argument"
+target = "string_expr"
+note = "NULL string."
+catches = "NULL read as an empty string (an error)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t006_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t007"
+form = "sf.functions.to-date.date"
+kind = "null_argument"
+target = "format"
+note = "NULL format."
+catches = "NULL read as AUTO"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t007_null_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t008"
+form = "sf.functions.to-date.date"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a leap year."
+catches = "a rejected leap day"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t008_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.date.t009"
+form = "sf.functions.to-date.date"
+kind = "error_parity"
+target = "error"
+note = "29 February in a common year."
+catches = "a carry to 1 March or NULL instead of an error"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.date.toml#t009_not_a_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t001"
+form = "sf.functions.to-date.to-date"
+kind = "type_combination"
+target = "VARCHAR"
+note = "TO_DATE of ISO strings."
+catches = "a timestamp result, or month and day swapped"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t002"
+form = "sf.functions.to-date.to-date"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "An explicit day-first format."
+catches = "the format ignored (an error or 2024-12-01)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t003"
+form = "sf.functions.to-date.to-date"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "A timestamp late in the day."
+catches = "the date rounded to the next day"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t004"
+form = "sf.functions.to-date.to-date"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ whose UTC date is the next day."
+catches = "the date of the UTC instant (2025-01-01)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t004_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t005"
+form = "sf.functions.to-date.to-date"
+kind = "type_combination"
+target = "'integer'"
+note = "Integer strings of seconds and milliseconds."
+catches = "every integer read as seconds, or as days since the epoch"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t005_integer_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t006"
+form = "sf.functions.to-date.to-date"
+kind = "null_argument"
+target = "string_expr"
+note = "NULL string."
+catches = "NULL read as an empty string (an error)"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t006_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t007"
+form = "sf.functions.to-date.to-date"
+kind = "null_argument"
+target = "format"
+note = "NULL format."
+catches = "NULL read as AUTO"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t007_null_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t008"
+form = "sf.functions.to-date.to-date"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "29 February in a leap year."
+catches = "a rejected leap day"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t008_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-date.to-date.t009"
+form = "sf.functions.to-date.to-date"
+kind = "error_parity"
+target = "error"
+note = "29 February in a common year."
+catches = "a carry to 1 March or NULL instead of an error"
+reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
+cases = ["cases/translation/functions/to-date.to-date.toml#t009_not_a_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t001"
+form = "sf.functions.to-time.time"
+kind = "type_combination"
+target = "VARCHAR"
+note = "TIME of strings with fractional seconds."
+catches = "fractional seconds dropped or rounded"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t002"
+form = "sf.functions.to-time.time"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "A timestamp's time part."
+catches = "the date leaking in, or an error"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t003"
+form = "sf.functions.to-time.time"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ's wall-clock time."
+catches = "the UTC time (07:30) instead of the wall clock (23:30)"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t004"
+form = "sf.functions.to-time.time"
+kind = "type_combination"
+target = "'integer'"
+note = "Integer strings of seconds and milliseconds."
+catches = "the integer not taken modulo a day, or always read as seconds"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t004_integer_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t005"
+form = "sf.functions.to-time.time"
+kind = "null_argument"
+target = "string_expr"
+note = "NULL string."
+catches = "NULL read as midnight"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t005_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.time.t006"
+form = "sf.functions.to-time.time"
+kind = "error_parity"
+target = "error"
+note = "An hour of 25."
+catches = "a wrap to 01:00 or NULL instead of an error"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.time.toml#t006_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t001"
+form = "sf.functions.to-time.to-time"
+kind = "type_combination"
+target = "VARCHAR"
+note = "TO_TIME of strings with fractional seconds."
+catches = "fractional seconds dropped or rounded"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t002"
+form = "sf.functions.to-time.to-time"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A 12-hour format with AM/PM."
+catches = "the format ignored, or 12 AM read as noon"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t003"
+form = "sf.functions.to-time.to-time"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "A timestamp's time part."
+catches = "the date leaking in, or an error"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t004"
+form = "sf.functions.to-time.to-time"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ's wall-clock time."
+catches = "the UTC time (07:30) instead of the wall clock (23:30)"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t004_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t005"
+form = "sf.functions.to-time.to-time"
+kind = "type_combination"
+target = "'integer'"
+note = "Integer strings of seconds and milliseconds."
+catches = "the integer not taken modulo a day, or always read as seconds"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t005_integer_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t006"
+form = "sf.functions.to-time.to-time"
+kind = "null_argument"
+target = "string_expr"
+note = "NULL string."
+catches = "NULL read as midnight"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t006_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t007"
+form = "sf.functions.to-time.to-time"
+kind = "error_parity"
+target = "error"
+note = "An hour of 25."
+catches = "a wrap to 01:00 or NULL instead of an error"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t007_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-time.to-time.t008"
+form = "sf.functions.to-time.to-time"
+kind = "null_argument"
+target = "format"
+note = "NULL format."
+catches = "NULL read as AUTO"
+reading = "the page: a string (with an optional format), a timestamp (its time part) or an integer string read by magnitude, taken modulo 86400 seconds"
+cases = ["cases/translation/functions/to-time.to-time.toml#t008_null_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t001"
+form = "sf.functions.to-timestamp"
+kind = "type_combination"
+target = "NUMBER"
+note = "Whole seconds since the epoch."
+catches = "milliseconds assumed, or a local zone applied"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t002"
+form = "sf.functions.to-timestamp"
+kind = "type_combination"
+target = "NUMBER, scale"
+note = "Scales 3, 6 and 9."
+catches = "the scale ignored (seconds) or applied as a power of the wrong base"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t002_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t003"
+form = "sf.functions.to-timestamp"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "A fractional number of seconds, whose scale is kept."
+catches = "the fraction truncated"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t003_decimal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t004"
+form = "sf.functions.to-timestamp"
+kind = "type_combination"
+target = "NUMBER"
+note = "TO_TIMESTAMP_NTZ, _LTZ and _TZ of the same number."
+catches = "a zone applied to the NTZ result, or the LTZ/TZ result not in UTC here"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t004_variants"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t005"
+form = "sf.functions.to-timestamp"
+kind = "null_argument"
+target = "numeric_expr"
+note = "NULL number."
+catches = "NULL read as the epoch"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t005_null_numeric_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t006"
+form = "sf.functions.to-timestamp"
+kind = "null_argument"
+target = "scale"
+note = "NULL scale."
+catches = "NULL read as 0"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t006_null_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t007"
+form = "sf.functions.to-timestamp"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative values, before 1970."
+catches = "truncation toward zero for a negative fraction"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t007_pre_epoch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t008"
+form = "sf.functions.to-timestamp"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "The first second of 29 February 2024."
+catches = "a 365-day year in the conversion"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t008_leap"]
+required = true
+
+[[obligation]]
 id = "sf.functions.translate.t001"
 form = "sf.functions.translate"
 kind = "type_combination"
@@ -8249,6 +11357,84 @@ note = "Negative values at the rounding step."
 catches = "FLOOR used for negatives (TRUNCATE(-2.7) is -2)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/trunc.truncate.toml#t008_negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t001"
+form = "sf.functions.trunc2"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar parts of a Sunday in a leap year."
+catches = "week truncated to Sunday, quarter to the wrong month, or a TIMESTAMP returned for a DATE"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t002"
+form = "sf.functions.trunc2"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "rounding instead of truncation (12:00 for 11:59:59.999)"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t003"
+form = "sf.functions.trunc2"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ truncated in its own offset."
+catches = "truncation in UTC (2025-01-01) instead of the wall clock (2024-12-31 00:00 -0800), or the offset dropped"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t004"
+form = "sf.functions.trunc2"
+kind = "type_combination"
+target = "TIME"
+note = "A TIME truncated to hour and minute."
+catches = "an error for a TIME, or a timestamp returned"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t005"
+form = "sf.functions.trunc2"
+kind = "null_argument"
+target = "date_or_time_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t005_null_date_or_time_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t006"
+form = "sf.functions.trunc2"
+kind = "boundary"
+subkind = "timezone_dst"
+target = "timezone_dst"
+note = "TIMESTAMP_TZ values on both sides of a DST change."
+catches = "the offset re-derived from a zone rule (or UTC) instead of kept"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t006_dst"]
+required = true
+
+[[obligation]]
+id = "sf.functions.trunc2.t007"
+form = "sf.functions.trunc2"
+kind = "error_parity"
+target = "error"
+note = "A TIME truncated to day, which the page says is an error."
+catches = "midnight returned instead of an error"
+reading = "the page: the result has the input's type; week follows WEEK_START (0: Monday); a TIME cannot be truncated to day or larger"
+cases = ["cases/translation/functions/trunc2.toml#t007_time_day"]
 required = true
 
 [[obligation]]
@@ -8707,4 +11893,765 @@ note = "Equal end points are an error."
 catches = "division by zero returning NULL or infinity"
 reading = "the page: expr, min_value and max_value numeric within -(2^53 - 1) to 2^53 - 1, the end points \"not be equal\"; num_buckets \"must be a positive integer value\""
 cases = ["cases/translation/functions/width-bucket.toml#t011_equal_ends"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t001"
+form = "sf.functions.year.day"
+kind = "type_combination"
+target = "DATE"
+note = "DAY of dates at year, ISO-week and leap boundaries."
+catches = "an off-by-one or 0-based result at the boundaries"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t002"
+form = "sf.functions.year.day"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "DAY of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t003"
+form = "sf.functions.year.day"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAY of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the day of the UTC instant (1) instead of the wall clock (31)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t004"
+form = "sf.functions.year.day"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t005"
+form = "sf.functions.year.day"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.day.t006"
+form = "sf.functions.year.day"
+kind = "type_combination"
+target = "INTERVAL"
+note = "DAY of the interval type the page allows."
+catches = "an error for an interval, or the interval read as a date"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.day.toml#t006_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofmonth.t001"
+form = "sf.functions.year.dayofmonth"
+kind = "type_combination"
+target = "DATE"
+note = "DAYOFMONTH of dates at year, ISO-week and leap boundaries."
+catches = "an off-by-one or 0-based result at the boundaries"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofmonth.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofmonth.t002"
+form = "sf.functions.year.dayofmonth"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "DAYOFMONTH of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofmonth.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofmonth.t003"
+form = "sf.functions.year.dayofmonth"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAYOFMONTH of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the day of the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofmonth.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofmonth.t004"
+form = "sf.functions.year.dayofmonth"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofmonth.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofmonth.t005"
+form = "sf.functions.year.dayofmonth"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofmonth.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweek.t001"
+form = "sf.functions.year.dayofweek"
+kind = "type_combination"
+target = "DATE"
+note = "DAYOFWEEK of dates at year, ISO-week and leap boundaries."
+catches = "another week numbering (ISO 1-7 or Sunday=1) than WEEK_START 0 gives"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweek.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweek.t002"
+form = "sf.functions.year.dayofweek"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "DAYOFWEEK of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweek.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweek.t003"
+form = "sf.functions.year.dayofweek"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAYOFWEEK of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweek.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweek.t004"
+form = "sf.functions.year.dayofweek"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweek.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweek.t005"
+form = "sf.functions.year.dayofweek"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweek.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweekiso.t001"
+form = "sf.functions.year.dayofweekiso"
+kind = "type_combination"
+target = "DATE"
+note = "DAYOFWEEKISO of dates at year, ISO-week and leap boundaries."
+catches = "Sunday as 0 or 1 instead of ISO 7"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweekiso.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweekiso.t002"
+form = "sf.functions.year.dayofweekiso"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "DAYOFWEEKISO of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweekiso.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweekiso.t003"
+form = "sf.functions.year.dayofweekiso"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAYOFWEEKISO of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweekiso.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweekiso.t004"
+form = "sf.functions.year.dayofweekiso"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweekiso.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofweekiso.t005"
+form = "sf.functions.year.dayofweekiso"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofweekiso.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofyear.t001"
+form = "sf.functions.year.dayofyear"
+kind = "type_combination"
+target = "DATE"
+note = "DAYOFYEAR of dates at year, ISO-week and leap boundaries."
+catches = "a 0-based day, 365 on the last day of a leap year, or the UTC instant's day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofyear.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofyear.t002"
+form = "sf.functions.year.dayofyear"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "DAYOFYEAR of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofyear.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofyear.t003"
+form = "sf.functions.year.dayofyear"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "DAYOFYEAR of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofyear.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofyear.t004"
+form = "sf.functions.year.dayofyear"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofyear.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.dayofyear.t005"
+form = "sf.functions.year.dayofyear"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.dayofyear.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t001"
+form = "sf.functions.year.month"
+kind = "type_combination"
+target = "DATE"
+note = "MONTH of dates at year, ISO-week and leap boundaries."
+catches = "an off-by-one or 0-based result at the boundaries"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t002"
+form = "sf.functions.year.month"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "MONTH of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t003"
+form = "sf.functions.year.month"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "MONTH of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the month of the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t004"
+form = "sf.functions.year.month"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t005"
+form = "sf.functions.year.month"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.month.t006"
+form = "sf.functions.year.month"
+kind = "type_combination"
+target = "INTERVAL"
+note = "MONTH of the interval type the page allows."
+catches = "an error for an interval, or the interval read as a date"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.month.toml#t006_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.quarter.t001"
+form = "sf.functions.year.quarter"
+kind = "type_combination"
+target = "DATE"
+note = "QUARTER of dates at year, ISO-week and leap boundaries."
+catches = "the quarter of the UTC instant (1) instead of 4, or month/3 rounded"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.quarter.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.quarter.t002"
+form = "sf.functions.year.quarter"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "QUARTER of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.quarter.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.quarter.t003"
+form = "sf.functions.year.quarter"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "QUARTER of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the quarter of the UTC instant (1) instead of 4, or month/3 rounded"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.quarter.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.quarter.t004"
+form = "sf.functions.year.quarter"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.quarter.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.quarter.t005"
+form = "sf.functions.year.quarter"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.quarter.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.week.t001"
+form = "sf.functions.year.week"
+kind = "type_combination"
+target = "DATE"
+note = "WEEK of dates at year, ISO-week and leap boundaries."
+catches = "a calendar-year week (1 for 2024-12-30) instead of the ISO week under WEEK_OF_YEAR_POLICY 0"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.week.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.week.t002"
+form = "sf.functions.year.week"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "WEEK of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.week.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.week.t003"
+form = "sf.functions.year.week"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "WEEK of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.week.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.week.t004"
+form = "sf.functions.year.week"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.week.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.week.t005"
+form = "sf.functions.year.week"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.week.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekiso.t001"
+form = "sf.functions.year.weekiso"
+kind = "type_combination"
+target = "DATE"
+note = "WEEKISO of dates at year, ISO-week and leap boundaries."
+catches = "a Sunday-start week or week 0 for early January"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekiso.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekiso.t002"
+form = "sf.functions.year.weekiso"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "WEEKISO of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekiso.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekiso.t003"
+form = "sf.functions.year.weekiso"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "WEEKISO of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekiso.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekiso.t004"
+form = "sf.functions.year.weekiso"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekiso.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekiso.t005"
+form = "sf.functions.year.weekiso"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekiso.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekofyear.t001"
+form = "sf.functions.year.weekofyear"
+kind = "type_combination"
+target = "DATE"
+note = "WEEKOFYEAR of dates at year, ISO-week and leap boundaries."
+catches = "a calendar-year week instead of the ISO week"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekofyear.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekofyear.t002"
+form = "sf.functions.year.weekofyear"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "WEEKOFYEAR of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekofyear.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekofyear.t003"
+form = "sf.functions.year.weekofyear"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "WEEKOFYEAR of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekofyear.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekofyear.t004"
+form = "sf.functions.year.weekofyear"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekofyear.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.weekofyear.t005"
+form = "sf.functions.year.weekofyear"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.weekofyear.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t001"
+form = "sf.functions.year.year"
+kind = "type_combination"
+target = "DATE"
+note = "YEAR of dates at year, ISO-week and leap boundaries."
+catches = "an off-by-one or 0-based result at the boundaries"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t002"
+form = "sf.functions.year.year"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "YEAR of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t003"
+form = "sf.functions.year.year"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "YEAR of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the year of the UTC instant (2025) instead of the TIMESTAMP_TZ's own wall clock (2024)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t004"
+form = "sf.functions.year.year"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t005"
+form = "sf.functions.year.year"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.year.t006"
+form = "sf.functions.year.year"
+kind = "type_combination"
+target = "INTERVAL"
+note = "YEAR of the interval type the page allows."
+catches = "an error for an interval, or the interval read as a date"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.year.toml#t006_interval"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweek.t001"
+form = "sf.functions.year.yearofweek"
+kind = "type_combination"
+target = "DATE"
+note = "YEAROFWEEK of dates at year, ISO-week and leap boundaries."
+catches = "the calendar year (2024) for 2024-12-30, which belongs to week 1 of 2025"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweek.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweek.t002"
+form = "sf.functions.year.yearofweek"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "YEAROFWEEK of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweek.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweek.t003"
+form = "sf.functions.year.yearofweek"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "YEAROFWEEK of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweek.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweek.t004"
+form = "sf.functions.year.yearofweek"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweek.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweek.t005"
+form = "sf.functions.year.yearofweek"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweek.toml#t005_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweekiso.t001"
+form = "sf.functions.year.yearofweekiso"
+kind = "type_combination"
+target = "DATE"
+note = "YEAROFWEEKISO of dates at year, ISO-week and leap boundaries."
+catches = "the calendar year instead of the ISO week-year"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweekiso.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweekiso.t002"
+form = "sf.functions.year.yearofweekiso"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "YEAROFWEEKISO of a timestamp just before midnight on 31 December."
+catches = "the timestamp rounded to the next day"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweekiso.toml#t002_timestamp_ntz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweekiso.t003"
+form = "sf.functions.year.yearofweekiso"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "YEAROFWEEKISO of a TIMESTAMP_TZ whose UTC instant is in the next year."
+catches = "the part taken from the UTC instant instead of the wall clock"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweekiso.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweekiso.t004"
+form = "sf.functions.year.yearofweekiso"
+kind = "null_argument"
+target = "date_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date (1970-01-01)"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweekiso.toml#t004_null_date_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.year.yearofweekiso.t005"
+form = "sf.functions.year.yearofweekiso"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Days around 29 February in a leap and a common year."
+catches = "a fixed 365-day year or a non-leap 2024"
+reading = "the page: a date or a timestamp (DAY, MONTH and YEAR also a matching interval); returns NUMBER; week parts follow WEEK_START and WEEK_OF_YEAR_POLICY (0 and 0 here)"
+cases = ["cases/translation/functions/year.yearofweekiso.toml#t005_leap"]
 required = true

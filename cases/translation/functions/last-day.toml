@@ -1,0 +1,74 @@
+category = "translation"
+construct = "sf.functions.last-day"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "The default month part. Catches: the first day of the next month, or day 30/31 regardless of month"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-04-10'"],
+  ["'2024-12-01'"],
+]
+query = "SELECT LAST_DAY(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_parts"
+description = "Year, quarter and week parts. Catches: the part ignored, or week ending on Saturday instead of Sunday under WEEK_START 0"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-05-15'"],
+]
+query = "SELECT LAST_DAY(d, 'year') AS y, LAST_DAY(d, 'quarter') AS q, LAST_DAY(d, 'week') AS w FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp"
+description = "A timestamp input, which the page says returns a DATE. Catches: a TIMESTAMP result"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-06-15 18:00:00'"],
+]
+query = "SELECT LAST_DAY(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_timestamp_tz"
+description = "A TIMESTAMP_TZ whose UTC instant is in the next month. Catches: the month of the UTC instant (2025-01-31)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT LAST_DAY(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_date_or_timestamp_expr"
+description = "NULL date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT LAST_DAY(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_february"
+description = "February in leap and common years, including 1900 and 2000. Catches: a fixed 28 or a Julian leap rule (1900-02-29)"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-10'"],
+  ["'2023-02-10'"],
+  ["'1900-02-01'"],
+  ["'2000-02-01'"],
+]
+query = "SELECT LAST_DAY(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
