@@ -53176,3 +53176,27 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-semantic-view.create-or-alter-semantic.o078"
+form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
+construct = "every independent option of one production together: CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+reason = "not submitted: held by the rr2-ddl runtime existing-name screen: names an existing account object: PUBLIC"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-semantic-view.create-or-alter-semantic.k9e3061862029", sql_sha256 = "9e306186202926d3c63397054af52c6599d60e1e78bfd3f504b6748bac084b26" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.ddl.create-semantic-view.create-semantic-view-tables.o101"
+form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
+construct = "every independent option of one production together: CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 1 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+reason = "not submitted: held by the rr2-ddl runtime existing-name screen: names an existing account object: PUBLIC"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.ddl.create-semantic-view.create-semantic-view-tables.k65430399e766", sql_sha256 = "65430399e766da654ec20973412d567aa9c2fa09e3a9e0b7f52ce351a43dd388" },
+]
+runs = []
+probes = []

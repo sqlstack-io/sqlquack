@@ -112285,13 +112285,6 @@ required = true
 target = "{ USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER… → EXTERNAL VOLUME"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o045"
-kind = "required_operand_missing"
-required = true
-target = "<object_name>"
-note = "omit <object_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o046"
 kind = "operand_type_class"
 required = true
@@ -112541,13 +112534,6 @@ required = true
 target = "{ SCHEMA <schema_name> | ALL SCHEMAS IN DATABASE <db_name> } → ALL SCHEMAS IN DATABASE <db_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o087"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o088"
 kind = "operand_type_class"
 required = true
@@ -112734,13 +112720,6 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o118"
-kind = "required_operand_missing"
-required = true
-target = "<object_type>"
-note = "omit <object_type>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o119"
 kind = "operand_type_class"
 required = true
@@ -112844,13 +112823,6 @@ target = "<schema_name> #2"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o134"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o135"
 kind = "operand_type_class"
 required = true
@@ -112871,40 +112843,16 @@ required = true
 note = "the form without its required POOL"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o138"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { COMPUTE POOL | DATABASE | WAREHOUSE }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o139"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SERVICE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o140"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ENDPOINT"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o142"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TASK"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o143"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WAREHOUSES"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o144"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SESSION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o145"
@@ -112917,18 +112865,6 @@ id = "sf.security_admin.revoke-privilege-application.o146"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ACCOUNT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o147"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o148"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { DATABASE ROLE | SCHEMA }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o149"
@@ -112953,12 +112889,6 @@ id = "sf.security_admin.revoke-privilege-application.o152"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VOLUME"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o153"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o154"
@@ -113009,12 +112939,6 @@ required = true
 note = "the form without its required POLICY"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o162"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { AGGREGATION | MASKING | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | SECRET | SEMANTIC VIEW | SEQUENCE | SERVICE | SNAPSHOT | STAGE | STREAM | TAG | TABLE | TASK | VIEW }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o163"
 kind = "negative_neighbour"
 required = true
@@ -113043,12 +112967,6 @@ id = "sf.security_admin.revoke-privilege-application.o167"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WRITE in [ , WRITE ]"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o168"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o169"
@@ -113144,6 +113062,101 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.revoke-privilege-application / Syntax"
 note = "the form without its required MANAGED, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o182"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { AGGREGATION | MASKING | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | SECRET | SEMANTIC VIEW | SEQUENCE | SERVICE | SNAPSHOT | STAGE | STREAM | TAG | TABLE | TASK | VIEW }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o183"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o184"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required SESSION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o185"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required { DATABASE ROLE | SCHEMA }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o186"
+kind = "required_operand_missing"
+required = true
+target = "<object_name>"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "omit <object_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o187"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o188"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required ENDPOINT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o189"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required { COMPUTE POOL | DATABASE | WAREHOUSE }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o190"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required WAREHOUSES, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o191"
+kind = "required_operand_missing"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "omit <object_type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o192"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "omit <schema_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o193"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required SCHEMA, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-application.o194"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+note = "the form without its required ROLE, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application-role.o001"
@@ -114536,13 +114549,6 @@ required = true
 target = "{ DATABASE <name> | SCHEMA <name> | MODEL <name> | SEMANTIC VIEW … → { VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o023"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o024"
 kind = "operand_type_class"
 required = true
@@ -114557,13 +114563,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o026"
-kind = "required_operand_missing"
-required = true
-target = "<name> #2"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o027"
 kind = "operand_type_class"
 required = true
@@ -114576,13 +114575,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name> #2"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o029"
-kind = "required_operand_missing"
-required = true
-target = "<name> #3"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o030"
@@ -114848,13 +114840,6 @@ required = true
 target = "{ VIEW <name> | ALL VIEWS IN SCHEMA <schema_name> } → ALL VIEWS IN SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o069"
-kind = "required_operand_missing"
-required = true
-target = "<name> #9"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o070"
 kind = "operand_type_class"
 required = true
@@ -114890,13 +114875,6 @@ target = "<schema_name> #5"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o075"
-kind = "required_operand_missing"
-required = true
-target = "<share_name>"
-note = "omit <share_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o076"
 kind = "operand_type_class"
 required = true
@@ -114909,12 +114887,6 @@ kind = "negative_neighbour"
 required = true
 target = "<share_name>"
 note = "a string literal in place of <share_name>"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o083"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o106"
@@ -114971,12 +114943,6 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-share.o093"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-share.o094"
 kind = "identifier_class"
 required = true
@@ -115023,6 +114989,60 @@ required = true
 target = "<share_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o107"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o108"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "the form without its required SCHEMA, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o109"
+kind = "required_operand_missing"
+required = true
+target = "<share_name>"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "omit <share_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o110"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o111"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "the form without its required SHARE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o112"
+kind = "required_operand_missing"
+required = true
+target = "<name> #9"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-share.o113"
+kind = "required_operand_missing"
+required = true
+target = "<name> #3"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o001"
@@ -115607,13 +115627,6 @@ required = true
 target = "{ SCHEMA <schema_name> | ALL SCHEMAS IN DATABASE <db_name> } → ALL SCHEMAS IN DATABASE <db_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o097"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o098"
 kind = "operand_type_class"
 required = true
@@ -115952,34 +115965,16 @@ required = true
 note = "the form without its required FOR in [ GRANT OPTION FOR ]"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o151"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o152"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SERVICE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o153"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ENDPOINT"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o154"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ACCESS"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o155"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | TAG }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o156"
@@ -116006,28 +116001,10 @@ required = true
 note = "the form without its required TASK"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o160"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o161"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o162"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SUPPORT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o163"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CASES"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o164"
@@ -116048,12 +116025,6 @@ required = true
 note = "the form without its required FULFILLMENT"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o167"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ACCOUNT SUPPORT CASES | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | USER SUPPORT CASES | WAREHOUSES }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o168"
 kind = "negative_neighbour"
 required = true
@@ -116072,22 +116043,10 @@ required = true
 note = "the form without its required TRACE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o171"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o172"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { EXECUTION | SECURITY | USAGE }"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o173"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESTRICTIONS"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o174"
@@ -116106,18 +116065,6 @@ id = "sf.security_admin.revoke-privilege-user.o176"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required LISTING"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o177"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o178"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SESSION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o179"
@@ -116208,18 +116155,6 @@ id = "sf.security_admin.revoke-privilege-user.o193"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required WRITE in [ , WRITE ]"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o194"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o195"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ERROR"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o196"
@@ -116314,6 +116249,105 @@ required = true
 target = "<user_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o209"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required RESTRICTIONS, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o210"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required ENDPOINT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o211"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required { ACCOUNT SUPPORT CASES | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | USER SUPPORT CASES | WAREHOUSES }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o212"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required CASES, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o213"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required SCHEMA, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o214"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required ALL, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o215"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o216"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required SESSION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o217"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o218"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "omit <schema_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o219"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required SHARE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o220"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required POLICY, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o221"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required ERROR, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege-user.o222"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | TAG }, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o001"
@@ -120724,13 +120758,6 @@ required = true
 target = "{ SCHEMA <schema_name> | ALL SCHEMAS IN DATABASE <db_name> } → ALL SCHEMAS IN DATABASE <db_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o217"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o218"
 kind = "operand_type_class"
 required = true
@@ -121898,12 +121925,6 @@ required = true
 note = "the form without its required SERVICE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o407"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ENDPOINT"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o408"
 kind = "negative_neighbour"
 required = true
@@ -121914,12 +121935,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o409"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required LIFECYCLE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o410"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o411"
@@ -121946,28 +121961,10 @@ required = true
 note = "the form without its required TASK"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o415"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o416"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { SHARE | ORGANIZATION LISTING }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o417"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SUPPORT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o418"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CASES"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o419"
@@ -122018,12 +122015,6 @@ required = true
 note = "the form without its required TARGET"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o427"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o428"
 kind = "negative_neighbour"
 required = true
@@ -122040,12 +122031,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o430"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TRACE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o431"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o432"
@@ -122066,12 +122051,6 @@ required = true
 note = "the form without its required SHARE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o435"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESTRICTIONS"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o436"
 kind = "negative_neighbour"
 required = true
@@ -122082,18 +122061,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o437"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXCHANGE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o438"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o439"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SESSION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o440"
@@ -122366,12 +122333,6 @@ required = true
 note = "the form without its required WRITE in [ , WRITE ]"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o485"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o486"
 kind = "negative_neighbour"
 required = true
@@ -122492,6 +122453,91 @@ required = true
 target = "<role_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o503"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required RESTRICTIONS, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o504"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ENDPOINT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o505"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o506"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required CASES, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o507"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SCHEMA, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o508"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ALL, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o509"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o510"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SESSION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o511"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o512"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "omit <schema_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o513"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required { SHARE | ORGANIZATION LISTING }, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o514"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-role.role.o001"
@@ -123473,13 +123519,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-authentication-policies.o022"
-kind = "required_operand_missing"
-required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
-note = "omit <application_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-authentication-policies.o023"
 kind = "operand_type_class"
 required = true
@@ -123747,6 +123786,14 @@ anchor = "doc.sql.show-authentication-policies / Usage notes"
 note = "LIMIT 10,001 against the documented maximum of 10,000"
 
 [[obligation]]
+id = "sf.security_admin.show-authentication-policies.o061"
+kind = "required_operand_missing"
+required = true
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+anchor = "doc.sql.show-authentication-policies / Syntax"
+note = "omit <application_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-available-organization-profiles.o001"
 kind = "positive"
 required = true
@@ -123919,13 +123966,6 @@ required = true
 target = "[ LIMIT <rows> ]"
 
 [[obligation]]
-id = "sf.security_admin.show-backup-policies.o025"
-kind = "required_operand_missing"
-required = true
-target = "<rows> in [ LIMIT <rows> ]"
-note = "omit <rows>"
-
-[[obligation]]
 id = "sf.security_admin.show-backup-policies.o026"
 kind = "operand_type_class"
 required = true
@@ -123995,6 +124035,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.show-backup-policies.o036"
+kind = "required_operand_missing"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+anchor = "doc.sql.show-backup-policies / Syntax"
+note = "omit <rows>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-caller-grants.o001"
 kind = "positive"
 required = true
@@ -124023,13 +124071,6 @@ id = "sf.security_admin.show-caller-grants.o005"
 kind = "alternative"
 required = true
 target = "{ ON <object_type> <object_name> | ON ACCOUNT } → ON ACCOUNT"
-
-[[obligation]]
-id = "sf.security_admin.show-caller-grants.o006"
-kind = "required_operand_missing"
-required = true
-target = "<object_type>"
-note = "omit <object_type>"
 
 [[obligation]]
 id = "sf.security_admin.show-caller-grants.o007"
@@ -124079,13 +124120,6 @@ required = true
 target = "{ ROLE | DATABASE ROLE } → DATABASE ROLE"
 
 [[obligation]]
-id = "sf.security_admin.show-caller-grants.o014"
-kind = "required_operand_missing"
-required = true
-target = "<owner_name>"
-note = "omit <owner_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-caller-grants.o015"
 kind = "operand_type_class"
 required = true
@@ -124110,24 +124144,6 @@ id = "sf.security_admin.show-caller-grants.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ACCOUNT"
-
-[[obligation]]
-id = "sf.security_admin.show-caller-grants.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE"
-
-[[obligation]]
-id = "sf.security_admin.show-caller-grants.o020"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ROLE | DATABASE ROLE }"
-
-[[obligation]]
-id = "sf.security_admin.show-caller-grants.o021"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { { ON <object_type> <object_name> | ON ACCOUNT } | TO { ROLE | DATABASE ROLE } <owner_name> }"
 
 [[obligation]]
 id = "sf.security_admin.show-caller-grants.o022"
@@ -124160,6 +124176,43 @@ required = true
 target = "<owner_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-caller-grants.o026"
+kind = "required_operand_missing"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.show-caller-grants / Syntax"
+note = "omit <object_type>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-caller-grants.o027"
+kind = "required_operand_missing"
+required = true
+target = "<owner_name>"
+anchor = "doc.sql.show-caller-grants / Syntax"
+note = "omit <owner_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-caller-grants.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-caller-grants / Syntax"
+note = "the form without its required ROLE, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-caller-grants.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-caller-grants / Syntax"
+note = "the form without its required { ROLE | DATABASE ROLE }, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-caller-grants.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-caller-grants / Syntax"
+note = "the form without its required { { ON <object_type> <object_name> | ON ACCOUNT } | TO { ROLE | DATABASE ROLE } <owner_name> }, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-catalog-integrations.o001"
@@ -124449,13 +124502,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.show-database-roles.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.show-database-roles.o003"
 kind = "operand_type_class"
 required = true
@@ -124529,12 +124575,6 @@ target = "'<name_string>' in [ FROM '<name_string>' ]"
 note = "an unquoted identifier in place of '<name_string>'"
 
 [[obligation]]
-id = "sf.security_admin.show-database-roles.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE"
-
-[[obligation]]
 id = "sf.security_admin.show-database-roles.o015"
 kind = "negative_neighbour"
 required = true
@@ -124570,17 +124610,25 @@ anchor = "doc.sql.show-database-roles / Syntax"
 note = "the form without its required DATABASE #2, observed"
 
 [[obligation]]
+id = "sf.security_admin.show-database-roles.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-database-roles / Syntax"
+note = "the form without its required DATABASE, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-database-roles.o022"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-database-roles / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-databases-in-failover-group.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.show-databases-in-failover-group.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.show-databases-in-failover-group.o003"
@@ -124637,17 +124685,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.show-databases-in-failover-group.o011"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-databases-in-failover-group / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-databases-in-replication-group.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.show-databases-in-replication-group.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.show-databases-in-replication-group.o003"
@@ -124702,6 +124751,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-databases-in-replication-group.o011"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.show-databases-in-replication-group / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-event-routing-table-on-organization.o001"
@@ -124966,10 +125023,11 @@ required = true
 note = "the form without its required GROUPS"
 
 [[obligation]]
-id = "sf.security_admin.show-failover-groups.o008"
+id = "sf.security_admin.show-failover-groups.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ]"
+anchor = "doc.sql.show-failover-groups / Syntax"
+note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ], observed"
 
 [[obligation]]
 id = "sf.security_admin.show-feature-policies.policies.o001"
@@ -125020,13 +125078,6 @@ required = true
 target = "{ ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database… → SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-feature-policies.policies.o009"
-kind = "required_operand_missing"
-required = true
-target = "<app_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_nam…"
-note = "omit <app_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-feature-policies.policies.o010"
 kind = "operand_type_class"
 required = true
@@ -125062,13 +125113,6 @@ target = "<app_package_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLIC
 note = "a string literal in place of <app_package_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-feature-policies.policies.o015"
-kind = "required_operand_missing"
-required = true
-target = "<database_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databas…"
-note = "omit <database_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-feature-policies.policies.o016"
 kind = "operand_type_class"
 required = true
@@ -125081,13 +125125,6 @@ kind = "negative_neighbour"
 required = true
 target = "<database_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databas…"
 note = "a string literal in place of <database_name>"
-
-[[obligation]]
-id = "sf.security_admin.show-feature-policies.policies.o018"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_…"
-note = "omit <schema_name>"
 
 [[obligation]]
 id = "sf.security_admin.show-feature-policies.policies.o019"
@@ -125184,6 +125221,30 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-feature-policies.policies.o032"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_…"
+anchor = "doc.sql.show-feature-policies / Syntax"
+note = "omit <schema_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-feature-policies.policies.o033"
+kind = "required_operand_missing"
+required = true
+target = "<app_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_nam…"
+anchor = "doc.sql.show-feature-policies / Syntax"
+note = "omit <app_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-feature-policies.policies.o034"
+kind = "required_operand_missing"
+required = true
+target = "<database_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databas…"
+anchor = "doc.sql.show-feature-policies / Syntax"
+note = "omit <database_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-feature-policies.policies-on-account.o001"
@@ -125804,12 +125865,6 @@ target = "<database_role_name>"
 note = "a string literal in place of <database_role_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.future-grants-to-database.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FUTURE"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.future-grants-to-database.o006"
 kind = "negative_neighbour"
 required = true
@@ -125842,6 +125897,13 @@ required = true
 target = "<database_role_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.future-grants-to-database.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required FUTURE, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.future-grants-to-role.o001"
@@ -126056,13 +126118,6 @@ target = "<service_role_name>"
 note = "a string literal in place of <service_role_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-of-application-role.o014"
-kind = "required_operand_missing"
-required = true
-target = "<role_name>"
-note = "omit <role_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-of-application-role.o015"
 kind = "operand_type_class"
 required = true
@@ -126191,17 +126246,18 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.show-grants.grants-of-application-role.o033"
+kind = "required_operand_missing"
+required = true
+target = "<role_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <role_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-grants.grants-of-share.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-of-share.o002"
-kind = "required_operand_missing"
-required = true
-target = "<share_name>"
-note = "omit <share_name>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-of-share.o003"
@@ -126256,12 +126312,6 @@ required = true
 note = "the form without its required OF"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-of-share.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-of-share.o012"
 kind = "identifier_class"
 required = true
@@ -126278,17 +126328,25 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.show-grants.grants-of-share.o014"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required SHARE, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-of-share.o015"
+kind = "required_operand_missing"
+required = true
+target = "<share_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <share_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-grants.grants-on.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-on.o002"
-kind = "required_operand_missing"
-required = true
-target = "<object_type>"
-note = "omit <object_type>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-on.o003"
@@ -126380,6 +126438,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.show-grants.grants-on.o016"
+kind = "required_operand_missing"
+required = true
+target = "<object_type>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <object_type>, observed"
+
+[[obligation]]
 id = "sf.security_admin.show-grants.grants-on-account.o001"
 kind = "positive"
 required = true
@@ -126396,13 +126462,6 @@ id = "sf.security_admin.show-grants.grants-on-account.o003"
 kind = "option_absent"
 required = true
 target = "[ LIMIT <rows> ]"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-on-account.o004"
-kind = "required_operand_missing"
-required = true
-target = "<rows> in [ LIMIT <rows> ]"
-note = "omit <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-on-account.o005"
@@ -126428,6 +126487,14 @@ id = "sf.security_admin.show-grants.grants-on-account.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ACCOUNT"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-on-account.o009"
+kind = "required_operand_missing"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <rows>, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o001"
@@ -126478,13 +126545,6 @@ required = true
 target = "{ APPLICATION <app_name> | APPLICATION ROLE [ <app_name> . ] <app_role_name> | SERVICE ROLE <service… → USER <user_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o009"
-kind = "required_operand_missing"
-required = true
-target = "<app_name>"
-note = "omit <app_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o010"
 kind = "operand_type_class"
 required = true
@@ -126511,13 +126571,6 @@ required = true
 target = "[ <app_name> . ]"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o014"
-kind = "required_operand_missing"
-required = true
-target = "<app_name> in [ <app_name> . ]"
-note = "omit <app_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o015"
 kind = "operand_type_class"
 required = true
@@ -126530,13 +126583,6 @@ kind = "negative_neighbour"
 required = true
 target = "<app_name> in [ <app_name> . ]"
 note = "a string literal in place of <app_name>"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o017"
-kind = "required_operand_missing"
-required = true
-target = "<app_role_name>"
-note = "omit <app_role_name>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o018"
@@ -126595,13 +126641,6 @@ target = "<service_role_name>"
 note = "a string literal in place of <service_role_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o026"
-kind = "required_operand_missing"
-required = true
-target = "<class_name>"
-note = "omit <class_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o027"
 kind = "operand_type_class"
 required = true
@@ -126658,13 +126697,6 @@ target = "<instance_role_name>"
 note = "a string literal in place of <instance_role_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o035"
-kind = "required_operand_missing"
-required = true
-target = "<role_name>"
-note = "omit <role_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o036"
 kind = "operand_type_class"
 required = true
@@ -126677,13 +126709,6 @@ kind = "negative_neighbour"
 required = true
 target = "<role_name>"
 note = "a string literal in place of <role_name>"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o038"
-kind = "required_operand_missing"
-required = true
-target = "<share_name>"
-note = "omit <share_name>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o039"
@@ -126700,12 +126725,6 @@ target = "<share_name>"
 note = "a string literal in place of <share_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o041"
-kind = "option_present"
-required = true
-target = "[ IN APPLICATION PACKAGE <app_package_name> ]"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o042"
 kind = "option_absent"
 required = true
@@ -126719,25 +126738,11 @@ target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
 note = "omit <app_package_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o044"
-kind = "operand_type_class"
-required = true
-target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o045"
 kind = "negative_neighbour"
 required = true
 target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
 note = "a string literal in place of <app_package_name>"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o046"
-kind = "required_operand_missing"
-required = true
-target = "<user_name>"
-note = "omit <user_name>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o047"
@@ -126954,22 +126959,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o076"
-kind = "identifier_class"
-required = true
-target = "<app_package_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o077"
-kind = "identifier_class"
-required = true
-target = "<app_package_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o078"
 kind = "identifier_class"
 required = true
@@ -126984,6 +126973,94 @@ required = true
 target = "<user_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o080"
+kind = "required_operand_missing"
+required = true
+target = "<user_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <user_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o081"
+kind = "required_operand_missing"
+required = true
+target = "<role_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <role_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o082"
+kind = "required_operand_missing"
+required = true
+target = "<app_name> in [ <app_name> . ]"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <app_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o083"
+kind = "identifier_class"
+required = true
+target = "<app_package_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o084"
+kind = "required_operand_missing"
+required = true
+target = "<app_role_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <app_role_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o085"
+kind = "required_operand_missing"
+required = true
+target = "<share_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <share_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o086"
+kind = "required_operand_missing"
+required = true
+target = "<class_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <class_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o087"
+kind = "identifier_class"
+required = true
+target = "<app_package_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o088"
+kind = "required_operand_missing"
+required = true
+target = "<app_name>"
+anchor = "doc.sql.show-grants / Syntax"
+note = "omit <app_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o089"
+kind = "option_present"
+required = true
+target = "[ IN APPLICATION PACKAGE <app_package_name> ]"
+anchor = "doc.sql.show-grants / Syntax"
+note = "option present [ IN APPLICATION PACKAGE <app_package_name> ], observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o090"
+kind = "operand_type_class"
+required = true
+target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
+anchor = "doc.sql.show-grants / Syntax"
+note = "a valid identifier, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-ingress-policies.o001"
@@ -127997,13 +128074,6 @@ target = "<schema_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> 
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-masking-policies.o023"
-kind = "required_operand_missing"
-required = true
-target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
-note = "omit <application_name>"
-
-[[obligation]]
 id = "sf.security_admin.show-masking-policies.o024"
 kind = "operand_type_class"
 required = true
@@ -128125,6 +128195,14 @@ required = true
 target = "<application_package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.show-masking-policies.o041"
+kind = "required_operand_missing"
+required = true
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+anchor = "doc.sql.show-masking-policies / Syntax"
+note = "omit <application_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-multi-party-approval-policies.policies.o001"

@@ -10443,7 +10443,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
@@ -10453,7 +10453,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -10463,7 +10463,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -10473,7 +10473,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "observe"
 context = "raw"
 
@@ -10483,7 +10483,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "accept"
 context = "raw"
 
@@ -10493,7 +10493,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
+sql = "CREATE OR REPLACE SEMANTIC VIEW IF NOT EXISTS v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COPY GRANTS ;"
 expect = "accept"
 context = "raw"
 
@@ -15631,7 +15631,7 @@ kind = "boundary_below"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 119 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 119 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "observe"
 context = "raw"
 
@@ -15641,7 +15641,7 @@ kind = "boundary_at"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 120 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 120 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -15651,7 +15651,7 @@ kind = "boundary_above"
 target = "MAX_STALENESS = <integer>"
 note = "MAX_STALENESS = 121 against the documented minimum of 120"
 anchor = "doc.sql.create-semantic-view / Parameters"
-sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( v1 AS v1 PRIMARY KEY ( v1 , v1 ) UNIQUE ( v1 , v1 ) CONSTRAINT v1 DISTINCT RANGE BETWEEN v1 AND v1 EXCLUSIVE WITH SYNONYMS = ( 'm' , 'm' ) COMMENT = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) , TAG ( v1 = 'm' , v1 = 'm' ) ) RELATIONSHIPS ( v1 AS v1 ( v1 , v1 ) REFERENCES v1 ( ASOF v1 , v1 ) , v1 ( ASOF v1 , v1 ) ) FACTS ( PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) DIMENSIONS ( PUBLIC v1 . v1 LABELS = ( FILTER ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' WITH CORTEX SEARCH SERVICE v1 USING v1 , v1 ) METRICS ( PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' , PRIVATE v1 . v1 USING ( v1 , v1 ) NON ADDITIVE BY ( v1 ASC NULLS FIRST , v1 ASC NULLS FIRST ) AS 1 WITH SYNONYMS = ( 'm' , 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ) COMMENT = 'm' MAX_STALENESS = 121 AI_SQL_GENERATION 'm' AI_QUESTION_CATEGORIZATION 'm' AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) , v1 AS ( QUESTION 'm' VERIFIED_AT CURRENT_TIMESTAMP ( ) ONBOARDING_QUESTION TRUE VERIFIED_BY '( p1 = c1 )' SQL 'm' ) ) ;"
 expect = "accept"
 context = "raw"
 
@@ -67663,5 +67663,1271 @@ kind = "negative_neighbour"
 note = "the form without its required MANAGED, observed"
 anchor = "doc.sql.revoke-privilege-application / Syntax"
 sql = "REVOKE EXECUTE TASK ON ACCOUNT FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+# D113 security_admin receipt triage (imports 109): remaining contradictions observed, each reason names its category and receipt.
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { AGGREGATION | MASKING | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | SECRET | SEMANTIC VIEW | SEQUENCE | SERVICE | SNAPSHOT | STAGE | STREAM | TAG | TABLE | TASK | VIEW }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | EXTERNAL TABLE | FILE FORMAT | FUNCTION | IMAGE REPOSITORY | MATERIALIZED VIEW | PIPE | PROCEDURE | { AGGREGATION | MASKING | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | SECRET | SEMANTIC VIEW | SEQUENCE | SERVICE | SNAPSHOT | STAGE | STREAM | TAG | TABLE | TASK | VIEW }, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE CREATE ON SCHEMA v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME }, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE MODIFY ON v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required SESSION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required SESSION, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE READ ON ACCOUNT FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { DATABASE ROLE | SCHEMA }, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE CREATE ON USER v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<object_name>"
+note = "omit <object_name>, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE MODIFY ON USER FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE CREATE COMPUTE POOL ON ACCOUNT FROM APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE BIND SERVICE ON ACCOUNT FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { COMPUTE POOL | DATABASE | WAREHOUSE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required { COMPUTE POOL | DATABASE | WAREHOUSE }, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE CREATE ON ACCOUNT FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required WAREHOUSES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required WAREHOUSES, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE MANAGE ON ACCOUNT FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE MONITOR ON v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE ADD SEARCH OPTIMIZATION ON SCHEMA FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE EVOLVE ON TABLE v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-application"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.revoke-privilege-application / Syntax"
+sql = "REVOKE CREATE DATABASE ON USER v1 FROM APPLICATION v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON DATABASE FROM SHARE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE EVOLVE ON DATABASE v1 FROM SHARE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON DATABASE v1 FROM SHARE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #2"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #2"
+note = "omit <name>, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON SCHEMA FROM SHARE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "negative_neighbour"
+note = "the form without its required SHARE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "negative_neighbour"
+note = "the form without its required SHARE, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON DATABASE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #9"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #9"
+note = "omit <name>, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON VIEW FROM SHARE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #3"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-share"
+kind = "required_operand_missing"
+target = "<name> #3"
+note = "omit <name>, observed"
+anchor = "doc.sql.revoke-privilege-share / Syntax"
+sql = "REVOKE REFERENCE_USAGE ON MODEL FROM SHARE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE OVERRIDE SHARE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required RESTRICTIONS, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE OVERRIDE SHARE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE BIND SERVICE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ENDPOINT, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE BIND SERVICE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | USER SUPPORT CASES | WAREHOUSES }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | USER SUPPORT CASES | WAREHOUSES }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MANAGE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ACCOUNT SUPPORT CASES | APPLICATION SPECIFICATIONS | CORTEX EXTENSION SECURITY SCAN | EVENT SHARING | GRANTS | LISTING AUTO FULFILLMENT | ORGANIZATION SUPPORT CASES | SHARE TARGET | USER SUPPORT CASES | VISIBILITY | WAREHOUSES }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required CASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required CASES, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MANAGE ACCOUNT SUPPORT ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CASES"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required CASES, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MANAGE ACCOUNT SUPPORT ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE EVOLVE ON TABLE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE EVOLVE ON TABLE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ALL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ALL, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE RESOLVE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ALL"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required ALL, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE RESOLVE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE MODIFY ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { LOG LEVEL | TRACE LEVEL | SESSION LOG LEVEL | SESSION TRACE LEVEL }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE MODIFY ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SESSION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SESSION, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE READ ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SESSION"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required SESSION, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE READ ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE EXECUTE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { ALERT | DATA METRIC FUNCTION | MANAGED ALERT | MANAGED TASK | TASK }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE EXECUTE ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE ADD SEARCH OPTIMIZATION ON SCHEMA FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE ADD SEARCH OPTIMIZATION ON SCHEMA FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SHARE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required SHARE, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE IMPORT ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { SHARE | ORGANIZATION LISTING }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { SHARE | ORGANIZATION LISTING }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE IMPORT ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required POLICY, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE ATTACH ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ERROR"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3007 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required ERROR, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE SELECT TABLE ON TABLE v1 FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | TAG }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege-user"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION } POLICY | TAG }, observed"
+anchor = "doc.sql.revoke-privilege-user / Syntax"
+sql = "REVOKE APPLY ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+note = "the form without its required { { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY | CONTACT | TAG }, observed"
+anchor = "doc.sql.revoke-privilege / Syntax"
+sql = "REVOKE APPLY ON ACCOUNT FROM v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-authentication-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-authentication-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATIO…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-authentication-policies / Syntax"
+sql = "SHOW AUTHENTICATION POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-backup-policies"
+kind = "required_operand_missing"
+target = "<rows> in [ LIMIT <rows> ]"
+note = "omit <rows>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1059 SQLSTATE 22023, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-backup-policies"
+kind = "required_operand_missing"
+target = "<rows> in [ LIMIT <rows> ]"
+note = "omit <rows>, observed"
+anchor = "doc.sql.show-backup-policies / Syntax"
+sql = "SHOW BACKUP POLICIES IN ACCOUNT LIMIT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-caller-grants"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-caller-grants"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.show-caller-grants / Syntax"
+sql = "SHOW CALLER GRANTS ON v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-caller-grants"
+kind = "required_operand_missing"
+target = "<owner_name>"
+note = "omit <owner_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-caller-grants"
+kind = "required_operand_missing"
+target = "<owner_name>"
+note = "omit <owner_name>, observed"
+anchor = "doc.sql.show-caller-grants / Syntax"
+sql = "SHOW CALLER GRANTS TO ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required ROLE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 4351 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required ROLE, observed"
+anchor = "doc.sql.show-caller-grants / Syntax"
+sql = "SHOW CALLER GRANTS TO DATABASE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required { ROLE | DATABASE ROLE }, observed"
+anchor = "doc.sql.show-caller-grants / Syntax"
+sql = "SHOW CALLER GRANTS TO v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required { { ON <object_type> <object_name> | ON ACCOUNT } | TO { ROLE | DATABASE ROLE } <owner_name> }"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 4351 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-caller-grants"
+kind = "negative_neighbour"
+note = "the form without its required { { ON <object_type> <object_name> | ON ACCOUNT } | TO { ROLE | DATABASE ROLE } <owner_name> }, observed"
+anchor = "doc.sql.show-caller-grants / Syntax"
+sql = "SHOW CALLER GRANTS ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-database-roles"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-database-roles"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE, observed"
+anchor = "doc.sql.show-database-roles / Syntax"
+sql = "SHOW ROLES IN DATABASE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-database-roles"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-109), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-database-roles"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-database-roles / Syntax"
+sql = "SHOW DATABASE ROLES IN DATABASE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-databases-in-failover-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-109), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-databases-in-failover-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-databases-in-failover-group / Syntax"
+sql = "SHOW DATABASES IN FAILOVER GROUP ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-databases-in-replication-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-109), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-databases-in-replication-group"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.show-databases-in-replication-group / Syntax"
+sql = "SHOW DATABASES IN REPLICATION GROUP ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-failover-groups"
+kind = "negative_neighbour"
+note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ]"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-failover-groups"
+kind = "negative_neighbour"
+note = "the form without its required ACCOUNT in [ IN ACCOUNT <account> ], observed"
+anchor = "doc.sql.show-failover-groups / Syntax"
+sql = "SHOW FAILOVER GROUPS IN v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<schema_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_…"
+note = "omit <schema_name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-109), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<schema_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_…"
+note = "omit <schema_name>, observed"
+anchor = "doc.sql.show-feature-policies / Syntax"
+sql = "SHOW FEATURE POLICIES IN SCHEMA ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<app_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_nam…"
+note = "omit <app_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<app_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <database_nam…"
+note = "omit <app_name>, observed"
+anchor = "doc.sql.show-feature-policies / Syntax"
+sql = "SHOW FEATURE POLICIES IN APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<database_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databas…"
+note = "omit <database_name>"
+reason = "D113 [undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261104-109), though the page requires the omitted part; observed (D110)"
+
+[[limit]]
+form = "sf.security_admin.show-feature-policies.policies"
+kind = "required_operand_missing"
+target = "<database_name> in [ IN { ACCOUNT | APPLICATION <app_name> | APPLICATION PACKAGE <app_package_name> | DATABASE <databas…"
+note = "omit <database_name>, observed"
+anchor = "doc.sql.show-feature-policies / Syntax"
+sql = "SHOW FEATURE POLICIES IN DATABASE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.future-grants-to-database"
+kind = "negative_neighbour"
+note = "the form without its required FUTURE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.future-grants-to-database"
+kind = "negative_neighbour"
+note = "the form without its required FUTURE, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO DATABASE ROLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-of-application-role"
+kind = "required_operand_missing"
+target = "<role_name>"
+note = "omit <role_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-of-application-role"
+kind = "required_operand_missing"
+target = "<role_name>"
+note = "omit <role_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS OF ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-of-share"
+kind = "negative_neighbour"
+note = "the form without its required SHARE"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-of-share"
+kind = "negative_neighbour"
+note = "the form without its required SHARE, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS OF v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-of-share"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-of-share"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS OF SHARE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-on-account"
+kind = "required_operand_missing"
+target = "<rows> in [ LIMIT <rows> ]"
+note = "omit <rows>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-on-account"
+kind = "required_operand_missing"
+target = "<rows> in [ LIMIT <rows> ]"
+note = "omit <rows>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS ON ACCOUNT LIMIT ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-on"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-on"
+kind = "required_operand_missing"
+target = "<object_type>"
+note = "omit <object_type>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS ON v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<user_name>"
+note = "omit <user_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<user_name>"
+note = "omit <user_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO USER ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<role_name>"
+note = "omit <role_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<role_name>"
+note = "omit <role_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_name> in [ <app_name> . ]"
+note = "omit <app_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2043 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_name> in [ <app_name> . ]"
+note = "omit <app_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO APPLICATION ROLE . v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "identifier_class"
+target = "<app_package_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-109); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "identifier_class"
+target = "<app_package_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE \"SELECT\" ;"
+expect = "observe"
+documented = true
+also_sql = "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE SELECT ;"
+also_expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_role_name>"
+note = "omit <app_role_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_role_name>"
+note = "omit <app_role_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO APPLICATION ROLE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO SHARE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<class_name>"
+note = "omit <class_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<class_name>"
+note = "omit <class_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO ROLE v1!v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "identifier_class"
+target = "<app_package_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-109); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "identifier_class"
+target = "<app_package_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE \"v1 Q\" ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_name>"
+note = "omit <app_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 3044 SQLSTATE 42601, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "required_operand_missing"
+target = "<app_name>"
+note = "omit <app_name>, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO APPLICATION ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "option_present"
+target = "[ IN APPLICATION PACKAGE <app_package_name> ]"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-109); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "option_present"
+target = "[ IN APPLICATION PACKAGE <app_package_name> ]"
+note = "option present [ IN APPLICATION PACKAGE <app_package_name> ], observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "operand_type_class"
+target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
+note = "a valid identifier"
+reason = "D113 [documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-109); observed, not flipped to reject"
+
+[[limit]]
+form = "sf.security_admin.show-grants.grants-to-application-application"
+kind = "operand_type_class"
+target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
+note = "a valid identifier, observed"
+anchor = "doc.sql.show-grants / Syntax"
+sql = "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;"
+expect = "observe"
+documented = true
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.show-masking-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>"
+reason = "D113 [undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261104-109), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.show-masking-policies"
+kind = "required_operand_missing"
+target = "<application_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_na…"
+note = "omit <application_name>, observed"
+anchor = "doc.sql.show-masking-policies / Syntax"
+sql = "SHOW MASKING POLICIES IN APPLICATION ;"
 expect = "observe"
 context = "raw"
