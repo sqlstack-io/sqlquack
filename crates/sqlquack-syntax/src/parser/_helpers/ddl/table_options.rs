@@ -287,6 +287,9 @@ impl Parser {
     pub(crate) fn parse_column_def(&mut self) -> Result<ColumnDef> {
         let name = { self.expect_identifier_or_safe_keyword_with_quoted()? };
 
+        if self.is_snowflake() && self.check(TokenType::As) {
+            return Err(self.parse_error("Expected a data type before AS"));
+        }
         if self.check(TokenType::As) {
             let mut col_def = ColumnDef::new(
                 name.name.clone(),
@@ -522,17 +525,17 @@ impl Parser {
         col_def.auto_increment = true;
         col_def.constraint_order.push(ConstraintType::AutoIncrement);
         if self.match_token(TokenType::LParen) {
-            col_def.auto_increment_start = Some(Box::new(self.parse_primary()?));
+            col_def.auto_increment_start = Some(Box::new(self.parse_identity_value()?));
             if self.match_token(TokenType::Comma) {
-                col_def.auto_increment_increment = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_increment = Some(Box::new(self.parse_identity_value()?));
             }
             self.expect_token(TokenType::RParen)?;
         }
         loop {
             if self.match_keyword("START") {
-                col_def.auto_increment_start = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_start = Some(Box::new(self.parse_identity_value()?));
             } else if self.match_keyword("INCREMENT") {
-                col_def.auto_increment_increment = Some(Box::new(self.parse_primary()?));
+                col_def.auto_increment_increment = Some(Box::new(self.parse_identity_value()?));
             } else if self.match_token(TokenType::Order) {
                 col_def.auto_increment_order = Some(true);
             } else if self.match_identifier("NOORDER") {
@@ -544,7 +547,35 @@ impl Parser {
         Ok(col_def)
     }
 
+    /// An identity START or INCREMENT value; Snowflake takes only a number, possibly negative.
+    fn parse_identity_value(&mut self) -> Result<Expression> {
+        if self.is_snowflake()
+            && !self.check(TokenType::Number)
+            && !(self.check(TokenType::Dash)
+                && self
+                    .peek_nth(1)
+                    .is_some_and(|token| token.token_type == TokenType::Number))
+        {
+            return Err(self.parse_error("Expected a number"));
+        }
+        self.parse_unary()
+    }
+
     fn parse_column_collate(&mut self, mut col_def: ColumnDef) -> Result<ColumnDef> {
+        if self.is_snowflake() {
+            // Snowflake's collation is a string specification, such as 'en-ci'.
+            if !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a collation string after COLLATE"));
+            }
+            let text = self.advance_text()?;
+            col_def
+                .constraints
+                .push(ColumnConstraint::Collate(Identifier::new(format!(
+                    "'{text}'"
+                ))));
+            col_def.constraint_order.push(ConstraintType::Collate);
+            return Ok(col_def);
+        }
         let mut collation = self.expect_identifier_or_keyword_with_quoted()?;
         while self.match_token(TokenType::Dot) {
             let next = self.expect_identifier_or_keyword_with_quoted()?;
@@ -673,7 +704,7 @@ impl Parser {
         if self.match_identifier("UPPERCASE") || self.match_identifier("CASESPECIFIC") {
             return true;
         }
-        false
+        self.is_snowflake() && (self.match_identifier("RELY") || self.match_identifier("NORELY"))
     }
 
     /// Parses Teradata table options after CREATE TABLE AS.

@@ -13,6 +13,7 @@ use crate::tokens::types::Result;
 /// The object kinds this module parses, as the words that follow ALTER.
 const RESOURCE_KINDS: &[&[&str]] = &[
     &["MULTI", "PARTY", "APPROVAL", "POLICY"],
+    &["STORAGE", "LIFECYCLE", "POLICY"],
     &["DATA", "MOVEMENT", "POLICY"],
     &["AGGREGATION", "POLICY"],
     &["AUTHENTICATION", "POLICY"],
@@ -232,6 +233,9 @@ impl Parser {
             | ("EXTERNAL", "AGENT" | "TABLE" | "VOLUME" | "CONSUMER" | "ACCESS") => true,
             ("EVENT", "ROUTING") => matches!(self.text_at(2).as_deref(), Some("TABLE")),
             ("RESTRICTED", "SESSION") => matches!(self.text_at(2).as_deref(), Some("SCOPE")),
+            ("STORAGE", "INTEGRATION") => return None,
+            ("STORAGE", "LIFECYCLE") => matches!(self.text_at(2).as_deref(), Some("POLICY")),
+            ("STORAGE", _) => false,
             ("BACKUP", "SET") => return None,
             (
                 "COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT" | "ARTIFACT"
@@ -264,6 +268,14 @@ impl Parser {
             }
             ("AGENT", "SET") if !self.check_identifier("TAG") => {
                 (vec![], vec![self.parse_literal_property()?])
+            }
+            ("STORAGE LIFECYCLE POLICY", "SET") if self.check_identifier("BODY") => {
+                self.skip();
+                self.expect_token(TokenType::Arrow)?;
+                (
+                    vec![],
+                    vec![property("BODY", None, Some(self.parse_expression()?))],
+                )
             }
             (_, "SET" | "MODIFY LIVE VERSION SET") => (vec![], self.parse_resource_set()?),
             (_, "UNSET") => (vec![], self.parse_resource_unset()?),

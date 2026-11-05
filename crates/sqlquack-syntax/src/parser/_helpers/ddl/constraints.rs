@@ -602,7 +602,10 @@ impl Parser {
 
     /// Parse foreign key reference
     pub(crate) fn parse_foreign_key_ref(&mut self) -> Result<ForeignKeyRef> {
-        let table = self.parse_table_ref()?;
+        let table = match self.is_snowflake() {
+            true => self.parse_object_name()?,
+            false => self.parse_table_ref()?,
+        };
 
         let columns = if self.match_token(TokenType::LParen) {
             let cols = self.parse_identifier_list()?;
@@ -1696,9 +1699,40 @@ impl Parser {
     fn parse_alter_table_actions(&mut self) -> Result<(Vec<AlterTableAction>, Option<String>)> {
         let mut actions: Vec<AlterTableAction> = Vec::new();
         let mut last_was_add_column = false;
+        let mut last_was_alter_column = false;
+        let mut dropping_columns: Option<bool> = None;
         let mut with_check_modifier: Option<String> = None;
 
         loop {
+            if last_was_alter_column {
+                // Snowflake: `{ ALTER | MODIFY } [ COLUMN ] c1 <action> , [ COLUMN ] c2 <action> ...`.
+                self.match_token(TokenType::Column);
+                let name = self.parse_simple_name()?;
+                let action = self.parse_alter_column_action()?;
+                actions.push(AlterTableAction::AlterColumn {
+                    name,
+                    action,
+                    use_modify_keyword: false,
+                });
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                continue;
+            }
+            if let Some(if_exists) =
+                dropping_columns.filter(|_| !self.check_alter_table_action_start())
+            {
+                // Snowflake: `DROP [ COLUMN ] [ IF EXISTS ] c1 , c2 ...`.
+                actions.push(AlterTableAction::DropColumn {
+                    name: self.parse_simple_name()?,
+                    if_exists,
+                    cascade: false,
+                });
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                continue;
+            }
             if self.check_identifier("ALGORITHM") || self.check_identifier("LOCK") {
                 break;
             }
@@ -1765,8 +1799,47 @@ impl Parser {
                     self.current -= 1;
                     break;
                 }
-                let action = self.parse_alter_action()?;
+                let modify = self.is_snowflake() && self.check_identifier("MODIFY");
+                let typed = if modify {
+                    // The column actions read as typed; policy, tag, DATA METRIC FUNCTION and parenthesized
+                    // MODIFY keep the raw action they had.
+                    let start = self.current;
+                    self.skip();
+                    self.match_token(TokenType::Column);
+                    let typed = self.parse_simple_name().and_then(|name| {
+                        Ok(AlterTableAction::AlterColumn {
+                            name,
+                            action: self.parse_alter_column_action()?,
+                            use_modify_keyword: true,
+                        })
+                    });
+                    let ends = self.is_at_end()
+                        || self.check(TokenType::Comma)
+                        || self.check(TokenType::Semicolon);
+                    if typed.is_err() || !ends {
+                        self.current = start;
+                        None
+                    } else {
+                        typed.ok()
+                    }
+                } else {
+                    None
+                };
+                let action = match typed {
+                    Some(action) => action,
+                    None => self.parse_alter_action()?,
+                };
                 last_was_add_column = matches!(action, AlterTableAction::AddColumn { .. });
+                last_was_alter_column =
+                    self.is_snowflake() && matches!(action, AlterTableAction::AlterColumn { .. });
+                dropping_columns = match &action {
+                    AlterTableAction::DropColumn {
+                        if_exists,
+                        cascade: false,
+                        ..
+                    } if self.is_snowflake() => Some(*if_exists),
+                    _ => None,
+                };
                 actions.push(action);
             }
             if !self.match_token(TokenType::Comma) {
@@ -1808,5 +1881,30 @@ impl Parser {
             }
         }
         Ok((algorithm, lock))
+    }
+
+    /// Whether the next words start another ALTER TABLE action rather than continuing a Snowflake column list.
+    fn check_alter_table_action_start(&self) -> bool {
+        [
+            TokenType::Add,
+            TokenType::Drop,
+            TokenType::Alter,
+            TokenType::Rename,
+            TokenType::Set,
+            TokenType::Cluster,
+        ]
+        .iter()
+        .any(|kind| self.check(*kind))
+            || [
+                "MODIFY",
+                "UNSET",
+                "SWAP",
+                "CLUSTER",
+                "SUSPEND",
+                "RESUME",
+                "RECLUSTER",
+            ]
+            .iter()
+            .any(|word| self.check_identifier(word))
     }
 }

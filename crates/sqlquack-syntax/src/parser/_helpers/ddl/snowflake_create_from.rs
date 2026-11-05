@@ -4,6 +4,7 @@ use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::models::CreateObject;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -16,6 +17,12 @@ impl Parser {
         modifier: Option<&str>,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        if modifier.is_none() {
+            if let Some(create) = self.parse_snowflake_create_ml_object(or_replace)? {
+                return Ok(Some(create));
+            }
+            self.current = start;
+        }
         let plain = matches!(modifier, None | Some("TRANSIENT"));
         let dynamic = matches!(modifier, Some("DYNAMIC"));
         let table = self.check(TokenType::Table);
@@ -77,6 +84,76 @@ impl Parser {
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: kind.to_owned(),
             modifier: modifier.filter(|_| !dynamic).map(str::to_owned),
+            or_replace,
+            if_not_exists,
+            name,
+            source: source.to_owned(),
+            operands,
+            properties,
+        }))))
+    }
+
+    /// `MODEL <name> [ WITH VERSION <v> ] FROM MODEL <source> [ VERSION <v> ]`, `GATEWAY <name> FROM SPECIFICATION <text>`
+    /// or a bare `EXPERIMENT <name>`; None (position unchanged by the caller) for a model from a stage or a typed experiment.
+    fn parse_snowflake_create_ml_object(&mut self, or_replace: bool) -> Result<Option<Expression>> {
+        let kind = if self.check_identifier("MODEL") && !self.check_next_identifier("MONITOR") {
+            "MODEL"
+        } else if self.check_identifier("GATEWAY") {
+            "GATEWAY"
+        } else if self.check_identifier("EXPERIMENT") {
+            "EXPERIMENT"
+        } else {
+            return Ok(None);
+        };
+        self.skip();
+        let if_not_exists =
+            self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        let source = match kind {
+            "MODEL" => {
+                if self.match_token(TokenType::With) {
+                    self.expect_alter_words(&[&["VERSION"]])?;
+                    let version = Expression::Identifier(self.parse_simple_name()?);
+                    properties.push(property("WITH VERSION", None, Some(version)));
+                }
+                if self.check(TokenType::From) && !self.check_next_identifier("MODEL") {
+                    if self
+                        .peek_nth(1)
+                        .is_some_and(|token| token.text.starts_with('@'))
+                    {
+                        return Ok(None);
+                    }
+                    return Err(self.parse_error("Expected FROM MODEL"));
+                }
+                self.expect_token(TokenType::From)?;
+                self.expect_alter_words(&[&["MODEL"]])?;
+                operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                if self.match_identifier("VERSION") {
+                    let version = Expression::Identifier(self.parse_simple_name()?);
+                    properties.push(property("VERSION", None, Some(version)));
+                }
+                "MODEL"
+            }
+            "GATEWAY" => {
+                self.expect_token(TokenType::From)?;
+                self.expect_alter_words(&[&["SPECIFICATION"]])?;
+                if !self.check(TokenType::String) && !self.check(TokenType::DollarString) {
+                    return Err(self.parse_error("Expected the specification text"));
+                }
+                operands.push(self.parse_primary()?);
+                "SPECIFICATION"
+            }
+            _ if self.check(TokenType::Type) || self.check_identifier("TYPE") => return Ok(None),
+            _ => "",
+        };
+        if !self.is_at_end() && !self.check(TokenType::Semicolon) {
+            return Err(self.parse_error(format!("Unexpected token after CREATE {kind}")));
+        }
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: kind.to_owned(),
+            modifier: None,
             or_replace,
             if_not_exists,
             name,

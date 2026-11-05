@@ -2254,3 +2254,108 @@ fn given_a_snowflake_insert_frame_or_execute_when_parsing_then_missing_parts_are
         assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
     }
 }
+
+#[test]
+fn given_a_snowflake_alter_table_column_list_when_parsing_then_each_column_and_definition_is_checked(
+) {
+    let rejected = [
+        ("UNSET with nothing", "ALTER TABLE v1 ALTER v1 UNSET ;"),
+        (
+            "a collation that is not a string",
+            "ALTER TABLE v1 ADD v1 INT COLLATE m1 ;",
+        ),
+        (
+            "a string identity start",
+            "ALTER TABLE v1 ADD v1 INT AUTOINCREMENT START 'x' INCREMENT 1 ;",
+        ),
+        (
+            "a reserved referenced table",
+            "ALTER TABLE v1 ADD v1 INT REFERENCES SELECT ;",
+        ),
+        (
+            "a reserved column in the list",
+            "ALTER TABLE v1 ALTER v1 COMMENT 'm' , SELECT COMMENT 'm' ;",
+        ),
+        (
+            "a table action inside a column list",
+            "ALTER TABLE v1 ALTER v1 DROP DEFAULT , UNSET COMMENT ;",
+        ),
+        (
+            "DEFAULT as a column type",
+            "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v2 DEFAULT ;",
+        ),
+        (
+            "an incomplete lifecycle policy kind",
+            "ALTER STORAGE LIFECYCLE v1 RENAME TO v1 ;",
+        ),
+        (
+            "a lifecycle policy SET with nothing",
+            "ALTER STORAGE LIFECYCLE POLICY v1 SET ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "ALTER TABLE IF EXISTS v1 ALTER COLUMN v1 DROP DEFAULT , COLUMN v2 SET DATA TYPE INT ;",
+        "ALTER TABLE v1 MODIFY v1 DROP DEFAULT , v2 DROP NOT NULL ;",
+        "ALTER TABLE v1 ALTER v1 UNSET COMMENT , v2 UNSET COMMENT ;",
+        "ALTER TABLE v1 ALTER v1 SET DEFAULT s1.NEXTVAL , v2 NOT NULL ;",
+        "ALTER TABLE IF EXISTS v1 DROP COLUMN IF EXISTS v1 , v2 ;",
+        "ALTER TABLE v1 ADD COLUMN v1 INT CONSTRAINT c1 UNIQUE RELY COLLATE 'm' ;",
+        "CREATE TABLE t1 ( v1 INT AUTOINCREMENT START -1 INCREMENT 1 , v2 VARCHAR COLLATE 'en-ci' ) ;",
+        "ALTER STORAGE LIFECYCLE POLICY IF EXISTS v1 RENAME TO \"v1 Q\" ;",
+        "ALTER STORAGE LIFECYCLE POLICY v1 SET ARCHIVE_TIER = COOL ;",
+        "ALTER STORAGE LIFECYCLE POLICY v1 UNSET ARCHIVE_FOR_DAYS ;",
+    ];
+    for sql in kept {
+        assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}
+
+#[test]
+fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_source_is_checked() {
+    let rejected = [
+        ("FROM without MODEL", "CREATE MODEL v1 FROM v1 ;"),
+        (
+            "a string source version",
+            "CREATE MODEL v1 FROM MODEL v1 VERSION 'v1' ;",
+        ),
+        (
+            "a string new version",
+            "CREATE MODEL v1 WITH VERSION 'v1' FROM MODEL v1 ;",
+        ),
+        (
+            "a gateway with no specification",
+            "CREATE GATEWAY v1 FROM SPECIFICATION ;",
+        ),
+        ("a reserved experiment name", "CREATE EXPERIMENT SELECT ;"),
+        ("an INT precision", "CREATE TABLE t1 ( v1 INT ( 1 ) ) ;"),
+        (
+            "a computed column without a type",
+            "ALTER TABLE v1 ADD v1 AS ( 1 ) ;",
+        ),
+    ];
+    for (description, sql) in rejected {
+        assert!(
+            !accepted(sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        "CREATE OR REPLACE MODEL IF NOT EXISTS v1 WITH VERSION v2 FROM MODEL d1.s1.m1 VERSION last ;",
+        "CREATE MODEL v1 WITH VERSION \"v1 Q\" FROM @s1 ;",
+        "CREATE GATEWAY \"v1 Q\" FROM SPECIFICATION $$m: 1$$ ;",
+        "CREATE EXPERIMENT v1 ;",
+        "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
+        "ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
+        "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
+        "CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
+    ];
+    for sql in kept {
+        assert!(accepted(sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}

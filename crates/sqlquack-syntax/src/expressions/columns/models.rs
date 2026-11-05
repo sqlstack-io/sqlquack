@@ -738,6 +738,8 @@ pub enum AlterColumnAction {
     DropNotNull,
     /// Set column comment
     Comment(String),
+    /// Snowflake: UNSET COMMENT
+    UnsetComment,
     /// MySQL: SET VISIBLE
     SetVisible,
     /// MySQL: SET INVISIBLE

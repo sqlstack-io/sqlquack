@@ -26,6 +26,9 @@ impl Parser {
             "VARBINARY" => self.parse_cast_varbinary_type()?,
             "DECIMAL" | "NUMERIC" | "NUMBER" => self.parse_cast_decimal_type()?,
             "INT" | "INTEGER" => {
+                if self.is_snowflake() && self.check(TokenType::LParen) {
+                    return Err(self.parse_error("Snowflake's INT and INTEGER take no precision"));
+                }
                 let length = if self.match_token(TokenType::LParen) {
                     let n = Some(self.expect_number()? as u32);
                     self.expect_token(TokenType::RParen)?;
