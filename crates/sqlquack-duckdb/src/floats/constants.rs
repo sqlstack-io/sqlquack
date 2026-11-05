@@ -15,7 +15,7 @@ pub const VANISHING_DOUBLE: &str = "1e-19";
 /// The power of two a double is scaled by, less its binary exponent, to make it a whole number.
 pub const SIGNIFICAND_SHIFT: i32 = 60;
 /// The scales recordings show a FLOAT rounded to.
-pub const FLOAT_DECIMAL_SCALES: &[u8] = &[2, 6, 8];
+pub const FLOAT_DECIMAL_SCALES: &[u8] = &[2, 3, 4, 5, 6, 8, 10];
 /// The divergence of a FLOAT rounded to more significant digits than recordings show.
 pub const FLOAT_DECIMAL_DIGITS: &str = "float_decimal_digits";
 /// The most significant digits of a rounded FLOAT recordings show: its scaled value stays below.

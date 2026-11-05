@@ -347,7 +347,8 @@ pub(crate) fn last_day(
     })
 }
 
-/// DATEADD(unit, amount, value) with a NUMBER(p,0) amount, keeping the value's type.
+/// DATEADD(unit, amount, value) with a NUMBER(p,0) amount: the value's type, a TIMESTAMP_NTZ widened
+/// to nanoseconds as Snowflake was recorded widening it.
 pub(crate) fn date_add(
     (unit, amount, value): (&Value, &Value, &Value),
     construct: &Construct,
@@ -407,10 +408,25 @@ pub(crate) fn date_add(
         site.context.log,
     )
     .map_err(refuse)?;
+    let (sql, data_type) = match operand.data_type {
+        SnowflakeType::TimestampNtz { precision } if precision < MAX_FRACTION_DIGITS_U8 => {
+            let nanoseconds = SnowflakeType::TimestampNtz {
+                precision: MAX_FRACTION_DIGITS_U8,
+            };
+            let widened = temporal_cast(
+                &sql,
+                (operand.data_type, nanoseconds),
+                (site.context, construct),
+            )
+            .map_err(refuse)?;
+            (widened, nanoseconds)
+        }
+        other => (sql, other),
+    };
     Ok(rezoned(
         Emitted {
             declared: operand.declared,
-            ..Emitted::new(sql, operand.data_type)
+            ..Emitted::new(sql, data_type)
         },
         zoned,
         site.context.log,

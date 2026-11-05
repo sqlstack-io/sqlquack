@@ -52,7 +52,7 @@ use crate::conversion::_helpers::expressions::variants::{to_variant, written_arr
 use crate::conversion::_helpers::support::declared::rely_on_declared;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::failure::text_failure;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
 use crate::conversion::_helpers::support::shapes::type_family;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -115,7 +115,7 @@ pub(crate) fn convert_cast(
     {
         let _rule = cast_rule(CAST_NUMERIC, log);
         let sql = number_literal_cast(&digits, target.data_type, log).map_err(refuse)?;
-        return Ok(Emitted::new(sql, target.data_type));
+        return Ok(Emitted::new(bounded(sql, target, log), target.data_type));
     }
     let trying = matches!(construct.name.as_str(), "try_cast");
     if target.data_type == SnowflakeType::Varchar
@@ -134,10 +134,13 @@ pub(crate) fn convert_cast(
     }
     let operand = convert_held(operand_node, site)?;
     if operand.is_variant_held() {
-        if type_name == OBJECT_TYPE_NAME && !built_object(operand_node) {
+        if type_name == OBJECT_TYPE_NAME
+            && !built_object(operand_node)
+            && operand.root != VariantRoot::Element
+        {
             return Err(refuse(
-                "a VARIANT built from a FLOAT cast to OBJECT, other than an OBJECT_CONSTRUCT, \
-                 which Snowflake may reject as it compiles"
+                "a VARIANT built from a FLOAT cast to OBJECT, other than an OBJECT_CONSTRUCT or an \
+                 element read from one, which Snowflake may reject as it compiles"
                     .to_owned(),
             ));
         }
@@ -658,6 +661,12 @@ pub(crate) fn number_literal_text(node: &Value) -> Option<String> {
     }
 }
 
+/// An integer literal as Snowflake writes it as text: no plus sign, leading zero or negative zero.
+fn is_written_integer(text: &str) -> bool {
+    let digits = text.strip_prefix('-').unwrap_or(text);
+    is_unsigned_integer(digits) && (digits == "0" || !digits.starts_with('0')) && text != "-0"
+}
+
 fn is_plain_decimal(text: &str) -> bool {
     let body = text.strip_prefix(['+', '-']).unwrap_or(text);
     let (whole, fraction) = body.split_once('.').unwrap_or((body, ""));
@@ -699,6 +708,7 @@ fn number_literal_cast(
             cast(&with_leading_zero(text), to, log)
         }
         SnowflakeType::Float if is_float_spelling(text) => cast(&with_leading_zero(text), to, log),
+        SnowflakeType::Varchar if is_written_integer(text) => Ok(string_literal(text, log)),
         _ => Err(format!(
             "casting the literal {text} to {to} has no proven conversion"
         )),
