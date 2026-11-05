@@ -1,5 +1,6 @@
 //! Snowflake's rules on COMMENT ON names and values, and its class instance method calls.
 
+use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::Call;
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
@@ -30,6 +31,21 @@ impl Parser {
         Ok(())
     }
 
+    /// A called object's dotted name; an empty middle part (`<database>..<name>`) is kept as an empty part.
+    pub(crate) fn parse_call_name(&mut self) -> Result<Vec<Identifier>> {
+        let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        while self.match_token(TokenType::Dot) {
+            if name.len() == 1 && self.match_token(TokenType::Dot) {
+                name.push(Identifier::new(""));
+            }
+            name.push(self.expect_identifier_or_keyword_with_quoted()?);
+        }
+        for part in &name {
+            self.reject_reserved_name_part(part)?;
+        }
+        Ok(name)
+    }
+
     /// Parse a Snowflake class instance method call, `<instance>!<method>( [ <arg> , ... ] )`, after CALL; None for any other CALL.
     pub(super) fn parse_snowflake_method_call(&mut self) -> Result<Option<Expression>> {
         if !self.is_snowflake() {
@@ -38,30 +54,23 @@ impl Parser {
         if self.check(TokenType::Exclamation) {
             return Err(self.parse_error("Expected an instance name before !"));
         }
-        let mut offset = 0;
-        while self
-            .tokens
-            .get(self.current + offset + 1)
-            .map(|token| token.token_type)
-            == Some(TokenType::Dot)
-        {
-            offset += 2;
+        let token_type = |offset: usize| {
+            self.tokens
+                .get(self.current + offset)
+                .map(|token| token.token_type)
+        };
+        let mut offset = 1;
+        while token_type(offset) == Some(TokenType::Dot) {
+            offset += if token_type(offset + 1) == Some(TokenType::Dot) {
+                3
+            } else {
+                2
+            };
         }
-        if self
-            .tokens
-            .get(self.current + offset + 1)
-            .map(|token| token.token_type)
-            != Some(TokenType::Exclamation)
-        {
+        if token_type(offset) != Some(TokenType::Exclamation) {
             return Ok(None);
         }
-        let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
-        while self.match_token(TokenType::Dot) {
-            name.push(self.expect_identifier_or_keyword_with_quoted()?);
-        }
-        for part in &name {
-            self.reject_reserved_name_part(part)?;
-        }
+        let name = self.parse_call_name()?;
         self.expect_token(TokenType::Exclamation)?;
         if !self.is_identifier_token() {
             return Err(self.parse_error("Expected a method name after !"));

@@ -217,13 +217,7 @@ impl Parser {
 
     /// `<name> ( [[<arg> =>] <value>, ...] ) [INTO :<variable>]` after CALL.
     pub(crate) fn parse_call_target(&mut self, with: Option<With>) -> Result<Expression> {
-        let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
-        while self.match_token(TokenType::Dot) {
-            name.push(self.expect_identifier_or_keyword_with_quoted()?);
-        }
-        for part in &name {
-            self.reject_reserved_name_part(part)?;
-        }
+        let name = self.parse_call_name()?;
         self.expect_token(TokenType::LParen)?;
         let arguments = if self.check(TokenType::RParen) {
             Vec::new()

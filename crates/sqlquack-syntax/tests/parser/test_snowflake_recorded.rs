@@ -381,6 +381,12 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "CALL names a class method with the schema left out (recorded semantic error)",
+            sql: "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!DROP_MONITOR ( 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "CALL takes no empty argument (recorded errno 1003)",
             sql: "CALL SET_SYS_CONTEXT ( 'm' , , 'm' ) ;",
             dialect: Dialect::Snowflake,
