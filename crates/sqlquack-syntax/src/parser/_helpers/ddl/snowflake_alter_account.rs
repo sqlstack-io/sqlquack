@@ -384,16 +384,14 @@ impl Parser {
             "SET" => (vec![], self.parse_integration_set()?),
             "UNSET" => (vec![], self.parse_group_unset()?),
             _ => {
-                while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                    let key = self.expect_alter_words(&[
-                        &["OAUTH_CLIENT_SECRET_2"],
-                        &["OAUTH_CLIENT_SECRET"],
-                        &["SAML2_SNOWFLAKE_PRIVATE_KEY"],
-                        &["METADATA_URL"],
-                    ])?;
-                    action.push(' ');
-                    action.push_str(&key);
-                }
+                let key = self.expect_alter_words(&[
+                    &["OAUTH_CLIENT_SECRET_2"],
+                    &["OAUTH_CLIENT_SECRET"],
+                    &["SAML2_SNOWFLAKE_PRIVATE_KEY"],
+                    &["METADATA_URL"],
+                ])?;
+                action.push(' ');
+                action.push_str(&key);
                 (vec![], vec![])
             }
         };

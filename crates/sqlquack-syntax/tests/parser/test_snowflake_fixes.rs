@@ -1226,3 +1226,30 @@ fn given_snowflake_security_admin_show_drop_and_describe_when_parsing_then_the_r
         );
     }
 }
+
+#[test]
+fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_then_the_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase { description: "a secret sets a property (recorded parse)", sql: "ALTER SECRET v1 SET SECRET_STRING = 'm' ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a quoted reserved word names a secret (recorded parse)", sql: "ALTER SECRET \"SELECT\" SET COMMENT = 'm' ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a string is no secret name (recorded errno 1003)", sql: "ALTER SECRET 'v1' SET COMMENT = 'm' ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "a secret's property needs SET (recorded errno 1003)", sql: "ALTER SECRET v1 COMMENT = 'm' ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "a resource monitor sets its quota (recorded parse)", sql: "ALTER RESOURCE MONITOR v1 SET CREDIT_QUOTA = 1 ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a resource monitor sets properties and triggers (recorded parse)", sql: "ALTER RESOURCE MONITOR IF EXISTS v1 SET CREDIT_QUOTA = 1 FREQUENCY = MONTHLY TRIGGERS ON 80 PERCENT DO SUSPEND ON 90 PERCENT DO NOTIFY ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "a trigger needs PERCENT", sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 80 DO SUSPEND ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "SET needs a property", sql: "ALTER RESOURCE MONITOR v1 SET ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "an integration refreshes one secret (recorded parse)", sql: "ALTER INTEGRATION v1 REFRESH OAUTH_CLIENT_SECRET_2 ;", expected_kind: Some("alter_object") },
+        SnowflakeVerdictTestCase { description: "REFRESH names what it refreshes (recorded errno 1003)", sql: "ALTER INTEGRATION \"v1 Q\" REFRESH ;", expected_kind: None },
+        SnowflakeVerdictTestCase { description: "REFRESH names one key (recorded errno 1003)", sql: "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;", expected_kind: None },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake ALTER of schemas, stages, file formats, routines, services and project objects.
 
 use crate::expressions::names::models::Literal;
+use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
@@ -46,6 +47,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["FILE", "FORMAT"],
     &["GIT", "REPOSITORY"],
     &["MODEL", "MONITOR"],
+    &["RESOURCE", "MONITOR"],
     &["AGENT"],
     &["DATASET"],
     &["PIPE"],
@@ -59,6 +61,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["NOTEBOOK"],
     &["PROCEDURE"],
     &["SCHEMA"],
+    &["SECRET"],
     &["SERVICE"],
     &["STAGE"],
 ];
@@ -79,6 +82,7 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
         ],
         "DBT PROJECT" => &[&["DEPLOY", "FROM"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
         "DCM PROJECT" => &[&["DROP", "DEPLOYMENT"], &["SET"], &["UNSET"]],
+        "SECRET" => &[&["SET"]],
         "EVENT ROUTING TABLE" => &[
             &["MODIFY", "RULE"],
             &["RENAME", "TO"],
@@ -210,6 +214,9 @@ impl Parser {
         };
         let kind = words.join(" ");
         let head = self.parse_alter_object_head()?;
+        if matches!(kind.as_str(), "RESOURCE MONITOR") {
+            return self.parse_alter_resource_monitor(head).map(Some);
+        }
         let arguments = match kind.as_str() {
             "PROCEDURE" => self.parse_routine_signature()?,
             _ => Vec::new(),
@@ -221,6 +228,34 @@ impl Parser {
         };
         alter.arguments = arguments;
         Ok(Some(Expression::AlterObject(alter)))
+    }
+
+    /// ALTER RESOURCE MONITOR after its name: `[ SET <property> ... ] [ TRIGGERS ON <n> PERCENT DO <action> ... ]`.
+    fn parse_alter_resource_monitor(&mut self, head: (TableRef, bool)) -> Result<Expression> {
+        let mut words: Vec<&str> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if self.match_text_seq(&["SET"]) {
+            words.push("SET");
+            while !self.is_statement_end_at(0) && !self.check_identifier("TRIGGERS") {
+                properties.extend(self.parse_create_property_item()?);
+            }
+            if properties.is_empty() {
+                return Err(self.parse_error("Expected a property to set"));
+            }
+        }
+        if self.check_identifier("TRIGGERS") {
+            words.push("TRIGGERS");
+            properties.extend(self.parse_create_property_item()?);
+        }
+        if !self.is_statement_end_at(0) {
+            return Err(self.parse_error("Expected SET, TRIGGERS or the end of the statement"));
+        }
+        Ok(alter_object(
+            "RESOURCE MONITOR",
+            head,
+            words.join(" "),
+            (vec![], properties),
+        ))
     }
 
     /// The words of an incomplete multi-word kind, such as `COMPUTE` without `POOL`, if the next words are one.
@@ -245,7 +280,8 @@ impl Parser {
                 "COMPUTE" | "DBT" | "DCM" | "GIT" | "FILE" | "EXTERNAL" | "EVENT" | "ARTIFACT"
                 | "MATERIALIZED" | "RESTRICTED" | "VOLUME" | "AGGREGATION" | "AUTHENTICATION"
                 | "BACKUP" | "DATA" | "INGRESS" | "JOIN" | "MAINTENANCE" | "MASKING" | "MULTI"
-                | "NETWORK" | "PACKAGES" | "PASSWORD" | "PRIVACY" | "PROJECTION" | "ROW",
+                | "NETWORK" | "PACKAGES" | "PASSWORD" | "PRIVACY" | "PROJECTION" | "RESOURCE"
+                | "ROW",
                 _,
             ) => false,
             _ => return None,
