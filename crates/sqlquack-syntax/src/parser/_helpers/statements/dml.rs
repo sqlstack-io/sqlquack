@@ -284,6 +284,13 @@ impl Parser {
             if let Some(create) = self.parse_snowflake_create_body_policy(or_replace, or_alter)? {
                 return Ok(create);
             }
+            if let Some(create) = self.parse_snowflake_create_data_metric_function(
+                if define { "DEFINE" } else { "CREATE" },
+                or_replace,
+                or_alter && !define,
+            )? {
+                return Ok(create);
+            }
         }
 
         let hana_modifier: Option<String> = None;

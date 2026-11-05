@@ -93,6 +93,7 @@ impl Expression {
             | Expression::AlterView(_)
             | Expression::AlterObject(_)
             | Expression::CreateObject(_)
+            | Expression::CreateDataMetricFunction(_)
             | Expression::AlterIndex(_)
             | Expression::Truncate(_)
             | Expression::TruncateTable(_)

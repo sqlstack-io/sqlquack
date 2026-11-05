@@ -1618,7 +1618,7 @@ impl Parser {
                 && crate::parser::constants::SNOWFLAKE_LITERAL_TYPES.contains(&type_name.as_str());
 
         if !is_type_literal_type {
-            return Ok(None);
+            return self.try_parse_snowflake_named_type_literal();
         }
 
         if self.current + 1 >= self.tokens.len() {

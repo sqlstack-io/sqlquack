@@ -1218,3 +1218,26 @@ pub struct ObjectProperty {
     #[serde(default)]
     pub value: Option<Expression>,
 }
+
+/// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteObject {
+    /// The object kind as written in upper case, such as `TASK GRAPH`.
+    pub kind: String,
+    pub name: TableRef,
+    /// The action words in upper case, such as `RETRY LAST` or `PURGE`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub action: Option<String>,
+    /// `RETRY GRAPH RUN GROUP '<id>'`: the graph run group.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub group: Option<Expression>,
+    /// `PURGE AS "<alias>"`: the deployment alias.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub alias: Option<Identifier>,
+    /// `USING CONFIG = <configuration>`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub config: Option<Expression>,
+    /// The clauses and options of a job, notebook, dbt or code bundle, such as `IN COMPUTE POOL` or `ARGS`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<ObjectProperty>,
+}

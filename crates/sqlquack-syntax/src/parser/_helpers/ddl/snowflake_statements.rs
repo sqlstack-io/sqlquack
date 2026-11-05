@@ -74,6 +74,20 @@ impl Parser {
         &mut self,
         leading_comments: &[String],
     ) -> Result<Option<Expression>> {
+        if self.applies_snowflake_context_rules() && self.is_statement_end_at(1) {
+            return Ok(Some(Expression::Describe(Box::new(Describe {
+                target: Expression::Table(Box::new(self.parse_object_name()?)),
+                extended: false,
+                formatted: false,
+                kind: None,
+                properties: Vec::new(),
+                style: None,
+                partition: None,
+                leading_comments: leading_comments.to_vec(),
+                as_json: false,
+                params: Vec::new(),
+            }))));
+        }
         let as_resource = self.match_text_seq(&["AS", "RESOURCE"]);
         let Some(kind) = SNOWFLAKE_DESCRIBE_KINDS
             .iter()
@@ -101,7 +115,9 @@ impl Parser {
                 self.parse_primary()?
             }
             "TRANSACTION" => return Err(self.parse_error("Expected a transaction ID")),
-            "RESULT" => return Err(self.parse_error("Expected a query ID or LAST_QUERY_ID()")),
+            "RESULT" if self.check_next(TokenType::LParen) => {
+                return Err(self.parse_error("Expected a query ID or LAST_QUERY_ID()"))
+            }
             _ => Expression::Table(Box::new(self.parse_object_name()?)),
         };
         let properties = match kind.as_str() {

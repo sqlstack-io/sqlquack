@@ -27,10 +27,10 @@ fn given_a_snowflake_describe_when_parsing_then_it_needs_a_kind_and_a_name() {
             expected_accepted: false,
         },
         AcceptanceTestCase {
-            description: "a bare name is no kind (recorded errno 1003)",
+            description: "a bare name is described as an object (recorded errno 2003)",
             sql: "DESC v1 ;",
             dialect: Dialect::Snowflake,
-            expected_accepted: false,
+            expected_accepted: true,
         },
         AcceptanceTestCase {
             description: "a word after the name is refused, not dropped",

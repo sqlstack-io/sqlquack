@@ -24,21 +24,25 @@ impl Parser {
             }
             return self.parse_snowflake_show_grants(future).map(Some);
         }
+        let class = self.applies_snowflake_context_rules() && self.check_next(TokenType::Dot);
         let shared = SHARED_SHOW_KINDS
             .iter()
             .any(|kind| self.check_text_seq(kind))
             || self.check_next(TokenType::Dot);
-        if shared {
+        if shared && !class {
             return Ok(None);
         }
-        let Some(kind) = SNOWFLAKE_SHOW_KINDS
-            .iter()
-            .find(|kind| self.match_text_seq(kind))
-            .map(|kind| kind.join(" "))
-        else {
-            return Err(self.parse_error("Expected an object kind after SHOW"));
+        let target = match class {
+            true => Some(self.parse_show_name()?),
+            false => None,
+        };
+        let kind = match class {
+            true if self.match_identifier("INSTANCES") => "CLASS INSTANCES".to_owned(),
+            true => "CLASS".to_owned(),
+            false => self.parse_show_kind()?,
         };
         let mut show = Show::new(kind.clone());
+        show.target = target;
         show.terse = terse;
         show.history = self.match_identifier("HISTORY");
         if matches!(kind.as_str(), "DELEGATED AUTHORIZATIONS BY USER") {
@@ -135,6 +139,17 @@ impl Parser {
             show.for_target = Some(self.parse_show_name()?);
         }
         Ok(Some(Expression::Show(Box::new(show))))
+    }
+
+    /// A documented object kind, such as `TABLES`.
+    fn parse_show_kind(&mut self) -> Result<String> {
+        match SNOWFLAKE_SHOW_KINDS
+            .iter()
+            .find(|kind| self.match_text_seq(kind))
+        {
+            Some(kind) => Ok(kind.join(" ")),
+            None => Err(self.parse_error("Expected an object kind after SHOW")),
+        }
     }
 
     /// A quoted string operand after `clause`.

@@ -1,15 +1,113 @@
-//! Snowflake data metric function actions in ALTER TABLE and ALTER VIEW.
+//! Snowflake data metric functions: their definition and their actions in ALTER TABLE and ALTER VIEW.
 
+use crate::expressions::columns::models::CreateDataMetricFunction;
+use crate::expressions::columns::models::DataMetricColumn;
 use crate::expressions::columns::models::DataMetricExpectation;
 use crate::expressions::columns::models::DataMetricFunctionAction;
 use crate::expressions::columns::models::DataMetricFunctionClause;
 use crate::expressions::columns::models::DataMetricFunctionItem;
+use crate::expressions::columns::models::DataMetricTableArgument;
 use crate::expressions::tree::models::Expression;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// `[ SECURE ] DATA METRIC FUNCTION ...` after Snowflake CREATE or DEFINE, or none.
+    pub(crate) fn parse_snowflake_create_data_metric_function(
+        &mut self,
+        verb: &str,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules() {
+            return Ok(None);
+        }
+        let start = self.current;
+        let secure = self.match_identifier("SECURE");
+        if !self.match_text_seq(&["DATA", "METRIC", "FUNCTION"]) {
+            self.current = start;
+            return Ok(None);
+        }
+        let if_not_exists =
+            self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        self.expect_token(TokenType::LParen)?;
+        let mut arguments = vec![self.parse_data_metric_table_argument()?];
+        while self.match_token(TokenType::Comma) {
+            arguments.push(self.parse_data_metric_table_argument()?);
+        }
+        self.expect_token(TokenType::RParen)?;
+        if !self.match_token(TokenType::Returns) {
+            return Err(
+                self.parse_error("Expected RETURNS after the data metric function's arguments")
+            );
+        }
+        let return_type = self.parse_data_type()?;
+        let nullable = if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
+            Some(false)
+        } else if self.match_token(TokenType::Null) {
+            Some(true)
+        } else {
+            None
+        };
+        let language = match self.match_token(TokenType::Language) {
+            true => Some(self.parse_simple_name()?),
+            false => None,
+        };
+        let comment = match self.match_token(TokenType::Comment) {
+            true => {
+                self.expect_token(TokenType::Eq)?;
+                Some(self.parse_object_value()?)
+            }
+            false => None,
+        };
+        self.expect_token(TokenType::As)?;
+        if !self.check(TokenType::String) && !self.check(TokenType::DollarString) {
+            return Err(self.parse_error("Expected the data metric function's body as a string"));
+        }
+        let body = self.parse_primary()?;
+        Ok(Some(Expression::CreateDataMetricFunction(Box::new(
+            CreateDataMetricFunction {
+                verb: verb.to_owned(),
+                or_replace,
+                or_alter,
+                secure,
+                if_not_exists,
+                name,
+                arguments,
+                return_type,
+                nullable,
+                language,
+                comment,
+                body,
+            },
+        ))))
+    }
+
+    /// `<name> TABLE ( <column> <type>, ... )`.
+    fn parse_data_metric_table_argument(&mut self) -> Result<DataMetricTableArgument> {
+        let name = self.parse_simple_name()?;
+        self.expect_token(TokenType::Table)?;
+        self.expect_token(TokenType::LParen)?;
+        let mut columns = vec![self.parse_data_metric_column()?];
+        while self.match_token(TokenType::Comma) {
+            columns.push(self.parse_data_metric_column()?);
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(DataMetricTableArgument { name, columns })
+    }
+
+    /// `<column> <type>`.
+    fn parse_data_metric_column(&mut self) -> Result<DataMetricColumn> {
+        let name = self.parse_simple_name()?;
+        if self.check(TokenType::String) {
+            return Err(self.parse_error("Expected a data type, not a string"));
+        }
+        let data_type = self.parse_data_type()?;
+        Ok(DataMetricColumn { name, data_type })
+    }
+
     /// `{ ADD | DROP | MODIFY } DATA METRIC FUNCTION <item>, ...` in a Snowflake ALTER TABLE or VIEW, or none.
     pub(crate) fn parse_data_metric_function_action(
         &mut self,

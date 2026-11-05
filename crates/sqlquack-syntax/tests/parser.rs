@@ -18,6 +18,8 @@ mod test_snowflake_create_clone;
 mod test_snowflake_create_properties;
 #[path = "parser/test_snowflake_describe_show.rs"]
 mod test_snowflake_describe_show;
+#[path = "parser/test_snowflake_execute.rs"]
+mod test_snowflake_execute;
 #[path = "parser/test_snowflake_fixes.rs"]
 mod test_snowflake_fixes;
 #[path = "parser/test_snowflake_grant.rs"]
