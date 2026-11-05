@@ -1,6 +1,6 @@
 //! Expected differences.
 
-use crate::expected::_helpers::nodes::differ_only_by_kept_node;
+use crate::expected::_helpers::nodes::{differ_only_by_kept_field, differ_only_by_kept_node};
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
 use crate::expected::constants::{COMMAND_TREE, ERROR_PREFIX, OK_PREFIX};
 use std::collections::{BTreeMap, BTreeSet};
@@ -26,6 +26,9 @@ pub struct ExpectedFile {
     /// One entry per reviewed wrapper node SQLQuack keeps and polyglot drops.
     #[serde(default, rename = "kept_node")]
     pub kept_nodes: Vec<KeptNode>,
+    /// One entry per reviewed field SQLQuack keeps as written where polyglot drops or infers it.
+    #[serde(default, rename = "kept_field")]
+    pub kept_fields: Vec<KeptField>,
     /// One entry per reviewed statement polyglot keeps as a command and SQLQuack structures.
     #[serde(default, rename = "structured")]
     pub structured: Vec<StructuredStatement>,
@@ -68,6 +71,20 @@ pub struct KeptNode {
     /// The wrapper node SQLQuack keeps, such as `pos`; its only field is `this`.
     pub node: String,
     /// Why SQLQuack keeps it; without its wrappers the trees may differ in nothing.
+    pub note: String,
+}
+
+/// A statement both parsers parse, where SQLQuack keeps a field as written, such as a list polyglot joins into one name.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptField {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `SECONDARYROLES`.
+    pub marker: String,
+    /// The field, such as `roles`; without it in either tree the trees may differ in nothing.
+    pub field: String,
+    /// Why SQLQuack's field is right; a test in sqlquack-syntax pins its tree.
     pub note: String,
 }
 
@@ -126,6 +143,8 @@ pub struct ExpectedDifferences {
     pub kept_quotings: Vec<KeptQuoting>,
     /// The reviewed wrapper nodes SQLQuack keeps and polyglot drops.
     pub kept_nodes: Vec<KeptNode>,
+    /// The reviewed fields SQLQuack keeps as written where polyglot drops or infers them.
+    pub kept_fields: Vec<KeptField>,
     /// The reviewed statements polyglot keeps as a command and SQLQuack structures.
     pub structured: Vec<StructuredStatement>,
 }
@@ -185,6 +204,15 @@ impl ExpectedDifferences {
         self.kept_nodes.iter().find(|entry| {
             compact.contains(&entry.marker.to_ascii_uppercase())
                 && differ_only_by_kept_node(polyglot, sqlquack, &entry.node)
+        })
+    }
+
+    /// The entry explaining where SQLQuack keeps a field as written that polyglot drops or infers.
+    pub fn kept_field_for(&self, sql: &str, polyglot: &str, sqlquack: &str) -> Option<&KeptField> {
+        let compact = compact(sql);
+        self.kept_fields.iter().find(|entry| {
+            compact.contains(&entry.marker.to_ascii_uppercase())
+                && differ_only_by_kept_field(polyglot, sqlquack, &entry.field)
         })
     }
 

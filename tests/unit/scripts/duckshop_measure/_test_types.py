@@ -65,3 +65,19 @@ class SnowflakeTestCase:
     expected_compared: tuple[str, ...]
     expected_scored: int
     expected_outcomes: dict[str, list[str]]
+
+
+@dataclass(frozen=True)
+class FunctionSchemaTestCase:
+    description: str
+    header: str
+    expected_functions: dict[str, dict[str, object]]
+
+
+@dataclass(frozen=True)
+class FunctionMeasureTestCase:
+    description: str
+    models: tuple[tuple[str, str], ...]
+    expected_converted: list[str]
+    expected_compared: dict[str, object]
+    expected_outcomes: dict[str, list[str]]

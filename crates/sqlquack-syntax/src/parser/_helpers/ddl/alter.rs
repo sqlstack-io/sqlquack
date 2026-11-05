@@ -1250,7 +1250,17 @@ impl Parser {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
 
         let has_only = self.match_token(TokenType::Only);
+        let error_table = self.is_snowflake()
+            && self.check_identifier("ERROR_TABLE")
+            && self.check_next(TokenType::LParen);
+        if error_table {
+            self.skip();
+            self.skip();
+        }
         let mut table = self.parse_object_name_ref()?;
+        if error_table {
+            self.expect_token(TokenType::RParen)?;
+        }
         if has_only {
             table.only = true;
         }
@@ -1321,6 +1331,7 @@ impl Parser {
             identity,
             restrict,
             partition: partition.map(Box::new),
+            error_table,
         })))
     }
 
@@ -1413,8 +1424,10 @@ impl Parser {
                 self.skip();
                 let snowflake = self.is_snowflake();
                 let mut roles: Vec<String> = Vec::new();
+                let mut listed: Vec<Identifier> = Vec::new();
                 loop {
                     if snowflake && self.check(TokenType::QuotedIdentifier) {
+                        listed.push(Identifier::quoted(self.peek_text()));
                         roles.push(self.parse_quoted_role()?);
                         if !self.match_token(TokenType::Comma) {
                             break;
@@ -1424,6 +1437,7 @@ impl Parser {
                         || self.check(TokenType::Identifier)
                     {
                         let role = self.advance_text()?;
+                        listed.push(Identifier::new(role.clone()));
                         roles.push(role);
                         if !self.match_token(TokenType::Comma) {
                             break;
@@ -1440,9 +1454,14 @@ impl Parser {
                 } else {
                     roles.join(", ")
                 };
+                let keyword = matches!(roles.as_slice(), [role] if role.eq_ignore_ascii_case("ALL") || role.eq_ignore_ascii_case("NONE"));
                 return Ok(Expression::Use(Box::new(Use {
                     kind: Some(UseKind::SecondaryRoles),
                     this: Identifier::new(name),
+                    roles: match snowflake && !keyword {
+                        true => listed,
+                        false => Vec::new(),
+                    },
                 })));
             }
         }
@@ -1472,7 +1491,11 @@ impl Parser {
             ident.name = format!("{}.{}", ident.name, second_part.name);
         }
 
-        Ok(Expression::Use(Box::new(Use { kind, this: ident })))
+        Ok(Expression::Use(Box::new(Use {
+            kind,
+            this: ident,
+            roles: Vec::new(),
+        })))
     }
 
     /// Parses BigQuery EXPORT DATA [WITH CONNECTION c] OPTIONS (...) AS SELECT ...

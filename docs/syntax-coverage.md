@@ -379,7 +379,8 @@ results on stdout and progress on stderr:
 - `boundaries --form <id>`: the form's boundary and nesting-depth obligations, with their bounds,
   notes and cases.
 - `snapshot --catalogue-commit <commit>`: every form's state and every satisfied obligation as
-  JSON. It is refused unless the catalogue, `sources.toml` and `aliases.toml` in the working tree
+  JSON, with the receipted cases Snowflake parsed split into those the parser accepts (opaque or
+  not) and those it rejects. It is refused unless the catalogue, `sources.toml` and `aliases.toml` in the working tree
   equal those of the commit.
 - `diff BASE [HEAD]`: one snapshot against a later one, or against the current tree when HEAD is
   omitted.
@@ -388,8 +389,11 @@ results on stdout and progress on stderr:
 
 `coverage/syntax/baseline.json` is a snapshot on the frozen catalogue. `make syntax-coverage`,
 part of `make check-ci`, runs `diff` against it and fails in two cases. The first is a coverage
-regression: a form the baseline records as verified or excluded that no longer is, or a satisfied
-obligation that no longer is. The second is a catalogue change: a changed sources, aliases or
+regression: a form the baseline records as verified or excluded that no longer is, a satisfied
+obligation that no longer is, or a receipted case Snowflake parsed that the base parser accepted
+and the current one rejects. That last line catches a case that moves from an opaque acceptance,
+which satisfies no obligation, to a rejection; a pull request that has one explains each case. A
+snapshot taken before these case lists existed has none, so it reports no such case. The second is a catalogue change: a changed sources, aliases or
 catalogue file, or a form added or removed. Catalogue changes are reported separately from
 coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline
 with `snapshot` and commit it with the change. A review without fingerprints binds the parser

@@ -208,7 +208,7 @@ duckshop-measure: duckshop-compiled
 	library="$$(dirname "$$(ls "$$target"/duckdb-download/*/*/libduckdb.so | head -1)")"; \
 	compiled="$(abspath $(word 1,$(DUCKSHOP_COMPILED)))"; out="$(DUCKSHOP_MEASURE_DIR)"; \
 	uv run python -m scripts.measure_duckshop schema --environment referee/environments/duckshop.json \
-	  --recorded "$(DUCKSHOP_RESULTS)" --out "$$out/schema.json"; \
+	  --recorded "$(DUCKSHOP_RESULTS)" --functions "$$compiled/functions" --out "$$out/schema.json"; \
 	SQLQUACK_CONVERTED_DIR="$$out/converted" SQLQUACK_GUARDS_DIR="$$out/guards" \
 	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --policy sqlquack.toml --json \
 	  --names --schema "$$out/schema.json" "$$compiled/models" > "$$out/census.json"; \
@@ -216,7 +216,8 @@ duckshop-measure: duckshop-compiled
 	  --sqlquack "$$target/release/sqlquack" --library "$$library" --out "$$out/tests.json"; \
 	uv run python -m scripts.measure_duckshop snowflake --results "$(DUCKSHOP_RESULTS)" \
 	  --compiled "$$compiled" --census "$$out/census.json" --converted "$$out/converted" \
-	  --guards "$$out/guards" --sqlquack "$$target/release/sqlquack" --library "$$library" \
+	  --guards "$$out/guards" --functions "$$compiled/functions" --schema "$$out/schema.json" \
+	  --sqlquack "$$target/release/sqlquack" --library "$$library" \
 	  --work "$$out/work" --out "$$out/snowflake.json"
 
 # Fuzzes each of FUZZ_TARGETS from the exact check's statements for FUZZ_SECONDS: tolerant parsing,

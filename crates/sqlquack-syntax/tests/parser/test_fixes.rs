@@ -683,6 +683,48 @@ fn given_a_snowflake_drop_of_another_object_kind_when_parsing_then_the_tree_name
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "a join keeps LAST apart from FIRST",
+            sql: "SELECT * FROM t1 JOIN t2 ON TRUE LAST ( a1 )",
+            pointer: "/0/select/joins/0/first_last",
+            expected_value: json!("LAST"),
+        },
+        ProjectionTestCase {
+            description: "a join without FIRST or LAST leaves both out of the tree",
+            sql: "SELECT * FROM t1 JOIN t2 ON TRUE",
+            pointer: "/0/select/joins/0/first_last",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
+            description: "a failover account keeps its organization as its own part",
+            sql: "ALTER FAILOVER GROUP g1 ADD \"o.1\" . a1 TO ALLOWED_ACCOUNTS",
+            pointer: "/0/alter_object/operands/0/table/schema/name",
+            expected_value: json!("o.1"),
+        },
+        ProjectionTestCase {
+            description: "a failover account keeps its quoting apart from its organization's",
+            sql: "ALTER FAILOVER GROUP g1 ADD o1 . \"a.1\" TO ALLOWED_ACCOUNTS",
+            pointer: "/0/alter_object/operands/0/table/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a connection's failover account keeps its organization",
+            sql: "ALTER CONNECTION c1 DISABLE FAILOVER TO ACCOUNTS o1 . a1",
+            pointer: "/0/alter_object/operands/0/table/schema/name",
+            expected_value: json!("o1"),
+        },
+        ProjectionTestCase {
+            description: "TRUNCATE ERROR_TABLE marks the error table",
+            sql: "TRUNCATE ERROR_TABLE ( v1 )",
+            pointer: "/0/truncate/error_table",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a plain TRUNCATE leaves error_table out of the tree",
+            sql: "TRUNCATE TABLE v1",
+            pointer: "/0/truncate/error_table",
+            expected_value: serde_json::Value::Null,
+        },
+        ProjectionTestCase {
             description: "DROP SEQUENCE keeps RESTRICT apart from the default",
             sql: "DROP SEQUENCE v1 RESTRICT",
             pointer: "/0/drop_sequence/restrict",
@@ -1044,6 +1086,97 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description:
+                "a PIVOT aggregate is a call, not a parenthesised column (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( ( v1 ) FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT aggregate reads a column, not a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( 'v1' ) FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT aggregate alias is no string",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) 'v1' FOR c1 IN ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT IN list is not empty",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ANY ORDER needs BY (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ANY ORDER ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ANY ORDER BY parses",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( ANY ORDER BY c1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a PIVOT IN value takes an alias without AS (recorded semantic error)",
+            sql: "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( 1 v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT IN column takes a quoted alias without AS",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR v1 IN ( v1 \"SELECT\" ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT IN list holds columns, not strings (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR v1 IN ( 'v1' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an UNPIVOT name column is no reserved keyword",
+            sql: "SELECT 1 FROM t1 UNPIVOT ( c1 FOR SELECT IN ( v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a join takes FIRST ( alias ) (recorded semantic error)",
+            sql: "SELECT * FROM t1 JOIN t2 FIRST ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a directed join takes LAST ( alias ) after USING",
+            sql: "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) LAST ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FIRST ( alias ) refuses a reserved keyword (recorded errno 1003)",
+            sql: "SELECT * FROM t1 JOIN t2 FIRST ( SELECT ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TRUNCATE takes ERROR_TABLE ( table ) (recorded semantic error)",
+            sql: "TRUNCATE TABLE IF EXISTS ERROR_TABLE ( \"v1 Q\" ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "TRUNCATE ( name ) is no statement (recorded errno 1003)",
+            sql: "TRUNCATE ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "TABLE( ) needs an argument",
             sql: "SELECT * FROM TABLE ( ) ;",
             dialect: Dialect::Snowflake,
@@ -1362,6 +1495,306 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
             sql: "ALTER BACKUP SET v1 SUSPEND BACKUP EXPIRATION POLICY",
             pointer: "/0/alter_object/action",
             expected_value: json!("SUSPEND BACKUP EXPIRATION POLICY"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_describe_when_parsing_then_it_needs_a_kind_and_a_name() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a two-word kind is read whole (recorded semantic error)",
+            sql: "DESC COMPUTE POOL v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "half a kind is no kind (recorded errno 1003)",
+            sql: "DESC POOL v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a kind needs its name (recorded errno 1003)",
+            sql: "DESC FILE FORMAT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bare name is no kind (recorded errno 1003)",
+            sql: "DESC v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word after the name is refused, not dropped",
+            sql: "DESC TABLE v1 v2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an argument type is no string (recorded errno 1003)",
+            sql: "DESC FUNCTION v1 ( 'INT' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "AS RESOURCE comes before AGENT only",
+            sql: "DESC AS RESOURCE STAGE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a transaction is described by its number (recorded errno 1003 without)",
+            sql: "DESC TRANSACTION v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_describe_when_parsing_then_the_tree_keeps_its_kind_name_and_options() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a one-word kind keeps the name after it",
+            sql: "DESC WAREHOUSE v1",
+            pointer: "/0/describe/target/table/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "DATABASE is the kind, not the name",
+            sql: "DESCRIBE DATABASE v1",
+            pointer: "/0/describe/kind",
+            expected_value: json!("DATABASE"),
+        },
+        ProjectionTestCase {
+            description: "a three-word kind is named whole",
+            sql: "DESC CORTEX SEARCH SERVICE v1",
+            pointer: "/0/describe/kind",
+            expected_value: json!("CORTEX SEARCH SERVICE"),
+        },
+        ProjectionTestCase {
+            description: "AS RESOURCE is kept",
+            sql: "DESC AS RESOURCE AGENT v1",
+            pointer: "/0/describe/style",
+            expected_value: json!("AS RESOURCE"),
+        },
+        ProjectionTestCase {
+            description: "the application keeps its quoting",
+            sql: "DESC CONFIGURATION v1 IN APPLICATION \"a b\".v2",
+            pointer: "/0/describe/properties/0",
+            expected_value: json!(["in_application", "\"a b\".v2"]),
+        },
+        ProjectionTestCase {
+            description: "a listing revision is kept",
+            sql: "DESC LISTING v1 REVISION = DRAFT",
+            pointer: "/0/describe/properties/0",
+            expected_value: json!(["revision", "DRAFT"]),
+        },
+        ProjectionTestCase {
+            description: "a transaction number is the target",
+            sql: "DESC TRANSACTION 12",
+            pointer: "/0/describe/target/literal/value",
+            expected_value: json!("12"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_show_when_parsing_then_its_kind_and_clauses_follow_the_grammar() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a shown kind in its container (recorded semantic error)",
+            sql: "SHOW OFFERS IN LISTING v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a kind that needs a container refuses a bare name (recorded errno 1003)",
+            sql: "SHOW OFFERS IN v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "half a kind is no kind (recorded errno 1003)",
+            sql: "SHOW POOLS ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "STARTS WITH takes a string (recorded errno 1003)",
+            sql: "SHOW DATABASES STARTS WITH m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "WITH PRIVILEGES needs a privilege (recorded errno 1003)",
+            sql: "SHOW DATABASES WITH PRIVILEGES ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a container another kind owns is refused (recorded errno 1003)",
+            sql: "SHOW CHANNELS IN LISTING v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a reserved word is no part of a dotted name (recorded errno 1003)",
+            sql: "SHOW REPLICATION DATABASES WITH PRIMARY v1 . SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TABLE stands alone as a container (recorded semantic error)",
+            sql: "SHOW COLUMNS IN TABLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_operands() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a multi-word kind is named whole",
+            sql: "SHOW COMPUTE POOL INSTANCE FAMILIES",
+            pointer: "/0/show/this",
+            expected_value: json!("COMPUTE POOL INSTANCE FAMILIES"),
+        },
+        ProjectionTestCase {
+            description: "the container kind is kept",
+            sql: "SHOW ENTITIES IN DCM PROJECT v1",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("DCM PROJECT"),
+        },
+        ProjectionTestCase {
+            description: "the package after an artifact repository is kept",
+            sql: "SHOW VERSIONS IN ARTIFACT REPOSITORY v1 FOR PACKAGE p1",
+            pointer: "/0/show/for_target/table/name/name",
+            expected_value: json!("p1"),
+        },
+        ProjectionTestCase {
+            description: "the run of an experiment is kept",
+            sql: "SHOW RUN METRICS IN EXPERIMENT v1 RUN r1",
+            pointer: "/0/show/target/table/name/name",
+            expected_value: json!("r1"),
+        },
+        ProjectionTestCase {
+            description: "privileges are a list",
+            sql: "SHOW DATABASES WITH PRIVILEGES USAGE, MODIFY",
+            pointer: "/0/show/privileges",
+            expected_value: json!(["USAGE", "MODIFY"]),
+        },
+        ProjectionTestCase {
+            description: "the primary keeps its account and database apart",
+            sql: "SHOW REPLICATION DATABASES WITH PRIMARY a1.\"d 1\"",
+            pointer: "/0/show/target/table/schema/name",
+            expected_value: json!("a1"),
+        },
+        ProjectionTestCase {
+            description: "the primary database keeps its quoting",
+            sql: "SHOW REPLICATION DATABASES WITH PRIMARY a1.\"d 1\"",
+            pointer: "/0/show/target/table/name/quoted",
+            expected_value: json!(true),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "SELECT ALL is kept, where it was dropped",
+            sql: "SELECT ALL * FROM t1",
+            pointer: "/0/select/all",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DISTINCT is kept on an aggregate of two arguments",
+            sql: "SELECT APPROX_COUNT_DISTINCT ( DISTINCT 1 , 1 )",
+            pointer: "/0/select/expressions/0/function/distinct",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "TIMESTAMP WITHOUT TIME ZONE is TIMESTAMP_NTZ, not bare TIMESTAMP",
+            sql: "SELECT CAST(NULL AS TIMESTAMP(3) WITHOUT TIME ZONE)",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_value: json!("TIMESTAMPNTZ(3)"),
+        },
+        ProjectionTestCase {
+            description: "a transaction name is the name, quoting kept, NAME apart",
+            sql: "START TRANSACTION NAME \"v1 Q\"",
+            pointer: "/0/transaction/this/identifier/name",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
+            description: "a quoted transaction name stays quoted",
+            sql: "START TRANSACTION NAME \"v1 Q\"",
+            pointer: "/0/transaction/this/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "secondary roles are listed one by one, quoting kept",
+            sql: "USE SECONDARY ROLES v1 , \"v2\"",
+            pointer: "/0/use/roles/1/quoted",
+            expected_value: json!(true),
         },
     ];
 

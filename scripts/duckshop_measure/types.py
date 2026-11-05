@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from scripts.duckshop_measure.models import Conversion
+    from scripts.duckshop_measure.models import Conversion, FunctionMacro, ProjectFunction
 
 
 class Outcome(StrEnum):
@@ -38,6 +38,7 @@ class ModelOutcome(StrEnum):
     INCREMENTAL = "incremental"
     UNRECORDABLE = "unrecordable"
     SNOWFLAKE_ERROR = "snowflake_error"
+    PYTHON_UDF_NOT_MEASURED = "python_udf_not_measured"
 
 
 class RecordedOutcome(StrEnum):
@@ -58,6 +59,12 @@ class Executor(Protocol):
     """Runs converted SQL on DuckDB and returns its rows, or raises DuckDB's error."""
 
     def __call__(self, sql: str) -> list[tuple[object, ...]]: ...
+
+
+class FunctionConverter(Protocol):
+    """Converts one project SQL function into a DuckDB macro, or names its refusals."""
+
+    def __call__(self, function: ProjectFunction) -> FunctionMacro | tuple[str, ...]: ...
 
 
 class Comparer(Protocol):

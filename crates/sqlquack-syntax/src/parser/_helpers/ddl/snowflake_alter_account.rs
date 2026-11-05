@@ -1,5 +1,6 @@
 //! Parser ddl: Snowflake ALTER of account-level objects: failover and replication groups, connections, integrations and organization objects.
 
+use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
@@ -208,8 +209,15 @@ impl Parser {
     fn parse_account_names(&mut self) -> Result<Vec<Expression>> {
         let mut accounts: Vec<Expression> = Vec::new();
         loop {
-            let name = self.parse_simple_qualified_name()?;
-            accounts.push(Expression::Table(Box::new(TableRef::new(name.name))));
+            let mut parts: Vec<Identifier> = vec![self.parse_simple_name()?];
+            while self.match_token(TokenType::Dot) {
+                parts.push(self.parse_simple_name()?);
+            }
+            let mut account = TableRef::new("");
+            account.name = parts.pop().unwrap_or_else(Identifier::empty);
+            account.schema = parts.pop();
+            account.catalog = parts.pop();
+            accounts.push(Expression::Table(Box::new(account)));
             if !self.match_token(TokenType::Comma) {
                 return Ok(accounts);
             }

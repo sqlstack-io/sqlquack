@@ -784,10 +784,7 @@ impl Parser {
             }
         } else if self.match_keyword("WITHOUT") {
             self.match_time_zone_words()?;
-            Ok(DataType::Timestamp {
-                precision,
-                timezone: false,
-            })
+            Ok(self.timestamp_without_time_zone(precision))
         } else {
             Ok(DataType::Timestamp {
                 precision,

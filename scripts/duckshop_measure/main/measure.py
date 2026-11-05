@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from scripts.duckshop_measure._helpers.functions import project_macros
 from scripts.duckshop_measure._helpers.measures import (
     snowflake_results,
     unit_test_outcomes,
@@ -21,7 +22,7 @@ from scripts.duckshop_measure._helpers.running import binary_converter, duckdb_r
 from scripts.duckshop_measure._helpers.snowflake import policy_value_divergences, run_comparisons
 from scripts.duckshop_measure.constants import SCHEMA_COMMAND, SNOWFLAKE_COMMAND, TESTS_COMMAND
 from scripts.duckshop_measure.models import ModelResult, SnowflakeInputs, UnitTestOutcome
-from scripts.duckshop_measure.types import Comparer, Converter
+from scripts.duckshop_measure.types import Comparer, Converter, FunctionConverter
 
 
 def _measure_parser() -> argparse.ArgumentParser:
@@ -37,6 +38,9 @@ def _measure_parser() -> argparse.ArgumentParser:
     schema.add_argument("--out", type=Path, required=True)
     schema.add_argument(
         "--recorded", type=Path, help="recorded results whose relations the schema types instead"
+    )
+    schema.add_argument(
+        "--functions", type=Path, help="compiled project functions the schema declares"
     )
     tests: argparse.ArgumentParser = commands.add_parser(
         TESTS_COMMAND, help="compiled unit tests converted and run on DuckDB"
@@ -65,6 +69,12 @@ def _measure_parser() -> argparse.ArgumentParser:
         help="with a strict census: SQLQUACK_CONVERTED_DIR of a census under the default policy",
     )
     snowflake.add_argument("--guards", type=Path, help="SQLQUACK_GUARDS_DIR of the census")
+    snowflake.add_argument(
+        "--functions", type=Path, help="compiled project functions, created in DuckDB before models"
+    )
+    snowflake.add_argument(
+        "--schema", type=Path, help="the census schema declaring the functions (with --functions)"
+    )
     snowflake.add_argument("--sqlquack", type=Path, required=True)
     snowflake.add_argument("--library", type=Path, required=True, help="libduckdb.so's directory")
     snowflake.add_argument("--policy", type=Path, default=Path("sqlquack.toml"))
@@ -73,7 +83,12 @@ def _measure_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _measure_snowflake(*, arguments: argparse.Namespace, comparer: Comparer | None) -> None:
+def _measure_snowflake(
+    *,
+    arguments: argparse.Namespace,
+    comparer: Comparer | None,
+    function_converter: FunctionConverter | None,
+) -> None:
     """Write the Snowflake comparison report and print its summary."""
 
     def compare(
@@ -88,6 +103,9 @@ def _measure_snowflake(*, arguments: argparse.Namespace, comparer: Comparer | No
         )
 
     arguments.work.mkdir(parents=True, exist_ok=True)
+    macros, python, refused = project_macros(
+        arguments=arguments, function_converter=function_converter
+    )
     inputs: SnowflakeInputs = SnowflakeInputs(
         results=arguments.results,
         compiled=arguments.compiled,
@@ -97,6 +115,12 @@ def _measure_snowflake(*, arguments: argparse.Namespace, comparer: Comparer | No
         guards=arguments.guards,
         value_divergences=policy_value_divergences(arguments.policy),
         work=arguments.work,
+        macros=macros,
+        python_functions=python,
+        unavailable_functions=tuple(
+            (name, f"sqlquack function refused: {'; '.join(why)}")
+            for name, why in sorted(refused.items())
+        ),
     )
     models: list[ModelResult] = snowflake_results(inputs=inputs, run=comparer or compare)
     arguments.out.write_text(json.dumps(snowflake_report(models), indent=1) + "\n")
@@ -108,16 +132,22 @@ def run_measure(
     argv: list[str] | None = None,
     converter: Converter | None = None,
     comparer: Comparer | None = None,
+    function_converter: FunctionConverter | None = None,
 ) -> int:
     """Run one DuckShop measure subcommand; 0 once its report is written."""
     arguments: argparse.Namespace = _measure_parser().parse_args(argv)
     if arguments.command == SCHEMA_COMMAND:
         write_schema(
-            environment=arguments.environment, out=arguments.out, recorded=arguments.recorded
+            environment=arguments.environment,
+            out=arguments.out,
+            recorded=arguments.recorded,
+            functions=arguments.functions,
         )
         return 0
     if arguments.command == SNOWFLAKE_COMMAND:
-        _measure_snowflake(arguments=arguments, comparer=comparer)
+        _measure_snowflake(
+            arguments=arguments, comparer=comparer, function_converter=function_converter
+        )
         return 0
     convert: Converter = converter or binary_converter(
         binary=arguments.sqlquack, library=arguments.library, policy=arguments.policy

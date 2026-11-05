@@ -851,7 +851,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    distinct,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,

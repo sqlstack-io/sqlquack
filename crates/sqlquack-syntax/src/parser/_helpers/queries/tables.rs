@@ -1068,6 +1068,7 @@ impl Parser {
                 break;
             }
             let func = self.parse_primary()?;
+            self.refuse_snowflake_pivot_aggregate(&func)?;
             let expr = if self.match_token(TokenType::As) {
                 let alias_name = self.expect_identifier_or_keyword()?;
                 Expression::Alias(Box::new(Alias::new(func, Identifier::new(alias_name))))
@@ -1075,6 +1076,9 @@ impl Parser {
                 && !self.check(TokenType::For)
                 && !self.check(TokenType::RParen)
             {
+                if self.is_snowflake() && self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected an identifier alias in PIVOT"));
+                }
                 if let Some(id) = self.parse_id_var()? {
                     let alias_name = match &id {
                         Expression::Identifier(ident) => ident.name.clone(),
@@ -1153,6 +1157,7 @@ impl Parser {
 
         if self.match_token(TokenType::LParen) {
             let in_exprs = if self.match_text_seq(&["ANY"]) {
+                self.expect_snowflake_order_by()?;
                 let order = self.parse_order()?;
                 vec![Expression::PivotAny(Box::new(PivotAny {
                     this: order.map(Box::new),
@@ -1161,10 +1166,13 @@ impl Parser {
                 let mut vals: Vec<Expression> = Vec::new();
                 loop {
                     if self.check(TokenType::RParen) {
+                        self.refuse_snowflake_empty_pivot_list(&vals)?;
                         break;
                     }
                     if let Some(val) = self.parse_select_or_expression()? {
-                        let val = if self.match_token(TokenType::As) {
+                        let val = if let Some(alias) = self.parse_snowflake_bare_pivot_alias()? {
+                            Expression::PivotAlias(Box::new(PivotAlias { this: val, alias }))
+                        } else if self.match_token(TokenType::As) {
                             let alias_expr = self.parse_bitwise()?.ok_or_else(|| {
                                 self.parse_error(
                                     "Expected expression after AS in PIVOT/UNPIVOT IN clause",
@@ -1242,6 +1250,9 @@ impl Parser {
             };
 
         self.expect_token(TokenType::For)?;
+        if self.is_snowflake() && self.is_snowflake_reserved_keyword() {
+            return Err(self.parse_error("Expected a column name after FOR"));
+        }
         let name_column = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
 
         self.expect_token(TokenType::In)?;
@@ -1286,6 +1297,9 @@ impl Parser {
                         self.parse_select_or_expression()?
                     }
                 } else {
+                    if snowflake && self.check(TokenType::String) {
+                        return Err(self.parse_error("Expected a column in the UNPIVOT IN list"));
+                    }
                     self.parse_select_or_expression()?
                 };
 
@@ -1294,7 +1308,9 @@ impl Parser {
                     {
                         return Err(self.parse_error("Expected an identifier alias in UNPIVOT IN"));
                     }
-                    let col = if self.match_token(TokenType::As) {
+                    let col = if let Some(alias) = self.parse_snowflake_bare_pivot_alias()? {
+                        Expression::PivotAlias(Box::new(PivotAlias { this: col, alias }))
+                    } else if self.match_token(TokenType::As) {
                         let alias_expr = self.parse_bitwise()?.ok_or_else(|| {
                             self.parse_error("Expected expression after AS in UNPIVOT IN clause")
                         })?;

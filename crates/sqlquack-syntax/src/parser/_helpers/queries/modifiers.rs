@@ -1358,6 +1358,8 @@ impl Parser {
                 comments: Vec::new(),
                 nesting_group: 0,
                 directed: false,
+                first_last: None,
+                first_last_alias: None,
                 span: SourceSpan::default(),
             });
         }

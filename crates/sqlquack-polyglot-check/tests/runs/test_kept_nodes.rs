@@ -1,7 +1,7 @@
-//! Reviewed kept nodes cover only wrappers polyglot drops, in statements with the marker.
+//! Reviewed kept nodes and fields cover only what polyglot drops or infers, in statements with the marker.
 
 use sqlquack_polyglot_check::corpora::models::CorpusEntry;
-use sqlquack_polyglot_check::expected::models::{ExpectedDifferences, KeptNode};
+use sqlquack_polyglot_check::expected::models::{ExpectedDifferences, KeptField, KeptNode};
 use sqlquack_syntax::Dialect;
 
 use crate::helpers::summary_of;
@@ -130,6 +130,70 @@ fn given_trees_with_a_marker_when_matched_then_only_dropped_wrappers_are_allowed
         assert_eq!(
             expected
                 .kept_node_for(test_case.sql, &test_case.polyglot, &test_case.sqlquack)
+                .is_some(),
+            test_case.expected_match,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_trees_with_a_marker_when_matched_then_only_the_kept_field_may_differ() {
+    let tree = |scope: &str, name: &str| {
+        format!(r#"ok:[{{"show":{{"this":"TABLES","scope_kind":{scope},"scope":"{name}"}}}}]"#)
+    };
+    let test_cases = [
+        QuotingTreesTestCase {
+            description: "a field polyglot infers is the only difference",
+            sql: "SHOW TABLES IN a.b",
+            polyglot: tree(r#""SCHEMA""#, "a.b"),
+            sqlquack: tree("null", "a.b"),
+            expected_match: true,
+        },
+        QuotingTreesTestCase {
+            description: "a field polyglot lacks is the only difference",
+            sql: "SHOW TABLES IN a.b",
+            polyglot: r#"ok:[{"show":{"this":"TABLES","scope":"a.b"}}]"#.to_owned(),
+            sqlquack: tree("null", "a.b"),
+            expected_match: true,
+        },
+        QuotingTreesTestCase {
+            description: "another difference beside the field is not matched",
+            sql: "SHOW TABLES IN a.b",
+            polyglot: tree(r#""SCHEMA""#, "a.b"),
+            sqlquack: tree("null", "a.c"),
+            expected_match: false,
+        },
+        QuotingTreesTestCase {
+            description: "a statement without the marker is not matched",
+            sql: "DESC TABLE a.b",
+            polyglot: tree(r#""SCHEMA""#, "a.b"),
+            sqlquack: tree("null", "a.b"),
+            expected_match: false,
+        },
+        QuotingTreesTestCase {
+            description: "a polyglot error is not matched",
+            sql: "SHOW TABLES IN a.b",
+            polyglot: "err:Parse".to_owned(),
+            sqlquack: tree("null", "a.b"),
+            expected_match: false,
+        },
+    ];
+    let expected = ExpectedDifferences {
+        kept_fields: vec![KeptField {
+            id: "show_container".to_owned(),
+            marker: "SHOW".to_owned(),
+            field: "scope_kind".to_owned(),
+            note: "a test entry".to_owned(),
+        }],
+        ..ExpectedDifferences::default()
+    };
+
+    for test_case in test_cases {
+        assert_eq!(
+            expected
+                .kept_field_for(test_case.sql, &test_case.polyglot, &test_case.sqlquack)
                 .is_some(),
             test_case.expected_match,
             "{}",
