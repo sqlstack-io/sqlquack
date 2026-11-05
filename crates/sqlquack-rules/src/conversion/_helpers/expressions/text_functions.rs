@@ -920,8 +920,7 @@ pub(crate) fn system_typeof_call(node: &Value) -> Option<&Value> {
     (kind == FUNCTION_KIND && call_name(payload) == SYSTEM_TYPEOF_NAME).then_some(payload)
 }
 
-/// REGEXP_REPLACE(t, '\\[.*\\]$', ''), `t` SYSTEM$TYPEOF(x) or a column of its text: x's Snowflake
-/// type, as SYSTEM$TYPEOF names it without its storage suffix.
+/// REGEXP_REPLACE(t, '\\[.*\\]$', '') of SYSTEM$TYPEOF text: the type name without its suffix.
 pub(crate) fn stripped_type_name(
     (typed, pattern, replacement): (&Value, &Value, &Value),
     site: Site<'_>,
@@ -993,8 +992,7 @@ fn null_pattern(node: &Value) -> bool {
     })
 }
 
-/// SYSTEM$TYPEOF(operand): its Snowflake type as text, written without the storage suffix that
-/// Snowflake's plan decides and marked as still carrying it.
+/// SYSTEM$TYPEOF(operand): the type name without its plan-decided suffix, marked as suffixed.
 pub(crate) fn type_name(operand: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let log = site.context.log;
     let _rule = log.rule(SYSTEM_TYPE_NAME);

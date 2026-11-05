@@ -10,8 +10,7 @@ pub(crate) struct Placement {
     pub(crate) filter: bool,
     /// Whether an unordered array may pass up unchecked, as only order-free readers take it.
     pub(crate) order_free: bool,
-    /// Whether SYSTEM$TYPEOF text with its storage suffix on may pass up, as only readers that
-    /// keep it whole take it.
+    /// Whether suffixed SYSTEM$TYPEOF text may pass up, as only readers keeping it whole take it.
     pub(crate) suffixed: bool,
 }
 

@@ -116,8 +116,7 @@ fn passes_order(node: &Value) -> bool {
     }
 }
 
-/// `node` converted, refusing a VARIANT-held value unless `held` and suffixed SYSTEM$TYPEOF text
-/// unless `suffixed`.
+/// `node` converted, refusing held VARIANT values and suffixed SYSTEM$TYPEOF text unless allowed.
 fn converted_checked(
     node: &Value,
     site: Site<'_>,

@@ -214,8 +214,6 @@ pub(crate) fn order_and_limit(
         let order = payload_object(order, &construct)?;
         require_understood(order, &["expressions"], &construct)?;
         let grouped = query.get("group_by").is_some_and(|group| !group.is_null());
-        // A sole SYSTEM$TYPEOF output may be its own key: rows tied on its type name, ordered
-        // apart only by the suffix, then strip to the same text.
         let suffixed = matches!(outputs, [(_, output)] if output.suffixed);
         let mut items: Vec<String> = Vec::new();
         for item in list(order, "expressions") {
