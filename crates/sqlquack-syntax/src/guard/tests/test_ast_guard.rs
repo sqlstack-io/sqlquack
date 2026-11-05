@@ -73,6 +73,26 @@ fn given_a_70k_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_ref
             expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
         },
         AstDepthTestCase {
+            description: "a COLLATE chain is refused",
+            sql: || format!("SELECT 'a'{}", " COLLATE 'en'".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "an IS NULL chain is refused",
+            sql: || format!("SELECT 1{}", " IS NULL".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "an IN chain is refused",
+            sql: || format!("SELECT 1{}", " IN (1)".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "a : path chain is one path and parses",
+            sql: || format!("SELECT v{}", ":a".repeat(70_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
             description: "a chain alternating = and IS NULL is refused",
             sql: || format!("SELECT 1{}", "=1 IS NULL".repeat(70_000)),
             expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
