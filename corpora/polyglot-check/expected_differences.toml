@@ -990,6 +990,41 @@ sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON colum
 note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
 
 [[rejection]]
+id = "snowflake_function_body_number"
+sql = "CREATE FUNCTION f(x SMALLDECIMAL ARRAY) RETURNS INT AS 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the function body as a string"
+note = "Snowflake reads a function body only as a string (recorded errno 1003 for CREATE FUNCTION v1 ( ) RETURNS INT AS m1)"
+
+[[rejection]]
+id = "snowflake_function_body_return"
+sql = "CREATE FUNCTION a.b(x INT) RETURNS INT AS RETURN x + 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the function body as a string"
+note = "Snowflake has no RETURN body; a function body is a string or $$ block (recorded errno 1003 for CREATE FUNCTION v1 ( ) RETURNS INT AS m1)"
+
+[[rejection]]
+id = "snowflake_function_body_return_contains_sql"
+sql = "CREATE FUNCTION a.b(x TEXT) RETURNS TEXT CONTAINS SQL AS RETURN x"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the function body as a string"
+note = "Snowflake has no RETURN body; a function body is a string or $$ block (recorded errno 1003 for CREATE FUNCTION v1 ( ) RETURNS INT AS m1)"
+
+[[rejection]]
+id = "snowflake_function_body_return_modifies_sql"
+sql = "CREATE FUNCTION a.b(x TEXT) RETURNS TEXT LANGUAGE SQL MODIFIES SQL DATA AS RETURN x"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the function body as a string"
+note = "Snowflake has no RETURN body; a function body is a string or $$ block (recorded errno 1003 for CREATE FUNCTION v1 ( ) RETURNS INT AS m1)"
+
+[[rejection]]
+id = "snowflake_function_body_return_reads_sql"
+sql = "CREATE FUNCTION a.b(x TEXT) LANGUAGE SQL READS SQL DATA RETURNS TEXT AS RETURN x"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the function body as a string"
+note = "Snowflake has no RETURN body; a function body is a string or $$ block (recorded errno 1003 for CREATE FUNCTION v1 ( ) RETURNS INT AS m1)"
+
+[[rejection]]
 id = "snowflake_string_part_extract"
 sql = "SELECT EXTRACT('{quoted}' FROM created_at) FROM events"
 dialects = ["Snowflake"]

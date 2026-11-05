@@ -24,6 +24,7 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                     ("snowflake_cte_without_as_prose".to_owned(), 1),
                     ("snowflake_reserved_type_name".to_owned(), 1),
                     ("snowflake_string_part_extract".to_owned(), 1),
+                    ("snowflake_function_body_number".to_owned(), 1),
                     ("snowflake_collate_needs_string".to_owned(), 1),
                     ("snowflake_dot_after_literal".to_owned(), 1),
                     ("snowflake_by_name_on_except".to_owned(), 1),
@@ -63,6 +64,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
             expected_outcome: ExactOutcome {
                 loaded: true,
                 rejected: BTreeMap::from([
+                    ("snowflake_function_body_return".to_owned(), 1),
+                    ("snowflake_function_body_return_contains_sql".to_owned(), 1),
+                    ("snowflake_function_body_return_modifies_sql".to_owned(), 1),
+                    ("snowflake_function_body_return_reads_sql".to_owned(), 1),
                     ("snowflake_cte_without_as".to_owned(), 1),
                     ("snowflake_empty_call_argument".to_owned(), 1),
                     ("snowflake_reserved_cte_name".to_owned(), 1),
