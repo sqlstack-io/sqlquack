@@ -784,8 +784,8 @@ const PARSED_TREE: &str = r#"{"error":false"#;
 const LOCATION_FIELD: &str = r#""query_location"#;
 
 /// Each everyday corpus query whose outcome under either policy differs from the recorded one.
-pub(crate) fn everyday_outcome_mismatches() -> Vec<String> {
-    let (root, corpus) = everyday_corpus();
+pub(crate) fn everyday_outcome_mismatches(directory: &str) -> Vec<String> {
+    let (root, corpus) = everyday_corpus(directory);
     let strict = everyday_arguments(&root, true);
     let repository = everyday_arguments(&root, false);
     corpus
@@ -818,8 +818,8 @@ pub(crate) fn everyday_outcome_mismatches() -> Vec<String> {
 }
 
 /// How many valid queries, not DDL, are recorded as translated: strict, and repository policy.
-pub(crate) fn everyday_translation_rates() -> String {
-    let (_, corpus) = everyday_corpus();
+pub(crate) fn everyday_translation_rates(directory: &str) -> String {
+    let (_, corpus) = everyday_corpus(directory);
     let valid: Vec<&EverydayQuery> = corpus
         .query
         .iter()
@@ -848,7 +848,7 @@ pub(crate) fn everyday_translation_rates() -> String {
 
 /// Queries Snowflake rejects that pass SQLQuack's parse and checks, once every receipt matches.
 pub(crate) fn everyday_snowflake_rejections_not_caught() -> Vec<String> {
-    let (root, corpus) = everyday_corpus();
+    let (root, corpus) = everyday_corpus(EVERYDAY_CORPUS);
     let text =
         std::fs::read_to_string(root.join("snowflake-receipts.json")).expect("receipts read");
     let receipts: serde_json::Value = serde_json::from_str(&text).expect("receipts parse");
@@ -893,11 +893,11 @@ pub(crate) fn everyday_snowflake_rejections_not_caught() -> Vec<String> {
 }
 
 /// The everyday corpus directory and its queries.
-fn everyday_corpus() -> (std::path::PathBuf, EverydayCorpus) {
-    let root = repository_root().join(EVERYDAY_CORPUS);
+fn everyday_corpus(directory: &str) -> (std::path::PathBuf, EverydayCorpus) {
+    let root = repository_root().join(directory);
     let text = std::fs::read_to_string(root.join("queries.toml")).expect("the corpus reads");
     let corpus: EverydayCorpus = toml::from_str(&text).expect("the corpus parses");
-    assert!(corpus.query.len() > 400, "{} queries", corpus.query.len());
+    assert!(corpus.query.len() > 300, "{} queries", corpus.query.len());
     (root, corpus)
 }
 
@@ -947,8 +947,11 @@ fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> String {
     )
 }
 
-/// The corpus directory, under the repository root.
-const EVERYDAY_CORPUS: &str = "corpora/everyday";
+/// The everyday corpus directory, under the repository root.
+pub(crate) const EVERYDAY_CORPUS: &str = "corpora/everyday";
+
+/// The dbt-style model corpus directory, laid out as the everyday corpus.
+pub(crate) const EVERYDAY_MODELS_CORPUS: &str = "corpora/everyday-models";
 
 /// Corpus categories of statements no rule translates: DDL and DML.
 const EVERYDAY_NOT_TRANSLATABLE: [&str; 1] = ["ddl_dml"];

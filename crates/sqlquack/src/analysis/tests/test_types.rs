@@ -213,6 +213,7 @@ pub(crate) struct OverrideCallsTestCase {
 
 pub(crate) struct EverydayCorpusTestCase {
     pub(crate) description: &'static str,
+    pub(crate) directory: &'static str,
     pub(crate) expected_mismatches: Vec<String>,
     pub(crate) expected_rates: &'static str,
     pub(crate) expected_rejections_not_caught: Vec<&'static str>,
