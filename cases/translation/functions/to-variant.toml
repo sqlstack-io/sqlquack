@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.to-variant"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_types"
+description = "Values of four types, each with the type TYPEOF reports. Catches: every value stored as text, or the date stored as a string"
+columns = [{ name = "x", type = "NUMBER(10,3)" }, { name = "v", type = "VARCHAR" }, { name = "d", type = "DATE" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["1.500", "'a'", "'2024-02-29'", "TRUE"],
+]
+query = "SELECT TO_VARIANT(x) AS x, TYPEOF(TO_VARIANT(x)) AS tx, TO_VARIANT(v) AS v, TYPEOF(TO_VARIANT(v)) AS tv, TO_VARIANT(d) AS d, TYPEOF(TO_VARIANT(d)) AS td, TYPEOF(TO_VARIANT(b)) AS tb FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr"
+description = "A NULL; the page does not say; the recording decides whether the result is a SQL NULL or a JSON null. Catches: the other kind of null than Snowflake returns"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_VARIANT(v) AS r, TO_VARIANT(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

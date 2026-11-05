@@ -4053,6 +4053,61 @@ cases = ["cases/translation/functions/bit-length.toml#t004_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.bitand.t001"
+form = "sf.functions.bitand"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Integers whose bits overlap in part, and a negative."
+catches = "a logical AND (1 instead of 8), or the sign bit lost"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t002"
+form = "sf.functions.bitand"
+kind = "type_combination"
+target = "DECIMAL and VARCHAR"
+note = "A decimal and the string 12.3, which the page says cast to integers."
+catches = "the decimal truncated where Snowflake rounds, or the string rejected"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t002_casts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t003"
+form = "sf.functions.bitand"
+kind = "type_combination"
+target = "BINARY, BINARY, padside"
+note = "BINARY values of different lengths padded on the left and on the right."
+catches = "both paddings giving the same result, or padside ignored"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t003_binary_pad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t004"
+form = "sf.functions.bitand"
+kind = "error_parity"
+target = "error"
+note = "BINARY values of different lengths without padside, which the page says requires it."
+catches = "a default padding applied"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t004_binary_unequal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t005"
+form = "sf.functions.bitand"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
+catches = "the NULL read as 0, or an error for the string"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
 id = "sf.functions.bitand-agg.bitand-agg.t001"
 form = "sf.functions.bitand-agg.bitand-agg"
 kind = "type_combination"
@@ -4504,6 +4559,94 @@ cases = ["cases/translation/functions/bitmap-to-array.toml#t004_null_bucket_numb
 required = true
 
 [[obligation]]
+id = "sf.functions.bitnot.t001"
+form = "sf.functions.bitnot"
+kind = "type_combination"
+target = "INTEGER"
+note = "Zero, a positive and a negative integer."
+catches = "a logical NOT, or an unsigned result"
+reading = "the page: the bitwise negation of an INTEGER or BINARY value; other numbers are cast to INTEGER; NULL gives NULL"
+cases = ["cases/translation/functions/bitnot.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitnot.t002"
+form = "sf.functions.bitnot"
+kind = "type_combination"
+target = "BINARY"
+note = "Bytes negated."
+catches = "the bytes read as an integer"
+reading = "the page: the bitwise negation of an INTEGER or BINARY value; other numbers are cast to INTEGER; NULL gives NULL"
+cases = ["cases/translation/functions/bitnot.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitnot.t003"
+form = "sf.functions.bitnot"
+kind = "null_argument"
+target = "expr"
+note = "A NULL."
+catches = "the NULL read as 0 (-1 returned)"
+reading = "the page: the bitwise negation of an INTEGER or BINARY value; other numbers are cast to INTEGER; NULL gives NULL"
+cases = ["cases/translation/functions/bitnot.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t001"
+form = "sf.functions.bitor"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Integers whose bits overlap in part, and a negative."
+catches = "a logical OR (1 instead of 14), or the sign bit lost"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t002"
+form = "sf.functions.bitor"
+kind = "type_combination"
+target = "DECIMAL and VARCHAR"
+note = "A decimal and the string 12.3, which the page says cast to integers."
+catches = "the decimal truncated where Snowflake rounds, or the string rejected"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t002_casts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t003"
+form = "sf.functions.bitor"
+kind = "type_combination"
+target = "BINARY, BINARY, padside"
+note = "BINARY values of different lengths padded on the left and on the right."
+catches = "both paddings giving the same result, or padside ignored"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t003_binary_pad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t004"
+form = "sf.functions.bitor"
+kind = "error_parity"
+target = "error"
+note = "BINARY values of different lengths without padside, which the page says requires it."
+catches = "a default padding applied"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t004_binary_unequal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t005"
+form = "sf.functions.bitor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
+catches = "the NULL read as 0, or an error for the string"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
 id = "sf.functions.bitor-agg.bitor-agg.t001"
 form = "sf.functions.bitor-agg.bitor-agg"
 kind = "type_combination"
@@ -4622,6 +4765,127 @@ note = "NULL partition keys, which form one partition."
 catches = "NULL-keyed rows each in their own partition or dropped"
 reading = "the page: returns NUMBER(38,0); DECIMAL and FLOAT values are rounded to the nearest integer first; VARCHAR is cast to FLOAT and rounded, and text that cannot be cast is treated as NULL; NULL values are ignored; no ORDER BY or frame as a window function; DISTINCT has no effect"
 cases = ["cases/translation/functions/bitor-agg.bitor-agg-over.toml#t004_null_partition_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftleft.t001"
+form = "sf.functions.bitshiftleft"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Shifts of positive and negative integers."
+catches = "a 64-bit result (bit 127 lost), or the sign kept when the high bit changes"
+reading = "the page: the INTEGER or BINARY value shifted left by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftleft.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftleft.t002"
+form = "sf.functions.bitshiftleft"
+kind = "type_combination"
+target = "BINARY, INTEGER"
+note = "Bytes shifted by four bits."
+catches = "the bytes read as an integer, or the shift in bytes"
+reading = "the page: the INTEGER or BINARY value shifted left by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftleft.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftleft.t003"
+form = "sf.functions.bitshiftleft"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL value and a NULL shift."
+catches = "the NULL read as 0"
+reading = "the page: the INTEGER or BINARY value shifted left by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftleft.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftright.t001"
+form = "sf.functions.bitshiftright"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Shifts of positive and negative integers."
+catches = "a logical shift on the negative (sign bit not kept), or a rotation"
+reading = "the page: the INTEGER or BINARY value shifted right by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftright.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftright.t002"
+form = "sf.functions.bitshiftright"
+kind = "type_combination"
+target = "BINARY, INTEGER"
+note = "Bytes shifted by four bits."
+catches = "the bytes read as an integer, or the shift in bytes"
+reading = "the page: the INTEGER or BINARY value shifted right by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftright.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitshiftright.t003"
+form = "sf.functions.bitshiftright"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL value and a NULL shift."
+catches = "the NULL read as 0"
+reading = "the page: the INTEGER or BINARY value shifted right by n bits; an INTEGER result is a signed 128-bit integer; NULL gives NULL"
+cases = ["cases/translation/functions/bitshiftright.toml#t003_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t001"
+form = "sf.functions.bitxor"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Integers whose bits overlap in part, and a negative."
+catches = "OR computed instead of XOR (14 instead of 6), or the sign bit lost"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t001_integers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t002"
+form = "sf.functions.bitxor"
+kind = "type_combination"
+target = "DECIMAL and VARCHAR"
+note = "A decimal and the string 12.3, which the page says cast to integers."
+catches = "the decimal truncated where Snowflake rounds, or the string rejected"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t002_casts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t003"
+form = "sf.functions.bitxor"
+kind = "type_combination"
+target = "BINARY, BINARY, padside"
+note = "BINARY values of different lengths padded on the left and on the right."
+catches = "both paddings giving the same result, or padside ignored"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t003_binary_pad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t004"
+form = "sf.functions.bitxor"
+kind = "error_parity"
+target = "error"
+note = "BINARY values of different lengths without padside, which the page says requires it."
+catches = "a default padding applied"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t004_binary_unequal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t005"
+form = "sf.functions.bitxor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
+catches = "the NULL read as 0, or an error for the string"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t005_null_expr1"]
 required = true
 
 [[obligation]]
@@ -5381,6 +5645,118 @@ note = "NULL expr against a WHEN NULL branch."
 catches = "NULL matching WHEN NULL (DECODE semantics) instead of falling to ELSE"
 reading = "the page: the first true condition's result is returned; a NULL condition is not true; no ELSE gives NULL; in the simple form each value must match expr's type or be castable to it"
 cases = ["cases/translation/functions/case.end.syntax.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t001"
+form = "sf.functions.cast.cast-as"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Values with three fractional digits cast to NUMBER(5,1), including halves."
+catches = "truncation (1.2 for 1.25), or half-even rounding (1.2 for 1.25, -1.2 for -1.25)"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.cast-as.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t002"
+form = "sf.functions.cast.cast-as"
+kind = "type_combination"
+target = "DOUBLE to INTEGER"
+note = "Floating-point halves cast to INTEGER."
+catches = "truncation toward zero, or half-even rounding (2 for 2.5)"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.cast-as.toml#t002_float_to_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t003"
+form = "sf.functions.cast.cast-as"
+kind = "type_combination"
+target = "VARCHAR to DATE, NUMBER and BOOLEAN"
+note = "Text cast to a date, a number with spaces around it, and a boolean spelled yes."
+catches = "the yes rejected (only true and false accepted), or the spaces rejected"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.cast-as.toml#t003_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t004"
+form = "sf.functions.cast.cast-as"
+kind = "error_parity"
+target = "error"
+note = "A value with more integer digits than the target precision, which the page says raises an error."
+catches = "the value rounded, truncated or returned as NULL"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.cast-as.toml#t004_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t005"
+form = "sf.functions.cast.cast-as"
+kind = "null_argument"
+target = "source-expr"
+note = "A NULL source."
+catches = "an error, or a default value such as 0"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.cast-as.toml#t005_null_source_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t001"
+form = "sf.functions.cast.double-colon"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Values with three fractional digits cast to NUMBER(5,1), including halves."
+catches = "truncation (1.2 for 1.25), or half-even rounding (1.2 for 1.25, -1.2 for -1.25)"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.double-colon.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t002"
+form = "sf.functions.cast.double-colon"
+kind = "type_combination"
+target = "DOUBLE to INTEGER"
+note = "Floating-point halves cast to INTEGER."
+catches = "truncation toward zero, or half-even rounding (2 for 2.5)"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.double-colon.toml#t002_float_to_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t003"
+form = "sf.functions.cast.double-colon"
+kind = "type_combination"
+target = "VARCHAR to DATE, NUMBER and BOOLEAN"
+note = "Text cast to a date, a number with spaces around it, and a boolean spelled yes."
+catches = "the yes rejected (only true and false accepted), or the spaces rejected"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.double-colon.toml#t003_text"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t004"
+form = "sf.functions.cast.double-colon"
+kind = "error_parity"
+target = "error"
+note = "A value with more integer digits than the target precision, which the page says raises an error."
+catches = "the value rounded, truncated or returned as NULL"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.double-colon.toml#t004_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t005"
+form = "sf.functions.cast.double-colon"
+kind = "null_argument"
+target = "source-expr"
+note = "A NULL source."
+catches = "an error, or a default value such as 0"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
+cases = ["cases/translation/functions/cast.double-colon.toml#t005_null_source_expr"]
 required = true
 
 [[obligation]]
@@ -9222,6 +9598,39 @@ note = "A NULL value and a NULL path; the page does not say; the recording decid
 catches = "an error"
 reading = "the page: equivalent to a chain of GET calls along a JavaScript-style path of field names and [index] operators; NULL when the path matches no element"
 cases = ["cases/translation/functions/get-path.get-path.toml#t003_null_column_identifier"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getbit.t001"
+form = "sf.functions.getbit"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Bits 0 to 3 of 11 (binary 1011)."
+catches = "positions counted from 1, or from the most significant bit"
+reading = "the page: the bit (0 or 1) at a position counted from 0 for the least significant bit up to 127"
+cases = ["cases/translation/functions/getbit.toml#t001_positions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getbit.t002"
+form = "sf.functions.getbit"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "A high bit of a negative integer, read as a 128-bit two's complement value; the page does not say; the recording decides."
+catches = "a 64-bit view of the value"
+reading = "the page: the bit (0 or 1) at a position counted from 0 for the least significant bit up to 127"
+cases = ["cases/translation/functions/getbit.toml#t002_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getbit.t003"
+form = "sf.functions.getbit"
+kind = "null_argument"
+target = "integer-expr"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the bit (0 or 1) at a position counted from 0 for the least significant bit up to 127"
+cases = ["cases/translation/functions/getbit.toml#t003_null_integer_expr"]
 required = true
 
 [[obligation]]
@@ -22489,6 +22898,216 @@ cases = ["cases/translation/functions/to-array.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-binary.t001"
+form = "sf.functions.to-binary"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "The same bytes from HEX in lower case, from BASE64 and from UTF-8 text."
+catches = "the HEX digits read case-sensitively, or the text bytes taken as HEX"
+reading = "the page: the string decoded as BINARY in the given format (HEX, BASE64 or UTF-8), by default BINARY_INPUT_FORMAT (HEX)"
+cases = ["cases/translation/functions/to-binary.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-binary.t002"
+form = "sf.functions.to-binary"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty_string"
+note = "An empty string."
+catches = "NULL instead of empty bytes"
+reading = "the page: the string decoded as BINARY in the given format (HEX, BASE64 or UTF-8), by default BINARY_INPUT_FORMAT (HEX)"
+cases = ["cases/translation/functions/to-binary.toml#t002_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-binary.t003"
+form = "sf.functions.to-binary"
+kind = "error_parity"
+target = "error"
+note = "Text that is not hexadecimal under the default format."
+catches = "NULL returned, or the text read as UTF-8"
+reading = "the page: the string decoded as BINARY in the given format (HEX, BASE64 or UTF-8), by default BINARY_INPUT_FORMAT (HEX)"
+cases = ["cases/translation/functions/to-binary.toml#t003_invalid_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-binary.t004"
+form = "sf.functions.to-binary"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "empty bytes returned"
+reading = "the page: the string decoded as BINARY in the given format (HEX, BASE64 or UTF-8), by default BINARY_INPUT_FORMAT (HEX)"
+cases = ["cases/translation/functions/to-binary.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-boolean.t001"
+form = "sf.functions.to-boolean"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Accepted spellings in mixed case."
+catches = "only true and false accepted, or the comparison case-sensitive"
+reading = "the page: 'true', 't', 'yes', 'y', 'on', '1' give TRUE and 'false', 'f', 'no', 'n', 'off', '0' give FALSE, case-insensitively; other strings are an error; 0 is FALSE and any other number TRUE; NULL gives NULL"
+cases = ["cases/translation/functions/to-boolean.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-boolean.t002"
+form = "sf.functions.to-boolean"
+kind = "type_combination"
+target = "NUMBER"
+note = "Zero, a negative fraction and a large number."
+catches = "only 1 read as TRUE, or a fraction rounded to 0 first"
+reading = "the page: 'true', 't', 'yes', 'y', 'on', '1' give TRUE and 'false', 'f', 'no', 'n', 'off', '0' give FALSE, case-insensitively; other strings are an error; 0 is FALSE and any other number TRUE; NULL gives NULL"
+cases = ["cases/translation/functions/to-boolean.toml#t002_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-boolean.t003"
+form = "sf.functions.to-boolean"
+kind = "error_parity"
+target = "error"
+note = "A string not in either list, which the page says is an error."
+catches = "NULL or FALSE returned"
+reading = "the page: 'true', 't', 'yes', 'y', 'on', '1' give TRUE and 'false', 'f', 'no', 'n', 'off', '0' give FALSE, case-insensitively; other strings are an error; 0 is FALSE and any other number TRUE; NULL gives NULL"
+cases = ["cases/translation/functions/to-boolean.toml#t003_invalid_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-boolean.t004"
+form = "sf.functions.to-boolean"
+kind = "error_parity"
+target = "error"
+note = "A FLOAT NaN, which the page says is an error."
+catches = "TRUE returned, as for any non-zero number"
+reading = "the page: 'true', 't', 'yes', 'y', 'on', '1' give TRUE and 'false', 'f', 'no', 'n', 'off', '0' give FALSE, case-insensitively; other strings are an error; 0 is FALSE and any other number TRUE; NULL gives NULL"
+cases = ["cases/translation/functions/to-boolean.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-boolean.t005"
+form = "sf.functions.to-boolean"
+kind = "null_argument"
+target = "string-or-numeric-expr"
+note = "A NULL, which the page says gives NULL without an error."
+catches = "FALSE returned"
+reading = "the page: 'true', 't', 'yes', 'y', 'on', '1' give TRUE and 'false', 'f', 'no', 'n', 'off', '0' give FALSE, case-insensitively; other strings are an error; 0 is FALSE and any other number TRUE; NULL gives NULL"
+cases = ["cases/translation/functions/to-boolean.toml#t005_null_string_or_numeric_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t001"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "NUMBER, format"
+note = "Numbers with a group separator and two fixed decimals, including a negative and a value that rounds."
+catches = "the format ignored, or the third decimal truncated"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t001_number_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t002"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, format"
+note = "A date with a month-name format, and without a format (the session DATE_OUTPUT_FORMAT)."
+catches = "the format ignored, or a numeric month"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t002_date_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t003"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "BINARY, format"
+note = "Bytes written as BASE64 and as HEX."
+catches = "the format ignored (HEX for both)"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t003_binary_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t004"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT string, which the page keeps as is, and a JSON null, which becomes the text null."
+catches = "the string written with JSON quotes, or the JSON null returned as SQL NULL"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t004_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t005"
+form = "sf.functions.to-char.to-char"
+kind = "null_argument"
+target = "expr"
+note = "A NULL value."
+catches = "the text null returned"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-varchar.t001"
+form = "sf.functions.to-char.to-varchar"
+kind = "type_combination"
+target = "NUMBER, format"
+note = "Numbers with a group separator and two fixed decimals, including a negative and a value that rounds."
+catches = "the format ignored, or the third decimal truncated"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-varchar.toml#t001_number_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-varchar.t002"
+form = "sf.functions.to-char.to-varchar"
+kind = "type_combination"
+target = "DATE, format"
+note = "A date with a month-name format, and without a format (the session DATE_OUTPUT_FORMAT)."
+catches = "the format ignored, or a numeric month"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-varchar.toml#t002_date_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-varchar.t003"
+form = "sf.functions.to-char.to-varchar"
+kind = "type_combination"
+target = "BINARY, format"
+note = "Bytes written as BASE64 and as HEX."
+catches = "the format ignored (HEX for both)"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-varchar.toml#t003_binary_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-varchar.t004"
+form = "sf.functions.to-char.to-varchar"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT string, which the page keeps as is, and a JSON null, which becomes the text null."
+catches = "the string written with JSON quotes, or the JSON null returned as SQL NULL"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-varchar.toml#t004_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-varchar.t005"
+form = "sf.functions.to-char.to-varchar"
+kind = "null_argument"
+target = "expr"
+note = "A NULL value."
+catches = "the text null returned"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-varchar.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-date.date.t001"
 form = "sf.functions.to-date.date"
 kind = "type_combination"
@@ -22686,6 +23305,295 @@ note = "29 February in a common year."
 catches = "a carry to 1 March or NULL instead of an error"
 reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
 cases = ["cases/translation/functions/to-date.to-date.toml#t009_not_a_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decfloat.t001"
+form = "sf.functions.to-decfloat"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Decimal strings with trailing zeros and an exponent, compared as text."
+catches = "trailing zeros dropped, or the exponent rejected"
+reading = "the page: a DECFLOAT from a numeric, string or Boolean value, with an optional format for strings; NaN and infinity are not supported; NULL gives NULL"
+cases = ["cases/translation/functions/to-decfloat.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decfloat.t002"
+form = "sf.functions.to-decfloat"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A string with a group separator parsed with a format model."
+catches = "the format ignored (an error or NULL)"
+reading = "the page: a DECFLOAT from a numeric, string or Boolean value, with an optional format for strings; NaN and infinity are not supported; NULL gives NULL"
+cases = ["cases/translation/functions/to-decfloat.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decfloat.t003"
+form = "sf.functions.to-decfloat"
+kind = "error_parity"
+target = "error"
+note = "The string NaN, which the page says is not supported."
+catches = "a NaN value returned"
+reading = "the page: a DECFLOAT from a numeric, string or Boolean value, with an optional format for strings; NaN and infinity are not supported; NULL gives NULL"
+cases = ["cases/translation/functions/to-decfloat.toml#t003_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decfloat.t004"
+form = "sf.functions.to-decfloat"
+kind = "null_argument"
+target = "expr"
+note = "A NULL, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: a DECFLOAT from a numeric, string or Boolean value, with an optional format for strings; NaN and infinity are not supported; NULL gives NULL"
+cases = ["cases/translation/functions/to-decfloat.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-decimal.t001"
+form = "sf.functions.to-decimal.to-decimal"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Strings with three fractional digits at scale 2, and the default scale 0 on a half."
+catches = "truncation (12.34 for 12.345), or half-even rounding (12 for 12.5)"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-decimal.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-decimal.t002"
+form = "sf.functions.to-decimal.to-decimal"
+kind = "type_combination"
+target = "VARCHAR, format, precision, scale"
+note = "A string with a group separator parsed with a format model."
+catches = "the format ignored (an error), or the scale dropped"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-decimal.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-decimal.t003"
+form = "sf.functions.to-decimal.to-decimal"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT holding true, false, a string and a JSON null."
+catches = "an error for the booleans, or the JSON null as 0"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-decimal.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-decimal.t004"
+form = "sf.functions.to-decimal.to-decimal"
+kind = "error_parity"
+target = "error"
+note = "A value with more digits than the precision allows."
+catches = "the value truncated or returned as NULL"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-decimal.toml#t004_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-decimal.t005"
+form = "sf.functions.to-decimal.to-decimal"
+kind = "null_argument"
+target = "expr"
+note = "A NULL, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-decimal.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-number.t001"
+form = "sf.functions.to-decimal.to-number"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Strings with three fractional digits at scale 2, and the default scale 0 on a half."
+catches = "truncation (12.34 for 12.345), or half-even rounding (12 for 12.5)"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-number.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-number.t002"
+form = "sf.functions.to-decimal.to-number"
+kind = "type_combination"
+target = "VARCHAR, format, precision, scale"
+note = "A string with a group separator parsed with a format model."
+catches = "the format ignored (an error), or the scale dropped"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-number.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-number.t003"
+form = "sf.functions.to-decimal.to-number"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT holding true, false, a string and a JSON null."
+catches = "an error for the booleans, or the JSON null as 0"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-number.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-number.t004"
+form = "sf.functions.to-decimal.to-number"
+kind = "error_parity"
+target = "error"
+note = "A value with more digits than the precision allows."
+catches = "the value truncated or returned as NULL"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-number.toml#t004_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-number.t005"
+form = "sf.functions.to-decimal.to-number"
+kind = "null_argument"
+target = "expr"
+note = "A NULL, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-number.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-numeric.t001"
+form = "sf.functions.to-decimal.to-numeric"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Strings with three fractional digits at scale 2, and the default scale 0 on a half."
+catches = "truncation (12.34 for 12.345), or half-even rounding (12 for 12.5)"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-numeric.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-numeric.t002"
+form = "sf.functions.to-decimal.to-numeric"
+kind = "type_combination"
+target = "VARCHAR, format, precision, scale"
+note = "A string with a group separator parsed with a format model."
+catches = "the format ignored (an error), or the scale dropped"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-numeric.toml#t002_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-numeric.t003"
+form = "sf.functions.to-decimal.to-numeric"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT holding true, false, a string and a JSON null."
+catches = "an error for the booleans, or the JSON null as 0"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-numeric.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-numeric.t004"
+form = "sf.functions.to-decimal.to-numeric"
+kind = "error_parity"
+target = "error"
+note = "A value with more digits than the precision allows."
+catches = "the value truncated or returned as NULL"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-numeric.toml#t004_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-decimal.to-numeric.t005"
+form = "sf.functions.to-decimal.to-numeric"
+kind = "null_argument"
+target = "expr"
+note = "A NULL, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: a NUMBER(precision, scale), by default (38, 0); reducing scale rounds; strings parse as decimal, integer or floating-point numbers, with an optional format; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-decimal.to-numeric.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-double.t001"
+form = "sf.functions.to-double"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Scientific notation and the special values the page accepts."
+catches = "the special values rejected"
+reading = "the page: a FLOAT; strings may be decimal, scientific or nan, inf, infinity; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-double.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-double.t002"
+form = "sf.functions.to-double"
+kind = "type_combination"
+target = "VARIANT"
+note = "A VARIANT holding true, a string and a JSON null."
+catches = "an error for the boolean, or the JSON null as 0"
+reading = "the page: a FLOAT; strings may be decimal, scientific or nan, inf, infinity; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-double.toml#t002_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-double.t003"
+form = "sf.functions.to-double"
+kind = "error_parity"
+target = "error"
+note = "Text that is not a number."
+catches = "NULL or 0 returned"
+reading = "the page: a FLOAT; strings may be decimal, scientific or nan, inf, infinity; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-double.toml#t003_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-double.t004"
+form = "sf.functions.to-double"
+kind = "null_argument"
+target = "expr"
+note = "A NULL, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: a FLOAT; strings may be decimal, scientific or nan, inf, infinity; a VARIANT boolean gives 0 or 1 and a JSON null gives NULL"
+cases = ["cases/translation/functions/to-double.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-ipaddress.t001"
+form = "sf.functions.to-ipaddress"
+kind = "type_combination"
+target = "VARCHAR"
+note = "An IPv4 address and an IPv6 address written with upper-case hex and zero runs, compared as text."
+catches = "the input text returned unchanged instead of the canonical form"
+reading = "the page: an IPADDRESS from a string holding a valid IPv4 or IPv6 address, in canonical form; NULL gives NULL; an invalid address raises an error"
+cases = ["cases/translation/functions/to-ipaddress.toml#t001_canonical"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-ipaddress.t002"
+form = "sf.functions.to-ipaddress"
+kind = "error_parity"
+target = "error"
+note = "An IPv4 address with an octet above 255, which the page says raises an error."
+catches = "NULL returned, or the octet wrapped"
+reading = "the page: an IPADDRESS from a string holding a valid IPv4 or IPv6 address, in canonical form; NULL gives NULL; an invalid address raises an error"
+cases = ["cases/translation/functions/to-ipaddress.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-ipaddress.t003"
+form = "sf.functions.to-ipaddress"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL, which the page says gives NULL."
+catches = "an error"
+reading = "the page: an IPADDRESS from a string holding a valid IPv4 or IPv6 address, in canonical form; NULL gives NULL; an invalid address raises an error"
+cases = ["cases/translation/functions/to-ipaddress.toml#t003_null_string_expr"]
 required = true
 
 [[obligation]]
@@ -23018,6 +23926,61 @@ note = "Strings with fractional seconds, an explicit format and an integer strin
 catches = "the fraction dropped, the format ignored, or an integer string read as a date"
 reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
 cases = ["cases/translation/functions/to-timestamp.toml#t009_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-uuid.t001"
+form = "sf.functions.to-uuid"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same UUID in upper and lower case, compared as text."
+catches = "the case kept as given, so the two differ"
+reading = "the page: a UUID from a string in UUID format; NULL gives NULL"
+cases = ["cases/translation/functions/to-uuid.toml#t001_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-uuid.t002"
+form = "sf.functions.to-uuid"
+kind = "error_parity"
+target = "error"
+note = "A string one digit short of a UUID."
+catches = "NULL returned, or the string padded"
+reading = "the page: a UUID from a string in UUID format; NULL gives NULL"
+cases = ["cases/translation/functions/to-uuid.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-uuid.t003"
+form = "sf.functions.to-uuid"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL, which the page says gives NULL."
+catches = "a nil UUID returned"
+reading = "the page: a UUID from a string in UUID format; NULL gives NULL"
+cases = ["cases/translation/functions/to-uuid.toml#t003_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-variant.t001"
+form = "sf.functions.to-variant"
+kind = "type_combination"
+target = "NUMBER, VARCHAR, DATE, BOOLEAN"
+note = "Values of four types, each with the type TYPEOF reports."
+catches = "every value stored as text, or the date stored as a string"
+reading = "the page: a VARIANT holding the value of any type"
+cases = ["cases/translation/functions/to-variant.toml#t001_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-variant.t002"
+form = "sf.functions.to-variant"
+kind = "null_argument"
+target = "expr"
+note = "A NULL; the page does not say; the recording decides whether the result is a SQL NULL or a JSON null."
+catches = "the other kind of null than Snowflake returns"
+reading = "the page: a VARIANT holding the value of any type"
+cases = ["cases/translation/functions/to-variant.toml#t002_null_expr"]
 required = true
 
 [[obligation]]
@@ -23602,6 +24565,62 @@ cases = ["cases/translation/functions/try-base64-decode-string.toml#t006_empty"]
 required = true
 
 [[obligation]]
+id = "sf.functions.try-cast.t001"
+form = "sf.functions.try-cast"
+kind = "type_combination"
+target = "VARCHAR to NUMBER, DATE, BOOLEAN"
+note = "Strings that convert."
+catches = "NULL returned for a valid string"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
+cases = ["cases/translation/functions/try-cast.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-cast.t002"
+form = "sf.functions.try-cast"
+kind = "type_combination"
+target = "VARCHAR to NUMBER, DATE, BOOLEAN"
+note = "Strings that do not convert, including 30 February."
+catches = "an error raised, or the date rolled over to March"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
+cases = ["cases/translation/functions/try-cast.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-cast.t003"
+form = "sf.functions.try-cast"
+kind = "boundary"
+subkind = "overflow"
+target = "overflow"
+note = "A string with more digits than the target precision."
+catches = "an error raised, or the value truncated"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
+cases = ["cases/translation/functions/try-cast.toml#t003_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-cast.t004"
+form = "sf.functions.try-cast"
+kind = "error_parity"
+target = "error"
+note = "A NUMBER argument; the page says TRY_CAST only works for string expressions."
+catches = "the number converted as CAST would"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
+cases = ["cases/translation/functions/try-cast.toml#t004_number_input"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-cast.t005"
+form = "sf.functions.try-cast"
+kind = "null_argument"
+target = "source-string-expr"
+note = "A NULL string."
+catches = "an error"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
+cases = ["cases/translation/functions/try-cast.toml#t005_null_source_string_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.try-hex-decode-binary.t001"
 form = "sf.functions.try-hex-decode-binary"
 kind = "type_combination"
@@ -23733,6 +24752,496 @@ note = "A SQL NULL."
 catches = "a JSON null returned"
 reading = "the page: as PARSE_JSON, but NULL when parsing fails"
 cases = ["cases/translation/functions/try-parse-json.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-binary.t001"
+form = "sf.functions.try-to-binary"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "Valid HEX and BASE64."
+catches = "NULL for valid input"
+reading = "the page: as TO_BINARY, but NULL where the conversion fails, and NULL for a format other than HEX, BASE64 or UTF-8"
+cases = ["cases/translation/functions/try-to-binary.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-binary.t002"
+form = "sf.functions.try-to-binary"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "Invalid HEX, an odd number of HEX digits, and an unknown format name, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: as TO_BINARY, but NULL where the conversion fails, and NULL for a format other than HEX, BASE64 or UTF-8"
+cases = ["cases/translation/functions/try-to-binary.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-binary.t003"
+form = "sf.functions.try-to-binary"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "empty bytes returned"
+reading = "the page: as TO_BINARY, but NULL where the conversion fails, and NULL for a format other than HEX, BASE64 or UTF-8"
+cases = ["cases/translation/functions/try-to-binary.toml#t003_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-boolean.t001"
+form = "sf.functions.try-to-boolean"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Accepted spellings in mixed case."
+catches = "only true and false accepted"
+reading = "the page: as TO_BOOLEAN on strings, but other strings give NULL"
+cases = ["cases/translation/functions/try-to-boolean.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-boolean.t002"
+form = "sf.functions.try-to-boolean"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Strings not in either list, including 2 and an empty string."
+catches = "an error raised, or 2 read as TRUE"
+reading = "the page: as TO_BOOLEAN on strings, but other strings give NULL"
+cases = ["cases/translation/functions/try-to-boolean.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-boolean.t003"
+form = "sf.functions.try-to-boolean"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "FALSE returned"
+reading = "the page: as TO_BOOLEAN on strings, but other strings give NULL"
+cases = ["cases/translation/functions/try-to-boolean.toml#t003_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-date.t001"
+form = "sf.functions.try-to-date"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "An ISO date, and a date in a given format."
+catches = "the format ignored, or day and month swapped"
+reading = "the page: a DATE from a string, with an optional format (default AUTO); an integer string is seconds below 31536000000, milliseconds from there, then microseconds and nanoseconds; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-date.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-date.t002"
+form = "sf.functions.try-to-date"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Integer strings just below and at the milliseconds boundary, which the page reads as seconds and milliseconds."
+catches = "every integer read as seconds, or as days"
+reading = "the page: a DATE from a string, with an optional format (default AUTO); an integer string is seconds below 31536000000, milliseconds from there, then microseconds and nanoseconds; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-date.toml#t002_epoch_units"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-date.t003"
+form = "sf.functions.try-to-date"
+kind = "type_combination"
+target = "VARCHAR"
+note = "30 February and text that is not a date."
+catches = "an error raised, or the date rolled over to March"
+reading = "the page: a DATE from a string, with an optional format (default AUTO); an integer string is seconds below 31536000000, milliseconds from there, then microseconds and nanoseconds; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-date.toml#t003_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-date.t004"
+form = "sf.functions.try-to-date"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "an error, or the epoch date"
+reading = "the page: a DATE from a string, with an optional format (default AUTO); an integer string is seconds below 31536000000, milliseconds from there, then microseconds and nanoseconds; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-date.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decfloat.t001"
+form = "sf.functions.try-to-decfloat"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Decimal strings with trailing zeros and an exponent, compared as text."
+catches = "NULL for valid input, or trailing zeros dropped"
+reading = "the page: as TO_DECFLOAT, but NULL on a conversion error"
+cases = ["cases/translation/functions/try-to-decfloat.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decfloat.t002"
+form = "sf.functions.try-to-decfloat"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text that is not a number, and inf, which the page says is not supported."
+catches = "an error raised, or infinity returned"
+reading = "the page: as TO_DECFLOAT, but NULL on a conversion error"
+cases = ["cases/translation/functions/try-to-decfloat.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decfloat.t003"
+form = "sf.functions.try-to-decfloat"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "zero returned"
+reading = "the page: as TO_DECFLOAT, but NULL on a conversion error"
+cases = ["cases/translation/functions/try-to-decfloat.toml#t003_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-decimal.t001"
+form = "sf.functions.try-to-decimal.try-to-decimal"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A string with three fractional digits at scale 2."
+catches = "truncation (12.34)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-decimal.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-decimal.t002"
+form = "sf.functions.try-to-decimal.try-to-decimal"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text that is not a number, and a value too wide for the precision."
+catches = "an error raised"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-decimal.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-decimal.t003"
+form = "sf.functions.try-to-decimal.try-to-decimal"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A string with a currency sign and group separator parsed with a format model."
+catches = "the format ignored (NULL)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-decimal.toml#t003_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-decimal.t004"
+form = "sf.functions.try-to-decimal.try-to-decimal"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-decimal.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-number.t001"
+form = "sf.functions.try-to-decimal.try-to-number"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A string with three fractional digits at scale 2."
+catches = "truncation (12.34)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-number.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-number.t002"
+form = "sf.functions.try-to-decimal.try-to-number"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text that is not a number, and a value too wide for the precision."
+catches = "an error raised"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-number.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-number.t003"
+form = "sf.functions.try-to-decimal.try-to-number"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A string with a currency sign and group separator parsed with a format model."
+catches = "the format ignored (NULL)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-number.toml#t003_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-number.t004"
+form = "sf.functions.try-to-decimal.try-to-number"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-number.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-numeric.t001"
+form = "sf.functions.try-to-decimal.try-to-numeric"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "A string with three fractional digits at scale 2."
+catches = "truncation (12.34)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-numeric.toml#t001_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-numeric.t002"
+form = "sf.functions.try-to-decimal.try-to-numeric"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text that is not a number, and a value too wide for the precision."
+catches = "an error raised"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-numeric.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-numeric.t003"
+form = "sf.functions.try-to-decimal.try-to-numeric"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A string with a currency sign and group separator parsed with a format model."
+catches = "the format ignored (NULL)"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-numeric.toml#t003_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-decimal.try-to-numeric.t004"
+form = "sf.functions.try-to-decimal.try-to-numeric"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string, which the page says gives NULL."
+catches = "zero returned"
+reading = "the page: as TO_DECIMAL on a string, but NULL where the conversion fails or the input is NULL"
+cases = ["cases/translation/functions/try-to-decimal.try-to-numeric.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-double.t001"
+form = "sf.functions.try-to-double"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Scientific notation and a special value."
+catches = "the special value rejected"
+reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
+cases = ["cases/translation/functions/try-to-double.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-double.t002"
+form = "sf.functions.try-to-double"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text that is not a number."
+catches = "an error raised"
+reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
+cases = ["cases/translation/functions/try-to-double.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-double.t003"
+form = "sf.functions.try-to-double"
+kind = "error_parity"
+target = "error"
+note = "A NUMBER argument; the page says the function only accepts string expressions."
+catches = "the number converted"
+reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
+cases = ["cases/translation/functions/try-to-double.toml#t003_number_input"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-double.t004"
+form = "sf.functions.try-to-double"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "zero returned"
+reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
+cases = ["cases/translation/functions/try-to-double.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-ipaddress.t001"
+form = "sf.functions.try-to-ipaddress"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A valid IPv6 address, compared as text."
+catches = "NULL for a valid address"
+reading = "the page: as TO_IPADDRESS, but NULL where TO_IPADDRESS would raise an error"
+cases = ["cases/translation/functions/try-to-ipaddress.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-ipaddress.t002"
+form = "sf.functions.try-to-ipaddress"
+kind = "type_combination"
+target = "VARCHAR"
+note = "An octet above 255 and text that is not an address."
+catches = "an error raised"
+reading = "the page: as TO_IPADDRESS, but NULL where TO_IPADDRESS would raise an error"
+cases = ["cases/translation/functions/try-to-ipaddress.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-ipaddress.t003"
+form = "sf.functions.try-to-ipaddress"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "an error"
+reading = "the page: as TO_IPADDRESS, but NULL where TO_IPADDRESS would raise an error"
+cases = ["cases/translation/functions/try-to-ipaddress.toml#t003_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-time.t001"
+form = "sf.functions.try-to-time"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A time with nine fractional digits, and a 12-hour time with a format."
+catches = "the fraction truncated to milliseconds, or the afternoon read as morning"
+reading = "the page: a TIME from a string, with an optional format (default AUTO); an integer string is read by the same magnitude rule as TRY_TO_DATE; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-time.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-time.t002"
+form = "sf.functions.try-to-time"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Integer strings read as seconds and as milliseconds after midnight of the epoch."
+catches = "every integer read as seconds"
+reading = "the page: a TIME from a string, with an optional format (default AUTO); an integer string is read by the same magnitude rule as TRY_TO_DATE; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-time.toml#t002_epoch_units"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-time.t003"
+form = "sf.functions.try-to-time"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Hour 25 and text that is not a time."
+catches = "an error raised, or the hour wrapped"
+reading = "the page: a TIME from a string, with an optional format (default AUTO); an integer string is read by the same magnitude rule as TRY_TO_DATE; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-time.toml#t003_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-time.t004"
+form = "sf.functions.try-to-time"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "midnight returned"
+reading = "the page: a TIME from a string, with an optional format (default AUTO); an integer string is read by the same magnitude rule as TRY_TO_DATE; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-time.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t001"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A timestamp with nine fractional digits, and one in a given format."
+catches = "the fraction truncated, or the format ignored"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t002"
+form = "sf.functions.try-to-timestamp"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Integer strings on each side of the milliseconds, microseconds and nanoseconds boundaries."
+catches = "every integer read as seconds"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t002_epoch_units"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t003"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR with an offset"
+note = "A string with an offset read by TRY_TO_TIMESTAMP_TZ and TRY_TO_TIMESTAMP_NTZ."
+catches = "the offset applied to the NTZ result, or dropped from the TZ result"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t003_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t004"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Hour 25 on a valid date, and text that is not a timestamp."
+catches = "an error raised, or the hour carried into the next day"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t004_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t005"
+form = "sf.functions.try-to-timestamp"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "the epoch returned"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t005_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-uuid.t001"
+form = "sf.functions.try-to-uuid"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A UUID in lower case, compared as text."
+catches = "NULL for a valid UUID"
+reading = "the page: as TO_UUID, but NULL where TO_UUID would raise an error"
+cases = ["cases/translation/functions/try-to-uuid.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-uuid.t002"
+form = "sf.functions.try-to-uuid"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A string one digit short and a string with a non-hex digit."
+catches = "an error raised"
+reading = "the page: as TO_UUID, but NULL where TO_UUID would raise an error"
+cases = ["cases/translation/functions/try-to-uuid.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-uuid.t003"
+form = "sf.functions.try-to-uuid"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "a nil UUID returned"
+reading = "the page: as TO_UUID, but NULL where TO_UUID would raise an error"
+cases = ["cases/translation/functions/try-to-uuid.toml#t003_null_string_expr"]
 required = true
 
 [[obligation]]

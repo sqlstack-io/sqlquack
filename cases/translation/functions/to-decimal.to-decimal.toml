@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.to-decimal.to-decimal"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_scale"
+description = "Strings with three fractional digits at scale 2, and the default scale 0 on a half. Catches: truncation (12.34 for 12.345), or half-even rounding (12 for 12.5)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'12.345'"],
+  ["'-12.345'"],
+  ["'12.5'"],
+]
+query = "SELECT TO_DECIMAL(v, 10, 2) AS s2, TO_DECIMAL(v) AS s0 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t002_format"
+description = "A string with a group separator parsed with a format model. Catches: the format ignored (an error), or the scale dropped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'1,234.5'"],
+]
+query = "SELECT TO_DECIMAL(v, '9,999.9', 6, 1) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_variant"
+description = "A VARIANT holding true, false, a string and a JSON null. Catches: an error for the booleans, or the JSON null as 0"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'true'"],
+  ["'false'"],
+  ["'\"7\"'"],
+  ["'null'"],
+]
+query = "SELECT TO_DECIMAL(PARSE_JSON(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_precision"
+description = "A value with more digits than the precision allows. Catches: the value truncated or returned as NULL"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'12345'"],
+]
+query = "SELECT TO_DECIMAL(v, 4, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_expr"
+description = "A NULL, which the page says gives NULL. Catches: zero returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_DECIMAL(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
