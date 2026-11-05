@@ -741,6 +741,18 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["WORKSPACES"],
 ];
 
+/// The one-word object kinds UNDROP takes besides TABLE, SCHEMA and DATABASE.
+pub(crate) const SNOWFLAKE_UNDROP_KINDS: &[&str] = &[
+    "ACCOUNT",
+    "NOTEBOOK",
+    "SNAPSHOT",
+    "STAGE",
+    "STREAMLIT",
+    "TAG",
+    "TYPE",
+    "VARIABLE",
+];
+
 /// SHOW kinds the shared SHOW still reads for Snowflake, by their leading words.
 pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["CALLER"],

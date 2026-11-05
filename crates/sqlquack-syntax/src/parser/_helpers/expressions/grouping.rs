@@ -136,7 +136,9 @@ impl Parser {
             return Ok(None);
         }
 
-        self.match_token(TokenType::RParen);
+        if !self.match_token(TokenType::RParen) && self.is_snowflake() {
+            return Err(self.parse_error(format!("Expected ) to close {this}")));
+        }
 
         Ok(Some(Expression::HistoricalData(Box::new(HistoricalData {
             this: Box::new(Expression::Identifier(Identifier::new(this))),

@@ -554,7 +554,12 @@ impl Parser {
             None
         };
 
-        self.match_token(TokenType::RParen);
+        let closed = self.match_token(TokenType::RParen);
+        if self.is_snowflake() && (information.is_none() || !closed) {
+            return Err(
+                self.parse_error("Expected a value and ) in CHANGES ( INFORMATION => ... )")
+            );
+        }
 
         let at_before = self.parse_historical_data()?.map(Box::new);
 

@@ -738,14 +738,7 @@ impl Parser {
             "SCHEMA".to_string()
         } else if self.match_token(TokenType::Database) {
             "DATABASE".to_string()
-        } else if self.match_texts(&[
-            "ACCOUNT",
-            "NOTEBOOK",
-            "SNAPSHOT",
-            "STREAMLIT",
-            "TAG",
-            "TYPE",
-        ]) {
+        } else if self.match_texts(crate::parser::constants::SNOWFLAKE_UNDROP_KINDS) {
             self.previous_text().to_ascii_uppercase()
         } else {
             return Err(self.parse_error(
