@@ -49,3 +49,15 @@ rows = [
 query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t005-outside"
+description = "ASIN at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, Infinity, NULL or an error differing from Snowflake"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-2"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

@@ -52,7 +52,7 @@ form = "sf.expressions.operators-arithmetic.add"
 kind = "type_combination"
 target = "NUMBER(10,2) + FLOAT"
 note = "a NUMBER(10,2) + b FLOAT."
-catches = "fixed-point turned into FLOAT before adding or the reverse"
+catches = "the FLOAT operand cast to NUMBER(10,2) (1.00 instead of 1.001) or a fixed-point result type"
 reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
 cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t005-num-float-102"]
 required = true
@@ -332,7 +332,7 @@ kind = "boundary"
 subkind = "negative"
 target = "negative"
 note = "Both operands negative."
-catches = "sign of the remainder taken from the divisor"
+catches = "remainder made non-negative (Euclidean or ABS): 2 instead of -1 for -7 % -3, 4 instead of -1 for -1 % -5"
 reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
 cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t008-both-negative"]
 required = true
@@ -346,6 +346,17 @@ note = "A non-numeric string operand."
 catches = "the string silently read as 0 instead of the conversion error"
 reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
 cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t009-mod-text"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t010"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "error_parity"
+target = "error"
+note = "A zero divisor: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NULL for x % 0 (DuckDB) where Snowflake raises division by zero"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t010-zero-divisor"]
 required = true
 
 [[obligation]]

@@ -64,11 +64,11 @@ tags = ["null"]
 
 [[case]]
 id = "t006-neg-zero"
-description = "Negative dividends over zero. Catches: -0 or a negative zero result"
-columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,2)" }]
+description = "Negative dividends over zero. Catches: the sign of the dividend kept on the zero result (-0 instead of 0)"
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
 rows = [
-  ["-5.00", "0.00"],
-  ["-0.01", "3.00"],
+  ["-5", "0"],
+  ["-0.01", "3"],
 ]
 query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
 order = "ordered"

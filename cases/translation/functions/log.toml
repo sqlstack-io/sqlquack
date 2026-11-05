@@ -29,7 +29,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003-float"
-description = "LOG of FLOAT values. Catches: computed in decimal"
+description = "LOG of FLOAT values. Catches: arguments swapped (LOG(10, 0.001) is -3, LOG(0.001, 10) is -1/3) or a non-FLOAT result type"
 columns = [{ name = "b", type = "FLOAT" }, { name = "x", type = "FLOAT" }]
 rows = [
   ["2.718281828459045", "10"],

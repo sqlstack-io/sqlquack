@@ -50,3 +50,15 @@ rows = [
 query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t005-outside"
+description = "ACOS at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, Infinity, NULL or an error differing from Snowflake"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-1.0001"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

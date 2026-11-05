@@ -33,7 +33,7 @@ id = "t003-float"
 description = "ABS of FLOAT. Catches: negative zero and tiny negatives"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
-  ["-0.0"],
+  ["-0e0"],
   ["-1e-300"],
   ["2.5"],
 ]

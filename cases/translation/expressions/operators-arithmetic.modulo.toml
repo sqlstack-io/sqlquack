@@ -32,7 +32,7 @@ id = "t003-num-num-102124"
 description = "a NUMBER(10,2) % b NUMBER(12,4). Catches: result scale taken from one operand"
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(12,4)" }]
 rows = [
-  ["5.25", "1.1000"],
+  ["5.25", "1.0001"],
   ["-0.75", "0.5000"],
 ]
 query = "SELECT a % b AS r FROM input ORDER BY ordinal"
@@ -87,7 +87,7 @@ tags = ["null"]
 
 [[case]]
 id = "t008-both-negative"
-description = "Both operands negative. Catches: sign of the remainder taken from the divisor"
+description = "Both operands negative. Catches: remainder made non-negative (Euclidean or ABS): 2 instead of -1 for -7 % -3, 4 instead of -1 for -1 % -5"
 columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["-7", "-3"],
@@ -103,6 +103,17 @@ description = "A non-numeric string operand. Catches: the string silently read a
 columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["'abc'", "3"],
+]
+query = "SELECT a % b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t010-zero-divisor"
+description = "A zero divisor: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NULL for x % 0 (DuckDB) where Snowflake raises division by zero"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["5", "0"],
 ]
 query = "SELECT a % b AS r FROM input ORDER BY ordinal"
 order = "ordered"

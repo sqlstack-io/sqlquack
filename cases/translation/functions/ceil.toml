@@ -44,13 +44,15 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004-decfloat"
-description = "CEIL of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT"
+description = "CEIL of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["2.25"],
   ["-2.25"],
+  ["0.29"],
+  ["12345678901234567890.25"],
 ]
-query = "SELECT CEIL(x, 1) AS r FROM input ORDER BY ordinal"
+query = "SELECT CEIL(x, 1) AS r, CEIL(x, 2) AS s FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -96,6 +98,7 @@ columns = [{ name = "x", type = "NUMBER(10,2)" }]
 rows = [
   ["-2.15"],
   ["-0.01"],
+  ["2.11"],
 ]
 query = "SELECT CEIL(x, 1) AS r FROM input ORDER BY ordinal"
 order = "ordered"

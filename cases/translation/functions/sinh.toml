@@ -40,11 +40,11 @@ tags = ["null"]
 
 [[case]]
 id = "t004-overflow-inf"
-description = "Arguments past the double range. Catches: infinity versus error"
+description = "Arguments just past the double range (710.48). Catches: infinity versus error"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
-  ["710"],
-  ["-710"],
+  ["711"],
+  ["-711"],
 ]
 query = "SELECT SINH(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"

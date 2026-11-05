@@ -44,13 +44,15 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004-decfloat"
-description = "TRUNCATE of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT"
+description = "TRUNCATE of DECFLOAT returns DECFLOAT. Catches: computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 columns = [{ name = "x", type = "DECFLOAT" }]
 rows = [
   ["2.25"],
   ["-2.25"],
+  ["0.29"],
+  ["12345678901234567890.25"],
 ]
-query = "SELECT TRUNCATE(x, 1) AS r FROM input ORDER BY ordinal"
+query = "SELECT TRUNCATE(x, 1) AS r, TRUNCATE(x, 2) AS s FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -78,7 +80,7 @@ tags = ["null"]
 
 [[case]]
 id = "t007-scale-past"
-description = "Scales past the input scale and far negative. Catches: scale capped or wrapping"
+description = "Scales past the input scale and far negative. Catches: a negative scale beyond the integer digits not giving 0, or a scale above the input scale changing the value"
 columns = [{ name = "x", type = "NUMBER(12,4)" }, { name = "s", type = "NUMBER(38,0)" }]
 rows = [
   ["12.3456", "6"],

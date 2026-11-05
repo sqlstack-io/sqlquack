@@ -29,7 +29,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003-float"
-description = "POWER of FLOAT values. Catches: computed in decimal"
+description = "POWER of FLOAT values. Catches: arguments swapped (2.5^1.5 is 3.95, 1.5^2.5 is 2.76) or a non-FLOAT result type"
 columns = [{ name = "x", type = "FLOAT" }, { name = "y", type = "FLOAT" }]
 rows = [
   ["1.5", "2.5"],
@@ -96,6 +96,17 @@ rows = [
   ["-3", "3"],
   ["-3", "2"],
   ["-0.5", "-1"],
+]
+query = "SELECT POWER(x, y) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t009-neg-frac"
+description = "A negative base with a fractional exponent: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, NULL or an error differing from Snowflake"
+columns = [{ name = "x", type = "FLOAT" }, { name = "y", type = "FLOAT" }]
+rows = [
+  ["-8", "0.5"],
 ]
 query = "SELECT POWER(x, y) AS r FROM input ORDER BY ordinal"
 order = "ordered"

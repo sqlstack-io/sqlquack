@@ -104,6 +104,18 @@ cases = ["cases/translation/functions/acos.toml#t004-edges"]
 required = true
 
 [[obligation]]
+id = "sf.functions.acos.t005"
+form = "sf.functions.acos"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "ACOS at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acos.toml#t005-outside"]
+required = true
+
+[[obligation]]
 id = "sf.functions.acosh.t001"
 form = "sf.functions.acosh"
 kind = "type_combination"
@@ -149,6 +161,18 @@ cases = ["cases/translation/functions/acosh.toml#t004-edge"]
 required = true
 
 [[obligation]]
+id = "sf.functions.acosh.t005"
+form = "sf.functions.acosh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "ACOSH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/acosh.toml#t005-below-one"]
+required = true
+
+[[obligation]]
 id = "sf.functions.asin.t001"
 form = "sf.functions.asin"
 kind = "type_combination"
@@ -191,6 +215,18 @@ note = "Odd symmetry at negatives."
 catches = "absolute value taken"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/asin.toml#t004-odd"]
+required = true
+
+[[obligation]]
+id = "sf.functions.asin.t005"
+form = "sf.functions.asin"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "ASIN at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/asin.toml#t005-outside"]
 required = true
 
 [[obligation]]
@@ -418,6 +454,30 @@ cases = ["cases/translation/functions/atanh.toml#t004-near-one"]
 required = true
 
 [[obligation]]
+id = "sf.functions.atanh.t005"
+form = "sf.functions.atanh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "ATANH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t005-edge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.atanh.t006"
+form = "sf.functions.atanh"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "ATANH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/atanh.toml#t006-outside"]
+required = true
+
+[[obligation]]
 id = "sf.functions.cbrt.t001"
 form = "sf.functions.cbrt"
 kind = "type_combination"
@@ -512,7 +572,7 @@ form = "sf.functions.ceil"
 kind = "type_combination"
 target = "DECFLOAT"
 note = "CEIL of DECFLOAT returns DECFLOAT."
-catches = "computed in FLOAT"
+catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/ceil.toml#t004-decfloat"]
 required = true
@@ -647,7 +707,7 @@ form = "sf.functions.cosh"
 kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
-note = "Arguments past the double range."
+note = "Arguments just past the double range (710.48)."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/cosh.toml#t004-overflow-inf"]
@@ -699,6 +759,18 @@ cases = ["cases/translation/functions/cot.toml#t004-small"]
 required = true
 
 [[obligation]]
+id = "sf.functions.cot.t005"
+form = "sf.functions.cot"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "COT at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/cot.toml#t005-pole"]
+required = true
+
+[[obligation]]
 id = "sf.functions.degrees.t001"
 form = "sf.functions.degrees"
 kind = "type_combination"
@@ -738,9 +810,21 @@ kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
 note = "Large radian values."
-catches = "overflow handling"
+catches = "x*180 computed before dividing by pi, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/degrees.toml#t004-large"]
+required = true
+
+[[obligation]]
+id = "sf.functions.degrees.t005"
+form = "sf.functions.degrees"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "A result past the double range: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "Infinity versus an error"
+reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
+cases = ["cases/translation/functions/degrees.toml#t005-overflow"]
 required = true
 
 [[obligation]]
@@ -805,7 +889,7 @@ kind = "boundary"
 subkind = "negative"
 target = "negative"
 note = "Negative dividends over zero."
-catches = "-0 or a negative zero result"
+catches = "the sign of the dividend kept on the zero result (-0 instead of 0)"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0 returns 0 when the divisor is 0"
 cases = ["cases/translation/functions/div0.toml#t006-neg-zero"]
 required = true
@@ -872,7 +956,7 @@ kind = "boundary"
 subkind = "negative"
 target = "negative"
 note = "Negative dividends over zero."
-catches = "-0 or a negative zero result"
+catches = "a sign-keeping or FLOAT path giving -0 or -1e-10 where the quotient underflows the scale"
 reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; DIV0NULL returns 0 when the divisor is 0 or NULL"
 cases = ["cases/translation/functions/div0null.toml#t006-neg-zero"]
 required = true
@@ -1039,7 +1123,7 @@ form = "sf.functions.floor"
 kind = "type_combination"
 target = "DECFLOAT"
 note = "FLOOR of DECFLOAT returns DECFLOAT."
-catches = "computed in FLOAT"
+catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/floor.toml#t004-decfloat"]
 required = true
@@ -1185,7 +1269,7 @@ form = "sf.functions.log"
 kind = "type_combination"
 target = "FLOAT"
 note = "LOG of FLOAT values."
-catches = "computed in decimal"
+catches = "arguments swapped (LOG(10, 0.001) is -3, LOG(0.001, 10) is -1/3) or a non-FLOAT result type"
 reading = "the page: base and expr \"can be of any numeric data type (INTEGER, fixed-point, or floating point)\"; \"If base is 1 or less than or equal to 0, an error is returned. If expr is less than or equal to 0, an error is returned.\""
 cases = ["cases/translation/functions/log.toml#t003-float"]
 required = true
@@ -1359,6 +1443,17 @@ cases = ["cases/translation/functions/mod.toml#t008-max"]
 required = true
 
 [[obligation]]
+id = "sf.functions.mod.t009"
+form = "sf.functions.mod"
+kind = "error_parity"
+target = "error"
+note = "MOD by zero: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "a bare % giving NULL for MOD(x, 0); with it, mod.t006 catches NULL read as 0"
+reading = "the page: both arguments numeric expressions; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT; \"the remainder from truncation-based division (rounding toward zero)\""
+cases = ["cases/translation/functions/mod.toml#t009-zero-divisor"]
+required = true
+
+[[obligation]]
 id = "sf.functions.pi.t001"
 form = "sf.functions.pi"
 kind = "type_combination"
@@ -1397,7 +1492,7 @@ form = "sf.functions.pow.pow"
 kind = "type_combination"
 target = "FLOAT"
 note = "POW of FLOAT values."
-catches = "computed in decimal"
+catches = "arguments swapped (2.5^1.5 is 3.95, 1.5^2.5 is 2.76) or a non-FLOAT result type"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
 cases = ["cases/translation/functions/pow.pow.toml#t003-float"]
 required = true
@@ -1460,6 +1555,18 @@ cases = ["cases/translation/functions/pow.pow.toml#t008-neg-base"]
 required = true
 
 [[obligation]]
+id = "sf.functions.pow.pow.t009"
+form = "sf.functions.pow.pow"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A negative base with a fractional exponent: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, NULL or an error differing from Snowflake"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.pow.toml#t009-neg-frac"]
+required = true
+
+[[obligation]]
 id = "sf.functions.pow.power.t001"
 form = "sf.functions.pow.power"
 kind = "type_combination"
@@ -1487,7 +1594,7 @@ form = "sf.functions.pow.power"
 kind = "type_combination"
 target = "FLOAT"
 note = "POWER of FLOAT values."
-catches = "computed in decimal"
+catches = "arguments swapped (2.5^1.5 is 3.95, 1.5^2.5 is 2.76) or a non-FLOAT result type"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
 cases = ["cases/translation/functions/pow.power.toml#t003-float"]
 required = true
@@ -1550,6 +1657,18 @@ cases = ["cases/translation/functions/pow.power.toml#t008-neg-base"]
 required = true
 
 [[obligation]]
+id = "sf.functions.pow.power.t009"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A negative base with a fractional exponent: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, NULL or an error differing from Snowflake"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power.toml#t009-neg-frac"]
+required = true
+
+[[obligation]]
 id = "sf.functions.radians.t001"
 form = "sf.functions.radians"
 kind = "type_combination"
@@ -1589,7 +1708,7 @@ kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
 note = "Large degree values."
-catches = "overflow handling"
+catches = "x*pi computed before dividing by 180, overflowing where the result is finite"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/radians.toml#t004-large"]
 required = true
@@ -1600,7 +1719,7 @@ form = "sf.functions.round.round"
 kind = "type_combination"
 target = "NUMBER(38,0)"
 note = "ROUND of integers with a negative scale."
-catches = "a negative scale ignored, or 1550 rounded to even (1600 expected half away)"
+catches = "half-to-even (1400) instead of half away from zero (1500), or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
 cases = ["cases/translation/functions/round.round.toml#t001-int"]
 required = true
@@ -1655,7 +1774,7 @@ form = "sf.functions.round.round"
 kind = "type_combination"
 target = "'HALF_AWAY_FROM_ZERO'"
 note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
-catches = "the mode read as half-even"
+catches = "the mode read as half-even (-0.0250 to -0.02 instead of -0.03)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
 cases = ["cases/translation/functions/round.round.toml#t006-mode-away"]
 required = true
@@ -1700,7 +1819,7 @@ form = "sf.functions.round.round"
 kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
-note = "Rounding the largest 38-digit integers up to a power of ten."
+note = "Rounding 38-digit integers at scale -1, near the 38-digit limit."
 catches = "overflow to FLOAT"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\")"
 cases = ["cases/translation/functions/round.round.toml#t010-max"]
@@ -1734,7 +1853,7 @@ form = "sf.functions.round.round-expr-scale"
 kind = "type_combination"
 target = "NUMBER(38,0)"
 note = "ROUND of integers with a negative scale."
-catches = "a negative scale ignored, or 1550 rounded to even (1600 expected half away)"
+catches = "half-to-even (1400) instead of half away from zero (1500), or a negative scale ignored"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
 cases = ["cases/translation/functions/round.round-expr-scale.toml#t001-int"]
 required = true
@@ -1789,7 +1908,7 @@ form = "sf.functions.round.round-expr-scale"
 kind = "type_combination"
 target = "'HALF_AWAY_FROM_ZERO'"
 note = "rounding_mode 'HALF_AWAY_FROM_ZERO' spelled out."
-catches = "the mode read as half-even"
+catches = "the mode read as half-even (-0.0250 to -0.02 instead of -0.03)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
 cases = ["cases/translation/functions/round.round-expr-scale.toml#t006-mode-away"]
 required = true
@@ -1834,7 +1953,7 @@ form = "sf.functions.round.round-expr-scale"
 kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
-note = "Rounding the largest 38-digit integers up to a power of ten."
+note = "Rounding 38-digit integers at scale -1, near the 38-digit limit."
 catches = "overflow to FLOAT"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type; rounding_mode 'HALF_AWAY_FROM_ZERO' (default) or 'HALF_TO_EVEN', and with a rounding_mode the input must be fixed-point (\"FLOAT aren't supported with this argument\"); \"If you specify the EXPR => named argument, you must also specify the SCALE => named argument\""
 cases = ["cases/translation/functions/round.round-expr-scale.toml#t010-max"]
@@ -1879,7 +1998,7 @@ form = "sf.functions.sign"
 kind = "type_combination"
 target = "NUMBER(38,0)"
 note = "SIGN of integers."
-catches = "ABS computed, or -0.001 rounded to 0 before taking the sign"
+catches = "ABS computed (-7 gives 7 instead of -1)"
 reading = "the page names no argument type; the numeric category gives integer NUMBER, NUMBER with a scale and FLOAT"
 cases = ["cases/translation/functions/sign.toml#t001-int"]
 required = true
@@ -2013,7 +2132,7 @@ form = "sf.functions.sinh"
 kind = "boundary"
 subkind = "magnitude"
 target = "magnitude"
-note = "Arguments past the double range."
+note = "Arguments just past the double range (710.48)."
 catches = "infinity versus error"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/sinh.toml#t004-overflow-inf"]
@@ -2073,6 +2192,18 @@ note = "Very small and very large values."
 catches = "precision at the extremes"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
 cases = ["cases/translation/functions/sqrt.toml#t005-tiny-huge"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sqrt.t006"
+form = "sf.functions.sqrt"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "SQRT at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error."
+catches = "NaN, Infinity, NULL or an error differing from Snowflake"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
+cases = ["cases/translation/functions/sqrt.toml#t006-negative"]
 required = true
 
 [[obligation]]
@@ -2271,7 +2402,7 @@ form = "sf.functions.trunc.trunc"
 kind = "type_combination"
 target = "DECFLOAT"
 note = "TRUNC of DECFLOAT returns DECFLOAT."
-catches = "computed in FLOAT"
+catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/trunc.trunc.toml#t004-decfloat"]
 required = true
@@ -2361,7 +2492,7 @@ form = "sf.functions.trunc.truncate"
 kind = "type_combination"
 target = "DECFLOAT"
 note = "TRUNCATE of DECFLOAT returns DECFLOAT."
-catches = "computed in FLOAT"
+catches = "computed in FLOAT: the fraction of a 20-digit value lost, or 0.29 at scale 2 off by one ulp"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/trunc.truncate.toml#t004-decfloat"]
 required = true
@@ -2395,7 +2526,7 @@ kind = "boundary"
 subkind = "rounding_scale"
 target = "rounding_scale"
 note = "Scales past the input scale and far negative."
-catches = "scale capped or wrapping"
+catches = "a negative scale beyond the integer digits not giving 0, or a scale above the input scale changing the value"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/trunc.truncate.toml#t007-scale-past"]
 required = true

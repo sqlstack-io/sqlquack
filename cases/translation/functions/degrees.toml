@@ -40,11 +40,22 @@ tags = ["null"]
 
 [[case]]
 id = "t004-large"
-description = "Large radian values. Catches: overflow handling"
+description = "Large radian values. Catches: x*180 computed before dividing by pi, overflowing where the result is finite"
 columns = [{ name = "x", type = "FLOAT" }]
 rows = [
-  ["1e300"],
-  ["-1e305"],
+  ["1e306"],
+  ["-1e306"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t005-overflow"
+description = "A result past the double range: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: Infinity versus an error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e307"],
 ]
 query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"

@@ -34,6 +34,7 @@ columns = [{ name = "a", type = "FLOAT" }]
 rows = [
   ["1.5e-10"],
   ["-2.25"],
+  ["0e0"],
 ]
 query = "SELECT -a AS r FROM input ORDER BY ordinal"
 order = "ordered"

@@ -42,7 +42,7 @@ rows = [
   ["0.75"],
   ["-0.1"],
 ]
-query = "SELECT WIDTH_BUCKET(x, 0.25, 1.25, 5) AS r FROM input ORDER BY ordinal"
+query = "SELECT WIDTH_BUCKET(x, 0.25::FLOAT, 1.25::FLOAT, 5) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -111,6 +111,8 @@ columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["9007199254740991"],
   ["-9007199254740991"],
+  ["-3002399751580331"],
+  ["-3002399751580330"],
 ]
 query = "SELECT WIDTH_BUCKET(x, -9007199254740991, 9007199254740991, 3) AS r FROM input ORDER BY ordinal"
 order = "ordered"

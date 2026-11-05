@@ -49,3 +49,14 @@ rows = [
 query = "SELECT ACOSH(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t005-below-one"
+description = "ACOSH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, Infinity, NULL or an error differing from Snowflake"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+]
+query = "SELECT ACOSH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

@@ -96,3 +96,14 @@ rows = [
 query = "SELECT MOD(a, b) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t009-zero-divisor"
+description = "MOD by zero: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: a bare % giving NULL for MOD(x, 0); with it, mod.t006 catches NULL read as 0"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["5", "0"],
+]
+query = "SELECT MOD(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

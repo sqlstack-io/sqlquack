@@ -11,6 +11,7 @@ rows = [
   ["-1", "-1"],
   ["1", "-1"],
   ["0", "-1"],
+  ["-1", "2"],
 ]
 query = "SELECT ATAN2(y, x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -68,8 +69,8 @@ description = "Signed zeros on the negative x axis. Catches: the sign of zero lo
 columns = [{ name = "y", type = "FLOAT" }, { name = "x", type = "FLOAT" }]
 rows = [
   ["0", "0"],
-  ["-0.0", "-1"],
-  ["0.0", "-1"],
+  ["-0e0", "-1"],
+  ["0e0", "-1"],
 ]
 query = "SELECT ATAN2(y, x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
