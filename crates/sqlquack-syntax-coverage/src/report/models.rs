@@ -70,6 +70,9 @@ pub struct Snapshot {
     /// Receipted cases Snowflake refused as syntax that the parser accepts, opaque or not.
     #[serde(default)]
     pub syntax_error_cases_accepted: BTreeSet<String>,
+    /// Cases the catalogue marks documented (D113): their acceptance against a syntax error is intended.
+    #[serde(default)]
+    pub documented_cases: BTreeSet<String>,
 }
 
 /// One snapshot against a later one; coverage and catalogue changes kept apart.
@@ -88,6 +91,8 @@ pub struct SnapshotDiff {
     pub obligations_gained: Vec<String>,
     /// Cases Snowflake parsed that the base parser accepted, opaque or not, and the head rejects.
     pub parsed_cases_refused: Vec<String>,
-    /// Cases Snowflake refused as syntax that the base parser rejected and the head accepts.
+    /// Cases Snowflake refused as syntax that the base parser rejected and the head accepts, less documented ones.
     pub syntax_error_cases_accepted: Vec<String>,
+    /// The same flips on cases marked documented (D113): listed for the auditor, not failing (D135).
+    pub documented_cases_accepted: Vec<String>,
 }
