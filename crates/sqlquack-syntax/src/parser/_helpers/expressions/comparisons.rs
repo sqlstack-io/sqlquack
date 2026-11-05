@@ -1446,7 +1446,7 @@ impl Parser {
                     span: SourceSpan::default(),
                 }));
             } else if self.check(TokenType::Arrow)
-                || (self.check(TokenType::DArrow) && !self.is_snowflake())
+                || (self.check(TokenType::DArrow) && !self.applies_snowflake_context_rules())
             {
                 let scalar = self.match_token(TokenType::DArrow);
                 if !scalar {
@@ -1613,7 +1613,9 @@ impl Parser {
                 | "DATERANGE"
         ) || self.config.dialect
             == Some(crate::tokens::models::DialectType::DuckDB)
-            && DataType::from_unsigned_name(&type_name).is_some();
+            && DataType::from_unsigned_name(&type_name).is_some()
+            || self.is_snowflake()
+                && crate::parser::constants::SNOWFLAKE_LITERAL_TYPES.contains(&type_name.as_str());
 
         if !is_type_literal_type {
             return Ok(None);

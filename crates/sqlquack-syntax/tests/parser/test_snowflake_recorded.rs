@@ -326,6 +326,24 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "** spreads an array into arguments (recorded success)",
+            sql: "SELECT GREATEST ( ** [ 1 , 2 ] ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "** needs an array after it (recorded errno 1003)",
+            sql: "SELECT GREATEST ( ** ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IPADDRESS types a string literal (recorded success)",
+            sql: "SELECT IPADDRESS '192.0.2.1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
@@ -393,6 +411,12 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             description: "the flow operator keeps the statement after it",
             sql: "SELECT 1 ->> SELECT 2",
             pointer: "/0/operator/expression/select/expressions/0/literal/value",
+            expected_value: json!("2"),
+        },
+        ProjectionTestCase {
+            description: "** keeps the array it spreads",
+            sql: "SELECT GREATEST ( ** [ 1 , 2 ] )",
+            pointer: "/0/select/expressions/0/function/args/0/variadic/this/array_func/expressions/1/literal/value",
             expected_value: json!("2"),
         },
     ];

@@ -18,7 +18,7 @@ impl Parser {
     /// Chains Snowflake statements with the flow operator, as in `SELECT 1 ->> SELECT * FROM $1`.
     pub(crate) fn parse_snowflake_flow(&mut self, first: Expression) -> Result<Expression> {
         let mut flow = first;
-        while self.is_snowflake() && self.match_token(TokenType::DArrow) {
+        while self.applies_snowflake_context_rules() && self.match_token(TokenType::DArrow) {
             let next = self.parse_statement()?;
             flow = Expression::Operator(Box::new(Operator {
                 this: Box::new(flow),

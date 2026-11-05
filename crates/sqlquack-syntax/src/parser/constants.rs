@@ -227,6 +227,9 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
     crate::tokens::models::TokenType::Match,
 ];
 
+/// Snowflake types written before a string as a typed literal, beyond the shared ones.
+pub(crate) const SNOWFLAKE_LITERAL_TYPES: &[&str] = &["IPADDRESS"];
+
 /// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
 pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
 

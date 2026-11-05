@@ -754,7 +754,10 @@ impl Parser {
 
     /// An optional label, written directly before the statement's semicolon.
     fn parse_scripting_label(&mut self) -> Result<Option<Identifier>> {
-        if self.is_at_end() || self.check(TokenType::Semicolon) || self.check(TokenType::DArrow) {
+        if self.is_at_end()
+            || self.check(TokenType::Semicolon)
+            || (self.check(TokenType::DArrow) && self.applies_snowflake_context_rules())
+        {
             return Ok(None);
         }
         self.expect_scripting_name().map(Some)

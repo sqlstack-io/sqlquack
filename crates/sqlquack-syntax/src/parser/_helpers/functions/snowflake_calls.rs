@@ -4,12 +4,36 @@ use crate::expressions::names::models::Column;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::queries::models::Subquery;
 use crate::expressions::tree::models::Expression;
+use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
+    /// An array spread into a call's arguments: PostgreSQL's `VARIADIC <array>` or Snowflake's `** <array>`.
+    pub(crate) fn parse_variadic_argument(&mut self) -> Result<Option<Expression>> {
+        let postgres_variadic = self.config.dialect
+            == Some(crate::tokens::models::DialectType::PostgreSQL)
+            && self.check(TokenType::Var)
+            && self.peek_text().eq_ignore_ascii_case(VARIADIC_KEYWORD);
+        let argument = matches!(
+            self.previous_token_type(),
+            Some(TokenType::LParen | TokenType::Comma)
+        );
+        let snowflake_spread = self.is_snowflake() && argument && self.check(TokenType::DStar);
+        if !postgres_variadic && !snowflake_spread {
+            return Ok(None);
+        }
+        self.skip();
+        let this = self.parse_bitwise_or()?;
+        Ok(Some(Expression::Variadic(Box::new(
+            crate::expressions::statements::models::Variadic {
+                this: Box::new(this),
+            },
+        ))))
+    }
+
     /// The operand of `ANY`/`ALL`, which Snowflake also reads as a list of values, as in `1 = ALL ( 1 )`.
     pub(crate) fn parse_quantified_operand(&mut self) -> Result<Expression> {
         let query = self.check(TokenType::Select)
