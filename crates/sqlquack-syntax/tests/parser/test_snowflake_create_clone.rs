@@ -33,6 +33,12 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_ar
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "CREATE DATABASE ROLE alone creates a database named ROLE (recorded success)",
+            sql: "CREATE DATABASE ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "a role has no CLONE (recorded errno 1003)",
             sql: "CREATE ROLE v1 CLONE v1 ;",
             dialect: Dialect::Snowflake,
@@ -178,6 +184,12 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_the_tree_keeps_its_parts
             sql: "CREATE FAILOVER GROUP g1 AS REPLICA OF o1.a1.g2",
             pointer: "/0/create_object/source",
             expected_value: json!("REPLICA"),
+        },
+        ProjectionTestCase {
+            description: "a database named ROLE clones as a database",
+            sql: "CREATE DATABASE ROLE CLONE d2",
+            pointer: "/0/create_database/name/name",
+            expected_value: json!("ROLE"),
         },
         ProjectionTestCase {
             description: "a database clone keeps OR REPLACE",

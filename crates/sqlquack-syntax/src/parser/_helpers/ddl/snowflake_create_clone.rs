@@ -234,7 +234,8 @@ impl Parser {
             None if !temporary && self.match_text_seq(&["FILE", "FORMAT"]) => {
                 ("FILE FORMAT", CloneOptions::Bare)
             }
-            None if !temporary && self.match_text_seq(&["DATABASE", "ROLE"]) => {
+            None if !temporary && self.names_a_database_role() => {
+                self.match_text_seq(&["DATABASE", "ROLE"]);
                 ("DATABASE ROLE", CloneOptions::Bare)
             }
             _ => {
@@ -291,6 +292,15 @@ impl Parser {
             operands,
             properties,
         }))))
+    }
+
+    /// Whether DATABASE ROLE starts a database role: `CREATE DATABASE ROLE ;` and
+    /// `CREATE DATABASE ROLE CLONE d2` create a database named ROLE.
+    fn names_a_database_role(&self) -> bool {
+        self.check_text_seq(&["DATABASE", "ROLE"])
+            && self.tokens.get(self.current + 2).is_some_and(|t| {
+                t.token_type != TokenType::Semicolon && !t.text.eq_ignore_ascii_case("CLONE")
+            })
     }
 
     /// Whether the rest of the statement contains REPLICA or AS OF, which make it a replica.
