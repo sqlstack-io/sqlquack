@@ -56,6 +56,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         limit_by,
         fetch,
         distinct,
+        all: _,
         distinct_on,
         top,
         with,

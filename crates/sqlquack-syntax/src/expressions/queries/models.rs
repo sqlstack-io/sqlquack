@@ -44,6 +44,9 @@ pub struct Select {
     pub limit_by: Option<Vec<Expression>>,
     pub fetch: Option<Fetch>,
     pub distinct: bool,
+    /// Whether ALL was written where DISTINCT could be: it changes nothing, but was written.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub all: bool,
     pub distinct_on: Option<Vec<Expression>>,
     pub top: Option<Top>,
     pub with: Option<With>,
@@ -130,6 +133,7 @@ impl Select {
             limit_by: None,
             fetch: None,
             distinct: false,
+            all: false,
             distinct_on: None,
             top: None,
             with: None,

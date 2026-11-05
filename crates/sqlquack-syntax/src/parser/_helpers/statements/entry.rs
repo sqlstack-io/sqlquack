@@ -1180,6 +1180,8 @@ impl Parser {
         let top = self.parse_select_top()?;
 
         let is_distinct_token = self.match_token(TokenType::Distinct);
+        let all =
+            !is_distinct_token && self.check(TokenType::All) && !self.check_next(TokenType::Dot);
         let (distinct, distinct_on) = if is_distinct_token {
             if self.match_token(TokenType::On) {
                 self.expect_token(TokenType::LParen)?;
@@ -1311,6 +1313,7 @@ impl Parser {
             hint,
             top,
             distinct,
+            all,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1539,6 +1542,7 @@ impl Parser {
             hint,
             top,
             distinct,
+            all,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1575,6 +1579,7 @@ impl Parser {
             limit_by,
             fetch,
             distinct,
+            all,
             distinct_on,
             top,
             with: None,

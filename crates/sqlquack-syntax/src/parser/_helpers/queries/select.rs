@@ -446,6 +446,7 @@ impl Parser {
             limit_by: None,
             fetch: None,
             distinct: false,
+            all: false,
             distinct_on: None,
             top: None,
             with: None,

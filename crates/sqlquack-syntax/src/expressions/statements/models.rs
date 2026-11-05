@@ -506,6 +506,9 @@ pub struct Use {
     pub kind: Option<UseKind>,
     /// The name of the object
     pub this: Identifier,
+    /// Snowflake's secondary roles one by one, quoting kept; empty for ALL, NONE and other kinds.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub roles: Vec<Identifier>,
 }
 
 /// Kind of USE statement

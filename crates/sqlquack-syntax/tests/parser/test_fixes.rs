@@ -1756,3 +1756,57 @@ fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_op
         );
     }
 }
+
+#[test]
+fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "SELECT ALL is kept, where it was dropped",
+            sql: "SELECT ALL * FROM t1",
+            pointer: "/0/select/all",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DISTINCT is kept on an aggregate of two arguments",
+            sql: "SELECT APPROX_COUNT_DISTINCT ( DISTINCT 1 , 1 )",
+            pointer: "/0/select/expressions/0/function/distinct",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "TIMESTAMP WITHOUT TIME ZONE is TIMESTAMP_NTZ, not bare TIMESTAMP",
+            sql: "SELECT CAST(NULL AS TIMESTAMP(3) WITHOUT TIME ZONE)",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_value: json!("TIMESTAMPNTZ(3)"),
+        },
+        ProjectionTestCase {
+            description: "a transaction name is the name, quoting kept, NAME apart",
+            sql: "START TRANSACTION NAME \"v1 Q\"",
+            pointer: "/0/transaction/this/identifier/name",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
+            description: "a quoted transaction name stays quoted",
+            sql: "START TRANSACTION NAME \"v1 Q\"",
+            pointer: "/0/transaction/this/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "secondary roles are listed one by one, quoting kept",
+            sql: "USE SECONDARY ROLES v1 , \"v2\"",
+            pointer: "/0/use/roles/1/quoted",
+            expected_value: json!(true),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
