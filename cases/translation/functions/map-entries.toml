@@ -22,7 +22,7 @@ rows = [
 ]
 query = "SELECT MAP_ENTRIES(MAP_DELETE(MAP_CONSTRUCT('a', x), 'a')) AS r FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["boundary", "empty"]
+tags = ["empty-input"]
 
 [[case]]
 id = "t003_null_map"

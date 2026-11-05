@@ -37,7 +37,7 @@ tags = ["error"]
 
 [[case]]
 id = "t004_null_string_containing_xml"
-description = "A SQL NULL; the page does not say; the recording decides. Catches: an error"
+description = "A SQL NULL, which the page says gives NULL. Catches: an error, or an empty object"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["NULL"],

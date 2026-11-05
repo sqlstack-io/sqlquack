@@ -27,7 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_expression"
-description = "A SQL NULL; the page does not say; the recording decides. Catches: an empty element returned"
+description = "A SQL NULL, which the page says gives NULL. Catches: an empty element returned"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["NULL"],
