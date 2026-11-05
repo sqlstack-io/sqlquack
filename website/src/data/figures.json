@@ -1,6 +1,8 @@
 {
-	"_comment": "Headline coverage figures, used by the homepage and docs/coverage. A value left as its own {{NAME}} token renders as a visible placeholder, and the build warns about it.",
+	"_comment": "Headline coverage figures: the only file to edit for them. The homepage, docs/coverage and llms.txt read it at build time. A value left as its own {{NAME}} token renders as a visible placeholder; `npm run build` warns, and `npm run check:figures` fails, while any is left.",
+	"_sources": "The syntax figures come from the auditor's latest D118 count on the current catalogue, recorded under coverage/syntax/audits/ on wip/syntax-omission-audit (the d118-findings-*.toml records and the cases-*.toml counts made against them), not from coverage/syntax/baseline.json, which is bound to an older catalogue. SYNTAX_FORMS is that count's denominator and SYNTAX_PCT its verified share. TRANSLATION_PCT is the share of actual Snowflake statements that convert in full.",
 	"SYNTAX_PCT": "{{SYNTAX_PCT}}",
+	"SYNTAX_FORMS": "3,351",
 	"SYNTAX_BASIS": "{{SYNTAX_BASIS}}",
 	"TRANSLATION_PCT": "{{TRANSLATION_PCT}}",
 	"TRANSLATION_BASIS": "{{TRANSLATION_BASIS}}"

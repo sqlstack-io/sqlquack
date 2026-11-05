@@ -4,4 +4,5 @@ dist/
 public/playground/engine/
 wasm/target/
 public/playground/duckdb/
+public/playground/duckdb-version.js
 public/playground/sqlquack.toml
