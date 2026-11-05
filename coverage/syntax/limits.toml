@@ -30304,7 +30304,7 @@ reason = "D113 [page misreading]: The block omits the values; the parameters rea
 form = "sf.ddl.show-compute-pools"
 grammar_sha256 = "acc7af6831c31f694d239f753ec1bb0bb8e136408c47ee5e9e9145c498eb259f"
 grammar = ["SHOW COMPUTE POOLS [ LIKE '<pattern>' ] [ STARTS WITH '<name_string>' ] [ LIMIT <rows> [ FROM '<name_string>' ] ]"]
-reason = "D113 [page misreading]: the block writes LIMIT <ROWS>; the extractor drops that all-caps placeholder (the page's Markdown source has none), so the extracted grammar has LIMIT without its operand; the parameter reads `LIMIT rows [ FROM 'name_string' ]`."
+reason = "D129 [page misreading]: the block writes LIMIT <ROWS>; the extractor drops that all-caps placeholder (the page's Markdown source has none), so the extracted grammar has LIMIT without its operand; the parameter reads `LIMIT rows [ FROM 'name_string' ]`."
 
 [[reading]]
 form = "sf.ddl.show-contacts"
@@ -70273,31 +70273,6 @@ expect = "observe"
 documented = true
 context = "raw"
 
-[[suppress]]
-form = "sf.ddl.comment.is"
-kind = "operand_type_class"
-target = "<object_type>"
-note = "a valid data_type"
-reason = "<object_type> is an object kind keyword (the page: TABLE, SCHEMA, VIEW, and so on), not a data type; the hand rows below type it"
-
-[[suppress]]
-form = "sf.ddl.comment.is"
-kind = "negative_neighbour"
-target = "<object_type>"
-note = "a string literal in place of <object_type>"
-reason = "<object_type> is an object kind keyword, not a data type, so the data-type neighbour 'INT' does not apply; the hand rows below give the object kind neighbours"
-
-[[limit]]
-form = "sf.ddl.comment.is"
-kind = "operand_type_class"
-target = "<object_type>"
-note = "an object kind keyword (TABLE)"
-anchor = "doc.sql.comment / Parameters"
-sql = "COMMENT ON TABLE v1 IS 'm' ;"
-expect = "accept"
-documented = true
-context = "raw"
-
 [[limit]]
 form = "sf.ddl.comment.is"
 kind = "alternative"
@@ -70318,16 +70293,6 @@ anchor = "doc.sql.comment / Parameters"
 sql = "COMMENT ON VIEW v1 IS 'm' ;"
 expect = "observe"
 documented = true
-context = "raw"
-
-[[limit]]
-form = "sf.ddl.comment.is"
-kind = "negative_neighbour"
-target = "<object_type>"
-note = "a string literal in place of the object kind keyword"
-anchor = "doc.sql.comment / Parameters"
-sql = "COMMENT ON 'TABLE' v1 IS 'm' ;"
-expect = "observe"
 context = "raw"
 
 [[limit]]

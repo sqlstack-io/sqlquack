@@ -14903,11 +14903,11 @@ target = "<object_type> in [ OBJECT_TYPES = <object_type> [ , <object_type> , ..
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.alter-failover-group.set.o010"
+id = "sf.security_admin.alter-failover-group.set.o048"
 kind = "operand_type_class"
 required = true
 target = "<object_type> in [ OBJECT_TYPES = <object_type> [ , <object_type> , ... ] ]"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.set.o011"
@@ -31874,11 +31874,11 @@ target = "<object_type> in [ OBJECT_TYPES = <object_type> [ , <object_type> , ..
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.alter-replication-group.set.o010"
+id = "sf.security_admin.alter-replication-group.set.o048"
 kind = "operand_type_class"
 required = true
 target = "<object_type> in [ OBJECT_TYPES = <object_type> [ , <object_type> , ... ] ]"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.alter-replication-group.set.o011"
@@ -67013,11 +67013,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o008"
+id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o110"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o009"
@@ -77105,11 +77105,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o008"
+id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o105"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o009"
@@ -98586,11 +98586,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.grant-caller.all-caller-privileges-on.o003"
+id = "sf.security_admin.grant-caller.all-caller-privileges-on.o030"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-caller.all-caller-privileges-on.o004"
@@ -99103,11 +99103,11 @@ required = true
 target = "[ , <object_privilege> ... ]"
 
 [[obligation]]
-id = "sf.security_admin.grant-caller.caller-on-to-role.o007"
+id = "sf.security_admin.grant-caller.caller-on-to-role.o032"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-caller.caller-on-to-role.o008"
@@ -100088,11 +100088,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <database_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-ownership.all-in-database-schema.o007"
+id = "sf.security_admin.grant-ownership.all-in-database-schema.o069"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-ownership.all-in-database-schema.o008"
@@ -101444,11 +101444,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege-application.o121"
+id = "sf.security_admin.grant-privilege-application.o197"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege-application.o122"
@@ -102295,11 +102295,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege-application-role.o071"
+id = "sf.security_admin.grant-privilege-application-role.o155"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege-application-role.o072"
@@ -104204,11 +104204,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege-user.o129"
+id = "sf.security_admin.grant-privilege-user.o231"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege-user.o130"
@@ -106108,11 +106108,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.create-schema-modify-monitor.o224"
+id = "sf.security_admin.grant-privilege.create-schema-modify-monitor.o350"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.create-schema-modify-monitor.o225"
@@ -108890,11 +108890,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o341"
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o536"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o342"
@@ -110713,11 +110713,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-caller.all-caller-privileges-on.o003"
+id = "sf.security_admin.revoke-caller.all-caller-privileges-on.o024"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-caller.all-caller-privileges-on.o004"
@@ -111201,11 +111201,11 @@ required = true
 target = "[ , <object_privilege> ... ]"
 
 [[obligation]]
-id = "sf.security_admin.revoke-caller.caller-on-from-role.o007"
+id = "sf.security_admin.revoke-caller.caller-on-from-role.o029"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-caller.caller-on-from-role.o008"
@@ -112747,11 +112747,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN… → ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> }"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application.o119"
+id = "sf.security_admin.revoke-privilege-application.o195"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application.o120"
@@ -113899,11 +113899,11 @@ required = true
 target = "{ <object_type> <object_name> | ALL <object_type_plural> IN SCHEMA <… → ALL <object_type_plural> IN SCHEMA <schema_name>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-application-role.o120"
+id = "sf.security_admin.revoke-privilege-application-role.o211"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-application-role.o121"
@@ -115853,11 +115853,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege-user.o130"
+id = "sf.security_admin.revoke-privilege-user.o223"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege-user.o131"
@@ -118472,11 +118472,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o346"
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o507"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o347"
@@ -121528,11 +121528,11 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o340"
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o515"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o341"
@@ -124100,11 +124100,11 @@ required = true
 target = "{ ON <object_type> <object_name> | ON ACCOUNT } → ON ACCOUNT"
 
 [[obligation]]
-id = "sf.security_admin.show-caller-grants.o007"
+id = "sf.security_admin.show-caller-grants.o031"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.show-caller-grants.o008"
@@ -126376,11 +126376,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-on.o003"
+id = "sf.security_admin.show-grants.grants-on.o017"
 kind = "operand_type_class"
 required = true
 target = "<object_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-on.o004"
@@ -127824,11 +127824,11 @@ target = "<entity_type>"
 note = "omit <entity_type>"
 
 [[obligation]]
-id = "sf.security_admin.show-maintenance-policies.o011"
+id = "sf.security_admin.show-maintenance-policies.o024"
 kind = "operand_type_class"
 required = true
 target = "<entity_type>"
-note = "a valid data_type"
+note = "a valid object_kind"
 
 [[obligation]]
 id = "sf.security_admin.show-maintenance-policies.o012"

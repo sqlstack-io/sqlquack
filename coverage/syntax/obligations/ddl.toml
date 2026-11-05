@@ -99401,6 +99401,20 @@ target = "<object_type>"
 note = "omit <object_type>"
 
 [[obligation]]
+id = "sf.ddl.comment.is.o023"
+kind = "operand_type_class"
+required = true
+target = "<object_type>"
+note = "a valid object_kind"
+
+[[obligation]]
+id = "sf.ddl.comment.is.o024"
+kind = "negative_neighbour"
+required = true
+target = "<object_type>"
+note = "a string literal in place of <object_type>"
+
+[[obligation]]
 id = "sf.ddl.comment.is.o007"
 kind = "required_operand_missing"
 required = true
@@ -99477,14 +99491,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.comment.is.o022"
-kind = "operand_type_class"
-required = true
-target = "<object_type>"
-anchor = "doc.sql.comment / Parameters"
-note = "an object kind keyword (TABLE)"
-
-[[obligation]]
 id = "sf.ddl.comment.is.o018"
 kind = "alternative"
 required = true
@@ -99499,14 +99505,6 @@ required = true
 target = "<object_type>"
 anchor = "doc.sql.comment / Parameters"
 note = "the object kind VIEW, observed"
-
-[[obligation]]
-id = "sf.ddl.comment.is.o020"
-kind = "negative_neighbour"
-required = true
-target = "<object_type>"
-anchor = "doc.sql.comment / Parameters"
-note = "a string literal in place of the object kind keyword"
 
 [[obligation]]
 id = "sf.ddl.comment.is.o021"

@@ -84,6 +84,7 @@ CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"statement"), "statement"),
     (re.compile(r"(^|_)(sub)?query$"), "query"),
     (re.compile(r"^workload_type$"), "operand"),
+    (re.compile(r"^(object|entity)_type$"), "object_kind"),
     (re.compile(r"(^|_)(data_)?type$|_type$"), "data_type"),
     (re.compile(r"number$|^n$|^num|_count$|^count$|position$"), "integer_literal"),
     (re.compile(r"message|string|pattern|comment"), "string_literal"),
@@ -103,6 +104,7 @@ LEXICALLY_DISTINCT_WRONG_FILL: dict[str, str] = {
     "integer_literal": "'x'",
     "string_literal": "m1",
     "data_type": "'INT'",
+    "object_kind": "'TABLE'",
     "statement": "1",
     "query": "1",
 }
@@ -111,6 +113,7 @@ LEXICAL_WRONG: dict[str, str] = {
     "integer_literal": "a string literal",
     "string_literal": "an unquoted identifier",
     "data_type": "a string literal",
+    "object_kind": "a string literal",
     "statement": "a bare literal",
     "query": "a bare literal",
 }
@@ -181,6 +184,7 @@ CLASS_FILL: dict[str, str] = {
     "statement": "NULL",
     "query": "SELECT 1",
     "data_type": "INT",
+    "object_kind": "TABLE",
     "integer_literal": "1",
     "string_literal": "'m'",
     "expression": "1",

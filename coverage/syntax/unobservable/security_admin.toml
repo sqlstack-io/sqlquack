@@ -1215,25 +1215,13 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o008"
+obligation = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o110"
 form = "sf.security_admin.create-failover-group.object-types-allowed-accounts"
-construct = "a valid data_type: CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 ;"
+construct = "a valid object_kind: CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-21: billable or out-of-account: replication or failover"
 cause = "not_submitted"
 cases = [
   { case_id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.k677532266bdb", sql_sha256 = "677532266bdb32ae43808089ce4e02b0bc831f03eee6f4138778e32ae2351c95" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o009"
-form = "sf.security_admin.create-failover-group.object-types-allowed-accounts"
-construct = "a string literal in place of <object_type>: CREATE FAILOVER GROUP v1 OBJECT_TYPES = 'INT' ALLOWED_ACCOUNTS = v1 . v1 ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-21: billable or out-of-account: replication or failover"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.kd941870e510d", sql_sha256 = "d941870e510dc9d67ac4c547ef7923b146f6769634c506cc243ac1cadae659c7" },
 ]
 runs = []
 probes = []
@@ -6080,25 +6068,13 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o008"
+obligation = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o105"
 form = "sf.security_admin.create-replication-group.object-types-allowed-accounts"
-construct = "a valid data_type: CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 ;"
+construct = "a valid object_kind: CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-25: billable or out-of-account: replication or failover"
 cause = "not_submitted"
 cases = [
   { case_id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.ke9bd8821f4f6", sql_sha256 = "e9bd8821f4f6449d1056053d1e153b7effff606a8d42cd717d223406ab468ebd" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o009"
-form = "sf.security_admin.create-replication-group.object-types-allowed-accounts"
-construct = "a string literal in place of <object_type>: CREATE REPLICATION GROUP v1 OBJECT_TYPES = 'INT' ALLOWED_ACCOUNTS = v1 . v1 ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-25: billable or out-of-account: replication or failover"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.kd566921504f9", sql_sha256 = "d566921504f9fa7614d186f251ba1e9704a13e467821aadf64d63489dffdcb26" },
 ]
 runs = []
 probes = []
