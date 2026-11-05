@@ -29,12 +29,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_alphabet"
-description = "A custom alphabet. Catches: the alphabet ignored (NULL for -_ input)"
-columns = [{ name = "a", type = "VARCHAR" }, { name = "al", type = "VARCHAR" }]
+description = "A custom alphabet. The constant argument is a literal per call, as Snowflake requires. Catches: the alphabet ignored (NULL for -_ input)"
+columns = [{ name = "a1", type = "VARCHAR" }]
 rows = [
-  ["'fn5-Pw~~'", "'-_~'"],
+  ["'fn5-Pw~~'"],
 ]
-query = "SELECT TRY_BASE64_DECODE_STRING(a, al) AS r FROM input ORDER BY ordinal"
+query = "SELECT TRY_BASE64_DECODE_STRING(a1, '-_~') AS r1 FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -52,13 +52,12 @@ tags = ["null"]
 
 [[case]]
 id = "t005_null_alphabet"
-description = "NULL alphabet next to a set one. Catches: NULL read as the default alphabet"
-columns = [{ name = "a", type = "VARCHAR" }, { name = "al", type = "VARCHAR" }]
+description = "NULL alphabet next to a set one. The constant argument is a literal per call, as Snowflake requires. Catches: NULL read as the default alphabet"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
 rows = [
-  ["'YQ=='", "NULL"],
-  ["'YQ=='", "'+/='"],
+  ["'YQ=='", "'YQ=='"],
 ]
-query = "SELECT TRY_BASE64_DECODE_STRING(a, al) AS r FROM input ORDER BY ordinal"
+query = "SELECT TRY_BASE64_DECODE_STRING(a1, NULL) AS r1, TRY_BASE64_DECODE_STRING(a2, '+/=') AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
 

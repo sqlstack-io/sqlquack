@@ -19,13 +19,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_alphabet"
-description = "A custom alphabet for indexes 62 and 63 and the padding character. Catches: the alphabet argument ignored (an error or other bytes for -_ and ~ padding)"
-columns = [{ name = "a", type = "VARCHAR" }, { name = "al", type = "VARCHAR" }]
+description = "A custom alphabet for indexes 62 and 63 and the padding character. The constant argument is a literal per call, as Snowflake requires. Catches: the alphabet argument ignored (an error or other bytes for -_ and ~ padding)"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
 rows = [
-  ["'fn5-Pw~~'", "'-_~'"],
-  ["'fn5+Pw=='", "'+$'"],
+  ["'fn5-Pw~~'", "'fn5+Pw=='"],
 ]
-query = "SELECT BASE64_DECODE_STRING(a, al) AS r FROM input ORDER BY ordinal"
+query = "SELECT BASE64_DECODE_STRING(a1, '-_~') AS r1, BASE64_DECODE_STRING(a2, '+$') AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -43,13 +42,12 @@ tags = ["null"]
 
 [[case]]
 id = "t004_null_alphabet"
-description = "NULL alphabet next to a set one. Catches: a NULL alphabet treated as the default (a value instead of NULL)"
-columns = [{ name = "a", type = "VARCHAR" }, { name = "al", type = "VARCHAR" }]
+description = "NULL alphabet next to a set one. The constant argument is a literal per call, as Snowflake requires. Catches: a NULL alphabet treated as the default (a value instead of NULL)"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
 rows = [
-  ["'YQ=='", "NULL"],
-  ["'YQ=='", "'+/='"],
+  ["'YQ=='", "'YQ=='"],
 ]
-query = "SELECT BASE64_DECODE_STRING(a, al) AS r FROM input ORDER BY ordinal"
+query = "SELECT BASE64_DECODE_STRING(a1, NULL) AS r1, BASE64_DECODE_STRING(a2, '+/=') AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
 
