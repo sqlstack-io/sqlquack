@@ -372,7 +372,9 @@ class _Renderer:
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
             cut_by_keyword: bool = start >= 0 and before[start] not in CLOSE_REPEAT_AFTER
             item: list[str] = before[start + 1 :]
-            if cut_by_keyword:
+            if cut_by_keyword and item[:1] == ["="]:
+                item = before[_separator_start(before=before) + 1 :]
+            elif cut_by_keyword:
                 item = self._whole_choice(item=item, before=before)
             other: list[str] = self._other_branch(item=item, choices=choices)
             return [",", *(other or [self._repeat(text) for text in item])]
@@ -397,10 +399,18 @@ class _Renderer:
         node, index, chosen = self._last_choice
         if chosen != item or len(node.branches) == 1:
             return []
-        following: int = (index + 1) % len(node.branches)
-        if not (_keywords_only(node.branches[index]) and _keywords_only(node.branches[following])):
+        if not _keywords_only(node.branches[index]):
             return []
-        return self._sequence(nodes=node.branches[following], choices=choices)
+        for step in range(1, len(node.branches)):
+            following: tuple[Node, ...] = node.branches[(index + step) % len(node.branches)]
+            if not _keywords_only(following):
+                continue
+            keywords: int = len(self._keywords)
+            other: list[str] = self._sequence(nodes=following, choices=choices)
+            if other != chosen:
+                return other
+            del self._keywords[keywords:]
+        return []
 
     def _repeat(self, text: str) -> str:
         """A copied list item, continued with its REPEAT_FILLS value when one is declared."""
@@ -535,6 +545,20 @@ def _repeat_start(*, before: list[str], keywords: set[str]) -> int:
                 and not calls
             )
         ):
+            return index
+    return -1
+
+
+def _separator_start(*, before: list[str]) -> int:
+    """The index of the nearest open `(` or `,` outside parentheses, or -1."""
+    depth: int = 0
+    for index in range(len(before) - 1, -1, -1):
+        text: str = before[index]
+        if text == CLOSE_PAREN:
+            depth += 1
+        elif text == OPEN_PAREN and depth:
+            depth -= 1
+        elif depth == 0 and text in CLOSE_REPEAT_AFTER:
             return index
     return -1
 
