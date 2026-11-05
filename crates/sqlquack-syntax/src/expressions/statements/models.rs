@@ -503,6 +503,9 @@ pub struct Use {
     /// Snowflake's secondary roles one by one, quoting kept; empty for ALL, NONE and other kinds.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub roles: Vec<Identifier>,
+    /// Snowflake's qualified name part by part, quoting kept; empty for a one-part name.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub parts: Vec<Identifier>,
 }
 
 /// Kind of USE statement

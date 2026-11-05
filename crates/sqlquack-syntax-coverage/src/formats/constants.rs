@@ -72,6 +72,8 @@ pub const SNAPSHOT_FORMAT: &str = "sqlquack-syntax-coverage-snapshot/1";
 pub const BASELINE_FILE: &str = "baseline.json";
 /// The run-report list of receipt lines the importer withdrew, each by `receipt_sha256`.
 pub const REPORT_WITHDRAWN: &str = "withdrawn";
+/// The run-report list of statements the importer read, each with `sql` and `sql_sha256`.
+pub const REPORT_INPUTS: &str = "inputs";
 /// The field of a withdrawn entry naming the receipt line's SHA-256.
 pub const REPORT_RECEIPT_SHA256: &str = "receipt_sha256";
 /// The importer's run report beside each receipts file.

@@ -455,9 +455,9 @@ fn given_a_snowflake_show_of_grants_or_policies_when_parsing_then_its_clauses_ar
             expected_kind: Some("show"),
         },
         SnowflakeVerdictTestCase {
-            description: "keeps SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
+            description: "LIMIT after IN APPLICATION PACKAGE (recorded errno 1003)",
             sql: "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
-            expected_kind: Some("show"),
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "keeps SHOW GRANTS OF APPLICATION ROLE v1 LIMIT 1 ;",
@@ -1035,14 +1035,14 @@ fn given_a_snowflake_function_or_procedure_when_parsing_then_its_properties_are_
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
-            description: "an argument with a type and no name (recorded errno 1003)",
+            description: "an argument with a type and no name (recorded errno 90201, import 137)",
             sql: "DEFINE PROCEDURE d1.s1.v1 ( INT ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;",
-            expected_kind: None,
+            expected_kind: Some("create_procedure"),
         },
         SnowflakeVerdictTestCase {
-            description: "a returned table column with no type (recorded errno 1003)",
+            description: "a returned table column with no type (recorded errno 90214, import 137)",
             sql: "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
-            expected_kind: None,
+            expected_kind: Some("create_procedure"),
         },
         SnowflakeVerdictTestCase {
             description: "a reserved procedure name (recorded errno 1003)",

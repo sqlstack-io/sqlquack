@@ -1445,7 +1445,6 @@ impl Parser {
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
-            self.check_snowflake_routine_arguments(&params)?;
             (params, true)
         } else {
             (Vec::new(), false)

@@ -181,6 +181,24 @@ fn given_snowflake_comment_drop_and_call_statements_when_parsing_then_only_docum
 fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_keeps_their_parts() {
     let test_cases = [
         ProjectionTestCase {
+            description: "ALTER USER without a name acts on the current user",
+            sql: "ALTER USER ADD PAT t1 DAYS_TO_EXPIRY = 1",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("ADD PROGRAMMATIC ACCESS TOKEN"),
+        },
+        ProjectionTestCase {
+            description: "a modified credential keeps its change",
+            sql: "ALTER USER u1 MODIFY KEY PAIR k1 UNSET DISABLED , COMMENT",
+            pointer: "/0/alter_object/properties/1/kind",
+            expected_value: json!("COMMENT"),
+        },
+        ProjectionTestCase {
+            description: "a share's accounts keep their organization part",
+            sql: "ALTER SHARE s1 ADD ACCOUNTS = o1.a1 SHARE_RESTRICTIONS = TRUE",
+            pointer: "/0/alter_object/operands/0/table/schema/name",
+            expected_value: json!("o1"),
+        },
+        ProjectionTestCase {
             description: "an Iceberg action names its kind",
             sql: "ALTER ICEBERG TABLE v1 UPGRADE TO ICEBERG VERSION 3",
             pointer: "/0/alter_object/kind",

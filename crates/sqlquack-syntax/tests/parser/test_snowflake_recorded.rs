@@ -749,12 +749,207 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             pointer: "/0/select/expressions/0/cast/to/name",
             expected_value: json!("PERIOD ( INT )"),
         },
+        ProjectionTestCase {
+            description: "USE SCHEMA keeps the database part's quoting",
+            sql: "USE SCHEMA \"v1 Q\" . v1",
+            pointer: "/0/use/parts/0/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "USE SCHEMA keeps the schema part apart from the database",
+            sql: "USE SCHEMA \"v1 Q\" . v1",
+            pointer: "/0/use/parts/1/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "USE SCHEMA with a quoted dotted name has one part",
+            sql: "USE SCHEMA \"v1 Q.v1\"",
+            pointer: "/0/use/parts",
+            expected_value: json!(null),
+        },
     ];
 
     for test_case in test_cases {
         assert_eq!(
             statement_at(test_case.sql, test_case.pointer),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_receipts_contradicted_by_pr_68_when_parsing_then_acceptance_matches_snowflake() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a function argument may omit its name (recorded errno 90201)",
+            sql: "CREATE FUNCTION v1 ( INT ) RETURNS INT AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a function argument may omit its type (recorded errno 90201)",
+            sql: "CREATE FUNCTION v1 ( v1 ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a procedure argument may omit its type (recorded errno 90201)",
+            sql: "CREATE PROCEDURE v1 ( v1 ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a procedure's RETURNS TABLE column may omit its type (recorded errno 90214)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS TABLE ( v1 ) LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a procedure's RETURNS TABLE column may omit its name (recorded success)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS TABLE ( INT ) LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS OF reads a kind word as the name (recorded errno 2003)",
+            sql: "SHOW GRANTS OF ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS ON takes a bare name (recorded errno 2003)",
+            sql: "SHOW GRANTS ON v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS TO takes an empty kind (recorded errno 2003)",
+            sql: "SHOW GRANTS TO APPLICATION ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS OF APPLICATION ROLE needs a name (recorded errno 1003)",
+            sql: "SHOW GRANTS OF APPLICATION ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a task tag value may be a name (recorded errno 391805)",
+            sql: "CREATE TASK v1 WITH TAG ( v1 = m1 ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a task property takes a dollar-quoted value and commas (recorded success)",
+            sql: "CREATE TASK v1 CONFIG = $$x$$ TIMEZONE = 'UTC', AUTOCOMMIT = TRUE AS SELECT 1",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a task's AFTER comes before EXECUTE AS USER (recorded errno 1003)",
+            sql: "CREATE TASK t2 WAREHOUSE = wh EXECUTE AS USER u1 AFTER t1 AS SELECT 1",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a task's EXECUTE AS USER follows AFTER (recorded success)",
+            sql: "CREATE TASK t2 AFTER t1 EXECUTE AS USER u1 AS SELECT 1",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DEFINE SEQUENCE refuses a reserved name part (recorded errno 1003)",
+            sql: "DEFINE SEQUENCE d1.s1.SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an experiment may omit its TYPE (recorded errno 400022)",
+            sql: "CREATE EXPERIMENT v1 FROM SPECIFICATION $$$$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "stage options may be comma-separated (recorded success)",
+            sql: "CREATE STAGE s1 COMMENT = 'x', FILE_FORMAT = ( TYPE = CSV )",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "file format options may be comma-separated (recorded success)",
+            sql: "CREATE FILE FORMAT f1 TYPE = 'CSV' FIELD_DELIMITER = '|', SKIP_HEADER = 2",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake has no backtick identifiers (recorded errno 1003)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = ` v1 ` HANDLER = 'm1.run' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ALTER DYNAMIC TABLE may omit the name before SET (recorded errno 926)",
+            sql: "ALTER DYNAMIC TABLE SET TARGET_LAG = '1 minute' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ALTER DYNAMIC TABLE refuses a missing name before UNSET (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE UNSET INITIALIZATION_WAREHOUSE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a dynamic table's UNSET TAG may be empty (recorded errno 1420)",
+            sql: "ALTER DYNAMIC TABLE v1 UNSET TAG ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a dynamic table's SET TAG may omit the tag name (recorded errno 1420)",
+            sql: "ALTER DYNAMIC TABLE v1 SET TAG = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a dynamic table column's UNSET TAG needs a tag (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 UNSET TAG ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a row access policy may name no columns (recorded errno 2003)",
+            sql: "ALTER DYNAMIC TABLE v1 ADD ROW ACCESS POLICY v1 ON ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a storage lifecycle policy needs columns (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ADD STORAGE LIFECYCLE POLICY v1 ON ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DROP SEARCH OPTIMIZATION takes a string target (recorded errno 904)",
+            sql: "ALTER DYNAMIC TABLE v1 DROP SEARCH OPTIMIZATION ON 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "RESUME SEARCH OPTIMIZATION refuses a string target (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 RESUME SEARCH OPTIMIZATION ON 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
             "{}",
             test_case.description
         );

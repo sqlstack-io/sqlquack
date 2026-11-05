@@ -4,10 +4,12 @@ use crate::check::tests::helpers::{
     OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
     crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form, not_submitted,
     note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
-    rejecting, replace, reshaped, rewrite_select_17, select_17, select_17_setup_sha256, sha256,
-    structural, unobservable, verified_tree, with_fields, write,
+    rejecting, replace, report_input, reshaped, retired_receipt, rewrite_select_17, select_17,
+    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
 };
-use crate::check::tests::test_types::{AccountStateTestCase, CheckTestCase, Parameters};
+use crate::check::tests::test_types::{
+    AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase,
+};
 use crate::formats::main::load_coverage::load_coverage;
 
 #[test]
@@ -1165,6 +1167,76 @@ fn given_a_receipt_with_account_state_when_checking_then_only_its_case_carries_i
                 .filter(|form| form.family == "query")
                 .all(|form| form.state == FormState::Verified),
             "{}: account state is provenance and changes no verdict",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_receipts_no_form_cites_when_checking_then_each_is_judged_against_the_parser() {
+    let test_cases = [
+        ReceiptCheckTestCase {
+            description: "a retired case Snowflake parsed, which the parser now rejects",
+            mutate: |root| {
+                retired_receipt(root, "SELECT 2", serde_json::json!({}));
+                report_input(root, "SELECT 2");
+            },
+            parse: rejecting,
+            expected_contradictions: vec!["retired-1"],
+            expected_unjudged: Vec::new(),
+        },
+        ReceiptCheckTestCase {
+            description: "a retired case Snowflake parsed, which the parser accepts",
+            mutate: |root| {
+                retired_receipt(root, "SELECT 2", serde_json::json!({}));
+                report_input(root, "SELECT 2");
+            },
+            parse: structural,
+            expected_contradictions: Vec::new(),
+            expected_unjudged: Vec::new(),
+        },
+        ReceiptCheckTestCase {
+            description: "a retired syntax error with errno 1003, which the parser accepts",
+            mutate: |root| {
+                retired_receipt(
+                    root,
+                    "SELECT 2",
+                    serde_json::json!({"phase": "syntax_error", "outcome": "error", "errno": 1003}),
+                );
+                report_input(root, "SELECT 2");
+            },
+            parse: structural,
+            expected_contradictions: vec!["retired-1"],
+            expected_unjudged: Vec::new(),
+        },
+        ReceiptCheckTestCase {
+            description: "a retired case whose SQL no case or report gives",
+            mutate: |root| retired_receipt(root, "SELECT 2", serde_json::json!({})),
+            parse: rejecting,
+            expected_contradictions: Vec::new(),
+            expected_unjudged: vec!["retired-1"],
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("tempdir");
+        verified_tree(directory.path());
+        (test_case.mutate)(directory.path());
+        let coverage = load_coverage(directory.path()).expect("loads");
+        let check = check_coverage(&coverage, Some(TREE), &test_case.parse);
+        let contradicted: Vec<&str> = check
+            .receipt_contradictions
+            .iter()
+            .map(String::as_str)
+            .filter(|id| *id == "retired-1")
+            .collect();
+        let unjudged: Vec<&str> = check.unjudged_receipts.iter().map(String::as_str).collect();
+        assert_eq!(
+            (contradicted, unjudged),
+            (
+                test_case.expected_contradictions,
+                test_case.expected_unjudged
+            ),
+            "{}",
             test_case.description
         );
     }

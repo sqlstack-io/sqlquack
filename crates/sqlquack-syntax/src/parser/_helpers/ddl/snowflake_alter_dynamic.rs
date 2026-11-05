@@ -51,7 +51,11 @@ const ACTIONS: &[&[&str]] = &[
 impl Parser {
     /// Parse ALTER DYNAMIC TABLE after its kind.
     pub(super) fn parse_alter_dynamic_table(&mut self) -> Result<Expression> {
-        let head = self.parse_alter_object_head()?;
+        let head = if self.omits_dynamic_table_name() {
+            (crate::expressions::names::models::TableRef::new(""), false)
+        } else {
+            self.parse_alter_object_head()?
+        };
         let mut names: Vec<Expression> = Vec::new();
         while self.match_token(TokenType::Comma) {
             names.push(Expression::Table(Box::new(self.parse_object_name()?)));
@@ -71,6 +75,16 @@ impl Parser {
         ))
     }
 
+    /// Whether the table name is omitted before `SET <property> =` which Snowflake parses and refuses by name check.
+    fn omits_dynamic_table_name(&self) -> bool {
+        let follows = |offset: usize, types: &[TokenType]| {
+            self.tokens
+                .get(self.current + offset)
+                .is_some_and(|token| types.contains(&token.token_type))
+        };
+        (self.check_identifier("SET") || self.check(TokenType::Set)) && follows(2, &[TokenType::Eq])
+    }
+
     /// Parse what follows the words of an ALTER DYNAMIC TABLE action.
     fn parse_dynamic_table_action(&mut self, action: &str) -> Result<Parts> {
         Ok(match action {
@@ -80,7 +94,7 @@ impl Parser {
                     self.expect_alter_words(&[&["ADD", "ROW", "ACCESS", "POLICY"]])?;
                     let added = self.policy_operand()?;
                     self.expect_token(TokenType::On)?;
-                    return Ok((vec![name, added, self.column_list_operand()?], vec![]));
+                    return Ok((vec![name, added, self.row_access_columns()?], vec![]));
                 }
                 (vec![name], vec![])
             }
@@ -100,7 +114,11 @@ impl Parser {
                 let mut targets: Vec<Expression> = Vec::new();
                 if self.match_token(TokenType::On) {
                     loop {
-                        targets.push(self.search_target(action.starts_with("ADD"))?);
+                        if action.starts_with("DROP") && self.check(TokenType::String) {
+                            targets.push(self.parse_primary()?);
+                        } else {
+                            targets.push(self.search_target(action.starts_with("ADD"))?);
+                        }
                         if !self.match_token(TokenType::Comma) {
                             break;
                         }
@@ -108,10 +126,15 @@ impl Parser {
                 }
                 (targets, vec![])
             }
-            "ADD STORAGE LIFECYCLE POLICY" | "ADD ROW ACCESS POLICY" => {
+            "ADD STORAGE LIFECYCLE POLICY" => {
                 let policy = self.policy_operand()?;
                 self.expect_token(TokenType::On)?;
                 (vec![policy, self.column_list_operand()?], vec![])
+            }
+            "ADD ROW ACCESS POLICY" => {
+                let policy = self.policy_operand()?;
+                self.expect_token(TokenType::On)?;
+                (vec![policy, self.row_access_columns()?], vec![])
             }
             "SET AGGREGATION POLICY" => {
                 let policy = self.policy_operand()?;
@@ -129,6 +152,15 @@ impl Parser {
                 }
                 (vec![policy], properties)
             }
+            "UNSET TAG" if self.is_at_end() || self.check(TokenType::Semicolon) => (vec![], vec![]),
+            "SET TAG" if self.check(TokenType::Eq) => {
+                self.skip();
+                let value = self.parse_object_value()?;
+                (
+                    vec![],
+                    vec![property("TAG", Some(Identifier::new("")), Some(value))],
+                )
+            }
             "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == SET_TAG)?),
             "SET" | "UNSET" => (vec![], self.parse_dynamic_table_properties(action == SET)?),
             "ALTER" | "MODIFY" => (self.parse_dynamic_column_actions()?, vec![]),
@@ -139,6 +171,15 @@ impl Parser {
     /// Parse a policy, table or tag name operand.
     fn policy_operand(&mut self) -> Result<Expression> {
         Ok(Expression::Table(Box::new(self.parse_object_name()?)))
+    }
+
+    /// Parse the row access policy columns, which Snowflake parses even when empty.
+    fn row_access_columns(&mut self) -> Result<Expression> {
+        if self.check(TokenType::LParen) && self.check_next(TokenType::RParen) {
+            self.current += 2;
+            return Ok(tuple(vec![]));
+        }
+        self.column_list_operand()
     }
 
     /// Parse `( <col_name> [ , ... ] )`.

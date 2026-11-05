@@ -283,7 +283,6 @@ impl Parser {
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
             let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
-            self.check_snowflake_routine_arguments(&params)?;
             (params, true)
         } else if self.check(TokenType::Var) && !self.check(TokenType::As) {
             let params = self.parse_tsql_procedure_params()?;
@@ -444,7 +443,11 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = if self.applies_snowflake_context_rules() {
+            self.parse_object_name()?
+        } else {
+            self.parse_table_ref()?
+        };
 
         let mut seq = CreateSequence {
             name,

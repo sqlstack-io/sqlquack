@@ -162,6 +162,10 @@ pub struct CheckResult {
     pub unexcluded_pages: Vec<String>,
     /// References between files that do not resolve; any one fails the check.
     pub problems: Vec<String>,
+    /// Receipt case ids whose statement the parser contradicts, cited by a form or not (D141).
+    pub receipt_contradictions: BTreeSet<String>,
+    /// Receipt case ids whose SQL no case or run report gives, so no verdict can be compared.
+    pub unjudged_receipts: BTreeSet<String>,
 }
 
 /// The files joined for checking, with every case already judged.

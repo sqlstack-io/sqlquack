@@ -433,3 +433,17 @@ pub(crate) fn move_form(root: &Path, id: &str) {
         &format!("{declared}anchor = \"Syntax, edited\""),
     );
 }
+
+/// Adds a receipt recording `fields` for `retired-1`, a case id no form cites, of `sql`.
+pub(crate) fn retired_receipt(root: &Path, sql: &str, fields: Value) {
+    let case: String = case_line("retired-1", "sf.query.select.o001", sql, &[]);
+    append_receipt(root, &with_fields(&receipt_line(&case, "accepted"), fields));
+}
+
+/// Writes the run report beside the receipts, listing `sql` among its inputs.
+pub(crate) fn report_input(root: &Path, sql: &str) {
+    let report: Value = serde_json::json!({
+        "inputs": [{"sql": sql, "sql_sha256": sha256(sql)}],
+    });
+    write(root, "receipts/run-1.report.json", &report.to_string());
+}

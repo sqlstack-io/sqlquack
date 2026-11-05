@@ -65,5 +65,7 @@ pub fn snapshot(
         syntax_error_cases_rejected: by_snowflake(check, SnowflakeSyntax::Refused, false),
         syntax_error_cases_accepted: by_snowflake(check, SnowflakeSyntax::Refused, true),
         documented_cases: coverage.documented_cases.clone(),
+        receipt_contradictions: Some(check.receipt_contradictions.clone()),
+        unjudged_receipts: Some(check.unjudged_receipts.clone()),
     }
 }

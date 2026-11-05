@@ -1,7 +1,6 @@
 //! Snowflake function, procedure and object-name rules that the shared parsers do not apply.
 
 use crate::expressions::names::models::TableRef;
-use crate::expressions::schema_objects::models::FunctionParameter;
 use crate::parser::constants::{
     SNOWFLAKE_RESERVED_KEYWORDS, SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES,
     SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES, SNOWFLAKE_ROUTINE_NAME_PROPERTIES,
@@ -97,7 +96,7 @@ impl Parser {
         Ok(())
     }
 
-    /// In a Snowflake parse, refuses `TABLE ( ... )` with a reserved column name or a column lacking its type.
+    /// In a Snowflake parse, refuses `TABLE ( ... )` with a reserved column name.
     pub(crate) fn check_snowflake_table_columns(&self) -> Result<()> {
         if !self.is_snowflake()
             || !self.check(TokenType::Table)
@@ -122,27 +121,9 @@ impl Parser {
                         .iter()
                         .any(|word| next.text.eq_ignore_ascii_case(word))
             });
-            let untyped = next.is_some_and(|next| next.token_type != TokenType::RParen)
-                && self
-                    .tokens
-                    .get(self.current + offset + 3)
-                    .is_some_and(|after| {
-                        matches!(after.token_type, TokenType::Comma | TokenType::RParen)
-                    });
-            if opens_column && (reserved || untyped) {
-                return Err(self.parse_error("Expected a column name and type in TABLE ( ... )"));
+            if opens_column && reserved {
+                return Err(self.parse_error("Expected a column name in TABLE ( ... )"));
             }
-        }
-        Ok(())
-    }
-
-    /// In a Snowflake parse, refuses a routine argument that lacks its name or its type.
-    pub(crate) fn check_snowflake_routine_arguments(
-        &self,
-        arguments: &[FunctionParameter],
-    ) -> Result<()> {
-        if self.is_snowflake() && arguments.iter().any(|argument| argument.name.is_none()) {
-            return Err(self.parse_error("Expected a name and a type for each argument"));
         }
         Ok(())
     }
