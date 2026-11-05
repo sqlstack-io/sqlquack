@@ -455,9 +455,9 @@ fn given_a_snowflake_show_of_grants_or_policies_when_parsing_then_its_clauses_ar
             expected_kind: Some("show"),
         },
         SnowflakeVerdictTestCase {
-            description: "keeps SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
+            description: "LIMIT after IN APPLICATION PACKAGE (recorded errno 1003)",
             sql: "SHOW GRANTS TO SHARE v1 IN APPLICATION PACKAGE v1 LIMIT 1 ;",
-            expected_kind: Some("show"),
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "keeps SHOW GRANTS OF APPLICATION ROLE v1 LIMIT 1 ;",

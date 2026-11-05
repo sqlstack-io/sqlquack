@@ -261,14 +261,17 @@ impl Parser {
             let (clause, show) = self.parse_show_grants_to(show)?;
             (Some(clause), show)
         } else if self.match_text_seq(&["OF"]) {
-            let words = self.expect_alter_words(&[
+            let kinds: &[&[&str]] = &[
                 &["APPLICATION", "ROLE"],
                 &["SERVICE", "ROLE"],
                 &["DATABASE", "ROLE"],
                 &["ROLE"],
                 &["SHARE"],
-            ])?;
-            (Some(format!("OF {words}")), show)
+            ];
+            match kinds.iter().find(|words| self.match_text_seq(words)) {
+                Some(words) => (Some(format!("OF {}", words.join(" "))), show),
+                None => (Some("OF".to_owned()), show),
+            }
         } else if self.match_token(TokenType::In) {
             self.expect_alter_words(&[&["DCM", "PROJECT"]])?;
             (Some("IN DCM PROJECT".to_owned()), show)
@@ -276,17 +279,41 @@ impl Parser {
             (None, show)
         };
         if let Some(clause) = clause {
-            if show.scope.is_none() && clause != ON_ACCOUNT {
-                show.scope = Some(match clause.ends_with("SERVICE ROLE") {
-                    true => self.parse_show_instance_role()?,
-                    false => self.parse_show_name()?,
+            let bare = !future
+                && self.is_statement_end_at(0)
+                && matches!(
+                    clause.as_str(),
+                    "TO USER"
+                        | "TO ROLE"
+                        | "TO SHARE"
+                        | "TO APPLICATION"
+                        | "TO APPLICATION ROLE"
+                        | "OF ROLE"
+                        | "OF SHARE"
+                );
+            if show.scope.is_none() && clause != ON_ACCOUNT && !bare {
+                show.scope = Some(match clause.as_str() {
+                    "TO SERVICE ROLE" | "OF SERVICE ROLE" => self.parse_show_instance_role()?,
+                    "TO ROLE" if self.check_next(TokenType::Exclamation) => {
+                        self.parse_show_instance_role()?
+                    }
+                    "TO APPLICATION ROLE" if self.match_token(TokenType::Dot) => {
+                        self.parse_show_name()?
+                    }
+                    _ => self.parse_show_name()?,
                 });
             }
             show.scope_kind = Some(clause);
         }
         if show.scope_kind.as_deref() == Some("TO SHARE") && self.match_token(TokenType::In) {
             self.expect_alter_words(&[&["APPLICATION", "PACKAGE"]])?;
+            if self.check(TokenType::QuotedIdentifier) {
+                return Err(
+                    self.parse_error("Snowflake takes an unquoted application package name")
+                );
+            }
             show.target = Some(self.parse_show_name()?);
+            return Ok(Expression::Show(Box::new(show)));
         }
         if self.match_token(TokenType::Limit) {
             if !self.check(TokenType::Number) {
@@ -319,10 +346,10 @@ impl Parser {
         {
             kind.push(self.advance_text()?.to_ascii_uppercase());
         }
-        if kind.is_empty() {
-            return Err(self.parse_error("Expected an object kind after ON"));
-        }
         show.scope = Some(self.parse_show_name()?);
+        if kind.is_empty() {
+            return Ok(("ON".to_owned(), show));
+        }
         if self.check(TokenType::LParen) {
             show.privileges = self.parse_function_param_types()?;
         }
