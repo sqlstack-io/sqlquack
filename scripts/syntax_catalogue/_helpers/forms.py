@@ -250,5 +250,7 @@ def refers_to(*, name: str, grammars: tuple[str, ...]) -> bool:
 
 
 def uses(*, definitions: tuple[str, ...], grammars: tuple[str, ...]) -> list[str]:
-    """The page's sub-grammar names a form's grammar refers to."""
-    return sorted(name for name in definitions if refers_to(name=name, grammars=grammars))
+    """The page's definitions a form's grammar refers to, every variant of a name it names."""
+    return sorted(
+        name for name in definitions if refers_to(name=name.split(" ")[0], grammars=grammars)
+    )

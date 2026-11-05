@@ -1,0 +1,227 @@
+# Documented limits that Snowflake enforces only after parsing, or not at all (decision D85).
+# Each obligation named here is an accept obligation in obligations/<family>.toml: the parser must
+# not reject the input. This list is reported as a separate semantic measure and never counts
+# towards the syntax numerator or denominator. Fields as in semantic-limits/scripting.toml.
+
+
+[[semantic_limit]]
+obligation = "sf.expressions.identifiers-syntax.unquoted-identifier.o014"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+anchor = "doc.identifiers-syntax / Unquoted identifiers"
+rule = "Regardless of whether an identifier is unquoted or double-quoted, the maximum number of characters allowed is 255 (including blank spaces)."
+input = "a 256-character unquoted identifier against the documented maximum of 255"
+documented = "reject"
+observed = "accepted"
+agrees = false
+receipts = [
+  { case_id = "sf.expressions.identifiers-syntax.unquoted-identifier.k8916a0e585d8", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "393c14a6a14daa0031ddc07966fabde3619465baade7462b563e33a91a103528" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.identifiers-syntax.double-quoted-identifier.o013"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+anchor = "doc.identifiers-syntax / Double-quoted identifiers"
+rule = "Regardless of whether an identifier is unquoted or double-quoted, the maximum number of characters allowed is 255 (including blank spaces)."
+input = "a 256-character double-quoted identifier, blanks included, against the documented maximum of 255"
+documented = "reject"
+observed = "accepted"
+agrees = false
+receipts = [
+  { case_id = "sf.expressions.identifiers-syntax.double-quoted-identifier.k391da746a658", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "2aaf6aa8ef4d67fb8d20834f404037a76cc150c4c50220996c06bce7edb9b2e4" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-numeric.number.o013"
+form = "sf.expressions.data-types-numeric.number"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+rule = "Numbers up to 38 digits, with an optional precision and scale"
+input = "SELECT CAST ( NULL AS NUMBER ( 39 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1811
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-numeric.number.kaa581a33f75a", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "72b2ee57893ccf0e9d9142b1677225b1ee241baafda271dafa8100ee5f5b4efb" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-numeric.number.o016"
+form = "sf.expressions.data-types-numeric.number"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / NUMBER"
+rule = "The maximum scale, which is the number of digits to the right of the decimal point, is 37."
+input = "SELECT CAST ( NULL AS NUMBER ( 38 , 38 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1812
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-numeric.number.kfa0e92da2a09", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "0260efa8441ea72d30b5f7e22cd90ac18bcbe416b042d28c04c775dbfa8487a4" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-numeric.decimal.o016"
+form = "sf.expressions.data-types-numeric.decimal"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+rule = "Numbers up to 38 digits, with an optional precision and scale"
+input = "SELECT CAST ( NULL AS DECIMAL ( 39 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1811
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-numeric.decimal.k196ba9299088", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "7860877bb05945c368eab966e6cd419096ef485dbced893108813f10e02d555f" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-numeric.decimal.o019"
+form = "sf.expressions.data-types-numeric.decimal"
+anchor = "doc.data-types-numeric / Data types for fixed-point numbers / DECIMAL , DEC , NUMERIC"
+rule = "The maximum scale, which is the number of digits to the right of the decimal point, is 37."
+input = "SELECT CAST ( NULL AS DECIMAL ( 38 , 38 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1812
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-numeric.decimal.k122ca9e75d34", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "30aba11501d4852af36c6ae945d77e32ec1a05c04f9570107aa750cc1bed884f" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-datetime.time.o009"
+form = "sf.expressions.data-types-datetime.time"
+anchor = "doc.data-types-datetime / Data types / TIME"
+rule = "Time precision can range from 0 (seconds) to 9 (nanoseconds)."
+input = "SELECT CAST ( NULL AS TIME ( 10 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1815
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-datetime.time.k33becfc48fea", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "7e3ecc346b58e147638563cc95ca64968d160cdd8514ecfaa460c837214591b8" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-datetime.timestamp.o009"
+form = "sf.expressions.data-types-datetime.timestamp"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ / TIMESTAMP"
+rule = "Timestamp precision can range from 0 (seconds) to 9 (nanoseconds)."
+input = "SELECT CAST ( NULL AS TIMESTAMP ( 10 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1813
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-datetime.timestamp.ka6e8aa7934db", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "d0e2fe29d900c3f7b389ad90f280cdfb1f4f5a68bc1ff437c874861dd82074fc" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-datetime.timestamp-variations.o022"
+form = "sf.expressions.data-types-datetime.timestamp-variations"
+anchor = "doc.data-types-datetime / Data types / TIMESTAMP_LTZ , TIMESTAMP_NTZ , TIMESTAMP_TZ"
+rule = "Timestamp precision can range from 0 (seconds) to 9 (nanoseconds)."
+input = "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 10 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1813
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-datetime.timestamp-variations.k6f79dc96731d", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "a163ca4dc837f8c63ca24531a7df00f0cab8c970c173460a171017f135fdaeca" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-text.varchar.o009"
+form = "sf.expressions.data-types-text.varchar"
+anchor = "doc.data-types-text / Data types for text strings / VARCHAR"
+rule = "a VARCHAR value is also limited to a maximum of 134217728 bytes (128 MB)."
+input = "SELECT CAST ( NULL AS VARCHAR ( 134217729 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1810
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-text.varchar.ka8d956086763", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "ce103bfa37a36e7e8bc772afebf23520ce4ad9bb2640533732277480dbd3e66b" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-text.string.o016"
+form = "sf.expressions.data-types-text.string"
+anchor = "doc.data-types-text / Data types for text strings / STRING, TEXT, VARCHAR2, NVARCHAR, NVARCHAR2, CHAR VARYING, NCHAR VARYING"
+rule = "a VARCHAR value is also limited to a maximum of 134217728 bytes (128 MB)."
+input = "SELECT CAST ( NULL AS STRING ( 134217729 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1810
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-text.string.k3ba255bfa63b", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "ebfb0a830c60cc7196cf972763848537af296ff04c71798cc04eb37f8c242893" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-text.char.o012"
+form = "sf.expressions.data-types-text.char"
+anchor = "doc.data-types-text / Data types for text strings / CHAR, CHARACTER, NCHAR"
+rule = "a VARCHAR value is also limited to a maximum of 134217728 bytes (128 MB)."
+input = "SELECT CAST ( NULL AS CHAR ( 134217729 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1810
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-text.char.k68af31e2847f", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "43853715b4036d960774f4bc20458f0d90c2a4e118baa9b589eb1e31e57f7f23" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-text.binary.o009"
+form = "sf.expressions.data-types-text.binary"
+anchor = "doc.data-types-text / Data types for binary strings / BINARY"
+rule = "The maximum length is 64 MB (67,108,864 bytes)."
+input = "SELECT CAST ( NULL AS BINARY ( 67108865 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1816
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-text.binary.ka8714107903a", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "4fab333d8730f88249ce9b05c83657efad0048f2ae67d7f30017396553cb648d" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-text.varbinary.o009"
+form = "sf.expressions.data-types-text.varbinary"
+anchor = "doc.data-types-text / Data types for binary strings / VARBINARY"
+rule = "The maximum length is 64 MB (67,108,864 bytes)."
+input = "SELECT CAST ( NULL AS VARBINARY ( 67108865 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 1816
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-text.varbinary.k42f59fe8b7dc", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "7b5ee67389479b25556011375bb4db690314537a585e0d939569e4262b0b53df" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-vector.o012"
+form = "sf.expressions.data-types-vector"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+rule = "This must be a positive integer value with a maximum value of 4096."
+input = "SELECT CAST ( NULL AS VECTOR ( INT , 0 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 2281
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-vector.k2d432296b364", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "d684bbc719242bd0de1cbb2cacb00f496de5d13b06d746e98e718d67443ac56e" },
+]
+
+[[semantic_limit]]
+obligation = "sf.expressions.data-types-vector.o015"
+form = "sf.expressions.data-types-vector"
+anchor = "doc.data-types-vector / Data types / VECTOR"
+rule = "This must be a positive integer value with a maximum value of 4096."
+input = "SELECT CAST ( NULL AS VECTOR ( INT , 4097 ) ) ;"
+documented = "reject"
+observed = "semantic_error"
+errno = 2281
+agrees = true
+receipts = [
+  { case_id = "sf.expressions.data-types-vector.ke1855d43e219", run_id = "d91-expr-1-20261104T023704Z", receipt_sha256 = "ce747f51c4678771f84ed470d12bd8a9b3a53b41128984540dcc8021f8fbab82" },
+]

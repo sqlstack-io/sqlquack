@@ -1,5 +1,6 @@
 # Forms catalogued by hand: syntax the docs give outside sqlsyntax blocks (HTML-only parsed-literal
-# blocks, tables, headings and prose). Each form is bound to the Markdown or HTML hash of the page it
+# blocks, tables, headings, prose and code blocks outside the sections the extractor reads as
+# syntax). Each form is bound to the Markdown or HTML hash of the page it
 # was read from; scripts/build_syntax_catalogue.py refuses a form whose page has changed since.
 # Fields: source, anchor (heading path below the title), kind, optional label (names the form id),
 # grammar (one entry per signature), basis and page_sha256.
@@ -1003,3 +1004,24 @@ reason = "string content of an INTERVAL literal; an obligation of the interval l
 form = "sf.expressions.data-types-datetime.interval-formats.interval-formats"
 into = ["sf.expressions.data-types-datetime.interval"]
 reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+
+[[form]]
+source = "doc.sql.create-warehouse"
+anchor = "CREATE OR ALTER WAREHOUSE"
+kind = "statement"
+grammar = [
+  "CREATE OR ALTER WAREHOUSE <name> [ [ WITH ] objectProperties ] [ objectParams ]",
+]
+basis = "code_block"
+page_sha256 = "5a41d1532c97b71d87a44a730c6ef9240c2ea51eb79f73ea4bfd84fa0e9f96cc"
+
+[[form]]
+source = "doc.constructs.at-before"
+anchor = "Parameters / Iceberg table parameters"
+kind = "statement"
+label = "iceberg-version"
+grammar = [
+  "SELECT ... FROM ... AT ( { VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_id> } ) [ ... ]",
+]
+basis = "code_block"
+page_sha256 = "6ce082403d5dfbaeb63cac536e08cfcaf92e393e2d7d31c31bb29b69faa909b7"

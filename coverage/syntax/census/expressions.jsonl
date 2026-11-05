@@ -1,0 +1,21 @@
+{"case_id":"sf.expressions.commands-model-function.model-default-version.k44f9569f86bf","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.k4686eb486d6d","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.ka84c3f2490b1","relations":[{"name":"\"SELECT\"","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.kc901cbb1aaca","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.kd6a89dcac9b8","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.kdd415edc1ee1","relations":[{"name":"'v1'","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.ke5c12a505dcd","relations":[{"name":"\"t1 Q\"","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-default-version.kfe7b084fe945","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k3b140b180424","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k466f89439abf","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k4cf6436918f5","relations":[{"name":"\"SELECT\"","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k4e8d393ab28f","relations":[{"name":"'v1'","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k5ac0a0e1ec2f","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.k94746f686893","relations":[{"name":"\"t1 Q\"","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.ka30f18a09d4b","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.kc0b41a3b155f","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.kc6c7979e3048","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.commands-model-function.model-version-or-alias.kec6e75a2820d","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.data-types-semistructured.colon-subscript-dot.kec5804397b17","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.functions-table.k6fea4f96e781","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.expressions.name-resolution.k0a18931b0894","relations":[{"name":"t1","columns":[{"name":"Z1","type":"INT"}]}]}

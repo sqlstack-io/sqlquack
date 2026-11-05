@@ -6,7 +6,9 @@ import argparse
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.syntax_obligations._helpers.elisions import write_elisions
 from scripts.syntax_obligations._helpers.obligations import family_obligations, obligation_rows
+from scripts.syntax_obligations.constants import WITHDRAWN_CLASS_HEADER, WITHDRAWN_HEADER
 from scripts.syntax_obligations.types import Row
 
 
@@ -19,7 +21,8 @@ def run_build(argv: list[str] | None = None) -> int:
     root: Path = arguments.root
     for family in arguments.families:
         path: Path = root / "obligations" / f"{family}.toml"
-        numbered, _ = family_obligations(root=root, family=family)
+        numbered, trees, withdrawn, classes, _ = family_obligations(root=root, family=family)
+        write_elisions(root=root, family=family, trees=trees)
         rows: list[Row] = obligation_rows(numbered)
         path.parent.mkdir(parents=True, exist_ok=True)
         write_tables(
@@ -29,4 +32,15 @@ def run_build(argv: list[str] | None = None) -> int:
             "# See docs/syntax-coverage.md.",
             tables=[("obligation", rows)],
         )
+        withdrawn_path: Path = root / "withdrawn" / f"{family}.toml"
+        if withdrawn or classes:
+            withdrawn_path.parent.mkdir(parents=True, exist_ok=True)
+            write_tables(
+                path=withdrawn_path,
+                header=WITHDRAWN_HEADER.format(family=family)
+                + (WITHDRAWN_CLASS_HEADER if classes else ""),
+                tables=[("withdrawn_class", classes), ("withdrawn", withdrawn)],
+            )
+        elif withdrawn_path.exists():
+            withdrawn_path.unlink()
     return 0

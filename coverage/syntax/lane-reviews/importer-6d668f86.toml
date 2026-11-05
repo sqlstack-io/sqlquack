@@ -1,0 +1,25 @@
+# Lane C review of lane A's receipt importer: errno 1003 is a syntax error only with a parse position.
+# Bound to the reviewed commit and the Git tree of scripts/syntax_receipts at that commit.
+
+[review]
+subject = "importer"
+reviewer_lane = "C"
+branch = "wip/syntax-evidence"
+commit = "6d668f86e8a0ae15c6824dbdd8ec3d51c1bfba1c"
+importer_tree = "1f19dfa8701dce6fa571fd0993616408249802bb"
+reviewed_utc = "2026-11-04T15:55:00Z"
+verdict = "approved"
+not_reviewed = "importer changes after 6d668f86; the raw messages behind the 18 supersessions are private run records, so their text is checked through lane A's report only"
+
+[[closed]]
+finding = "errno 1003 compilation errors were all syntax_error, though 18 catalogue cases carry a 1003 message with no parse position (a missing object kind, an invalid argument value, an unavailable operation): checks on a statement that already parsed"
+check = "read classify in _helpers/receipts.py: a compiled 1003 is syntax_error only when a line of the message starts with 'syntax error line N at position M' or 'parse error line N at position M' (PARSE_POSITION_MESSAGE, re.MULTILINE); any other compiled 1003 is semantic_error with basis 'errno 1003 without a parse position, a check after parsing'; uncaught-exception 1003s are untouched"
+
+[[closed]]
+finding = "an unanchored pattern would match case text quoted inside a message, such as a position inside an \"Invalid value '…'\" message"
+check = "the pattern is anchored to a line start; the quoted-position test case covers it"
+
+[method]
+tests = "tests/unit/scripts/syntax_receipts at 6d668f86: 77 pass"
+mutation = "dropping the ^ anchor fails 'a parse position quoted inside the message is not a parse position'; returning syntax_error for every compiled 1003 fails that case and 'errno 1003 without a parse position is semantic'"
+binding = "import-20261104-55 at cbffbc7c: 478 receipts (286 syntax_error, 155 semantic_error, 19 accepted, 18 runtime_error) carry the earlier receipts' field set; 477 equal a case of catalogue ba710a86 on case_id, sql_sha256, setup_sha256, session_sha256 and capture; the 18 superseding receipts are semantic_error and each supersedes only syntax_error receipts of the same case and SQL; the one unbound receipt supersedes the receipt of sf.ddl.alter-materialized-view.set-data-metric-schedule.k814110f099cf, a case no longer in the catalogue"
