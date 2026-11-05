@@ -2,7 +2,8 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::check::models::{CaseResult, LocalVerdict, Reason};
+use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
+use crate::formats::constants::{SYNTAX_ERRNO, SYNTAX_ERRNO_42601};
 use crate::formats::models::{AccountSetting, Case, Expect, Phase, Receipt};
 
 /// A syntax receipt bound to exactly this case's SQL, setup, session and capture, with a query id.
@@ -61,8 +62,35 @@ fn agreement(phase: Phase, local: &LocalVerdict, terminates: bool) -> Result<boo
     }
 }
 
-/// The case's result against its receipts and the current parser's verdict.
-pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdict) -> CaseResult {
+/// What Snowflake's parser did by the syntax receipts of the case's statement; none unless all agree.
+fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<SnowflakeSyntax> {
+    let verdicts: BTreeSet<Option<SnowflakeSyntax>> = statement_receipts
+        .iter()
+        .filter(|receipt| receipt.measure.is_none())
+        .map(|receipt| match (receipt.phase, receipt.errno) {
+            (Phase::SyntaxError, Some(errno))
+                if errno == SYNTAX_ERRNO || errno == SYNTAX_ERRNO_42601 =>
+            {
+                Some(SnowflakeSyntax::Refused)
+            }
+            (Phase::SyntaxError, _) => None,
+            (_, Some(errno)) if errno == SYNTAX_ERRNO => None,
+            _ => Some(SnowflakeSyntax::Parsed),
+        })
+        .collect();
+    match verdicts.len() {
+        1 => verdicts.into_iter().next().flatten(),
+        _ => None,
+    }
+}
+
+/// The case's result against its receipts, its statement's receipts and the parser's verdict.
+pub(crate) fn case_result(
+    case: &Case,
+    receipts: &[&Receipt],
+    statement_receipts: &[&Receipt],
+    local: LocalVerdict,
+) -> CaseResult {
     let (phase, reason, semantic_only): (Option<Phase>, Option<Reason>, bool) =
         match receipt_phase(case, receipts) {
             _ if case.expect == Some(Expect::Observe) => {
@@ -84,6 +112,7 @@ pub(crate) fn case_result(case: &Case, receipts: &[&Receipt], local: LocalVerdic
         local,
         reason,
         semantic_only,
+        snowflake: snowflake_syntax(statement_receipts),
         account_state: receipts
             .iter()
             .filter(|receipt| admissible(case, receipt))

@@ -66,6 +66,11 @@ pub(crate) fn reshaped(sql: &str) -> LocalVerdict {
     vec![structural(sql), accepted_as("another tree")].swap_remove(usize::from(sql == "SELECT 17"))
 }
 
+/// `structural`, except that `SELECT 17` is rejected.
+pub(crate) fn rejecting_select_17(sql: &str) -> LocalVerdict {
+    vec![structural(sql), LocalVerdict::Rejected].swap_remove(usize::from(sql == "SELECT 17"))
+}
+
 /// `structural`, except that `SELECT FROM` crashes instead of being rejected.
 pub(crate) fn crashing_on_select_from(sql: &str) -> LocalVerdict {
     vec![structural(sql), crashing(sql)].swap_remove(usize::from(sql == "SELECT FROM"))

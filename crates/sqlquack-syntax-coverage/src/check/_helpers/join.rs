@@ -51,20 +51,44 @@ fn receipts_by_case(coverage: &SyntaxCoverage) -> BTreeMap<&str, Vec<&Receipt>> 
     receipts
 }
 
+/// The receipts of each statement, by its SQL, setup and session hashes, whatever the case id.
+fn receipts_by_statement(coverage: &SyntaxCoverage) -> BTreeMap<(&str, &str, &str), Vec<&Receipt>> {
+    let mut receipts: BTreeMap<(&str, &str, &str), Vec<&Receipt>> = BTreeMap::new();
+    for receipt in &coverage.receipts {
+        receipts
+            .entry((
+                receipt.sql_sha256.as_str(),
+                receipt.setup_sha256.as_str(),
+                receipt.session_sha256.as_str(),
+            ))
+            .or_default()
+            .push(receipt);
+    }
+    receipts
+}
+
 /// Every join the checker needs, with each case judged against `parse`.
 pub(crate) fn join<'a>(
     coverage: &'a SyntaxCoverage,
     parse: &dyn Fn(&str) -> LocalVerdict,
 ) -> Joined<'a> {
     let receipts: BTreeMap<&str, Vec<&Receipt>> = receipts_by_case(coverage);
+    let statements: BTreeMap<(&str, &str, &str), Vec<&Receipt>> = receipts_by_statement(coverage);
     let mut cases: BTreeMap<&str, CaseResult> = BTreeMap::new();
     for case in coverage.cases.values().flatten() {
         let found: &[&Receipt] = receipts
             .get(case.case_id.as_str())
             .map_or(&[], Vec::as_slice);
+        let statement: &[&Receipt] = statements
+            .get(&(
+                case.sql_sha256.as_str(),
+                case.setup_sha256.as_str(),
+                case.session_sha256.as_str(),
+            ))
+            .map_or(&[], Vec::as_slice);
         cases.insert(
             case.case_id.as_str(),
-            case_result(case, found, parse(&case.sql)),
+            case_result(case, found, statement, parse(&case.sql)),
         );
     }
     Joined {
