@@ -300,7 +300,7 @@ class _Walk:
             kind=KIND_OPTION_ABSENT,
             target=present,
             note="",
-            spec=self.spec(action=ACTION_MIN_OPTIONS),
+            spec=self.spec(action=ACTION_MIN_OPTIONS, node=node),
         )
         if len(node.branches) > 1:
             self._alternatives(node=node, text=text)

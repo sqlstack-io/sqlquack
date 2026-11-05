@@ -6644,12 +6644,6 @@ required = true
 note = "the form without its required APPLICATION"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set.o052"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PACKAGE"
-
-[[obligation]]
 id = "sf.ddl.alter-application-package.set.o042"
 kind = "negative_neighbour"
 required = true
@@ -7498,18 +7492,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
-
-[[obligation]]
-id = "sf.ddl.alter-application-service.set.o055"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required APPLICATION"
-
-[[obligation]]
-id = "sf.ddl.alter-application-service.set.o056"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE"
 
 [[obligation]]
 id = "sf.ddl.alter-application-service.set.o043"
@@ -28729,12 +28711,6 @@ target = "'<comment>' in [ COMMENT = '<comment>' ]"
 note = "an unquoted identifier in place of '<comment>'"
 
 [[obligation]]
-id = "sf.ddl.alter-external-agent.set.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.alter-external-agent.set.o012"
 kind = "negative_neighbour"
 required = true
@@ -31400,6 +31376,13 @@ anchor = "doc.sql.alter-external-volume / Syntax"
 note = "the form without its required { { STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }' STORAGE_AWS_ROLE_ARN = '<iam_role>' STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]' [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ] [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] } | { STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ] } | { STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] STORAGE_BASE_URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' } }, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o088"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-volume / Syntax"
+note = "the storage location without its required STORAGE_PROVIDER, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-external-volume.remove-storage-location.o001"
 kind = "positive"
 required = true
@@ -32058,82 +32041,94 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o023"
+id = "sf.ddl.alter-file-format.set.o232"
 kind = "alternative"
 required = true
-target = "{ [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | D… → [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ]"
+target = "{ [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | D… → [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ]"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o024"
+id = "sf.ddl.alter-file-format.set.o233"
 kind = "option_present"
 required = true
-target = "[ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<strin…"
+target = "[ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ] [ RECORD_DELIMI…"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o025"
+id = "sf.ddl.alter-file-format.set.o234"
 kind = "option_absent"
 required = true
-target = "[ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<strin…"
+target = "[ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ] [ RECORD_DELIMI…"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o026"
+id = "sf.ddl.alter-file-format.set.o235"
 kind = "option_present"
 required = true
-target = "[ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ]"
+target = "[ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o027"
+id = "sf.ddl.alter-file-format.set.o236"
 kind = "option_absent"
 required = true
-target = "[ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ]"
+target = "[ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o028"
+id = "sf.ddl.alter-file-format.set.o237"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → AUTO"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → AUTO"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o029"
+id = "sf.ddl.alter-file-format.set.o238"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → GZIP"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → GZIP"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o030"
+id = "sf.ddl.alter-file-format.set.o239"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → BZ2"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → BZ2"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o031"
+id = "sf.ddl.alter-file-format.set.o240"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → BROTLI"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → BROTLI"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o032"
+id = "sf.ddl.alter-file-format.set.o241"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → ZSTD"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → ZSTD"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o033"
+id = "sf.ddl.alter-file-format.set.o242"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → DEFLATE"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → DEFLATE"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o034"
+id = "sf.ddl.alter-file-format.set.o243"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → RAW_DEFLATE"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → RAW_DEFLATE"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o035"
+id = "sf.ddl.alter-file-format.set.o244"
 kind = "alternative"
 required = true
-target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } → NONE"
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → NONE"
+
+[[obligation]]
+id = "sf.ddl.alter-file-format.set.o245"
+kind = "alternative"
+required = true
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → LZO"
+
+[[obligation]]
+id = "sf.ddl.alter-file-format.set.o246"
+kind = "alternative"
+required = true
+target = "{ AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } → SNAPPY"
 
 [[obligation]]
 id = "sf.ddl.alter-file-format.set.o036"
@@ -33150,10 +33145,10 @@ required = true
 note = "the form without its required SET"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o191"
+id = "sf.ddl.alter-file-format.set.o247"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } in [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ]"
+note = "the form without its required { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } in [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ]"
 
 [[obligation]]
 id = "sf.ddl.alter-file-format.set.o192"
@@ -33348,10 +33343,10 @@ required = true
 note = "the form without its required { TRUE | FALSE } in [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ]"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o224"
+id = "sf.ddl.alter-file-format.set.o248"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ] }"
+note = "the form without its required { [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ] }"
 
 [[obligation]]
 id = "sf.ddl.alter-file-format.set.o231"
@@ -36842,25 +36837,28 @@ required = true
 target = "[ <arg_data_type> , ... ]"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-compression.o009"
-kind = "required_operand_missing"
+id = "sf.ddl.alter-function.set-compression.o021"
+kind = "alternative"
 required = true
-target = "<compression_type>"
-note = "omit <compression_type>"
+target = "{ NONE | GZIP | DEFLATE | AUTO } → NONE"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-compression.o010"
-kind = "operand_type_class"
+id = "sf.ddl.alter-function.set-compression.o022"
+kind = "alternative"
 required = true
-target = "<compression_type>"
-note = "a valid data_type"
+target = "{ NONE | GZIP | DEFLATE | AUTO } → GZIP"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-compression.o011"
-kind = "negative_neighbour"
+id = "sf.ddl.alter-function.set-compression.o023"
+kind = "alternative"
 required = true
-target = "<compression_type>"
-note = "a string literal in place of <compression_type>"
+target = "{ NONE | GZIP | DEFLATE | AUTO } → DEFLATE"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-compression.o024"
+kind = "alternative"
+required = true
+target = "{ NONE | GZIP | DEFLATE | AUTO } → AUTO"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-compression.o012"
@@ -36897,6 +36895,12 @@ id = "sf.ddl.alter-function.set-compression.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required COMPRESSION"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-compression.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { NONE | GZIP | DEFLATE | AUTO }"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-compression.o020"
@@ -49343,12 +49347,6 @@ required = true
 note = "the form without its required MODEL"
 
 [[obligation]]
-id = "sf.ddl.alter-model-monitor.set.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MONITOR"
-
-[[obligation]]
 id = "sf.ddl.alter-model-monitor.set.o023"
 kind = "negative_neighbour"
 required = true
@@ -50113,6 +50111,19 @@ target = "'<tag_value>'"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.alter-model.set-tag.o026"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.ddl.alter-model.set-tag.o027"
+kind = "option_absent"
+required = true
+target = "[ , <tag_name> = '<tag_value>' ... ]"
+
+[[obligation]]
 id = "sf.ddl.alter-model.set-tag.o013"
 kind = "negative_neighbour"
 required = true
@@ -50129,6 +50140,12 @@ id = "sf.ddl.alter-model.set-tag.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
+
+[[obligation]]
+id = "sf.ddl.alter-model.set-tag.o028"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.alter-model.set-tag.o017"
@@ -63720,6 +63737,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-service / Syntax"
 note = "the form without its required SPECIFICATION, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o085"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-service / Syntax"
+note = "the specification without its required FROM, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-service.restore-volume-instances-from.o001"

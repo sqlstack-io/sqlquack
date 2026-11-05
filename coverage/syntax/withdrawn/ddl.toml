@@ -11,6 +11,15 @@ valid_as = "sf.ddl.alter-application.rename-to positive the documented form with
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-application-package.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PACKAGE"
+sql = "ALTER APPLICATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-application.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-application-package.set-tag"
 kind = "negative_neighbour"
 target = ""
@@ -26,6 +35,24 @@ target = ""
 note = "the form without its required PACKAGE"
 sql = "ALTER APPLICATION v1 UNSET TAG v1 ;"
 valid_as = "sf.ddl.alter-application.unset-tag positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-application-service.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required APPLICATION"
+sql = "ALTER SERVICE v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-service.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-application-service.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SERVICE"
+sql = "ALTER APPLICATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-application.set positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -115,7 +142,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required DYNAMIC"
 sql = "ALTER TABLE v1 SET COMMENT = 'm' ;"
-valid_as = "sf.ddl.alter-table-event-table.set option_present [ COMMENT = '<string_literal>' ]"
+valid_as = "sf.ddl.alter-table-event-table.set positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -143,6 +170,15 @@ target = ""
 note = "the form without its required DYNAMIC"
 sql = "ALTER TABLE v1 ALTER v1 COMMENT 'm' ;"
 valid_as = "sf.ddl.alter-table.tablecolumnaction alternative { DROP DEFAULT | SET DEFAULT <seq_name> . NEXTVAL | { [ SET ] NOT NULL | DROP NOT NULL } | [ [ SET… → COMMENT '<string>'"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-external-agent.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required EXTERNAL"
+sql = "ALTER AGENT v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-agent.set positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -299,6 +335,15 @@ valid_as = "sf.ddl.alter-view.datametricfunctionaction alternative { SET DATA_ME
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-model-monitor.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MONITOR"
+sql = "ALTER MODEL v1 SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-model.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-pipe.refresh"
 kind = "negative_neighbour"
 target = ""
@@ -349,7 +394,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SEMANTIC, observed"
 sql = "ALTER VIEW v1 SET COMMENT = 'm' ;"
-valid_as = "sf.ddl.alter-view.set option_present [ COMMENT = '<string_literal>' ]"
+valid_as = "sf.ddl.alter-view.set positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

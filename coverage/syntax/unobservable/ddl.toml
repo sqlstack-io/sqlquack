@@ -2914,11 +2914,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o001"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "the documented form with every required part and no optional part: ALTER EXTERNAL CONSUMER v1 SET ;"
+construct = "the documented form with every required part and no optional part: ALTER EXTERNAL CONSUMER v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k969a43a312e2", sql_sha256 = "969a43a312e25766e91507c1b65c24bc79da9f5bdd0239ca4cb9fe62ddaa3aba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.kadf1e6a61c49", sql_sha256 = "adf1e6a61c492a892ef14695f95776803862f88c1e326f1f78573b56714b93d9" },
 ]
 runs = []
 probes = []
@@ -2938,11 +2938,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o003"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET ;"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k969a43a312e2", sql_sha256 = "969a43a312e25766e91507c1b65c24bc79da9f5bdd0239ca4cb9fe62ddaa3aba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.kadf1e6a61c49", sql_sha256 = "adf1e6a61c492a892ef14695f95776803862f88c1e326f1f78573b56714b93d9" },
 ]
 runs = []
 probes = []
@@ -2950,11 +2950,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o004"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "omit <name>: ALTER EXTERNAL CONSUMER SET ;"
+construct = "omit <name>: ALTER EXTERNAL CONSUMER SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k2ada5aaa45a1", sql_sha256 = "2ada5aaa45a1c06e889609d8e7a3511883cacd8380ae1a5ea173004300a346ba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k68c5a4570b70", sql_sha256 = "68c5a4570b70bf6ec6df7dd2ad545bea24ad61a85741deb0e4cd397946048197" },
 ]
 runs = []
 probes = []
@@ -2962,11 +2962,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o005"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "a valid identifier: ALTER EXTERNAL CONSUMER v1 SET ;"
+construct = "a valid identifier: ALTER EXTERNAL CONSUMER v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k969a43a312e2", sql_sha256 = "969a43a312e25766e91507c1b65c24bc79da9f5bdd0239ca4cb9fe62ddaa3aba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.kadf1e6a61c49", sql_sha256 = "adf1e6a61c492a892ef14695f95776803862f88c1e326f1f78573b56714b93d9" },
 ]
 runs = []
 probes = []
@@ -2974,11 +2974,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o006"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "a string literal in place of <name>: ALTER EXTERNAL CONSUMER 'v1' SET ;"
+construct = "a string literal in place of <name>: ALTER EXTERNAL CONSUMER 'v1' SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k62e520bc77f0", sql_sha256 = "62e520bc77f07a426fd25c558ddcce2eeb2fc70cdc7aa12efe1ea6df4bcee606" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k931159f87635", sql_sha256 = "931159f87635e31046689400f77a3c16f24c0b54869f9d7edad3cf76c0d965d7" },
 ]
 runs = []
 probes = []
@@ -2998,11 +2998,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o008"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET ;"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET EMAIL = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k969a43a312e2", sql_sha256 = "969a43a312e25766e91507c1b65c24bc79da9f5bdd0239ca4cb9fe62ddaa3aba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.kd008fac7a23c", sql_sha256 = "d008fac7a23c5c9f0f95c0b4d84b3916d9031a7247c7742d751095b4c352f826" },
 ]
 runs = []
 probes = []
@@ -3058,11 +3058,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o013"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET ;"
+construct = "option_absent: ALTER EXTERNAL CONSUMER v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k969a43a312e2", sql_sha256 = "969a43a312e25766e91507c1b65c24bc79da9f5bdd0239ca4cb9fe62ddaa3aba" },
+  { case_id = "sf.ddl.alter-external-consumer.set.kadf1e6a61c49", sql_sha256 = "adf1e6a61c492a892ef14695f95776803862f88c1e326f1f78573b56714b93d9" },
 ]
 runs = []
 probes = []
@@ -3106,11 +3106,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o019"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER EXTERNAL CONSUMER IF v1 SET ;"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER EXTERNAL CONSUMER IF v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k7538b3898d26", sql_sha256 = "7538b3898d2685904fe256bedb475eabdaaafdcfc31d559973ab6e645df728c8" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k50cbb8772443", sql_sha256 = "50cbb8772443f1fbabf7bdc4673d372f1256ca03b511b30771e4fb14efbeb066" },
 ]
 runs = []
 probes = []
@@ -3118,11 +3118,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o020"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "the form without its required SET: ALTER EXTERNAL CONSUMER v1 ;"
+construct = "the form without its required SET: ALTER EXTERNAL CONSUMER v1 COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.ke178bc2cc9f3", sql_sha256 = "e178bc2cc9f371e6feda13d4f3d5c1ee25e67429ddca814b298cc25cab2b01b4" },
+  { case_id = "sf.ddl.alter-external-consumer.set.ka41ef37b9a7e", sql_sha256 = "a41ef37b9a7e7775742ceb848c57d7bca1144b097403be96b3f3371d4e0bb2d1" },
 ]
 runs = []
 probes = []
@@ -3142,11 +3142,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o022"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER EXTERNAL CONSUMER \"v1 Q\" SET ;"
+construct = "quoted: ALTER EXTERNAL CONSUMER \"v1 Q\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k268df67d2af4", sql_sha256 = "268df67d2af4a2bb55add76fce5542ae23a70ce0a467787e9ce280a8699de4d7" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k917bed398d2c", sql_sha256 = "917bed398d2c2df81e4beecabedcc222c774209b2a8e18e554c6a7223a40abc5" },
 ]
 runs = []
 probes = []
@@ -3154,12 +3154,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-external-consumer.set.o023"
 form = "sf.ddl.alter-external-consumer.set"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER EXTERNAL CONSUMER \"SELECT\" SET ;"
+construct = "reserved: ALTER EXTERNAL CONSUMER SELECT SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level EXTERNAL CONSUMER names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-external-consumer.set.k50e37add4600", sql_sha256 = "50e37add4600003fbf7b3c7603ac57034dc7ee22337fd10c3659a3017ccfb614" },
-  { case_id = "sf.ddl.alter-external-consumer.set.kd3dc1c11f5d2", sql_sha256 = "d3dc1c11f5d2712b4c70d5144d7d1407bd1d651db9d3bfb02cadd55fd71de1db" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k0215187bfa9b", sql_sha256 = "0215187bfa9b5d001a6f3a70ef9e7e5cbc236baf7c195c03d467df7cadae0498" },
+  { case_id = "sf.ddl.alter-external-consumer.set.k0be5ef441f98", sql_sha256 = "0be5ef441f98116b3f52076b1ba0878ef69ac4f75b6ef33b9e2f3c40a09d9ef7" },
 ]
 runs = []
 probes = []
@@ -5088,11 +5088,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o001"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "the documented form with every required part and no optional part: ALTER OPENFLOW CONNECTOR v1 SET ;"
+construct = "the documented form with every required part and no optional part: ALTER OPENFLOW CONNECTOR v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k24a9ee97e5e6", sql_sha256 = "24a9ee97e5e6342162304588c743a8daa811d57431e4bafa51db7a51ba2f1e1f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kebe91afbe094", sql_sha256 = "ebe91afbe0941b14b7d0a082bb41ef5309fe8f201f68e15467435976b3e852fb" },
 ]
 runs = []
 probes = []
@@ -5112,11 +5112,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o003"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k24a9ee97e5e6", sql_sha256 = "24a9ee97e5e6342162304588c743a8daa811d57431e4bafa51db7a51ba2f1e1f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kebe91afbe094", sql_sha256 = "ebe91afbe0941b14b7d0a082bb41ef5309fe8f201f68e15467435976b3e852fb" },
 ]
 runs = []
 probes = []
@@ -5124,11 +5124,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o004"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "omit <name>: ALTER OPENFLOW CONNECTOR SET ;"
+construct = "omit <name>: ALTER OPENFLOW CONNECTOR SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k7dc0854e60b9", sql_sha256 = "7dc0854e60b9cd23e9aaf000eac7adbfb7fac5fb2904c7bda916460baca6572e" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k0b562c254ec4", sql_sha256 = "0b562c254ec47bbe4232057abf0782fd639db54e764bb34efd8be287aef03f32" },
 ]
 runs = []
 probes = []
@@ -5136,11 +5136,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o005"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "a valid identifier: ALTER OPENFLOW CONNECTOR v1 SET ;"
+construct = "a valid identifier: ALTER OPENFLOW CONNECTOR v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k24a9ee97e5e6", sql_sha256 = "24a9ee97e5e6342162304588c743a8daa811d57431e4bafa51db7a51ba2f1e1f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kebe91afbe094", sql_sha256 = "ebe91afbe0941b14b7d0a082bb41ef5309fe8f201f68e15467435976b3e852fb" },
 ]
 runs = []
 probes = []
@@ -5148,11 +5148,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o006"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "a string literal in place of <name>: ALTER OPENFLOW CONNECTOR 'v1' SET ;"
+construct = "a string literal in place of <name>: ALTER OPENFLOW CONNECTOR 'v1' SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.kde803316e5ce", sql_sha256 = "de803316e5ce50e45ed361be41a9a0a0f660fa63136fb1647e5e6d4ee06288c2" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kb676433bcd3c", sql_sha256 = "b676433bcd3c74aaef91c4874043a4fa9d16d73bbe062670e005f058244100d3" },
 ]
 runs = []
 probes = []
@@ -5172,11 +5172,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o008"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k24a9ee97e5e6", sql_sha256 = "24a9ee97e5e6342162304588c743a8daa811d57431e4bafa51db7a51ba2f1e1f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kebe91afbe094", sql_sha256 = "ebe91afbe0941b14b7d0a082bb41ef5309fe8f201f68e15467435976b3e852fb" },
 ]
 runs = []
 probes = []
@@ -5232,11 +5232,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o013"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW CONNECTOR v1 SET DISPLAY_NAME = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k24a9ee97e5e6", sql_sha256 = "24a9ee97e5e6342162304588c743a8daa811d57431e4bafa51db7a51ba2f1e1f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k82b6034942c2", sql_sha256 = "82b6034942c2e2667f20e3fd173b88882c1ee6259d5027206b2deb2c643b3dd4" },
 ]
 runs = []
 probes = []
@@ -5280,11 +5280,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o018"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "the form without its required CONNECTOR: ALTER OPENFLOW v1 SET ;"
+construct = "the form without its required CONNECTOR: ALTER OPENFLOW v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW V1 names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.kadd1079a6bdb", sql_sha256 = "add1079a6bdbeeeabe9dcad92e58fc33f96deaa68dc2b8270bf01c88c5f7ec49" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k5d44fbfc8edf", sql_sha256 = "5d44fbfc8edf08e7fa47b6e7d4da13d5f2cc10cdf22eb3e717b51aa7e0eadb9a" },
 ]
 runs = []
 probes = []
@@ -5292,11 +5292,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o019"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW CONNECTOR IF v1 SET ;"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW CONNECTOR IF v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k01be488ae846", sql_sha256 = "01be488ae846d3180ad6522f521777ee28c56680abbe78c439f253fb87a3ce0d" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.ka233bf2f85e1", sql_sha256 = "a233bf2f85e1f3d7deaf8aa2b21df83359368e2994aefdbe11e68ba829f4ad2b" },
 ]
 runs = []
 probes = []
@@ -5304,11 +5304,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o020"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "the form without its required SET: ALTER OPENFLOW CONNECTOR v1 ;"
+construct = "the form without its required SET: ALTER OPENFLOW CONNECTOR v1 COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.abort.k1b01c903e60b", sql_sha256 = "1b01c903e60bbf36a2dd60b4ca977f8a0b788c7f6f478a415eea52f9eedc8094" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k23de9c05c9a0", sql_sha256 = "23de9c05c9a0e0f09b4d3c0feeabe58f5706d0f9cea4e0d887742f1ac7d820be" },
 ]
 runs = []
 probes = []
@@ -5328,11 +5328,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o022"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER OPENFLOW CONNECTOR \"v1 Q\" SET ;"
+construct = "quoted: ALTER OPENFLOW CONNECTOR \"v1 Q\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.k16f6e3d97fb3", sql_sha256 = "16f6e3d97fb38fb14f379abd0690faedf5f18626a8c77fe4c3f7272437c02d1b" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.kffaf4b8d7f39", sql_sha256 = "ffaf4b8d7f3989d8ddfcb589d42e7278e006143601f645d447cf5f04e190ddd0" },
 ]
 runs = []
 probes = []
@@ -5340,12 +5340,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-connector.set.o023"
 form = "sf.ddl.alter-openflow-connector.set"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER OPENFLOW CONNECTOR SELECT SET ;"
+construct = "reserved: ALTER OPENFLOW CONNECTOR \"SELECT\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW CONNECTOR names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.kc34c3601f04c", sql_sha256 = "c34c3601f04c4ab0ce8190cc382c5f869188fe53def2b8cba8798c9ad242d4d5" },
-  { case_id = "sf.ddl.alter-openflow-connector.set.kfff085a1d2c7", sql_sha256 = "fff085a1d2c77583978c84cec75f556d39d772666f9a5f7d457ac8431000981f" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k1cedf5e600da", sql_sha256 = "1cedf5e600dafb80c826ab85aa3e8a270383e5dd32af0e7265450565cd85d824" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k3ad7131fea67", sql_sha256 = "3ad7131fea67ffa7dc765cdb055353141bfdacd7f3184ffae2f5777e53d2f0b1" },
 ]
 runs = []
 probes = []
@@ -5994,11 +5994,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o001"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "the documented form with every required part and no optional part: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "the documented form with every required part and no optional part: ALTER OPENFLOW DEPLOYMENT v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k92db1a24d67f", sql_sha256 = "92db1a24d67f67eba4403bb94701e1d96da7cdddc3d1da58a30a8aa44a4acd2a" },
 ]
 runs = []
 probes = []
@@ -6018,11 +6018,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o003"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k92db1a24d67f", sql_sha256 = "92db1a24d67f67eba4403bb94701e1d96da7cdddc3d1da58a30a8aa44a4acd2a" },
 ]
 runs = []
 probes = []
@@ -6030,11 +6030,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o004"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "omit <name>: ALTER OPENFLOW DEPLOYMENT SET ;"
+construct = "omit <name>: ALTER OPENFLOW DEPLOYMENT SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k85e4ec071bea", sql_sha256 = "85e4ec071beabfa482ee8514774abc2739883ffbe615fd86c11d4313d75f067e" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k455c69578a50", sql_sha256 = "455c69578a50640905b0d89da3a5e4495a7bb62f2fcc4006ff80570cce1c91ff" },
 ]
 runs = []
 probes = []
@@ -6042,11 +6042,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o005"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "a valid identifier: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "a valid identifier: ALTER OPENFLOW DEPLOYMENT v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k92db1a24d67f", sql_sha256 = "92db1a24d67f67eba4403bb94701e1d96da7cdddc3d1da58a30a8aa44a4acd2a" },
 ]
 runs = []
 probes = []
@@ -6054,11 +6054,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o006"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "a string literal in place of <name>: ALTER OPENFLOW DEPLOYMENT 'v1' SET ;"
+construct = "a string literal in place of <name>: ALTER OPENFLOW DEPLOYMENT 'v1' SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k3b1faefc9aef", sql_sha256 = "3b1faefc9aef9e445ad67fb548859873682a7b01299a86d31df7c370c69cad32" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k8133aa89a5d2", sql_sha256 = "8133aa89a5d2986f604a3c92a7c4f40dc5437ab7b88b9cd464f4df6af27e638d" },
 ]
 runs = []
 probes = []
@@ -6078,11 +6078,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o008"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k92db1a24d67f", sql_sha256 = "92db1a24d67f67eba4403bb94701e1d96da7cdddc3d1da58a30a8aa44a4acd2a" },
 ]
 runs = []
 probes = []
@@ -6138,11 +6138,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o013"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET DISPLAY_NAME = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k6cdcf1e5ed75", sql_sha256 = "6cdcf1e5ed75efe2871803c7213b344f226ab723499502601cac6c902de12ec7" },
 ]
 runs = []
 probes = []
@@ -6198,11 +6198,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o018"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW DEPLOYMENT v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.kf051896a3f3c", sql_sha256 = "f051896a3f3c529acad54d3fae9994c537a0656637a7852ca1a6a9aec3643108" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k92db1a24d67f", sql_sha256 = "92db1a24d67f67eba4403bb94701e1d96da7cdddc3d1da58a30a8aa44a4acd2a" },
 ]
 runs = []
 probes = []
@@ -6234,11 +6234,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o022"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "the form without its required DEPLOYMENT: ALTER OPENFLOW v1 SET ;"
+construct = "the form without its required DEPLOYMENT: ALTER OPENFLOW v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW V1 names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.kadd1079a6bdb", sql_sha256 = "add1079a6bdbeeeabe9dcad92e58fc33f96deaa68dc2b8270bf01c88c5f7ec49" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k5d44fbfc8edf", sql_sha256 = "5d44fbfc8edf08e7fa47b6e7d4da13d5f2cc10cdf22eb3e717b51aa7e0eadb9a" },
 ]
 runs = []
 probes = []
@@ -6246,11 +6246,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o023"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW DEPLOYMENT IF v1 SET ;"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW DEPLOYMENT IF v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k0fc845f9ab07", sql_sha256 = "0fc845f9ab07668dc42241c5f62e404b8bd9dedea97aeb52937952c1a733e61a" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k8ce6723a1253", sql_sha256 = "8ce6723a1253faaf63083c0efdc4d86f9c96fa292f65d3194fc8b54ac126da63" },
 ]
 runs = []
 probes = []
@@ -6258,11 +6258,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o024"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "the form without its required SET: ALTER OPENFLOW DEPLOYMENT v1 ;"
+construct = "the form without its required SET: ALTER OPENFLOW DEPLOYMENT v1 COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k73677f2ff4e4", sql_sha256 = "73677f2ff4e4edc1084879fdcca532fdfe81b16e3bb06916cf00bfe28aba3025" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k473e7d858b27", sql_sha256 = "473e7d858b27e49b4fbb7393948c65859f8b383e87d888efcb6abf78ef1f53d6" },
 ]
 runs = []
 probes = []
@@ -6294,11 +6294,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o027"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER OPENFLOW DEPLOYMENT \"v1 Q\" SET ;"
+construct = "quoted: ALTER OPENFLOW DEPLOYMENT \"v1 Q\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k874c769f1deb", sql_sha256 = "874c769f1deb361405735ca56302d5bd8eebecab56d6784594d5c52c8b71526a" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k03fb44cd5e9d", sql_sha256 = "03fb44cd5e9d60be07b2868acdd57e00ec238d594af366a6f0e59c66e43c0bd9" },
 ]
 runs = []
 probes = []
@@ -6306,12 +6306,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-deployment.set.o028"
 form = "sf.ddl.alter-openflow-deployment.set"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER OPENFLOW DEPLOYMENT \"SELECT\" SET ;"
+construct = "reserved: ALTER OPENFLOW DEPLOYMENT \"SELECT\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k668ea185ec70", sql_sha256 = "668ea185ec70ab7495be0f8d173405e353b6bdde5a56ec4d75b67eb98d782450" },
-  { case_id = "sf.ddl.alter-openflow-deployment.set.ka60072a4561f", sql_sha256 = "a60072a4561fb9e39a6b03225cb757cb1f23b63dae74d9b5c64853b6744cf770" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k154d854313ee", sql_sha256 = "154d854313eece2ab4eac9ce273f69b4fc9b318b1f022bc7abec12ee1957c094" },
+  { case_id = "sf.ddl.alter-openflow-deployment.set.k9a42b424d21e", sql_sha256 = "9a42b424d21ecb69f3b72413d8f4219c20ad3f9beda7701ee915546c6da39176" },
 ]
 runs = []
 probes = []
@@ -6419,7 +6419,7 @@ construct = "the form without its required TERMINATE: ALTER OPENFLOW DEPLOYMENT 
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k73677f2ff4e4", sql_sha256 = "73677f2ff4e4edc1084879fdcca532fdfe81b16e3bb06916cf00bfe28aba3025" },
+  { case_id = "sf.ddl.alter-openflow-deployment.terminate.k73677f2ff4e4", sql_sha256 = "73677f2ff4e4edc1084879fdcca532fdfe81b16e3bb06916cf00bfe28aba3025" },
 ]
 runs = []
 probes = []
@@ -6733,7 +6733,7 @@ construct = "the form without its required UPGRADE: ALTER OPENFLOW DEPLOYMENT v1
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW DEPLOYMENT names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-deployment.set.k73677f2ff4e4", sql_sha256 = "73677f2ff4e4edc1084879fdcca532fdfe81b16e3bb06916cf00bfe28aba3025" },
+  { case_id = "sf.ddl.alter-openflow-deployment.terminate.k73677f2ff4e4", sql_sha256 = "73677f2ff4e4edc1084879fdcca532fdfe81b16e3bb06916cf00bfe28aba3025" },
 ]
 runs = []
 probes = []
@@ -7768,11 +7768,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o001"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "the documented form with every required part and no optional part: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "the documented form with every required part and no optional part: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -7792,11 +7792,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o003"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -7804,11 +7804,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o004"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "omit <name>: ALTER OPENFLOW RUNTIME SET ;"
+construct = "omit <name>: ALTER OPENFLOW RUNTIME SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.k23761b5a9010", sql_sha256 = "23761b5a901012ba89be669bbc7f50dcd44c1077d1e3a43ec6909ed2e9c9398f" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k507656d79f2d", sql_sha256 = "507656d79f2d1a01f70685248c5789a3c6f2b1105f17dc6f46c3cd1ebdff9675" },
 ]
 runs = []
 probes = []
@@ -7816,11 +7816,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o005"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "a valid identifier: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "a valid identifier: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -7828,11 +7828,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o006"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "a string literal in place of <name>: ALTER OPENFLOW RUNTIME 'v1' SET ;"
+construct = "a string literal in place of <name>: ALTER OPENFLOW RUNTIME 'v1' SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.k0e5effe506f7", sql_sha256 = "0e5effe506f7bb5db30bdea2828d96898d4531b3dcce167f053f103abf4deaba" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.kf13364f2d02c", sql_sha256 = "f13364f2d02cc714dff5558657b25b875755e2f5e6942b4dc795a2ba457b3a44" },
 ]
 runs = []
 probes = []
@@ -7852,11 +7852,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o008"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -7912,11 +7912,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o013"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -7960,11 +7960,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o017"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -8008,11 +8008,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o021"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -8104,11 +8104,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o029"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -8176,11 +8176,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o035"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k12ff90a7a746", sql_sha256 = "12ff90a7a746102ccb328f95a8d4ebcbb8aa194f399cb38407fee3321d297633" },
 ]
 runs = []
 probes = []
@@ -8224,11 +8224,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o039"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET ;"
+construct = "option_absent: ALTER OPENFLOW RUNTIME v1 SET DISPLAY_NAME = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.ka0869a1061b8", sql_sha256 = "a0869a1061b82e79c70ba2a5f6cbcfbd3ded6f97fdd4ca4f90975aa04adba1a9" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.kb4d1a339dcec", sql_sha256 = "b4d1a339dcecd4d9fa9a0da26348754b6567ff4f7e611e1f17346dd42b7154a5" },
 ]
 runs = []
 probes = []
@@ -8272,11 +8272,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o044"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "the form without its required RUNTIME: ALTER OPENFLOW v1 SET ;"
+construct = "the form without its required RUNTIME: ALTER OPENFLOW v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-01: account-level OPENFLOW V1 names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-connector.set.kadd1079a6bdb", sql_sha256 = "add1079a6bdbeeeabe9dcad92e58fc33f96deaa68dc2b8270bf01c88c5f7ec49" },
+  { case_id = "sf.ddl.alter-openflow-connector.set.k5d44fbfc8edf", sql_sha256 = "5d44fbfc8edf08e7fa47b6e7d4da13d5f2cc10cdf22eb3e717b51aa7e0eadb9a" },
 ]
 runs = []
 probes = []
@@ -8284,11 +8284,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o045"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW RUNTIME IF v1 SET ;"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER OPENFLOW RUNTIME IF v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.k94866f16970c", sql_sha256 = "94866f16970c7f24fddbc56572b5e657512680592e22d3f1e7455c065c739e35" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k3379191ae41d", sql_sha256 = "3379191ae41d035fa1d821d2acd016a452f40dc6eecbbce4fd2d6920962f4868" },
 ]
 runs = []
 probes = []
@@ -8296,11 +8296,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o046"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "the form without its required SET: ALTER OPENFLOW RUNTIME v1 ;"
+construct = "the form without its required SET: ALTER OPENFLOW RUNTIME v1 COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.restart.k7dcb6083ad8e", sql_sha256 = "7dcb6083ad8e94b1138be75d90c3e945944f954d6da16c9423a4608f15ee90d5" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k20fe2bb2eb77", sql_sha256 = "20fe2bb2eb770bc0b8fb56663b2a37577f914dc653825282cabf64aca0b6ea0b" },
 ]
 runs = []
 probes = []
@@ -8356,11 +8356,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o051"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER OPENFLOW RUNTIME \"v1 Q\" SET ;"
+construct = "quoted: ALTER OPENFLOW RUNTIME \"v1 Q\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.kd0c76a5723b9", sql_sha256 = "d0c76a5723b9f9812fbe7af93aa041184f6e2591b794fd5092888cdc30afe229" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k0527ec20673e", sql_sha256 = "0527ec20673e28d3428af61e5183cdabd089c3441dde6cbfe2b435a8405f4f01" },
 ]
 runs = []
 probes = []
@@ -8368,12 +8368,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-openflow-runtime.set.o052"
 form = "sf.ddl.alter-openflow-runtime.set"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER OPENFLOW RUNTIME \"SELECT\" SET ;"
+construct = "reserved: ALTER OPENFLOW RUNTIME \"SELECT\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level OPENFLOW RUNTIME names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-openflow-runtime.set.k2542e05ca7f9", sql_sha256 = "2542e05ca7f938a7ab03c25df697603e34d475bc65ae26a7101e0264ce2c452a" },
-  { case_id = "sf.ddl.alter-openflow-runtime.set.k5e4d82b25239", sql_sha256 = "5e4d82b25239c91cc588f0a2d7c87af2ee6578761c7573f03b5bfaabac1849f6" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.k9c275ddd6631", sql_sha256 = "9c275ddd6631b7ebe1ba9c9e4bb0158bf5b1996af757d752d168b510b82bccdc" },
+  { case_id = "sf.ddl.alter-openflow-runtime.set.ka63396e98d85", sql_sha256 = "a63396e98d850118d1f74db029c2fd0294382c99f6bd6f860f055f02b0250c88" },
 ]
 runs = []
 probes = []
@@ -9855,11 +9855,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o001"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "the documented form with every required part and no optional part: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "the documented form with every required part and no optional part: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -9879,11 +9879,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o003"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -9891,11 +9891,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o004"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "omit <name>: ALTER POSTGRES INSTANCE SET ;"
+construct = "omit <name>: ALTER POSTGRES INSTANCE SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k5bd02eaeff8b", sql_sha256 = "5bd02eaeff8baeac84047799d1069943a2f79672576a8d00a428910db26fc0ae" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.ka8173a00c0f1", sql_sha256 = "a8173a00c0f110855457baeaa05352aad1ef4278481b2e9d2b211fa6ba244c31" },
 ]
 runs = []
 probes = []
@@ -9903,11 +9903,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o005"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "a valid identifier: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "a valid identifier: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -9915,11 +9915,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o006"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "a string literal in place of <name>: ALTER POSTGRES INSTANCE 'v1' SET ;"
+construct = "a string literal in place of <name>: ALTER POSTGRES INSTANCE 'v1' SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k10cac08a9b2b", sql_sha256 = "10cac08a9b2ba03ee887dc6892128a4fbb577cfb03506a8e543e8be5a00ccab7" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kb364fae7f4d4", sql_sha256 = "b364fae7f4d498f8653e3de96cecec84b41768f39593eda7bf6a82fb107be4e5" },
 ]
 runs = []
 probes = []
@@ -9939,11 +9939,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o008"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -9999,11 +9999,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o013"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10059,11 +10059,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o018"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10107,11 +10107,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o022"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET NETWORK_POLICY = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.k2e512983bf32", sql_sha256 = "2e512983bf320cdb3526d59da3a2fb46df16c15deb4e87d9ca70b5ee3e4cdb06" },
 ]
 runs = []
 probes = []
@@ -10167,11 +10167,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o027"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10215,11 +10215,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o031"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10275,11 +10275,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o036"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10323,11 +10323,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o040"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10383,11 +10383,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o045"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10443,11 +10443,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o050"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10491,11 +10491,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o054"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10551,11 +10551,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o059"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET ;"
+construct = "option_absent: ALTER POSTGRES INSTANCE v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k262bc68c0bc1", sql_sha256 = "262bc68c0bc14da3a434ef78ebb70ded397a1ffef86ab623e0fca58c02046498" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kf10974bd5dad", sql_sha256 = "f10974bd5dad4d73eaceb9e0679642cf0def708d6d302237536292a55a725f54" },
 ]
 runs = []
 probes = []
@@ -10623,11 +10623,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o067"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER POSTGRES INSTANCE IF v1 SET ;"
+construct = "the form without its required EXISTS in [ IF EXISTS ]: ALTER POSTGRES INSTANCE IF v1 SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k984db60ecf4d", sql_sha256 = "984db60ecf4dbfde2b9542d6bcf6e2e8f74580647bb9fa956a8a269f1eb4485d" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.kb6314ebde37a", sql_sha256 = "b6314ebde37aec4ab9086f1bdd30ebe9cc9ba0f5f71803936218571574dd89df" },
 ]
 runs = []
 probes = []
@@ -10635,11 +10635,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o068"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "the form without its required SET: ALTER POSTGRES INSTANCE v1 ;"
+construct = "the form without its required SET: ALTER POSTGRES INSTANCE v1 COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.resume.k3af8e748c4d6", sql_sha256 = "3af8e748c4d68ff64a30d2c794e98d9cbb2d89b126ab9a89dc1cbe6113a7ca75" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.k673fffbe62cf", sql_sha256 = "673fffbe62cff012d91547540e030ff96ff2be9611aec96f97a4638455e30123" },
 ]
 runs = []
 probes = []
@@ -10731,11 +10731,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o076"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: ALTER POSTGRES INSTANCE \"v1 Q\" SET ;"
+construct = "quoted: ALTER POSTGRES INSTANCE \"v1 Q\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.kfeab6614b0d6", sql_sha256 = "feab6614b0d659971fc9f6ececdba86df70c6f6d9c1415324123e21af977bc23" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.k2b5e205e0354", sql_sha256 = "2b5e205e03542ba59820ec47022f450dc5e886f58e3d19ebbda9c5c636c49898" },
 ]
 runs = []
 probes = []
@@ -10743,12 +10743,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.alter-postgres-instance.set.o077"
 form = "sf.ddl.alter-postgres-instance.set"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): ALTER POSTGRES INSTANCE SELECT SET ;"
+construct = "reserved: ALTER POSTGRES INSTANCE \"SELECT\" SET COMMENT = 'm' ;"
 reason = "not submitted: held by the capture guard in chunk ux-02: account-level POSTGRES INSTANCE names not listed"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.alter-postgres-instance.set.k860d10be2d30", sql_sha256 = "860d10be2d305753bc272c46733294f87215bf28ec2c3d959347575d462c22c8" },
-  { case_id = "sf.ddl.alter-postgres-instance.set.k9ee7ca78abeb", sql_sha256 = "9ee7ca78abeb3399c0b4c7f2e8a5440f158805905929c2f6de2c6562f12ec61d" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.k07234785bad3", sql_sha256 = "07234785bad3edef27a79e5e0c5f4bef74aecf99415b76d221fdab1e63ea19d2" },
+  { case_id = "sf.ddl.alter-postgres-instance.set.k1894e50ea979", sql_sha256 = "1894e50ea9793cf00211145357be23495df71384a340dc76f5367a46e5205c3a" },
 ]
 runs = []
 probes = []

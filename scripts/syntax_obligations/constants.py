@@ -420,9 +420,14 @@ ELISION_START: str = "^"
 PURE_ELISION: str = "[ ... ]"
 LIST_SEPARATOR: str = ","
 OPENED: int = -2
+# An all-optional property list after SET renders one property: Snowflake rejects `SET ;` (D118).
+SET_KEYWORDS: frozenset[str] = frozenset({"SET"})
+SET_ANCHOR_PREFERENCE: tuple[str, ...] = ("COMMENT", "ENABLED")
 LIST_ITEM_KEYWORDS: frozenset[str] = frozenset(
     {"AS", "NOT", "NULL", "ASC", "DESC", "NULLS", "FIRST", "LAST", "DEFAULT"}
 )
+# A documented `@` before a stage fill that carries its own `@` renders one (D118).
+DOUBLED_STAGE_SIGIL: re.Pattern[str] = re.compile(r"(?<![^ ])@ (?=@[^ @])")
 GLUED_PREFIXES: re.Pattern[str] = re.compile(r"(?<![^ ])([$:@]) (?![a-z]+:/)(?=[^ =])")
 STAGE_TOKEN: str = r'(@(?:"[^"]*"|[^\s"])*'
 STAGE_GLUES: tuple[re.Pattern[str], ...] = (
@@ -700,6 +705,16 @@ QUERY_FRAGMENT_PREFIXES: dict[str, str] = {
     "sf.query.match-recognize.match-recognize-pattern-define-as": "SELECT * FROM t1 ",
     "sf.query.semantic-view": "SELECT * FROM ",
 }
+QUERY_FORM_FILLS: dict[str, dict[str, str]] = dict.fromkeys(
+    (
+        "sf.query.group-by.groupitem",
+        "sf.query.group-by-cube",
+        "sf.query.group-by-rollup",
+        "sf.query.group-by-grouping-sets",
+        "sf.query.order-by.orderitem",
+    ),
+    {"expr": "v1 + 1"},
+)
 QUERY_STYLES: dict[str, FormStyle] = {
     "sf.query.": FormStyle(
         prefix="",
@@ -717,6 +732,16 @@ QUERY_STYLES: dict[str, FormStyle] = {
             elisions=QUERY_FILLS,
         )
         for form, prefix in QUERY_FRAGMENT_PREFIXES.items()
+    },
+    **{
+        form: FormStyle(
+            prefix="",
+            suffix="",
+            fills={**QUERY_PLACEHOLDER_FILLS, **fills},
+            clauses=QUERY_CLAUSES,
+            elisions=QUERY_FILLS,
+        )
+        for form, fills in QUERY_FORM_FILLS.items()
     },
 }
 EXPRESSIONS_FILLS: dict[str, str] = {

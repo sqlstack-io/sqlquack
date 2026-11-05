@@ -33,6 +33,7 @@ from scripts.syntax_obligations.constants import (
     DEFINE_SECRETS_CLAUSE,
     DOLLAR_QUOTE,
     DOUBLE_QUOTE,
+    DOUBLED_STAGE_SIGIL,
     EMPTY_CLAUSE,
     EMPTY_LIST,
     EMPTY_PROPERTY_LIST,
@@ -66,6 +67,8 @@ from scripts.syntax_obligations.constants import (
     RESERVED_WORD,
     SCHEMA_QUALIFIER,
     SCHEMA_REFERENCES,
+    SET_ANCHOR_PREFERENCE,
+    SET_KEYWORDS,
     SINGLE_CHARACTER_LITERAL_LENGTH,
     SINGLE_QUOTE,
     STAGE_GLUES,
@@ -92,6 +95,7 @@ class _Choices:
     replace: dict[int, str] = field(default_factory=dict)
     drop: frozenset[int] = frozenset()
     quote: str = ""
+    absent: int = 0
 
 
 def submissions(
@@ -196,7 +200,9 @@ class _Renderer:
         self._used = {}
         self._keywords = []
         self._last_choice = None
-        joined: str = " ".join(self._sequence(nodes=self.trees[production], choices=choices))
+        joined: str = DOUBLED_STAGE_SIGIL.sub(
+            "", " ".join(self._sequence(nodes=self.trees[production], choices=choices))
+        )
         glued: str = GLUED_INFIX_RIGHT.sub("!", GLUED_PREFIXES.sub(r"\1", joined))
         staged: str = _stage_glued(GLUED_INFIX_LEFT.sub("!", glued))
         keywords: set[str] = set(self._keywords)
@@ -236,6 +242,8 @@ class _Renderer:
             choices.replace[spec.node] = spec.payload
         elif spec.action == ACTION_QUOTE_IDENTIFIERS:
             choices.quote = spec.payload
+        else:
+            choices.absent = spec.node
         return choices
 
     @staticmethod
@@ -326,6 +334,8 @@ class _Renderer:
         dangling: int = -1
         for position, node in enumerate(nodes):
             key: int = id(node)
+            if node.token_kind == TOKEN_KEYWORD and node.text.upper() in SET_KEYWORDS:
+                choices = self._set_anchor(rest=nodes[position + 1 :], choices=choices)
             if key in choices.drop:
                 if dangling >= 0 and node.text == CLOSE_PAREN:
                     del out[dangling]
@@ -364,6 +374,21 @@ class _Renderer:
                 out.append(self._token(node=node, choices=choices, dollar_quoted=quoted))
             dangling = _dangling_separator(out=out, emitted=emitted, dangling=dangling, node=node)
         return out
+
+    @staticmethod
+    def _set_anchor(*, rest: tuple[Node, ...], choices: _Choices) -> _Choices:
+        """Choices with one property of an all-optional SET list, if none would render (D118)."""
+        options: list[Node] = _set_options(rest)
+        if choices.full or not options or any(id(n) in choices.path for n in options):
+            return choices
+        named: dict[str, Node] = {
+            _tokens(n.branches[0])[0].text.upper(): n for n in reversed(options) if n.branches[0]
+        }
+        ranked: list[Node] = [named[k] for k in SET_ANCHOR_PREFERENCE if k in named] + options
+        anchor: Node | None = next((n for n in ranked if id(n) != choices.absent), None)
+        if anchor is None:
+            return choices
+        return replace(choices, path=choices.path | {id(anchor)})
 
     def _optional(
         self, *, node: Node, choices: _Choices, before: list[str], closes: bool = False
@@ -595,6 +620,22 @@ def _tokens(nodes: tuple[Node, ...]) -> list[Node]:
             for branch in node.branches:
                 found += _tokens(branch)
         else:
+            found.append(node)
+    return found
+
+
+def _set_options(rest: tuple[Node, ...]) -> list[Node]:
+    """The plain options of a list made only of options and one-branch groups, else none."""
+    found: list[Node] = []
+    for node in rest:
+        if node.kind == NODE_CHOICE and len(node.branches) == 1:
+            inner: list[Node] = _set_options(node.branches[0])
+            if not inner:
+                return []
+            found += inner
+        elif node.kind != NODE_OPTIONAL:
+            return []
+        elif not is_pure_elision(node) and not all(is_repetition(b) for b in node.branches):
             found.append(node)
     return found
 

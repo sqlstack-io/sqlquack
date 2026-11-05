@@ -10231,6 +10231,14 @@ anchor = "doc.functions.build_scoped_file_url / Syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case, stage reference single-quoted as the page requires"
 
 [[obligation]]
+id = "sf.functions.build-scoped-file-url.o016"
+kind = "option_absent"
+required = true
+target = "<use_privatelink_host_for_business_critical>"
+anchor = "doc.functions.build_scoped_file_url / Arguments"
+note = "the two-argument call: <use_privatelink_host_for_business_critical> has Default: TRUE (Arguments)"
+
+[[obligation]]
 id = "sf.functions.build-stage-file-url.o001"
 kind = "positive"
 required = true
@@ -11563,18 +11571,19 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.complete-snowflake-cortex-multimodal.from.o017"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
-note = "the form without its required FROM, observed"
-
-[[obligation]]
 id = "sf.functions.complete-snowflake-cortex-multimodal.from.o018"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
 note = "the form without its required CORTEX, observed"
+
+[[obligation]]
+id = "sf.functions.complete-snowflake-cortex-multimodal.from.o019"
+kind = "option_absent"
+required = true
+target = "FROM <table>"
+anchor = "doc.functions.complete-snowflake-cortex-multimodal / Arguments"
+note = "FROM <table> absent: Arguments calls the table optional"
 
 [[obligation]]
 id = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax.o001"
@@ -11650,11 +11659,12 @@ anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
 note = "the form without its required CORTEX, observed"
 
 [[obligation]]
-id = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax.o015"
-kind = "negative_neighbour"
+id = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax.o016"
+kind = "option_absent"
 required = true
-anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
-note = "the form without its required FROM, observed"
+target = "FROM <table>"
+anchor = "doc.functions.complete-snowflake-cortex-multimodal / Arguments"
+note = "FROM <table> absent: Arguments calls the table optional"
 
 [[obligation]]
 id = "sf.functions.complete-task-graphs.o001"
@@ -15050,6 +15060,30 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
 note = "the form without its required CORTEX, observed"
+
+[[obligation]]
+id = "sf.functions.data-agent-run-snowflake-cortex.o013"
+kind = "operand_type_class"
+required = true
+target = "'<agent_name>[!<version>]'"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+note = "a valid string_literal naming the agent"
+
+[[obligation]]
+id = "sf.functions.data-agent-run-snowflake-cortex.o014"
+kind = "required_operand_missing"
+required = true
+target = "'<agent_name>[!<version>]'"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+note = "omit '<agent_name>[!<version>]'"
+
+[[obligation]]
+id = "sf.functions.data-agent-run-snowflake-cortex.o015"
+kind = "required_operand_missing"
+required = true
+target = "<request_body>"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+note = "omit <request_body>"
 
 [[obligation]]
 id = "sf.functions.data-metric-function-expectations.o001"
@@ -25581,6 +25615,14 @@ anchor = "doc.functions.dmf_referential_integrity_count / Syntax"
 note = "the form without its required CORE, observed"
 
 [[obligation]]
+id = "sf.functions.dmf-referential-integrity-count.table.syntax.o035"
+kind = "option_present"
+required = true
+target = "<column2>, ..."
+anchor = "doc.functions.dmf_referential_integrity_count / Syntax"
+note = "the list continued at least once: a third source and reference column"
+
+[[obligation]]
 id = "sf.functions.dmf-rmse.o001"
 kind = "positive"
 required = true
@@ -33216,29 +33258,29 @@ target = "<constant_expr> in [ CREATED_TIME_END => <constant_expr> ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o010"
+id = "sf.functions.get-job-history.o020"
 kind = "option_present"
 required = true
-target = "[ RESULT_LIMIT = <integer> ]"
+target = "[ RESULT_LIMIT => <integer> ]"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o011"
+id = "sf.functions.get-job-history.o021"
 kind = "option_absent"
 required = true
-target = "[ RESULT_LIMIT = <integer> ]"
+target = "[ RESULT_LIMIT => <integer> ]"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o012"
+id = "sf.functions.get-job-history.o022"
 kind = "required_operand_missing"
 required = true
-target = "<integer> in [ RESULT_LIMIT = <integer> ]"
+target = "<integer> in [ RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o013"
+id = "sf.functions.get-job-history.o023"
 kind = "operand_type_class"
 required = true
-target = "<integer> in [ RESULT_LIMIT = <integer> ]"
+target = "<integer> in [ RESULT_LIMIT => <integer> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -33501,6 +33543,14 @@ anchor = "doc.functions.get_lineage-snowflake-core / Syntax"
 note = "the form without its required CORE, observed"
 
 [[obligation]]
+id = "sf.functions.get-lineage-snowflake-core.o045"
+kind = "alternative"
+required = true
+target = "'<object_name>'"
+anchor = "doc.functions.get_lineage-snowflake-core / Usage notes"
+note = "arguments by name (Usage notes)"
+
+[[obligation]]
 id = "sf.functions.get-object-references.o001"
 kind = "positive"
 required = true
@@ -33651,6 +33701,14 @@ required = true
 target = "<column_identifier>"
 anchor = "doc.functions.get_path / Syntax"
 note = "omit <column_identifier>, observed"
+
+[[obligation]]
+id = "sf.functions.get-path.colon.o015"
+kind = "operand_type_class"
+required = true
+target = "<path_name>"
+anchor = "doc.functions.get_path / Usage notes"
+note = "a path of field names joined by periods with an index operator (Usage notes)"
 
 [[obligation]]
 id = "sf.functions.get-path.colon.syntax.o002"
@@ -37881,6 +37939,14 @@ anchor = "doc.functions.ilike_any / Syntax"
 note = "omit <escape_char>, observed"
 
 [[obligation]]
+id = "sf.functions.ilike-any.o021"
+kind = "alternative"
+required = true
+target = "(<pattern1> [, <pattern2> ... ] )"
+anchor = "doc.functions.ilike_any / Usage notes"
+note = "a subquery in place of the pattern list (Usage notes)"
+
+[[obligation]]
 id = "sf.functions.ilike.ilike.o001"
 kind = "positive"
 required = true
@@ -41748,6 +41814,14 @@ anchor = "doc.functions.like_all / Syntax"
 note = "omit <escape_char>, observed"
 
 [[obligation]]
+id = "sf.functions.like-all.o021"
+kind = "alternative"
+required = true
+target = "(<pattern1> [, <pattern2> ... ] )"
+anchor = "doc.functions.like_all / Usage notes"
+note = "a subquery in place of the pattern list (Usage notes)"
+
+[[obligation]]
 id = "sf.functions.like-any.o001"
 kind = "positive"
 required = true
@@ -41851,6 +41925,14 @@ required = true
 target = "<escape_char> in [ ESCAPE <escape_char> ]"
 anchor = "doc.functions.like_any / Syntax"
 note = "omit <escape_char>, observed"
+
+[[obligation]]
+id = "sf.functions.like-any.o021"
+kind = "alternative"
+required = true
+target = "(<pattern1> [, <pattern2> ... ] )"
+anchor = "doc.functions.like_any / Usage notes"
+note = "a subquery in place of the pattern list (Usage notes)"
 
 [[obligation]]
 id = "sf.functions.like.like.o001"
@@ -48345,6 +48427,22 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.parse_document-snowflake-cortex / Syntax"
 note = "the form without its required CORTEX, observed"
+
+[[obligation]]
+id = "sf.functions.parse-document-snowflake-cortex.o013"
+kind = "operand_type_class"
+required = true
+target = "'@<stage>'"
+anchor = "doc.functions.parse_document-snowflake-cortex / Syntax"
+note = "a valid string_literal naming a stage"
+
+[[obligation]]
+id = "sf.functions.parse-document-snowflake-cortex.o014"
+kind = "required_operand_missing"
+required = true
+target = "'@<stage>'"
+anchor = "doc.functions.parse_document-snowflake-cortex / Syntax"
+note = "omit '@<stage>'"
 
 [[obligation]]
 id = "sf.functions.parse-ip.o001"
@@ -80147,11 +80245,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o003"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o057"
+kind = "alternative"
 required = true
-target = "timestampFunction"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o058"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o059"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o060"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o005"
@@ -80187,11 +80302,28 @@ target = "<scale> in [ , <scale> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o012"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o061"
+kind = "alternative"
 required = true
-target = "timestampFunction #2"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP #2"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o062"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ #2"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o063"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ #2"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o064"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ #2"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o014"
@@ -80201,11 +80333,28 @@ target = "<date_expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o016"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o065"
+kind = "alternative"
 required = true
-target = "timestampFunction #3"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP #3"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o066"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ #3"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o067"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ #3"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o068"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ #3"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o018"
@@ -80215,11 +80364,28 @@ target = "<timestamp_expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o020"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o069"
+kind = "alternative"
 required = true
-target = "timestampFunction #4"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP #4"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o070"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ #4"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o071"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ #4"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o072"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ #4"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o022"
@@ -80255,11 +80421,28 @@ target = "<format> in [ , <format> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o029"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o073"
+kind = "alternative"
 required = true
-target = "timestampFunction #5"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP #5"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o074"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ #5"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o075"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ #5"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o076"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ #5"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o031"
@@ -80269,11 +80452,28 @@ target = "'<integer>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o034"
-kind = "operand_type_class"
+id = "sf.functions.to-timestamp.o077"
+kind = "alternative"
 required = true
-target = "timestampFunction #6"
-note = "a valid operand"
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP #6"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o078"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_LTZ #6"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o079"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_NTZ #6"
+
+[[obligation]]
+id = "sf.functions.to-timestamp.o080"
+kind = "alternative"
+required = true
+target = "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } → TO_TIMESTAMP_TZ #6"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o036"
@@ -82346,11 +82546,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.functions.try-to-timestamp.o003"
-kind = "operand_type_class"
+id = "sf.functions.try-to-timestamp.o024"
+kind = "alternative"
 required = true
-target = "timestampFunction"
-note = "a valid operand"
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o025"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_LTZ"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o026"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_NTZ"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o027"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_TZ"
 
 [[obligation]]
 id = "sf.functions.try-to-timestamp.o005"
@@ -82386,11 +82603,28 @@ target = "<format> in [ , <format> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.functions.try-to-timestamp.o012"
-kind = "operand_type_class"
+id = "sf.functions.try-to-timestamp.o028"
+kind = "alternative"
 required = true
-target = "timestampFunction #2"
-note = "a valid operand"
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP #2"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o029"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_LTZ #2"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o030"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_NTZ #2"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.o031"
+kind = "alternative"
+required = true
+target = "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } → TRY_TO_TIMESTAMP_TZ #2"
 
 [[obligation]]
 id = "sf.functions.try-to-timestamp.o014"

@@ -6381,13 +6381,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-api-integration.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-api-integration.set.o007"
 kind = "operand_type_class"
 required = true
@@ -6799,6 +6792,14 @@ required = true
 target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
 anchor = "doc.sql.alter-api-integration / Syntax"
 note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-api-integration.set.o071"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-api-integration / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-api-integration.set-tag.o001"
@@ -21398,13 +21399,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-email.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.set.o007"
 kind = "operand_type_class"
 required = true
@@ -21717,6 +21711,14 @@ required = true
 target = "DEFAULT_SUBJECT = '<subject_line>'"
 anchor = "doc.sql.alter-notification-integration-email / Parameters"
 note = "a DEFAULT_SUBJECT of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-email.set.o072"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-email.set-tag.o001"
@@ -22379,13 +22381,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set.o007"
 kind = "operand_type_class"
 required = true
@@ -22501,6 +22496,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set.o025"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-notification-integration-queue-inbound-gcp / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment.o001"
@@ -22840,13 +22843,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set.o007"
 kind = "operand_type_class"
 required = true
@@ -23028,6 +23024,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-notification-integration-queue-outbound-azure / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name.o001"
@@ -23240,13 +23244,6 @@ id = "sf.security_admin.alter-notification-integration-webhooks.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-notification-integration-webhooks.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-webhooks.set.o007"
@@ -23558,6 +23555,14 @@ required = true
 target = "<secret_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-notification-integration-webhooks.set.o054"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-notification-integration-webhooks / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-notification-integration-webhooks.unset-enabled-webhook-secret-webhook-body-template.o001"
@@ -36008,12 +36013,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.o025"
 kind = "negative_neighbour"
 required = true
@@ -36237,12 +36236,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault.o030"
 kind = "negative_neighbour"
 required = true
@@ -36464,12 +36457,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager.o030"
@@ -36801,12 +36788,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o046"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o047"
@@ -37169,12 +37150,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o048"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o049"
@@ -37560,12 +37535,6 @@ target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "an unquoted identifier in place of '<string_literal>'"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o053"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SECURITY"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o054"
 kind = "negative_neighbour"
 required = true
@@ -37640,13 +37609,6 @@ id = "sf.security_admin.alter-security-integration-aws-iam.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-aws-iam.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-aws-iam.set.o007"
@@ -37817,6 +37779,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-aws-iam.set.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-aws-iam / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-external.set.o001"
 kind = "positive"
 required = true
@@ -37845,13 +37815,6 @@ id = "sf.security_admin.alter-security-integration-oauth-external.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-external.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-external.set.o007"
@@ -38645,6 +38608,14 @@ anchor = "doc.sql.alter-security-integration-oauth-external / Parameters"
 note = "4 JWS key URLs against the documented maximum of 3"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-external.set.o132"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-oauth-external / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-external.set.o131"
 kind = "required_operand_missing"
 required = true
@@ -38921,13 +38892,6 @@ id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o007"
@@ -39497,6 +39461,14 @@ anchor = "doc.sql.alter-security-integration-oauth-snowflake / Parameters"
 note = "OAUTH_REFRESH_TOKEN_VALIDITY = 7,776,001 against the documented range 3,600 to 7,776,000"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o093"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o001"
 kind = "positive"
 required = true
@@ -39525,13 +39497,6 @@ id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o0
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o007"
@@ -40425,6 +40390,14 @@ anchor = "doc.sql.alter-security-integration-oauth-snowflake / Parameters"
 note = "OAUTH_REFRESH_TOKEN_VALIDITY = 7,776,001 against the documented range 3,600 to 7,776,000"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o145"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-comment.o001"
 kind = "positive"
 required = true
@@ -40729,13 +40702,6 @@ id = "sf.security_admin.alter-security-integration-oidc.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-oidc.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oidc.set.o007"
@@ -41337,6 +41303,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-oidc.set.o100"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-oidc / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment.o001"
 kind = "positive"
 required = true
@@ -41636,13 +41610,6 @@ id = "sf.security_admin.alter-security-integration-saml2.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-saml2.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.set.o007"
@@ -42349,6 +42316,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-saml2.set.o116"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+note = "omit <name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.unset-enabled.o001"
 kind = "positive"
 required = true
@@ -42494,13 +42469,6 @@ id = "sf.security_admin.alter-security-integration-scim.set.o005"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-scim.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-scim.set.o007"
@@ -42714,6 +42682,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-scim.set.o040"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-security-integration-scim / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-scim.unset-network-policy.o001"
@@ -46040,13 +46016,6 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-integration.set.o006"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-integration.set.o007"
 kind = "operand_type_class"
 required = true
@@ -46452,6 +46421,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o071"
+kind = "required_operand_missing"
+required = true
+target = "<name>"
+anchor = "doc.sql.alter-storage-integration / Syntax"
+note = "omit <name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-integration.set-tag.o001"

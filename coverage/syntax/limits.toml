@@ -11591,8 +11591,8 @@ reason = "page definitions inlined: cloudProviderParams; a definition the page g
 [[reading]]
 form = "sf.ddl.alter-file-format.set"
 grammar_sha256 = "d252b035af98341d20a5437d845f2238bf9d069def34c67eaedfb2725bc46d5f"
-grammar = ["ALTER FILE FORMAT [ IF EXISTS ] <name> SET { [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ] }"]
-reason = "page definitions inlined: formatTypeOptions; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options; formatTypeOptions without TYPE: every option the page lists for any TYPE, each once"
+grammar = ["ALTER FILE FORMAT [ IF EXISTS ] <name> SET { [ [ COMPRESSION = { AUTO | GZIP | BZ2 | BROTLI | ZSTD | DEFLATE | RAW_DEFLATE | NONE | LZO | SNAPPY } ] [ RECORD_DELIMITER = { '<string>' | NONE } ] [ FIELD_DELIMITER = { '<string>' | NONE } ] [ MULTI_LINE = { TRUE | FALSE } ] [ FILE_EXTENSION = '<string>' ] [ PARSE_HEADER = { TRUE | FALSE } ] [ SKIP_HEADER = <integer> ] [ SKIP_BLANK_LINES = { TRUE | FALSE } ] [ DATE_FORMAT = { '<string>' | AUTO } ] [ TIME_FORMAT = { '<string>' | AUTO } ] [ TIMESTAMP_FORMAT = { '<string>' | AUTO } ] [ BINARY_FORMAT = { HEX | BASE64 | UTF8 } ] [ ESCAPE = { '<character>' | NONE } ] [ ESCAPE_UNENCLOSED_FIELD = { '<character>' | NONE } ] [ TRIM_SPACE = { TRUE | FALSE } ] [ FIELD_OPTIONALLY_ENCLOSED_BY = { '<character>' | NONE } ] [ NULL_IF = ( '<string>' [ , '<string>' ... ] ) ] [ ERROR_ON_COLUMN_COUNT_MISMATCH = { TRUE | FALSE } ] [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ] [ EMPTY_FIELD_AS_NULL = { TRUE | FALSE } ] [ SKIP_BYTE_ORDER_MARK = { TRUE | FALSE } ] [ ENCODING = { '<string>' | UTF8 } ] [ ENABLE_OCTAL = { TRUE | FALSE } ] [ ALLOW_DUPLICATE = { TRUE | FALSE } ] [ STRIP_OUTER_ARRAY = { TRUE | FALSE } ] [ STRIP_NULL_VALUES = { TRUE | FALSE } ] [ IGNORE_UTF8_ERRORS = { TRUE | FALSE } ] [ SNAPPY_COMPRESSION = { TRUE | FALSE } ] [ BINARY_AS_TEXT = { TRUE | FALSE } ] [ USE_LOGICAL_TYPE = { TRUE | FALSE } ] [ USE_VECTORIZED_SCANNER = { TRUE | FALSE } ] [ PRESERVE_SPACE = { TRUE | FALSE } ] [ STRIP_OUTER_ELEMENT = { TRUE | FALSE } ] [ DISABLE_AUTO_CONVERT = { TRUE | FALSE } ] ] [ COMMENT = '<string_literal>' ] }"]
+reason = "page definitions inlined: formatTypeOptions; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced; formatTypeOptions inlined per TYPE from the page's `-- If TYPE = ...` sections, each option optional and its `KEY = a | b` braced; a TYPE with no section takes no options; formatTypeOptions without TYPE: every option the page lists for any TYPE, each once; COMPRESSION also takes the PARQUET values LZO and SNAPPY (D118)"
 
 [[reading]]
 form = "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by"
@@ -16201,7 +16201,7 @@ reason = "the page puts the comma before the optional COMMENT outside its bracke
 [[reading]]
 form = "sf.security_admin.alter-security-integration-oauth-external.set"
 grammar_sha256 = "6956c3537aa9948081e1d61c3165493200f7c9f54730fda6ad1d36683e6f23ca"
-grammar = ["ALTER [ SECURITY ] INTEGRATION [ IF EXISTS ] <name> SET [ TYPE = EXTERNAL_OAUTH ] [ ENABLED = { TRUE | FALSE } ] [ EXTERNAL_OAUTH_TYPE = { OKTA | AZURE | PING_FEDERATE | CUSTOM } ] [ EXTERNAL_OAUTH_ISSUER = '<string_literal>' ] [ EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = { '<string_literal>' | ( '<string_literal>' , '<string_literal>' [ , ... ] ) } ] [ EXTERNAL_OAUTH_SNOWFLAKE_USER_MAPPING_ATTRIBUTE = { 'LOGIN_NAME' | 'EMAIL_ADDRESS' } ] [ EXTERNAL_OAUTH_JWS_KEYS_URL = { '<string_literal>' | ( '<string_literal>' [ , '<string_literal>' ... ] ) } ] [ EXTERNAL_OAUTH_RSA_PUBLIC_KEY = <public_key1> ] [ EXTERNAL_OAUTH_RSA_PUBLIC_KEY_2 = <public_key2> ] [ EXTERNAL_OAUTH_BLOCKED_ROLES_LIST = ( '<role_name>' [ , '<role_name>' , ... ] ) ] [ EXTERNAL_OAUTH_ALLOWED_ROLES_LIST = ( '<role_name>' [ , '<role_name>' , ... ] ) ] [ EXTERNAL_OAUTH_AUDIENCE_LIST = ('<string_literal>') ] [ EXTERNAL_OAUTH_ANY_ROLE_MODE = DISABLE | ENABLE | ENABLE_FOR_PRIVILEGE ] [ EXTERNAL_OAUTH_SCOPE_DELIMITER = '<string_literal>' ] [ IS_AGENTIC = { TRUE | FALSE } ] [ NETWORK_POLICY = '<network_policy>' ] [ COMMENT = '<string_literal>' ]"]
+grammar = ["ALTER [ SECURITY ] INTEGRATION [ IF EXISTS ] <name> SET [ TYPE = EXTERNAL_OAUTH ] [ ENABLED = { TRUE | FALSE } ] [ EXTERNAL_OAUTH_TYPE = { OKTA | AZURE | PING_FEDERATE | CUSTOM } ] [ EXTERNAL_OAUTH_ISSUER = '<string_literal>' ] [ EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = { '<string_literal>' | ( '<string_literal>' , '<string_literal>' [ , ... ] ) } ] [ EXTERNAL_OAUTH_SNOWFLAKE_USER_MAPPING_ATTRIBUTE = { 'LOGIN_NAME' | 'EMAIL_ADDRESS' } ] [ EXTERNAL_OAUTH_JWS_KEYS_URL = { '<string_literal>' | ( '<string_literal>' [ , '<string_literal>' ... ] ) } ] [ EXTERNAL_OAUTH_RSA_PUBLIC_KEY = <public_key1> ] [ EXTERNAL_OAUTH_RSA_PUBLIC_KEY_2 = <public_key2> ] [ EXTERNAL_OAUTH_BLOCKED_ROLES_LIST = ( '<role_name>' [ , '<role_name>' , ... ] ) ] [ EXTERNAL_OAUTH_ALLOWED_ROLES_LIST = ( '<role_name>' [ , '<role_name>' , ... ] ) ] [ EXTERNAL_OAUTH_AUDIENCE_LIST = ('<string_literal>') ] [ EXTERNAL_OAUTH_ANY_ROLE_MODE = { DISABLE | ENABLE | ENABLE_FOR_PRIVILEGE } ] [ EXTERNAL_OAUTH_SCOPE_DELIMITER = '<string_literal>' ] [ IS_AGENTIC = { TRUE | FALSE } ] [ NETWORK_POLICY = '<network_policy>' ] [ COMMENT = '<string_literal>' ]"]
 reason = "the page writes `KEY = '<string_literal>' | ( ... )` unbraced, the choice of values inside one quoted string ('LOGIN_NAME | EMAIL_ADDRESS'), and EXTERNAL_OAUTH_JWS_KEYS_URL twice (per OAuth type); read with the value choices braced and the two JWS_KEYS_URL lines as one property"
 
 [[reading]]
@@ -25851,16 +25851,7 @@ reason = "D110b: withdrawn, the remainder is another form (COLLATE is not a rese
 form = "sf.functions.complete-snowflake-cortex-multimodal.from"
 kind = "negative_neighbour"
 note = "the form without its required FROM"
-reason = "D97: Snowflake parses this SQL and fails it later, errno 399270 SQLSTATE 0A000 (phase runtime_error, import-20261104-18), so it is not a syntax error; the hand row below observes it"
-
-[[limit]]
-form = "sf.functions.complete-snowflake-cortex-multimodal.from"
-kind = "negative_neighbour"
-note = "the form without its required FROM, observed"
-anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
-sql = "SELECT SNOWFLAKE . CORTEX . COMPLETE ( 'm' , 'm' , v1 ) v1 ;"
-expect = "observe"
-context = "raw"
+reason = "FROM <table> is optional (Arguments: an optional table), so dropping it is no negative; the bare v1 would read as an alias (D118). Earlier: D97: Snowflake parses this SQL and fails it later, errno 399270 SQLSTATE 0A000 (phase runtime_error, import-20261104-18), so it is not a syntax error; the hand row below observes it"
 
 [[suppress]]
 form = "sf.functions.complete-snowflake-cortex-multimodal.from"
@@ -25896,16 +25887,7 @@ context = "raw"
 form = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax"
 kind = "negative_neighbour"
 note = "the form without its required FROM"
-reason = "D97: Snowflake parses this SQL and fails it later, errno 399270 SQLSTATE 0A000 (phase runtime_error, import-20261104-18), so it is not a syntax error; the hand row below observes it"
-
-[[limit]]
-form = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax"
-kind = "negative_neighbour"
-note = "the form without its required FROM, observed"
-anchor = "doc.functions.complete-snowflake-cortex-multimodal / Syntax"
-sql = "SELECT SNOWFLAKE . CORTEX . COMPLETE ( 'm' , v1 ) v1 ;"
-expect = "observe"
-context = "raw"
+reason = "FROM <table> is optional (Arguments: an optional table), so dropping it is no negative; the bare v1 would read as an alias (D118). Earlier: D97: Snowflake parses this SQL and fails it later, errno 399270 SQLSTATE 0A000 (phase runtime_error, import-20261104-18), so it is not a syntax error; the hand row below observes it"
 
 [[suppress]]
 form = "sf.functions.complete-snowflake-cortex"
@@ -29893,34 +29875,6 @@ note = "the form without its required SYSTEM$GET_CLASSIFICATION_RESULT"
 reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
 
 [[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #4"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #5"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.try-to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.try-to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #2"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
 form = "sf.functions.system-global-account-set-parameter"
 kind = "negative_neighbour"
 note = "the form without its required SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER"
@@ -30088,34 +30042,6 @@ context = "raw"
 [[suppress]]
 form = "sf.functions.to-timestamp"
 kind = "required_operand_missing"
-target = "timestampFunction"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #2"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #3"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
-target = "timestampFunction #6"
-note = "omit timestampFunction"
-reason = "D110b: withdrawn, the remainder is another form (the remainder is a parenthesised literal, a documented expression), so Snowflake accepting it (phase accepted, import-20261104-18) says nothing about this form"
-
-[[suppress]]
-form = "sf.functions.to-timestamp"
-kind = "required_operand_missing"
 target = "<numeric_expr>"
 note = "omit <numeric_expr>"
 reason = "D97: Snowflake parses this SQL and fails it later, errno 2139 SQLSTATE 02000 (phase semantic_error, import-20261104-18), so it is not a syntax error; the hand row below observes it"
@@ -30126,7 +30052,7 @@ kind = "required_operand_missing"
 target = "<numeric_expr>"
 note = "omit <numeric_expr>, observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30143,7 +30069,7 @@ kind = "required_operand_missing"
 target = "<date_expr>"
 note = "omit <date_expr>, observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30160,7 +30086,7 @@ kind = "required_operand_missing"
 target = "<timestamp_expr>"
 note = "omit <timestamp_expr>, observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30177,7 +30103,7 @@ kind = "required_operand_missing"
 target = "<string_expr>"
 note = "omit <string_expr>, observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30194,7 +30120,7 @@ kind = "required_operand_missing"
 target = "'<integer>'"
 note = "omit '<integer>', observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30211,7 +30137,7 @@ kind = "required_operand_missing"
 target = "<variant_expr>"
 note = "omit <variant_expr>, observed"
 anchor = "doc.functions.to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30228,7 +30154,7 @@ kind = "required_operand_missing"
 target = "<string_expr>"
 note = "omit <string_expr>, observed"
 anchor = "doc.functions.try_to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TRY_TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -30245,7 +30171,7 @@ kind = "required_operand_missing"
 target = "'<integer>'"
 note = "omit '<integer>', observed"
 anchor = "doc.functions.try_to_timestamp / Syntax"
-sql = "SELECT v1 ( ) ;"
+sql = "SELECT TRY_TO_TIMESTAMP ( ) ;"
 expect = "observe"
 context = "raw"
 
@@ -60755,6 +60681,227 @@ expect = "observe"
 context = "raw"
 
 [[suppress]]
+form = "sf.security_admin.alter-security-integration-scim.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-scim.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-scim / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-storage-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-storage-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-storage-integration / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-notification-integration-email.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-email.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-notification-integration-email / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-notification-integration-queue-inbound-gcp / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-queue-outbound-azure.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-notification-integration-queue-outbound-azure / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-notification-integration-webhooks.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-notification-integration-webhooks.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-notification-integration-webhooks / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-aws-iam.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-aws-iam.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-aws-iam / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-external.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-external.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oauth-external / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oauth-snowflake / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-oidc.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-oidc.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-oidc / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-security-integration-saml2.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-security-integration-saml2.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-api-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>"
+reason = "D113 [undocumented acceptance]: with its SET property (D118), Snowflake parses this SQL and fails it later (errno 1003 SQLSTATE 42000, phase semantic_error, import-20261104-70, the receipt of sf.security_admin.alter-integration o014), so it is not a syntax error; observed (D97 settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-api-integration.set"
+kind = "required_operand_missing"
+target = "<name>"
+note = "omit <name>, observed"
+anchor = "doc.sql.alter-api-integration / Syntax"
+sql = "ALTER INTEGRATION SET COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
 form = "sf.security_admin.alter-join-policy.set-comment"
 kind = "required_operand_missing"
 target = "<name>"
@@ -81155,3 +81302,282 @@ sql = "DEFINE SECURE LOCAL TEMP RECURSIVE VIEW d1.s1.v1 ( v1 ) CHANGE_TRACKING =
 expect = "observe"
 documented = true
 context = "raw"
+
+[[reading]]
+form = "sf.functions.to-timestamp"
+grammar_sha256 = "46ac09d9e039407642ec57efdae892cdac6fdeab49cf25867f2dfa6fefb8ec05"
+grammar = ["{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( <numeric_expr> [ , <scale> ] )", "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( <date_expr> )", "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( <timestamp_expr> )", "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( <string_expr> [ , <format> ] )", "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( '<integer>' )", "{ TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ } ( <variant_expr> )"]
+reason = "timestampFunction ::= TO_TIMESTAMP | TO_TIMESTAMP_LTZ | TO_TIMESTAMP_NTZ | TO_TIMESTAMP_TZ inlined from the page, so each documented function name is an alternative (D118)"
+
+[[reading]]
+form = "sf.functions.try-to-timestamp"
+grammar_sha256 = "05428582c6776346167251c62dbee723597f071265019cb8deeeabc55d8be302"
+grammar = ["{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } ( <string_expr> [, <format> ] )", "{ TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ } ( '<integer>' )"]
+reason = "timestampFunction ::= TRY_TO_TIMESTAMP | TRY_TO_TIMESTAMP_LTZ | TRY_TO_TIMESTAMP_NTZ | TRY_TO_TIMESTAMP_TZ inlined from the page, so each documented function name is an alternative (D118)"
+
+[[reading]]
+form = "sf.ddl.alter-function.set-compression"
+grammar_sha256 = "fec5c23ca55a3c49bb140b9a17efc36465fbedbe3100491593c07b2a243cb84a"
+grammar = ["ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) SET COMPRESSION = { NONE | GZIP | DEFLATE | AUTO }"]
+reason = "compression_type takes the keywords NONE, GZIP, DEFLATE or AUTO, the valid values CREATE EXTERNAL FUNCTION documents for COMPRESSION (D118)"
+
+[[reading]]
+form = "sf.ddl.alter-model.set-tag"
+grammar_sha256 = "2630c59e1d85ab0ca9159c56ecb0f8f614b563b1f5c4337e6770a9a2a15e8cde"
+grammar = ["ALTER MODEL [ IF EXISTS ] <model_name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]"]
+reason = "Parameters documents a tag list, TAG tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ], where the Syntax line shows one tag (D118)"
+
+[[limit]]
+form = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate"
+kind = "negative_neighbour"
+note = "the specification without its required FROM, observed"
+anchor = "doc.sql.alter-service / Syntax"
+sql = "ALTER SERVICE v1 SPECIFICATION_FILE = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams"
+kind = "negative_neighbour"
+note = "the storage location without its required STORAGE_PROVIDER, observed"
+anchor = "doc.sql.alter-external-volume / Syntax"
+sql = "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_BASE_URL = 'gcs://b1/p1/' ) ;"
+expect = "observe"
+context = "raw"
+
+# D118 catalogue findings (auditor d118-findings a398f2e5 and f3c75ab3): hand rows.
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-account-notification-emails"
+kind = "operand_type_class"
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal holding a comma-separated address list"
+anchor = "doc.classes.anomaly-insights.methods.set_account_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . LOCAL . ANOMALY_INSIGHTS!SET_ACCOUNT_NOTIFICATION_EMAILS ( 'u1@example.com, u2@example.com' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-org-notification-emails"
+kind = "operand_type_class"
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal holding a comma-separated address list"
+anchor = "doc.classes.anomaly-insights.methods.set_org_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . LOCAL . ANOMALY_INSIGHTS!SET_ORG_NOTIFICATION_EMAILS ( 'u1@example.com, u2@example.com' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails"
+kind = "operand_type_class"
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal holding a comma-separated address list"
+anchor = "doc.classes.anomaly-insights.methods.set_monitor_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . LOCAL . ANOMALY_INSIGHTS!SET_MONITOR_NOTIFICATION_EMAILS ( 'm' , 'u1@example.com, u2@example.com' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails"
+kind = "required_operand_missing"
+target = "'<email_address> [, <email_address> ... ]'"
+note = "omit the address list"
+anchor = "doc.classes.anomaly-insights.methods.set_monitor_notification_emails / Syntax"
+sql = "CALL SNOWFLAKE . LOCAL . ANOMALY_INSIGHTS!SET_MONITOR_NOTIFICATION_EMAILS ( 'm' , ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.parse-document-snowflake-cortex"
+kind = "operand_type_class"
+target = "'@<stage>'"
+note = "a valid string_literal naming a stage"
+anchor = "doc.functions.parse_document-snowflake-cortex / Syntax"
+sql = "SELECT SNOWFLAKE . CORTEX . PARSE_DOCUMENT ( '@s1' , 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.parse-document-snowflake-cortex"
+kind = "required_operand_missing"
+target = "'@<stage>'"
+note = "omit '@<stage>'"
+anchor = "doc.functions.parse_document-snowflake-cortex / Syntax"
+sql = "SELECT SNOWFLAKE . CORTEX . PARSE_DOCUMENT ( , 'm' ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.data-agent-run-snowflake-cortex"
+kind = "operand_type_class"
+target = "'<agent_name>[!<version>]'"
+note = "a valid string_literal naming the agent"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+sql = "SELECT SNOWFLAKE . CORTEX . DATA_AGENT_RUN ( 'a1' , v1 ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.data-agent-run-snowflake-cortex"
+kind = "required_operand_missing"
+target = "'<agent_name>[!<version>]'"
+note = "omit '<agent_name>[!<version>]'"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+sql = "SELECT SNOWFLAKE . CORTEX . DATA_AGENT_RUN ( , v1 ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.data-agent-run-snowflake-cortex"
+kind = "required_operand_missing"
+target = "<request_body>"
+note = "omit <request_body>"
+anchor = "doc.functions.data_agent_run-snowflake-cortex / Syntax"
+sql = "SELECT SNOWFLAKE . CORTEX . DATA_AGENT_RUN ( 'a1' , ) ;"
+expect = "reject"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-expansion"
+kind = "operand_type_class"
+target = "<array>"
+note = "a valid array: an array literal"
+anchor = "doc.operators-expansion / Spread / Syntax"
+sql = "SELECT GREATEST ( ** [ 1 , 2 ] ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.operators-flow"
+kind = "option_present"
+target = "[ ->> <sql_statement_n> ... ]"
+note = "the list continued at least once: [ ->> <sql_statement_n> ... ] repeated"
+anchor = "doc.operators-flow / Pipe / Syntax"
+sql = "SELECT 1 ->> SELECT 2 ->> SELECT 3 ->> SELECT 4 ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.build-scoped-file-url"
+kind = "option_absent"
+target = "<use_privatelink_host_for_business_critical>"
+note = "the two-argument call: <use_privatelink_host_for_business_critical> has Default: TRUE (Arguments)"
+anchor = "doc.functions.build_scoped_file_url / Arguments"
+sql = "SELECT BUILD_SCOPED_FILE_URL ( @v1 , 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.like-any"
+kind = "alternative"
+target = "(<pattern1> [, <pattern2> ... ] )"
+note = "a subquery in place of the pattern list (Usage notes)"
+anchor = "doc.functions.like_any / Usage notes"
+sql = "SELECT v1 LIKE ANY ( SELECT 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.like-all"
+kind = "alternative"
+target = "(<pattern1> [, <pattern2> ... ] )"
+note = "a subquery in place of the pattern list (Usage notes)"
+anchor = "doc.functions.like_all / Usage notes"
+sql = "SELECT v1 LIKE ALL ( SELECT 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.ilike-any"
+kind = "alternative"
+target = "(<pattern1> [, <pattern2> ... ] )"
+note = "a subquery in place of the pattern list (Usage notes)"
+anchor = "doc.functions.ilike_any / Usage notes"
+sql = "SELECT v1 ILIKE ANY ( SELECT 'm' ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.dmf-referential-integrity-count.table.syntax"
+kind = "option_present"
+target = "<column2>, ..."
+note = "the list continued at least once: a third source and reference column"
+anchor = "doc.functions.dmf_referential_integrity_count / Syntax"
+sql = "ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . REFERENTIAL_INTEGRITY_COUNT ON ( v1 , v2 , v3 , TABLE ( v1 ( v1 , v2 , v3 ) ) ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.get-lineage-snowflake-core"
+kind = "alternative"
+target = "'<object_name>'"
+note = "arguments by name (Usage notes)"
+anchor = "doc.functions.get_lineage-snowflake-core / Usage notes"
+sql = "SELECT * FROM TABLE ( SNOWFLAKE . CORE . GET_LINEAGE ( OBJECT_NAME => 'm' , OBJECT_DOMAIN => 'TABLE' , DIRECTION => 'DOWNSTREAM' , MAX_DISTANCE => 2 ) ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.get-path.colon"
+kind = "operand_type_class"
+target = "<path_name>"
+note = "a path of field names joined by periods with an index operator (Usage notes)"
+anchor = "doc.functions.get_path / Usage notes"
+sql = "SELECT v1:a.b[0] ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.complete-snowflake-cortex-multimodal.from"
+kind = "option_absent"
+target = "FROM <table>"
+note = "FROM <table> absent: Arguments calls the table optional"
+anchor = "doc.functions.complete-snowflake-cortex-multimodal / Arguments"
+sql = "SELECT SNOWFLAKE . CORTEX . COMPLETE ( 'm' , 'm' , TO_FILE ( '@s1' , 'f1.png' ) ) ;"
+expect = "accept"
+context = "raw"
+
+[[limit]]
+form = "sf.functions.complete-snowflake-cortex-multimodal.from.syntax"
+kind = "option_absent"
+target = "FROM <table>"
+note = "FROM <table> absent: Arguments calls the table optional"
+anchor = "doc.functions.complete-snowflake-cortex-multimodal / Arguments"
+sql = "SELECT SNOWFLAKE . CORTEX . COMPLETE ( 'm' , PROMPT ( 'm {0}' , TO_FILE ( '@s1' , 'f1.png' ) ) ) ;"
+expect = "accept"
+context = "raw"
+
+[[suppress]]
+form = "sf.expressions.commands-model-function.model-default-version"
+kind = "negative_neighbour"
+note = "the form without its required MODEL"
+reason = "the derived row also changes the method argument to ( * ); the hand row below drops only MODEL (D118)"
+
+[[limit]]
+form = "sf.expressions.commands-model-function.model-default-version"
+kind = "negative_neighbour"
+note = "the form without its required MODEL"
+anchor = "doc.commands-model-function / Calling model methods"
+sql = "SELECT ( m1 )!predict ( 1 ) FROM t1 ;"
+expect = "reject"
+context = "raw"
+
+[[suppress]]
+form = "sf.expressions.commands-model-function.model-version-or-alias"
+kind = "negative_neighbour"
+note = "the form without its required MODEL"
+reason = "the derived row also changes the method argument to ( * ); the hand row below drops only MODEL (D118)"
+
+[[limit]]
+form = "sf.expressions.commands-model-function.model-version-or-alias"
+kind = "negative_neighbour"
+note = "the form without its required MODEL"
+anchor = "doc.commands-model-function / Calling model methods"
+sql = "SELECT ( m1 , v1 )!predict ( 1 ) FROM t1 ;"
+expect = "reject"
+context = "raw"
+
+[[reading]]
+form = "sf.functions.get-job-history"
+grammar_sha256 = "64b87bab980d30e0d1f81c129f8bd4491d09fcfe402c7d560d981985ccb38975"
+grammar = ["SNOWFLAKE.SPCS.GET_JOB_HISTORY( [ CREATED_TIME_START => <constant_expr> ], [ CREATED_TIME_END => <constant_expr> ], [ RESULT_LIMIT => <integer> ])"]
+reason = "Arguments documents RESULT_LIMIT => integer, a named argument like the others; the Syntax line's `=` would read as a comparison (D118)"

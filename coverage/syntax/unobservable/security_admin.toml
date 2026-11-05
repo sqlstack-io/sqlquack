@@ -4309,11 +4309,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o001"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the documented form with every required part and no optional part: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "the documented form with every required part and no optional part: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4321,11 +4321,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o002"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @@d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
+construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k13dff4613240", sql_sha256 = "13dff461324045b7b1b165beb1b6f7b735f20914b0074ba326e5b4860113c74d" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kde9075a65c07", sql_sha256 = "de9075a65c070d56d7cefde9c87d90471add33681f3595bfac3a7c33a66426d7" },
 ]
 runs = []
 probes = []
@@ -4333,11 +4333,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o003"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4345,11 +4345,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o004"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "omit <name>: CREATE ORGANIZATION PROFILE FROM @@d1.s1.st1/p1 ;"
+construct = "omit <name>: CREATE ORGANIZATION PROFILE FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k6df4b0d1b07d", sql_sha256 = "6df4b0d1b07d468256dfd3982a8fd42af112420637d5a381246fb8b3bf13c0b2" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k63b67f573c9a", sql_sha256 = "63b67f573c9af3d4f1aacc7aa3eba49295b3911fab10d346f1256cb8b4845882" },
 ]
 runs = []
 probes = []
@@ -4357,11 +4357,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o005"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "a valid identifier: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "a valid identifier: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4369,11 +4369,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o006"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "a string literal in place of <name>: CREATE ORGANIZATION PROFILE 'v1' FROM @@d1.s1.st1/p1 ;"
+construct = "a string literal in place of <name>: CREATE ORGANIZATION PROFILE 'v1' FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k48c3c287d798", sql_sha256 = "48c3c287d798f973366eeb07a6faae1940502b1a7bd6a715fc93e7d6873e76c2" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k71c49021c5d0", sql_sha256 = "71c49021c5d04e777de202636f433e423952b785dc51848978a66007ddcb244f" },
 ]
 runs = []
 probes = []
@@ -4393,11 +4393,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o008"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "a valid operand: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "a valid operand: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4405,11 +4405,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o009"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @@d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
+construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k13dff4613240", sql_sha256 = "13dff461324045b7b1b165beb1b6f7b735f20914b0074ba326e5b4860113c74d" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kde9075a65c07", sql_sha256 = "de9075a65c070d56d7cefde9c87d90471add33681f3595bfac3a7c33a66426d7" },
 ]
 runs = []
 probes = []
@@ -4417,11 +4417,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o010"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4429,11 +4429,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o011"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "omit <version_alias_name>: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 VERSION ;"
+construct = "omit <version_alias_name>: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 VERSION ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd2851ca99d86", sql_sha256 = "d2851ca99d867915fcee24add6541f664e72e36153c0db667aef0227b5763ee2" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k08935905ffdb", sql_sha256 = "08935905ffdbf8ac8e904c31634d2425e3201b600270117d6b50a183bbbd1b91" },
 ]
 runs = []
 probes = []
@@ -4441,11 +4441,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o012"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "a valid identifier: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @@d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
+construct = "a valid identifier: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k13dff4613240", sql_sha256 = "13dff461324045b7b1b165beb1b6f7b735f20914b0074ba326e5b4860113c74d" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kde9075a65c07", sql_sha256 = "de9075a65c070d56d7cefde9c87d90471add33681f3595bfac3a7c33a66426d7" },
 ]
 runs = []
 probes = []
@@ -4453,11 +4453,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o013"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "a string literal in place of <version_alias_name>: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 VERSION 'v1' ;"
+construct = "a string literal in place of <version_alias_name>: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 VERSION 'v1' ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k039bd95914a4", sql_sha256 = "039bd95914a46aa1cc242f3ebf7260e9bf14e0cbce91f63704ff9d03a1332323" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k31e5b9e5154b", sql_sha256 = "31e5b9e5154bd3e5e00971f516c7dc071135e99f0f0be3ec63fc482599fd57dd" },
 ]
 runs = []
 probes = []
@@ -4465,11 +4465,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o014"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @@d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
+construct = "option_present: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k13dff4613240", sql_sha256 = "13dff461324045b7b1b165beb1b6f7b735f20914b0074ba326e5b4860113c74d" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kde9075a65c07", sql_sha256 = "de9075a65c070d56d7cefde9c87d90471add33681f3595bfac3a7c33a66426d7" },
 ]
 runs = []
 probes = []
@@ -4477,11 +4477,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o015"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 ;"
+construct = "option_absent: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kffaade754735", sql_sha256 = "ffaade754735362f5f31258fc8be206dee3c138f3084e8a4afd160c119de0aeb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd6a275ea65db", sql_sha256 = "d6a275ea65db02cd4887632e0b907adb3c21d56e97c2fd64f0a2d653397dcfb6" },
 ]
 runs = []
 probes = []
@@ -4489,11 +4489,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o016"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "alternative: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 PUBLISH = TRUE ;"
+construct = "alternative: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k28e053dbc015", sql_sha256 = "28e053dbc0155d8cf3f8cb983893265a15f9cd0342c4c2b20a1f48466f9ea2b2" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kf4175fc8b162", sql_sha256 = "f4175fc8b1622ac61cb25cf746ea0359090fae9af3e5723b2fcdf2fcb0501ed4" },
 ]
 runs = []
 probes = []
@@ -4501,11 +4501,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o017"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "alternative: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 PUBLISH = FALSE ;"
+construct = "alternative: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 PUBLISH = FALSE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k2c4be4ba6b23", sql_sha256 = "2c4be4ba6b238fdb6d3aa1bbe90fcbc694d6a000fbb08b2ca1a58d0289374d30" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k749f855b82b0", sql_sha256 = "749f855b82b014b1326f7f7c0da88b5f0fb7d6bb792b8e756f96d1c7292dd04b" },
 ]
 runs = []
 probes = []
@@ -4513,11 +4513,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o019"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the form without its required PROFILE: CREATE ORGANIZATION v1 FROM @@d1.s1.st1/p1 ;"
+construct = "the form without its required PROFILE: CREATE ORGANIZATION v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k8ba8e3ddc177", sql_sha256 = "8ba8e3ddc177a4cb7097067f9e9cab169d3e069e95fd6fc95818abf1c3183a70" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k4291f05a67b7", sql_sha256 = "4291f05a67b7b537f5eafe949dd180a6571c2697da0543d9fe7819b72845ebc5" },
 ]
 runs = []
 probes = []
@@ -4525,11 +4525,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o020"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the form without its required NOT in [ IF NOT EXISTS ]: CREATE ORGANIZATION PROFILE IF EXISTS v1 FROM @@d1.s1.st1/p1 ;"
+construct = "the form without its required NOT in [ IF NOT EXISTS ]: CREATE ORGANIZATION PROFILE IF EXISTS v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k1e50d1b78f9e", sql_sha256 = "1e50d1b78f9e5515859ceaf88d4b9eff35a5995b9ac1857dc299e5328ef6f283" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k53700f52c2b1", sql_sha256 = "53700f52c2b11b87e6187a084323a4384c56083c7894c0776f4a48152144c043" },
 ]
 runs = []
 probes = []
@@ -4537,11 +4537,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o021"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the form without its required EXISTS in [ IF NOT EXISTS ]: CREATE ORGANIZATION PROFILE IF NOT v1 FROM @@d1.s1.st1/p1 ;"
+construct = "the form without its required EXISTS in [ IF NOT EXISTS ]: CREATE ORGANIZATION PROFILE IF NOT v1 FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k53b18ef53b05", sql_sha256 = "53b18ef53b0575544d67d8a63f6f2f97e85cbf9e18a7aeb6f4cf6c186c28effb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kae524785eebc", sql_sha256 = "ae524785eebc5c2ce3800a1a6f68af9f5553e2027ab960176f32dc4b8ee342ee" },
 ]
 runs = []
 probes = []
@@ -4549,11 +4549,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o022"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the form without its required FROM: CREATE ORGANIZATION PROFILE v1 @@d1.s1.st1/p1 ;"
+construct = "the form without its required FROM: CREATE ORGANIZATION PROFILE v1 @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k90cdd9b5d6aa", sql_sha256 = "90cdd9b5d6aa949e2c20cfec28c0a8e891eb2ade63b568fce4a23429fb3df158" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k9abf4f053670", sql_sha256 = "9abf4f0536701ebc564104151c89eb5d2ddf0ff6370d527922666affe32df4b8" },
 ]
 runs = []
 probes = []
@@ -4561,11 +4561,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o023"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 PUBLISH = ;"
+construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 PUBLISH = ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k0e4f28e13f8d", sql_sha256 = "0e4f28e13f8d72888798f3ab388d07eb44aa37efb73e0401fcedd828c266bfa9" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k6bda65c7340f", sql_sha256 = "6bda65c7340fdd90bb56e17680da7f4ada319c447468b4e3c21fcd5616697504" },
 ]
 runs = []
 probes = []
@@ -4573,11 +4573,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o024"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "every independent option of one production together: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @@d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
+construct = "every independent option of one production together: CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k13dff4613240", sql_sha256 = "13dff461324045b7b1b165beb1b6f7b735f20914b0074ba326e5b4860113c74d" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kde9075a65c07", sql_sha256 = "de9075a65c070d56d7cefde9c87d90471add33681f3595bfac3a7c33a66426d7" },
 ]
 runs = []
 probes = []
@@ -4585,11 +4585,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o025"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: CREATE ORGANIZATION PROFILE \"v1 Q\" FROM @@d1.s1.st1/p1 ;"
+construct = "quoted: CREATE ORGANIZATION PROFILE \"v1 Q\" FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kdf9aefd2281b", sql_sha256 = "df9aefd2281bfd210f93a080b71479032f28a7ab18a71593053406ea8498b014" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k11ba3563446b", sql_sha256 = "11ba3563446bd9806c924e9aefff03856a9bf1225fc53377fd559652475af24a" },
 ]
 runs = []
 probes = []
@@ -4597,12 +4597,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o026"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE ORGANIZATION PROFILE SELECT FROM @@d1.s1.st1/p1 ;"
+construct = "reserved: CREATE ORGANIZATION PROFILE \"SELECT\" FROM @d1.s1.st1/p1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k4fc10f34cb88", sql_sha256 = "4fc10f34cb88f36c147c91a29d0e45eda3f42803d31f1de9f6f16f5e244df6f7" },
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kd70edc990de9", sql_sha256 = "d70edc990de9a45097788b1078f5c760aad88a1fc8ce2267a57e1e52f41605ac" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k543be48b03a7", sql_sha256 = "543be48b03a7bd092766f6653a04f29278d875ab65c34ce9b654a26d3d4d4258" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kba941fba011c", sql_sha256 = "ba941fba011c56a0fa74fdee6925da9f12abae6e802ce1dbd60660933f1f1370" },
 ]
 runs = []
 probes = []
@@ -4610,11 +4610,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o027"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "quoted: a double-quoted identifier with blanks and mixed case: CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 VERSION \"v1 Q\" ;"
+construct = "quoted: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 VERSION \"v1 Q\" ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.kbcf528c8fbb0", sql_sha256 = "bcf528c8fbb0b62b712500ab2e7cc1d9a51dbdc5b2540528f3028fcc82368df7" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.kbbbf5a2ba78a", sql_sha256 = "bbbf5a2ba78a7ffe31a80f256d2b6ad7074d469fecd82d17a3a3e0c8175b98d8" },
 ]
 runs = []
 probes = []
@@ -4622,12 +4622,12 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-profile.profile-from.o028"
 form = "sf.security_admin.create-organization-profile.profile-from"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE ORGANIZATION PROFILE v1 FROM @@d1.s1.st1/p1 VERSION \"SELECT\" ;"
+construct = "reserved: CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 VERSION \"SELECT\" ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-24: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k29572cf79fda", sql_sha256 = "29572cf79fdaef2e394d8a815816a9f95f013b246686d63bc98b43e3a352c657" },
-  { case_id = "sf.security_admin.create-organization-profile.profile-from.k7ce0d51227aa", sql_sha256 = "7ce0d51227aaa554667be5dfe55cf02c27de64b9497efd7cd58604396cf11061" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k5cd183733624", sql_sha256 = "5cd183733624a63be7877f8c2c7c3534f2a4c2f8ba39e5787eeb1bddd0adb4bb" },
+  { case_id = "sf.security_admin.create-organization-profile.profile-from.k6d164424e892", sql_sha256 = "6d164424e8929b1bcf81782461a356b849d35abf8ed2238951a3637f9f685101" },
 ]
 runs = []
 probes = []

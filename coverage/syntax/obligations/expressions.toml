@@ -146,12 +146,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.expressions.commands-model-function.model-default-version.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MODEL"
-
-[[obligation]]
 id = "sf.expressions.commands-model-function.model-default-version.o012"
 kind = "negative_neighbour"
 required = true
@@ -239,6 +233,13 @@ anchor = "doc.commands-model-function / Calling model methods"
 note = "a string literal in place of <table_name>, observed"
 
 [[obligation]]
+id = "sf.expressions.commands-model-function.model-default-version.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.commands-model-function / Calling model methods"
+note = "the form without its required MODEL"
+
+[[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o001"
 kind = "positive"
 required = true
@@ -320,12 +321,6 @@ kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.expressions.commands-model-function.model-version-or-alias.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MODEL"
 
 [[obligation]]
 id = "sf.expressions.commands-model-function.model-version-or-alias.o015"
@@ -429,6 +424,13 @@ required = true
 target = "<table_name>"
 anchor = "doc.commands-model-function / Calling model methods"
 note = "a string literal in place of <table_name>, observed"
+
+[[obligation]]
+id = "sf.expressions.commands-model-function.model-version-or-alias.o014"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.commands-model-function / Calling model methods"
+note = "the form without its required MODEL"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.date.o001"
@@ -4929,6 +4931,14 @@ anchor = "doc.operators-expansion / Spread / Syntax"
 note = "** with no operand"
 
 [[obligation]]
+id = "sf.expressions.operators-expansion.o006"
+kind = "operand_type_class"
+required = true
+target = "<array>"
+anchor = "doc.operators-expansion / Spread / Syntax"
+note = "a valid array: an array literal"
+
+[[obligation]]
 id = "sf.expressions.operators-flow.o001"
 kind = "positive"
 required = true
@@ -5018,6 +5028,14 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.expressions.operators-flow.o016"
+kind = "option_present"
+required = true
+target = "[ ->> <sql_statement_n> ... ]"
+anchor = "doc.operators-flow / Pipe / Syntax"
+note = "the list continued at least once: [ ->> <sql_statement_n> ... ] repeated"
 
 [[obligation]]
 id = "sf.expressions.operators-logical.and.o001"

@@ -195,8 +195,62 @@ form = "sf.security_admin.alter-organization-profile.add-version-from"
 kind = "required_operand_missing"
 target = "<version_alias_name> in [ [ IF NOT EXISTS ] <version_alias_name> ]"
 note = "omit <version_alias_name>"
-sql = "ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @@d1.s1.st1/p1 ;"
+sql = "ALTER ORGANIZATION PROFILE v1 ADD VERSION FROM @d1.s1.st1/p1 ;"
 valid_as = "sf.security_admin.alter-organization-profile.add-version-from positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SECURITY"
+sql = "ALTER INTEGRATION v1 SET COMMENT = 'm' ;"
+valid_as = "sf.security_admin.alter-api-integration.set positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
