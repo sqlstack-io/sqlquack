@@ -1535,11 +1535,15 @@ impl Parser {
 
         if self.match_token(TokenType::To) {
             if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("NEXT") {
-                self.skip();
-                if self.match_token(TokenType::Row) {
+                if self.check_next(TokenType::Row) {
+                    self.skip();
+                    self.skip();
                     return Ok(Some(MatchRecognizeAfter::ToNextRow));
                 }
-                return Err(self.parse_error("Expected ROW after NEXT"));
+                if !self.is_snowflake() {
+                    self.skip();
+                    return Err(self.parse_error("Expected ROW after NEXT"));
+                }
             }
 
             if self.match_token(TokenType::First) {
@@ -1550,6 +1554,11 @@ impl Parser {
             if self.match_token(TokenType::Last) {
                 let name = self.expect_identifier()?;
                 return Ok(Some(MatchRecognizeAfter::ToLast(Identifier::new(name))));
+            }
+
+            if self.is_snowflake() {
+                let name = self.expect_identifier()?;
+                return Ok(Some(MatchRecognizeAfter::To(Identifier::new(name))));
             }
 
             return Err(self.parse_error("Expected NEXT ROW, FIRST x, or LAST x after TO"));

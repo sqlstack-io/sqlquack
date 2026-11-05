@@ -136,6 +136,12 @@ fn given_incomplete_sql_when_parsing_then_parsing_fails() {
             expected_error: "error",
         },
         ParseErrorTestCase {
+            description: "RESAMPLE's METADATA_COLUMNS needs a function, and the interval does not take it as its unit (recorded errno 1003)",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS ( ) ) ;",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
             description: "a star's ILIKE without a pattern is rejected",
             dialect: None,
             sql: "SELECT * ILIKE",

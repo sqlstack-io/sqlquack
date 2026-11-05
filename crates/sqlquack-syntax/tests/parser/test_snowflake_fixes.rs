@@ -1377,3 +1377,32 @@ fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_after_match_skip_to_when_parsing_then_a_bare_symbol_is_accepted() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "NEXT without ROW is the symbol of TO <symbol> (recorded errno 2347)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO NEXT PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TO NEXT ROW stays the next-row form",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO NEXT ROW PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TO needs a symbol",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
