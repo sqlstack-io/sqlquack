@@ -1255,3 +1255,37 @@ dialects = ["Snowflake"]
 sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
 note = "Snowflake grants a role as GRANT ROLE <name> TO ...; PostgreSQL's keywordless role grant is no Snowflake statement"
 
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_user"
+sql = "GRANT developer_role TO john;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_admin_option"
+sql = "GRANT admin_role TO mary WITH ADMIN OPTION;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_list"
+sql = "GRANT role1, role2 TO user1, \"user2@example.com\";"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_users"
+sql = "GRANT purchases_reader_role TO george, maria;"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
+
+[[rejection]]
+id = "snowflake_grant_without_role_keyword_strings"
+sql = "GRANT 'role1', 'role2' TO 'user1'@'localhost', 'user2'@'localhost';"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected ROLE, DATABASE ROLE or APPLICATION ROLE"
+note = "Snowflake grants a role as GRANT ROLE <name> TO ...; this keywordless role grant is PostgreSQL's or MySQL's"
