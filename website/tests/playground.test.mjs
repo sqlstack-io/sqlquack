@@ -17,16 +17,14 @@ test('spans after non-ASCII text underline the characters the diagnostic names',
 	// 'é' is one UTF-16 unit, '😀' two and 'ß' one: three characters but four units before `nope`.
 	const sql = "SELECT 'é😀ß' AS note, nope FROM orders";
 	const report = JSON.parse(analyze(sql, SCHEMA));
-	const [refusal] = report.translate.diagnostics;
-	assert.equal(refusal.code, 'SQ0004');
-	const chars = Array.from(sql);
-	assert.equal(chars.slice(refusal.span.start, refusal.span.end).join(''), 'nope');
-	// Slicing the string by UTF-16 units would land one unit early, on ` nop`.
-	assert.notEqual(sql.slice(refusal.span.start, refusal.span.end), 'nope');
-	const { html } = underlined(chars, [{ kind: 'error', span: refusal.span }]);
-	assert.deepEqual(marked(html), ['nope']);
 	const [finding] = report.checks.findings;
+	assert.equal(finding.code, 'E201');
+	const chars = Array.from(sql);
 	assert.equal(chars.slice(finding.span.start, finding.span.end).join(''), 'nope');
+	// Slicing the string by UTF-16 units would land one unit early, on ` nop`.
+	assert.notEqual(sql.slice(finding.span.start, finding.span.end), 'nope');
+	const { html } = underlined(chars, [{ kind: 'error', span: finding.span }]);
+	assert.deepEqual(marked(html), ['nope']);
 });
 
 test('a parse failure on a later line renders at its line and column', () => {
@@ -49,6 +47,9 @@ test('each stage reports pass, fail or skipped', () => {
 	assert.deepEqual(stages('SELECT order_id FROM orders WHERE'), ['fail', 'skipped', 'skipped']);
 	assert.deepEqual(stages('SELECT 1 QUALIFY TRUE'), ['pass', 'fail', 'skipped']);
 	assert.deepEqual(stages('SELECT HASH(order_id) AS h FROM orders'), ['pass', 'pass', 'fail']);
+	// SQL Snowflake rejects is not translated, though no rule refuses it: DuckDB's bind would.
+	assert.deepEqual(stages('SELECT order_id, note FROM orders GROUP BY note'), ['pass', 'fail', 'skipped']);
+	assert.deepEqual(stages('SELECT COUNT(*) AS n FROM orders WHERE n > 1'), ['pass', 'fail', 'skipped']);
 });
 
 test('translated SQL comes laid out over lines, with only whitespace changed', () => {
@@ -96,7 +97,7 @@ test('every example stops at the stage it is meant to, and the default translate
 		decimal: ['pass', 'pass', 'pass'],
 		syntax: ['fail', 'skipped', 'skipped'],
 		rejected: ['pass', 'fail', 'skipped'],
-		unknown: ['pass', 'fail', 'fail'],
+		unknown: ['pass', 'fail', 'skipped'],
 		refused: ['pass', 'pass', 'fail'],
 	};
 	assert.deepEqual(Object.keys(EXAMPLES).sort(), Object.keys(expected).sort());

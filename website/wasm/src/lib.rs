@@ -267,7 +267,14 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
         "names_checked",
         json!(!catalog.columns.is_empty() && statements.len() == 1),
     );
-    if !rejections.is_empty() {
+    // SQL Snowflake rejects is not translated, as the native check would refuse it at DuckDB's
+    // bind, which the browser does not run. Warnings (W codes) do not stop translation.
+    let erred = findings.iter().any(|finding| {
+        finding["code"]
+            .as_str()
+            .is_some_and(|code| code.starts_with('E'))
+    });
+    if !rejections.is_empty() || erred {
         return json!({ "parse": parse, "checks": checks, "translate": Stage::skipped() });
     }
 
