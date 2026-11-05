@@ -20,3 +20,21 @@ rows = [["1"]]
 query = "SELECT CAST('twelve' AS NUMBER(10,0)) AS n FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["invalid"]
+
+[[case]]
+id = "number_literal_casts_to_text"
+description = "Integer and decimal literals cast to VARCHAR and VARCHAR(10) beside an input column."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["NULL"]]
+query = "SELECT x, CAST(501 AS VARCHAR) AS a, 501::VARCHAR(10) AS b, CAST(-7 AS VARCHAR) AS c, CAST(0 AS VARCHAR) AS d, CAST(1.50 AS VARCHAR) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "zero", "negative"]
+
+[[case]]
+id = "text_literal_minute_timestamps"
+description = "String literals with minutes but no seconds cast to TIMESTAMP_NTZ, TIMESTAMP_NTZ(3) and DATE."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["1"], ["NULL"]]
+query = "SELECT x, CAST('2024-05-01 15:00' AS TIMESTAMP_NTZ) AS t, '2024-05-01 09:05'::TIMESTAMP_NTZ(3) AS t3, CAST('2024-05-01T15:00' AS TIMESTAMP_NTZ) AS iso FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
