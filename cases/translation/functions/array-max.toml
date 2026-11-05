@@ -7,7 +7,7 @@ id = "t001_numbers"
 description = "Integers beside a decimal and a negative number. Catches: elements compared as text (2.5 against 10), or the first element returned"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
-  ["'[10,2.5,-3]'"],
+  ["'[2.5,10,-3]'"],
   ["'[1]'"],
 ]
 query = "SELECT ARRAY_MAX(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
@@ -27,7 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_json_null"
-description = "A JSON null beside numbers. The page says explicit nulls are considered; the page does not say; the recording decides which wins. Catches: the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
+description = "A JSON null beside numbers. The page example shows an array holding a JSON null returning the JSON null; how it orders against numbers the page does not say, so the recording decides. Catches: the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'[1,null,2]'"],

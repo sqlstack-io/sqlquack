@@ -7,7 +7,7 @@ id = "t001_numbers"
 description = "Integers beside a decimal and a negative number. Catches: elements compared as text (2.5 against 10), or the first element returned"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
-  ["'[10,2.5,-3]'"],
+  ["'[10,2.5,30]'"],
   ["'[1]'"],
 ]
 query = "SELECT ARRAY_MIN(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
@@ -19,7 +19,7 @@ id = "t002_text"
 description = "Text elements. Catches: the first or last element returned instead of the ordered one"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
-  ["'[\"b\",\"c\",\"a\"]'"],
+  ["'[\"b\",\"a\",\"c\"]'"],
 ]
 query = "SELECT ARRAY_MIN(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -27,7 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_json_null"
-description = "A JSON null beside numbers. The page says explicit nulls are considered; the page does not say; the recording decides which wins. Catches: the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
+description = "A JSON null beside numbers. The page says explicit nulls are considered; how they order against numbers it does not say; the recording decides. Catches: the JSON null treated as a SQL NULL where Snowflake orders it, or the reverse"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'[1,null,2]'"],

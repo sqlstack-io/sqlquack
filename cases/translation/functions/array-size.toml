@@ -28,7 +28,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_object"
-description = "A VARIANT holding an object and one holding a number; the page does not say; the recording decides. Catches: the object's key count returned"
+description = "A VARIANT holding an object and one holding a number; the page says a VARIANT that does not hold an array returns NULL. Catches: the object's key count returned, or 1 for the number"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'{\"a\":1,\"b\":2}'"],
