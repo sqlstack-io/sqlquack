@@ -6,6 +6,7 @@ use syn::DeriveInput;
 
 use crate::ast_node::_helpers::naming::serde_snake_case;
 use crate::ast_node::_helpers::spans::span_methods;
+use crate::ast_node::_helpers::takers::node_taker;
 use crate::ast_node::_helpers::visitors::node_visitor;
 use crate::constants::EXPRESSION_TYPE;
 
@@ -14,6 +15,7 @@ pub(crate) fn expand_ast_node(input: &DeriveInput) -> proc_macro2::TokenStream {
     let immutable = node_visitor(input, true);
     let untracked = node_visitor(input, false);
     let spans = span_methods(input);
+    let taker = node_taker(input);
     let serialized_variant_names = if name == EXPRESSION_TYPE {
         if let Data::Enum(data) = &input.data {
             let names = data.variants.iter().map(|variant| {
@@ -56,6 +58,13 @@ pub(crate) fn expand_ast_node(input: &DeriveInput) -> proc_macro2::TokenStream {
                 T: FnMut(&'ast crate::expressions::types::models::DataType),
             {
                 #untracked
+            }
+
+            fn take_expressions(
+                &mut self,
+                out: &mut Vec<crate::expressions::tree::models::Expression>,
+            ) {
+                #taker
             }
 
             #spans

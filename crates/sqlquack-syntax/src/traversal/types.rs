@@ -18,6 +18,9 @@ pub(crate) trait AstNode {
     where
         F: FnMut(&[ChildPathSegment], &'ast Expression);
 
+    /// Moves every direct expression child into `out`, leaving NULL in its place.
+    fn take_expressions(&mut self, out: &mut Vec<Expression>);
+
     /// SQLQuack: the node's own recorded source range, when it has a `span` field holding one.
     fn recorded_span(&self) -> Option<Span> {
         None

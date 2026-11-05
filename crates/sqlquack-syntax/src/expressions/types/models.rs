@@ -464,6 +464,21 @@ pub enum IntervalUnitSpec {
     ExprSpan(IntervalSpanExpr),
     /// Expression as unit (e.g., CURRENT_DATE, CAST(GETDATE() AS DATE))
     Expr(Box<Expression>),
+    /// Snowflake qualifier with a field precision, such as `YEAR(9) TO MONTH` or `SECOND(9), (3)`.
+    Qualifier(IntervalQualifier),
+}
+
+/// Snowflake interval qualifier: fields with their leading and fractional seconds precisions.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct IntervalQualifier {
+    /// Leading field (e.g., DAY)
+    pub this: IntervalUnit,
+    /// Leading field precision, as 9 in `DAY(9)`
+    pub leading_precision: Option<u32>,
+    /// Trailing field after TO (e.g., SECOND)
+    pub expression: Option<IntervalUnit>,
+    /// Fractional seconds precision, as 3 in `DAY TO SECOND(3)` or `SECOND(9), (3)`
+    pub fractional_precision: Option<u32>,
 }
 
 /// Interval span for ranges like HOUR TO SECOND

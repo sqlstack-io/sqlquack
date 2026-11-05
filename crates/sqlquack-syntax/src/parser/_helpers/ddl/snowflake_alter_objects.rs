@@ -7,6 +7,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::constants::CONTACT;
 use crate::parser::constants::TAG;
 use crate::parser::models::Parser;
@@ -90,11 +91,24 @@ impl Parser {
 
     /// Parse a comma-separated list of account identifiers, each `[ <organization_name> . ] <account_name>`.
     fn account_list_operand(&mut self) -> Result<Expression> {
-        let mut accounts = vec![Expression::Identifier(self.parse_simple_qualified_name()?)];
+        let mut accounts = vec![self.account_operand()?];
         while self.match_token(TokenType::Comma) {
-            accounts.push(Expression::Identifier(self.parse_simple_qualified_name()?));
+            accounts.push(self.account_operand()?);
         }
         Ok(tuple(accounts))
+    }
+
+    /// Parse `[ <organization_name> . ] <account_name>`, keeping each part and its quoting.
+    fn account_operand(&mut self) -> Result<Expression> {
+        let first = self.parse_simple_name()?;
+        let mut account = TableRef::new("");
+        if self.match_token(TokenType::Dot) {
+            account.name = self.parse_simple_name()?;
+            account.schema = Some(first);
+        } else {
+            account.name = first;
+        }
+        Ok(Expression::Table(Box::new(account)))
     }
 
     /// Parse a parenthesized list of account identifiers.
@@ -237,7 +251,7 @@ impl Parser {
                 } else {
                     None
                 };
-                properties.push(property(&name.name.to_ascii_uppercase(), None, value));
+                properties.push(property(&property_kind(&name), None, value));
             }
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {

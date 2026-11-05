@@ -7,6 +7,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Tuple;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -124,7 +125,7 @@ impl Parser {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             let value = self.parse_group_values()?;
-            properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+            properties.push(property(&property_kind(&name), None, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
             }
@@ -188,7 +189,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_name()?;
-            properties.push(property(&name.name.to_ascii_uppercase(), None, None));
+            properties.push(property(&property_kind(&name), None, None));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }
@@ -406,7 +407,7 @@ impl Parser {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             let value = self.parse_integration_value()?;
-            properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+            properties.push(property(&property_kind(&name), None, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
             }
@@ -545,7 +546,7 @@ impl Parser {
             } else {
                 self.parse_object_value()?
             };
-            properties.push(property(&name.name.to_ascii_uppercase(), None, Some(value)));
+            properties.push(property(&property_kind(&name), None, Some(value)));
             self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
@@ -558,7 +559,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_name()?;
-            properties.push(property(&name.name.to_ascii_uppercase(), None, None));
+            properties.push(property(&property_kind(&name), None, None));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }

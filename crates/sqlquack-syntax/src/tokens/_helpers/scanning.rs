@@ -56,7 +56,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
 
     pub(crate) fn tokenize(&mut self) -> Result<Vec<T>> {
         while !self.is_at_end() {
-            self.skip_whitespace();
+            self.skip_whitespace()?;
             if self.is_at_end() {
                 break;
             }
@@ -249,7 +249,8 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
         Some((content_start, content_end))
     }
 
-    pub(crate) fn skip_whitespace(&mut self) {
+    /// Skips whitespace and comments; an unterminated block comment is an error at its `/*`.
+    pub(crate) fn skip_whitespace(&mut self) -> Result<()> {
         let mut saw_newline = false;
         while !self.is_at_end() {
             let c = self.peek();
@@ -275,9 +276,8 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
                     if self.current + 2 < self.size && self.char_at(self.current + 2) == '+' {
                         break;
                     }
-                    if self.scan_block_comment(saw_newline).is_err() {
-                        return;
-                    }
+                    self.start = self.current;
+                    self.scan_block_comment(saw_newline)?;
                 }
                 '/' if self.peek_next() == '/' && self.config.comments.contains_key("//") => {
                     let prev_non_ws = if self.current > 0 {
@@ -301,6 +301,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
                 _ => break,
             }
         }
+        Ok(())
     }
 
     pub(crate) fn scan_hash_line_comment(&mut self) {

@@ -1521,6 +1521,24 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
             expected_value: json!("ENABLE REPLICATION IGNORE EDITION CHECK"),
         },
         ProjectionTestCase {
+            description: "an account keeps its unquoted organization as a separate part",
+            sql: "ALTER APPLICATION PACKAGE v1 MODIFY RELEASE CHANNEL c1 ADD ACCOUNTS = ( o1 . \"a Q\" )",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/0/table/schema/quoted",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "an account keeps its quoted name as written",
+            sql: "ALTER APPLICATION PACKAGE v1 MODIFY RELEASE CHANNEL c1 ADD ACCOUNTS = ( o1 . \"a Q\" )",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/0/table/name/name",
+            expected_value: json!("a Q"),
+        },
+        ProjectionTestCase {
+            description: "a quoted property name is not case-folded",
+            sql: "ALTER ORGANIZATION ACCOUNT UNSET \"v1 Q\", foo",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
             description: "a linked catalog change names its list",
             sql: "ALTER DATABASE v1 UPDATE LINKED_CATALOG REMOVE ( 'n1' ) FROM ALLOWED_NAMESPACES",
             pointer: "/0/alter_object/action",

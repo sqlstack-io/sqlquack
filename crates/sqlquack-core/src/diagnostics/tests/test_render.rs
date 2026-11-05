@@ -102,6 +102,18 @@ fn given_guard_failures_when_diagnosed_then_each_guard_has_its_own_code_and_form
             expected_code: ("SQ0001", None),
             expected_label: "Unterminated string",
         },
+        GuardTestCase {
+            description: "an unterminated block comment is refused with the parse code",
+            source: "SELECT 1 /* never closed".to_owned(),
+            expected_code: ("SQ0001", None),
+            expected_label: "Unterminated block comment",
+        },
+        GuardTestCase {
+            description: "50,000 added terms are one flat chain, not 50,000 levels of depth",
+            source: format!("SELECT {} FROM", vec!["1"; 50_000].join(" + ")),
+            expected_code: ("SQ0001", None),
+            expected_label: "Expected table name or subquery, got From",
+        },
     ];
     for test_case in test_cases {
         let diagnostics = diagnose(&[unparsed(&test_case.source)], &test_case.source);
