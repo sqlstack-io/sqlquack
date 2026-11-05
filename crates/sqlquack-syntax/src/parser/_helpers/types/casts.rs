@@ -5,6 +5,9 @@ use crate::expressions::operators::models::Case;
 use crate::expressions::operators::models::Cast;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::expressions::types::models::IntervalQualifier;
+use crate::expressions::types::models::IntervalUnit;
+use crate::expressions::types::models::IntervalUnitSpec;
 use crate::parser::_helpers::types::data_types::convert_name_is_known_custom;
 use crate::parser::constants::CHAR;
 use crate::parser::constants::CHARACTER;
@@ -261,6 +264,98 @@ impl Parser {
                 range.end()
             ))),
         }
+    }
+
+    /// Reads Snowflake's interval literal qualifier when a field has a precision, as `SECOND(9), (3)`.
+    pub(crate) fn try_parse_snowflake_interval_qualifier(
+        &mut self,
+    ) -> Result<Option<IntervalUnitSpec>> {
+        let precise = self.is_type_at(1, TokenType::LParen)
+            || self.is_to_at(1)
+                && self.interval_field_at(2).is_some()
+                && self.is_type_at(3, TokenType::LParen);
+        let Some(this) = self
+            .interval_field_at(0)
+            .filter(|_| precise && self.applies_snowflake_context_rules())
+        else {
+            return Ok(None);
+        };
+        self.skip();
+        let leading_precision = self.parse_snowflake_interval_precision()?;
+        let mut qualifier = IntervalQualifier {
+            this,
+            leading_precision,
+            expression: None,
+            fractional_precision: None,
+        };
+        let fraction_follows = [
+            TokenType::Comma,
+            TokenType::LParen,
+            TokenType::Number,
+            TokenType::RParen,
+        ]
+        .into_iter()
+        .enumerate()
+        .all(|(offset, token_type)| self.is_type_at(offset, token_type));
+        if let Some(end) = self.interval_field_at(1).filter(|_| self.is_to_at(0)) {
+            self.skip();
+            self.skip();
+            qualifier.expression = Some(end);
+            if end == IntervalUnit::Second {
+                qualifier.fractional_precision = self.parse_snowflake_interval_precision()?;
+            }
+        } else if this == IntervalUnit::Second && leading_precision.is_some() && fraction_follows {
+            self.skip();
+            qualifier.fractional_precision = self.parse_snowflake_interval_precision()?;
+        }
+        Ok(Some(IntervalUnitSpec::Qualifier(qualifier)))
+    }
+
+    /// Whether the token `offset` ahead has type `token_type`.
+    fn is_type_at(&self, offset: usize, token_type: TokenType) -> bool {
+        self.tokens
+            .get(self.current + offset)
+            .is_some_and(|token| token.token_type == token_type)
+    }
+
+    /// Whether the token `offset` ahead is TO.
+    fn is_to_at(&self, offset: usize) -> bool {
+        self.tokens
+            .get(self.current + offset)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case("TO"))
+    }
+
+    /// The Snowflake interval field `offset` ahead: YEAR, MONTH, DAY, HOUR, MINUTE or SECOND.
+    fn interval_field_at(&self, offset: usize) -> Option<IntervalUnit> {
+        let text = self
+            .tokens
+            .get(self.current + offset)?
+            .text
+            .to_ascii_uppercase();
+        match text.as_str() {
+            "YEAR" => Some(IntervalUnit::Year),
+            "MONTH" => Some(IntervalUnit::Month),
+            "DAY" => Some(IntervalUnit::Day),
+            "HOUR" => Some(IntervalUnit::Hour),
+            "MINUTE" => Some(IntervalUnit::Minute),
+            "SECOND" => Some(IntervalUnit::Second),
+            _ => None,
+        }
+    }
+
+    /// Reads an optional `( n )` interval field precision.
+    fn parse_snowflake_interval_precision(&mut self) -> Result<Option<u32>> {
+        if !self.match_token(TokenType::LParen) {
+            return Ok(None);
+        }
+        let number = self.check(TokenType::Number);
+        let digits = match self.peek_text().parse::<u32>() {
+            Ok(digits) if number => digits,
+            _ => return Err(self.parse_error("Expected an interval precision")),
+        };
+        self.skip();
+        self.expect_token(TokenType::RParen)?;
+        Ok(Some(digits))
     }
 
     /// Refuses Snowflake's INTERVAL type without a field, or with TO and no field after it.
