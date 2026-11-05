@@ -4,12 +4,12 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_collated"
-description = "COLLATION of a collated and an uncollated string. Catches: a fixed or empty answer, or the collation of the wrong operand"
+description = "COLLATION of the same string under two explicit collations. Catches: a fixed or empty answer, or the collation specification dropped or normalised (de-ci read as de)"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'x'"],
 ]
-query = "SELECT COLLATION(COLLATE(a, 'de-ci')) AS r, COLLATION(a) AS u FROM input ORDER BY ordinal"
+query = "SELECT COLLATION(COLLATE(a, 'de-ci')) AS r, COLLATION(COLLATE(a, 'en')) AS e FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

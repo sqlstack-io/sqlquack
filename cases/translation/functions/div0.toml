@@ -64,7 +64,7 @@ tags = ["null"]
 
 [[case]]
 id = "t006_neg_zero"
-description = "Negative dividends over zero. Catches: the sign of the dividend kept on the zero result (-0 instead of 0)"
+description = "Negative dividends over zero; Snowflake returns +0 for DIV0(-5, 0) (captured at e8691b63). Catches: the sign of the dividend kept on the zero result (-0 instead of 0)"
 columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
 rows = [
   ["-5", "0"],
