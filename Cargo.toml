@@ -54,7 +54,7 @@ sha2 = "0.10"
 sqlquack = { path = "crates/sqlquack" }
 sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-core = { path = "crates/sqlquack-core" }
-sqlquack-duckdb = { path = "crates/sqlquack-duckdb" }
+sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
