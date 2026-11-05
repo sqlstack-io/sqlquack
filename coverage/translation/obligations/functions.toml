@@ -2535,6 +2535,655 @@ cases = ["cases/translation/functions/arrays-zip.toml#t004_null_array"]
 required = true
 
 [[obligation]]
+id = "sf.functions.as-array.t001"
+form = "sf.functions.as-array"
+kind = "type_combination"
+target = "VARIANT holding ARRAY"
+note = "Arrays, nested and empty."
+catches = "an empty array returned as NULL, or a nested array flattened"
+reading = "the page: the value as ARRAY when the VARIANT holds ARRAY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-array.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-array.t002"
+form = "sf.functions.as-array"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "An object, a string holding array text, and a number."
+catches = "the string parsed as JSON, or a scalar wrapped as a one-element array (TO_ARRAY)"
+reading = "the page: the value as ARRAY when the VARIANT holds ARRAY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-array.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-array.t003"
+form = "sf.functions.as-array"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as ARRAY when the VARIANT holds ARRAY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-array.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-binary.t001"
+form = "sf.functions.as-binary"
+kind = "type_combination"
+target = "VARIANT holding BINARY"
+note = "A BINARY value cast to VARIANT."
+catches = "the bytes returned as hexadecimal text"
+reading = "the page: the value as BINARY when the VARIANT holds BINARY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-binary.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-binary.t002"
+form = "sf.functions.as-binary"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string of hexadecimal digits and a number."
+catches = "the hexadecimal text decoded to bytes"
+reading = "the page: the value as BINARY when the VARIANT holds BINARY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-binary.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-binary.t003"
+form = "sf.functions.as-binary"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as BINARY when the VARIANT holds BINARY; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-binary.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-boolean.t001"
+form = "sf.functions.as-boolean"
+kind = "type_combination"
+target = "VARIANT holding BOOLEAN"
+note = "JSON true and false."
+catches = "false read as NULL, or the values swapped"
+reading = "the page: the value as BOOLEAN when the VARIANT holds BOOLEAN; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-boolean.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-boolean.t002"
+form = "sf.functions.as-boolean"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "The string \"true\", the number 1 and the number 0."
+catches = "text or numbers converted to BOOLEAN (TO_BOOLEAN)"
+reading = "the page: the value as BOOLEAN when the VARIANT holds BOOLEAN; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-boolean.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-boolean.t003"
+form = "sf.functions.as-boolean"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as BOOLEAN when the VARIANT holds BOOLEAN; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-boolean.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-char.t001"
+form = "sf.functions.as-char-varchar.as-char"
+kind = "type_combination"
+target = "VARIANT holding VARCHAR"
+note = "Strings, one holding digits and one empty."
+catches = "the empty string returned as NULL, or the JSON quotes kept"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-char.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-char.t002"
+form = "sf.functions.as-char-varchar.as-char"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A number, a boolean and an object."
+catches = "scalars rendered as text (5 as \"5\"), or the object serialised"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-char.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-char.t003"
+form = "sf.functions.as-char-varchar.as-char"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-char.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-varchar.t001"
+form = "sf.functions.as-char-varchar.as-varchar"
+kind = "type_combination"
+target = "VARIANT holding VARCHAR"
+note = "Strings, one holding digits and one empty."
+catches = "the empty string returned as NULL, or the JSON quotes kept"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-varchar.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-varchar.t002"
+form = "sf.functions.as-char-varchar.as-varchar"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A number, a boolean and an object."
+catches = "scalars rendered as text (5 as \"5\"), or the object serialised"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-varchar.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-char-varchar.as-varchar.t003"
+form = "sf.functions.as-char-varchar.as-varchar"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as VARCHAR when the VARIANT holds VARCHAR; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-char-varchar.as-varchar.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-date.t001"
+form = "sf.functions.as-date"
+kind = "type_combination"
+target = "VARIANT holding DATE"
+note = "A DATE cast to VARIANT, on a leap day."
+catches = "the date shifted a day, or returned as text"
+reading = "the page: the value as DATE when the VARIANT holds DATE; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-date.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-date.t002"
+form = "sf.functions.as-date"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a date and a number."
+catches = "date text parsed (TO_DATE), or a number read as days since the epoch"
+reading = "the page: the value as DATE when the VARIANT holds DATE; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-date.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-date.t003"
+form = "sf.functions.as-date"
+kind = "type_combination"
+target = "VARIANT holding TIMESTAMP_NTZ"
+note = "A TIMESTAMP_NTZ cast to VARIANT; the page returns NULL when the type is not DATE."
+catches = "the timestamp truncated to its date"
+reading = "the page: the value as DATE when the VARIANT holds DATE; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-date.toml#t003_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-date.t004"
+form = "sf.functions.as-date"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as DATE when the VARIANT holds DATE; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-date.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-decimal.t001"
+form = "sf.functions.as-decimal-number.as-decimal"
+kind = "type_combination"
+target = "VARIANT holding NUMBER"
+note = "Decimals with the default precision and scale (38, 0), which the page says round."
+catches = "the fraction truncated (12 and -12) instead of rounded, or the scale of the input kept"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-decimal.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-decimal.t002"
+form = "sf.functions.as-decimal-number.as-decimal"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding digits and an exponent number."
+catches = "text parsed as a number, or a floating-point value converted"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-decimal.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-decimal.t003"
+form = "sf.functions.as-decimal-number.as-decimal"
+kind = "type_combination"
+target = "VARIANT, precision, scale"
+note = "An explicit precision 10 and scale 2 on a value with three fractional digits."
+catches = "the third digit truncated (12.34) instead of rounded (12.35), or the arguments ignored"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-decimal.toml#t003_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-decimal.t004"
+form = "sf.functions.as-decimal-number.as-decimal"
+kind = "error_parity"
+target = "error"
+note = "A value that needs more digits than the precision after rounding; the page says reducing scale can cause out-of-range errors."
+catches = "NULL returned, or the digits silently dropped"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-decimal.toml#t004_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-decimal.t005"
+form = "sf.functions.as-decimal-number.as-decimal"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-decimal.toml#t005_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-number.t001"
+form = "sf.functions.as-decimal-number.as-number"
+kind = "type_combination"
+target = "VARIANT holding NUMBER"
+note = "Decimals with the default precision and scale (38, 0), which the page says round."
+catches = "the fraction truncated (12 and -12) instead of rounded, or the scale of the input kept"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-number.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-number.t002"
+form = "sf.functions.as-decimal-number.as-number"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding digits and an exponent number."
+catches = "text parsed as a number, or a floating-point value converted"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-number.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-number.t003"
+form = "sf.functions.as-decimal-number.as-number"
+kind = "type_combination"
+target = "VARIANT, precision, scale"
+note = "An explicit precision 10 and scale 2 on a value with three fractional digits."
+catches = "the third digit truncated (12.34) instead of rounded (12.35), or the arguments ignored"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-number.toml#t003_scale"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-number.t004"
+form = "sf.functions.as-decimal-number.as-number"
+kind = "error_parity"
+target = "error"
+note = "A value that needs more digits than the precision after rounding; the page says reducing scale can cause out-of-range errors."
+catches = "NULL returned, or the digits silently dropped"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-number.toml#t004_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-decimal-number.as-number.t005"
+form = "sf.functions.as-decimal-number.as-number"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as NUMBER when the VARIANT holds NUMBER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-decimal-number.as-number.toml#t005_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-double.t001"
+form = "sf.functions.as-double-real.as-double"
+kind = "type_combination"
+target = "VARIANT holding a floating-point value"
+note = "Numbers written with an exponent, one negative and one large."
+catches = "the exponent misread, or the sign lost"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-double.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-double.t002"
+form = "sf.functions.as-double-real.as-double"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a number and a boolean."
+catches = "text parsed as a number, or true read as 1"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-double.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-double.t003"
+form = "sf.functions.as-double-real.as-double"
+kind = "type_combination"
+target = "VARIANT holding NUMBER"
+note = "Fixed-point and integer numbers; the page names only floating-point values and does not say whether these convert; the recording decides."
+catches = "an implementation that converts every number, or none, where Snowflake does the other"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-double.toml#t003_fixed_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-double.t004"
+form = "sf.functions.as-double-real.as-double"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-double.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-real.t001"
+form = "sf.functions.as-double-real.as-real"
+kind = "type_combination"
+target = "VARIANT holding a floating-point value"
+note = "Numbers written with an exponent, one negative and one large."
+catches = "the exponent misread, or the sign lost"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-real.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-real.t002"
+form = "sf.functions.as-double-real.as-real"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a number and a boolean."
+catches = "text parsed as a number, or true read as 1"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-real.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-real.t003"
+form = "sf.functions.as-double-real.as-real"
+kind = "type_combination"
+target = "VARIANT holding NUMBER"
+note = "Fixed-point and integer numbers; the page names only floating-point values and does not say whether these convert; the recording decides."
+catches = "an implementation that converts every number, or none, where Snowflake does the other"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-real.toml#t003_fixed_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-double-real.as-real.t004"
+form = "sf.functions.as-double-real.as-real"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as a floating-point value when the VARIANT holds a floating-point value; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-double-real.as-real.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-integer.t001"
+form = "sf.functions.as-integer"
+kind = "type_combination"
+target = "VARIANT holding INTEGER"
+note = "Integers, negative and beyond 32 bits."
+catches = "values wrapped to 32 bits, or the sign lost"
+reading = "the page: the value as INTEGER when the VARIANT holds INTEGER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-integer.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-integer.t002"
+form = "sf.functions.as-integer"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding digits and a boolean."
+catches = "text parsed as an integer, or true read as 1"
+reading = "the page: the value as INTEGER when the VARIANT holds INTEGER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-integer.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-integer.t003"
+form = "sf.functions.as-integer"
+kind = "type_combination"
+target = "VARIANT holding NUMBER with a fraction"
+note = "Decimals with and without a fractional part; the page does not say whether they count as INTEGER; the recording decides."
+catches = "a fraction truncated or rounded where Snowflake returns NULL, or the reverse"
+reading = "the page: the value as INTEGER when the VARIANT holds INTEGER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-integer.toml#t003_fraction"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-integer.t004"
+form = "sf.functions.as-integer"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as INTEGER when the VARIANT holds INTEGER; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-integer.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-object.t001"
+form = "sf.functions.as-object"
+kind = "type_combination"
+target = "VARIANT holding OBJECT"
+note = "Objects, nested and empty."
+catches = "an empty object returned as NULL, or nested keys flattened"
+reading = "the page: the value as OBJECT when the VARIANT holds OBJECT; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-object.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-object.t002"
+form = "sf.functions.as-object"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "An array of pairs, a string holding object text and a number."
+catches = "the string parsed as JSON, or the array read as key-value pairs"
+reading = "the page: the value as OBJECT when the VARIANT holds OBJECT; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-object.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-object.t003"
+form = "sf.functions.as-object"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as OBJECT when the VARIANT holds OBJECT; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-object.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-time.t001"
+form = "sf.functions.as-time"
+kind = "type_combination"
+target = "VARIANT holding TIME"
+note = "A TIME with milliseconds cast to VARIANT."
+catches = "the fraction dropped, or a 12-hour clock"
+reading = "the page: the value as TIME when the VARIANT holds TIME; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-time.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-time.t002"
+form = "sf.functions.as-time"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a time and a number of seconds."
+catches = "time text parsed, or a number read as seconds since midnight"
+reading = "the page: the value as TIME when the VARIANT holds TIME; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-time.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-time.t003"
+form = "sf.functions.as-time"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as TIME when the VARIANT holds TIME; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-time.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ltz.t001"
+form = "sf.functions.as-timestamp.as-timestamp-ltz"
+kind = "type_combination"
+target = "VARIANT holding TIMESTAMP_LTZ"
+note = "A TIMESTAMP_LTZ with milliseconds cast to VARIANT."
+catches = "the fraction dropped, or the offset or zone changed"
+reading = "the page: the value as TIMESTAMP_LTZ when the VARIANT holds TIMESTAMP_LTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ltz.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ltz.t002"
+form = "sf.functions.as-timestamp.as-timestamp-ltz"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a timestamp and a DATE-like string."
+catches = "timestamp text parsed (TO_TIMESTAMP)"
+reading = "the page: the value as TIMESTAMP_LTZ when the VARIANT holds TIMESTAMP_LTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ltz.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ltz.t003"
+form = "sf.functions.as-timestamp.as-timestamp-ltz"
+kind = "type_combination"
+target = "VARIANT holding another timestamp type"
+note = "The other two timestamp types cast to VARIANT. The page says a timestamp type returns the same timestamp type, without saying whether that holds when it differs from LTZ; the recording decides."
+catches = "the other type converted to this one, or NULL where Snowflake returns the value, or the reverse"
+reading = "the page: the value as TIMESTAMP_LTZ when the VARIANT holds TIMESTAMP_LTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ltz.toml#t003_other_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ltz.t004"
+form = "sf.functions.as-timestamp.as-timestamp-ltz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as TIMESTAMP_LTZ when the VARIANT holds TIMESTAMP_LTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ltz.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ntz.t001"
+form = "sf.functions.as-timestamp.as-timestamp-ntz"
+kind = "type_combination"
+target = "VARIANT holding TIMESTAMP_NTZ"
+note = "A TIMESTAMP_NTZ with milliseconds cast to VARIANT."
+catches = "the fraction dropped, or the offset or zone changed"
+reading = "the page: the value as TIMESTAMP_NTZ when the VARIANT holds TIMESTAMP_NTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ntz.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ntz.t002"
+form = "sf.functions.as-timestamp.as-timestamp-ntz"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a timestamp and a DATE-like string."
+catches = "timestamp text parsed (TO_TIMESTAMP)"
+reading = "the page: the value as TIMESTAMP_NTZ when the VARIANT holds TIMESTAMP_NTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ntz.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ntz.t003"
+form = "sf.functions.as-timestamp.as-timestamp-ntz"
+kind = "type_combination"
+target = "VARIANT holding another timestamp type"
+note = "The other two timestamp types cast to VARIANT. The page says a timestamp type returns the same timestamp type, without saying whether that holds when it differs from NTZ; the recording decides."
+catches = "the other type converted to this one, or NULL where Snowflake returns the value, or the reverse"
+reading = "the page: the value as TIMESTAMP_NTZ when the VARIANT holds TIMESTAMP_NTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ntz.toml#t003_other_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-ntz.t004"
+form = "sf.functions.as-timestamp.as-timestamp-ntz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as TIMESTAMP_NTZ when the VARIANT holds TIMESTAMP_NTZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-ntz.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-tz.t001"
+form = "sf.functions.as-timestamp.as-timestamp-tz"
+kind = "type_combination"
+target = "VARIANT holding TIMESTAMP_TZ"
+note = "A TIMESTAMP_TZ with milliseconds cast to VARIANT."
+catches = "the fraction dropped, or the offset or zone changed"
+reading = "the page: the value as TIMESTAMP_TZ when the VARIANT holds TIMESTAMP_TZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-tz.toml#t001_match"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-tz.t002"
+form = "sf.functions.as-timestamp.as-timestamp-tz"
+kind = "type_combination"
+target = "VARIANT holding another type"
+note = "A string holding a timestamp and a DATE-like string."
+catches = "timestamp text parsed (TO_TIMESTAMP)"
+reading = "the page: the value as TIMESTAMP_TZ when the VARIANT holds TIMESTAMP_TZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-tz.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-tz.t003"
+form = "sf.functions.as-timestamp.as-timestamp-tz"
+kind = "type_combination"
+target = "VARIANT holding another timestamp type"
+note = "The other two timestamp types cast to VARIANT. The page says a timestamp type returns the same timestamp type, without saying whether that holds when it differs from TZ; the recording decides."
+catches = "the other type converted to this one, or NULL where Snowflake returns the value, or the reverse"
+reading = "the page: the value as TIMESTAMP_TZ when the VARIANT holds TIMESTAMP_TZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-tz.toml#t003_other_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.functions.as-timestamp.as-timestamp-tz.t004"
+form = "sf.functions.as-timestamp.as-timestamp-tz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match."
+catches = "the JSON null passed through as a value, or an error"
+reading = "the page: the value as TIMESTAMP_TZ when the VARIANT holds TIMESTAMP_TZ; NULL when its type does not match; NULL for NULL"
+cases = ["cases/translation/functions/as-timestamp.as-timestamp-tz.toml#t004_null_variant_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.ascii.t001"
 form = "sf.functions.ascii"
 kind = "type_combination"
@@ -4980,6 +5629,50 @@ note = "Start positions 0 and -1: records what Snowflake returns."
 catches = "0 read other than as Snowflake does (as 1, as an error, or as no match), or a negative start counted from the end"
 reading = "the page: <expr1> and <expr2> are both strings or both binary; <start_pos> is 1-based; not found or start past the end gives 0; an empty <expr1> gives 1; NULL gives NULL"
 cases = ["cases/translation/functions/charindex.toml#t009_start_zero_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-json.t001"
+form = "sf.functions.check-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid JSON documents of several kinds, including a bare string and a bare number."
+catches = "a bare scalar rejected (only objects and arrays accepted)"
+reading = "the page: NULL when the input is valid JSON or NULL; otherwise a string describing the parse error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-json.toml#t001_valid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-json.t002"
+form = "sf.functions.check-json"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Malformed documents: a missing value, a trailing comma and an unclosed array."
+catches = "NULL returned for an invalid document, or an error raised instead of a message"
+reading = "the page: NULL when the input is valid JSON or NULL; otherwise a string describing the parse error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-json.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-json.t003"
+form = "sf.functions.check-json"
+kind = "type_combination"
+target = "VARIANT holding a string"
+note = "A VARIANT holding a string, which the page says is checked as JSON text."
+catches = "the VARIANT treated as already-valid JSON (NULL for the malformed text)"
+reading = "the page: NULL when the input is valid JSON or NULL; otherwise a string describing the parse error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-json.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.check-json.t004"
+form = "sf.functions.check-json"
+kind = "null_argument"
+target = "string-or-variant-expr"
+note = "A SQL NULL, which the page treats as valid."
+catches = "an error message returned for NULL"
+reading = "the page: NULL when the input is valid JSON or NULL; otherwise a string describing the parse error. The page does not give the message text, so the cases measure whether the result is NULL"
+cases = ["cases/translation/functions/check-json.toml#t004_null_string_or_variant_expr"]
 required = true
 
 [[obligation]]
@@ -10082,6 +10775,270 @@ cases = ["cases/translation/functions/insert.toml#t008_delete"]
 required = true
 
 [[obligation]]
+id = "sf.functions.is-array.t001"
+form = "sf.functions.is-array"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_ARRAY over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the object or the string"
+reading = "the page: TRUE when the VARIANT holds an ARRAY; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-array.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-array.t002"
+form = "sf.functions.is-array"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_ARRAY over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for BINARY"
+reading = "the page: TRUE when the VARIANT holds an ARRAY; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-array.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-array.t003"
+form = "sf.functions.is-array"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds an ARRAY; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-array.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-binary.t001"
+form = "sf.functions.is-binary"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_BINARY over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for a string"
+reading = "the page: TRUE when the VARIANT holds a BINARY value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-binary.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-binary.t002"
+form = "sf.functions.is-binary"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_BINARY over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "FALSE for the BINARY cast to VARIANT, or TRUE for VARCHAR-like values"
+reading = "the page: TRUE when the VARIANT holds a BINARY value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-binary.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-binary.t003"
+form = "sf.functions.is-binary"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a BINARY value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-binary.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-boolean.t001"
+form = "sf.functions.is-boolean"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_BOOLEAN over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the integer or the JSON null"
+reading = "the page: TRUE when the VARIANT holds a BOOLEAN value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-boolean.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-boolean.t002"
+form = "sf.functions.is-boolean"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_BOOLEAN over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for a number"
+reading = "the page: TRUE when the VARIANT holds a BOOLEAN value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-boolean.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-boolean.t003"
+form = "sf.functions.is-boolean"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a BOOLEAN value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-boolean.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-char.t001"
+form = "sf.functions.is-char-varchar.is-char"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_CHAR over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "FALSE for the date-like string, or TRUE for a number"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-char.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-char.t002"
+form = "sf.functions.is-char-varchar.is-char"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_CHAR over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for the DATE, TIME or timestamps, whose VARIANT form prints as text"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-char.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-char.t003"
+form = "sf.functions.is-char-varchar.is-char"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-char.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-varchar.t001"
+form = "sf.functions.is-char-varchar.is-varchar"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_VARCHAR over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "FALSE for the date-like string, or TRUE for a number"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-varchar.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-varchar.t002"
+form = "sf.functions.is-char-varchar.is-varchar"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_VARCHAR over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for the DATE, TIME or timestamps, whose VARIANT form prints as text"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-varchar.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-char-varchar.is-varchar.t003"
+form = "sf.functions.is-char-varchar.is-varchar"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a string value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-char-varchar.is-varchar.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date.t001"
+form = "sf.functions.is-date-value.is-date"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_DATE over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the string holding a date"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date.t002"
+form = "sf.functions.is-date-value.is-date"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_DATE over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for the timestamps, or FALSE for the DATE"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date.t003"
+form = "sf.functions.is-date-value.is-date"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date-value.t001"
+form = "sf.functions.is-date-value.is-date-value"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_DATE_VALUE over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the string holding a date"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date-value.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date-value.t002"
+form = "sf.functions.is-date-value.is-date-value"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_DATE_VALUE over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for the timestamps, or FALSE for the DATE"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date-value.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-date-value.is-date-value.t003"
+form = "sf.functions.is-date-value.is-date-value"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a DATE value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-date-value.is-date-value.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-decimal.t001"
+form = "sf.functions.is-decimal"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_DECIMAL over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "FALSE for the integer, or TRUE for the exponent number (a floating-point value)"
+reading = "the page: TRUE when the VARIANT holds a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-decimal.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-decimal.t002"
+form = "sf.functions.is-decimal"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_DECIMAL over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for DOUBLE, or FALSE for NUMBER(10,2)"
+reading = "the page: TRUE when the VARIANT holds a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-decimal.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-decimal.t003"
+form = "sf.functions.is-decimal"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-decimal.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.is-distinct-from.t001"
 form = "sf.functions.is-distinct-from"
 kind = "type_combination"
@@ -10126,6 +11083,105 @@ cases = ["cases/translation/functions/is-distinct-from.toml#t004_null_expr2"]
 required = true
 
 [[obligation]]
+id = "sf.functions.is-double-real.is-double.t001"
+form = "sf.functions.is-double-real.is-double"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_DOUBLE over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "FALSE for the integer or the decimal (only floating-point values accepted)"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-double.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-double-real.is-double.t002"
+form = "sf.functions.is-double-real.is-double"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_DOUBLE over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "FALSE for NUMBER(10,2)"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-double.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-double-real.is-double.t003"
+form = "sf.functions.is-double-real.is-double"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-double.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-double-real.is-real.t001"
+form = "sf.functions.is-double-real.is-real"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_REAL over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "FALSE for the integer or the decimal (only floating-point values accepted)"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-real.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-double-real.is-real.t002"
+form = "sf.functions.is-double-real.is-real"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_REAL over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "FALSE for NUMBER(10,2)"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-real.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-double-real.is-real.t003"
+form = "sf.functions.is-double-real.is-real"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a floating-point number, a fixed-point number or an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-double-real.is-real.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-integer.t001"
+form = "sf.functions.is-integer"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_INTEGER over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the decimal 1.50 or the exponent number"
+reading = "the page: TRUE when the VARIANT holds an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-integer.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-integer.t002"
+form = "sf.functions.is-integer"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_INTEGER over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for NUMBER(10,2) or DOUBLE"
+reading = "the page: TRUE when the VARIANT holds an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-integer.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-integer.t003"
+form = "sf.functions.is-integer"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds an integer; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-integer.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.is-null.t001"
 form = "sf.functions.is-null"
 kind = "type_combination"
@@ -10167,6 +11223,171 @@ note = "SQL NULL."
 catches = "TRUE for SQL NULL"
 reading = "the page: TRUE for a JSON null, FALSE for another JSON value, NULL for SQL NULL"
 cases = ["cases/translation/functions/is-null-value.toml#t002_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-object.t001"
+form = "sf.functions.is-object"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_OBJECT over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the array"
+reading = "the page: TRUE when the VARIANT holds an OBJECT; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-object.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-object.t002"
+form = "sf.functions.is-object"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_OBJECT over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for any typed value"
+reading = "the page: TRUE when the VARIANT holds an OBJECT; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-object.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-object.t003"
+form = "sf.functions.is-object"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds an OBJECT; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-object.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-time.t001"
+form = "sf.functions.is-time"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_TIME over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for a string"
+reading = "the page: TRUE when the VARIANT holds a TIME value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-time.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-time.t002"
+form = "sf.functions.is-time"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_TIME over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "TRUE for the timestamps"
+reading = "the page: TRUE when the VARIANT holds a TIME value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-time.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-time.t003"
+form = "sf.functions.is-time"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a TIME value; FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-time.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ltz.t001"
+form = "sf.functions.is-timestamp.is-timestamp-ltz"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_TIMESTAMP_LTZ over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the date-like string"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_LTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ltz.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ltz.t002"
+form = "sf.functions.is-timestamp.is-timestamp-ltz"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_TIMESTAMP_LTZ over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "the other timestamp types answered differently from Snowflake; the page says only \"a timestamp\", so the recording decides which of the three types give TRUE"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_LTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ltz.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ltz.t003"
+form = "sf.functions.is-timestamp.is-timestamp-ltz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_LTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ltz.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ntz.t001"
+form = "sf.functions.is-timestamp.is-timestamp-ntz"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_TIMESTAMP_NTZ over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the date-like string"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_NTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ntz.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ntz.t002"
+form = "sf.functions.is-timestamp.is-timestamp-ntz"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_TIMESTAMP_NTZ over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "the other timestamp types answered differently from Snowflake; the page says only \"a timestamp\", so the recording decides which of the three types give TRUE"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_NTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ntz.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-ntz.t003"
+form = "sf.functions.is-timestamp.is-timestamp-ntz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_NTZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-ntz.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-tz.t001"
+form = "sf.functions.is-timestamp.is-timestamp-tz"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "IS_TIMESTAMP_TZ over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null."
+catches = "TRUE for the date-like string"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_TZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-tz.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-tz.t002"
+form = "sf.functions.is-timestamp.is-timestamp-tz"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "IS_TIMESTAMP_TZ over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT."
+catches = "the other timestamp types answered differently from Snowflake; the page says only \"a timestamp\", so the recording decides which of the three types give TRUE"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_TZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-tz.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.is-timestamp.is-timestamp-tz.t003"
+form = "sf.functions.is-timestamp.is-timestamp-tz"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL, which the page says returns NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE when the VARIANT holds a timestamp (it does not say whether only TIMESTAMP_TZ); FALSE otherwise; NULL for a NULL input"
+cases = ["cases/translation/functions/is-timestamp.is-timestamp-tz.toml#t003_null_variant_expr"]
 required = true
 
 [[obligation]]
@@ -18291,6 +19512,39 @@ cases = ["cases/translation/functions/stddev.stddev-samp-over.toml#t009_distinct
 required = true
 
 [[obligation]]
+id = "sf.functions.strip-null-value.t001"
+form = "sf.functions.strip-null-value"
+kind = "type_combination"
+target = "VARIANT"
+note = "A top-level JSON null, a field holding a JSON null, and a missing field."
+catches = "the JSON null kept, so IS NULL is FALSE"
+reading = "the page: SQL NULL when the VARIANT is a JSON null; otherwise the input unchanged"
+cases = ["cases/translation/functions/strip-null-value.toml#t001_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.strip-null-value.t002"
+form = "sf.functions.strip-null-value"
+kind = "type_combination"
+target = "VARIANT"
+note = "Containers holding JSON nulls, which are not themselves a JSON null."
+catches = "nulls stripped inside the array or object"
+reading = "the page: SQL NULL when the VARIANT is a JSON null; otherwise the input unchanged"
+cases = ["cases/translation/functions/strip-null-value.toml#t002_nested"]
+required = true
+
+[[obligation]]
+id = "sf.functions.strip-null-value.t003"
+form = "sf.functions.strip-null-value"
+kind = "null_argument"
+target = "variant-expr"
+note = "A SQL NULL."
+catches = "an error, or a JSON null returned"
+reading = "the page: SQL NULL when the VARIANT is a JSON null; otherwise the input unchanged"
+cases = ["cases/translation/functions/strip-null-value.toml#t003_null_variant_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.strtok.t001"
 form = "sf.functions.strtok"
 kind = "type_combination"
@@ -20134,6 +21388,50 @@ cases = ["cases/translation/functions/timestampdiff.toml#t009_negative"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-array.t001"
+form = "sf.functions.to-array"
+kind = "type_combination"
+target = "ARRAY"
+note = "Arrays, including an empty one."
+catches = "an array wrapped in another array"
+reading = "the page: an ARRAY returned unchanged; NULL or a JSON null gives NULL; any other value becomes a one-element array"
+cases = ["cases/translation/functions/to-array.toml#t001_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-array.t002"
+form = "sf.functions.to-array"
+kind = "type_combination"
+target = "VARIANT"
+note = "A string with a comma, a number and an object."
+catches = "the string split on the comma, or the object turned into its values"
+reading = "the page: an ARRAY returned unchanged; NULL or a JSON null gives NULL; any other value becomes a one-element array"
+cases = ["cases/translation/functions/to-array.toml#t002_scalar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-array.t003"
+form = "sf.functions.to-array"
+kind = "type_combination"
+target = "NUMBER(10,2), VARCHAR"
+note = "Typed values that are not VARIANT."
+catches = "the text parsed as JSON, or the decimal scale lost"
+reading = "the page: an ARRAY returned unchanged; NULL or a JSON null gives NULL; any other value becomes a one-element array"
+cases = ["cases/translation/functions/to-array.toml#t003_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-array.t004"
+form = "sf.functions.to-array"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL and a JSON null, both of which the page says give NULL."
+catches = "a one-element array holding the null"
+reading = "the page: an ARRAY returned unchanged; NULL or a JSON null gives NULL; any other value becomes a one-element array"
+cases = ["cases/translation/functions/to-array.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-date.date.t001"
 form = "sf.functions.to-date.date"
 kind = "type_combination"
@@ -20331,6 +21629,50 @@ note = "29 February in a common year."
 catches = "a carry to 1 March or NULL instead of an error"
 reading = "the page: a string (with an optional format or AUTO), a timestamp (its date part) or a string holding an integer read as seconds, milliseconds, microseconds or nanoseconds by magnitude"
 cases = ["cases/translation/functions/to-date.to-date.toml#t009_not_a_date"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-object.t001"
+form = "sf.functions.to-object"
+kind = "type_combination"
+target = "VARIANT holding OBJECT"
+note = "Objects, nested and empty."
+catches = "an empty object returned as NULL, or nested objects flattened"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t001_object"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-object.t002"
+form = "sf.functions.to-object"
+kind = "error_parity"
+target = "error"
+note = "An array, for which the page says any input other than an OBJECT reports an error."
+catches = "the array converted to an object, instead of the error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t002_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-object.t003"
+form = "sf.functions.to-object"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL."
+catches = "an empty object returned"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-object.t004"
+form = "sf.functions.to-object"
+kind = "error_parity"
+target = "error"
+note = "A string holding object text, for which the page says any input other than an OBJECT reports an error."
+catches = "the string parsed, instead of the error"
+reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error"
+cases = ["cases/translation/functions/to-object.toml#t004_string"]
 required = true
 
 [[obligation]]
@@ -21224,6 +22566,39 @@ note = "The empty string."
 catches = "NULL or an error for empty input"
 reading = "the page: <input> is a string of hexadecimal digits (decode) or a binary or string (encode); returns VARCHAR"
 cases = ["cases/translation/functions/try-hex-decode-string.toml#t004_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.typeof.t001"
+form = "sf.functions.typeof"
+kind = "type_combination"
+target = "VARIANT from JSON"
+note = "TYPEOF over each JSON kind; the page warns an integer may report DECIMAL, so the recording decides the integer's name."
+catches = "the JSON null named NULL instead of a distinct name, or a decimal and an exponent number given the same name"
+reading = "the page: a VARCHAR naming the type of the value in the VARIANT, such as BOOLEAN, DECIMAL, ARRAY or OBJECT; an exact integer may report DECIMAL"
+cases = ["cases/translation/functions/typeof.toml#t001_json"]
+required = true
+
+[[obligation]]
+id = "sf.functions.typeof.t002"
+form = "sf.functions.typeof"
+kind = "type_combination"
+target = "VARIANT from typed values"
+note = "TYPEOF over typed values cast to VARIANT."
+catches = "all timestamps given one name, or a DATE reported as VARCHAR"
+reading = "the page: a VARCHAR naming the type of the value in the VARIANT, such as BOOLEAN, DECIMAL, ARRAY or OBJECT; an exact integer may report DECIMAL"
+cases = ["cases/translation/functions/typeof.toml#t002_typed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.typeof.t003"
+form = "sf.functions.typeof"
+kind = "null_argument"
+target = "expr"
+note = "A SQL NULL."
+catches = "the string NULL_VALUE returned for a SQL NULL, or an error"
+reading = "the page: a VARCHAR naming the type of the value in the VARIANT, such as BOOLEAN, DECIMAL, ARRAY or OBJECT; an exact integer may report DECIMAL"
+cases = ["cases/translation/functions/typeof.toml#t003_null_expr"]
 required = true
 
 [[obligation]]
