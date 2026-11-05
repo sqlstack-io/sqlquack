@@ -89,7 +89,8 @@ tags = ["error"]
 
 [[case]]
 id = "t008_boolean"
-description = "A BOOLEAN argument is an error (\"any other data type\"). Catches: TRUE read as 1"
+compile_error = true
+description = "A BOOLEAN argument is an error (\"any other data type\"). Snowflake rejects it at compile time. Catches: TRUE read as 1"
 columns = [{ name = "y", type = "BOOLEAN" }, { name = "x", type = "FLOAT" }]
 rows = [
   ["TRUE", "1"],

@@ -151,7 +151,8 @@ tags = ["error"]
 
 [[case]]
 id = "t013_expr_no_scale"
-description = "EXPR => without SCALE => is an error, as the page says. Catches: SCALE defaulted to 0"
+compile_error = true
+description = "EXPR => without SCALE => is an error, as the page says. Snowflake rejects it at compile time. Catches: SCALE defaulted to 0"
 columns = [{ name = "x", type = "NUMBER(12,4)" }]
 rows = [
   ["2.5000"],
