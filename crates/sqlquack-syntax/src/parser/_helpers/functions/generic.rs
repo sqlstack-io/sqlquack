@@ -505,8 +505,8 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
-            while self.check(TokenType::Comma) {
-                self.skip();
+            if self.check(TokenType::Comma) {
+                return Err(self.parse_error("Expected a function argument between commas"));
             }
         }
 
@@ -903,6 +903,11 @@ impl Parser {
             } else if self.match_token(TokenType::Dot) {
                 expr = self.parse_subscript_dot_access(expr)?;
             } else if self.match_token(TokenType::Collate) {
+                if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                    && !self.check(TokenType::String)
+                {
+                    return Err(self.parse_error("Expected a collation specification string"));
+                }
                 let (collation, quoted, double_quoted) = if self.check(TokenType::String) {
                     (self.advance_text()?, true, false)
                 } else if self.check(TokenType::QuotedIdentifier) {
@@ -1106,6 +1111,11 @@ impl Parser {
     }
 
     fn parse_subscript_index_or_slice(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::RBracket)
+        {
+            return Err(self.parse_error("Expected an index in the brackets"));
+        }
         if self.check(TokenType::Colon) {
             self.skip();
             let end = self.parse_slice_element()?;
@@ -1158,6 +1168,11 @@ impl Parser {
     }
 
     fn parse_subscript_dot_access(&mut self, mut expr: Expression) -> Result<Expression> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && matches!(&expr, Expression::Literal(_))
+        {
+            return Err(self.parse_error("A literal has no fields to read with a dot"));
+        }
         if self.match_token(TokenType::Star) {
             let mut table_name = match &expr {
                 Expression::Column(col) => {
@@ -1433,6 +1448,8 @@ impl Parser {
     pub(crate) fn parse_window_frame_bound(
         &mut self,
     ) -> Result<(WindowFrameBound, Option<String>)> {
+        let snowflake: bool =
+            self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake);
         if self.match_token(TokenType::Current) {
             self.expect_token(TokenType::Row)?;
             Ok((WindowFrameBound::CurrentRow, None))
@@ -1448,7 +1465,11 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Preceding) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BarePreceding, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
@@ -1456,7 +1477,11 @@ impl Parser {
             }
         } else if self.match_token(TokenType::Following) {
             let text = self.tokens[self.current - 1].text.to_string();
-            if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
+            if snowflake {
+                Err(self.parse_error(
+                    "Snowflake frame bounds need a value or UNBOUNDED before FOLLOWING",
+                ))
+            } else if self.check(TokenType::RParen) || self.check(TokenType::Comma) {
                 Ok((WindowFrameBound::BareFollowing, Some(text)))
             } else {
                 let expr = self.parse_primary()?;
@@ -1470,6 +1495,8 @@ impl Parser {
             } else if self.match_token(TokenType::Following) {
                 let text = self.tokens[self.current - 1].text.to_string();
                 Ok((WindowFrameBound::Following(Box::new(expr)), Some(text)))
+            } else if snowflake {
+                Err(self.parse_error("Expected PRECEDING or FOLLOWING after a frame bound value"))
             } else {
                 Ok((WindowFrameBound::Value(Box::new(expr)), None))
             }

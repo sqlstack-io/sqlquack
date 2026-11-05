@@ -6,5 +6,11 @@ mod test_faithful;
 mod test_fixes;
 #[path = "parser/test_located.rs"]
 mod test_located;
+#[path = "parser/test_scripting.rs"]
+mod test_scripting;
+#[path = "parser/test_snowflake_alter.rs"]
+mod test_snowflake_alter;
+#[path = "parser/test_snowflake_alter_gaps.rs"]
+mod test_snowflake_alter_gaps;
 #[path = "parser/test_types.rs"]
 mod test_types;

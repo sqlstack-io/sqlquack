@@ -1,11 +1,13 @@
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, drop_lines, exclusion_review,
-    form, obligation, opaque, read, receipt_line, rejecting, replace, rewrite_select_17, select_17,
-    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
+    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
+    crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form, not_submitted,
+    note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
+    rejecting, replace, reshaped, rewrite_select_17, select_17, select_17_setup_sha256, sha256,
+    structural, unobservable, verified_tree, with_fields, write,
 };
-use crate::check::tests::test_types::CheckTestCase;
+use crate::check::tests::test_types::{AccountStateTestCase, CheckTestCase, Parameters};
 use crate::formats::main::load_coverage::load_coverage;
 
 #[test]
@@ -180,6 +182,23 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
                     "receipts/run-1.jsonl",
                     "\"capture_method\":\"execute\"",
                     "\"capture_method\":\"compile_only_explain\"",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReceipt),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an execute receipt never satisfies a case captured as a DCM definition file",
+            mutate: |root| {
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    "\"capture\":\"execute\"",
+                    "\"capture\":\"dcm_definition_file\"",
                 )
             },
             parse: structural,
@@ -503,6 +522,47 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
+            description: "a never-submitted obligation whose case otherwise agrees",
+            mutate: |root| {
+                not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 17", "")
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableNotSubmitted),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a never-submitted entry whose case hash is stale",
+            mutate: |root| {
+                not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 18", "")
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableNotSubmitted),
+            expected_problem: Some("case select-17 is not a case with that sql_sha256"),
+        },
+        CheckTestCase {
+            description: "a reading of a form that is not catalogued",
+            mutate: |root| {
+                replace(
+                    root,
+                    "limits.toml",
+                    "form = \"sf.query.select.top\"",
+                    "form = \"sf.query.tops\"",
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some("reading sf.query.tops: form is not catalogued"),
+        },
+        CheckTestCase {
             description: "an unobservable entry naming an undeclared obligation",
             mutate: |root| unobservable(root, "sf.query.select.o009", "select-17", "SELECT 17"),
             parse: structural,
@@ -552,6 +612,99 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             form: "sf.query.select",
             expected_state: FormState::Verified,
             expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a local parse that crashes",
+            mutate: |_| {},
+            parse: crashing,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a local parse past its time bound",
+            mutate: |_| {},
+            parse: hanging,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an observe case without a receipt",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "observe"})),
+                );
+                drop_lines(root, "receipts/run-1.jsonl", "\"select-17\"");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::AwaitingObservation),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an observe case with a receipt, still never satisfied",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "observe"})),
+                )
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::AwaitingObservation),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a terminates case Snowflake refused that the parser accepts",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "terminates"})),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\"",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a terminates case whose local parse crashes",
+            mutate: |root| {
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "terminates"})),
+                );
+                replace(
+                    root,
+                    "receipts/run-1.jsonl",
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\"",
+                );
+            },
+            parse: crashing,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::LocalParseFailure),
             expected_problem: None,
         },
         CheckTestCase {
@@ -660,6 +813,359 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             problem_found,
             "{}: {:?}",
             test_case.description, check.problems
+        );
+    }
+}
+
+#[test]
+fn given_a_review_with_fingerprints_when_the_parser_changes_then_only_changed_forms_are_stale() {
+    let test_cases = [
+        CheckTestCase {
+            description: "another parser tree that parses the form's cases the same way",
+            mutate: pin_fingerprints,
+            parse: structural,
+            parser_tree: Some(OTHER_TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an uncommitted parser that parses the form's cases the same way",
+            mutate: pin_fingerprints,
+            parse: structural,
+            parser_tree: None,
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a parser that changes the tree of one of the form's cases",
+            mutate: pin_fingerprints,
+            parse: reshaped,
+            parser_tree: Some(OTHER_TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "the same parser change leaves a form whose cases it does not touch current",
+            mutate: pin_fingerprints,
+            parse: reshaped,
+            parser_tree: Some(OTHER_TREE),
+            form: "sf.query.select.top",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a parser that changes the verdict of one of the form's cases",
+            mutate: pin_fingerprints,
+            parse: crashing_on_select_from,
+            parser_tree: Some(OTHER_TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case added to the form after review",
+            mutate: |root| {
+                pin_fingerprints(root);
+                let added: String =
+                    case_line("select-18", "sf.query.select.o001", "SELECT 18", &[]);
+                let cases: String = read(root, "cases/query.jsonl");
+                write(root, "cases/query.jsonl", &format!("{cases}{added}\n"));
+                append_receipt(root, &receipt_line(&added, "accepted"));
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case removed from the form after review",
+            mutate: |root| {
+                pin_fingerprints(root);
+                drop_lines(root, "cases/query.jsonl", "\"select-from\"");
+                drop_lines(root, "receipts/run-1.jsonl", "\"select-from\"");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        (test_case.mutate)(directory.path());
+        let coverage = load_coverage(directory.path())
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, test_case.parser_tree, &test_case.parse);
+        let form = check
+            .forms
+            .iter()
+            .find(|form| form.id == test_case.form)
+            .unwrap_or_else(|| panic!("{}: no form {}", test_case.description, test_case.form));
+        assert_eq!(
+            form.state, test_case.expected_state,
+            "{}: {:?}",
+            test_case.description, form.reasons
+        );
+        let reason_found: bool = test_case
+            .expected_reason
+            .map_or(form.reasons.is_empty(), |reason| {
+                form.reasons.contains(&reason)
+            });
+        assert!(
+            reason_found,
+            "{}: {:?}",
+            test_case.description, form.reasons
+        );
+        assert!(
+            check.problems.is_empty(),
+            "{}: {:?}",
+            test_case.description,
+            check.problems
+        );
+    }
+}
+
+#[test]
+fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_form_goes_stale() {
+    let test_cases = [
+        CheckTestCase {
+            description: "a review binding each form, with nothing changed",
+            mutate: pin_definitions,
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's obligation edited in the same obligations file",
+            mutate: |root| {
+                pin_definitions(root);
+                note_obligation(root, "sf.query.select.top.o001", "positive");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's entry edited in the same catalogue file",
+            mutate: |root| {
+                pin_definitions(root);
+                move_form(root, "sf.query.select.top");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "one of the form's own obligations edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                note_obligation(root, "sf.query.select.o002", "negative_neighbour");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "the form's own catalogue entry edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                move_form(root, "sf.query.select");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case's SQL edited after review, with a bound receipt for the new SQL",
+            mutate: |root| {
+                pin_definitions(root);
+                let edited: String =
+                    case_line("select-17", "sf.query.select.o001", "SELECT 18", &[SETUP]);
+                rewrite_select_17(root, &edited);
+                append_receipt(root, &receipt_line(&edited, "accepted"));
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a parser change to the tree of one of the form's cases",
+            mutate: pin_definitions,
+            parse: reshaped,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "the form's own reading edited after review",
+            mutate: |root| {
+                pin_definitions(root);
+                replace(
+                    root,
+                    "limits.toml",
+                    "read as one expression",
+                    "read as a list",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "another form's reading edited in the same limits file",
+            mutate: |root| {
+                pin_definitions(root);
+                replace(root, "limits.toml", "read as one count", "read as a list");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a review binding the family's files still goes stale on another form's edit",
+            mutate: |root| note_obligation(root, "sf.query.select.top.o001", "positive"),
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        (test_case.mutate)(directory.path());
+        let coverage = load_coverage(directory.path())
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, test_case.parser_tree, &test_case.parse);
+        let form = check
+            .forms
+            .iter()
+            .find(|form| form.id == test_case.form)
+            .unwrap_or_else(|| panic!("{}: no form {}", test_case.description, test_case.form));
+        assert_eq!(
+            (form.state, form.reasons.clone()),
+            (
+                test_case.expected_state,
+                test_case
+                    .expected_reason
+                    .into_iter()
+                    .collect::<Vec<Reason>>()
+            ),
+            "{}",
+            test_case.description
+        );
+        assert!(
+            check.problems.is_empty(),
+            "{}: {:?}",
+            test_case.description,
+            check.problems
+        );
+    }
+}
+
+#[test]
+fn given_a_receipt_with_account_state_when_checking_then_only_its_case_carries_it() {
+    let test_cases = [
+        AccountStateTestCase {
+            description: "a parameter with its value",
+            account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
+                            {\"value\":\"NONE\",\"basis\":\"D120: set by sa-01\"}}",
+            expected_cases: vec![
+                ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", Some("NONE"))]),
+                ("select-from", vec![]),
+                ("select-top", vec![]),
+            ],
+        },
+        AccountStateTestCase {
+            description: "a parameter whose value is null for want of a usable recorded_at",
+            account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
+                            {\"value\":null,\"basis\":\"D120: no usable recorded_at\"}}",
+            expected_cases: vec![
+                ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", None)]),
+                ("select-from", vec![]),
+                ("select-top", vec![]),
+            ],
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        replace(
+            directory.path(),
+            "receipts/run-1.jsonl",
+            "\"phase_basis\":\"errno\"",
+            &format!("\"phase_basis\":\"errno\"{}", test_case.account_state),
+        );
+        let coverage = load_coverage(directory.path())
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, Some(TREE), &structural);
+        let cases: Vec<(&str, Parameters)> = check
+            .forms
+            .iter()
+            .flat_map(|form| &form.obligations)
+            .flat_map(|obligation| &obligation.cases)
+            .map(|case| {
+                let state = case
+                    .account_state
+                    .iter()
+                    .map(|(name, setting)| (name.as_str(), setting.value.as_deref()))
+                    .collect();
+                (case.case_id.as_str(), state)
+            })
+            .collect();
+        assert_eq!(cases, test_case.expected_cases, "{}", test_case.description);
+        assert!(
+            check
+                .forms
+                .iter()
+                .filter(|form| form.family == "query")
+                .all(|form| form.state == FormState::Verified),
+            "{}: account state is provenance and changes no verdict",
+            test_case.description
         );
     }
 }

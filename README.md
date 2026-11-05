@@ -29,6 +29,18 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `session_timezone_utc` assumption; strict mode refuses them unless you confirm a UTC session with
 `--utc-session`.
 
+## Check
+
+```console
+$ cargo run --release -p sqlquack -- check query.sql
+$ echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check --json
+```
+
+`check` parses Snowflake SQL and reports what Snowflake would reject, without a schema or a
+conversion. It prints coded diagnostics on standard error, and `--json` prints
+`{"ok": …, "diagnostics": [...]}`. It exits 0 when it finds nothing, 1 when it finds a problem and
+2 for input without SQL.
+
 ## Convert
 
 ```console
@@ -36,10 +48,43 @@ $ cargo run --release -p sqlquack -- convert query.sql --schema schema.json
 $ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
 ```
 
+The binary links DuckDB's prebuilt shared library (`libduckdb.so`, `libduckdb.dylib` on macOS,
+`duckdb.dll` on Windows), which `cargo run` puts on the library path. To run
+`target/release/sqlquack` directly, point the library path at the directory the build downloaded it
+to, `target/duckdb-download/<target triple>/<DuckDB version>`:
+
+```console
+$ LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack convert query.sql
+```
+
+Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. The Python module ships the library beside
+itself and needs neither.
+
 `convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
 divergences and assumptions it relies on on standard error. A refused statement prints its refusals
-instead and exits 1; input holding no statement exits 2. `--session NAME=VALUE` passes the caller's
-Snowflake session parameters (`function` takes it too):
+instead and exits 1; input holding no statement exits 2. Each refusal is a coded diagnostic,
+underlined in the source as rustc does:
+
+```console
+error[SQ0004]: a name does not resolve
+ --> query.sql:1:15
+  |
+1 | SELECT a FROM orders
+  |               ^^^^^^ relation `ORDERS` has no known columns
+  |
+  = help: declare the relation and its columns in the schema (`--schema` on the command line)
+```
+
+With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `alias` (a parser
+guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
+`column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
+listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`; a code is
+never reused or renumbered. SQL that Snowflake parses but then rejects, such as `INTERSECT ALL`,
+`FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE` or `RENAME` of
+a column the pattern removes, is refused with its own `SQ02xx` code instead of being converted.
+A `VALUES` list of more than 1,000 rows is refused for now.
+`--session NAME=VALUE` passes the caller's Snowflake session parameters
+(`function` takes it too):
 
 - Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for
   `QUOTED_IDENTIFIERS_IGNORE_CASE = true`) and refuses, naming the parameters, when they match none.
@@ -58,6 +103,22 @@ session parameters yet and convert under `utc-v1`.
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
 exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
+They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
+`--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
+on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
+`--format text|json`; `--json` is short for `--format json`.
+
+HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
+run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
+deduplication or change detection can opt in by setting `default = "warn"` under
+`[divergences.hash]` in its `sqlquack.toml`.
+
+`function` converts a SQL project function's body, read from a file or from standard input with
+`-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
+"refusals": [diagnostics]}` instead, with the same diagnostics on standard error.
+
+`convert`, `function`, `census` and `index` exit 0 when they succeed, 1 when something is refused,
+and 2 when they cannot run: bad arguments, an unreadable file, or input without SQL.
 
 ## Census
 
@@ -106,6 +167,22 @@ rules → cases and files, and rule → cases and files, with refused constructs
 Every list is sorted, so the output of two revisions can be diffed to see which cases a change to
 one building block affects.
 
+## Python
+
+```python
+import sqlquack
+
+sqlquack.check(sql="SELECT 1 QUALIFY TRUE").diagnostics[0].code  # "SQ0203"
+result = sqlquack.convert(
+    sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True)
+)
+```
+
+The `sqlquack` package (in `python/`, built with `make python-wheel`) runs the same code as the
+command line. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
+command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
+per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
+
 ## Evidence
 
 Every rule is verified against results recorded on Snowflake and replayed on DuckDB:
@@ -140,6 +217,9 @@ See [docs/architecture.md](docs/architecture.md).
 evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
 recorder out.
 
+`make check-merge RECORDER=0` is what a merge to main must pass on its exact head: the static gate
+and the Rust tests.
+
 `make gate` runs everything CI runs: the static gate, the tests, the replay of every recorded case,
 the exact parser check and timed conversion over DuckShop and DuckShop 10K, and a fuzz smoke run.
 It needs a nightly toolchain with `cargo-fuzz` for the fuzz step, and fetches and compiles the
@@ -150,6 +230,13 @@ and `SQLBUILD_VERSION`). Run it with `RECORDER=0 UV_NO_SYNC=1` in a clean checko
 $ uv sync --locked --no-group recorder
 $ RECORDER=0 UV_NO_SYNC=1 make gate VERIFY_FLAGS="--require-verified --strict-errors"
 ```
+
+`make duckshop-measure DUCKSHOP_RESULTS=<dir>` measures DuckShop with the checkout's own binary
+and `sqlquack.toml`. It runs the compiled unit tests on DuckDB, then converts each model and runs
+it over Snowflake's recorded inputs, comparing the result with Snowflake's recorded rows.
+`DUCKSHOP_RESULTS` is a directory of DuckShop results recorded on Snowflake, with its
+`index-<target>.json` files beside it. The reports are written to `DUCKSHOP_MEASURE_DIR`, which
+defaults to `target/duckshop-measure`.
 
 A change lands on `main` as one squashed commit whose tree is exactly a tree that passed
 `make gate`.

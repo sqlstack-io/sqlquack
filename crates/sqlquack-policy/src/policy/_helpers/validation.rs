@@ -5,8 +5,8 @@ use std::collections::BTreeSet;
 use crate::policy::_helpers::type_patterns::parse_type_pattern;
 use crate::policy::constants::{SCHEMA_VERSION, SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use crate::policy::models::{
-    Divergence, EdgeCaseRequirement, PatternArgument, Policy, SessionProfile, SessionValue,
-    TypeEquality, TypePattern,
+    Divergence, DivergenceFailure, EdgeCaseRequirement, PatternArgument, Policy, SessionProfile,
+    SessionValue, TypeEquality, TypePattern,
 };
 
 pub(crate) fn problems(policy: &Policy) -> Vec<String> {
@@ -179,6 +179,11 @@ fn divergence_problems(name: &str, divergence: &Divergence) -> Vec<String> {
     }
     if divergence.reason.trim().is_empty() {
         found.push(format!("divergence `{name}` has no reason"));
+    }
+    if divergence.assumption && divergence.failure == DivergenceFailure::Loud {
+        found.push(format!(
+            "divergence `{name}` is an assumption, whose failure is a wrong value, so it cannot be loud"
+        ));
     }
     found
 }

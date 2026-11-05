@@ -4,7 +4,7 @@ use std::path::Path;
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
-use crate::check::models::LocalVerdict;
+use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::constants::FAMILIES;
 
 /// The parser tree every family review in the fixture binds.
@@ -50,10 +50,90 @@ pub(crate) fn drop_lines(root: &Path, path: &str, fragment: &str) {
 
 /// SQLQuack as the fixture needs it: `SELECT FROM` is rejected, everything else is structural.
 pub(crate) fn structural(sql: &str) -> LocalVerdict {
-    [
-        LocalVerdict::Accepted { opaque: false },
-        LocalVerdict::Rejected,
-    ][usize::from(sql == "SELECT FROM")]
+    vec![accepted_as(sql), LocalVerdict::Rejected].swap_remove(usize::from(sql == "SELECT FROM"))
+}
+
+/// A structural acceptance whose tree serialises as `tree`.
+fn accepted_as(tree: &str) -> LocalVerdict {
+    LocalVerdict::Accepted {
+        opaque: false,
+        tree_sha256: Some(sha256(tree)),
+    }
+}
+
+/// `structural`, except that `SELECT 17` parses into another tree.
+pub(crate) fn reshaped(sql: &str) -> LocalVerdict {
+    vec![structural(sql), accepted_as("another tree")].swap_remove(usize::from(sql == "SELECT 17"))
+}
+
+/// `structural`, except that `SELECT FROM` crashes instead of being rejected.
+pub(crate) fn crashing_on_select_from(sql: &str) -> LocalVerdict {
+    vec![structural(sql), crashing(sql)].swap_remove(usize::from(sql == "SELECT FROM"))
+}
+
+/// Rewrites the query review to list both query forms with their fingerprints under `structural`.
+pub(crate) fn pin_fingerprints(root: &Path) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let pins: Vec<String> = check
+        .forms
+        .iter()
+        .filter(|form| form.family == "query")
+        .map(|form| format!("\"{}\" = \"{}\"", form.id, form.fingerprint))
+        .collect();
+    replace(
+        root,
+        "reviews/query.toml",
+        "verdict = \"approved\"\n",
+        &format!(
+            "verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+             fingerprints = {{ {} }}\n",
+            pins.join(", ")
+        ),
+    );
+}
+
+/// Rewrites the query review to bind each query form by fingerprint and definition (D118).
+pub(crate) fn pin_definitions(root: &Path) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let query: Vec<&crate::check::models::FormResult> = check
+        .forms
+        .iter()
+        .filter(|form| form.family == "query")
+        .collect();
+    let pins = |value: fn(&crate::check::models::FormResult) -> &str| -> String {
+        query
+            .iter()
+            .map(|form| format!("\"{}\" = \"{}\"", form.id, value(form)))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    let review: String = format!(
+        "[[review]]\nid = \"query-1\"\nreviewer_lane = \"auditor\"\nfamily = \"query\"\n\
+         parser_tree = \"{TREE}\"\nreviewed_utc = \"2026-11-04T09:00:00Z\"\n\
+         verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+         fingerprints = {{ {} }}\ndefinitions = {{ {} }}\n",
+        pins(|form| &form.fingerprint),
+        pins(|form| &form.definition_sha256),
+    );
+    write(root, "reviews/query.toml", &review);
+}
+
+/// A local parse that crashes on everything.
+pub(crate) fn crashing(_sql: &str) -> LocalVerdict {
+    LocalVerdict::Failed {
+        failure: LocalFailure::Crash,
+    }
+}
+
+/// A local parse that runs past its time bound on everything.
+pub(crate) fn hanging(_sql: &str) -> LocalVerdict {
+    LocalVerdict::Failed {
+        failure: LocalFailure::Timeout,
+    }
 }
 
 /// A parser that rejects everything.
@@ -68,8 +148,11 @@ pub(crate) fn append_receipt(root: &Path, line: &str) {
 }
 
 /// A parser that accepts everything, through a Command or Raw fallback.
-pub(crate) fn opaque(_sql: &str) -> LocalVerdict {
-    LocalVerdict::Accepted { opaque: true }
+pub(crate) fn opaque(sql: &str) -> LocalVerdict {
+    LocalVerdict::Accepted {
+        opaque: true,
+        tree_sha256: Some(sha256(sql)),
+    }
 }
 
 /// A case line, its hashes computed from its SQL, setup and session.
@@ -233,6 +316,16 @@ pub(crate) fn verified_tree(root: &Path) {
         "receipts/run-1.jsonl",
         &format!("{}\n", receipts.join("\n")),
     );
+    write(
+        root,
+        "limits.toml",
+        &format!(
+            "[[reading]]\nform = \"sf.query.select\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT <expr> read as one expression\"]\nreason = \"r\"\n\
+             [[reading]]\nform = \"sf.query.select.top\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT TOP <n> <expr> read as one count\"]\nreason = \"r\"\n"
+        ),
+    );
     review(root);
 }
 
@@ -295,5 +388,43 @@ pub(crate) fn unobservable(root: &Path, obligation: &str, case_id: &str, sql: &s
              runs = [\"run-1\"]\nprobes = []\n",
             sha256(sql)
         ),
+    );
+}
+
+/// Lists `obligation` as never submitted, citing `case_id` with the hash of `sql`, with `runs`.
+pub(crate) fn not_submitted(root: &Path, obligation: &str, case_id: &str, sql: &str, runs: &str) {
+    write(
+        root,
+        "unobservable/query.toml",
+        &format!(
+            "[[unobservable]]\nobligation = \"{obligation}\"\nform = \"sf.query.select\"\n\
+             construct = \"a construct\"\nreason = \"not submitted: held by the capture guard\"\n\
+             cause = \"not_submitted\"\n\
+             cases = [{{ case_id = \"{case_id}\", sql_sha256 = \"{}\" }}]\n\
+             runs = [{runs}]\nprobes = []\n",
+            sha256(sql)
+        ),
+    );
+}
+
+/// Adds a note to the obligation `id` of kind `kind`, an edit the obligations file alone sees.
+pub(crate) fn note_obligation(root: &Path, id: &str, kind: &str) {
+    let declared: String = format!("id = \"{id}\"\nkind = \"{kind}\"\nrequired = true\n");
+    replace(
+        root,
+        "obligations/query.toml",
+        &declared,
+        &format!("{declared}note = \"edited after review\"\n"),
+    );
+}
+
+/// Moves the catalogue form `id` to another anchor, an edit the catalogue file alone sees.
+pub(crate) fn move_form(root: &Path, id: &str) {
+    let declared: String = format!("id = \"{id}\"\nfamily = \"query\"\nsource = \"doc.select\"\n");
+    replace(
+        root,
+        "catalogue/query.toml",
+        &format!("{declared}anchor = \"Syntax\""),
+        &format!("{declared}anchor = \"Syntax, edited\""),
     );
 }

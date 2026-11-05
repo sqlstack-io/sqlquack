@@ -29,6 +29,8 @@ pub(crate) struct Emitted {
     pub(crate) utc_offset: bool,
     /// The schema columns whose declared offset the UTC mark relies on, as `RELATION.COLUMN`.
     pub(crate) declared: Vec<String>,
+    /// For a TIMESTAMP_TZ from CONVERT_TIMEZONE of two arguments: its target zone's DuckDB SQL.
+    pub(crate) zone: Option<String>,
     /// For VARIANT values: how DuckDB holds them.
     pub(crate) held: Holding,
     /// For VARIANT-held values: what their root is known to be.
@@ -72,6 +74,7 @@ impl Emitted {
             literal: None,
             utc_offset: false,
             declared: Vec::new(),
+            zone: None,
             held: Holding::Json,
             root: VariantRoot::Dynamic,
             untainted: false,
@@ -161,6 +164,8 @@ pub(crate) struct Context<'a> {
     pub(crate) order: &'a OrderTrack,
     /// Whether query results may keep unordered arrays: CTE and FROM subquery bodies.
     pub(crate) free_projections: bool,
+    /// Whether this converts a case's input fixture, whose literals stand for source data.
+    pub(crate) fixture_body: bool,
 }
 
 /// How many unordered values were passed up unchecked, to positions where order cannot matter.

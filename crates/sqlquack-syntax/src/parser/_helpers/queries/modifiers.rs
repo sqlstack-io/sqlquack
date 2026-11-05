@@ -655,6 +655,14 @@ impl Parser {
         let mut corresponding = false;
         let mut on_columns: Vec<Expression> = Vec::new();
 
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::By)
+            && !self
+                .peek_nth(1)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("NAME"))
+        {
+            return Err(self.parse_error("Expected NAME after BY"));
+        }
         if self.match_token(TokenType::By) && self.match_identifier("NAME") {
             by_name = true;
             if matches!(
@@ -1350,6 +1358,8 @@ impl Parser {
                 comments: Vec::new(),
                 nesting_group: 0,
                 directed: false,
+                first_last: None,
+                first_last_alias: None,
                 span: SourceSpan::default(),
             });
         }

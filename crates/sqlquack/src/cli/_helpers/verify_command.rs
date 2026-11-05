@@ -1,10 +1,12 @@
-//! `sqlquack verify`.
+//! `sqlquack verify` and `sqlquack compare`.
 
 use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use sqlquack_compare::comparison::models::RowOrder;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{SESSION_DEFAULTS_FILE, SESSION_DEFAULTS_NAME};
 use sqlquack_evidence::coverage::constants::COVERAGE_GAPS_LISTED;
@@ -12,15 +14,22 @@ use sqlquack_evidence::coverage::main::check_coverage::check_coverage;
 use sqlquack_evidence::coverage::main::load_domains::load_domains;
 use sqlquack_evidence::coverage::main::load_hazards::load_hazards;
 use sqlquack_evidence::coverage::models::CoverageReport;
+use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
+use sqlquack_evidence::replay::models::ReplaySettings;
+use sqlquack_evidence::results::main::load_recording::load_recording;
 use sqlquack_evidence::results::main::load_session_defaults::load_session_defaults;
+use sqlquack_evidence::verify::main::judge_recording::judge_recording;
 use sqlquack_evidence::verify::main::verify_cases::verify_cases;
+use sqlquack_evidence::verify::models::RecordingMatch;
 use sqlquack_evidence::verify::models::{
     CaseVerdict, Conversion, ErrorCheck, Verdict, VerifyInputs, VerifyReport,
 };
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::constants::RULES;
-use sqlquack_rules::conversion::constants::PROJECT_UDF;
+use sqlquack_rules::conversion::constants::{HASH_DIVERGENCE, PROJECT_UDF};
+use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
@@ -29,7 +38,9 @@ use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::conversion_options::conversion_options;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::evidence::{Evidence, load_evidence};
-use crate::cli::models::{CoverageArguments, EvidencePaths, VerifyArguments};
+use crate::cli::models::{
+    CompareArguments, Comparison, CoverageArguments, EvidencePaths, VerifyArguments,
+};
 
 pub(crate) fn verify_command(
     arguments: &VerifyArguments,
@@ -48,7 +59,7 @@ pub(crate) fn verify_command(
         }
     };
     let coverage = coverage(&arguments.coverage, &evidence, &report);
-    let rendered = if arguments.json {
+    let rendered = if arguments.output.json() {
         serde_json::to_string_pretty(&report).unwrap_or_default() + "\n"
     } else {
         render(&report) + &coverage.as_ref().map(render_coverage).unwrap_or_default()
@@ -167,7 +178,7 @@ fn coverage(
 /// The verdicts with pending cases that convert counted as passed, and the pending cases refused.
 fn projected(evidence: &Evidence, report: &VerifyReport) -> (Vec<CaseVerdict>, Vec<String>) {
     let converter = PipelineConverter {
-        options: conversion_options(&evidence.policy, false),
+        options: verified_options(&evidence.policy),
         python: None,
     };
     let cases: BTreeMap<&str, &LoadedCase> = evidence
@@ -435,14 +446,109 @@ fn render(report: &VerifyReport) -> String {
     lines.join("\n") + "\n"
 }
 
-/// The converter of `policy`'s default mode, relying on `project_udf` when Python replays cases.
+/// `policy`'s default mode with HASH allowed: its recorded cases check the opt-in conversion.
+fn verified_options(policy: &Policy) -> ConversionOptions {
+    confirm_assumption(conversion_options(policy, false), policy, HASH_DIVERGENCE)
+}
+
+/// The converter `verified_options` gives, relying on `project_udf` when Python replays cases.
 pub(crate) fn python_converter(policy: &Policy, python: Option<&Path>) -> PipelineConverter {
-    let options = conversion_options(policy, false);
+    let options = verified_options(policy);
     PipelineConverter {
         options: match python {
             Some(_) => confirm_assumption(options, policy, PROJECT_UDF),
             None => options,
         },
         python: python.map(Path::to_path_buf),
+    }
+}
+
+/// `sqlquack compare`: each manifest entry's converted SQL replayed and judged on DuckDB.
+pub(crate) fn compare_command(
+    arguments: &CompareArguments,
+    stdout: &mut dyn Write,
+    stderr: &mut dyn Write,
+) -> ExitCode {
+    match compare(arguments) {
+        Ok(outcomes) => {
+            let _ = writeln!(stdout, "{}", serde_json::Value::Array(outcomes));
+            ExitCode::SUCCESS
+        }
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack compare: failed: {error}");
+            ExitCode::from(2)
+        }
+    }
+}
+
+fn compare(arguments: &CompareArguments) -> Result<Vec<serde_json::Value>, String> {
+    let policy = load_policy(&arguments.policy).map_err(|error| error.to_string())?;
+    let profile = policy
+        .session_profiles
+        .get(&arguments.session_profile)
+        .ok_or_else(|| {
+            format!(
+                "the policy has no session profile `{}`",
+                arguments.session_profile
+            )
+        })?;
+    let settings = ReplaySettings {
+        time_zone: profile.duckdb_time_zone.clone(),
+        null_order: policy.comparator.null_order.duckdb_setting().to_owned(),
+    };
+    let text = std::fs::read_to_string(&arguments.manifest).map_err(|error| error.to_string())?;
+    let comparisons: Vec<Comparison> =
+        serde_json::from_str(&text).map_err(|error| error.to_string())?;
+    Ok(comparisons
+        .par_iter()
+        .map(|comparison| {
+            let (outcome, detail) = judged(comparison, &policy, &settings);
+            serde_json::json!({"id": comparison.id, "outcome": outcome, "detail": detail})
+        })
+        .collect())
+}
+
+/// The outcome of one comparison and what lies behind it.
+fn judged(
+    comparison: &Comparison,
+    policy: &Policy,
+    settings: &ReplaySettings,
+) -> (&'static str, String) {
+    let recorded = match load_recording(&comparison.recorded) {
+        Ok(recorded) => recorded,
+        Err(error) => return ("unreadable", error.to_string()),
+    };
+    let sql = match std::fs::read_to_string(&comparison.sql) {
+        Ok(sql) => sql,
+        Err(error) => {
+            return (
+                "unreadable",
+                format!("{}: {error}", comparison.sql.display()),
+            );
+        }
+    };
+    let database = comparison
+        .database
+        .display()
+        .to_string()
+        .replace('\'', "''");
+    let setup = [format!(
+        "ATTACH '{database}' AS inputs (READ_ONLY); USE inputs;"
+    )];
+    let replayed = match replay_on_duckdb((&setup, &sql), None, settings) {
+        Ok(replayed) => replayed,
+        Err(error) => return ("duckdb_error", error),
+    };
+    let order = match comparison.ordered {
+        true => RowOrder::Ordered,
+        false => RowOrder::Bag,
+    };
+    match judge_recording(&recorded, &replayed, order, &policy.comparator) {
+        Ok(RecordingMatch::Matches) => ("matches", String::new()),
+        Ok(RecordingMatch::MatchesAtMicroseconds) => ("matches_at_microseconds", String::new()),
+        Ok(RecordingMatch::Differs(mismatch)) => {
+            ("differs", format!("{:?}: {mismatch}", mismatch.kind))
+        }
+        Err(error) => ("differs", error),
     }
 }

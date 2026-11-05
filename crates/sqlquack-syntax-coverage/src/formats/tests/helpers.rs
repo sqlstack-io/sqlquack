@@ -74,6 +74,40 @@ pub(crate) fn receipt_line() -> String {
     )
 }
 
+/// Where a receipt line takes an `account_state` field.
+pub(crate) const ACCOUNT_STATE_AT: &str = "\"phase_basis\":\"ran\"";
+
+/// `ACCOUNT_STATE_AT` followed by one account parameter whose basis is `basis`.
+pub(crate) fn account_state(basis: &str) -> String {
+    format!(
+        "{ACCOUNT_STATE_AT},\"account_state\":{{\"CORTEX_MODELS_ALLOWLIST\":\
+         {{\"basis\":\"{basis}\",\"value\":\"NONE\"}}}}"
+    )
+}
+
+/// `receipt_line()` as a failed DCM PLAN of its case, its inner error ending the whole message.
+pub(crate) fn dcm_line(inner_message: &str, position: &str) -> String {
+    let message: String = format!(
+        "Error during DCM INIT_PLAN of DCM Project RUN_DB.PUBLIC.DP1: Compilation failed in file \
+         sources/definitions/d1.sql:\\n{inner_message}"
+    );
+    receipt_line()
+        .replace(
+            "\"capture_method\":\"execute\"",
+            "\"capture_method\":\"dcm_definition_file\"",
+        )
+        .replace(
+            "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+            &format!(
+                "\"errno\":1003,\"sqlstate\":\"42000\",\"phase\":\"syntax_error\",\
+                 \"message\":\"{message}\",\"inner_message\":\"{inner_message}\",\
+                 \"dcm_project\":\"RUN_DB.PUBLIC.DP1\",\
+                 \"definition_file_sha256\":\
+                 \"ef83e1f6253a9a3e957db2ad55395a2ff7743a020a4f73c6085dbcbc5cb09ac7\"{position}"
+            ),
+        )
+}
+
 /// A valid tree with one record of every kind.
 pub(crate) fn valid_tree(root: &Path) {
     write(
@@ -137,6 +171,16 @@ pub(crate) fn valid_tree(root: &Path) {
         ),
     );
     write(root, "cases/query.jsonl", &format!("{}\n", case_line()));
+    write(
+        root,
+        "limits.toml",
+        &format!(
+            "[[limit]]\nform = \"sf.query.select\"\nkind = \"boundary_above\"\n\
+             [[suppress]]\nform = \"sf.query.select\"\nreason = \"r\"\n\
+             [[reading]]\nform = \"sf.query.select\"\ngrammar_sha256 = \"{SHA_A}\"\n\
+             grammar = [\"SELECT <expr>\"]\nreason = \"r\"\n"
+        ),
+    );
     write(
         root,
         "receipts/first.jsonl",

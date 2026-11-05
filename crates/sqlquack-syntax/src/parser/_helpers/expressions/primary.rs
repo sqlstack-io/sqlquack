@@ -507,6 +507,7 @@ impl Parser {
                 let this_expr = count_expr.this.clone().unwrap_or_else(|| {
                     Expression::Star(crate::expressions::names::models::Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,
@@ -625,6 +626,7 @@ impl Parser {
                         negated: false,
                         left: Expression::Star(Star {
                             table: None,
+                            ilike: None,
                             except: None,
                             replace: None,
                             rename: None,
@@ -1068,6 +1070,11 @@ impl Parser {
             }))
         };
 
+        if self.check(TokenType::String)
+            && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+        {
+            return Err(self.parse_error("Snowflake does not join adjacent string literals"));
+        }
         if self.check(TokenType::String) {
             let mut expressions = vec![first_literal];
             while self.check(TokenType::String) {
@@ -1108,6 +1115,7 @@ impl Parser {
                 self.skip();
                 Expression::Star(Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,

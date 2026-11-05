@@ -13,6 +13,7 @@ use crate::expressions::operators::models::In;
 use crate::expressions::operators::models::Placeholder;
 use crate::expressions::queries::models::Pivot;
 use crate::expressions::queries::models::PivotAlias;
+use crate::expressions::queries::models::Resample;
 use crate::expressions::queries::models::Unpivot;
 use crate::expressions::statements::models::TableAlias;
 use crate::expressions::tree::models::Expression;
@@ -93,7 +94,14 @@ impl Parser {
             expr = self.parse_match_recognize(Some(expr))?;
         }
 
-        expr = self.parse_table_alias(expr)?;
+        if self.is_resample_start() {
+            expr = self.parse_table_resample(expr)?;
+        } else {
+            expr = self.parse_table_alias(expr)?;
+            if self.is_resample_start() {
+                expr = self.parse_table_resample(expr)?;
+            }
+        }
 
         if matches!(
             self.config.dialect,
@@ -135,6 +143,68 @@ impl Parser {
         expr = self.parse_table_trailing_time_travel(expr);
 
         Ok(expr)
+    }
+
+    /// Whether a Snowflake `RESAMPLE (` clause comes next.
+    fn is_resample_start(&self) -> bool {
+        matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && self.check_keyword_text("RESAMPLE")
+            && self.check_next(TokenType::LParen)
+    }
+
+    /// Parses `RESAMPLE ( USING col INCREMENT BY expr [PARTITION BY ...] [METADATA_COLUMNS f() [[AS] a], ...] )`.
+    fn parse_table_resample(&mut self, expr: Expression) -> Result<Expression> {
+        self.skip();
+        self.expect_token(TokenType::LParen)?;
+        if !self.match_token(TokenType::Using) {
+            return Err(self.parse_error("Expected USING in RESAMPLE"));
+        }
+        let using = self.expect_identifier_with_quoted()?;
+        if !self.match_text_seq(&["INCREMENT", "BY"]) {
+            return Err(self.parse_error("Expected INCREMENT BY in RESAMPLE"));
+        }
+        let increment = self.parse_expression()?;
+        let partition_by = if self.match_keywords(&[TokenType::Partition, TokenType::By]) {
+            self.parse_expression_list()?
+        } else {
+            Vec::new()
+        };
+        let mut metadata_columns: Vec<(Expression, Option<Identifier>)> = Vec::new();
+        if self.match_keyword("METADATA_COLUMNS") {
+            loop {
+                let is_call = matches!(
+                    self.peek().token_type,
+                    TokenType::Identifier | TokenType::Var | TokenType::QuotedIdentifier
+                ) && self.check_next(TokenType::LParen);
+                if !is_call {
+                    return Err(self.parse_error("Expected a metadata column function in RESAMPLE"));
+                }
+                let call = self.parse_expression()?;
+                let alias = if self.match_token(TokenType::As)
+                    || matches!(
+                        self.peek().token_type,
+                        TokenType::Identifier | TokenType::Var | TokenType::QuotedIdentifier
+                    ) {
+                    Some(self.expect_identifier_with_quoted()?)
+                } else {
+                    None
+                };
+                metadata_columns.push((call, alias));
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Resample(Box::new(Resample {
+            this: Box::new(expr),
+            using,
+            increment,
+            partition_by,
+            metadata_columns,
+        })))
     }
 
     fn parse_table_sample(&mut self, mut expr: Expression) -> Result<Expression> {
@@ -998,6 +1068,7 @@ impl Parser {
                 break;
             }
             let func = self.parse_primary()?;
+            self.refuse_snowflake_pivot_aggregate(&func)?;
             let expr = if self.match_token(TokenType::As) {
                 let alias_name = self.expect_identifier_or_keyword()?;
                 Expression::Alias(Box::new(Alias::new(func, Identifier::new(alias_name))))
@@ -1005,6 +1076,9 @@ impl Parser {
                 && !self.check(TokenType::For)
                 && !self.check(TokenType::RParen)
             {
+                if self.is_snowflake() && self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected an identifier alias in PIVOT"));
+                }
                 if let Some(id) = self.parse_id_var()? {
                     let alias_name = match &id {
                         Expression::Identifier(ident) => ident.name.clone(),
@@ -1083,6 +1157,7 @@ impl Parser {
 
         if self.match_token(TokenType::LParen) {
             let in_exprs = if self.match_text_seq(&["ANY"]) {
+                self.expect_snowflake_order_by()?;
                 let order = self.parse_order()?;
                 vec![Expression::PivotAny(Box::new(PivotAny {
                     this: order.map(Box::new),
@@ -1091,10 +1166,13 @@ impl Parser {
                 let mut vals: Vec<Expression> = Vec::new();
                 loop {
                     if self.check(TokenType::RParen) {
+                        self.refuse_snowflake_empty_pivot_list(&vals)?;
                         break;
                     }
                     if let Some(val) = self.parse_select_or_expression()? {
-                        let val = if self.match_token(TokenType::As) {
+                        let val = if let Some(alias) = self.parse_snowflake_bare_pivot_alias()? {
+                            Expression::PivotAlias(Box::new(PivotAlias { this: val, alias }))
+                        } else if self.match_token(TokenType::As) {
                             let alias_expr = self.parse_bitwise()?.ok_or_else(|| {
                                 self.parse_error(
                                     "Expected expression after AS in PIVOT/UNPIVOT IN clause",
@@ -1172,6 +1250,9 @@ impl Parser {
             };
 
         self.expect_token(TokenType::For)?;
+        if self.is_snowflake() && self.is_snowflake_reserved_keyword() {
+            return Err(self.parse_error("Expected a column name after FOR"));
+        }
         let name_column = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
 
         self.expect_token(TokenType::In)?;
@@ -1216,6 +1297,9 @@ impl Parser {
                         self.parse_select_or_expression()?
                     }
                 } else {
+                    if snowflake && self.check(TokenType::String) {
+                        return Err(self.parse_error("Expected a column in the UNPIVOT IN list"));
+                    }
                     self.parse_select_or_expression()?
                 };
 
@@ -1224,7 +1308,9 @@ impl Parser {
                     {
                         return Err(self.parse_error("Expected an identifier alias in UNPIVOT IN"));
                     }
-                    let col = if self.match_token(TokenType::As) {
+                    let col = if let Some(alias) = self.parse_snowflake_bare_pivot_alias()? {
+                        Expression::PivotAlias(Box::new(PivotAlias { this: col, alias }))
+                    } else if self.match_token(TokenType::As) {
                         let alias_expr = self.parse_bitwise()?.ok_or_else(|| {
                             self.parse_error("Expected expression after AS in UNPIVOT IN clause")
                         })?;
@@ -1307,6 +1393,34 @@ impl Parser {
         let prev_token = &self.tokens[self.current - 1];
         let curr_token = &self.tokens[self.current];
         prev_token.span.end == curr_token.span.start
+    }
+
+    /// An object name after DROP, UNDROP or TRUNCATE; Snowflake rejects unquoted reserved words.
+    pub(crate) fn parse_object_name_ref(&mut self) -> Result<TableRef> {
+        let name = self.parse_table_ref()?;
+        for part in [&name.catalog, &name.schema].into_iter().flatten() {
+            self.reject_reserved_name_part(part)?;
+        }
+        self.reject_reserved_name_part(&name.name)?;
+        Ok(name)
+    }
+
+    /// Fails on an unquoted Snowflake reserved word used as a name part in a Snowflake parse.
+    pub(crate) fn reject_reserved_name_part(&self, part: &Identifier) -> Result<()> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && !part.quoted
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                .iter()
+                .any(|keyword| part.name.eq_ignore_ascii_case(keyword))
+        {
+            return Err(self.parse_error(format!(
+                "Reserved word {} cannot be an unquoted object name",
+                part.name.to_ascii_uppercase()
+            )));
+        }
+        Ok(())
     }
 
     /// Parse a table reference (schema.table format)

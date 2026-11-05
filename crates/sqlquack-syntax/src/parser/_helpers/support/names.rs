@@ -1291,6 +1291,7 @@ impl Parser {
 
         Ok(Some(Expression::Star(Star {
             table: None,
+            ilike: None,
             except,
             replace,
             rename,

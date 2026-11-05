@@ -864,6 +864,7 @@ impl Parser {
             if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,
@@ -953,6 +954,7 @@ impl Parser {
             if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
+                    ilike: None,
                     except: None,
                     replace: None,
                     rename: None,
@@ -963,6 +965,7 @@ impl Parser {
                 if self.match_token(TokenType::Star) {
                     elements.push(Expression::Star(crate::expressions::names::models::Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,
@@ -1380,11 +1383,12 @@ impl Parser {
             }
         }
 
-        self.mark_order_by_all(&mut expressions);
+        let (expressions, all) = self.take_order_by_all(expressions);
         Ok(Some(Expression::OrderBy(Box::new(OrderBy {
             expressions,
             siblings: false,
             comments: Vec::new(),
+            all,
         }))))
     }
 
@@ -1597,6 +1601,12 @@ impl Parser {
                     let expr = self.maybe_clickhouse_alias(expr);
                     let expr = self.try_clickhouse_func_arg_alias(expr);
                     args.push(expr);
+                }
+                Ok(None)
+                    if self.config.dialect
+                        == Some(crate::tokens::models::DialectType::Snowflake) =>
+                {
+                    return Err(self.parse_error("Expected an argument after the comma"));
                 }
                 Ok(None) => break,
                 Err(e) => return Err(e),
@@ -1912,6 +1922,16 @@ impl Parser {
         let unit_index: Option<usize> = match dialect {
             DT::Snowflake => match upper.as_str() {
                 "DATE_TRUNC" | "DATETRUNC" if !args.is_empty() => Some(0),
+                "DATEDIFF" | "TIMEDIFF" | "TIMESTAMPDIFF" if args.len() == TERNARY_ARITY => Some(0),
+                "EXTRACT" if args.len() == BINARY_ARITY => Some(0),
+                "TRUNC" | "TRUNCATE"
+                    if args.len() == BINARY_ARITY
+                        && matches!(&args[1], Expression::Column(c)
+                            if c.table.is_none() && !c.name.quoted)
+                        && self.try_parse_date_part_unit_expr(&args[1]).is_some() =>
+                {
+                    Some(1)
+                }
                 _ => None,
             },
             _ => None,

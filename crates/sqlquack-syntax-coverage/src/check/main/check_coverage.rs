@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 use crate::check::_helpers::forms::form_result;
 use crate::check::_helpers::join::join;
 use crate::check::_helpers::references::reference_problems;
-use crate::check::_helpers::reviews::{current_exclusions, review_reason, unexcluded_pages};
+use crate::check::_helpers::reviews::{current_exclusions, unexcluded_pages};
 use crate::check::models::{CheckResult, FamilyContext, FormResult, Joined, LocalVerdict};
 use crate::formats::models::SyntaxCoverage;
 
@@ -23,12 +23,9 @@ pub fn check_coverage(
         for form in family_forms {
             let context: FamilyContext = FamilyContext {
                 joined: &joined,
-                review: review_reason(
-                    &form.id,
-                    &coverage.reviews,
-                    &coverage.file_hashes,
-                    parser_tree,
-                ),
+                reviews: &coverage.reviews,
+                hashes: &coverage.file_hashes,
+                parser_tree,
                 excluded: &excluded_forms,
             };
             forms.push(form_result(form, family, &context));

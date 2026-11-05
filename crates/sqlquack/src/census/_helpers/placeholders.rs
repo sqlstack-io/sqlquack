@@ -13,6 +13,9 @@ use crate::census::models::{Replacement, Rewritten};
 
 const PROJECT_FUNCTION_CALL: &str = "__udf";
 const TABLE_FUNCTION_CALL: &str = "__table_fn";
+/// The keyword SQLBuild wraps a table function call in, and its opening.
+const TABLE_KEYWORD: &str = "TABLE";
+const TABLE_WRAPPER: &str = "TABLE(";
 
 /// The rewritten SQL, its placeholder relations and replacements, cursors as `cursor_bound`.
 pub(crate) fn rewrite_with_references(sql: &str, cursor_bound: Option<&str>) -> Rewritten {
@@ -31,7 +34,22 @@ pub(crate) fn rewrite_with_references(sql: &str, cursor_bound: Option<&str>) -> 
     let mut rewritten = String::with_capacity(sql.len());
     let mut position = 0;
     let mut copied = 0;
-    while position < bytes.len() {
+    let mut closing: Vec<usize> = Vec::new();
+    while position <= bytes.len() {
+        if closing.last() == Some(&position) {
+            closing.pop();
+            rewritten.push_str(&sql[copied..position]);
+            replacements.push(Replacement {
+                rewritten: rewritten.len()..rewritten.len() + 1,
+                original: position..position,
+            });
+            rewritten.push(')');
+            copied = position;
+            continue;
+        }
+        if position == bytes.len() {
+            break;
+        }
         let skipped = skip_inert(bytes, position);
         if skipped > position {
             position = skipped;
@@ -43,7 +61,12 @@ pub(crate) fn rewrite_with_references(sql: &str, cursor_bound: Option<&str>) -> 
         {
             let name_end = identifier_end(bytes, position);
             let name = sql[position..name_end].to_ascii_lowercase();
-            if let Some((replacement, end)) = replacement(bytes, &name, name_end, cursor_bound) {
+            if let Some((mut replacement, end)) = replacement(bytes, &name, name_end, cursor_bound)
+            {
+                if let Some(arguments_end) = unwrapped_table_call(bytes, &name, position, end) {
+                    replacement.insert_str(0, TABLE_WRAPPER);
+                    closing.push(arguments_end);
+                }
                 if RELATION_CALLS.contains(&name.as_str()) {
                     references.insert(replacement.to_ascii_uppercase());
                 }
@@ -138,6 +161,32 @@ fn replacement(
             call_end?,
         )),
         _ => None,
+    }
+}
+
+/// Where the arguments of a table function call SQLBuild wraps in TABLE(...) end, unless written in one.
+fn unwrapped_table_call(bytes: &[u8], name: &str, start: usize, end: usize) -> Option<usize> {
+    let open = skip_whitespace(bytes, end);
+    if name != TABLE_FUNCTION_CALL || bytes.get(open) != Some(&b'(') {
+        return None;
+    }
+    let before = String::from_utf8_lossy(&bytes[..start]);
+    let wrapped = before
+        .trim_end()
+        .strip_suffix('(')
+        .map(str::trim_end)
+        .and_then(|before| {
+            let keyword = before.len().checked_sub(TABLE_KEYWORD.len())?;
+            let preceding = before.as_bytes()[..keyword].last().copied();
+            Some(
+                before[keyword..].eq_ignore_ascii_case(TABLE_KEYWORD)
+                    && !preceding.is_some_and(is_identifier_byte),
+            )
+        })
+        .unwrap_or(false);
+    match wrapped {
+        true => None,
+        false => matching_paren(bytes, open),
     }
 }
 

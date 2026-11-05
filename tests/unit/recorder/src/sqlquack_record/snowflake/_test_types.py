@@ -45,3 +45,15 @@ class RecordableErrorTestCase:
     errno: int
     sqlstate: str
     expected_recordable: bool
+
+
+@dataclass(frozen=True)
+class SubMicrosecondTestCase:
+    description: str
+    type_name: str
+    names: tuple[str, ...]
+    nanoseconds: tuple[tuple[int | None, ...], ...]
+    check_answer: str
+    expected_checked: tuple[bool, ...] | None
+    expected_message: str | None
+    expected_checks: int

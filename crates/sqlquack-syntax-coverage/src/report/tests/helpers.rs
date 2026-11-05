@@ -21,5 +21,7 @@ pub(crate) fn base() -> Snapshot {
             ("sf.query.with".to_owned(), FormState::Unverified),
         ]),
         satisfied_obligations: BTreeSet::from(["sf.query.select.o001".to_owned()]),
+        parsed_cases: BTreeSet::from(["sf.query.select.k1".to_owned()]),
+        refused_cases: BTreeSet::from(["sf.query.with.k2".to_owned()]),
     }
 }

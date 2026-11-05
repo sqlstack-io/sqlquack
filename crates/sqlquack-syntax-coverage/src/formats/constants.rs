@@ -20,6 +20,8 @@ pub const RECEIPTS_DIR: &str = "receipts";
 pub const REVIEWS_DIR: &str = "reviews";
 /// Obligations Snowflake answers only with an internal error, one optional TOML file per family.
 pub const UNOBSERVABLE_DIR: &str = "unobservable";
+/// Hand-added limits, suppressions and grammar readings; the checker loads the readings.
+pub const LIMITS_FILE: &str = "limits.toml";
 /// Every family, each with a catalogue, an obligation and a case file.
 pub const FAMILIES: [&str; 10] = [
     "query",
@@ -80,3 +82,9 @@ pub const GIT_TREE_LENGTH: usize = 40;
 pub const HTTPS: &str = "https://";
 /// Text that would identify an account, host or person; never allowed in a receipt.
 pub const RECEIPT_FORBIDDEN_TEXT: [&str; 3] = ["@", "snowflakecomputing", "://"];
+
+/// What precedes the line number in a DCM inner error, as in `syntax error line 1 at position 61`.
+pub const DCM_LINE: &str = "line ";
+
+/// What separates an inner error's line from its position.
+pub const DCM_POSITION: &str = " at position ";

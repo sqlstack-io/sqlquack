@@ -1,7 +1,7 @@
 //! `timestamp_format`: a literal Snowflake timestamp format as the pattern it reads.
 
 use crate::temporal::constants::{
-    LITERAL_FORMAT_LETTERS, LITERAL_FORMAT_PUNCTUATION, TIMESTAMP_FORMAT_ELEMENTS,
+    FOUR_DIGIT_YEAR, LITERAL_FORMAT_LETTERS, LITERAL_FORMAT_PUNCTUATION, TIMESTAMP_FORMAT_ELEMENTS,
 };
 use crate::temporal::models::{TimestampField, TimestampFormat};
 
@@ -10,6 +10,7 @@ pub fn timestamp_format(written: &str) -> Result<TimestampFormat, String> {
     let mut pattern = String::from("^");
     let mut fields: Vec<TimestampField> = Vec::new();
     let mut rest = written;
+    let mut short_year: Option<(usize, usize)> = None;
     let mut previous_numeric = false;
     while let Some(next) = rest.chars().next() {
         if let Some((name, field, reads)) = TIMESTAMP_FORMAT_ELEMENTS.iter().find(|(name, _, _)| {
@@ -20,20 +21,24 @@ pub fn timestamp_format(written: &str) -> Result<TimestampFormat, String> {
                 return Err(format!("the format element {name} twice"));
             }
             rest = &rest[name.len()..];
-            let numeric = *field != TimestampField::Meridiem;
+            let numeric = !matches!(field, TimestampField::Meridiem | TimestampField::MonthName);
             let adjacent = numeric
                 && (previous_numeric
                     || TIMESTAMP_FORMAT_ELEMENTS.iter().any(|(other, kind, _)| {
-                        *kind != TimestampField::Meridiem
+                        !matches!(kind, TimestampField::Meridiem | TimestampField::MonthName)
                             && rest
                                 .get(..other.len())
                                 .is_some_and(|start| start.eq_ignore_ascii_case(other))
                     }));
             fields.push(*field);
-            match adjacent {
-                true => pattern.push_str(&reads.replace("{1,2}", "{2}")),
-                false => pattern.push_str(reads),
+            let reads = match adjacent {
+                true => reads.replace("{1,2}", "{2}"),
+                false => (*reads).to_owned(),
+            };
+            if *field == TimestampField::ShortYear {
+                short_year = Some((pattern.len(), reads.len()));
             }
+            pattern.push_str(&reads);
             previous_numeric = numeric;
         } else if next == '"' {
             let Some(end) = rest[1..].find('"') else {
@@ -59,8 +64,9 @@ pub fn timestamp_format(written: &str) -> Result<TimestampFormat, String> {
     }
     pattern.push('$');
     let has = |field: TimestampField| fields.contains(&field);
-    let complete =
-        has(TimestampField::Year) && has(TimestampField::Month) && has(TimestampField::Day);
+    let complete = (has(TimestampField::Year) != has(TimestampField::ShortYear))
+        && (has(TimestampField::Month) != has(TimestampField::MonthName))
+        && has(TimestampField::Day);
     let clock = !(has(TimestampField::Hour24) && has(TimestampField::Hour12))
         && has(TimestampField::Hour12) == has(TimestampField::Meridiem)
         && (has(TimestampField::Minute) || !has(TimestampField::Second))
@@ -68,7 +74,17 @@ pub fn timestamp_format(written: &str) -> Result<TimestampFormat, String> {
             || has(TimestampField::Hour12)
             || !has(TimestampField::Minute));
     match complete && clock {
-        true => Ok(TimestampFormat { pattern, fields }),
+        true => Ok(TimestampFormat {
+            rejected: short_year.map(|(start, length)| {
+                format!(
+                    "{}{FOUR_DIGIT_YEAR}{}",
+                    &pattern[..start],
+                    &pattern[start + length..]
+                )
+            }),
+            pattern,
+            fields,
+        }),
         false => Err("a format without a year, month and day and a whole clock".to_owned()),
     }
 }

@@ -1,5 +1,5 @@
 use crate::analysis::tests::helpers::shop_first_outcome;
-use crate::analysis::tests::test_types::FirstValueTestCase;
+use crate::analysis::tests::test_types::{BuiltFirstValueTestCase, FirstValueTestCase};
 
 #[test]
 fn given_text_searches_when_converting_then_positions_count_characters_from_one() {
@@ -475,6 +475,544 @@ fn given_ordered_array_agg_when_rows_tie_on_its_keys_then_only_equal_tied_values
     for test_case in test_cases {
         assert_eq!(
             shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_arrays_built_with_sql_nulls_when_sizing_them_then_undefined_elements_count() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "ARRAY_APPEND of a SQL NULL adds one element",
+            sql: "SELECT ARRAY_SIZE(ARRAY_APPEND(SPLIT('a,b', ','), NULL::NUMBER)) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "ARRAY_CAT of constructed arrays with SQL NULLs counts each",
+            sql: "SELECT ARRAY_SIZE(ARRAY_CAT(ARRAY_CONSTRUCT(NULL::VARCHAR), \
+                  ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Ok("3"),
+        },
+        FirstValueTestCase {
+            description: "an array read by ARRAY_DISTINCT before ARRAY_SIZE keeps its guard",
+            sql: "SELECT ARRAY_SIZE(ARRAY_DISTINCT(ARRAY_CONSTRUCT(NULL::VARCHAR, 'b'))) AS v",
+            expected_outcome: Err("keeps as undefined"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT padded to ten digits at scale 6 rounds exactly",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(18,6) AS v",
+            expected_outcome: Ok("1649.730000"),
+        },
+        FirstValueTestCase {
+            description: "a FLOAT reaching eleven digits once scaled still raises",
+            sql: "SELECT (1649.73::FLOAT)::NUMBER(38,8) AS v",
+            expected_outcome: Err("float_decimal_digits"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_dates_and_naive_timestamps_when_converting_to_timestamp_then_values_are_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(9) is the same timestamp",
+            sql: "SELECT TO_TIMESTAMP_NTZ('2024-02-29 13:45:01.123456789'::TIMESTAMP_NTZ(9)) \
+                  = '2024-02-29 13:45:01.123456789'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP_NTZ of a TIMESTAMP_NTZ(3) keeps its milliseconds",
+            sql: "SELECT TO_TIMESTAMP_NTZ('2024-02-29 13:45:01.123'::TIMESTAMP_NTZ(3)) \
+                  = '2024-02-29 13:45:01.123'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TO_TIMESTAMP of a DATE is its midnight",
+            sql: "SELECT TO_TIMESTAMP('2024-02-29'::DATE) \
+                  = '2024-02-29 00:00:00'::TIMESTAMP_NTZ(9) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "TRY_TO_TIMESTAMP_NTZ of a timestamp is refused, as Snowflake rejects it",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('2024-02-29 13:45:01'::TIMESTAMP_NTZ(9)) AS v",
+            expected_outcome: Err("TRY_TO_TIMESTAMP_NTZ of TIMESTAMP_NTZ(9)"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_quoted_units_when_converting_timestampdiff_then_boundaries_are_counted() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a quoted minute counts the boundary crossed, not whole minutes elapsed",
+            sql: "SELECT TIMESTAMPDIFF('minute', '2024-01-31 23:59:59'::TIMESTAMP_NTZ, \
+                  '2024-02-01 00:00:01'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a quoted unit in mixed case reads as the unit",
+            sql: "SELECT TIMESTAMPDIFF('Day', '2024-02-29 23:00:00'::TIMESTAMP_NTZ, \
+                  '2024-02-28 01:00:00'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Ok("-1"),
+        },
+        FirstValueTestCase {
+            description: "a quoted unknown unit refuses",
+            sql: "SELECT TIMESTAMPDIFF('fortnight', '2024-01-01'::TIMESTAMP_NTZ, \
+                  '2024-02-01'::TIMESTAMP_NTZ) AS v",
+            expected_outcome: Err("FORTNIGHT"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_dates_when_converting_dayofweekiso_then_monday_is_one_and_sunday_seven() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a Sunday is 7",
+            sql: "SELECT DAYOFWEEKISO('2023-12-31'::DATE) AS v",
+            expected_outcome: Ok("7"),
+        },
+        FirstValueTestCase {
+            description: "a Monday is 1",
+            sql: "SELECT DAYOFWEEKISO('2024-01-01'::DATE) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a timestamp just before midnight keeps its own day",
+            sql: "SELECT DAYOFWEEKISO('2024-02-29 23:59:59.999999999'::TIMESTAMP_NTZ(9)) AS v",
+            expected_outcome: Ok("4"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_ordered_rows_when_converting_ntile_then_extra_rows_go_to_the_first_buckets() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "the third of seven rows in three buckets is in the first",
+            sql: "SELECT b FROM (SELECT x, NTILE(3) OVER (ORDER BY x) AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 7)))) WHERE x = 2",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "a bucket count that is not a literal refuses",
+            sql: "SELECT NTILE(x) OVER (ORDER BY x) AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 3)))",
+            expected_outcome: Err("positive integer literal"),
+        },
+        FirstValueTestCase {
+            description: "NTILE without an ORDER BY refuses",
+            sql: "SELECT NTILE(2) OVER () AS b \
+                  FROM (SELECT SEQ4() AS x FROM TABLE(GENERATOR(ROWCOUNT => 3)))",
+            expected_outcome: Err("ORDER BY"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_dates_when_converting_last_day_then_the_month_end_is_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a leap February ends on the 29th",
+            sql: "SELECT LAST_DAY('2024-02-10'::DATE) = '2024-02-29'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a timestamp just before midnight keeps its own month",
+            sql: "SELECT LAST_DAY('2024-01-31 23:59:59.999999999'::TIMESTAMP_NTZ(9)) \
+                  = '2024-01-31'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a quoted month unit is the default",
+            sql: "SELECT LAST_DAY('2023-02-10'::DATE, 'month') = '2023-02-28'::DATE AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a week unit refuses",
+            sql: "SELECT LAST_DAY('2024-02-10'::DATE, week) AS v",
+            expected_outcome: Err("other than MONTH"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sides_qualified_by_the_walked_relation_when_converting_connect_by_then_it_walks() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "PRIOR on the left, both sides qualified",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY PRIOR c.id = c.parent)",
+            expected_outcome: Ok("108"),
+        },
+        FirstValueTestCase {
+            description: "PRIOR on the right, the alias in another case",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY C.parent = PRIOR C.id)",
+            expected_outcome: Ok("108"),
+        },
+        FirstValueTestCase {
+            description: "a qualifier naming another relation refuses",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1), (3, 2), (4, 1)) AS v(id, parent)) \
+                  SELECT SUM(id * 10 + depth) AS v FROM (SELECT c.id, LEVEL AS depth FROM t AS c \
+                  START WITH c.parent IS NULL CONNECT BY PRIOR x.id = c.parent)",
+            expected_outcome: Err("walked relation"),
+        },
+        FirstValueTestCase {
+            description: "ORDER BY a qualified column after the walk refuses, as Snowflake rejects it",
+            sql: "WITH t AS (SELECT * FROM (VALUES (1, NULL), (2, 1)) AS v(id, parent)) \
+                  SELECT c.id AS v FROM t AS c START WITH c.parent IS NULL \
+                  CONNECT BY PRIOR c.id = c.parent ORDER BY c.id",
+            expected_outcome: Err("Snowflake rejects"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "10^23, an exact tie, rounds to even as Snowflake records",
+            sql: "SELECT POWER(10, 23) = '1e23'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "a negative whole exponent",
+            sql: "SELECT POWER(10, -3) = '0.001'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "an exponent far beyond the double range is inf",
+            sql: "SELECT POWER(10, 1000) = 'inf'::FLOAT AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "another base refuses",
+            sql: "SELECT POWER(2, 3) AS v",
+            expected_outcome: Err("other than the constant 10"),
+        },
+        FirstValueTestCase {
+            description: "a fractional exponent refuses",
+            sql: "SELECT POWER(10, 1.5) AS v",
+            expected_outcome: Err("exponent"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_zoned_timestamps_when_counting_seconds_and_minutes_then_utc_instants_are_compared() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "seconds between +02:00 and +00:00 values are those between the instants",
+            sql: "SELECT DATEDIFF('second', '2024-06-01 12:00:00 +02:00'::TIMESTAMP_TZ, \
+                  '2024-06-01 10:00:30 +00:00'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Ok("30"),
+        },
+        FirstValueTestCase {
+            description: "a minute boundary crossed at a +05:30 offset, as recorded",
+            sql: "SELECT DATEDIFF('minute', '2024-06-01 15:29:59 +05:30'::TIMESTAMP_TZ, \
+                  '2024-06-01 10:00:01 +00:00'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Ok("1"),
+        },
+        FirstValueTestCase {
+            description: "hours between zoned values refuse",
+            sql: "SELECT DATEDIFF('hour', '2024-06-01 10:59:00 +05:30'::TIMESTAMP_TZ, \
+                  '2024-06-01 11:01:00 +05:30'::TIMESTAMP_TZ) AS v",
+            expected_outcome: Err("which reads the local time of an offset"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_batch_two_constructs_when_converting_then_they_match_their_recordings() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT rounds 4/7 to six places, not truncating it",
+            sql: "SELECT r AS v FROM (SELECT x, RATIO_TO_REPORT(x) OVER () AS r \
+                  FROM (VALUES (4), (3)) AS t(x)) WHERE x = 4",
+            expected_outcome: Ok("0.571429"),
+        },
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT of a zero-sum partition is NULL, not a division error",
+            sql: "SELECT COALESCE(RATIO_TO_REPORT(x) OVER (), -1) AS v FROM (VALUES (0), (0)) AS t(x)",
+            expected_outcome: Ok("-1.000000"),
+        },
+        FirstValueTestCase {
+            description: "RATIO_TO_REPORT over an ordered window refuses",
+            sql: "SELECT RATIO_TO_REPORT(x) OVER (ORDER BY x) AS v FROM (VALUES (1), (2)) AS t(x)",
+            expected_outcome: Err("Snowflake rejects"),
+        },
+        FirstValueTestCase {
+            description: "IS_DECIMAL of a JSON fraction is true",
+            sql: "SELECT IS_DECIMAL(PARSE_JSON('12.5')) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "IS_INTEGER of a JSON fraction is false",
+            sql: "SELECT IS_INTEGER(PARSE_JSON('12.5')) AS v",
+            expected_outcome: Ok("false"),
+        },
+        FirstValueTestCase {
+            description: "IS_INTEGER of 2.0 is true, as PARSE_JSON reads it as an integer",
+            sql: "SELECT IS_INTEGER(PARSE_JSON('2.0')) AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "IS_DECIMAL of numeric text in JSON is false",
+            sql: "SELECT IS_DECIMAL(PARSE_JSON('\"12\"')) AS v",
+            expected_outcome: Ok("false"),
+        },
+        FirstValueTestCase {
+            description: "\\b treats an underscore as a word character",
+            sql: "SELECT COALESCE(REGEXP_SUBSTR('_AB123_', '\\\\b[A-Z]{2}[0-9]{3}\\\\b'), 'none') AS v",
+            expected_outcome: Ok("none"),
+        },
+        FirstValueTestCase {
+            description: "\\b matches beside a non-ASCII letter",
+            sql: "SELECT REGEXP_SUBSTR('éAB123é', '\\\\b[A-Z]{2}[0-9]{3}\\\\b') AS v",
+            expected_outcome: Ok("AB123"),
+        },
+        FirstValueTestCase {
+            description: "a RANGE frame of 2 days spans the leap day and a later peer, unlike ROWS",
+            sql: "SELECT s AS v FROM (SELECT d, x, SUM(x) OVER (ORDER BY d RANGE BETWEEN \
+                  INTERVAL '2 days' PRECEDING AND CURRENT ROW) AS s FROM (VALUES \
+                  ('2024-02-26'::DATE, 1), ('2024-02-28'::DATE, 2), ('2024-03-01'::DATE, 4), \
+                  ('2024-03-01'::DATE, 8)) AS t(d, x)) WHERE x = 4",
+            expected_outcome: Ok("14"),
+        },
+        FirstValueTestCase {
+            description: "a RANGE frame over a descending key refuses",
+            sql: "SELECT SUM(x) OVER (ORDER BY d DESC RANGE BETWEEN INTERVAL '2 days' \
+                  PRECEDING AND CURRENT ROW) AS v FROM (VALUES ('2024-03-01'::DATE, 1)) AS t(d, x)",
+            expected_outcome: Err("one ascending DATE key"),
+        },
+        FirstValueTestCase {
+            description: "YY 69 is 2069 under DD-MON-YY",
+            sql: "SELECT YEAR(TRY_TO_TIMESTAMP_NTZ('05-mar-69 00:00', 'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("2069"),
+        },
+        FirstValueTestCase {
+            description: "YY 70 is 1970 and a full month name reads under MON",
+            sql: "SELECT YEAR(TRY_TO_TIMESTAMP_NTZ('31-December-70 23:59', \
+                  'DD-MON-YY HH24:MI')) AS v",
+            expected_outcome: Ok("1970"),
+        },
+        FirstValueTestCase {
+            description: "a four-digit year where YY reads two is NULL, as recorded, not a raise",
+            sql: "SELECT TRY_TO_TIMESTAMP_NTZ('05-Mar-2024 14:30', 'DD-MON-YY HH24:MI') IS NULL AS v",
+            expected_outcome: Ok("true"),
+        },
+        FirstValueTestCase {
+            description: "MON outside the TRY_ forms refuses",
+            sql: "SELECT TO_TIMESTAMP_NTZ('05-Mar-24 10:00', 'DD-MON-YY HH24:MI') AS v",
+            expected_outcome: Err("recorded only under the TRY_ forms"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_direct_array_constructs_when_writing_them_as_text_then_null_elements_are_undefined() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "a NULL first element is written undefined, a string quoted",
+            sql: "SELECT ARRAY_CONSTRUCT(NULL, 'G-2')::VARCHAR AS v",
+            expected_outcome: Ok("[undefined,\"G-2\"]"),
+        },
+        FirstValueTestCase {
+            description: "ARRAY_TO_STRING writes an undefined element as empty text",
+            sql: "SELECT ARRAY_TO_STRING(ARRAY_CONSTRUCT('gift', NULL), '|') AS v",
+            expected_outcome: Ok("gift|"),
+        },
+        FirstValueTestCase {
+            description: "a JSON null element is null, not undefined",
+            sql: "SELECT ARRAY_CONSTRUCT(PARSE_JSON('null'), NULL)::VARCHAR AS v",
+            expected_outcome: Ok("[null,undefined]"),
+        },
+        FirstValueTestCase {
+            description: "an ARRAY_CONSTRUCT not written directly in the cast still raises",
+            sql: "SELECT a::VARCHAR AS v FROM (SELECT ARRAY_CONSTRUCT(NULL, 'x') AS a)",
+            expected_outcome: Err("keeps as undefined"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_pivot_in_from_when_converting_then_each_listed_key_aggregates_its_group_rows() {
+    let source = "(SELECT customer_id, IFF(amount > 3, 'big', 'small') AS k, amount FROM orders)";
+    let pivoted = |aggregate: &str, keys: &str, alias: &str| {
+        format!("{source} PIVOT({aggregate}(amount) FOR k IN ({keys})) AS p{alias}")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "SUM of a key sums only that key's rows in the group",
+            sql: format!(
+                "SELECT p.big || '/' || p.small AS v FROM {} WHERE p.customer_id = 2",
+                pivoted("SUM", "'big', 'small'", "(customer_id, big, small)")
+            ),
+            expected_outcome: Ok("7.50/2.50"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a listed key without rows in the group is NULL",
+            sql: format!(
+                "SELECT COALESCE(TO_VARCHAR(p.small), 'null') AS v FROM {} WHERE p.customer_id = 1",
+                pivoted("MAX", "'big', 'small'", "(customer_id, big, small)")
+            ),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a key matches exactly, so a differently cased key is NULL",
+            sql: format!(
+                "SELECT COALESCE(TO_VARCHAR(p.big), 'null') AS v FROM {} WHERE p.customer_id = 1",
+                pivoted("SUM", "'BIG'", "(customer_id, big)")
+            ),
+            expected_outcome: Ok("null"),
+        },
+        BuiltFirstValueTestCase {
+            description: "without an alias column list it stays refused",
+            sql: format!("SELECT * FROM {}", pivoted("SUM", "'big'", "")),
+            expected_outcome: Err("alias column list"),
+        },
+        BuiltFirstValueTestCase {
+            description: "another aggregate stays refused",
+            sql: format!(
+                "SELECT * FROM {}",
+                pivoted("AVG", "'big'", "(customer_id, big)")
+            ),
+            expected_outcome: Err("other than SUM or MAX"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
             test_case
                 .expected_outcome
                 .map(str::to_owned)

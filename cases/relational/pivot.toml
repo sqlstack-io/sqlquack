@@ -1,0 +1,105 @@
+# PIVOT in FROM: an aggregate spread over an IN list of keys, with the alias column list the
+# models give it, the implicit grouping by every other input column, and the keys it drops.
+category = "relational"
+construct = "node:pivot"
+session_profile = "utc-v1"
+
+[[case]]
+id = "pivot_sum_alias_list"
+description = "SUM(amount) FOR key IN (three texts) AS p(id, ...): repeated keys sum, NULL amounts, a missing key, keys outside the list or NULL dropped, a lowercase key that does not match, and an id whose keys are all outside the list."
+columns = [{ name = "order_id", type = "VARCHAR" }, { name = "method_group", type = "VARCHAR" }, { name = "amount", type = "NUMBER(18,0)" }]
+rows = [
+  ["'o-1'", "'CARD'", "100"],
+  ["'o-1'", "'CARD'", "25"],
+  ["'o-1'", "'WALLET'", "7"],
+  ["'o-2'", "'BANK'", "NULL"],
+  ["'o-2'", "'BANK'", "40"],
+  ["'o-2'", "'CASH'", "999"],
+  ["'o-3'", "'WALLET'", "NULL"],
+  ["'o-3'", "NULL", "5"],
+  ["'o-4'", "'card'", "11"],
+  ["'o-4'", "'CASH'", "3"],
+  ["NULL", "'CARD'", "9"],
+]
+query = "SELECT p.order_id, p.card, p.wallet, p.bank FROM (SELECT order_id, method_group, amount FROM input) PIVOT(SUM(amount) FOR method_group IN ('CARD', 'WALLET', 'BANK')) AS p(order_id, card, wallet, bank) ORDER BY p.order_id NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "missing-key", "case-sensitive-key"]
+
+[[case]]
+id = "pivot_sum_coalesced"
+description = "COALESCE(p.key, 0) over a SUM pivot, as a rollup reads it: missing keys and all-NULL sums both become 0."
+columns = [{ name = "order_id", type = "VARCHAR" }, { name = "method_group", type = "VARCHAR" }, { name = "amount", type = "NUMBER(18,0)" }]
+rows = [
+  ["'o-1'", "'CARD'", "100"],
+  ["'o-1'", "'OTHER'", "1"],
+  ["'o-2'", "'WALLET'", "NULL"],
+  ["'o-3'", "'BANK'", "-4"],
+]
+query = "SELECT p.order_id, COALESCE(p.card, 0) AS card, COALESCE(p.wallet, 0) AS wallet, COALESCE(p.bank, 0) AS bank, COALESCE(p.other, 0) AS other FROM (SELECT order_id, method_group, amount FROM input) PIVOT(SUM(amount) FOR method_group IN ('CARD', 'WALLET', 'BANK', 'OTHER')) AS p(order_id, card, wallet, bank, other) ORDER BY p.order_id"
+order = "ordered"
+tags = ["null", "missing-key"]
+
+[[case]]
+id = "pivot_max_boolean"
+description = "MAX(flag) FOR key IN (four texts) over BOOLEAN: TRUE beats FALSE, NULL flags are ignored, and a missing key is NULL."
+columns = [{ name = "customer_id", type = "VARCHAR" }, { name = "consent_type", type = "VARCHAR" }, { name = "is_granted", type = "BOOLEAN" }]
+rows = [
+  ["'c-1'", "'EMAIL_MARKETING'", "TRUE"],
+  ["'c-1'", "'EMAIL_MARKETING'", "FALSE"],
+  ["'c-1'", "'SMS_MARKETING'", "FALSE"],
+  ["'c-2'", "'PERSONALISATION'", "NULL"],
+  ["'c-2'", "'THIRD_PARTY_SHARING'", "TRUE"],
+  ["'c-2'", "'LEGACY'", "TRUE"],
+  ["'c-3'", "'SMS_MARKETING'", "NULL"],
+  ["'c-3'", "'SMS_MARKETING'", "TRUE"],
+]
+query = "SELECT p.customer_id, p.email_marketing, p.sms_marketing, p.personalisation, p.third_party_sharing FROM (SELECT customer_id, consent_type, is_granted FROM input) PIVOT(MAX(is_granted) FOR consent_type IN ('EMAIL_MARKETING', 'SMS_MARKETING', 'PERSONALISATION', 'THIRD_PARTY_SHARING')) AS p(customer_id, email_marketing, sms_marketing, personalisation, third_party_sharing) ORDER BY p.customer_id"
+order = "ordered"
+tags = ["null", "duplicates", "missing-key"]
+
+[[case]]
+id = "pivot_star_two_groups"
+description = "SELECT * from a SUM pivot over NUMBER(18,2) grouped by two columns, a DATE and a text with a NULL group, with an alias list naming every output column."
+columns = [{ name = "recognition_month", type = "DATE" }, { name = "region_code", type = "VARCHAR" }, { name = "revenue_stream", type = "VARCHAR" }, { name = "revenue_usd", type = "NUMBER(18,2)" }]
+rows = [
+  ["'2026-01-01'", "'EU'", "'product'", "10.25"],
+  ["'2026-01-01'", "'EU'", "'product'", "0.75"],
+  ["'2026-01-01'", "'EU'", "'refund'", "-3.10"],
+  ["'2026-01-01'", "'US'", "'subscription'", "99.99"],
+  ["'2026-02-01'", "'EU'", "'subscription'", "5.00"],
+  ["'2026-02-01'", "NULL", "'product'", "1.01"],
+  ["'2026-02-01'", "NULL", "'product'", "NULL"],
+  ["NULL", "'US'", "'refund'", "-0.01"],
+  ["'2026-02-01'", "'US'", "'Product'", "8.00"],
+]
+query = "SELECT * FROM (SELECT recognition_month, region_code, revenue_stream, revenue_usd FROM input) PIVOT(SUM(revenue_usd) FOR revenue_stream IN ('product', 'refund', 'subscription')) AS p(recognition_month, region_code, product_usd, refund_usd, subscription_usd) ORDER BY 1 NULLS LAST, 2 NULLS LAST"
+order = "ordered"
+tags = ["null", "duplicates", "missing-key", "case-sensitive-key"]
+
+[[case]]
+id = "pivot_dash_keys_decimal"
+description = "SUM(amount) over NUMBER(38,2) FOR texts with a dash, spaced as an edge model writes it: PIVOT(...) AS pv (id, a, b), read through * and cast."
+columns = [{ name = "check_id", type = "VARCHAR" }, { name = "group_code", type = "VARCHAR" }, { name = "amount", type = "NUMBER(38,2)" }]
+rows = [
+  ["'k-1'", "'G-1'", "1.10"],
+  ["'k-1'", "'G-1'", "2.20"],
+  ["'k-1'", "'G-2'", "-0.30"],
+  ["'k-2'", "'G-2'", "NULL"],
+  ["'k-3'", "'G-3'", "4.00"],
+  ["'k-3'", "'G-1 '", "4.00"],
+]
+query = "WITH pivoted AS (SELECT * FROM (SELECT check_id, group_code, amount FROM input) PIVOT(SUM(amount) FOR group_code IN ('G-1', 'G-2')) AS pv (check_id, first_group_amount, second_group_amount)) SELECT p.check_id::VARCHAR AS check_id, p.first_group_amount::NUMBER(38, 2) AS first_group_amount, p.second_group_amount::NUMBER(38, 2) AS second_group_amount FROM pivoted AS p ORDER BY p.check_id"
+order = "ordered"
+tags = ["null", "duplicates", "missing-key"]
+
+[[case]]
+id = "pivot_empty_input"
+description = "A SUM pivot over no rows returns no rows, not one row of NULLs."
+columns = [{ name = "order_id", type = "VARCHAR" }, { name = "method_group", type = "VARCHAR" }, { name = "amount", type = "NUMBER(18,0)" }]
+rows = [
+  ["'o-1'", "'CARD'", "100"],
+  ["'o-2'", "'BANK'", "NULL"],
+]
+query = "SELECT p.order_id, p.card, p.bank FROM (SELECT order_id, method_group, amount FROM input WHERE FALSE) PIVOT(SUM(amount) FOR method_group IN ('CARD', 'BANK')) AS p(order_id, card, bank)"
+order = "bag"
+tags = ["empty-input"]

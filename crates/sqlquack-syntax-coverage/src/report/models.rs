@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde::{Deserialize, Serialize};
 
 use crate::check::models::{FormState, Reason};
+use crate::report::_helpers::obligation_order::in_obligation_order;
 
 /// Forms counted in one family or on one page.
 #[derive(Clone, Debug, Default, PartialEq, Serialize)]
@@ -54,8 +55,15 @@ pub struct Snapshot {
     pub parser_tree: Option<String>,
     /// Every form's state, absent forms included.
     pub forms: BTreeMap<String, FormState>,
-    /// Required obligations the checker found satisfied.
+    /// Required obligations the checker found satisfied, written in obligation order.
+    #[serde(serialize_with = "in_obligation_order")]
     pub satisfied_obligations: BTreeSet<String>,
+    /// Receipted cases Snowflake parsed that the parser accepts, opaque or not.
+    #[serde(default)]
+    pub parsed_cases: BTreeSet<String>,
+    /// Receipted cases Snowflake parsed that the parser rejects.
+    #[serde(default)]
+    pub refused_cases: BTreeSet<String>,
 }
 
 /// One snapshot against a later one; coverage and catalogue changes kept apart.
@@ -72,4 +80,6 @@ pub struct SnapshotDiff {
     /// Obligations satisfied in the base that no longer are: regressions.
     pub obligations_lost: Vec<String>,
     pub obligations_gained: Vec<String>,
+    /// Cases Snowflake parsed that the base parser accepted, opaque or not, and the head rejects.
+    pub parsed_cases_refused: Vec<String>,
 }

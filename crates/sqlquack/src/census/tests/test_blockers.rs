@@ -227,12 +227,12 @@ fn given_two_independent_blockers_when_one_is_fixed_then_the_file_stays_refused_
             conversion: ConversionOptions::default(),
             expected_summary: BlockerSummary {
                 roots: vec![
-                    ("fn:SOUNDEX".to_owned(), [1, 1, 2, 0]),
                     ("fn:HASH".to_owned(), [1, 1, 2, 0]),
+                    ("fn:SOUNDEX".to_owned(), [1, 1, 2, 0]),
                 ],
                 single_root_files: 0,
                 possibly_incomplete_files: 0,
-                pairs: vec![(owned(&["fn:SOUNDEX", "fn:HASH"]), 2)],
+                pairs: vec![(owned(&["fn:HASH", "fn:SOUNDEX"]), 2)],
                 files: vec![
                     ("a".to_owned(), owned(&[]), 0),
                     ("b".to_owned(), owned(&["a"]), 0),

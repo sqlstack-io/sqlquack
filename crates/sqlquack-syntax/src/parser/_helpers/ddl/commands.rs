@@ -22,6 +22,7 @@ use crate::expressions::schema_objects::models::FunctionUsingResource;
 use crate::expressions::schema_objects::models::SqlDataAccess;
 use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Comment;
+use crate::expressions::statements::models::ExecuteObject;
 use crate::expressions::statements::models::ExecuteParameter;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::Grant;
@@ -33,10 +34,12 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::SetItem;
 use crate::expressions::statements::models::SetStatement;
+use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::tables::models::CollateProperty;
 use crate::expressions::tables::models::Property;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::FUNCTION;
 use crate::parser::constants::PROCEDURE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
@@ -87,6 +90,9 @@ impl Parser {
     /// Parses CALL procedure(args, ...).
     pub(crate) fn parse_call(&mut self) -> Result<Expression> {
         let call_token = self.advance()?;
+        if let Some(call) = self.parse_snowflake_method_call()? {
+            return Ok(call);
+        }
 
         let mut tokens = vec![("CALL".to_string(), call_token.token_type)];
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -153,9 +159,72 @@ impl Parser {
         )
     }
 
+    /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action, or none.
+    fn parse_snowflake_execute_object(&mut self) -> Result<Option<Expression>> {
+        let start = self.current;
+        let kind = if self.match_text_seq(&["ALERT"]) {
+            "ALERT"
+        } else if self.match_text_seq(&["DCM", "PROJECT"]) {
+            EXECUTE_DCM_PROJECT
+        } else if self.match_text_seq(&["TASK", "GRAPH"]) {
+            "TASK GRAPH"
+        } else if self.match_text_seq(&["TASK"]) {
+            "TASK"
+        } else {
+            return Ok(None);
+        };
+        let name = self.parse_object_name_ref()?;
+        let mut node = ExecuteObject {
+            kind: kind.to_owned(),
+            name,
+            action: None,
+            group: None,
+            alias: None,
+            config: None,
+        };
+        if kind.starts_with("TASK") {
+            if self.match_text_seq(&["RETRY", "LAST"]) {
+                node.action = Some("RETRY LAST".to_owned());
+            } else if self.match_text_seq(&["RETRY", "GRAPH", "RUN", "GROUP"]) {
+                node.action = Some("RETRY GRAPH RUN".to_owned());
+                if !self.check(TokenType::String) {
+                    return Err(self.parse_error("Expected the graph run group as a string"));
+                }
+                node.group = Some(self.parse_primary()?);
+            } else if self.match_text_seq(&["USING", "CONFIG"]) {
+                self.expect_token(TokenType::Eq)?;
+                node.config = Some(self.parse_primary()?);
+            }
+        } else if kind == EXECUTE_DCM_PROJECT {
+            if self.match_text_seq(&["PURGE"]) {
+                node.action = Some("PURGE".to_owned());
+                if self.match_token(TokenType::As) {
+                    node.alias = Some(self.expect_identifier_or_keyword_with_quoted()?);
+                }
+            } else if self.match_text_seq(&["TEST", "ALL"]) {
+                node.action = Some("TEST ALL".to_owned());
+            } else {
+                self.current = start;
+                return Ok(None);
+            }
+        }
+        Ok(Some(Expression::ExecuteObject(Box::new(node))))
+    }
+
     /// Parses TSQL EXEC/EXECUTE [schema.]procedure [@param = value, ...].
     pub(crate) fn parse_execute(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Execute)?;
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            if let Some(statement) = self.parse_snowflake_execute_object()? {
+                return Ok(statement);
+            }
+            if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
+                return Err(self.parse_error("Expected an object kind and name after EXECUTE"));
+            }
+        }
 
         let return_status = { None };
 
@@ -666,6 +735,7 @@ impl Parser {
 
             Expression::Identifier(Identifier::new(name_str))
         } else {
+            self.check_snowflake_comment_name()?;
             self.parse_qualified_name()?
         };
 
@@ -673,6 +743,13 @@ impl Parser {
             self.skip();
         } else {
             return Err(self.parse_error("Expected IS in COMMENT ON statement"));
+        }
+        if self.is_snowflake()
+            && !self.check(TokenType::String)
+            && !self.check(TokenType::DollarString)
+            && !self.check(TokenType::NationalString)
+        {
+            return Err(self.parse_error("Expected a string after IS"));
         }
 
         let expression = self.parse_primary()?;
@@ -683,6 +760,23 @@ impl Parser {
             expression,
             exists,
             materialized,
+        })))
+    }
+
+    /// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`.
+    pub(crate) fn parse_unset(&mut self) -> Result<Expression> {
+        self.skip();
+        let parenthesized = self.match_token(TokenType::LParen);
+        let mut names = vec![self.expect_identifier_or_keyword_with_quoted()?];
+        while parenthesized && self.match_token(TokenType::Comma) {
+            names.push(self.expect_identifier_or_keyword_with_quoted()?);
+        }
+        if parenthesized {
+            self.expect_token(TokenType::RParen)?;
+        }
+        Ok(Expression::UnsetStatement(Box::new(UnsetStatement {
+            names,
+            parenthesized,
         })))
     }
 
@@ -1230,14 +1324,13 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSchema(Box::new(DropSchema {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 
@@ -1375,11 +1468,15 @@ impl Parser {
         let name = self.expect_identifier_or_safe_keyword_with_quoted()?;
 
         let sync = { false };
+        let cascade = self.match_token(TokenType::Cascade);
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropDatabase(Box::new(DropDatabase {
             name,
             if_exists,
             sync,
+            cascade,
+            restrict,
         })))
     }
 

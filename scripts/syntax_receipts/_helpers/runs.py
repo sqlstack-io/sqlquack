@@ -8,14 +8,17 @@ from scripts.syntax_receipts._helpers.audit import index_inputs, read_audit
 from scripts.syntax_receipts._helpers.canonical_run import import_canonical_run
 from scripts.syntax_receipts._helpers.ddl_run import import_ddl_run
 from scripts.syntax_receipts._helpers.diagnostic_run import import_diagnostic_run
+from scripts.syntax_receipts._helpers.hashing import canonical_json, digest
 from scripts.syntax_receipts._helpers.packet_run import import_packet_run
 from scripts.syntax_receipts._helpers.receipts import refusal
 from scripts.syntax_receipts.constants import (
     EXPLAIN_METHOD,
     MANIFEST_KEY,
     PROPOSAL_KEY,
+    RECONCILED_STATUS,
     RUN_DATABASE_KEY,
     SCRIPTING_SUBMISSION,
+    UNRECORDED_KEY,
     WHOLE_RUN_ROW,
 )
 from scripts.syntax_receipts.exceptions import RunRefused
@@ -32,6 +35,11 @@ def import_runs(*, runs: Path, input_dirs: list[Path]) -> Imported:
             run: CaptureRun = read_audit(run=path)
             found: Imported = _import_run(run=run, index=index)
             status: Row = {"run_id": path.name, "status": "imported", "audit_sha256": run.audit_sha}
+            if run.reconciliation is not None:
+                found = _reconciled(run=run, found=found)
+                status.update(
+                    status=RECONCILED_STATUS, reconciliation_sha256=run.reconciliation_sha
+                )
         except RunRefused as error:
             found = Imported(
                 refusals=[refusal(run_id=path.name, row_id=WHOLE_RUN_ROW, reason=str(error))]
@@ -57,3 +65,37 @@ def _import_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
     if MANIFEST_KEY in (start.get("binding") or {}):
         return import_canonical_run(run=run, index=index)
     raise RunRefused("start event matches no known capture driver")
+
+
+def _reconciled(*, run: CaptureRun, found: Imported) -> Imported:
+    """The receipts whose record the reconciliation lists with the same hash; the rest refused."""
+    record: Row = run.reconciliation or {}
+    listed: dict[str, str] = {
+        str(entry.get("id")): str(entry.get("sha256")) for entry in record["raw_records"]["records"]
+    }
+    unrecorded: object = record.get(UNRECORDED_KEY)
+    if isinstance(unrecorded, dict):
+        listed.setdefault(str(unrecorded.get("case_id")), digest(canonical_json(unrecorded)))
+    kept: Imported = Imported(inputs=found.inputs, refusals=list(found.refusals))
+    seen: set[str] = {row["row_id"] for row in found.refusals}
+    for receipt in found.receipts:
+        case_id: str = receipt["case_id"]
+        seen.add(case_id)
+        if listed.get(case_id) == receipt["raw_record_sha256"]:
+            kept.receipts.append(receipt)
+            continue
+        reason: str = (
+            "raw record hash differs from the run's reconciliation"
+            if case_id in listed
+            else "raw record is not listed in the run's reconciliation"
+        )
+        kept.refusals.append(refusal(run_id=run.path.name, row_id=case_id, reason=reason))
+    kept.refusals.extend(
+        refusal(
+            run_id=run.path.name,
+            row_id=case_id,
+            reason="listed in the run's reconciliation but absent from its records",
+        )
+        for case_id in sorted(listed.keys() - seen)
+    )
+    return kept

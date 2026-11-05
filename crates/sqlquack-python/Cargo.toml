@@ -1,0 +1,31 @@
+[package]
+name = "sqlquack-python"
+description = "The sqlquack Python module: check and convert Snowflake SQL with coded diagnostics."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "_native"
+crate-type = ["cdylib"]
+# Loaded only by the interpreter; `make python-module` builds it and tests/unit/python tests it.
+test = false
+doctest = false
+
+[features]
+# Set when building the module the interpreter loads, so it does not link libpython itself.
+extension-module = ["pyo3/extension-module"]
+
+[dependencies]
+pyo3.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlquack.workspace = true
+sqlquack-core.workspace = true
+sqlquack-policy.workspace = true
+
+[lints]
+workspace = true

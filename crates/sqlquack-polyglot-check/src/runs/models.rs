@@ -25,10 +25,16 @@ pub struct RunSummary {
     pub same_errors: usize,
     /// Entries polyglot rejects and SQLQuack parses, as a reviewed fix explains.
     pub fixed: BTreeMap<String, usize>,
-    /// Entries SQLQuack rejects and polyglot parses, as a reviewed rejection explains.
+    /// Entries SQLQuack rejects where polyglot parses them or fails differently, as a reviewed rejection explains.
     pub rejected: BTreeMap<String, usize>,
     /// Entries whose trees differ only by quoting polyglot drops, as a reviewed entry explains.
     pub kept_quoting: BTreeMap<String, usize>,
+    /// Entries whose trees differ only by wrapper nodes polyglot drops, as a reviewed entry explains.
+    pub kept_nodes: BTreeMap<String, usize>,
+    /// Entries whose trees differ only by a field kept as written, as a reviewed entry explains.
+    pub kept_fields: BTreeMap<String, usize>,
+    /// Entries polyglot keeps as a command and SQLQuack structures, as a reviewed entry explains.
+    pub structured: BTreeMap<String, usize>,
     /// Entries whose results differ.
     pub differences: Vec<Finding>,
     /// Entries whose lossless tokens do not reproduce the input.

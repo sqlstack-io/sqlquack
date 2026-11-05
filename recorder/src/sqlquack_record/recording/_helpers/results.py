@@ -61,6 +61,7 @@ def write_result(
                 "scale": column.scale,
                 "internal_size": column.internal_size,
                 "nullable": column.nullable,
+                **({"sub_microsecond_checked": True} if column.sub_microsecond_checked else {}),
             }
             for column in result.columns
         ],

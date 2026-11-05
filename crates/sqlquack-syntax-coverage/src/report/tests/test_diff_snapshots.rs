@@ -47,6 +47,24 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
         },
         DiffTestCase {
+            description: "obligations gained past 999 are listed by number, not as text",
+            head: |mut head| {
+                for number in ["o1000", "o999", "o100"] {
+                    head.satisfied_obligations
+                        .insert(format!("sf.query.with.{number}"));
+                }
+                head
+            },
+            expected_diff: SnapshotDiff {
+                obligations_gained: ids(&[
+                    "sf.query.with.o100",
+                    "sf.query.with.o999",
+                    "sf.query.with.o1000",
+                ]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
             description: "the catalogue changed: a file hash, a form added and one removed",
             head: |mut head| {
                 head.catalogue_files
@@ -64,6 +82,28 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
                 forms_removed: ids(&["sf.query.with"]),
                 ..SnapshotDiff::default()
             },
+        },
+        DiffTestCase {
+            description: "a case Snowflake parsed and the base parser accepted is now rejected",
+            head: |mut head| {
+                head.parsed_cases.remove("sf.query.select.k1");
+                head.refused_cases.insert("sf.query.select.k1".to_owned());
+                head
+            },
+            expected_diff: SnapshotDiff {
+                parsed_cases_refused: ids(&["sf.query.select.k1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DiffTestCase {
+            description: "a refused case now parsing, or one leaving the receipts, is no regression",
+            head: |mut head| {
+                head.refused_cases.remove("sf.query.with.k2");
+                head.parsed_cases.insert("sf.query.with.k2".to_owned());
+                head.parsed_cases.remove("sf.query.select.k1");
+                head
+            },
+            expected_diff: SnapshotDiff::default(),
         },
         DiffTestCase {
             description: "a verified form removed from the catalogue is also lost",

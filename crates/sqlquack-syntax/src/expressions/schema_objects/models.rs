@@ -14,6 +14,7 @@ use crate::expressions::tables::models::RefreshTriggerProperty;
 use crate::expressions::tables::models::UniqueKeyProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::expressions::types::models::StructField;
 
 /// View column definition with optional COMMENT and OPTIONS (BigQuery)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -317,6 +318,9 @@ pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSchema {
@@ -325,6 +329,7 @@ impl DropSchema {
             name: Identifier::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -392,6 +397,12 @@ pub struct DropDatabase {
     /// ClickHouse: SYNC modifier
     #[serde(default)]
     pub sync: bool,
+    /// Snowflake CASCADE, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub cascade: bool,
+    /// Snowflake RESTRICT, left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropDatabase {
@@ -400,6 +411,8 @@ impl DropDatabase {
             name: Identifier::new(name),
             if_exists: false,
             sync: false,
+            cascade: false,
+            restrict: false,
         }
     }
 }
@@ -685,6 +698,9 @@ pub struct CreateProcedure {
     /// Whether the short form PROC was used (instead of PROCEDURE)
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub use_proc_keyword: bool,
+    /// Snowflake `RETURNS TABLE (...)` columns, possibly none; `return_type` is then absent.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns_table: Option<Vec<StructField>>,
 }
 
 impl CreateProcedure {
@@ -703,6 +719,7 @@ impl CreateProcedure {
             with_options: Vec::new(),
             has_parens: true,
             use_proc_keyword: false,
+            returns_table: None,
         }
     }
 }
@@ -859,6 +876,9 @@ pub struct DropSequence {
     pub name: TableRef,
     pub if_exists: bool,
     pub cascade: bool,
+    /// RESTRICT, kept apart from the default; left out of the tree when absent
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub restrict: bool,
 }
 
 impl DropSequence {
@@ -867,6 +887,7 @@ impl DropSequence {
             name: TableRef::new(name),
             if_exists: false,
             cascade: false,
+            restrict: false,
         }
     }
 }
@@ -1104,4 +1125,40 @@ impl DropType {
             cascade: false,
         }
     }
+}
+
+/// Snowflake ALTER of an object kind with no statement of its own, e.g. `ALTER TASK t1 RESUME`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AlterObject {
+    /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
+    pub kind: String,
+    /// The object name
+    pub name: TableRef,
+    /// The argument types that identify a function or procedure; a TABLE( ... ) argument is a tuple
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub arguments: Vec<Expression>,
+    /// IF EXISTS clause
+    #[serde(default)]
+    pub if_exists: bool,
+    /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"
+    pub action: String,
+    /// The action's operands in order: names, values, a condition or a statement
+    #[serde(default)]
+    pub operands: Vec<Expression>,
+    /// The properties the action sets or unsets; an unset property has no value
+    #[serde(default)]
+    pub properties: Vec<ObjectProperty>,
+}
+
+/// One property of a Snowflake ALTER action, e.g. `SCHEDULE = '1 MINUTE'` or `TAG t1 = 'v'`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ObjectProperty {
+    /// The property's keywords, e.g. "SCHEDULE", "CONTACT", "TAG", "EXECUTE AS USER"
+    pub kind: String,
+    /// The name it qualifies: the tag name, the contact purpose or a TASK_DEFAULTS property
+    #[serde(default)]
+    pub name: Option<Identifier>,
+    /// The value, absent for an unset property
+    #[serde(default)]
+    pub value: Option<Expression>,
 }

@@ -1,9 +1,16 @@
 //! `sqlquack function`: a SQL project function's body as a DuckDB macro, or why it is refused.
 
 use std::collections::BTreeMap;
-use std::io::Write;
+use std::io::{Read, Write};
+use std::path::Path;
 use std::process::ExitCode;
 
+use serde::Serialize;
+use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_core::diagnostics::main::diagnose::diagnose;
+use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
@@ -12,10 +19,35 @@ use sqlquack_rules::conversion::models::ConvertedFunction;
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::parse_session::parse_session;
 use crate::analysis::main::session_conversion_options::session_conversion_options;
+use crate::census::main::resolve_references::resolve_references;
+use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::chosen_policy;
-use crate::cli::_helpers::evidence::confirmed_offsets;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
+
+/// The path naming standard input.
+const STDIN_PATH: &str = "-";
+/// How diagnostics name standard input.
+const STDIN_NAME: &str = "<stdin>";
+
+/// Why a function did not convert.
+enum Failure {
+    /// The command could not run: an argument or file is unusable.
+    Usage(String),
+    /// The body was read and refused, for these reasons.
+    Refused {
+        body: String,
+        diagnostics: Vec<Diagnostic>,
+    },
+}
+
+/// What `function` prints on standard output when the body is refused.
+#[derive(Serialize)]
+struct FunctionRefusal<'report> {
+    converted: bool,
+    name: &'report str,
+    refusals: &'report [Diagnostic],
+}
 
 pub(crate) fn function_command(
     arguments: &FunctionArguments,
@@ -23,14 +55,10 @@ pub(crate) fn function_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack function: converting {}…", arguments.name);
-    let inputs = match function_inputs(arguments) {
-        Ok(inputs) => inputs,
-        Err(error) => {
-            let _ = writeln!(stderr, "sqlquack function: failed: {error}");
-            return ExitCode::from(2);
-        }
-    };
-    match convert(arguments, &inputs) {
+    let converted = function_inputs(arguments)
+        .map_err(Failure::Usage)
+        .and_then(|inputs| convert(arguments, &inputs));
+    match converted {
         Ok(converted) => {
             let _ = writeln!(
                 stdout,
@@ -44,8 +72,27 @@ pub(crate) fn function_command(
             );
             ExitCode::SUCCESS
         }
-        Err(error) => {
-            let _ = writeln!(stderr, "sqlquack function: refused: {error}");
+        Err(Failure::Usage(error)) => {
+            let _ = writeln!(stderr, "sqlquack function: failed: {error}");
+            ExitCode::from(2)
+        }
+        Err(Failure::Refused { body, diagnostics }) => {
+            let report = FunctionRefusal {
+                converted: false,
+                name: &arguments.name,
+                refusals: &diagnostics,
+            };
+            let _ = writeln!(
+                stdout,
+                "{}",
+                serde_json::to_string_pretty(&report).unwrap_or_default()
+            );
+            let _ = write!(
+                stderr,
+                "{}",
+                render_diagnostics(&diagnostics, &body, &shown_path(&arguments.body))
+            );
+            let _ = writeln!(stderr, "sqlquack function: refused {}", arguments.name);
             ExitCode::FAILURE
         }
     }
@@ -55,45 +102,78 @@ pub(crate) fn function_command(
 fn function_inputs(
     arguments: &FunctionArguments,
 ) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
-    let policy = chosen_policy(&arguments.policy, arguments.builtin_policy)?;
+    let policy = chosen_policy(
+        &arguments.conversion.policy,
+        arguments.conversion.builtin_policy,
+    )?;
     Ok((policy, parse_session(&arguments.session)?))
+}
+
+/// How diagnostics name the body's file.
+fn shown_path(path: &Path) -> String {
+    match path.as_os_str() == STDIN_PATH {
+        true => STDIN_NAME.to_owned(),
+        false => path.display().to_string(),
+    }
+}
+
+/// The body, from its file or from standard input when the path is `-`.
+fn read_body(path: &Path) -> Result<String, String> {
+    match path.as_os_str() == STDIN_PATH {
+        true => {
+            let mut body = String::new();
+            std::io::stdin()
+                .read_to_string(&mut body)
+                .map_err(|error| format!("cannot read standard input: {error}"))?;
+            Ok(body)
+        }
+        false => std::fs::read_to_string(path)
+            .map_err(|error| format!("cannot read {}: {error}", path.display())),
+    }
 }
 
 fn convert(
     arguments: &FunctionArguments,
     (policy, parameters): &(Option<Policy>, BTreeMap<String, String>),
-) -> Result<ConvertedFunction, String> {
-    let (options, _) = session_conversion_options(
+) -> Result<ConvertedFunction, Failure> {
+    let schema = load_schema(&arguments.schema).map_err(Failure::Usage)?;
+    let spec = schema.functions.get(&arguments.name).ok_or_else(|| {
+        Failure::Usage(format!(
+            "the schema declares no function {}",
+            arguments.name
+        ))
+    })?;
+    let body = resolve_references(&read_body(&arguments.body).map_err(Failure::Usage)?);
+    let options = match session_conversion_options(
         policy.as_ref(),
-        (arguments.strict, arguments.utc_session),
-        parameters,
-    )?;
-    let options = match policy {
-        Some(policy) => confirmed_offsets(
-            options,
-            policy,
-            (arguments.confirm_declared_offsets, arguments.python_runtime),
+        (
+            arguments.conversion.strict,
+            arguments.conversion.utc_session,
         ),
+        parameters,
+    ) {
+        Ok((options, _)) => options,
+        Err(reason) => {
+            return Err(Failure::Refused {
+                diagnostics: unplaced_diagnostic(SESSION_PARAMETERS, reason)
+                    .into_iter()
+                    .collect(),
+                body,
+            });
+        }
+    };
+    let options = match policy {
+        Some(policy) => caller_choices(options, policy, &arguments.conversion),
         None => options,
     };
-    let schema = load_schema(&arguments.schema)?;
-    let spec = schema
-        .functions
-        .get(&arguments.name)
-        .ok_or_else(|| format!("the schema declares no function {}", arguments.name))?;
-    let body = std::fs::read_to_string(&arguments.body)
-        .map_err(|error| format!("cannot read {}: {error}", arguments.body.display()))?;
     analyze_function(
         (&body, spec),
         SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&schema, &options),
     )
-    .map_err(|refusals| {
-        refusals
-            .iter()
-            .map(|refusal| refusal.reason.clone())
-            .collect::<Vec<String>>()
-            .join("; ")
+    .map_err(|refusals| Failure::Refused {
+        diagnostics: diagnose(&refusals, &body),
+        body,
     })
 }

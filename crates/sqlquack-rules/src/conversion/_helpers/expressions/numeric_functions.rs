@@ -7,6 +7,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::floats::main::exponential::exponential;
 use sqlquack_duckdb::floats::main::natural_logarithm::natural_logarithm;
+use sqlquack_duckdb::floats::main::power_of_ten::power_of_ten;
 use sqlquack_duckdb::floats::main::square_root::square_root;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::models::SnowflakeType;
@@ -19,8 +20,8 @@ use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    BITWISE, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, NUMERIC_RANGE, ROUND_FUNCTION, ROUNDING,
-    SIGN_RULE, SQRT_NAME,
+    BITWISE, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, NUMERIC_RANGE, POWER_BASE, POWER_RULE,
+    ROUND_FUNCTION, ROUNDING, SIGN_RULE, SQRT_NAME,
 };
 
 /// ABS of a NUMBER or FLOAT, of the operand's type.
@@ -82,6 +83,34 @@ pub(crate) fn logarithm(
         }
     };
     Ok(Emitted::new(sql, SnowflakeType::Float))
+}
+
+/// POWER(10, n) of a whole NUMBER exponent, as the FLOAT nearest the power; other bases refuse.
+pub(crate) fn power(
+    arguments: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(POWER_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [base, exponent] = arguments else {
+        return Err(refuse("POWER with these arguments".to_owned()));
+    };
+    let base = convert_expression(base, site)?;
+    if base.literal != Some(Literal::Number(POWER_BASE.to_owned())) {
+        return Err(refuse(
+            "POWER of a base other than the constant 10, whose rounding no recording shows"
+                .to_owned(),
+        ));
+    }
+    let exponent = convert_expression(exponent, site)?;
+    match exponent.data_type {
+        SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => Ok(Emitted::new(
+            power_of_ten(&exponent.sql, site.context.log),
+            SnowflakeType::Float,
+        )),
+        other => Err(refuse(format!("POWER(10, n) of a {other} exponent"))),
+    }
 }
 
 /// BITAND, BITOR and BITXOR of integer NUMBERs, as 128-bit two's complement.

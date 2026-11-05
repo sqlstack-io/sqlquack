@@ -76,6 +76,9 @@ pub struct WarehouseColumn {
     pub internal_size: Option<i64>,
     /// Whether NULL is allowed.
     pub nullable: Option<bool>,
+    /// Whether the recorder proved this microsecond-held nanosecond column has no sub-µs digits.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub sub_microsecond_checked: bool,
 }
 
 /// A warehouse error recorded as the case outcome.
@@ -114,4 +117,13 @@ pub struct SessionDefaults {
     pub parameters: BTreeMap<String, String>,
     /// SHA-256 of `parameters` as sorted `KEY=value` lines.
     pub parameters_sha256: String,
+}
+
+/// The fields of a project-run recording's sidecar a comparison reads; other fields are ignored.
+#[derive(Debug, Deserialize)]
+pub(crate) struct RecordingSidecar {
+    pub(crate) outcome: String,
+    pub(crate) columns: Vec<WarehouseColumn>,
+    pub(crate) row_count: Option<u64>,
+    pub(crate) arrow_sha256: Option<String>,
 }

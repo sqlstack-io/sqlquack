@@ -294,6 +294,9 @@ impl Parser {
         }
 
         enforce_ast(&statements, &self.config.complexity_guard)?;
+        if self.applies_snowflake_context_rules() {
+            self.reject_snowflake_name_wrappers(&statements)?;
+        }
         Ok(statements)
     }
 
@@ -395,7 +398,9 @@ impl Parser {
             TokenType::Alter => self.parse_alter(),
 
             TokenType::Truncate => {
-                if self.check_next(TokenType::LParen) {
+                if self.check_next(TokenType::LParen) && self.applies_snowflake_context_rules() {
+                    Err(self.parse_error("Expected a statement, not an expression"))
+                } else if self.check_next(TokenType::LParen) {
                     self.parse_expression()
                 } else {
                     self.parse_truncate()
@@ -442,6 +447,14 @@ impl Parser {
             TokenType::Pragma => self.parse_pragma(),
             TokenType::Rollback => self.parse_rollback(),
             TokenType::Commit => self.parse_commit(),
+            TokenType::Begin
+                if matches!(
+                    self.config.dialect,
+                    Some(crate::tokens::models::DialectType::Snowflake)
+                ) && self.is_scripting_begin() =>
+            {
+                self.parse_scripting_block()
+            }
             TokenType::Begin => self.parse_transaction(),
             TokenType::End
                 if self.config.dialect == Some(crate::tokens::models::DialectType::PostgreSQL) =>
@@ -509,6 +522,25 @@ impl Parser {
                 self.parse_rm_command()
             }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("CALL") => self.parse_call(),
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("UNSET")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                self.parse_unset()
+            }
+            TokenType::Var
+                if self.peek_text().eq_ignore_ascii_case("OPEN")
+                    && matches!(
+                        self.config.dialect,
+                        Some(crate::tokens::models::DialectType::Snowflake)
+                    ) =>
+            {
+                Err(self
+                    .parse_error("OPEN is a Snowflake Scripting statement, valid only in a block"))
+            }
             TokenType::Var if self.peek_text().eq_ignore_ascii_case("OPEN") => {
                 self.skip();
                 self.parse_command()?
@@ -721,9 +753,9 @@ impl Parser {
             ));
         };
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
         let rename_to = if self.match_keywords(&[TokenType::Rename, TokenType::To]) {
-            Some(self.parse_table_ref()?)
+            Some(self.parse_object_name_ref()?)
         } else {
             None
         };
@@ -875,6 +907,9 @@ impl Parser {
     }
 
     fn parse_statement_other(&mut self) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() {
+            return Err(self.parse_error("Expected a statement, not an expression"));
+        }
         let leading_comments = self.current_leading_comments().to_vec();
         let expr = self.parse_expression()?;
         let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1145,6 +1180,8 @@ impl Parser {
         let top = self.parse_select_top()?;
 
         let is_distinct_token = self.match_token(TokenType::Distinct);
+        let all = !is_distinct_token && self.check(TokenType::All);
+        let all = all && self.is_snowflake() && !self.check_next(TokenType::Dot);
         let (distinct, distinct_on) = if is_distinct_token {
             if self.match_token(TokenType::On) {
                 self.expect_token(TokenType::LParen)?;
@@ -1215,6 +1252,31 @@ impl Parser {
                     expressions: target_expressions,
                 })
             }
+        } else if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && self.check(TokenType::Into)
+            && self.check_next(TokenType::Colon)
+        {
+            self.skip();
+            let mut target_expressions = vec![self.parse_primary()?];
+            while self.match_token(TokenType::Comma) {
+                target_expressions.push(self.parse_primary()?);
+            }
+            Some(match target_expressions.len() {
+                1 => SelectInto {
+                    this: target_expressions.remove(0),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: Vec::new(),
+                },
+                _ => SelectInto {
+                    this: Expression::Null(Null),
+                    temporary: false,
+                    unlogged: false,
+                    bulk_collect: false,
+                    expressions: target_expressions,
+                },
+            })
         } else if self.match_token(TokenType::Into) {
             let temporary = self.match_token(TokenType::Temporary) || self.match_identifier("TEMP");
             let unlogged = !temporary && self.match_identifier("UNLOGGED");
@@ -1251,6 +1313,7 @@ impl Parser {
             hint,
             top,
             distinct,
+            all,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1479,6 +1542,7 @@ impl Parser {
             hint,
             top,
             distinct,
+            all,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1515,6 +1579,7 @@ impl Parser {
             limit_by,
             fetch,
             distinct,
+            all,
             distinct_on,
             top,
             with: None,
@@ -1813,6 +1878,7 @@ impl Parser {
 
         let recursive = self.match_token(TokenType::Recursive);
         let mut ctes: Vec<Cte> = Vec::new();
+        let mut has_procedure = false;
 
         loop {
             let cte_start = self.current;
@@ -1836,11 +1902,39 @@ impl Parser {
                 Vec::new()
             };
 
-            let cte_comments = if self.match_token(TokenType::As) {
+            let has_as = self.match_token(TokenType::As);
+            let cte_comments = if has_as {
                 self.previous_trailing_comments().to_vec()
             } else {
                 Vec::new()
             };
+            if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) {
+                self.reject_reserved_name_part(&name)?;
+                if !has_as {
+                    return Err(self.parse_error("Expected AS before the CTE body"));
+                }
+            }
+            if has_as && columns.is_empty() && self.at_anonymous_procedure() {
+                let procedure = self.parse_anonymous_procedure(&name)?;
+                has_procedure = true;
+                ctes.push(Cte {
+                    alias: name,
+                    this: procedure,
+                    columns,
+                    materialized: None,
+                    key_expressions,
+                    alias_first: true,
+                    comments: cte_comments,
+                    span: self.source_range(cte_start),
+                });
+                if self.match_token(TokenType::Comma) {
+                    continue;
+                }
+                break;
+            }
 
             let materialized = if self.match_token(TokenType::Materialized) {
                 Some(true)
@@ -1893,69 +1987,14 @@ impl Parser {
 
         let search = self.parse_recursive_with_search()?;
 
-        let mut main_query = self.parse_statement()?;
-
-        loop {
-            match main_query {
-                Expression::Paren(paren) => {
-                    main_query = paren.this;
-                }
-                Expression::Subquery(ref sub)
-                    if sub.alias.is_none()
-                        && sub.order_by.is_none()
-                        && sub.limit.is_none()
-                        && sub.offset.is_none() =>
-                {
-                    if let Expression::Subquery(sub) = main_query {
-                        main_query = sub.this;
-                    } else {
-                        break;
-                    }
-                }
-                _ => break,
-            }
-        }
-
-        let with_clause = With {
-            ctes,
-            recursive,
-            leading_comments,
-            search,
-        };
-        match &mut main_query {
-            Expression::Select(ref mut select) => {
-                select.with = Some(with_clause);
-            }
-            Expression::Union(ref mut union) => {
-                union.with = Some(with_clause);
-            }
-            Expression::Intersect(ref mut intersect) => {
-                intersect.with = Some(with_clause);
-            }
-            Expression::Except(ref mut except) => {
-                except.with = Some(with_clause);
-            }
-            Expression::Update(ref mut update) => {
-                update.with = Some(with_clause);
-            }
-            Expression::Insert(ref mut insert) => {
-                insert.with = Some(with_clause);
-            }
-            Expression::Delete(ref mut delete) => {
-                delete.with = Some(with_clause);
-            }
-            Expression::CreateTable(ref mut ct) => {
-                ct.with_cte = Some(with_clause);
-            }
-            Expression::Pivot(ref mut pivot) => {
-                pivot.with = Some(with_clause);
-            }
-            Expression::Merge(ref mut merge) => {
-                merge.with_ = Some(Box::new(Expression::With(Box::new(with_clause))));
-            }
-            _ => {}
-        }
-
-        Ok(main_query)
+        self.parse_with_statement(
+            With {
+                ctes,
+                recursive,
+                leading_comments,
+                search,
+            },
+            has_procedure,
+        )
     }
 }

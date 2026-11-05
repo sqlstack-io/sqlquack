@@ -82,6 +82,7 @@ impl Expression {
             | Expression::CreateTable(_)
             | Expression::DropTable(_)
             | Expression::Undrop(_)
+            | Expression::DropObject(_)
             | Expression::AlterTable(_)
             | Expression::SplitTable(_)
             | Expression::FlashbackTable(_)
@@ -90,6 +91,7 @@ impl Expression {
             | Expression::CreateView(_)
             | Expression::DropView(_)
             | Expression::AlterView(_)
+            | Expression::AlterObject(_)
             | Expression::AlterIndex(_)
             | Expression::Truncate(_)
             | Expression::TruncateTable(_)
@@ -114,6 +116,7 @@ impl Expression {
             | Expression::Use(_)
             | Expression::Set(_)
             | Expression::SetStatement(_)
+            | Expression::UnsetStatement(_)
             | Expression::Transaction(_)
             | Expression::Commit(_)
             | Expression::Rollback(_)
@@ -128,6 +131,7 @@ impl Expression {
             | Expression::Kill(_)
             | Expression::Prepare(_)
             | Expression::Execute(_)
+            | Expression::ExecuteObject(_)
             | Expression::Declare(_)
             | Expression::Refresh(_)
             | Expression::AlterSession(_)
@@ -145,6 +149,7 @@ impl Expression {
             | Expression::Pivot(_)
             | Expression::Unpivot(_)
             | Expression::Command(_)
+            | Expression::ScriptingBlock(_)
             | Expression::Raw(_)
             | Expression::CreateTask(_)
             | Expression::ReturnStmt(_) => true,
@@ -212,9 +217,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type.as_ref(),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type.as_ref()
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type.as_ref(),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type.as_ref(),
 
@@ -441,9 +447,10 @@ impl Expression {
             | Expression::BitwiseLeftShift(op)
             | Expression::BitwiseRightShift(op) => op.inferred_type = Some(dt),
 
-            Expression::Not(op) | Expression::Neg(op) | Expression::BitwiseNot(op) => {
-                op.inferred_type = Some(dt)
-            }
+            Expression::Not(op)
+            | Expression::Neg(op)
+            | Expression::Pos(op)
+            | Expression::BitwiseNot(op) => op.inferred_type = Some(dt),
 
             Expression::Like(op) | Expression::ILike(op) => op.inferred_type = Some(dt),
 
@@ -675,6 +682,7 @@ impl Expression {
     pub fn star() -> Self {
         Expression::Star(Star {
             table: None,
+            ilike: None,
             except: None,
             replace: None,
             rename: None,

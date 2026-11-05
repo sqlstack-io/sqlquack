@@ -19,7 +19,7 @@ use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
-use crate::census::constants::GUARDS_DIR_VARIABLE;
+use crate::census::constants::{CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE};
 use crate::census::errors::CensusError;
 use crate::census::models::PlacedRefusal;
 
@@ -131,6 +131,14 @@ pub(crate) fn inspect_file(
             "divergences": provenance.divergences,
         });
         let _ = std::fs::write(format!("{dir}/{name}.json"), text.to_string());
+    }
+    if let (Ok(dir), true, [converted]) = (
+        std::env::var(CONVERTED_DIR_VARIABLE),
+        analysis.refusals.is_empty(),
+        analysis.conversions.as_slice(),
+    ) {
+        let name = path.to_string_lossy().replace('/', "_");
+        let _ = std::fs::write(format!("{dir}/{name}"), &converted.sql);
     }
     let (unknown_relations, root_constructs) = traced(&analysis.refusals);
     let mut placed: Vec<PlacedRefusal> = Vec::new();

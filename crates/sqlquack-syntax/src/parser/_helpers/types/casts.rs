@@ -13,6 +13,7 @@ use crate::parser::constants::NATIONAL;
 use crate::parser::constants::NCHAR;
 use crate::parser::constants::NVARCHAR;
 use crate::parser::constants::REAL;
+use crate::parser::constants::TABLE_TYPE;
 use crate::parser::models::Parser;
 use crate::parser::models::ParserDepthScope;
 use crate::tokens::models::SourceSpan;
@@ -737,14 +738,9 @@ impl Parser {
 
     fn parse_time_data_type(&mut self) -> Result<DataType> {
         let precision = if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                None
-            } else {
-                let p = self.expect_number()? as u32;
-                self.expect_token(TokenType::RParen)?;
-                Some(p)
-            }
+            let p = self.expect_number()? as u32;
+            self.expect_token(TokenType::RParen)?;
+            Some(p)
         } else {
             None
         };
@@ -775,26 +771,20 @@ impl Parser {
         };
         if self.match_token(TokenType::With) {
             if self.match_token(TokenType::Local) {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Custom {
                     name: "TIMESTAMPLTZ".to_string(),
                 })
             } else {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
+                self.match_time_zone_words()?;
                 Ok(DataType::Timestamp {
                     precision,
                     timezone: true,
                 })
             }
         } else if self.match_keyword("WITHOUT") {
-            self.match_keyword("TIME");
-            self.match_keyword("ZONE");
-            Ok(DataType::Timestamp {
-                precision,
-                timezone: false,
-            })
+            self.match_time_zone_words()?;
+            Ok(self.timestamp_without_time_zone(precision))
         } else {
             Ok(DataType::Timestamp {
                 precision,
@@ -907,10 +897,7 @@ impl Parser {
 
     fn parse_varbinary_data_type(&mut self) -> Result<DataType> {
         if self.match_token(TokenType::LParen) {
-            if self.check(TokenType::RParen) {
-                self.skip();
-                Ok(DataType::VarBinary { length: None })
-            } else if self.check_identifier("MAX") {
+            if self.check_identifier("MAX") {
                 self.skip();
                 self.expect_token(TokenType::RParen)?;
                 Ok(DataType::Custom {
@@ -963,6 +950,7 @@ impl Parser {
                     dimension: Some(dimension),
                 })
             } else {
+                self.expect_snowflake_vector_element()?;
                 let element_type = self.parse_data_type()?;
                 self.expect_token(TokenType::Comma)?;
                 let dimension = self.expect_number()? as u32;
@@ -994,7 +982,9 @@ impl Parser {
                     };
                     let field_type = self.parse_data_type()?;
                     let not_null = if self.match_keyword("NOT") {
-                        self.match_keyword("NULL");
+                        if !self.match_keyword("NULL") {
+                            return Err(self.parse_error("Expected NULL after NOT"));
+                        }
                         true
                     } else {
                         false
@@ -1114,6 +1104,17 @@ impl Parser {
     }
 
     fn parse_named_data_type(&mut self, name: String, raw_name: String) -> Result<DataType> {
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) && self.previous().token_type != TokenType::QuotedIdentifier
+            && name != TABLE_TYPE
+            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&name.as_str())
+        {
+            return Err(self.parse_error(format!(
+                "Reserved word {name} cannot be an unquoted type name"
+            )));
+        }
         let is_known = convert_name_is_known_custom(&name);
         let custom_name = if is_known {
             name.clone()
@@ -1126,6 +1127,9 @@ impl Parser {
                 let mut after_comma = true;
                 loop {
                     if self.check(TokenType::RParen) {
+                        if after_comma && !(args.is_empty() && name == TABLE_TYPE) {
+                            return Err(self.parse_error("Expected a type parameter"));
+                        }
                         break;
                     }
                     let token = self.advance()?;

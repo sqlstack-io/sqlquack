@@ -225,12 +225,22 @@ impl Parser {
         self.expect_token(TokenType::Function)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let parameters = if self.match_token(TokenType::LParen) {
             let mut types: Vec<DataType> = Vec::new();
             if !self.check(TokenType::RParen) {
                 loop {
+                    if self.check(TokenType::Table)
+                        && self.check_next(TokenType::LParen)
+                        && self.tokens.get(self.current + 2).is_some_and(|token| {
+                            matches!(token.token_type, TokenType::RParen | TokenType::String)
+                        })
+                    {
+                        return Err(
+                            self.parse_error("A TABLE argument names at least one data type")
+                        );
+                    }
                     types.push(self.parse_data_type()?);
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -350,6 +360,8 @@ impl Parser {
                     }
                     self.expect_token(TokenType::End)?;
                     body = Some(FunctionBody::Statements(statements));
+                } else if self.check(TokenType::DollarString) {
+                    body = Some(FunctionBody::Expression(self.parse_expression()?));
                 } else {
                     let stmt = self.parse_statement()?;
                     body = Some(FunctionBody::Expression(stmt));
@@ -373,6 +385,7 @@ impl Parser {
             with_options,
             has_parens,
             use_proc_keyword,
+            returns_table: None,
         })))
     }
 
@@ -381,7 +394,7 @@ impl Parser {
         self.expect_token(TokenType::Procedure)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let parameters = if self.match_token(TokenType::LParen) {
             let mut types: Vec<DataType> = Vec::new();
@@ -614,17 +627,16 @@ impl Parser {
         self.expect_token(TokenType::Sequence)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let cascade = self.match_token(TokenType::Cascade);
-        if !cascade {
-            self.match_token(TokenType::Restrict);
-        }
+        let restrict = !cascade && self.match_token(TokenType::Restrict);
 
         Ok(Expression::DropSequence(Box::new(DropSequence {
             name,
             if_exists,
             cascade,
+            restrict,
         })))
     }
 
@@ -1235,7 +1247,7 @@ impl Parser {
         self.expect_token(TokenType::Type)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let cascade = self.match_token(TokenType::Cascade);
         if !cascade {

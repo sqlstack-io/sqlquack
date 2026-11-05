@@ -4,6 +4,7 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::column_type::column_type;
@@ -55,7 +56,7 @@ pub(crate) fn project_call(
     if returns == SnowflakeType::SemiStructured {
         rely_on(JSON_FIDELITY, construct, site.context)?;
         return Ok(Emitted::new(
-            json_guarded(&format!("CAST({call} AS VARCHAR)"), log),
+            json_guarded(&format!("CAST({call} AS VARCHAR)"), false, log),
             returns,
         ));
     }
@@ -65,13 +66,13 @@ pub(crate) fn project_call(
 /// A Python call relies on its handler running locally as in Snowflake, and on its values crossing.
 fn rely_on_python(name: &str, construct: &Construct, context: &Context<'_>) -> Result<(), Refusal> {
     if !context.options.divergences.contains_key(PROJECT_UDF) {
-        return Err(outside_conditions(
-            construct.clone(),
-            format!(
+        return Err(Refusal {
+            reason: format!(
                 "the Python function {name}, which runs only where a Python runtime registers it: \
                  assumption `{PROJECT_UDF}`, which needs --python-runtime"
             ),
-        ));
+            ..refused_divergence(construct.clone(), PROJECT_UDF)
+        });
     }
     context
         .log
@@ -82,14 +83,7 @@ fn rely_on_python(name: &str, construct: &Construct, context: &Context<'_>) -> R
 /// Relies on `divergence` for a project function, whose construct the policy cannot list by name.
 fn rely_on(divergence: &str, construct: &Construct, context: &Context<'_>) -> Result<(), Refusal> {
     if !context.options.divergences.contains_key(divergence) {
-        return Err(outside_conditions(
-            construct.clone(),
-            format!(
-                "{} may need known divergence `{divergence}`, which the policy does not allow \
-                 in this mode",
-                construct.key()
-            ),
-        ));
+        return Err(refused_divergence(construct.clone(), divergence));
     }
     context.log.divergence(divergence, &construct.key());
     Ok(())

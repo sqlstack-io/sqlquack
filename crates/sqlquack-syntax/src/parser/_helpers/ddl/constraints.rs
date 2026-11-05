@@ -28,6 +28,7 @@ use crate::expressions::statements::models::Schema;
 use crate::expressions::tables::main::split_mysql_create_index_key_parts::split_mysql_create_index_key_parts;
 use crate::expressions::tables::models::CreateIndex;
 use crate::expressions::tables::models::DropIndex;
+use crate::expressions::tables::models::DropObject;
 use crate::expressions::tables::models::DropTable;
 use crate::expressions::tables::models::IndexColumn;
 use crate::expressions::tables::models::IndexKeyPart;
@@ -36,7 +37,7 @@ use crate::expressions::tables::models::Tags;
 use crate::expressions::tables::models::UniqueKeyProperty;
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::AT_SIGN;
-use crate::parser::constants::FILE;
+use crate::parser::constants::SNOWFLAKE_DROP_KINDS;
 use crate::parser::models::Parser;
 use crate::parser::models::ViewModifiers;
 use crate::tokens::models::Token;
@@ -1412,50 +1413,11 @@ impl Parser {
                     self.config.dialect,
                     Some(crate::tokens::models::DialectType::Snowflake)
                 ) {
-                    let text_upper = self.peek_text().to_ascii_uppercase();
-                    let is_snowflake_drop = matches!(
-                        text_upper.as_str(),
-                        "STREAM"
-                            | "TASK"
-                            | "STAGE"
-                            | "WAREHOUSE"
-                            | "PIPE"
-                            | "INTEGRATION"
-                            | "TAG"
-                            | "NETWORK"
-                            | "SHARE"
-                    ) || text_upper == FILE
-                        && self.current + 1 < self.tokens.len()
-                        && self.tokens[self.current + 1]
-                            .text
-                            .eq_ignore_ascii_case("FORMAT");
-                    if is_snowflake_drop {
-                        self.skip();
-                        let mut tokens: Vec<(String, TokenType)> = vec![
-                            ("DROP".to_string(), TokenType::Var),
-                            (
-                                self.previous_text().to_ascii_uppercase(),
-                                self.previous().token_type,
-                            ),
-                        ];
-                        if text_upper == FILE {
-                            let fmt = self.advance()?;
-                            tokens.push((fmt.text.to_ascii_uppercase(), fmt.token_type));
-                        }
-                        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                            let token = self.advance()?;
-                            let text = if token.token_type == TokenType::QuotedIdentifier {
-                                format!("\"{}\"", token.text)
-                            } else if token.token_type == TokenType::String {
-                                format!("'{}'", token.text)
-                            } else {
-                                token.text.to_string()
-                            };
-                            tokens.push((text, token.token_type));
-                        }
-                        return Ok(Expression::Command(Box::new(Command {
-                            this: self.join_command_tokens(tokens),
-                        })));
+                    if let Some(kind) = SNOWFLAKE_DROP_KINDS
+                        .iter()
+                        .find(|kind| self.match_text_seq(kind))
+                    {
+                        return self.parse_drop_snowflake_object(kind.join(" "));
                     }
                 }
                 Err(self.parse_error(format!(
@@ -1464,6 +1426,35 @@ impl Parser {
                 )))
             }
         }
+    }
+
+    /// Parse a Snowflake DROP of `kind`, already consumed: the name and the options that kind takes.
+    fn parse_drop_snowflake_object(&mut self, kind: String) -> Result<Expression> {
+        let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        let (cascade, restrict, force) = match kind.as_str() {
+            "APPLICATION" | "OPENFLOW RUNTIME" => {
+                (self.match_token(TokenType::Cascade), false, false)
+            }
+            "EXTERNAL TABLE" => {
+                let cascade = self.match_token(TokenType::Cascade);
+                (
+                    cascade,
+                    !cascade && self.match_token(TokenType::Restrict),
+                    false,
+                )
+            }
+            "SERVICE" => (false, false, self.match_texts(&["FORCE"])),
+            _ => (false, false, false),
+        };
+        Ok(Expression::DropObject(Box::new(DropObject {
+            kind,
+            name,
+            if_exists,
+            cascade,
+            restrict,
+            force,
+        })))
     }
 
     /// Parse DROP TABLE
@@ -1478,7 +1469,7 @@ impl Parser {
 
         let mut names: Vec<TableRef> = Vec::new();
         loop {
-            names.push(self.parse_table_ref()?);
+            names.push(self.parse_object_name_ref()?);
             if !self.match_token(TokenType::Comma) {
                 break;
             }
@@ -1520,7 +1511,7 @@ impl Parser {
         self.expect_token(TokenType::View)?;
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         Ok(Expression::DropView(Box::new(DropView {
             name,
@@ -1537,7 +1528,7 @@ impl Parser {
 
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
 
-        let name = self.parse_table_ref()?;
+        let name = self.parse_object_name_ref()?;
 
         let table = if self.match_token(TokenType::On) {
             Some(self.parse_table_ref()?)
@@ -1563,19 +1554,39 @@ impl Parser {
         } else {
             None
         };
+        if matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        ) {
+            if let Some(expr) =
+                self.parse_alter_snowflake_table_action(alter_table_modifier.is_some())?
+            {
+                return Ok(expr);
+            }
+        }
 
         match self.peek().token_type {
             TokenType::Table => self.parse_alter_table(alter_table_modifier),
             TokenType::View => self.parse_alter_view_with_modifiers(None, None, None),
             TokenType::Index => self.parse_alter_index(),
             TokenType::Sequence => self.parse_alter_sequence(),
-            _ if self.check_identifier("SESSION") => {
+            _ if self.check_identifier("SESSION") && !self.check_next_identifier("POLICY") => {
                 self.skip();
                 match self.parse_alter_session()? {
                     Some(expr) => Ok(expr),
                     None => Ok(Expression::Command(Box::new(Command {
                         this: "ALTER SESSION".to_string(),
                     }))),
+                }
+            }
+            _ if matches!(
+                self.config.dialect,
+                Some(crate::tokens::models::DialectType::Snowflake)
+            ) =>
+            {
+                match self.parse_alter_snowflake_object()? {
+                    Some(expr) => Ok(expr),
+                    None => self.parse_alter_view_or_raw(),
                 }
             }
             _ => self.parse_alter_view_or_raw(),

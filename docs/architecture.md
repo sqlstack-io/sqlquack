@@ -88,6 +88,8 @@ else at the whole input.
 - **missing rule**: no verified rule converts the construct yet;
 - **not expressible in DuckDB**: declared in the catalogue with a reason and evidence;
 - **parse fidelity**: the SQL does not parse;
+- **divergence refused**: converting needs a known divergence that the policy refuses in this mode,
+  such as under `--strict` or `--builtin-policy`; the reason names the divergence;
 - **conversion budget exceeded**: converting the statement took longer, or emitted more DuckDB SQL
   relative to its source, than the `[conversion_budget]` in `sqlquack.toml` allows. The reason gives
   the measured time or size. A conversion that grows pathologically is refused, never kept.
@@ -208,12 +210,17 @@ Until SQLBuild writes the `functions` section itself, the census-only script
 The policy lists known divergences, each with the constructs it covers and a treatment in the
 default and in strict mode. A rule that may diverge asks the policy first: allowed, the conversion
 records the divergence and its construct, and reports carry a warning naming both; otherwise the
-construct is refused. `numeric_range` covers SUM and AVG totals beyond 38 digits, `+`, `-` and `*` whose
+construct is refused. Each divergence declares its `failure`: `loud` where the converted SQL raises
+wherever DuckDB could differ and never returns another value, proven by a case expecting it or a
+test of its guard raising; `value` where it can return another value, as for HASH, RANDOM, the
+clock or any assumption. `convert --json` reports each relied-on divergence's failure under
+`divergence_failures`, and `--loud-divergences-only` refuses every `value` divergence, in any mode
+and whatever the caller confirms. `numeric_range` covers SUM and AVG totals beyond 38 digits, `+`, `-` and `*` whose
 capped result type may hold a 39-digit value (Snowflake keeps up to 128 bits under NUMBER(38)), and
 divisions whose exact intermediate exceeds 128 bits, where DuckDB raises an error and Snowflake
 returns a value. For `*`, the generated `*_range_edge` cases (products between 10^38 and 2^127)
 recorded Snowflake returning rows where DuckDB raises. A
-divergence never covers DuckDB returning a different value. `timestamp_range` covers TIMESTAMP_NTZ(7-9) values
+loud divergence never covers DuckDB returning a different value. `timestamp_range` covers TIMESTAMP_NTZ(7-9) values
 outside DuckDB's nanosecond range (1677-2262), and `timestamp_tz_submicro` covers TIMESTAMP_TZ and
 TIMESTAMP_LTZ(7-9) values with a non-zero sub-microsecond part, which DuckDB's microsecond
 TIMESTAMPTZ cannot hold; both raise at run time. Naive timestamps pair by precision: 0-6 with
@@ -229,7 +236,10 @@ reads single quotes, NaN and undefined, rejects repeated keys and writes keys so
 read as JSON, numbers with an exponent, an all-zero fraction, six leading fraction zeros, more
 than 15 decimal digits or 39 integer digits, letters and trailing commas outside strings,
 surrogate escapes and repeated keys at any depth. PARSE_JSON and TRY_PARSE_JSON raise alike, so
-TRY_PARSE_JSON never returns NULL on one side and a value on the other. VARIANT columns of base
+TRY_PARSE_JSON never returns NULL on one side and a value on the other, with one exception that
+no reader can read: for TRY_PARSE_JSON, `duckdb.json_guarded` gives NULL for markup and for a
+document cut off before its first value closes, when only double-quoted strings could hide a
+bracket (recorded). VARIANT columns of base
 tables pass the same guard. VARIANT columns of source tables are assumed to hold JSON values, as loaded from JSON:
 `source_variant_json` names that assumption. Snowflake keeps a DATE, TIME, timestamp or BINARY
 typed inside a VARIANT, unequal to its text (recorded), where DuckDB's JSON holds only the text.
@@ -285,7 +295,10 @@ formula reproduces, so the converted SQL returns a value only where the fraction
 (or between equal values) and raises otherwise. `date_text_spelling` covers TRY_TO_DATE and
 TRY_CAST to DATE of text in a spelling no recording shows.
 
-`hash` is the one divergence that returns a different value, by user decision (CHI-836): HASH
+`hash` is a `value` divergence, as are RANDOM, UUID_STRING, the sequences and the clock, which
+differ by nature, and every assumption. Unlike them it is refused by default, since a wrong hash
+looks like a right one; a project that needs only internal consistency opts in with
+`default = "warn"` under `[divergences.hash]` in its policy. HASH
 converts to DuckDB's 64-bit hash shifted into the signed range, NUMBER(19,0), which is
 deterministic and equal for equal arguments in the same order within one run but never
 Snowflake's value. Integer NUMBERs hash by value whatever their precision, and a VARIANT by its
@@ -317,7 +330,8 @@ in greedy order (each next rule is the one that completes the most files). SQLBu
 (`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
 placeholders before parsing; each model, source or seed reference becomes a relation named after its
 arguments, so a `--schema` file can type it. The report holds counts and construct keys only. With
-`SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there.
+`SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there, and
+with `SQLQUACK_CONVERTED_DIR` set, each converted file's DuckDB SQL, named after its path.
 Progress goes to stderr every few seconds, and the conversion times of the slowest files, over every
 pass, are listed there at the end. `--names` adds file, model and relation names: the slowest
 files' paths, the blockers' model names and the relation in each `model:` and `relation:` root.
@@ -362,6 +376,25 @@ END`, so a guard is evaluated only for rows the other conjuncts keep, whatever o
 optimizer chooses; the free conjuncts stay plain so filters still push down. A guard inside an OR
 or a single guarded condition is evaluated for every row reaching it, which may raise for a row
 whose value Snowflake would not need: a loud failure, never a different value.
+
+### Comparing converted models with recorded results
+
+`sqlquack compare --manifest <file>` replays converted SQL on DuckDB and judges each result against a
+recording with the strict comparator (decision D101). The manifest is a JSON list of entries
+`{id, recorded, database, sql, ordered}`: a recording's sidecar, beside its `.arrow` file; a DuckDB
+database attached read-only as `inputs`, holding the recorded inputs the SQL reads; the converted
+SQL file; and whether rows compare in order or as a bag. The sidecar must record `rows`, and the
+Arrow file must match its `arrow_sha256`, column count and `row_count`. Each replay runs in the
+policy's session profile (`--session-profile`, `utc-v1` by default) with its null ordering. Each
+entry prints `{id, outcome, detail}`. The outcome is one of:
+
+- `matches`;
+- `matches_at_microseconds`: the recording kept declared nanosecond columns in microseconds without
+  the recorder's sub-microsecond check, and the replay matches once its own sub-microsecond digits
+  are dropped. This never counts as a full match;
+- `differs`, with the first difference;
+- `duckdb_error`;
+- `unreadable`: the recording or the SQL file cannot be read.
 
 ### Guard measurement
 
@@ -557,7 +590,12 @@ setting reaches the repository. A pinned parameter whose account default differs
    22) without its query ID; session, connection and privilege
    (42501) errors stop the run without writing anything. When any statement of a batch fails, Snowflake reports the whole
    request as error 100132 (SQLSTATE P0000), so the batch's cases are rerun one at a time and each
-   real error is classified on its own. Existing results are never overwritten.
+   real error is classified on its own. The connector returns a whole TIME or TIMESTAMP(9) column
+   in microseconds when any row lies outside the nanosecond range. Such a result is kept only when
+   one read-only `SELECT COUNT_IF(DATE_PART(nanosecond, $n) % 1000 <> 0)` over `RESULT_SCAN` of
+   the same query finds no value with sub-microsecond digits; the column is then marked
+   `sub_microsecond_checked` and compares exactly. Otherwise, or if the check fails, the case is
+   refused: a rounded value is never recorded. Existing results are never overwritten.
 3. `sqlquack verify` converts each recorded case, replays it on DuckDB in a fresh in-memory
    database under the profile's time zone and the policy's NULL order, and compares. A refusal is
    always acceptable; a difference fails. Equivalence pairs are compared with each other instead.

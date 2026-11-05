@@ -340,7 +340,7 @@ def hash_files() -> list[CaseFile]:
             cases=(*pair_cases(), *order_cases(), *aggregate_cases()),
             header=(
                 "HASH properties only: equal inputs hash alike, results are signed 64-bit, NULL",
-                "has a hash, and argument order matters. No case outputs a hash value (CHI-836).",
+                "has a hash, and argument order matters. No case outputs a hash value.",
             ),
         )
     ]

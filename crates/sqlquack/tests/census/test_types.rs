@@ -78,3 +78,16 @@ pub(crate) struct DeclaredOutcome {
     pub(crate) divergences: Vec<String>,
     pub(crate) model_declaration_refused: bool,
 }
+
+pub(crate) struct ConvertedDirTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) set_variable: bool,
+    pub(crate) expected_files: Vec<ConvertedFile>,
+}
+
+/// One file census wrote under `SQLQUACK_CONVERTED_DIR`: its model and whether it holds a SELECT.
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct ConvertedFile {
+    pub(crate) model: String,
+    pub(crate) holds_select: bool,
+}

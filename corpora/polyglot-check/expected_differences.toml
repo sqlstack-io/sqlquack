@@ -769,16 +769,64 @@ marker = "variant)->"
 polyglot_errors = ["Expected RParen, got Var ('NUMBER')"]
 note = "(acc NUMBER(18, 2), i VARIANT) -> ... is a lambda with several typed parameters, one parameterised; polyglot reads a parenthesized lambda's parameters as names only"
 
-# Statements SQLQuack rejects where polyglot parses them. The check counts an entry as rejected only
+[[fix]]
+id = "snowflake_bare_trailing_limit"
+marker = "1LIMIT"
+polyglot_errors = ["Unexpected token: Limit"]
+note = "Snowflake accepts a bare trailing LIMIT (recorded as accepted) and reads it as LIMIT NULL; polyglot needs a count"
+
+# Statements SQLQuack rejects where polyglot parses them or fails with another error. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
 # crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.
 
 [[rejection]]
 id = "malformed_typed_type_text"
 sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
-dialects = ["Snowflake", "DuckDB"]
+dialects = ["DuckDB"]
 sqlquack_error = "Unexpected token after data type"
 note = "malformed typed-expression type text errors instead of degrading to an ordinary call"
+
+[[rejection]]
+id = "snowflake_reserved_type_name"
+sql = "SELECT __polyglot_typed(amount, 'NOT A TYPE (') FROM orders"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word NOT cannot be an unquoted type name"
+note = "the same malformed type text fails earlier in Snowflake, where NOT is reserved and cannot name a type"
+
+[[rejection]]
+id = "snowflake_cte_without_as"
+sql = "WITH t (SELECT 1 AS c) SELECT c FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS before the CTE body"
+note = "Snowflake needs AS between a CTE's name and its body: it refuses WITH v1 ( SELECT 1 ) SELECT 1 with syntax error 1003 (case sf.query.with.select.k8b29420d51a4)"
+
+[[rejection]]
+id = "snowflake_cte_without_as_prose"
+sql = " with the correct AST shape."
+dialects = ["Snowflake"]
+sqlquack_error = "Expected AS before the CTE body"
+note = "prose read as a CTE without AS; polyglot fails here too, with another error"
+
+[[rejection]]
+id = "snowflake_reserved_cte_name"
+sql = "WITH all AS (SELECT 1 AS count) SELECT all.count FROM all"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word ALL cannot be an unquoted object name"
+note = "ALL is a Snowflake reserved word, so it cannot name a CTE unquoted; Snowflake refuses WITH SELECT AS ( SELECT 1 ) SELECT 1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_reserved_truncate_target"
+sql = "TRUNCATE TABLE table"
+dialects = ["Snowflake"]
+sqlquack_error = "Reserved word TABLE cannot be an unquoted object name"
+note = "TABLE is a Snowflake reserved word, so it cannot name a table unquoted"
+
+[[rejection]]
+id = "snowflake_empty_call_argument"
+sql = "SELECT ROUND(SCALE => 1, EXPR => 2.25, , ROUNDING_MODE => 'HALF_TO_EVEN') AS value"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a function argument between commas"
+note = "Snowflake refuses an empty argument between commas with syntax error 1003; polyglot drops it"
 
 [[rejection]]
 id = "snowflake_bare_values_cte"
@@ -786,6 +834,209 @@ sql = "WITH RECURSIVE T(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n 
 dialects = ["Snowflake"]
 sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CTE 'T'"
 note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"
+
+[[rejection]]
+id = "snowflake_empty_select_list"
+sql = "SELECT"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "Snowflake rejects a SELECT with no items (recorded errno 1003); polyglot parses it with an empty expression list"
+
+[[rejection]]
+id = "snowflake_empty_select_list_lower_case"
+sql = "select"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "the lower-case spelling of the empty SELECT above"
+
+[[rejection]]
+id = "snowflake_empty_select_list_trailing_space"
+sql = "SELECT "
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "the empty SELECT above with a trailing space"
+
+[[rejection]]
+id = "snowflake_reserved_is_alias"
+sql = "SELECT 1 is"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "IS is fully reserved in Snowflake, so it is no implicit alias; Snowflake rejects a reserved implicit alias (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_empty_select_list_before_from"
+sql = "SELECT FROM users"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "SELECT FROM t has no select item; Snowflake rejects it (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_empty_select_list_keyword_qualifier"
+sql = "SELECT from.x, date.x FROM orders"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "FROM is fully reserved in Snowflake, so this SELECT has no item; polyglot fails later, at the dot"
+
+[[rejection]]
+id = "snowflake_empty_select_list_trailing_order_by"
+sql = "SELECT FROM x ORDER BY"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "an empty SELECT with a dangling ORDER BY; SQLQuack reports the missing item, polyglot the dangling BY"
+
+[[rejection]]
+id = "snowflake_empty_select_list_stage_text"
+sql = "SELECT FROM dollar-quoted stage path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake requires at least one select item"
+note = "a test's message text, not SQL; SQLQuack reports the missing select item, polyglot the dash"
+
+[[rejection]]
+id = "snowflake_reserved_distinct_alias"
+sql = "SELECT (a OR b) IS {}DISTINCT FROM (c AND d)"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "a test's format template, not SQL; both reject it, SQLQuack where IS meets the braces"
+
+[[rejection]]
+id = "snowflake_reserved_window_alias"
+sql = "SELECT col window FROM t"
+dialects = ["Snowflake"]
+sqlquack_error = "Invalid expression / Unexpected token"
+note = "WINDOW is fully reserved in Snowflake (reserved by ANSI), so it is no implicit alias; reserved implicit aliases are recorded as errno 1003"
+
+[[rejection]]
+id = "snowflake_set_operation_join_side"
+sql = "SELECT 1 AS a INNER UNION ALL BY NAME SELECT 2 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake set operations take no LEFT, RIGHT, FULL, INNER or OUTER"
+note = "INNER UNION ... BY NAME is BigQuery's; Snowflake rejects a join side before a set operation (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_describe_bare_name"
+sql = "DESCRIBE x"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "Snowflake DESCRIBE names its object kind before the name: it refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_show_profile"
+sql = "SHOW PROFILE FOR QUERY 5"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "SHOW PROFILE is MySQL's; PROFILE is no Snowflake SHOW kind"
+
+[[rejection]]
+id = "snowflake_show_groups"
+sql = "SHOW GROUPS FOR ROLE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "GROUPS is no Snowflake SHOW kind; Snowflake shows user groups as SHOW ORGANIZATION USER GROUPS"
+
+[[rejection]]
+id = "snowflake_show_create_table"
+sql = "SHOW CREATE TABLE t"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after SHOW"
+note = "SHOW CREATE TABLE is MySQL's; Snowflake returns DDL through GET_DDL, and CREATE is no SHOW kind"
+
+[[rejection]]
+id = "snowflake_describe_extended"
+sql = "DESCRIBE EXTENDED a.b"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "EXTENDED is Hive's and Spark's; Snowflake DESCRIBE names an object kind, and EXTENDED is none"
+
+[[rejection]]
+id = "snowflake_describe_formatted"
+sql = "DESCRIBE FORMATTED a.b"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "FORMATTED is Hive's; Snowflake DESCRIBE names an object kind, and FORMATTED is none"
+
+[[rejection]]
+id = "snowflake_describe_query"
+sql = "DESCRIBE SELECT 1"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "Snowflake describes a query's result with DESCRIBE RESULT and a query id, not the query itself"
+
+[[rejection]]
+id = "snowflake_describe_bare_quoted_name"
+sql = "DESCRIBE \"history\""
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "a quoted name is still a bare name: Snowflake refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_describe_bare_qualified_name"
+sql = "DESCRIBE db.table"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an object kind after DESCRIBE"
+note = "a qualified name is still a bare name: Snowflake refuses DESC v1 with syntax error 1003"
+
+[[rejection]]
+id = "snowflake_by_name_on_intersect"
+sql = "SELECT 1 AS a, 2 AS b INTERSECT DISTINCT BY NAME ON (b, a) SELECT 3 AS b, 4 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON column list"
+note = "BY NAME ON (...) after INTERSECT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_by_name_on_except"
+sql = "SELECT 1 AS a, 2 AS b EXCEPT DISTINCT BY NAME ON (b, a) SELECT 3 AS b, 4 AS a"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake allows BY NAME only after UNION, without an ON column list"
+note = "BY NAME ON (...) after EXCEPT is BigQuery's; Snowflake takes BY NAME only after UNION (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_string_part_extract"
+sql = "SELECT EXTRACT('{quoted}' FROM created_at) FROM events"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a date or time part keyword before FROM"
+note = "Snowflake refuses a string date part before FROM (recorded errno 1003 for EXTRACT ( 'm' FROM 1 ))"
+
+[[rejection]]
+id = "snowflake_string_part_date_part"
+sql = "SELECT DATE_PART('month' FROM CAST('2024-04-08' AS DATE))"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a date or time part keyword before FROM"
+note = "the same rule for DATE_PART (recorded errno 1003 for DATE_PART ( 'm' FROM 1 ))"
+
+[[rejection]]
+id = "snowflake_collate_needs_string"
+sql = "SELECT 1 || 2 COLLATE NOCASE * 3"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a collation specification string"
+note = "Snowflake's COLLATE takes a collation specification string such as 'en-ci' (recorded errno 1003 for 'm' COLLATE m1); NOCASE is SQLite's"
+
+[[rejection]]
+id = "snowflake_dot_after_literal"
+sql = "SELECT 1..2"
+dialects = ["Snowflake"]
+sqlquack_error = "A literal has no fields to read with a dot"
+note = "both parsers refuse it; polyglot says \"Expected field name after dot\""
+
+[[rejection]]
+id = "snowflake_frame_bare_preceding"
+sql = "SELECT SUM(x) OVER (PARTITION BY a ROWS BETWEEN UNBOUNDED PRECEDING AND PRECEDING)"
+dialects = ["Snowflake"]
+sqlquack_error = "Snowflake frame bounds need a value or UNBOUNDED before PRECEDING"
+note = "Snowflake needs a value or UNBOUNDED before PRECEDING (recorded errno 1003 for PERCENT_RANK ( ) OVER ( ORDER BY 1 RANGE PRECEDING ))"
+
+[[rejection]]
+id = "snowflake_frame_value_without_direction"
+sql = "SELECT SUM(x) OVER (PARTITION BY a RANGE BETWEEN 1 AND 3)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected PRECEDING or FOLLOWING after a frame bound value"
+note = "Snowflake needs PRECEDING or FOLLOWING after a frame bound value, as its window frame grammar documents"
+
+[[rejection]]
+id = "snowflake_frame_value_without_direction_end"
+sql = "SELECT SUM(x) OVER (PARTITION BY a RANGE BETWEEN 1 FOLLOWING AND 3)"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected PRECEDING or FOLLOWING after a frame bound value"
+note = "the same rule at the frame's end"
 
 # Statements both parsers parse where polyglot drops the quoting of a name SQLQuack keeps quoted.
 # The check counts an entry as kept quoting only when the statement, without whitespace and ignoring
@@ -797,3 +1048,45 @@ note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQ
 id = "star_exclude_quoted_name"
 marker = "EXCLUDE(\""
 note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not NOTE; polyglot drops the quotes of a star's EXCLUDE names"
+
+# Wrapper nodes SQLQuack keeps where polyglot drops them. The check counts an entry only when the
+# statement, without whitespace and ignoring case, contains `marker`, and both trees are equal once
+# every `{ "<node>": { "this": … } }` in SQLQuack's tree is replaced by its operand.
+
+[[kept_node]]
+id = "unary_plus"
+marker = "+"
+node = "pos"
+note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polyglot drops it and keeps only the operand; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+# Fields SQLQuack keeps as written where polyglot drops or infers them. The check counts an entry
+# only when the statement, without whitespace and ignoring case, contains `marker`, the trees differ,
+# and both are equal once every `<field>` key is removed from each.
+
+[[kept_field]]
+id = "snowflake_secondary_role_list"
+marker = "SECONDARYROLES"
+field = "roles"
+note = "USE SECONDARY ROLES a, b, c lists its roles one by one with their quoting; polyglot joins them into one unquoted name; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+[[kept_field]]
+id = "snowflake_show_unnamed_container"
+marker = "SHOW"
+field = "scope_kind"
+note = "SHOW ... IN a.b names no container kind, so SQLQuack records none; polyglot infers SCHEMA from the two-part name, which makes IN a.b and IN SCHEMA a.b one tree"
+
+[[kept_field]]
+id = "snowflake_timestamp_without_time_zone"
+marker = "WITHOUTTIMEZONE"
+field = "to"
+note = "Snowflake documents TIMESTAMP WITHOUT TIME ZONE as a synonym of TIMESTAMP_NTZ, so SQLQuack's cast target is TIMESTAMPNTZ, as for TIMESTAMP_NTZ; polyglot reads it as bare TIMESTAMP, whose meaning follows TIMESTAMP_TYPE_MAPPING; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
+# Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
+# The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
+# with `sqlquack_node`, and the statement, without whitespace and ignoring case, contains `marker`.
+
+[[structured]]
+id = "snowflake_scripting_block"
+marker = "BEGIN"
+sqlquack_node = "scripting_block"
+note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"

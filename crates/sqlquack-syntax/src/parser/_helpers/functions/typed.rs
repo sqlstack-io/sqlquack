@@ -44,9 +44,9 @@ use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::Tuple;
 use crate::parser::constants::BINARY_ARITY;
 use crate::parser::constants::FIRST_VALUE;
-use crate::parser::constants::HASH_AGG;
 use crate::parser::constants::LEAD;
 use crate::parser::constants::TIME_TO_TIME_STR;
+use crate::parser::constants::{HASH_AGG, OBJECT_AGG};
 use crate::parser::models::Parser;
 use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
@@ -116,11 +116,13 @@ impl Parser {
                 }
             }
             crate::functions::dispatch::models::ParserDispatchBehavior::HashLike => {
+                let distinct =
+                    canonical_upper_name == HASH_AGG && self.match_token(TokenType::Distinct);
                 let args = self.parse_expression_list()?;
                 self.expect_token(TokenType::RParen)?;
                 let filter = self.parse_filter_clause()?;
                 if canonical_upper_name == HASH_AGG || filter.is_some() {
-                    Ok(Some(Self::make_simple_aggregate(name, args, false, filter)))
+                    Ok(Some(Self::make_simple_aggregate(name, args, distinct, filter)))
                 } else {
                     Ok(Some(make_unquoted_function(name, args)))
                 }
@@ -130,6 +132,7 @@ impl Parser {
                 let args = if self.match_token(TokenType::Star) {
                     vec![Expression::Star(Star {
                         table: None,
+                        ilike: None,
                         except: None,
                         replace: None,
                         rename: None,
@@ -160,10 +163,12 @@ impl Parser {
                 )))
             }
             crate::functions::dispatch::models::ParserDispatchBehavior::ExprListAggregate => {
+                let distinct =
+                    canonical_upper_name == OBJECT_AGG && self.match_token(TokenType::Distinct);
                 let args = self.parse_expression_list()?;
                 self.expect_token(TokenType::RParen)?;
                 let filter = self.parse_filter_clause()?;
-                Ok(Some(Self::make_simple_aggregate(name, args, false, filter)))
+                Ok(Some(Self::make_simple_aggregate(name, args, distinct, filter)))
             }
             crate::functions::dispatch::models::ParserDispatchBehavior::UnaryAggregate => {
                 let this = self.parse_expression()?;
@@ -483,6 +488,8 @@ impl Parser {
         let count_start = self.tokens[self.current.saturating_sub(2)].span;
         let (this, star, distinct) = if self.check(TokenType::RParen) {
             (None, false, false)
+        } else if self.check(TokenType::Star) && !self.check_next(TokenType::RParen) {
+            (Some(self.parse_expression()?), false, false)
         } else if self.match_token(TokenType::Star) {
             (None, true, false)
         } else if self.match_token(TokenType::All) {
@@ -844,7 +851,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    distinct,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -1798,6 +1805,7 @@ impl Parser {
                     expressions: order_exprs,
                     siblings: false,
                     comments: Vec::new(),
+                    all: None,
                 }))))
             } else {
                 None

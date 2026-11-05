@@ -95,6 +95,7 @@ constructs = ["node:cast"]
 default = "warn"
 strict = "refuse"
 reason = "DuckDB nanosecond timestamps span a shorter range."
+failure = "loud"
 native_errors = ["Conversion Error: Could not convert string '*' to INT64*"]
 
 [edge_cases.numeric]
@@ -156,6 +157,7 @@ fn warehouse_column(name: &str, data_type: &DataType) -> WarehouseColumn {
         scale: Some(scale),
         internal_size: None,
         nullable: Some(true),
+        sub_microsecond_checked: false,
     }
 }
 

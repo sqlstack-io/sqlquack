@@ -399,13 +399,13 @@ id = "rule.variant_inspect"
 
 [[rule.form]]
 construct = "fn:TO_JSON"
-also = ["fn:IS_NULL_VALUE"]
+also = ["fn:IS_NULL_VALUE", "fn:STRIP_NULL_VALUE"]
 arguments = [
   { families = ["variant"] },
 ]
 template = "TO_JSON({0})"
 category = "semi-structured-output"
-variants = ["IS_NULL_VALUE({0})"]
+variants = ["IS_NULL_VALUE({0})", "STRIP_NULL_VALUE({0}) IS NULL"]
 
 [[rule]]
 id = "rule.variant_path"

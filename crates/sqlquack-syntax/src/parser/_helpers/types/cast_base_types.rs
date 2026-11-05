@@ -297,6 +297,31 @@ impl Parser {
         })
     }
 
+    /// Snowflake's VECTOR holds INT or FLOAT elements only.
+    pub(crate) fn expect_snowflake_vector_element(&self) -> Result<()> {
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && !matches!(
+                self.peek_text().to_ascii_uppercase().as_str(),
+                "INT" | "FLOAT"
+            )
+        {
+            return Err(self.parse_error("Expected INT or FLOAT as the VECTOR element type"));
+        }
+        Ok(())
+    }
+
+    /// `TIME ZONE` after `WITH [LOCAL]` or `WITHOUT`: both words in Snowflake, either elsewhere.
+    pub(crate) fn match_time_zone_words(&mut self) -> Result<()> {
+        let time = self.match_keyword("TIME");
+        let zone = self.match_keyword("ZONE");
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && !(time && zone)
+        {
+            return Err(self.parse_error("Expected TIME ZONE"));
+        }
+        Ok(())
+    }
+
     pub(crate) fn parse_cast_timestamp_type(&mut self) -> Result<DataType> {
         Ok({
             let precision = if self.match_token(TokenType::LParen) {
@@ -308,26 +333,20 @@ impl Parser {
             };
             if self.match_token(TokenType::With) {
                 if self.match_token(TokenType::Local) {
-                    self.match_keyword("TIME");
-                    self.match_keyword("ZONE");
+                    self.match_time_zone_words()?;
                     DataType::Custom {
                         name: "TIMESTAMPLTZ".to_string(),
                     }
                 } else {
-                    self.match_keyword("TIME");
-                    self.match_keyword("ZONE");
+                    self.match_time_zone_words()?;
                     DataType::Timestamp {
                         precision,
                         timezone: true,
                     }
                 }
             } else if self.match_keyword("WITHOUT") {
-                self.match_keyword("TIME");
-                self.match_keyword("ZONE");
-                DataType::Timestamp {
-                    precision,
-                    timezone: false,
-                }
+                self.match_time_zone_words()?;
+                self.timestamp_without_time_zone(precision)
             } else {
                 DataType::Timestamp {
                     precision,
@@ -335,6 +354,22 @@ impl Parser {
                 }
             }
         })
+    }
+
+    /// `TIMESTAMP WITHOUT TIME ZONE`: Snowflake's TIMESTAMP_NTZ, whatever TIMESTAMP maps to.
+    pub(crate) fn timestamp_without_time_zone(&self, precision: Option<u32>) -> DataType {
+        match (self.is_snowflake(), precision) {
+            (true, Some(precision)) => DataType::Custom {
+                name: format!("TIMESTAMPNTZ({precision})"),
+            },
+            (true, None) => DataType::Custom {
+                name: "TIMESTAMPNTZ".to_owned(),
+            },
+            (false, _) => DataType::Timestamp {
+                precision,
+                timezone: false,
+            },
+        }
     }
 
     pub(crate) fn parse_cast_timestamp_tz_type(&mut self) -> Result<DataType> {
@@ -586,6 +621,7 @@ impl Parser {
                         dimension: Some(dimension),
                     }
                 } else {
+                    self.expect_snowflake_vector_element()?;
                     let element_type = self.parse_data_type()?;
                     self.expect_token(TokenType::Comma)?;
                     let dimension = self.expect_number()? as u32;

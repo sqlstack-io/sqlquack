@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 # Runs every workspace test binary built with one Cargo profile, several at once.
 #
-# Usage: scripts/run_rust_tests.sh <profile>. RUST_TEST_JOBS (default 4) binaries run at a time,
-# the slowest first. Each runs from its package directory with the native library paths of the
-# build scripts, as `cargo test` runs it; its whole output is printed when it finishes, and any
-# failing binary fails the run after every binary has finished. Doc tests run last.
+# Usage: scripts/run_rust_tests.sh <profile>; RUST_TEST_FEATURES, when set, is Cargo's --features.
+# RUST_TEST_JOBS (default 4) binaries run at a time, the slowest first. Each runs from its package
+# directory with the native library paths of the build scripts, as `cargo test` runs it; its whole
+# output is printed when it finishes, and any failing binary fails the run after every binary has
+# finished. Doc tests run last.
 set -euo pipefail
 profile=${1:?usage: run_rust_tests.sh <profile>}
 jobs=${RUST_TEST_JOBS:-4}
+# The features the binaries build with: the same set as the build they reuse, or Cargo rebuilds.
+features=()
+if [ -n "${RUST_TEST_FEATURES:-}" ]; then features=(--features "$RUST_TEST_FEATURES"); fi
 # The fewest test binaries the workspace builds; fewer means tests went missing, not that they pass.
 minimum=${RUST_TEST_MIN_BINARIES:-21}
 # Started first, so the longest binaries overlap the rest.
@@ -15,7 +19,7 @@ slowest="cli runs index"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
-cargo test --workspace --locked --profile "$profile" --no-run \
+cargo test --workspace --locked --profile "$profile" "${features[@]}" --no-run \
   --message-format=json-render-diagnostics >"$work/messages.json"
 library_path=$(jq -r 'select(.reason == "build-script-executed") | .linked_paths[]' \
   "$work/messages.json" | sed 's/^[a-z]*=//' | sort -u | paste -sd: -)
@@ -71,6 +75,6 @@ while IFS="$(printf '\t')" read -r number name executable _; do
     failed=1
   fi
 done <"$work/ordered"
-cargo test --workspace --locked --profile "$profile" --doc || failed=1
+cargo test --workspace --locked --profile "$profile" "${features[@]}" --doc || failed=1
 [ "$failed" = 0 ] || { echo "run_rust_tests: FAILED" >&2; exit 1; }
 echo "run_rust_tests: passed"

@@ -193,3 +193,58 @@ pub(crate) struct DedicatedOverrideTestCase {
     pub(crate) expected_value: Option<&'static str>,
     pub(crate) expected_failure: Option<&'static str>,
 }
+
+pub(crate) struct ConvertDiagnosticTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_text: &'static str,
+    pub(crate) expected_json: (&'static str, &'static str, u64, u64),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct FunctionStdinOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) converted: Option<bool>,
+    pub(crate) first_code: Option<String>,
+    pub(crate) stderr_lines: Vec<String>,
+}
+
+pub(crate) struct FunctionStdinTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) name: &'static str,
+    pub(crate) body: &'static str,
+    pub(crate) expected_outcome: FunctionStdinOutcome,
+}
+
+pub(crate) struct OutputFormatTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stdout_prefix: &'static str,
+}
+
+pub(crate) struct CheckCommandTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) sql: &'static str,
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stdout_prefix: &'static str,
+    pub(crate) expected_stderr_mention: &'static str,
+}
+
+pub(crate) struct FailureKindTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_converted: bool,
+    pub(crate) expected_failures: &'static [(&'static str, &'static str)],
+}
+
+pub(crate) struct CompareTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) ordered: bool,
+    pub(crate) arrow_sha256: Option<&'static str>,
+    pub(crate) expected_outcome: &'static str,
+}

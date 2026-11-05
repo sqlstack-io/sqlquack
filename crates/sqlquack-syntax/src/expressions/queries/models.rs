@@ -44,6 +44,9 @@ pub struct Select {
     pub limit_by: Option<Vec<Expression>>,
     pub fetch: Option<Fetch>,
     pub distinct: bool,
+    /// Whether ALL was written where DISTINCT could be: it changes nothing, but was written.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub all: bool,
     pub distinct_on: Option<Vec<Expression>>,
     pub top: Option<Top>,
     pub with: Option<With>,
@@ -130,6 +133,7 @@ impl Select {
             limit_by: None,
             fetch: None,
             distinct: false,
+            all: false,
             distinct_on: None,
             top: None,
             with: None,
@@ -197,6 +201,7 @@ impl Select {
             expressions,
             siblings: false,
             comments: Vec::new(),
+            all: None,
         });
         self
     }
@@ -657,6 +662,12 @@ pub struct Join {
     /// Snowflake: DIRECTED keyword in JOIN (e.g., CROSS DIRECTED JOIN)
     #[serde(default)]
     pub directed: bool,
+    /// Snowflake: `FIRST` or `LAST` before the join's `( alias )`; absent when none
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub first_last: Option<String>,
+    /// Snowflake: the alias in `FIRST ( alias )` or `LAST ( alias )`; absent when none
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub first_last_alias: Option<Identifier>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -765,6 +776,21 @@ pub struct OrderBy {
     /// Leading comments that appeared before the ORDER BY keyword
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
+    /// DuckDB and Snowflake `ORDER BY ALL`, which sorts by every output column; `expressions` is then empty.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub all: Option<OrderByAll>,
+}
+
+/// The direction and null placement of `ORDER BY ALL`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct OrderByAll {
+    /// Whether the sort direction is descending.
+    pub desc: bool,
+    /// `Some(true)` = NULLS FIRST, `Some(false)` = NULLS LAST, `None` = unspecified.
+    pub nulls_first: Option<bool>,
+    /// Whether ASC was explicitly written.
+    #[serde(default)]
+    pub explicit_asc: bool,
 }
 
 /// A sort key: ascending unless `desc`; `nulls_first` is `None` when unspecified.
@@ -954,6 +980,23 @@ pub struct Prior {
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConnectByRoot {
     pub this: Expression,
+}
+
+/// Snowflake RESAMPLE clause on a table: generates rows for gaps in a time series.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Resample {
+    /// The table being resampled, with its alias
+    pub this: Box<Expression>,
+    /// USING column, the time or number column to resample on
+    pub using: Identifier,
+    /// INCREMENT BY expression, the gap between generated rows
+    pub increment: Expression,
+    /// PARTITION BY expressions
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub partition_by: Vec<Expression>,
+    /// METADATA_COLUMNS calls, each with its optional alias
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub metadata_columns: Vec<(Expression, Option<Identifier>)>,
 }
 
 /// MATCH_RECOGNIZE clause for row pattern matching (Oracle/Snowflake/Presto/Trino)

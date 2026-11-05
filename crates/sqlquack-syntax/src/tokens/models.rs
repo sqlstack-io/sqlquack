@@ -49,9 +49,9 @@ impl Dialect {
 pub enum CallMode {
     /// Every Snowflake call keeps its name and arguments as written; SQLQuack's mode.
     Faithful,
-    /// As [`CallMode::Faithful`], recording each faithful call's source span (for the exact check).
+    /// As [`CallMode::Faithful`] with call spans, for the exact check; skips statement-context rules.
     FaithfulWithSpans,
-    /// polyglot's lowering of calls into cross-dialect nodes (for the exact check only).
+    /// polyglot's call lowering, for the exact check only; skips statement-context rules.
     Lowered,
     /// As [`CallMode::Faithful`], recording each node's source range (for refusal locations).
     FaithfulLocated,

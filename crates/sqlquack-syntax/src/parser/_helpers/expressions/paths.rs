@@ -658,6 +658,9 @@ impl Parser {
                 parameter_types: Vec::new(),
             })));
         }
+        if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+            return Err(self.parse_error("Expected an expression in the parentheses"));
+        }
         self.maybe_parse_subscript(Expression::Tuple(Box::new(Tuple {
             expressions: Vec::new(),
         })))

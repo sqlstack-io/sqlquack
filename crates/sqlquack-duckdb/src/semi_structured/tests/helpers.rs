@@ -21,7 +21,7 @@ pub(crate) fn sorted_document(depth: usize) -> String {
 pub(crate) fn written_sql(document: &str) -> String {
     let log = ProvenanceLog::default();
     let literal = format!("'{}'", document.replace('\'', "''"));
-    json_serialized(&json_guarded(&literal, &log), &log)
+    json_serialized(&json_guarded(&literal, false, &log), &log)
 }
 
 /// What DuckDB returns for `sql`, and its error when it raises.

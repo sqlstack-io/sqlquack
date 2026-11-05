@@ -9,14 +9,14 @@ use crate::formats::_helpers::ids::{
     is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc,
 };
 use crate::formats::constants::{
-    DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS, PROSE_HASH_PREFIX,
-    RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
+    DCM_LINE, DCM_POSITION, DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS,
+    INTERACTION_MEMBERS, PROSE_HASH_PREFIX, RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
-    Alias, Case, Definition, Diagnostic, Exclusion, Expect, Form, FormKind, FormStatus, Index,
-    Obligation, ObligationKind, Phase, Receipt, Review, Source, SourceStatus, Unobservable,
-    UnobservableCase, UnobservableProbe,
+    AccountSetting, Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form,
+    FormKind, FormStatus, Index, Obligation, ObligationKind, Phase, Reading, Receipt, Review,
+    Source, SourceStatus, Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -200,13 +200,15 @@ pub(crate) fn check_obligation(obligation: &Obligation, family: &str) -> Vec<Str
                 && obligation.pair[0] != obligation.pair[1]
                 && !depths
         }
-        ObligationKind::InteractionAllOptions => !depths && !pair && obligation.target.is_none(),
+        ObligationKind::InteractionAllOptions | ObligationKind::Extreme => {
+            !depths && !pair && obligation.target.is_none()
+        }
         _ => !depths && !pair,
     };
     if !shaped {
         problems.push(format!(
             "obligation {id}: nesting_depth needs depths, interaction needs a pair of two, \
-             no other kind takes either, and interaction_all_options takes no target"
+             no other kind takes either, and interaction_all_options takes no target, nor does extreme"
         ));
     }
     let targeted: bool = matches!(
@@ -225,6 +227,13 @@ pub(crate) fn check_obligation(obligation: &Obligation, family: &str) -> Vec<Str
     {
         problems.push(format!(
             "obligation {id}: interaction needs the anchor of the usage note constraining it"
+        ));
+    }
+    if obligation.kind == ObligationKind::Extreme
+        && (!obligation.required || obligation.note.as_deref().is_none_or(blank))
+    {
+        problems.push(format!(
+            "obligation {id}: extreme is required and needs a note"
         ));
     }
     if targeted && obligation.target.as_deref().is_none_or(blank) {
@@ -284,7 +293,8 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: id is empty, too long or holds whitespace"
         ));
     }
-    let hashes: [Option<&String>; 10] = [
+    problems.extend(dcm_problems(receipt));
+    let hashes: [Option<&String>; 11] = [
         Some(&receipt.sql_sha256),
         Some(&receipt.setup_sha256),
         Some(&receipt.session_sha256),
@@ -295,6 +305,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.case_hash.as_ref(),
         receipt.input_sha256.as_ref(),
         receipt.supersedes_receipt_sha256.as_ref(),
+        receipt.definition_file_sha256.as_ref(),
     ];
     if !hashes.iter().flatten().all(|hash| is_sha256(hash)) {
         problems.push(format!("receipt {id}: a hash is not a lower-case SHA-256"));
@@ -328,7 +339,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: a reason category needs its basis and a phase after parsing"
         ));
     }
-    let text: [Option<&String>; 10] = [
+    let text: [Option<&String>; 13] = [
         Some(&receipt.run_id),
         receipt.query_id.as_ref(),
         Some(&receipt.warehouse_version),
@@ -339,10 +350,114 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.category.as_ref(),
         receipt.reason_category_basis.as_ref(),
         receipt.measure.as_ref(),
+        receipt.message.as_ref(),
+        receipt.inner_message.as_ref(),
+        receipt.dcm_project.as_ref(),
     ];
-    if text.iter().flatten().any(|field| identifying(field)) {
+    let settings: Vec<(&String, &AccountSetting)> =
+        receipt.account_state.iter().flatten().collect();
+    if receipt
+        .account_state
+        .as_ref()
+        .is_some_and(BTreeMap::is_empty)
+        || settings.iter().any(|(name, setting)| {
+            blank(name) || setting.value.as_deref().is_some_and(blank) || blank(&setting.basis)
+        })
+    {
+        problems.push(format!(
+            "receipt {id}: account_state names at least one parameter, each with a value and basis"
+        ));
+    }
+    let account_text = settings
+        .iter()
+        .flat_map(|(name, setting)| [Some(*name), setting.value.as_ref(), Some(&setting.basis)])
+        .flatten();
+    if text
+        .iter()
+        .flatten()
+        .copied()
+        .chain(account_text)
+        .any(|field| identifying(field))
+    {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"
+        ));
+    }
+    problems
+}
+
+/// The line and position an inner error's text points at: `line <n> at position <m>`.
+fn inner_position(text: &str) -> Option<(u32, u32)> {
+    let (_, rest) = text.split_once(DCM_LINE)?;
+    let (line, rest) = rest.split_once(DCM_POSITION)?;
+    let position: &str = rest
+        .split(|character: char| !character.is_ascii_digit())
+        .next()?;
+    match (line.parse::<u32>(), position.parse::<u32>()) {
+        (Ok(line), Ok(position)) => Some((line, position)),
+        _ => None,
+    }
+}
+
+/// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.
+fn dcm_problems(receipt: &Receipt) -> Vec<String> {
+    let id: &str = &receipt.case_id;
+    let inner: [bool; 4] = [
+        receipt.inner_errno.is_some(),
+        receipt.inner_message.is_some(),
+        receipt.definition_line.is_some(),
+        receipt.definition_position.is_some(),
+    ];
+    if receipt.capture_method != CaptureMethod::DcmDefinitionFile {
+        let dcm: bool = receipt.dcm_project.is_some()
+            || receipt.definition_file_sha256.is_some()
+            || inner.contains(&true);
+        return match dcm {
+            true => vec![format!(
+                "receipt {id}: DCM fields on a capture other than dcm_definition_file"
+            )],
+            false => Vec::new(),
+        };
+    }
+    let mut problems: Vec<String> = Vec::new();
+    if receipt.dcm_project.as_deref().is_none_or(blank) {
+        problems.push(format!("receipt {id}: a DCM receipt names its project"));
+    }
+    if receipt.definition_file_sha256.as_ref() != Some(&receipt.sql_sha256) {
+        problems.push(format!(
+            "receipt {id}: the definition file's sha256 must equal the case SQL's"
+        ));
+    }
+    let Some(inner_message) = receipt.inner_message.as_deref() else {
+        if receipt.phase != Phase::Accepted || inner.contains(&true) {
+            problems.push(format!(
+                "receipt {id}: a failed PLAN needs its inner message; a changeset has no inner error"
+            ));
+        }
+        return problems;
+    };
+    let suffix: bool = receipt
+        .message
+        .as_deref()
+        .is_some_and(|message| !blank(inner_message) && message.ends_with(inner_message));
+    if receipt.phase == Phase::Accepted || !suffix {
+        problems.push(format!(
+            "receipt {id}: an inner message belongs to a failed PLAN and ends its whole message"
+        ));
+    }
+    let recorded: Option<(u32, u32)> = receipt.definition_line.zip(receipt.definition_position);
+    let both_or_neither: bool =
+        receipt.definition_line.is_some() == receipt.definition_position.is_some();
+    let stated: bool = match inner_position(inner_message) {
+        Some(position) => recorded == Some(position),
+        None => {
+            recorded.is_none() || recorded == receipt.message.as_deref().and_then(inner_position)
+        }
+    };
+    if !both_or_neither || !stated {
+        problems.push(format!(
+            "receipt {id}: definition_line and definition_position must be the line and position \
+             the inner message states, else those the whole message states, or absent"
         ));
     }
     problems
@@ -380,15 +495,19 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
         }
         family => {
             FAMILIES.contains(&family)
-                && hash(&review.catalogue_sha256)
-                && hash(&review.obligations_sha256)
                 && review.sources_sha256.is_none()
+                && match review.definitions.is_empty() {
+                    true => hash(&review.catalogue_sha256) && hash(&review.obligations_sha256),
+                    false => {
+                        review.catalogue_sha256.is_none() && review.obligations_sha256.is_none()
+                    }
+                }
         }
     };
     if !bound {
         problems.push(format!(
-            "review {id}: a family review binds its catalogue and obligation hashes, a page review \
-             (empty family) binds only sources_sha256"
+            "review {id}: a family review binds its catalogue and obligation hashes, or instead \
+             each listed form's definition; a page review (empty family) binds only sources_sha256"
         ));
     }
     let tree_valid: bool = match (&review.parser_tree, review.family.as_str()) {
@@ -418,6 +537,44 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
                 }),
         );
     }
+    let listed: Vec<&String> = review.forms.iter().flatten().collect();
+    problems.extend(
+        review
+            .fingerprints
+            .iter()
+            .filter(|(form, fingerprint)| !listed.contains(form) || !is_sha256(fingerprint))
+            .map(|(form, _)| {
+                format!("review {id}: fingerprint of {form} is not a SHA-256 of a form it lists")
+            }),
+    );
+    if !review.fingerprints.is_empty()
+        && listed
+            .iter()
+            .any(|form| !review.fingerprints.contains_key(*form))
+    {
+        problems.push(format!(
+            "review {id}: fingerprints, when present, give one for every form it lists"
+        ));
+    }
+    problems.extend(
+        review
+            .definitions
+            .iter()
+            .filter(|(form, definition)| !listed.contains(form) || !is_sha256(definition))
+            .map(|(form, _)| {
+                format!("review {id}: definition of {form} is not a SHA-256 of a form it lists")
+            }),
+    );
+    if !review.definitions.is_empty()
+        && (listed.iter().any(|form| {
+            !review.definitions.contains_key(*form) || !review.fingerprints.contains_key(*form)
+        }) || !review.exclusions.is_empty())
+    {
+        problems.push(format!(
+            "review {id}: definitions, when present, give one and a fingerprint for every form it \
+             lists, and the review excludes nothing"
+        ));
+    }
     if !is_utc(&review.reviewed_utc) {
         problems.push(format!(
             "review {id}: reviewed_utc is not YYYY-MM-DDTHH:MM:SSZ"
@@ -434,6 +591,9 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
 }
 
 pub(crate) fn check_unobservable(entry: &Unobservable, family: &str) -> Vec<String> {
+    if entry.cause == Some(UnobservableCause::NotSubmitted) {
+        return check_not_submitted(entry, family);
+    }
     check_record(
         &UnobservableRecord {
             obligation: &entry.obligation,
@@ -463,6 +623,32 @@ pub(crate) fn check_diagnostic(entry: &Diagnostic, family: &str) -> Vec<String> 
         family,
         "diagnostic",
     )
+}
+
+/// A never-submitted entry: a reason and cases, but no runs or probes, since nothing ran.
+fn check_not_submitted(entry: &Unobservable, family: &str) -> Vec<String> {
+    let id: &str = &entry.obligation;
+    let mut problems: Vec<String> = Vec::new();
+    if obligation_form(id, family) != Some(entry.form.as_str()) {
+        problems.push(format!(
+            "unobservable {id}: not an obligation of form {} in family {family}",
+            entry.form
+        ));
+    }
+    if blank(&entry.construct) || blank(&entry.reason) || entry.cases.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: needs a construct, a reason and at least one case"
+        ));
+    }
+    if !entry.runs.is_empty() || !entry.probes.is_empty() {
+        problems.push(format!(
+            "unobservable {id}: a not_submitted entry has no runs or probes"
+        ));
+    }
+    if entry.cases.iter().any(|case| !is_sha256(&case.sql_sha256)) {
+        problems.push(format!("unobservable {id}: a sql_sha256 is not a SHA-256"));
+    }
+    problems
 }
 
 /// The fields an unobservable entry and a diagnostic share.
@@ -550,5 +736,26 @@ pub(crate) fn check_restatements<'a>(
                 )
             }),
     );
+    problems
+}
+
+/// A reading pins the page grammar it reads, by hash or prose heading, and gives its reason.
+pub(crate) fn check_reading(reading: &Reading) -> Vec<String> {
+    let id: &str = &reading.form;
+    let mut problems: Vec<String> = Vec::new();
+    let prose: bool = reading
+        .grammar_sha256
+        .strip_prefix(PROSE_HASH_PREFIX)
+        .is_some_and(|heading| !blank(heading));
+    if !prose && !is_sha256(&reading.grammar_sha256) {
+        problems.push(format!(
+            "reading {id}: grammar_sha256 is neither a SHA-256 nor a prose heading"
+        ));
+    }
+    if reading.grammar.iter().any(|line| blank(line)) || blank(&reading.reason) {
+        problems.push(format!(
+            "reading {id}: needs a reason and no blank grammar line"
+        ));
+    }
     problems
 }

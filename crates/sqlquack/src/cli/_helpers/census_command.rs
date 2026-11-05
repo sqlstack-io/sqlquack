@@ -8,6 +8,7 @@ use sqlquack_core::parsing::models::SourceDialect;
 
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};
+use crate::census::errors::CensusError;
 use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::CensusOptions;
@@ -33,18 +34,14 @@ pub(crate) fn census_command(
         Ok(schema) => schema.unwrap_or_default(),
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-            return ExitCode::FAILURE;
+            return ExitCode::from(2);
         }
     };
-    let conversion = match chosen_policy(&arguments.policy, arguments.builtin_policy) {
-        Ok(policy) => divergence_options(
-            policy.as_ref(),
-            (
-                arguments.strict,
-                arguments.utc_session,
-                (arguments.confirm_declared_offsets, arguments.python_runtime),
-            ),
-        ),
+    let conversion = match chosen_policy(
+        &arguments.conversion.policy,
+        arguments.conversion.builtin_policy,
+    ) {
+        Ok(policy) => divergence_options(policy.as_ref(), &arguments.conversion),
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
             return ExitCode::from(2);
@@ -114,7 +111,12 @@ pub(crate) fn census_command(
         Ok(run) => run,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-            return ExitCode::FAILURE;
+            return match error {
+                CensusError::DeclaredModelOffset(_) => ExitCode::FAILURE,
+                CensusError::NoInputs | CensusError::Read { .. } | CensusError::Workers(_) => {
+                    ExitCode::from(2)
+                }
+            };
         }
     };
     let report = run.report;
@@ -130,7 +132,7 @@ pub(crate) fn census_command(
             );
         }
     }
-    let rendered = if arguments.json {
+    let rendered = if arguments.output.json() {
         match serde_json::to_string_pretty(&report) {
             Ok(json) => json + "\n",
             Err(error) => {

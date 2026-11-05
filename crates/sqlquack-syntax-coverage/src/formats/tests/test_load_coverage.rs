@@ -4,7 +4,8 @@ use std::path::Path;
 use crate::formats::constants::{COVERAGE_ROOT, FAMILIES};
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::tests::helpers::{
-    line_sha256, receipt_line, replace, restated_page, superseding_line, valid_tree, write,
+    ACCOUNT_STATE_AT, account_state, dcm_line, line_sha256, receipt_line, replace, restated_page,
+    superseding_line, valid_tree, write,
 };
 use crate::formats::tests::test_types::{
     CommittedTestCase, FormatFaultTestCase, LoadTestCase, LoadedCounts,
@@ -65,6 +66,19 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(1),
         },
         LoadTestCase {
+            description: "an obligation numbered past 999 loads",
+            tree: |root| {
+                valid_tree(root);
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "sf.query.select.o002",
+                    "sf.query.select.o1002",
+                );
+            },
+            expected_counts: counts(1),
+        },
+        LoadTestCase {
             description: "a canonical-run receipt keeps only the query id hash and a Z time",
             tree: |root| {
                 valid_tree(root);
@@ -94,6 +108,39 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                          \"completed_statements\":2",
                     );
                 write(root, "receipts/ddl.jsonl", &format!("{ddl}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a receipt keeps the error the connector raised after the server ran it",
+            tree: |root| {
+                valid_tree(root);
+                let raised = receipt_line().replace(
+                    "\"errno\":null",
+                    "\"errno\":253006,\"connector_errno\":253006",
+                );
+                write(root, "receipts/client.jsonl", &format!("{raised}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a failed DCM PLAN keeps its inner error's line and position",
+            tree: |root| {
+                valid_tree(root);
+                let dcm = dcm_line(
+                    "SQL compilation error:\\nsyntax error line 1 at position 61 unexpected ')'.",
+                    ",\"definition_line\":1,\"definition_position\":61",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
+            description: "a failed DCM PLAN whose inner error gives no position has none",
+            tree: |root| {
+                valid_tree(root);
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "");
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"));
             },
             expected_counts: counts(2),
         },
@@ -186,6 +233,18 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                 retired_receipts: 1,
                 ..counts(0)
             },
+        },
+        LoadTestCase {
+            description: "a receipt recording the account parameter its capture ran under",
+            tree: |root| {
+                valid_tree(root);
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(ACCOUNT_STATE_AT, &account_state("D120")),
+                );
+            },
+            expected_counts: counts(1),
         },
         LoadTestCase {
             description: "a tree without renames or reviews yet",
@@ -610,6 +669,73 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "review query-1: forms, when present, lists at least one form",
         },
         FormatFaultTestCase {
+            description: "a review fingerprinting a form it does not list",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select.top\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: fingerprint of sf.query.select.top is not a SHA-256 of a form it lists",
+        },
+        FormatFaultTestCase {
+            description: "a review fingerprinting only some of the forms it lists",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\", \"sf.query.select.top\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: fingerprints, when present, give one for every form it lists",
+        },
+        FormatFaultTestCase {
+            description: "a review binding each form's definition and the family's files too",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n\
+                     definitions = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: a family review binds its catalogue and obligation hashes, or instead each listed form's definition",
+        },
+        FormatFaultTestCase {
+            description: "a review binding a form's definition without its fingerprint",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     definitions = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: definitions, when present, give one and a fingerprint for every form it lists",
+        },
+        FormatFaultTestCase {
+            description: "a review binding the definition of a form it does not list",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "verdict = \"approved\"\n",
+                    "verdict = \"approved\"\nforms = [\"sf.query.select\"]\n\
+                     fingerprints = { \"sf.query.select\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n\
+                     definitions = { \"sf.query.select.top\" = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }\n",
+                )
+            },
+            expected_problem: "review query-1: definition of sf.query.select.top is not a SHA-256 of a form it lists",
+        },
+        FormatFaultTestCase {
             description: "a review listing a form of another family",
             mutate: |root| {
                 replace(
@@ -642,6 +768,32 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "query-1: declared twice",
         },
         FormatFaultTestCase {
+            description: "no limits.toml, so no form's reading can be hashed",
+            mutate: |root| std::fs::remove_file(root.join("limits.toml")).expect("remove"),
+            expected_problem: "limits.toml: No such file",
+        },
+        FormatFaultTestCase {
+            description: "a form read twice",
+            mutate: |root| {
+                let limits = std::fs::read_to_string(root.join("limits.toml")).expect("read");
+                let reading = &limits[limits.find("[[reading]]").expect("reading")..];
+                write(root, "limits.toml", &format!("{limits}{reading}"));
+            },
+            expected_problem: "reading sf.query.select: listed twice",
+        },
+        FormatFaultTestCase {
+            description: "a misspelt table in limits.toml",
+            mutate: |root| {
+                let limits = std::fs::read_to_string(root.join("limits.toml")).expect("read");
+                write(
+                    root,
+                    "limits.toml",
+                    &limits.replace("[[reading]]", "[[readings]]"),
+                );
+            },
+            expected_problem: "unknown field `readings`",
+        },
+        FormatFaultTestCase {
             description: "an unobservable obligation of another form",
             mutate: |root| {
                 write(
@@ -671,6 +823,39 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "unobservable sf.query.select.o001: a sql_sha256 is not a SHA-256",
         },
         FormatFaultTestCase {
+            description: "an unobservable entry with an unknown cause",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"held_by_guard\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unknown variant `held_by_guard`",
+        },
+        FormatFaultTestCase {
+            description: "a never-submitted entry that lists a run",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"held\"\ncause = \"not_submitted\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = [\"run-1\"]\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: a not_submitted entry has no runs or probes",
+        },
+        FormatFaultTestCase {
+            description: "a 603 entry without runs",
+            mutate: |root| {
+                write(
+                    root,
+                    "unobservable/query.toml",
+                    "[[unobservable]]\nobligation = \"sf.query.select.o001\"\nform = \"sf.query.select\"\nconstruct = \"c\"\nreason = \"603\"\ncases = [{ case_id = \"query.select-17\", sql_sha256 = \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }]\nruns = []\nprobes = []\n",
+                )
+            },
+            expected_problem: "unobservable sf.query.select.o001: needs at least one case and one run",
+        },
+        FormatFaultTestCase {
             description: "an unobservable entry without cases",
             mutate: |root| {
                 write(
@@ -693,6 +878,86 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "diagnostic sf.query.select.o001: not an obligation of form",
+        },
+        FormatFaultTestCase {
+            description: "an extreme obligation without its note",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"positive\"",
+                    "kind = \"extreme\"",
+                )
+            },
+            expected_problem: "obligation sf.query.select.o001: extreme is required and needs a note",
+        },
+        FormatFaultTestCase {
+            description: "an extreme obligation with a target",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "kind = \"positive\"",
+                    "kind = \"extreme\"\nnote = \"no documented bound\"\ntarget = \"x\"",
+                )
+            },
+            expected_problem: "takes no target, nor does extreme",
+        },
+        FormatFaultTestCase {
+            description: "a zero-padded spelling of an existing obligation number",
+            mutate: |root| {
+                replace(
+                    root,
+                    "obligations/query.toml",
+                    "sf.query.select.o002",
+                    "sf.query.select.o0001",
+                )
+            },
+            expected_problem: "obligation sf.query.select.o0001: not sf.query.<form>.o<NNN>",
+        },
+        FormatFaultTestCase {
+            description: "a DCM definition file other than the case SQL",
+            mutate: |root| {
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "").replace(
+                    "\"definition_file_sha256\":\"ef83",
+                    "\"definition_file_sha256\":\"ff83",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "receipt query.select-17: the definition file's sha256 must equal",
+        },
+        FormatFaultTestCase {
+            description: "a DCM inner message that does not end the whole message",
+            mutate: |root| {
+                let dcm = dcm_line("Object 'T1' does not exist or not authorized.", "").replace(
+                    "\"inner_message\":\"Object",
+                    "\"inner_message\":\"An object",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "an inner message belongs to a failed PLAN and ends its whole message",
+        },
+        FormatFaultTestCase {
+            description: "a DCM position other than the inner message's",
+            mutate: |root| {
+                let dcm = dcm_line(
+                    "SQL compilation error:\\nsyntax error line 1 at position 61 unexpected ')'.",
+                    ",\"definition_line\":1,\"definition_position\":60",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{dcm}\n"))
+            },
+            expected_problem: "definition_line and definition_position must be the line and position",
+        },
+        FormatFaultTestCase {
+            description: "DCM fields on an execute receipt",
+            mutate: |root| {
+                let execute = receipt_line().replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"accepted\",\"dcm_project\":\"P\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{execute}\n"))
+            },
+            expected_problem: "receipt query.select-17: DCM fields on a capture other than",
         },
         FormatFaultTestCase {
             description: "an obligation id declared twice",
@@ -769,6 +1034,44 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 write(root, "cases/query.jsonl", &format!("\n{line}"));
             },
             expected_problem: "cases/query.jsonl:1:",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter without its basis",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(ACCOUNT_STATE_AT, &account_state(" ")),
+                )
+            },
+            expected_problem: "receipt query.select-17: account_state names at least one parameter",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter whose basis holds an address",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace(
+                        ACCOUNT_STATE_AT,
+                        &account_state("set by someone@example.com"),
+                    ),
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
+        },
+        FormatFaultTestCase {
+            description: "an account parameter with an unknown field",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line()
+                        .replace(ACCOUNT_STATE_AT, &account_state("D120"))
+                        .replace("\"value\":\"NONE\"", "\"value\":\"NONE\",\"scope\":\"x\""),
+                )
+            },
+            expected_problem: "unknown field `scope`",
         },
         FormatFaultTestCase {
             description: "a receipt holding an address",

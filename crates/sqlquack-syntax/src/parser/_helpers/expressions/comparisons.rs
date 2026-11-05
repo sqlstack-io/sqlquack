@@ -640,6 +640,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,
@@ -797,6 +800,9 @@ impl Parser {
                         span: SourceSpan::default(),
                     }))
                 } else if self.check(TokenType::RParen) {
+                    if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
+                        return Err(self.parse_error("Expected a value list after IN"));
+                    }
                     self.skip();
                     Expression::In(Box::new(In {
                         this: left,
@@ -1792,7 +1798,7 @@ impl Parser {
     ) -> Result<Expression> {
         for token in prefixes.into_iter().rev() {
             expr = match token {
-                TokenType::Plus => expr,
+                TokenType::Plus => Expression::Pos(Box::new(UnaryOp::new(expr))),
                 TokenType::Dash => Expression::Neg(Box::new(UnaryOp::new(expr))),
                 TokenType::Not => Expression::Not(Box::new(UnaryOp::new(expr))),
                 TokenType::Tilde => Expression::BitwiseNot(Box::new(UnaryOp::new(expr))),
