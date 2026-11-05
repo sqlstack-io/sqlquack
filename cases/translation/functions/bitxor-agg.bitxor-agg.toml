@@ -69,7 +69,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t006_null_expr1"
-description = "NULL rows beside values, and a group of only NULL. Catches: NULL read as 0 (changing AND), or the NULL group 0"
+description = "NULL rows beside values, and a group of only NULL. Catches: the NULL-only group giving 0 instead of NULL (0 is the XOR identity, so NULL read as 0 shows only there)"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'p'", "NULL"],

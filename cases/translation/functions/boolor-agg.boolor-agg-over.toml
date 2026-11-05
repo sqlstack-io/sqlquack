@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_partition"
-description = "Partitions with one and with three TRUE values. Catches: the whole input aggregated"
+description = "A partition with no TRUE value and one with three. Catches: the whole input aggregated"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
 rows = [
   ["'p'", "FALSE"],

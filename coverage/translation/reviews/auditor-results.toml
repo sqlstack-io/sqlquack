@@ -56,9 +56,9 @@ reviewed_utc = "2026-11-05T15:51:05Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-object-kinds"
-sha256 = "d423d5cde3cad9d35a5404006d72a1e7cfa7ff4d72449a4e628eb8cd2ba29aa2"
+sha256 = "9a2697bd27f1c9bcd386fd6617db88c8ea09c4850714bd37ac917d2a9db4f2d2"
 scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
+reviewed_utc = "2026-11-05T21:10:00Z"
 
 [[signoff]]
 subject = "not-translatable:metadata-listings"
