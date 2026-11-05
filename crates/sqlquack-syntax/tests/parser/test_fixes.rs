@@ -1855,3 +1855,49 @@ fn given_a_time_travel_clause_when_parsing_snowflake_then_its_parentheses_close(
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_merge_when_parsing_then_its_actions_need_their_clauses() {
+    let merge = "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1";
+    let rejected = [
+        ("a MERGE with no WHEN clause", ""),
+        ("UPDATE without SET", " WHEN MATCHED THEN UPDATE"),
+        (
+            "SET with a string for a column",
+            " WHEN MATCHED THEN UPDATE SET 'v1' = 1",
+        ),
+        ("INSERT without VALUES", " WHEN NOT MATCHED THEN INSERT"),
+        (
+            "an empty INSERT column list",
+            " WHEN NOT MATCHED THEN INSERT ( ) VALUES ( 1 )",
+        ),
+        (
+            "an unclosed INSERT column list",
+            " WHEN NOT MATCHED THEN INSERT ( v1 VALUES ( 1 )",
+        ),
+        (
+            "an empty VALUES list",
+            " WHEN NOT MATCHED THEN INSERT VALUES ( )",
+        ),
+        (
+            "an unclosed VALUES list",
+            " WHEN NOT MATCHED THEN INSERT VALUES ( 1",
+        ),
+    ];
+    for (description, tail) in rejected {
+        let sql = format!("{merge}{tail} ;");
+        assert!(
+            !accepted(&sql, Dialect::Snowflake),
+            "Snowflake rejects {description} (recorded errno 1003): {sql}"
+        );
+    }
+    let kept = [
+        " WHEN MATCHED THEN UPDATE SET c1 = t2.c1",
+        " WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THEN INSERT ( c1 , c2 ) VALUES ( t2.c1 , DEFAULT )",
+        " WHEN NOT MATCHED THEN INSERT VALUES ( 1 )",
+    ];
+    for tail in kept {
+        let sql = format!("{merge}{tail} ;");
+        assert!(accepted(&sql, Dialect::Snowflake), "Snowflake keeps {sql}");
+    }
+}

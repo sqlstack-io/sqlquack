@@ -744,6 +744,11 @@ impl Parser {
         };
 
         let whens = self.parse_when_matched_clauses()?;
+        if whens.is_none()
+            && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+        {
+            return Err(self.parse_error("Expected a WHEN clause in MERGE"));
+        }
 
         let returning = if let Some(ret) = self.parse_returning()? {
             Some(ret)
@@ -859,6 +864,12 @@ impl Parser {
         }
     }
 
+    /// In a Snowflake parse, whether a MERGE action stops here, before its required clause.
+    fn merge_action_ends(&self) -> bool {
+        self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+            && (self.is_at_end() || self.check(TokenType::Semicolon) || self.check(TokenType::When))
+    }
+
     fn parse_merge_when_insert(&mut self) -> Result<Expression> {
         Ok({
             let mut elements = vec![Expression::Var(Box::new(Var {
@@ -878,6 +889,12 @@ impl Parser {
             } else if self.match_token(TokenType::LParen) {
                 let mut columns: Vec<Expression> = Vec::new();
                 loop {
+                    if self.check(TokenType::String)
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected a column name, not a string"));
+                    }
                     if let Some(col) = self.parse_id_var()? {
                         let col = if self.match_token(TokenType::Dot) {
                             if let Expression::Identifier(table_ident) = col {
@@ -913,7 +930,12 @@ impl Parser {
                         break;
                     }
                 }
-                self.match_token(TokenType::RParen);
+                let closed = self.match_token(TokenType::RParen);
+                if (columns.is_empty() || !closed)
+                    && self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                {
+                    return Err(self.parse_error("Expected a closed column list in MERGE INSERT"));
+                }
                 if !columns.is_empty() {
                     elements.push(Expression::Tuple(Box::new(Tuple {
                         expressions: columns,
@@ -923,8 +945,20 @@ impl Parser {
 
             if self.match_text_seq(&["VALUES"]) {
                 if let Some(values) = self.parse_value()? {
+                    let empty = matches!(&values, Expression::Tuple(t) if t.expressions.is_empty());
+                    if (empty || self.previous_text() != ")")
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected a closed, non-empty VALUES list"));
+                    }
                     elements.push(values);
+                } else if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake)
+                {
+                    return Err(self.parse_error("Expected a value list after VALUES"));
                 }
+            } else if self.merge_action_ends() {
+                return Err(self.parse_error("Expected VALUES in MERGE INSERT"));
             } else if self.match_text_seq(&["ROW"]) {
                 elements.push(Expression::Var(Box::new(Var {
                     this: "ROW".to_string(),
@@ -965,6 +999,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     span: None,
                 }));
+            } else if self.merge_action_ends() {
+                return Err(self.parse_error("Expected SET in MERGE UPDATE"));
             } else if self.match_token(TokenType::Set) {
                 if self.match_token(TokenType::Star) {
                     elements.push(Expression::Star(crate::expressions::names::models::Star {
@@ -979,6 +1015,12 @@ impl Parser {
                 } else {
                     let mut assignments: Vec<Expression> = Vec::new();
                     loop {
+                        if self.check(TokenType::String)
+                            && self.config.dialect
+                                == Some(crate::tokens::models::DialectType::Snowflake)
+                        {
+                            return Err(self.parse_error("Expected a column name, not a string"));
+                        }
                         if let Some(col) = self.parse_id_var()? {
                             let col = if self.match_token(TokenType::Dot) {
                                 if let Expression::Identifier(table_ident) = col {
@@ -1023,6 +1065,12 @@ impl Parser {
                         if !self.match_token(TokenType::Comma) {
                             break;
                         }
+                    }
+                    if assignments.is_empty()
+                        && self.config.dialect
+                            == Some(crate::tokens::models::DialectType::Snowflake)
+                    {
+                        return Err(self.parse_error("Expected an assignment after SET"));
                     }
                     if !assignments.is_empty() {
                         elements.push(Expression::Tuple(Box::new(Tuple {
