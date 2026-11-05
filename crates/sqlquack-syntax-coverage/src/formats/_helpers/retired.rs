@@ -6,13 +6,16 @@ use std::path::{Path, PathBuf};
 use serde_json::Value;
 
 use crate::formats::_helpers::files::read_text;
-use crate::formats::_helpers::hashes::is_sha256;
-use crate::formats::constants::{REPORT_RECEIPT_SHA256, REPORT_WITHDRAWN};
+use crate::formats::_helpers::hashes::{is_sha256, sha256_hex};
+use crate::formats::constants::{REPORT_INPUTS, REPORT_RECEIPT_SHA256, REPORT_WITHDRAWN};
 use crate::formats::models::Receipt;
 
-/// The receipt line hashes the run reports withdraw, and every problem reading them.
-pub(crate) fn withdrawn_receipts(reports: &[PathBuf]) -> (BTreeSet<String>, Vec<String>) {
+/// The receipt line hashes the run reports withdraw, the SQL of their inputs by hash, and every problem.
+pub(crate) fn read_reports(
+    reports: &[PathBuf],
+) -> (BTreeSet<String>, BTreeMap<String, String>, Vec<String>) {
     let mut withdrawn: BTreeSet<String> = BTreeSet::new();
+    let mut statements: BTreeMap<String, String> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
     for path in reports {
         let report: Value = match read_text(path).and_then(|(text, _)| {
@@ -38,8 +41,21 @@ pub(crate) fn withdrawn_receipts(reports: &[PathBuf]) -> (BTreeSet<String>, Vec<
                 None => problems.push(withdrawn_problem(path)),
             }
         }
+        let inputs: &[Value] = report[REPORT_INPUTS].as_array().map_or(&[], Vec::as_slice);
+        for input in inputs {
+            match (input["sql"].as_str(), input["sql_sha256"].as_str()) {
+                (Some(sql), Some(hash)) if sha256_hex(sql.as_bytes()) == hash => {
+                    statements.insert(hash.to_owned(), sql.to_owned());
+                }
+                (Some(_), Some(hash)) => problems.push(format!(
+                    "{}: input {hash} is not the SHA-256 of its sql",
+                    path.display()
+                )),
+                _ => {}
+            }
+        }
     }
-    (withdrawn, problems)
+    (withdrawn, statements, problems)
 }
 
 fn withdrawn_problem(path: &Path) -> String {

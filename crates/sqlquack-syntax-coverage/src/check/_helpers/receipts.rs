@@ -63,7 +63,7 @@ fn agreement(phase: Phase, local: &LocalVerdict, terminates: bool) -> Result<boo
 }
 
 /// What Snowflake's parser did by the syntax receipts of the case's statement; none unless all agree.
-fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<SnowflakeSyntax> {
+pub(crate) fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<SnowflakeSyntax> {
     let verdicts: BTreeSet<Option<SnowflakeSyntax>> = statement_receipts
         .iter()
         .filter(|receipt| receipt.measure.is_none())
