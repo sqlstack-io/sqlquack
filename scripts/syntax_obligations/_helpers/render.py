@@ -78,9 +78,9 @@ from scripts.syntax_obligations.constants import (
     STRING_CLASS,
     TOKEN_ELISION,
     TOKEN_KEYWORD,
-    TOKEN_PUNCT,
     TOKEN_LITERAL,
     TOKEN_PLACEHOLDER,
+    TOKEN_PUNCT,
 )
 from scripts.syntax_obligations.models import FormStyle, Node, Rendered, Spec
 
@@ -426,7 +426,7 @@ class _Renderer:
         return rendered
 
     def _whole_choice(self, *, item: list[str], before: list[str]) -> list[str]:
-        """The item, widened to the last chosen branch when a keyword inside that branch cut it short."""
+        """The item, widened to the last chosen branch when a keyword in it cut the item short."""
         if self._last_choice is None:
             return item
         chosen: list[str] = self._last_choice[2]
@@ -606,7 +606,7 @@ def _separator_start(*, before: list[str]) -> int:
 
 
 def _keywords_only(branch: tuple[Node, ...]) -> bool:
-    """Whether a branch is fixed words: keywords, dotted ones such as SNOWFLAKE.ML.FORECAST included."""
+    """Whether a branch is fixed words: keywords, dotted ones such as SNOWFLAKE.ML.FORECAST too."""
     return all(
         token.token_kind == TOKEN_KEYWORD or (token.token_kind == TOKEN_PUNCT and token.text == ".")
         for token in _tokens(branch)
