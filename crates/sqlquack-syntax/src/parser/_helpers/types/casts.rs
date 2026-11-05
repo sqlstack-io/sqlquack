@@ -148,7 +148,7 @@ impl Parser {
                 fmt_expr
             };
             Some(Box::new(fmt_with_tz))
-        } else if self.match_token(TokenType::Comma) {
+        } else if !self.applies_snowflake_context_rules() && self.match_token(TokenType::Comma) {
             Some(Box::new(self.parse_expression()?))
         } else {
             None

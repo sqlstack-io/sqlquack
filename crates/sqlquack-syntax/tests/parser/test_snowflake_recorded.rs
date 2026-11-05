@@ -356,6 +356,12 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "CAST takes nothing after its type (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS INTERVAL SECOND ( 9 ) , ( 3 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
