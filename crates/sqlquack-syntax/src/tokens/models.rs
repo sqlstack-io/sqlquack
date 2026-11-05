@@ -1404,6 +1404,8 @@ pub struct TokenizerConfig {
     pub recover_unterminated_string: bool,
     /// Whether `//` is the integer-division operator (Vertica).
     pub double_slash_int_div: bool,
+    /// Whether `==` is one equality operator; Snowflake reads it as two `=` and rejects it.
+    pub double_equals_is_eq: bool,
 }
 
 impl Default for TokenizerConfig {
@@ -1432,6 +1434,7 @@ impl Default for TokenizerConfig {
             recover_terminal_backslash_quote: false,
             recover_unterminated_string: false,
             double_slash_int_div: false,
+            double_equals_is_eq: true,
         }
     }
 }

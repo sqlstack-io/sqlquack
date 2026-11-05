@@ -101,6 +101,16 @@ fn given_sql_when_tokenizing_then_each_token_has_its_type_and_text() {
             ]),
         },
         TokenizeTestCase {
+            description: "== is one equality token by default",
+            config: TokenizerConfig::default(),
+            sql: "a == b",
+            expected_tokens: Ok(vec![
+                (TokenType::Var, "a"),
+                (TokenType::Eq, "=="),
+                (TokenType::Var, "b"),
+            ]),
+        },
+        TokenizeTestCase {
             description: "comparison operators",
             config: TokenizerConfig::default(),
             sql: "a <= b >= c != d",

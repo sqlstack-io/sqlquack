@@ -4,8 +4,9 @@ use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{Dialect, LosslessToken, TokenKind, tokenize};
 
 use crate::diagnostics::constants::{
-    CLOSING_PAREN, END_OF_INPUT, EXPECTED_PREFIX, FOUND_SEPARATOR, NEAR_SUFFIX, TEMPLATE_HELP,
-    TEMPLATE_MARKERS, TOKEN_TEXTS, UNCLOSED_PAREN_HELP, UNEXPECTED_TOKEN,
+    CLOSING_PAREN, DOUBLED_EQUALS, DOUBLED_EQUALS_HELP, END_OF_INPUT, EXPECTED_PREFIX,
+    FOUND_SEPARATOR, NEAR_SUFFIX, TEMPLATE_HELP, TEMPLATE_MARKERS, TOKEN_TEXTS,
+    UNCLOSED_PAREN_HELP, UNEXPECTED_TOKEN,
 };
 use crate::parsing::models::{SourceLines, SourceLocation};
 
@@ -22,7 +23,20 @@ pub(crate) fn unparsed(message: &str, location: Option<SourceLocation>, source: 
     let help = TEMPLATE_MARKERS
         .iter()
         .any(|marker| source.contains(marker))
-        .then(|| TEMPLATE_HELP.to_owned());
+        .then(|| TEMPLATE_HELP.to_owned())
+        .or_else(|| {
+            location
+                .filter(|at| at.start > 0)
+                .is_some_and(|at| {
+                    source
+                        .chars()
+                        .skip(at.start - 1)
+                        .take(2)
+                        .collect::<String>()
+                        == DOUBLED_EQUALS
+                })
+                .then(|| DOUBLED_EQUALS_HELP.to_owned())
+        });
     let Some((expected, got)) = message
         .strip_prefix(EXPECTED_PREFIX)
         .and_then(|rest| rest.split_once(FOUND_SEPARATOR))

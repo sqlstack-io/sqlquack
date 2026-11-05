@@ -828,7 +828,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
 
         let token_type = match (c, next) {
             ('.', ':') => Some(TokenType::DotColon),
-            ('=', '=') => Some(TokenType::Eq),
+            ('=', '=') if self.config.double_equals_is_eq => Some(TokenType::Eq),
             ('<', '=') => Some(TokenType::Lte),
             ('>', '=') => Some(TokenType::Gte),
             ('!', '=') => Some(TokenType::Neq),

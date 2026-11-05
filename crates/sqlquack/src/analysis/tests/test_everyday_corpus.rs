@@ -15,7 +15,6 @@ fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_i
         expected_rejections_not_caught: vec![
             "SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders",
             "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p",
-            "SELECT order_id FROM orders WHERE status == 'shipped'",
             "SELECT order_id FROM orders WHERE status IN 'shipped'",
             "SELECT order_id FROM orders WHERE total >> 10",
             "SELECT order_id FROM orders WHERE ordered_at > 5",

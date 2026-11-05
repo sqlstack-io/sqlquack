@@ -183,6 +183,13 @@ fn given_everyday_parse_failures_when_diagnosed_then_the_label_names_what_was_ex
             expected_help: None,
         },
         UnparsedTestCase {
+            description: "== is pointed at its second `=`, with Snowflake's single `=` as the fix",
+            source: "SELECT order_id FROM orders WHERE status == 'shipped'",
+            expected_label: "unexpected `=`",
+            expected_column: 43,
+            expected_help: Some("Snowflake compares with a single `=`"),
+        },
+        UnparsedTestCase {
             description: "a dbt model is rendered before it is checked",
             source: "select\n    {{ dbt_utils.generate_surrogate_key(['order_id', 'line_number']) }} as order_item_key,\n    order_id\nfrom {{ ref('stg_order_items') }}",
             expected_label: "expected `:`, found `}`",

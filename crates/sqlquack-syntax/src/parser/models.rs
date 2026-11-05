@@ -256,6 +256,7 @@ impl DialectImpl for SnowflakeDialect {
         ];
         config.nested_comments = false;
         config.comments.insert("//".to_string(), None);
+        config.double_equals_is_eq = false;
         config
     }
 }

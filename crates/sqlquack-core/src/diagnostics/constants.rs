@@ -59,6 +59,10 @@ pub const UNCLOSED_PAREN_HELP: &str = "add the missing `)` where the bracketed p
 pub const TEMPLATE_MARKERS: [&str; 4] = ["{{", "}}", "{%", "%}"];
 /// The help for SQL that still holds template markers.
 pub const TEMPLATE_HELP: &str = "render dbt/Jinja templates before checking";
+/// `==`, which Snowflake does not read as equality.
+pub const DOUBLED_EQUALS: &str = "==";
+/// The fix for comparing with `==`.
+pub const DOUBLED_EQUALS_HELP: &str = "Snowflake compares with a single `=`";
 /// How an unresolved column's reason starts.
 pub const UNRESOLVED_COLUMN_PREFIX: &str = "column `";
 /// The quote around a quoted identifier in Snowflake SQL.
