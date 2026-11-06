@@ -382,6 +382,8 @@ pub struct ConvertReport {
     pub divergence_failures: BTreeMap<String, DivergenceFailure>,
     /// What the session parameters changed about conversion.
     pub notes: Vec<String>,
+    /// What the project leaves out, such as a source with an untyped column.
+    pub warnings: Vec<String>,
     /// The Python functions the SQL calls, which the caller registers before running it.
     pub python_functions: Vec<PythonSignature>,
     /// The macros of the user overrides the SQL calls, which the caller runs before it.
@@ -455,4 +457,6 @@ pub struct ProjectChoices {
     pub overrides: Option<PathBuf>,
     /// The caller's flags with `[project.confirm]` added: a flag confirms on top of the file.
     pub conversion: PolicyArguments,
+    /// What the project leaves out, such as a source with an untyped column.
+    pub warnings: Vec<String>,
 }

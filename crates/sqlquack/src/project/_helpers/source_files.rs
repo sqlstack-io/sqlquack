@@ -6,6 +6,7 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 
 use crate::project::_helpers::yaml_value::yaml_value;
+use crate::project::models::SourceTables;
 
 /// One source file; keys SQLQuack does not read, such as contracts and audits, are ignored.
 #[derive(Deserialize)]
@@ -31,17 +32,40 @@ struct SourceColumn {
     type_name: Option<Value>,
 }
 
-/// Each table `path` declares, upper-cased as Snowflake folds SQLBuild's unquoted names.
-pub(crate) fn source_relations(path: &Path) -> Result<Vec<(String, Value)>, String> {
+/// Each table `path` declares, upper-cased as Snowflake folds SQLBuild's unquoted names, and warnings.
+pub(crate) fn source_relations(path: &Path) -> Result<SourceTables, String> {
     let failed = |reason: String| format!("{}: {reason}", path.display());
     let text = std::fs::read_to_string(path).map_err(|error| failed(error.to_string()))?;
     let value = yaml_value(&text).map_err(failed)?;
     if value.is_null() {
-        return Ok(Vec::new());
+        return Ok(SourceTables::default());
     }
     let file: SourceFile = serde_json::from_value(value)
         .map_err(|error| failed(format!("is not a SQLBuild source file: {error}")))?;
-    Ok(file.sources.into_iter().filter_map(table).collect())
+    let mut found = SourceTables::default();
+    for source in file.sources {
+        match untyped_column(&source) {
+            Some(column) => found.warnings.push(format!(
+                "{}: the source {} is left out, because its column {column} has no type",
+                path.display(),
+                source.name
+            )),
+            None => found.tables.extend(table(source)),
+        }
+    }
+    Ok(found)
+}
+
+/// The first column of a table source without a text type.
+fn untyped_column(source: &SourceEntry) -> Option<&str> {
+    match source.expression {
+        Some(_) => None,
+        None => source
+            .columns
+            .iter()
+            .find(|column| !matches!(column.type_name, Some(Value::String(_))))
+            .map(|column| column.name.as_str()),
+    }
 }
 
 /// A source as a table and its `[column, type]` pairs; None for an inline query or an untyped column.

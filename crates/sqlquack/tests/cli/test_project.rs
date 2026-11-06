@@ -210,6 +210,18 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             expected_output: "add `python_runtime = true` under [project.confirm] in sqlquack.toml, or pass --python-runtime for one run",
         },
         ProjectTestCase {
+            description: "a source with an untyped column is left out with a warning naming it",
+            files: &[ProjectFile {
+                path: "sources/raw.yml",
+                text: "sources:\n  - name: raw__customers\n    columns:\n      - name: id\n        type: INTEGER\n      - name: email\n",
+            }],
+            project: "",
+            flags: &[],
+            sql: "SELECT id AS n FROM raw__customers",
+            expected_exit: Some(1),
+            expected_output: "sqlquack convert: warning: ./sources/raw.yml: the source raw__customers is left out, because its column email has no type",
+        },
+        ProjectTestCase {
             description: "a Python function file not marked as SQLBuild marks one is an error",
             files: &[ProjectFile {
                 path: "functions/python/plain.py",
