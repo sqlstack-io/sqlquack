@@ -22,6 +22,7 @@ from scripts.syntax_obligations_pg.constants import (
     FORM_ELISIONS,
     FORM_FILLS,
     FORM_PREFIX,
+    GRAMMAR_REWRITES,
     PG_CLASS_RULES,
     PROTECTED_TEXT,
 )
@@ -81,7 +82,14 @@ def pg_grammar_read(*, form: Row, readings: dict[str, Row]) -> list[str]:
     lines: list[str] = _shared_grammar_read(form=form, readings=readings)
     if str(form["id"]) in readings:
         return lines
-    return [_upper_bare_words(line) for line in lines]
+    return [_rewritten(_upper_bare_words(line)) for line in lines]
+
+
+def _rewritten(line: str) -> str:
+    """The line with each documented-list spelling the renderer cannot copy written out."""
+    for pattern, replacement in GRAMMAR_REWRITES:
+        line = pattern.sub(replacement, line)
+    return line
 
 
 def _upper_bare_words(line: str) -> str:

@@ -1,0 +1,62 @@
+# Cases recorded but not committed as receipts because the referee's method misjudges them;
+# each waits on the named referee change and is recorded again then. Not read by the checker.
+
+[[pending]]
+case_id = "pg.query.select-into.k41cdc87cdf2c"
+sql_sha256 = "41cdc87cdf2c40ccff66e6b4cf1347bf20fbb9f8f36caea750914ddbf725b550"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (each INTERSECT query must have the same number of columns); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.k5dffaea6f3b5"
+sql_sha256 = "5dffaea6f3b5edbd917693b66c97f63cbc98cf5d08fbab171dd91dd06c7080b4"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (SELECT * with no tables specified is not valid); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.k5e2a47176722"
+sql_sha256 = "5e2a4717672226feebab79595070e9956fcaa5934e04c948e46d868ef0df9291"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (each UNION query must have the same number of columns); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.k70b5e3f142df"
+sql_sha256 = "70b5e3f142dff34d9733253d86f5ca3315dcdc63e4aae34df8a0c6213ea7a375"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (SELECT * with no tables specified is not valid); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.k9d0c42a879ee"
+sql_sha256 = "9d0c42a879ee8e7a70a092db8573ff7e3387f09086906062de4a72dd51f8c9bf"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (SELECT * with no tables specified is not valid); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.ka23493b54299"
+sql_sha256 = "a23493b542998ee5112ae4a890f7308a51dd504357aef3ea0d0fcf1acf5386ee"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (each UNION query must have the same number of columns); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select-into.kd6452a4ef1b0"
+sql_sha256 = "d6452a4ef1b08711abf0eb2a5c60fa988a26719d61607581af5f8f4fbbeeaca6"
+reason = "SELECT ... INTO is decided by the live run, which raises 42601 from parse analysis (each EXCEPT query must have the same number of columns); the 18.6 grammar accepts it; waits on the referee telling analysis 42601 from parser 42601"
+
+[[pending]]
+case_id = "pg.query.select.table.k77b0d0f37076"
+sql_sha256 = "77b0d0f3707678bd9105fd979216ae13f451fb4a31383ec0521aaf7aff98e88f"
+reason = "the referee's DO-block pass rejects every TABLE statement (PL/pgSQL does not take TABLE as an SQL statement); the live run gives 42P01; waits on a parse-only exception for TABLE"
+
+[[pending]]
+case_id = "pg.query.select.table.k8a50671c7da9"
+sql_sha256 = "8a50671c7da976408b0981205459e7d1f39a0e3944468b700fd328d35d2a4a86"
+reason = "the referee's DO-block pass rejects every TABLE statement (PL/pgSQL does not take TABLE as an SQL statement); the live run gives 42P01; waits on a parse-only exception for TABLE"
+
+[[pending]]
+case_id = "pg.query.select.table.k995be2b5e7bb"
+sql_sha256 = "995be2b5e7bbd5baa0956dfeddde6d238bb64c0bf3935aa3e7ebdd198a9396c4"
+reason = "the referee's DO-block pass rejects every TABLE statement (PL/pgSQL does not take TABLE as an SQL statement); the live run gives 42P01; waits on a parse-only exception for TABLE"
+
+[[pending]]
+case_id = "pg.query.select.table.kf4b80fb96baa"
+sql_sha256 = "f4b80fb96baab931516ae790c879344e48da65716d32b19fff75793ad30ef3fb"
+reason = "the referee's DO-block pass rejects every TABLE statement (PL/pgSQL does not take TABLE as an SQL statement); the live run gives 42P01; waits on a parse-only exception for TABLE"
+
+[[pending]]
+case_id = "pg.query.select.table.kfc1e061f1f7e"
+sql_sha256 = "fc1e061f1f7e008b99f349e9edc0c655889f1df55e04ff369771b7d0da2a3fed"
+reason = "the referee's DO-block pass rejects every TABLE statement (PL/pgSQL does not take TABLE as an SQL statement); the live run gives 42P01; waits on a parse-only exception for TABLE"

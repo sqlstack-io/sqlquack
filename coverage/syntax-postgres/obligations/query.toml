@@ -348,16 +348,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.query.select-into.o002"
+id = "pg.query.select-into.o159"
 kind = "option_present"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o003"
+id = "pg.query.select-into.o160"
 kind = "option_absent"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
 id = "pg.query.select-into.o004"
@@ -372,101 +372,124 @@ required = true
 target = "[ RECURSIVE ]"
 
 [[obligation]]
-id = "pg.query.select-into.o006"
+id = "pg.query.select-into.o161"
 kind = "required_operand_missing"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "omit <with_query>"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o007"
+id = "pg.query.select-into.o162"
 kind = "operand_type_class"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.query.select-into.o163"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.query.select-into.o164"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.query.select-into.o165"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
 note = "a valid query"
 
 [[obligation]]
-id = "pg.query.select-into.o008"
+id = "pg.query.select-into.o166"
 kind = "negative_neighbour"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "a bare literal in place of <with_query>"
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a bare literal in place of <with_subquery>"
 
 [[obligation]]
-id = "pg.query.select-into.o009"
+id = "pg.query.select-into.o167"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.query.select-into.o010"
+id = "pg.query.select-into.o168"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.query.select-into.o011"
-kind = "option_present"
-required = true
-target = "[ ALL | DISTINCT [ ON ( <expression> [ , ... ] ) ] ]"
-
-[[obligation]]
-id = "pg.query.select-into.o012"
-kind = "option_absent"
-required = true
-target = "[ ALL | DISTINCT [ ON ( <expression> [ , ... ] ) ] ]"
-
-[[obligation]]
-id = "pg.query.select-into.o013"
-kind = "alternative"
-required = true
-target = "[ ALL | DISTINCT [ ON ( <expression> [ , ... ] ) ] ] → ALL"
-
-[[obligation]]
-id = "pg.query.select-into.o014"
-kind = "alternative"
-required = true
-target = "[ ALL | DISTINCT [ ON ( <expression> [ , ... ] ) ] ] → DISTINCT [ ON ( <expression> [ , ... ] ) ]"
-
-[[obligation]]
-id = "pg.query.select-into.o015"
-kind = "option_present"
-required = true
-target = "[ ON ( <expression> [ , ... ] ) ]"
-
-[[obligation]]
-id = "pg.query.select-into.o016"
-kind = "option_absent"
-required = true
-target = "[ ON ( <expression> [ , ... ] ) ]"
-
-[[obligation]]
-id = "pg.query.select-into.o017"
+id = "pg.query.select-into.o169"
 kind = "required_operand_missing"
 required = true
-target = "<expression> in [ ON ( <expression> [ , ... ] ) ]"
-note = "omit <expression>"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o018"
+id = "pg.query.select-into.o170"
 kind = "operand_type_class"
 required = true
-target = "<expression> in [ ON ( <expression> [ , ... ] ) ]"
-note = "a valid expression"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid identifier"
 
 [[obligation]]
-id = "pg.query.select-into.o019"
+id = "pg.query.select-into.o171"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.query.select-into.o172"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.query.select-into.o173"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid query"
+
+[[obligation]]
+id = "pg.query.select-into.o174"
+kind = "negative_neighbour"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a bare literal in place of <with_subquery>"
+
+[[obligation]]
+id = "pg.query.select-into.o224"
+kind = "alternative"
+required = true
+target = "{ [ ALL ] [ { * | <expression> [ [ AS ] <output_name> ] } [… → [ ALL ] [ { * | <expression> [ [ AS ] <output_name> ] } [ , ... ] ]"
+
+[[obligation]]
+id = "pg.query.select-into.o225"
+kind = "alternative"
+required = true
+target = "{ [ ALL ] [ { * | <expression> [ [ AS ] <output_name> ] } [… → DISTINCT [ ON ( <expression> [ , ... ] ) ] { * | <expression> [ [ AS ] <output_name> ] } [ , <expression> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o226"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
+target = "[ ALL ]"
 
 [[obligation]]
-id = "pg.query.select-into.o020"
+id = "pg.query.select-into.o227"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ ALL ]"
 
 [[obligation]]
 id = "pg.query.select-into.o021"
@@ -538,17 +561,146 @@ target = "<output_name> in [ [ AS ] <output_name> ]"
 note = "a string literal in place of <output_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o032"
+id = "pg.query.select-into.o009"
 kind = "option_present"
 required = true
-target = "[ , ... ] #3"
+target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.query.select-into.o033"
+id = "pg.query.select-into.o010"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #3"
+target = "[ , ... ]"
+
+[[obligation]]
+id = "pg.query.select-into.o015"
+kind = "option_present"
+required = true
+target = "[ ON ( <expression> [ , ... ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o016"
+kind = "option_absent"
+required = true
+target = "[ ON ( <expression> [ , ... ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o017"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ ON ( <expression> [ , ... ] ) ]"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.query.select-into.o018"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ ON ( <expression> [ , ... ] ) ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.query.select-into.o019"
+kind = "option_present"
+required = true
+target = "[ , ... ] #2"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "pg.query.select-into.o020"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o228"
+kind = "alternative"
+required = true
+target = "{ * | <expression> [ [ AS ] <output_name> ] } → * #2"
+
+[[obligation]]
+id = "pg.query.select-into.o229"
+kind = "alternative"
+required = true
+target = "{ * | <expression> [ [ AS ] <output_name> ] } → <expression> [ [ AS ] <output_name> ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o230"
+kind = "required_operand_missing"
+required = true
+target = "<expression>"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.query.select-into.o231"
+kind = "operand_type_class"
+required = true
+target = "<expression>"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.query.select-into.o232"
+kind = "option_present"
+required = true
+target = "[ [ AS ] <output_name> ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o233"
+kind = "option_absent"
+required = true
+target = "[ [ AS ] <output_name> ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o234"
+kind = "option_present"
+required = true
+target = "[ AS ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o235"
+kind = "option_absent"
+required = true
+target = "[ AS ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o236"
+kind = "operand_type_class"
+required = true
+target = "<output_name> in [ [ AS ] <output_name> ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.query.select-into.o237"
+kind = "negative_neighbour"
+required = true
+target = "<output_name> in [ [ AS ] <output_name> ] #2"
+note = "a string literal in place of <output_name>"
+
+[[obligation]]
+id = "pg.query.select-into.o193"
+kind = "option_present"
+required = true
+target = "[ , <expression> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o194"
+kind = "option_absent"
+required = true
+target = "[ , <expression> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o195"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ , <expression> ]"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.query.select-into.o196"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , <expression> ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.query.select-into.o034"
@@ -633,17 +785,17 @@ target = "<from_item> in [ FROM <from_item> [ , ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.query.select-into.o047"
+id = "pg.query.select-into.o032"
 kind = "option_present"
 required = true
-target = "[ , ... ] #4"
+target = "[ , ... ] #3"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.query.select-into.o048"
+id = "pg.query.select-into.o033"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #4"
+target = "[ , ... ] #3"
 
 [[obligation]]
 id = "pg.query.select-into.o049"
@@ -698,17 +850,17 @@ target = "<expression> in [ GROUP BY <expression> [ , ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.query.select-into.o057"
+id = "pg.query.select-into.o047"
 kind = "option_present"
 required = true
-target = "[ , ... ] #5"
+target = "[ , ... ] #4"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.query.select-into.o058"
+id = "pg.query.select-into.o048"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #5"
+target = "[ , ... ] #4"
 
 [[obligation]]
 id = "pg.query.select-into.o059"
@@ -737,57 +889,94 @@ target = "<condition> in [ HAVING <condition> ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.query.select-into.o063"
+id = "pg.query.select-into.o175"
 kind = "option_present"
 required = true
-target = "[ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+target = "[ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o064"
+id = "pg.query.select-into.o176"
 kind = "option_absent"
 required = true
-target = "[ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+target = "[ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o065"
+id = "pg.query.select-into.o177"
 kind = "required_operand_missing"
 required = true
-target = "<window_name> in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+target = "<window_name> in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] )…"
 note = "omit <window_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o066"
+id = "pg.query.select-into.o178"
 kind = "operand_type_class"
 required = true
-target = "<window_name> in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+target = "<window_name> in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] )…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.query.select-into.o067"
+id = "pg.query.select-into.o179"
 kind = "negative_neighbour"
 required = true
-target = "<window_name> in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+target = "<window_name> in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] )…"
 note = "a string literal in place of <window_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o068"
-kind = "required_operand_missing"
-required = true
-target = "<window_definition> in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
-note = "omit <window_definition>"
-
-[[obligation]]
-id = "pg.query.select-into.o069"
+id = "pg.query.select-into.o180"
 kind = "option_present"
 required = true
-target = "[ , ... ] #6"
-note = "the list continued at least once"
+target = "[ <window_definition> ]"
 
 [[obligation]]
-id = "pg.query.select-into.o070"
+id = "pg.query.select-into.o181"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #6"
+target = "[ <window_definition> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o182"
+kind = "option_present"
+required = true
+target = "[ , <window_name> AS ( [ <window_definition> ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o183"
+kind = "option_absent"
+required = true
+target = "[ , <window_name> AS ( [ <window_definition> ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o184"
+kind = "required_operand_missing"
+required = true
+target = "<window_name> in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+note = "omit <window_name>"
+
+[[obligation]]
+id = "pg.query.select-into.o185"
+kind = "operand_type_class"
+required = true
+target = "<window_name> in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.query.select-into.o186"
+kind = "negative_neighbour"
+required = true
+target = "<window_name> in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+note = "a string literal in place of <window_name>"
+
+[[obligation]]
+id = "pg.query.select-into.o187"
+kind = "option_present"
+required = true
+target = "[ <window_definition> ] #2"
+
+[[obligation]]
+id = "pg.query.select-into.o188"
+kind = "option_absent"
+required = true
+target = "[ <window_definition> ] #2"
 
 [[obligation]]
 id = "pg.query.select-into.o071"
@@ -858,29 +1047,29 @@ target = "<select> in [ { UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] <selec
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.query.select-into.o082"
+id = "pg.query.select-into.o189"
 kind = "option_present"
 required = true
-target = "[ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+target = "[ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o083"
+id = "pg.query.select-into.o190"
 kind = "option_absent"
 required = true
-target = "[ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+target = "[ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o084"
+id = "pg.query.select-into.o191"
 kind = "required_operand_missing"
 required = true
-target = "<expression> in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+target = "<expression> in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ]…"
 note = "omit <expression>"
 
 [[obligation]]
-id = "pg.query.select-into.o085"
+id = "pg.query.select-into.o192"
 kind = "operand_type_class"
 required = true
-target = "<expression> in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+target = "<expression> in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ]…"
 note = "a valid expression"
 
 [[obligation]]
@@ -952,29 +1141,54 @@ required = true
 target = "{ FIRST | LAST } → LAST"
 
 [[obligation]]
-id = "pg.query.select-into.o097"
+id = "pg.query.select-into.o238"
 kind = "option_present"
 required = true
-target = "[ , ... ] #7"
-note = "the list continued at least once"
+target = "[ , <expression> ] #2"
 
 [[obligation]]
-id = "pg.query.select-into.o098"
+id = "pg.query.select-into.o239"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #7"
+target = "[ , <expression> ] #2"
 
 [[obligation]]
-id = "pg.query.select-into.o099"
+id = "pg.query.select-into.o240"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ , <expression> ] #2"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.query.select-into.o241"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , <expression> ] #2"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.query.select-into.o197"
 kind = "option_present"
 required = true
-target = "[ LIMIT { <count> | ALL } ]"
+target = "[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.select-into.o100"
+id = "pg.query.select-into.o198"
 kind = "option_absent"
 required = true
-target = "[ LIMIT { <count> | ALL } ]"
+target = "[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.select-into.o199"
+kind = "alternative"
+required = true
+target = "{ LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } → LIMIT { <count> | ALL }"
+
+[[obligation]]
+id = "pg.query.select-into.o200"
+kind = "alternative"
+required = true
+target = "{ LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ]… → FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY"
 
 [[obligation]]
 id = "pg.query.select-into.o101"
@@ -989,18 +1203,54 @@ required = true
 target = "{ <count> | ALL } → ALL"
 
 [[obligation]]
-id = "pg.query.select-into.o103"
+id = "pg.query.select-into.o201"
 kind = "operand_type_class"
 required = true
-target = "<count> in [ LIMIT { <count> | ALL } ]"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "pg.query.select-into.o104"
-kind = "negative_neighbour"
+id = "pg.query.select-into.o115"
+kind = "alternative"
 required = true
-target = "<count> in [ LIMIT { <count> | ALL } ]"
-note = "a string literal in place of <count>"
+target = "{ FIRST | NEXT } → FIRST"
+
+[[obligation]]
+id = "pg.query.select-into.o116"
+kind = "alternative"
+required = true
+target = "{ FIRST | NEXT } → NEXT"
+
+[[obligation]]
+id = "pg.query.select-into.o117"
+kind = "option_present"
+required = true
+target = "[ <count> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o118"
+kind = "option_absent"
+required = true
+target = "[ <count> ]"
+
+[[obligation]]
+id = "pg.query.select-into.o119"
+kind = "operand_type_class"
+required = true
+target = "<count> in [ <count> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "pg.query.select-into.o121"
+kind = "alternative"
+required = true
+target = "{ ROW | ROWS } → ROW"
+
+[[obligation]]
+id = "pg.query.select-into.o122"
+kind = "alternative"
+required = true
+target = "{ ROW | ROWS } → ROWS"
 
 [[obligation]]
 id = "pg.query.select-into.o105"
@@ -1051,68 +1301,6 @@ id = "pg.query.select-into.o112"
 kind = "alternative"
 required = true
 target = "[ ROW | ROWS ] → ROWS"
-
-[[obligation]]
-id = "pg.query.select-into.o113"
-kind = "option_present"
-required = true
-target = "[ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
-
-[[obligation]]
-id = "pg.query.select-into.o114"
-kind = "option_absent"
-required = true
-target = "[ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
-
-[[obligation]]
-id = "pg.query.select-into.o115"
-kind = "alternative"
-required = true
-target = "{ FIRST | NEXT } → FIRST"
-
-[[obligation]]
-id = "pg.query.select-into.o116"
-kind = "alternative"
-required = true
-target = "{ FIRST | NEXT } → NEXT"
-
-[[obligation]]
-id = "pg.query.select-into.o117"
-kind = "option_present"
-required = true
-target = "[ <count> ]"
-
-[[obligation]]
-id = "pg.query.select-into.o118"
-kind = "option_absent"
-required = true
-target = "[ <count> ]"
-
-[[obligation]]
-id = "pg.query.select-into.o119"
-kind = "operand_type_class"
-required = true
-target = "<count> in [ <count> ]"
-note = "a valid integer_literal"
-
-[[obligation]]
-id = "pg.query.select-into.o120"
-kind = "negative_neighbour"
-required = true
-target = "<count> in [ <count> ]"
-note = "a string literal in place of <count>"
-
-[[obligation]]
-id = "pg.query.select-into.o121"
-kind = "alternative"
-required = true
-target = "{ ROW | ROWS } → ROW"
-
-[[obligation]]
-id = "pg.query.select-into.o122"
-kind = "alternative"
-required = true
-target = "{ ROW | ROWS } → ROWS"
 
 [[obligation]]
 id = "pg.query.select-into.o123"
@@ -1172,17 +1360,17 @@ target = "<table_name> in [ OF <table_name> [ , ... ] ]"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "pg.query.select-into.o132"
+id = "pg.query.select-into.o057"
 kind = "option_present"
 required = true
-target = "[ , ... ] #8"
+target = "[ , ... ] #5"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.query.select-into.o133"
+id = "pg.query.select-into.o058"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #8"
+target = "[ , ... ] #5"
 
 [[obligation]]
 id = "pg.query.select-into.o134"
@@ -1195,6 +1383,42 @@ id = "pg.query.select-into.o135"
 kind = "option_absent"
 required = true
 target = "[ NOWAIT ]"
+
+[[obligation]]
+id = "pg.query.select-into.o203"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.query.select-into.o204"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.query.select-into.o205"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.query.select-into.o206"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o207"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o208"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
 id = "pg.query.select-into.o136"
@@ -1215,10 +1439,10 @@ required = true
 note = "the form without its required ) in [ ON ( <expression> [ , ... ] ) ]"
 
 [[obligation]]
-id = "pg.query.select-into.o139"
+id = "pg.query.select-into.o242"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required INTO"
+note = "the form without its required { * | <expression> [ [ AS ] <output_name> ] }"
 
 [[obligation]]
 id = "pg.query.select-into.o140"
@@ -1227,28 +1451,46 @@ required = true
 note = "the form without its required BY in [ GROUP BY <expression> [ , ... ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o141"
+id = "pg.query.select-into.o209"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+note = "the form without its required AS in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o142"
+id = "pg.query.select-into.o210"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+note = "the form without its required ( in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o143"
+id = "pg.query.select-into.o211"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WINDOW <window_name> AS ( <window_definition> ) [ , ... ] ]"
+note = "the form without its required ) in [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ]"
 
 [[obligation]]
-id = "pg.query.select-into.o144"
+id = "pg.query.select-into.o212"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+note = "the form without its required AS in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o213"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o214"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <window_name> AS ( [ <window_definition> ] ) ]"
+
+[[obligation]]
+id = "pg.query.select-into.o215"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BY in [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ] ]"
 
 [[obligation]]
 id = "pg.query.select-into.o145"
@@ -1257,28 +1499,40 @@ required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
 
 [[obligation]]
-id = "pg.query.select-into.o146"
+id = "pg.query.select-into.o216"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <count> | ALL } in [ LIMIT { <count> | ALL } ]"
+note = "the form without its required LIMIT after <new_table> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.select-into.o147"
+id = "pg.query.select-into.o217"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FIRST | NEXT } in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required { <count> | ALL } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.select-into.o148"
+id = "pg.query.select-into.o218"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ROW | ROWS } in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required FETCH after <new_table> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.select-into.o149"
+id = "pg.query.select-into.o219"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ONLY in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required { FIRST | NEXT } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.select-into.o220"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ROW | ROWS } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.select-into.o221"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ONLY in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
 id = "pg.query.select-into.o150"
@@ -1293,18 +1547,18 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "pg.query.select-into.o152"
+id = "pg.query.select-into.o222"
 kind = "identifier_class"
 required = true
-target = "<output_name>"
+target = "<with_query_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "pg.query.select-into.o153"
+id = "pg.query.select-into.o223"
 kind = "identifier_class"
 required = true
-target = "<output_name>"
+target = "<with_query_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -2639,16 +2893,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.query.select.table.o002"
-kind = "option_present"
+id = "pg.query.select.table.o012"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <table_name> | <table_name> [ * ] } → ONLY <table_name>"
 
 [[obligation]]
-id = "pg.query.select.table.o003"
-kind = "option_absent"
+id = "pg.query.select.table.o013"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <table_name> | <table_name> [ * ] } → <table_name> [ * ]"
 
 [[obligation]]
 id = "pg.query.select.table.o004"
@@ -2672,6 +2926,27 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
+id = "pg.query.select.table.o014"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #2"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "pg.query.select.table.o015"
+kind = "operand_type_class"
+required = true
+target = "<table_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.query.select.table.o016"
+kind = "negative_neighbour"
+required = true
+target = "<table_name> #2"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
 id = "pg.query.select.table.o007"
 kind = "option_present"
 required = true
@@ -2684,10 +2959,10 @@ required = true
 target = "[ * ]"
 
 [[obligation]]
-id = "pg.query.select.table.o009"
-kind = "interaction_all_options"
+id = "pg.query.select.table.o017"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required { ONLY <table_name> | <table_name> [ * ] }"
 
 [[obligation]]
 id = "pg.query.select.table.o010"
@@ -2739,42 +3014,55 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "pg.query.values.o006"
+id = "pg.query.values.o053"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
+target = "[ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.query.values.o007"
+id = "pg.query.values.o054"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.query.values.o008"
-kind = "option_present"
-required = true
-target = "[ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , ... ] ]"
-
-[[obligation]]
-id = "pg.query.values.o009"
-kind = "option_absent"
-required = true
-target = "[ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , ... ] ]"
-
-[[obligation]]
-id = "pg.query.values.o010"
+id = "pg.query.values.o055"
 kind = "required_operand_missing"
 required = true
-target = "<sort_expression> in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , ... ] ]"
+target = "<expression> in [ , ( <expression> ) ]"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.query.values.o056"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , ( <expression> ) ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.query.values.o057"
+kind = "option_present"
+required = true
+target = "[ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , <sort_expression> ] ]"
+
+[[obligation]]
+id = "pg.query.values.o058"
+kind = "option_absent"
+required = true
+target = "[ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , <sort_expression> ] ]"
+
+[[obligation]]
+id = "pg.query.values.o059"
+kind = "required_operand_missing"
+required = true
+target = "<sort_expression> in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , <sort_expression> ] ]"
 note = "omit <sort_expression>"
 
 [[obligation]]
-id = "pg.query.values.o011"
+id = "pg.query.values.o060"
 kind = "operand_type_class"
 required = true
-target = "<sort_expression> in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , ... ] ]"
+target = "<sort_expression> in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , <sort_expression> ] ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -2822,29 +3110,54 @@ target = "<operator> in [ ASC | DESC | USING <operator> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.query.values.o019"
+id = "pg.query.values.o061"
 kind = "option_present"
 required = true
-target = "[ , ... ] #3"
-note = "the list continued at least once"
+target = "[ , <sort_expression> ]"
 
 [[obligation]]
-id = "pg.query.values.o020"
+id = "pg.query.values.o062"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #3"
+target = "[ , <sort_expression> ]"
 
 [[obligation]]
-id = "pg.query.values.o021"
+id = "pg.query.values.o063"
+kind = "required_operand_missing"
+required = true
+target = "<sort_expression> in [ , <sort_expression> ]"
+note = "omit <sort_expression>"
+
+[[obligation]]
+id = "pg.query.values.o064"
+kind = "operand_type_class"
+required = true
+target = "<sort_expression> in [ , <sort_expression> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.query.values.o065"
 kind = "option_present"
 required = true
-target = "[ LIMIT { <count> | ALL } ]"
+target = "[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.values.o022"
+id = "pg.query.values.o066"
 kind = "option_absent"
 required = true
-target = "[ LIMIT { <count> | ALL } ]"
+target = "[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.values.o067"
+kind = "alternative"
+required = true
+target = "{ LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } → LIMIT { <count> | ALL }"
+
+[[obligation]]
+id = "pg.query.values.o068"
+kind = "alternative"
+required = true
+target = "{ LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ]… → FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY"
 
 [[obligation]]
 id = "pg.query.values.o023"
@@ -2859,18 +3172,54 @@ required = true
 target = "{ <count> | ALL } → ALL"
 
 [[obligation]]
-id = "pg.query.values.o025"
+id = "pg.query.values.o069"
 kind = "operand_type_class"
 required = true
-target = "<count> in [ LIMIT { <count> | ALL } ]"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "pg.query.values.o026"
-kind = "negative_neighbour"
+id = "pg.query.values.o037"
+kind = "alternative"
 required = true
-target = "<count> in [ LIMIT { <count> | ALL } ]"
-note = "a string literal in place of <count>"
+target = "{ FIRST | NEXT } → FIRST"
+
+[[obligation]]
+id = "pg.query.values.o038"
+kind = "alternative"
+required = true
+target = "{ FIRST | NEXT } → NEXT"
+
+[[obligation]]
+id = "pg.query.values.o039"
+kind = "option_present"
+required = true
+target = "[ <count> ]"
+
+[[obligation]]
+id = "pg.query.values.o040"
+kind = "option_absent"
+required = true
+target = "[ <count> ]"
+
+[[obligation]]
+id = "pg.query.values.o041"
+kind = "operand_type_class"
+required = true
+target = "<count> in [ <count> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "pg.query.values.o043"
+kind = "alternative"
+required = true
+target = "{ ROW | ROWS } → ROW"
+
+[[obligation]]
+id = "pg.query.values.o044"
+kind = "alternative"
+required = true
+target = "{ ROW | ROWS } → ROWS"
 
 [[obligation]]
 id = "pg.query.values.o027"
@@ -2923,68 +3272,6 @@ required = true
 target = "[ ROW | ROWS ] → ROWS"
 
 [[obligation]]
-id = "pg.query.values.o035"
-kind = "option_present"
-required = true
-target = "[ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
-
-[[obligation]]
-id = "pg.query.values.o036"
-kind = "option_absent"
-required = true
-target = "[ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
-
-[[obligation]]
-id = "pg.query.values.o037"
-kind = "alternative"
-required = true
-target = "{ FIRST | NEXT } → FIRST"
-
-[[obligation]]
-id = "pg.query.values.o038"
-kind = "alternative"
-required = true
-target = "{ FIRST | NEXT } → NEXT"
-
-[[obligation]]
-id = "pg.query.values.o039"
-kind = "option_present"
-required = true
-target = "[ <count> ]"
-
-[[obligation]]
-id = "pg.query.values.o040"
-kind = "option_absent"
-required = true
-target = "[ <count> ]"
-
-[[obligation]]
-id = "pg.query.values.o041"
-kind = "operand_type_class"
-required = true
-target = "<count> in [ <count> ]"
-note = "a valid integer_literal"
-
-[[obligation]]
-id = "pg.query.values.o042"
-kind = "negative_neighbour"
-required = true
-target = "<count> in [ <count> ]"
-note = "a string literal in place of <count>"
-
-[[obligation]]
-id = "pg.query.values.o043"
-kind = "alternative"
-required = true
-target = "{ ROW | ROWS } → ROW"
-
-[[obligation]]
-id = "pg.query.values.o044"
-kind = "alternative"
-required = true
-target = "{ ROW | ROWS } → ROWS"
-
-[[obligation]]
 id = "pg.query.values.o045"
 kind = "negative_neighbour"
 required = true
@@ -2997,34 +3284,58 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "pg.query.values.o047"
+id = "pg.query.values.o071"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , ... ] ]"
+note = "the form without its required ( in [ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.query.values.o048"
+id = "pg.query.values.o072"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <count> | ALL } in [ LIMIT { <count> | ALL } ]"
+note = "the form without its required ) in [ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.query.values.o049"
+id = "pg.query.values.o073"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { FIRST | NEXT } in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required BY in [ ORDER BY <sort_expression> [ ASC | DESC | USING <operator> ] [ , <sort_expression> ] ]"
 
 [[obligation]]
-id = "pg.query.values.o050"
+id = "pg.query.values.o074"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { ROW | ROWS } in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required LIMIT after ) in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
-id = "pg.query.values.o051"
+id = "pg.query.values.o075"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ONLY in [ FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY ]"
+note = "the form without its required { <count> | ALL } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.values.o076"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FETCH after ) in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.values.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { FIRST | NEXT } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.values.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ROW | ROWS } in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+
+[[obligation]]
+id = "pg.query.values.o079"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ONLY in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
 
 [[obligation]]
 id = "pg.query.values.o052"

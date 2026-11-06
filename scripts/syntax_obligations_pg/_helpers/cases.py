@@ -24,6 +24,7 @@ from scripts.syntax_obligations_pg.constants import (
     AUTOCOMMIT_LEADS,
     CAPTURE_AUTOCOMMIT,
     CAPTURE_ROLLED_BACK,
+    CASED_FAMILIES,
     CASES_DIR,
     DIGEST_WIDTH,
     LEADING_WORD,
@@ -123,6 +124,8 @@ def write_family(
 ) -> tuple[int, int]:
     """Write one family's obligations and focus cases; return their counts."""
     numbered, trees, _, _, _ = family_obligations(root=root, family=family)
+    if family in CASED_FAMILIES:
+        focus = focus | set(trees)
     rows: list[Row] = obligation_rows(numbered)
     path: Path = root / OBLIGATIONS_DIR / f"{family}.toml"
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -501,3 +501,94 @@ note = "a reserved key word that is not a bare label (gram.y bare_label_keyword 
 anchor = "doc.sql-select / Synopsis"
 sql = "SELECT 1 ON"
 context = "raw"
+
+[[reading]]
+form = "pg.dml.insert"
+grammar_sha256 = "ac79f1af095557311dd1a001d3435dc52241911fc13259281fdc4e65ca9334d7"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] INSERT INTO <table_name> [ AS <alias> ] { DEFAULT VALUES | [ ( <column_name> [, ...] ) ] [ OVERRIDING { SYSTEM | USER } VALUE ] { VALUES ( { <expression> | DEFAULT } [, ...] ) [ , ( <expression> ) ] | <query> } } [ ON CONFLICT [ <conflict_target> ] <conflict_action> ] [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] } [ , <output_expression> ] ]"]
+reason = "DEFAULT VALUES takes no column list and no OVERRIDING clause (gram.y insert_rest: DEFAULT VALUES is its own alternative); with_query and the VALUES, WITH ( ... ) and RETURNING lists written out as the generic rewrites write them"
+
+[[reading]]
+form = "pg.dml.copy.pre-9-0-from"
+grammar_sha256 = "c8baca9f8e5e0bbf5d8a01095746e1cf206be5cbab9fb0d5256c1464eabf7c5d"
+grammar = ["COPY <table_name> [ ( <column_name> [, ...] ) ] FROM { '<filename>' | STDIN } [ [ WITH ] [ BINARY ] [ DELIMITER [ AS ] '<delimiter_character>' ] [ NULL [ AS ] '<null_string>' ] [ CSV [ HEADER ] [ QUOTE [ AS ] '<quote_character>' ] [ ESCAPE [ AS ] '<escape_character>' ] [ FORCE NOT NULL <column_name> [ , <column_name> ] ] ] ]"]
+reason = "the FORCE NOT NULL column list's second item written out, which the renderer otherwise copies with its keywords"
+
+# Derived negatives that are valid PostgreSQL, across the query and dml families.
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.values"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.values"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.delete"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.insert"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.merge"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required INTO"
+reason = "without INTO the statement is a plain SELECT, which is valid"
+
+[[suppress]]
+form = "pg.dml.copy.pre-7-3-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
+reason = "AS after NULL is optional in COPY's option list (gram.y copy_opt_item: NULL_P opt_as Sconst), which the legacy syntax shares"
+
+[[suppress]]
+form = "pg.dml.copy.pre-7-3-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
+reason = "AS after NULL is optional in COPY's option list (gram.y copy_opt_item: NULL_P opt_as Sconst), which the legacy syntax shares"
+
+[[suppress]]
+form = "pg.dml.copy.pre-9-0-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NOT in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
+reason = "without NOT, FORCE NULL column_list is the current COPY option of that name, which the legacy option list also parses (gram.y copy_opt_item)"
+

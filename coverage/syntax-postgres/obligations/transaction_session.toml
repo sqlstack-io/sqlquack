@@ -390,16 +390,16 @@ required = true
 target = "[ TABLE ]"
 
 [[obligation]]
-id = "pg.transaction_session.lock.o004"
-kind = "option_present"
+id = "pg.transaction_session.lock.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.transaction_session.lock.o005"
-kind = "option_absent"
+id = "pg.transaction_session.lock.o024"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.transaction_session.lock.o006"
@@ -420,6 +420,27 @@ id = "pg.transaction_session.lock.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.transaction_session.lock.o025"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.transaction_session.lock.o026"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.transaction_session.lock.o027"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -484,6 +505,12 @@ id = "pg.transaction_session.lock.o018"
 kind = "option_absent"
 required = true
 target = "[ NOWAIT ]"
+
+[[obligation]]
+id = "pg.transaction_session.lock.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.transaction_session.lock.o019"

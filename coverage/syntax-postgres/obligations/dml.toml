@@ -440,12 +440,6 @@ required = true
 note = "the form without its required NULL in [ WITH NULL AS '<null_string>' ]"
 
 [[obligation]]
-id = "pg.dml.copy.pre-7-3-from.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
-
-[[obligation]]
 id = "pg.dml.copy.pre-7-3-from.o028"
 kind = "interaction_all_options"
 required = true
@@ -633,12 +627,6 @@ id = "pg.dml.copy.pre-7-3-to.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required NULL in [ WITH NULL AS '<null_string>' ]"
-
-[[obligation]]
-id = "pg.dml.copy.pre-7-3-to.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
 
 [[obligation]]
 id = "pg.dml.copy.pre-7-3-to.o028"
@@ -1002,50 +990,70 @@ target = "'<escape_character>' in [ ESCAPE [ AS ] '<escape_character>' ]"
 note = "an unquoted identifier in place of '<escape_character>'"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o054"
+id = "pg.dml.copy.pre-9-0-from.o071"
 kind = "option_present"
 required = true
-target = "[ FORCE NOT NULL <column_name> [ , ... ] ]"
+target = "[ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o055"
+id = "pg.dml.copy.pre-9-0-from.o072"
 kind = "option_absent"
 required = true
-target = "[ FORCE NOT NULL <column_name> [ , ... ] ]"
+target = "[ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o056"
+id = "pg.dml.copy.pre-9-0-from.o073"
 kind = "required_operand_missing"
 required = true
-target = "<column_name> in [ FORCE NOT NULL <column_name> [ , ... ] ]"
+target = "<column_name> in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 note = "omit <column_name>"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o057"
+id = "pg.dml.copy.pre-9-0-from.o074"
 kind = "operand_type_class"
 required = true
-target = "<column_name> in [ FORCE NOT NULL <column_name> [ , ... ] ]"
+target = "<column_name> in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o058"
+id = "pg.dml.copy.pre-9-0-from.o075"
 kind = "negative_neighbour"
 required = true
-target = "<column_name> in [ FORCE NOT NULL <column_name> [ , ... ] ]"
+target = "<column_name> in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o059"
+id = "pg.dml.copy.pre-9-0-from.o076"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
+target = "[ , <column_name> ]"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o060"
+id = "pg.dml.copy.pre-9-0-from.o077"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , <column_name> ]"
+
+[[obligation]]
+id = "pg.dml.copy.pre-9-0-from.o078"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ , <column_name> ]"
+note = "omit <column_name>"
+
+[[obligation]]
+id = "pg.dml.copy.pre-9-0-from.o079"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ , <column_name> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.copy.pre-9-0-from.o080"
+kind = "negative_neighbour"
+required = true
+target = "<column_name> in [ , <column_name> ]"
+note = "a string literal in place of <column_name>"
 
 [[obligation]]
 id = "pg.dml.copy.pre-9-0-from.o061"
@@ -1066,16 +1074,10 @@ required = true
 note = "the form without its required { '<filename>' | STDIN }"
 
 [[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o064"
+id = "pg.dml.copy.pre-9-0-from.o082"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required NOT in [ FORCE NOT NULL <column_name> [ , ... ] ]"
-
-[[obligation]]
-id = "pg.dml.copy.pre-9-0-from.o065"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NULL in [ FORCE NOT NULL <column_name> [ , ... ] ]"
+note = "the form without its required NULL in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 
 [[obligation]]
 id = "pg.dml.copy.pre-9-0-from.o066"
@@ -1942,16 +1944,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.dml.delete.o002"
+id = "pg.dml.delete.o083"
 kind = "option_present"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
-id = "pg.dml.delete.o003"
+id = "pg.dml.delete.o084"
 kind = "option_absent"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
 id = "pg.dml.delete.o004"
@@ -1966,50 +1968,112 @@ required = true
 target = "[ RECURSIVE ]"
 
 [[obligation]]
-id = "pg.dml.delete.o006"
+id = "pg.dml.delete.o085"
 kind = "required_operand_missing"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "omit <with_query>"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.dml.delete.o007"
+id = "pg.dml.delete.o086"
 kind = "operand_type_class"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.delete.o087"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.delete.o088"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.delete.o089"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
 note = "a valid query"
 
 [[obligation]]
-id = "pg.dml.delete.o008"
+id = "pg.dml.delete.o090"
 kind = "negative_neighbour"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "a bare literal in place of <with_query>"
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a bare literal in place of <with_subquery>"
 
 [[obligation]]
-id = "pg.dml.delete.o009"
+id = "pg.dml.delete.o091"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o010"
+id = "pg.dml.delete.o092"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o011"
-kind = "option_present"
+id = "pg.dml.delete.o093"
+kind = "required_operand_missing"
 required = true
-target = "[ ONLY ]"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.dml.delete.o012"
-kind = "option_absent"
+id = "pg.dml.delete.o094"
+kind = "operand_type_class"
 required = true
-target = "[ ONLY ]"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.delete.o095"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.delete.o096"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.delete.o097"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid query"
+
+[[obligation]]
+id = "pg.dml.delete.o098"
+kind = "negative_neighbour"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a bare literal in place of <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.delete.o099"
+kind = "alternative"
+required = true
+target = "{ ONLY <table_name> | <table_name> [ * ] } → ONLY <table_name>"
+
+[[obligation]]
+id = "pg.dml.delete.o100"
+kind = "alternative"
+required = true
+target = "{ ONLY <table_name> | <table_name> [ * ] } → <table_name> [ * ]"
 
 [[obligation]]
 id = "pg.dml.delete.o013"
@@ -2030,6 +2094,27 @@ id = "pg.dml.delete.o015"
 kind = "negative_neighbour"
 required = true
 target = "<table_name>"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
+id = "pg.dml.delete.o101"
+kind = "required_operand_missing"
+required = true
+target = "<table_name> #2"
+note = "omit <table_name>"
+
+[[obligation]]
+id = "pg.dml.delete.o102"
+kind = "operand_type_class"
+required = true
+target = "<table_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.delete.o103"
+kind = "negative_neighbour"
+required = true
+target = "<table_name> #2"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
@@ -2109,17 +2194,17 @@ target = "<from_item> in [ USING <from_item> [ , ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.dml.delete.o028"
+id = "pg.dml.delete.o009"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
+target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.dml.delete.o029"
+id = "pg.dml.delete.o010"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "pg.dml.delete.o030"
@@ -2181,28 +2266,28 @@ target = "<cursor_name> in [ WHERE <condition> | WHERE CURRENT OF <cursor_name> 
 note = "a string literal in place of <cursor_name>"
 
 [[obligation]]
-id = "pg.dml.delete.o039"
+id = "pg.dml.delete.o104"
 kind = "option_present"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.delete.o040"
+id = "pg.dml.delete.o105"
 kind = "option_absent"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.delete.o041"
+id = "pg.dml.delete.o106"
 kind = "option_present"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o042"
+id = "pg.dml.delete.o107"
 kind = "option_absent"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
 id = "pg.dml.delete.o043"
@@ -2217,38 +2302,58 @@ required = true
 target = "{ OLD | NEW } → NEW"
 
 [[obligation]]
-id = "pg.dml.delete.o045"
+id = "pg.dml.delete.o108"
 kind = "required_operand_missing"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "omit <output_alias>"
 
 [[obligation]]
-id = "pg.dml.delete.o046"
+id = "pg.dml.delete.o109"
 kind = "operand_type_class"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.dml.delete.o047"
+id = "pg.dml.delete.o110"
 kind = "negative_neighbour"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a string literal in place of <output_alias>"
 
 [[obligation]]
-id = "pg.dml.delete.o048"
+id = "pg.dml.delete.o111"
 kind = "option_present"
 required = true
-target = "[ , ... ] #3"
-note = "the list continued at least once"
+target = "[ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.delete.o049"
+id = "pg.dml.delete.o112"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #3"
+target = "[ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.delete.o113"
+kind = "required_operand_missing"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "omit <output_alias>"
+
+[[obligation]]
+id = "pg.dml.delete.o114"
+kind = "operand_type_class"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.delete.o115"
+kind = "negative_neighbour"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a string literal in place of <output_alias>"
 
 [[obligation]]
 id = "pg.dml.delete.o050"
@@ -2263,17 +2368,17 @@ required = true
 target = "{ * | <output_expression> [ [ AS ] <output_name> ] } → <output_expression> [ [ AS ] <output_name> ]"
 
 [[obligation]]
-id = "pg.dml.delete.o052"
+id = "pg.dml.delete.o116"
 kind = "required_operand_missing"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "omit <output_expression>"
 
 [[obligation]]
-id = "pg.dml.delete.o053"
+id = "pg.dml.delete.o117"
 kind = "operand_type_class"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "a valid expression"
 
 [[obligation]]
@@ -2315,17 +2420,66 @@ target = "<output_name> in [ [ AS ] <output_name> ]"
 note = "a string literal in place of <output_name>"
 
 [[obligation]]
-id = "pg.dml.delete.o060"
+id = "pg.dml.delete.o118"
 kind = "option_present"
 required = true
-target = "[ , ... ] #4"
-note = "the list continued at least once"
+target = "[ , <output_expression> ]"
 
 [[obligation]]
-id = "pg.dml.delete.o061"
+id = "pg.dml.delete.o119"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #4"
+target = "[ , <output_expression> ]"
+
+[[obligation]]
+id = "pg.dml.delete.o120"
+kind = "required_operand_missing"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "omit <output_expression>"
+
+[[obligation]]
+id = "pg.dml.delete.o121"
+kind = "operand_type_class"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.dml.delete.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.delete.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.delete.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.delete.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.delete.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.delete.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
 id = "pg.dml.delete.o062"
@@ -2340,6 +2494,12 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "pg.dml.delete.o128"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <table_name> | <table_name> [ * ] }"
+
+[[obligation]]
 id = "pg.dml.delete.o064"
 kind = "negative_neighbour"
 required = true
@@ -2352,40 +2512,68 @@ required = true
 note = "the form without its required OF in [ WHERE <condition> | WHERE CURRENT OF <cursor_name> ]"
 
 [[obligation]]
-id = "pg.dml.delete.o066"
+id = "pg.dml.delete.o129"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o067"
+id = "pg.dml.delete.o130"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o068"
+id = "pg.dml.delete.o131"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.delete.o069"
+id = "pg.dml.delete.o132"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required NEW in [ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.delete.o070"
+id = "pg.dml.delete.o133"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+note = "the form without its required AS in [ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.delete.o134"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
+
+[[obligation]]
+id = "pg.dml.delete.o135"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
 id = "pg.dml.delete.o071"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.dml.delete.o136"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.dml.delete.o137"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "pg.dml.delete.o072"
@@ -2452,22 +2640,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "pg.dml.delete.o080"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.dml.delete.o081"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "pg.dml.delete.o082"
 kind = "nesting_depth"
 required = true
@@ -2484,16 +2656,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.dml.insert.o002"
+id = "pg.dml.insert.o102"
 kind = "option_present"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
-id = "pg.dml.insert.o003"
+id = "pg.dml.insert.o103"
 kind = "option_absent"
 required = true
-target = "[ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
 id = "pg.dml.insert.o004"
@@ -2508,38 +2680,100 @@ required = true
 target = "[ RECURSIVE ]"
 
 [[obligation]]
-id = "pg.dml.insert.o006"
+id = "pg.dml.insert.o104"
 kind = "required_operand_missing"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "omit <with_query>"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.dml.insert.o007"
+id = "pg.dml.insert.o105"
 kind = "operand_type_class"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.insert.o106"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.insert.o107"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.insert.o108"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
 note = "a valid query"
 
 [[obligation]]
-id = "pg.dml.insert.o008"
+id = "pg.dml.insert.o109"
 kind = "negative_neighbour"
 required = true
-target = "<with_query> in [ WITH [ RECURSIVE ] <with_query> [ , ... ] ]"
-note = "a bare literal in place of <with_query>"
+target = "<with_subquery> in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS (…"
+note = "a bare literal in place of <with_subquery>"
 
 [[obligation]]
-id = "pg.dml.insert.o009"
+id = "pg.dml.insert.o110"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o010"
+id = "pg.dml.insert.o111"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o112"
+kind = "required_operand_missing"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.insert.o113"
+kind = "operand_type_class"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.insert.o114"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.insert.o115"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.insert.o116"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid query"
+
+[[obligation]]
+id = "pg.dml.insert.o117"
+kind = "negative_neighbour"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a bare literal in place of <with_subquery>"
 
 [[obligation]]
 id = "pg.dml.insert.o011"
@@ -2596,6 +2830,18 @@ target = "<alias> in [ AS <alias> ]"
 note = "a string literal in place of <alias>"
 
 [[obligation]]
+id = "pg.dml.insert.o161"
+kind = "alternative"
+required = true
+target = "{ DEFAULT VALUES | [ ( <column_name> [ , ... ] ) ] [ OVERRIDING { SYSTEM | USER } VALUE ] { VALUES ( {… → DEFAULT VALUES"
+
+[[obligation]]
+id = "pg.dml.insert.o162"
+kind = "alternative"
+required = true
+target = "{ DEFAULT VALUES | [ ( <column_name> [ , ... ] ) ] [… → [ ( <column_name> [ , ... ] ) ] [ OVERRIDING { SYSTEM | USER } VALUE ] { VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ( <expression> ) ] | <query> }"
+
+[[obligation]]
 id = "pg.dml.insert.o019"
 kind = "option_present"
 required = true
@@ -2629,17 +2875,17 @@ target = "<column_name> in [ ( <column_name> [ , ... ] ) ]"
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
-id = "pg.dml.insert.o024"
+id = "pg.dml.insert.o009"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
+target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.dml.insert.o025"
+id = "pg.dml.insert.o010"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , ... ]"
 
 [[obligation]]
 id = "pg.dml.insert.o026"
@@ -2666,22 +2912,16 @@ required = true
 target = "{ SYSTEM | USER } → USER"
 
 [[obligation]]
-id = "pg.dml.insert.o030"
+id = "pg.dml.insert.o163"
 kind = "alternative"
 required = true
-target = "{ DEFAULT VALUES | VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ... ] | <query> } → DEFAULT VALUES"
+target = "{ VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , (… → VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o031"
+id = "pg.dml.insert.o164"
 kind = "alternative"
 required = true
-target = "{ DEFAULT VALUES | VALUES ( { <expression> | DEFAULT } [ ,… → VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ... ]"
-
-[[obligation]]
-id = "pg.dml.insert.o032"
-kind = "alternative"
-required = true
-target = "{ DEFAULT VALUES | VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ... ] | <query> } → <query>"
+target = "{ VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ( <expression> ) ] | <query> } → <query>"
 
 [[obligation]]
 id = "pg.dml.insert.o033"
@@ -2703,30 +2943,43 @@ target = "<expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.dml.insert.o036"
+id = "pg.dml.insert.o024"
 kind = "option_present"
 required = true
-target = "[ , ... ] #3"
+target = "[ , ... ] #2"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "pg.dml.insert.o037"
+id = "pg.dml.insert.o025"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #3"
+target = "[ , ... ] #2"
 
 [[obligation]]
-id = "pg.dml.insert.o038"
+id = "pg.dml.insert.o121"
 kind = "option_present"
 required = true
-target = "[ , ... ] #4"
-note = "the list continued at least once"
+target = "[ , ( <expression> ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o039"
+id = "pg.dml.insert.o122"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #4"
+target = "[ , ( <expression> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o123"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ , ( <expression> ) ]"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.dml.insert.o124"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , ( <expression> ) ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.dml.insert.o040"
@@ -2788,28 +3041,28 @@ target = "<conflict_action> in [ ON CONFLICT [ <conflict_target> ] <conflict_act
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.dml.insert.o049"
+id = "pg.dml.insert.o125"
 kind = "option_present"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.insert.o050"
+id = "pg.dml.insert.o126"
 kind = "option_absent"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.insert.o051"
+id = "pg.dml.insert.o127"
 kind = "option_present"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o052"
+id = "pg.dml.insert.o128"
 kind = "option_absent"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
 id = "pg.dml.insert.o053"
@@ -2824,38 +3077,58 @@ required = true
 target = "{ OLD | NEW } → NEW"
 
 [[obligation]]
-id = "pg.dml.insert.o055"
+id = "pg.dml.insert.o129"
 kind = "required_operand_missing"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "omit <output_alias>"
 
 [[obligation]]
-id = "pg.dml.insert.o056"
+id = "pg.dml.insert.o130"
 kind = "operand_type_class"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.dml.insert.o057"
+id = "pg.dml.insert.o131"
 kind = "negative_neighbour"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a string literal in place of <output_alias>"
 
 [[obligation]]
-id = "pg.dml.insert.o058"
+id = "pg.dml.insert.o132"
 kind = "option_present"
 required = true
-target = "[ , ... ] #5"
-note = "the list continued at least once"
+target = "[ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.insert.o059"
+id = "pg.dml.insert.o133"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #5"
+target = "[ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.insert.o134"
+kind = "required_operand_missing"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "omit <output_alias>"
+
+[[obligation]]
+id = "pg.dml.insert.o135"
+kind = "operand_type_class"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.insert.o136"
+kind = "negative_neighbour"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a string literal in place of <output_alias>"
 
 [[obligation]]
 id = "pg.dml.insert.o060"
@@ -2870,17 +3143,17 @@ required = true
 target = "{ * | <output_expression> [ [ AS ] <output_name> ] } → <output_expression> [ [ AS ] <output_name> ]"
 
 [[obligation]]
-id = "pg.dml.insert.o062"
+id = "pg.dml.insert.o137"
 kind = "required_operand_missing"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "omit <output_expression>"
 
 [[obligation]]
-id = "pg.dml.insert.o063"
+id = "pg.dml.insert.o138"
 kind = "operand_type_class"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "a valid expression"
 
 [[obligation]]
@@ -2922,17 +3195,66 @@ target = "<output_name> in [ [ AS ] <output_name> ]"
 note = "a string literal in place of <output_name>"
 
 [[obligation]]
-id = "pg.dml.insert.o070"
+id = "pg.dml.insert.o139"
 kind = "option_present"
 required = true
-target = "[ , ... ] #6"
-note = "the list continued at least once"
+target = "[ , <output_expression> ]"
 
 [[obligation]]
-id = "pg.dml.insert.o071"
+id = "pg.dml.insert.o140"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #6"
+target = "[ , <output_expression> ]"
+
+[[obligation]]
+id = "pg.dml.insert.o141"
+kind = "required_operand_missing"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "omit <output_expression>"
+
+[[obligation]]
+id = "pg.dml.insert.o142"
+kind = "operand_type_class"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.dml.insert.o143"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.insert.o144"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.insert.o145"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.insert.o146"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o147"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o148"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
 id = "pg.dml.insert.o072"
@@ -2945,6 +3267,18 @@ id = "pg.dml.insert.o073"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required INTO"
+
+[[obligation]]
+id = "pg.dml.insert.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DEFAULT after <table_name>"
+
+[[obligation]]
+id = "pg.dml.insert.o078"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VALUES"
 
 [[obligation]]
 id = "pg.dml.insert.o074"
@@ -2963,18 +3297,6 @@ id = "pg.dml.insert.o076"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VALUE in [ OVERRIDING { SYSTEM | USER } VALUE ]"
-
-[[obligation]]
-id = "pg.dml.insert.o077"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DEFAULT after <table_name>"
-
-[[obligation]]
-id = "pg.dml.insert.o078"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VALUES"
 
 [[obligation]]
 id = "pg.dml.insert.o079"
@@ -3001,10 +3323,28 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "pg.dml.insert.o083"
+id = "pg.dml.insert.o149"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { DEFAULT VALUES | VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ... ] | <query> }"
+note = "the form without its required ( in [ , ( <expression> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o150"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , ( <expression> ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o165"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ( <expression> ) ] | <query> }"
+
+[[obligation]]
+id = "pg.dml.insert.o166"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { DEFAULT VALUES | [ ( <column_name> [ , ... ] ) ] [ OVERRIDING { SYSTEM | USER } VALUE ] { VALUES ( { <expression> | DEFAULT } [ , ... ] ) [ , ( <expression> ) ] | <query> } }"
 
 [[obligation]]
 id = "pg.dml.insert.o084"
@@ -3013,40 +3353,68 @@ required = true
 note = "the form without its required CONFLICT in [ ON CONFLICT [ <conflict_target> ] <conflict_action> ]"
 
 [[obligation]]
-id = "pg.dml.insert.o085"
+id = "pg.dml.insert.o152"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o086"
+id = "pg.dml.insert.o153"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o087"
+id = "pg.dml.insert.o154"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.insert.o088"
+id = "pg.dml.insert.o155"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required NEW in [ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.insert.o089"
+id = "pg.dml.insert.o156"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+note = "the form without its required AS in [ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.insert.o157"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
+
+[[obligation]]
+id = "pg.dml.insert.o158"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
 id = "pg.dml.insert.o090"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.dml.insert.o159"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.dml.insert.o160"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "pg.dml.insert.o091"
@@ -3113,22 +3481,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "pg.dml.insert.o099"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.dml.insert.o100"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "pg.dml.insert.o101"
 kind = "nesting_depth"
 required = true
@@ -3145,62 +3497,124 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.dml.merge.o002"
+id = "pg.dml.merge.o070"
 kind = "option_present"
 required = true
-target = "[ WITH <with_query> [ , ... ] ]"
+target = "[ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
-id = "pg.dml.merge.o003"
+id = "pg.dml.merge.o071"
 kind = "option_absent"
 required = true
-target = "[ WITH <with_query> [ , ... ] ]"
+target = "[ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 
 [[obligation]]
-id = "pg.dml.merge.o004"
+id = "pg.dml.merge.o072"
 kind = "required_operand_missing"
 required = true
-target = "<with_query> in [ WITH <with_query> [ , ... ] ]"
-note = "omit <with_query>"
+target = "<with_query_name> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.dml.merge.o005"
+id = "pg.dml.merge.o073"
 kind = "operand_type_class"
 required = true
-target = "<with_query> in [ WITH <with_query> [ , ... ] ]"
+target = "<with_query_name> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.merge.o074"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.merge.o075"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.merge.o076"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
 note = "a valid query"
 
 [[obligation]]
-id = "pg.dml.merge.o006"
+id = "pg.dml.merge.o077"
 kind = "negative_neighbour"
 required = true
-target = "<with_query> in [ WITH <with_query> [ , ... ] ]"
-note = "a bare literal in place of <with_query>"
+target = "<with_subquery> in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+note = "a bare literal in place of <with_subquery>"
 
 [[obligation]]
-id = "pg.dml.merge.o007"
+id = "pg.dml.merge.o078"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o008"
+id = "pg.dml.merge.o079"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o009"
-kind = "option_present"
+id = "pg.dml.merge.o080"
+kind = "required_operand_missing"
 required = true
-target = "[ ONLY ]"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_query_name>"
 
 [[obligation]]
-id = "pg.dml.merge.o010"
-kind = "option_absent"
+id = "pg.dml.merge.o081"
+kind = "operand_type_class"
 required = true
-target = "[ ONLY ]"
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.merge.o082"
+kind = "negative_neighbour"
+required = true
+target = "<with_query_name> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a string literal in place of <with_query_name>"
+
+[[obligation]]
+id = "pg.dml.merge.o083"
+kind = "required_operand_missing"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "omit <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.merge.o084"
+kind = "operand_type_class"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a valid query"
+
+[[obligation]]
+id = "pg.dml.merge.o085"
+kind = "negative_neighbour"
+required = true
+target = "<with_subquery> in [ , <with_query_name> AS ( <with_subquery> ) ]"
+note = "a bare literal in place of <with_subquery>"
+
+[[obligation]]
+id = "pg.dml.merge.o086"
+kind = "alternative"
+required = true
+target = "{ ONLY <target_table_name> | <target_table_name> [ * ] } → ONLY <target_table_name>"
+
+[[obligation]]
+id = "pg.dml.merge.o087"
+kind = "alternative"
+required = true
+target = "{ ONLY <target_table_name> | <target_table_name> [ * ] } → <target_table_name> [ * ]"
 
 [[obligation]]
 id = "pg.dml.merge.o011"
@@ -3221,6 +3635,27 @@ id = "pg.dml.merge.o013"
 kind = "negative_neighbour"
 required = true
 target = "<target_table_name>"
+note = "a string literal in place of <target_table_name>"
+
+[[obligation]]
+id = "pg.dml.merge.o088"
+kind = "required_operand_missing"
+required = true
+target = "<target_table_name> #2"
+note = "omit <target_table_name>"
+
+[[obligation]]
+id = "pg.dml.merge.o089"
+kind = "operand_type_class"
+required = true
+target = "<target_table_name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.merge.o090"
+kind = "negative_neighbour"
+required = true
+target = "<target_table_name> #2"
 note = "a string literal in place of <target_table_name>"
 
 [[obligation]]
@@ -3316,28 +3751,28 @@ target = "<when_clause>"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.dml.merge.o028"
+id = "pg.dml.merge.o091"
 kind = "option_present"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.merge.o029"
+id = "pg.dml.merge.o092"
 kind = "option_absent"
 required = true
-target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+target = "[ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
-id = "pg.dml.merge.o030"
+id = "pg.dml.merge.o093"
 kind = "option_present"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o031"
+id = "pg.dml.merge.o094"
 kind = "option_absent"
 required = true
-target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "[ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
 id = "pg.dml.merge.o032"
@@ -3352,38 +3787,58 @@ required = true
 target = "{ OLD | NEW } → NEW"
 
 [[obligation]]
-id = "pg.dml.merge.o034"
+id = "pg.dml.merge.o095"
 kind = "required_operand_missing"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "omit <output_alias>"
 
 [[obligation]]
-id = "pg.dml.merge.o035"
+id = "pg.dml.merge.o096"
 kind = "operand_type_class"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.dml.merge.o036"
+id = "pg.dml.merge.o097"
 kind = "negative_neighbour"
 required = true
-target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+target = "<output_alias> in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 note = "a string literal in place of <output_alias>"
 
 [[obligation]]
-id = "pg.dml.merge.o037"
+id = "pg.dml.merge.o098"
 kind = "option_present"
 required = true
-target = "[ , ... ] #2"
-note = "the list continued at least once"
+target = "[ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.merge.o038"
+id = "pg.dml.merge.o099"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #2"
+target = "[ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.merge.o100"
+kind = "required_operand_missing"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "omit <output_alias>"
+
+[[obligation]]
+id = "pg.dml.merge.o101"
+kind = "operand_type_class"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.merge.o102"
+kind = "negative_neighbour"
+required = true
+target = "<output_alias> in [ , NEW AS <output_alias> ]"
+note = "a string literal in place of <output_alias>"
 
 [[obligation]]
 id = "pg.dml.merge.o039"
@@ -3398,17 +3853,17 @@ required = true
 target = "{ * | <output_expression> [ [ AS ] <output_name> ] } → <output_expression> [ [ AS ] <output_name> ]"
 
 [[obligation]]
-id = "pg.dml.merge.o041"
+id = "pg.dml.merge.o103"
 kind = "required_operand_missing"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "omit <output_expression>"
 
 [[obligation]]
-id = "pg.dml.merge.o042"
+id = "pg.dml.merge.o104"
 kind = "operand_type_class"
 required = true
-target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ […"
+target = "<output_expression> in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * |…"
 note = "a valid expression"
 
 [[obligation]]
@@ -3450,17 +3905,66 @@ target = "<output_name> in [ [ AS ] <output_name> ]"
 note = "a string literal in place of <output_name>"
 
 [[obligation]]
-id = "pg.dml.merge.o049"
+id = "pg.dml.merge.o105"
 kind = "option_present"
 required = true
-target = "[ , ... ] #3"
-note = "the list continued at least once"
+target = "[ , <output_expression> ]"
 
 [[obligation]]
-id = "pg.dml.merge.o050"
+id = "pg.dml.merge.o106"
 kind = "option_absent"
 required = true
-target = "[ , ... ] #3"
+target = "[ , <output_expression> ]"
+
+[[obligation]]
+id = "pg.dml.merge.o107"
+kind = "required_operand_missing"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "omit <output_expression>"
+
+[[obligation]]
+id = "pg.dml.merge.o108"
+kind = "operand_type_class"
+required = true
+target = "<output_expression> in [ , <output_expression> ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.dml.merge.o109"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.merge.o110"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.merge.o111"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ]"
+
+[[obligation]]
+id = "pg.dml.merge.o112"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.merge.o113"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , <with_query_name> AS ( <with_subquery> ) ]"
+
+[[obligation]]
+id = "pg.dml.merge.o114"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , <with_query_name> AS ( <with_subquery> ) ]"
 
 [[obligation]]
 id = "pg.dml.merge.o051"
@@ -3475,6 +3979,12 @@ required = true
 note = "the form without its required INTO"
 
 [[obligation]]
+id = "pg.dml.merge.o115"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <target_table_name> | <target_table_name> [ * ] }"
+
+[[obligation]]
 id = "pg.dml.merge.o053"
 kind = "negative_neighbour"
 required = true
@@ -3487,40 +3997,68 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.dml.merge.o055"
+id = "pg.dml.merge.o116"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required ( in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o056"
+id = "pg.dml.merge.o117"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required { OLD | NEW } in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o057"
+id = "pg.dml.merge.o118"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required AS in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
 
 [[obligation]]
-id = "pg.dml.merge.o058"
+id = "pg.dml.merge.o119"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ]"
+note = "the form without its required NEW in [ , NEW AS <output_alias> ]"
 
 [[obligation]]
-id = "pg.dml.merge.o059"
+id = "pg.dml.merge.o120"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , ... ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] }…"
+note = "the form without its required AS in [ , NEW AS <output_alias> ]"
+
+[[obligation]]
+id = "pg.dml.merge.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ]"
+
+[[obligation]]
+id = "pg.dml.merge.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { * | <output_expression> [ [ AS ] <output_name> ] } in [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ]…"
 
 [[obligation]]
 id = "pg.dml.merge.o060"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.dml.merge.o123"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.dml.merge.o124"
+kind = "identifier_class"
+required = true
+target = "<with_query_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "pg.dml.merge.o061"
@@ -3571,22 +4109,6 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "pg.dml.merge.o067"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.dml.merge.o068"
-kind = "identifier_class"
-required = true
-target = "<output_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "pg.dml.merge.o069"
 kind = "nesting_depth"
 required = true
@@ -3615,16 +4137,16 @@ required = true
 target = "[ TABLE ]"
 
 [[obligation]]
-id = "pg.dml.truncate.o004"
-kind = "option_present"
+id = "pg.dml.truncate.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.dml.truncate.o005"
-kind = "option_absent"
+id = "pg.dml.truncate.o027"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.dml.truncate.o006"
@@ -3645,6 +4167,27 @@ id = "pg.dml.truncate.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.dml.truncate.o028"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.dml.truncate.o029"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.dml.truncate.o030"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -3719,6 +4262,12 @@ id = "pg.dml.truncate.o020"
 kind = "alternative"
 required = true
 target = "[ CASCADE | RESTRICT ] → RESTRICT"
+
+[[obligation]]
+id = "pg.dml.truncate.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.dml.truncate.o021"

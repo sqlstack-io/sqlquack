@@ -3764,16 +3764,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.add-column-collate.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.add-column-collate.o046"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.add-column-collate.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.add-column-collate.o047"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.add-column-collate.o006"
@@ -3794,6 +3794,27 @@ id = "pg.ddl.alter-foreign-table.add-column-collate.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-column-collate.o048"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-column-collate.o049"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-column-collate.o050"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -3959,6 +3980,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.add-column-collate.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.add-column-collate.o034"
 kind = "negative_neighbour"
 required = true
@@ -4065,16 +4092,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.add-valid.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.add-valid.o024"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.add-valid.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.add-valid.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.add-valid.o006"
@@ -4095,6 +4122,27 @@ id = "pg.ddl.alter-foreign-table.add-valid.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-valid.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-valid.o027"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.add-valid.o028"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -4161,6 +4209,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.add-valid.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.add-valid.o019"
 kind = "negative_neighbour"
 required = true
@@ -4213,16 +4267,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-drop-default.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o028"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-drop-default.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-drop-default.o006"
@@ -4243,6 +4297,27 @@ id = "pg.ddl.alter-foreign-table.alter-drop-default.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o030"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o031"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o032"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -4314,6 +4389,12 @@ id = "pg.ddl.alter-foreign-table.alter-drop-default.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-drop-default.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-drop-default.o020"
@@ -4390,16 +4471,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-not-null.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-not-null.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-not-null.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-not-null.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-not-null.o006"
@@ -4420,6 +4501,27 @@ id = "pg.ddl.alter-foreign-table.alter-not-null.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-not-null.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-not-null.o034"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-not-null.o035"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -4505,6 +4607,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-not-null.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-not-null.o022"
 kind = "negative_neighbour"
 required = true
@@ -4585,16 +4693,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-options.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-options.o043"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-options.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-options.o044"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-options.o006"
@@ -4615,6 +4723,27 @@ id = "pg.ddl.alter-foreign-table.alter-options.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-options.o045"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-options.o046"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-options.o047"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -4777,6 +4906,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-options.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-options.o034"
 kind = "negative_neighbour"
 required = true
@@ -4857,16 +4992,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-reset.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-reset.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-reset.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-reset.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-reset.o006"
@@ -4887,6 +5022,27 @@ id = "pg.ddl.alter-foreign-table.alter-reset.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-reset.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-reset.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-reset.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -4987,6 +5143,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-reset.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-reset.o024"
 kind = "negative_neighbour"
 required = true
@@ -5067,16 +5229,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-set.o035"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-set.o036"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set.o006"
@@ -5097,6 +5259,27 @@ id = "pg.ddl.alter-foreign-table.alter-set.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set.o037"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set.o038"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set.o039"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -5211,6 +5394,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set.o026"
 kind = "negative_neighbour"
 required = true
@@ -5291,16 +5480,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-default.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-set-default.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-default.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-set-default.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-default.o006"
@@ -5321,6 +5510,27 @@ id = "pg.ddl.alter-foreign-table.alter-set-default.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-default.o032"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-default.o033"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-default.o034"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -5408,6 +5618,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-default.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-default.o022"
 kind = "negative_neighbour"
 required = true
@@ -5482,16 +5698,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-statistics.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-statistics.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-statistics.o006"
@@ -5512,6 +5728,27 @@ id = "pg.ddl.alter-foreign-table.alter-set-statistics.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o034"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o035"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -5599,6 +5836,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-statistics.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-statistics.o022"
 kind = "negative_neighbour"
 required = true
@@ -5673,16 +5916,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-storage.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set-storage.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o035"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-storage.o006"
@@ -5703,6 +5946,27 @@ id = "pg.ddl.alter-foreign-table.alter-set-storage.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o036"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o037"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o038"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -5806,6 +6070,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set-storage.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-storage.o025"
 kind = "negative_neighbour"
 required = true
@@ -5886,16 +6156,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-type.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.alter-type.o040"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-type.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.alter-type.o041"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-type.o006"
@@ -5916,6 +6186,27 @@ id = "pg.ddl.alter-foreign-table.alter-type.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-type.o042"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-type.o043"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-type.o044"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6055,6 +6346,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-type.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-type.o030"
 kind = "negative_neighbour"
 required = true
@@ -6145,16 +6442,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.disable-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.disable-trigger.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.disable-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.disable-trigger.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.disable-trigger.o006"
@@ -6175,6 +6472,27 @@ id = "pg.ddl.alter-foreign-table.disable-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.disable-trigger.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.disable-trigger.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.disable-trigger.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6259,6 +6577,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.disable-trigger.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.disable-trigger.o022"
 kind = "negative_neighbour"
 required = true
@@ -6327,16 +6651,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.drop.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.drop.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.drop.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.drop.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.drop.o006"
@@ -6357,6 +6681,27 @@ id = "pg.ddl.alter-foreign-table.drop.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6466,6 +6811,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.drop.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.drop.o026"
 kind = "negative_neighbour"
 required = true
@@ -6534,16 +6885,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.drop-constraint.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.drop-constraint.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.drop-constraint.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.drop-constraint.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.drop-constraint.o006"
@@ -6564,6 +6915,27 @@ id = "pg.ddl.alter-foreign-table.drop-constraint.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop-constraint.o034"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop-constraint.o035"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.drop-constraint.o036"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6661,6 +7033,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.drop-constraint.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.drop-constraint.o024"
 kind = "negative_neighbour"
 required = true
@@ -6735,16 +7113,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-always-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-always-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-always-trigger.o006"
@@ -6765,6 +7143,27 @@ id = "pg.ddl.alter-foreign-table.enable-always-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6824,6 +7223,12 @@ id = "pg.ddl.alter-foreign-table.enable-always-trigger.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-always-trigger.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-always-trigger.o018"
@@ -6894,16 +7299,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o006"
@@ -6924,6 +7329,27 @@ id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -6983,6 +7409,12 @@ id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-replica-trigger.o018"
@@ -7053,16 +7485,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.enable-trigger.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.enable-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.enable-trigger.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-trigger.o006"
@@ -7083,6 +7515,27 @@ id = "pg.ddl.alter-foreign-table.enable-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-trigger.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-trigger.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-trigger.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -7167,6 +7620,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.enable-trigger.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.enable-trigger.o022"
 kind = "negative_neighbour"
 required = true
@@ -7235,16 +7694,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.inherit.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.inherit.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.inherit.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.inherit.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.inherit.o006"
@@ -7265,6 +7724,27 @@ id = "pg.ddl.alter-foreign-table.inherit.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.inherit.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.inherit.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.inherit.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -7319,6 +7799,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.inherit.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.inherit.o017"
 kind = "negative_neighbour"
 required = true
@@ -7365,16 +7851,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.no-inherit.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.no-inherit.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.no-inherit.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.no-inherit.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.no-inherit.o006"
@@ -7395,6 +7881,27 @@ id = "pg.ddl.alter-foreign-table.no-inherit.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.no-inherit.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.no-inherit.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.no-inherit.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -7449,6 +7956,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.no-inherit.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.no-inherit.o017"
 kind = "negative_neighbour"
 required = true
@@ -7495,16 +8008,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.options.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.options.o035"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.options.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.options.o036"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.options.o006"
@@ -7525,6 +8038,27 @@ id = "pg.ddl.alter-foreign-table.options.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.options.o037"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.options.o038"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.options.o039"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -7654,6 +8188,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-foreign-table.options.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-foreign-table.options.o029"
 kind = "negative_neighbour"
 required = true
@@ -7712,16 +8252,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.owner-to.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.owner-to.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.owner-to.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.owner-to.o027"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.owner-to.o006"
@@ -7742,6 +8282,27 @@ id = "pg.ddl.alter-foreign-table.owner-to.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.owner-to.o028"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.owner-to.o029"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.owner-to.o030"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -7811,6 +8372,12 @@ id = "pg.ddl.alter-foreign-table.owner-to.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.owner-to.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.owner-to.o020"
@@ -7987,16 +8554,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.rename-to-only-column.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.rename-to-only-column.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.rename-to-only-column.o006"
@@ -8017,6 +8584,27 @@ id = "pg.ddl.alter-foreign-table.rename-to-only-column.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -8042,6 +8630,13 @@ id = "pg.ddl.alter-foreign-table.rename-to-only-column.o012"
 kind = "option_absent"
 required = true
 target = "[ COLUMN ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o034"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.rename-to-only-column.o013"
@@ -8089,6 +8684,12 @@ id = "pg.ddl.alter-foreign-table.rename-to-only-column.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.rename-to-only-column.o020"
@@ -8268,16 +8869,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.set-without-oids.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.set-without-oids.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.set-without-oids.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.set-without-oids.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.set-without-oids.o006"
@@ -8298,6 +8899,27 @@ id = "pg.ddl.alter-foreign-table.set-without-oids.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.set-without-oids.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.set-without-oids.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.set-without-oids.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -8336,6 +8958,12 @@ id = "pg.ddl.alter-foreign-table.set-without-oids.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.set-without-oids.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.set-without-oids.o015"
@@ -8396,16 +9024,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.validate-constraint.o004"
-kind = "option_present"
+id = "pg.ddl.alter-foreign-table.validate-constraint.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.validate-constraint.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-foreign-table.validate-constraint.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.validate-constraint.o006"
@@ -8426,6 +9054,27 @@ id = "pg.ddl.alter-foreign-table.validate-constraint.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.validate-constraint.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.validate-constraint.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.validate-constraint.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -8485,6 +9134,12 @@ id = "pg.ddl.alter-foreign-table.validate-constraint.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.validate-constraint.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.validate-constraint.o018"
@@ -26668,16 +27323,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.add.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.add.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.add.o006"
@@ -26698,6 +27353,27 @@ id = "pg.ddl.alter-table.add.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -26752,6 +27428,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.add.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.add.o017"
 kind = "negative_neighbour"
 required = true
@@ -26798,16 +27480,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add-column-not-collate.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.add-column-not-collate.o046"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add-column-not-collate.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.add-column-not-collate.o047"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.add-column-not-collate.o006"
@@ -26828,6 +27510,27 @@ id = "pg.ddl.alter-table.add-column-not-collate.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-column-not-collate.o048"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-column-not-collate.o049"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-column-not-collate.o050"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -26993,6 +27696,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.add-column-not-collate.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.add-column-not-collate.o034"
 kind = "negative_neighbour"
 required = true
@@ -27099,16 +27808,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add-not-valid.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.add-not-valid.o024"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.add-not-valid.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.add-not-valid.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.add-not-valid.o006"
@@ -27129,6 +27838,27 @@ id = "pg.ddl.alter-table.add-not-valid.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-not-valid.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-not-valid.o027"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-not-valid.o028"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -27193,6 +27923,12 @@ id = "pg.ddl.alter-table.add-not-valid.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.add-not-valid.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.add-not-valid.o019"
@@ -27426,16 +28162,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter.o046"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter.o047"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter.o006"
@@ -27456,6 +28192,27 @@ id = "pg.ddl.alter-table.alter.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter.o048"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter.o049"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter.o050"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -27604,6 +28361,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter.o032"
 kind = "negative_neighbour"
 required = true
@@ -27714,16 +28477,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-add-generated-as.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-add-generated-as.o040"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-add-generated-as.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-add-generated-as.o041"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-add-generated-as.o006"
@@ -27744,6 +28507,27 @@ id = "pg.ddl.alter-table.alter-add-generated-as.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-add-generated-as.o042"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-add-generated-as.o043"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-add-generated-as.o044"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -27853,6 +28637,12 @@ id = "pg.ddl.alter-table.alter-add-generated-as.o025"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-add-generated-as.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-add-generated-as.o026"
@@ -27965,16 +28755,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o041"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o042"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o006"
@@ -27995,6 +28785,27 @@ id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-imme
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o043"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o044"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o045"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -28128,6 +28939,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced.o030"
 kind = "negative_neighbour"
 required = true
@@ -28220,16 +29037,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-constraint-inherit-no.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-constraint-inherit-no.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-constraint-inherit-no.o006"
@@ -28250,6 +29067,27 @@ id = "pg.ddl.alter-table.alter-constraint-inherit-no.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o032"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o033"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o034"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -28335,6 +29173,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-constraint-inherit-no.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-constraint-inherit-no.o022"
 kind = "negative_neighbour"
 required = true
@@ -28409,16 +29253,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-default.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-drop-default.o028"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-default.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-drop-default.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-drop-default.o006"
@@ -28439,6 +29283,27 @@ id = "pg.ddl.alter-table.alter-drop-default.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-default.o030"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-default.o031"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-default.o032"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -28510,6 +29375,12 @@ id = "pg.ddl.alter-table.alter-drop-default.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-default.o033"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-drop-default.o020"
@@ -28586,16 +29457,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-expression.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-drop-expression.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-expression.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-drop-expression.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-drop-expression.o006"
@@ -28616,6 +29487,27 @@ id = "pg.ddl.alter-table.alter-drop-expression.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-expression.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-expression.o034"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-expression.o035"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -28701,6 +29593,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-drop-expression.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-drop-expression.o022"
 kind = "negative_neighbour"
 required = true
@@ -28781,16 +29679,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-identity.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-drop-identity.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-drop-identity.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-drop-identity.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-drop-identity.o006"
@@ -28811,6 +29709,27 @@ id = "pg.ddl.alter-table.alter-drop-identity.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-identity.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-identity.o034"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-drop-identity.o035"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -28896,6 +29815,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-drop-identity.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-drop-identity.o022"
 kind = "negative_neighbour"
 required = true
@@ -28976,16 +29901,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-not-null.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-not-null.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-not-null.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-not-null.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-not-null.o006"
@@ -29006,6 +29931,27 @@ id = "pg.ddl.alter-table.alter-not-null.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-not-null.o033"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-not-null.o034"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-not-null.o035"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -29091,6 +30037,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-not-null.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-not-null.o022"
 kind = "negative_neighbour"
 required = true
@@ -29171,16 +30123,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-reset.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-reset.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-reset.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-reset.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-reset.o006"
@@ -29201,6 +30153,27 @@ id = "pg.ddl.alter-table.alter-reset.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-reset.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-reset.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-reset.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -29301,6 +30274,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-reset.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-reset.o024"
 kind = "negative_neighbour"
 required = true
@@ -29381,16 +30360,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set.o035"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set.o036"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set.o006"
@@ -29411,6 +30390,27 @@ id = "pg.ddl.alter-table.alter-set.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set.o037"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set.o038"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set.o039"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -29525,6 +30525,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-set.o040"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-set.o026"
 kind = "negative_neighbour"
 required = true
@@ -29605,16 +30611,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-compression.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set-compression.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-compression.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set-compression.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-compression.o006"
@@ -29635,6 +30641,27 @@ id = "pg.ddl.alter-table.alter-set-compression.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-compression.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-compression.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-compression.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -29722,6 +30749,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-set-compression.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-set-compression.o022"
 kind = "negative_neighbour"
 required = true
@@ -29790,16 +30823,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-default.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set-default.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-default.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set-default.o031"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-default.o006"
@@ -29820,6 +30853,27 @@ id = "pg.ddl.alter-table.alter-set-default.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-default.o032"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-default.o033"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-default.o034"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -29907,6 +30961,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-set-default.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-set-default.o022"
 kind = "negative_neighbour"
 required = true
@@ -29981,16 +31041,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-expression-as.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set-expression-as.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-expression-as.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set-expression-as.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-expression-as.o006"
@@ -30011,6 +31071,27 @@ id = "pg.ddl.alter-table.alter-set-expression-as.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-expression-as.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-expression-as.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-expression-as.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -30096,6 +31177,12 @@ id = "pg.ddl.alter-table.alter-set-expression-as.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-expression-as.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-expression-as.o022"
@@ -30190,16 +31277,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-statistics.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set-statistics.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-statistics.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set-statistics.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-statistics.o006"
@@ -30220,6 +31307,27 @@ id = "pg.ddl.alter-table.alter-set-statistics.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-statistics.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-statistics.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-statistics.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -30312,6 +31420,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-set-statistics.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-set-statistics.o023"
 kind = "negative_neighbour"
 required = true
@@ -30392,16 +31506,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-storage.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-set-storage.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-set-storage.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-set-storage.o035"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-set-storage.o006"
@@ -30422,6 +31536,27 @@ id = "pg.ddl.alter-table.alter-set-storage.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-storage.o036"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-storage.o037"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-set-storage.o038"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -30525,6 +31660,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.alter-set-storage.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.alter-set-storage.o025"
 kind = "negative_neighbour"
 required = true
@@ -30605,16 +31746,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-type.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.alter-type.o044"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.alter-type.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.alter-type.o045"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-type.o006"
@@ -30635,6 +31776,27 @@ id = "pg.ddl.alter-table.alter-type.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-type.o046"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-type.o047"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-type.o048"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -30798,6 +31960,12 @@ id = "pg.ddl.alter-table.alter-type.o033"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter-type.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-type.o034"
@@ -31050,16 +32218,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.cluster-on.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.cluster-on.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.cluster-on.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.cluster-on.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.cluster-on.o006"
@@ -31080,6 +32248,27 @@ id = "pg.ddl.alter-table.cluster-on.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.cluster-on.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.cluster-on.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.cluster-on.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -31139,6 +32328,12 @@ id = "pg.ddl.alter-table.cluster-on.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.cluster-on.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.cluster-on.o018"
@@ -31355,16 +32550,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-row-level-security.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.disable-row-level-security.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-row-level-security.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.disable-row-level-security.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.disable-row-level-security.o006"
@@ -31385,6 +32580,27 @@ id = "pg.ddl.alter-table.disable-row-level-security.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-row-level-security.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-row-level-security.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-row-level-security.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -31423,6 +32639,12 @@ id = "pg.ddl.alter-table.disable-row-level-security.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-row-level-security.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.disable-row-level-security.o015"
@@ -31489,16 +32711,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-rule.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.disable-rule.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-rule.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.disable-rule.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.disable-rule.o006"
@@ -31519,6 +32741,27 @@ id = "pg.ddl.alter-table.disable-rule.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-rule.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-rule.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-rule.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -31578,6 +32821,12 @@ id = "pg.ddl.alter-table.disable-rule.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-rule.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.disable-rule.o018"
@@ -31648,16 +32897,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.disable-trigger.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.disable-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.disable-trigger.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.disable-trigger.o006"
@@ -31678,6 +32927,27 @@ id = "pg.ddl.alter-table.disable-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-trigger.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-trigger.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.disable-trigger.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -31762,6 +33032,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.disable-trigger.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.disable-trigger.o022"
 kind = "negative_neighbour"
 required = true
@@ -31830,16 +33106,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.drop.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.drop.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.drop.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.drop.o034"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.drop.o006"
@@ -31860,6 +33136,27 @@ id = "pg.ddl.alter-table.drop.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop.o035"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop.o036"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop.o037"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -31969,6 +33266,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.drop.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.drop.o026"
 kind = "negative_neighbour"
 required = true
@@ -32037,16 +33340,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.drop-constraint.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.drop-constraint.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.drop-constraint.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.drop-constraint.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.drop-constraint.o006"
@@ -32067,6 +33370,27 @@ id = "pg.ddl.alter-table.drop-constraint.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop-constraint.o034"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop-constraint.o035"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.drop-constraint.o036"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32164,6 +33488,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.drop-constraint.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.drop-constraint.o024"
 kind = "negative_neighbour"
 required = true
@@ -32238,16 +33568,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-always-rule.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-always-rule.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-always-rule.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-always-rule.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-always-rule.o006"
@@ -32268,6 +33598,27 @@ id = "pg.ddl.alter-table.enable-always-rule.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-rule.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-rule.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-rule.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32327,6 +33678,12 @@ id = "pg.ddl.alter-table.enable-always-rule.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-rule.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-always-rule.o018"
@@ -32397,16 +33754,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-always-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-always-trigger.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-always-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-always-trigger.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-always-trigger.o006"
@@ -32427,6 +33784,27 @@ id = "pg.ddl.alter-table.enable-always-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-trigger.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-trigger.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-trigger.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32486,6 +33864,12 @@ id = "pg.ddl.alter-table.enable-always-trigger.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-always-trigger.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-always-trigger.o018"
@@ -32556,16 +33940,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-replica-rule.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-replica-rule.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-replica-rule.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-replica-rule.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-replica-rule.o006"
@@ -32586,6 +33970,27 @@ id = "pg.ddl.alter-table.enable-replica-rule.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-rule.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-rule.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-rule.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32645,6 +34050,12 @@ id = "pg.ddl.alter-table.enable-replica-rule.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-rule.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-replica-rule.o018"
@@ -32715,16 +34126,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-replica-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-replica-trigger.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-replica-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-replica-trigger.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-replica-trigger.o006"
@@ -32745,6 +34156,27 @@ id = "pg.ddl.alter-table.enable-replica-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-trigger.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-trigger.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-trigger.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32804,6 +34236,12 @@ id = "pg.ddl.alter-table.enable-replica-trigger.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-replica-trigger.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-replica-trigger.o018"
@@ -32874,16 +34312,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-row-level-security.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-row-level-security.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-row-level-security.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-row-level-security.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-row-level-security.o006"
@@ -32904,6 +34342,27 @@ id = "pg.ddl.alter-table.enable-row-level-security.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-row-level-security.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-row-level-security.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-row-level-security.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -32942,6 +34401,12 @@ id = "pg.ddl.alter-table.enable-row-level-security.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-row-level-security.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-row-level-security.o015"
@@ -33008,16 +34473,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-rule.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-rule.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-rule.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-rule.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-rule.o006"
@@ -33038,6 +34503,27 @@ id = "pg.ddl.alter-table.enable-rule.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-rule.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-rule.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-rule.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33097,6 +34583,12 @@ id = "pg.ddl.alter-table.enable-rule.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-rule.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-rule.o018"
@@ -33167,16 +34659,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-trigger.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.enable-trigger.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.enable-trigger.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.enable-trigger.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.enable-trigger.o006"
@@ -33197,6 +34689,27 @@ id = "pg.ddl.alter-table.enable-trigger.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-trigger.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-trigger.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.enable-trigger.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33281,6 +34794,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.enable-trigger.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.enable-trigger.o022"
 kind = "negative_neighbour"
 required = true
@@ -33349,16 +34868,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.force-row-level-security.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.force-row-level-security.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.force-row-level-security.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.force-row-level-security.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.force-row-level-security.o006"
@@ -33379,6 +34898,27 @@ id = "pg.ddl.alter-table.force-row-level-security.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.force-row-level-security.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.force-row-level-security.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.force-row-level-security.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33417,6 +34957,12 @@ id = "pg.ddl.alter-table.force-row-level-security.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.force-row-level-security.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.force-row-level-security.o015"
@@ -33483,16 +35029,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.inherit.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.inherit.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.inherit.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.inherit.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.inherit.o006"
@@ -33513,6 +35059,27 @@ id = "pg.ddl.alter-table.inherit.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.inherit.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.inherit.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.inherit.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33567,6 +35134,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.inherit.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.inherit.o017"
 kind = "negative_neighbour"
 required = true
@@ -33613,16 +35186,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.no-force-row-level.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.no-force-row-level.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.no-force-row-level.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.no-force-row-level.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.no-force-row-level.o006"
@@ -33643,6 +35216,27 @@ id = "pg.ddl.alter-table.no-force-row-level.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-force-row-level.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-force-row-level.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-force-row-level.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33681,6 +35275,12 @@ id = "pg.ddl.alter-table.no-force-row-level.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-force-row-level.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.no-force-row-level.o015"
@@ -33747,16 +35347,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.no-inherit.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.no-inherit.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.no-inherit.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.no-inherit.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.no-inherit.o006"
@@ -33777,6 +35377,27 @@ id = "pg.ddl.alter-table.no-inherit.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-inherit.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-inherit.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.no-inherit.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33831,6 +35452,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.no-inherit.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.no-inherit.o017"
 kind = "negative_neighbour"
 required = true
@@ -33877,16 +35504,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.not-of.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.not-of.o020"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.not-of.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.not-of.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.not-of.o006"
@@ -33907,6 +35534,27 @@ id = "pg.ddl.alter-table.not-of.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.not-of.o022"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.not-of.o023"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.not-of.o024"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -33945,6 +35593,12 @@ id = "pg.ddl.alter-table.not-of.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.not-of.o025"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.not-of.o015"
@@ -33999,16 +35653,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.of.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.of.o024"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.of.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.of.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.of.o006"
@@ -34029,6 +35683,27 @@ id = "pg.ddl.alter-table.of.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.of.o026"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.of.o027"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.of.o028"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -34088,6 +35763,12 @@ id = "pg.ddl.alter-table.of.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.of.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.of.o018"
@@ -34152,16 +35833,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.owner-to.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.owner-to.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.owner-to.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.owner-to.o027"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.owner-to.o006"
@@ -34182,6 +35863,27 @@ id = "pg.ddl.alter-table.owner-to.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.owner-to.o028"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.owner-to.o029"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.owner-to.o030"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -34253,6 +35955,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.owner-to.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.owner-to.o020"
 kind = "negative_neighbour"
 required = true
@@ -34311,16 +36019,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.rename-constraint-to.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.rename-constraint-to.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.rename-constraint-to.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.rename-constraint-to.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.rename-constraint-to.o006"
@@ -34341,6 +36049,27 @@ id = "pg.ddl.alter-table.rename-constraint-to.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-constraint-to.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-constraint-to.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-constraint-to.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -34410,6 +36139,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.rename-constraint-to.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.rename-constraint-to.o019"
 kind = "negative_neighbour"
 required = true
@@ -34426,12 +36161,6 @@ id = "pg.ddl.alter-table.rename-constraint-to.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
-
-[[obligation]]
-id = "pg.ddl.alter-table.rename-constraint-to.o022"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "pg.ddl.alter-table.rename-constraint-to.o023"
@@ -34616,16 +36345,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.rename-to-only-column.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.rename-to-only-column.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.rename-to-only-column.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.rename-to-only-column.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.rename-to-only-column.o006"
@@ -34646,6 +36375,27 @@ id = "pg.ddl.alter-table.rename-to-only-column.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -34671,6 +36421,13 @@ id = "pg.ddl.alter-table.rename-to-only-column.o012"
 kind = "option_absent"
 required = true
 target = "[ COLUMN ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o034"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "pg.ddl.alter-table.rename-to-only-column.o013"
@@ -34718,6 +36475,12 @@ id = "pg.ddl.alter-table.rename-to-only-column.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.rename-to-only-column.o020"
@@ -34804,16 +36567,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.replica-identity.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.replica-identity.o032"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.replica-identity.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.replica-identity.o033"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.replica-identity.o006"
@@ -34834,6 +36597,27 @@ id = "pg.ddl.alter-table.replica-identity.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.replica-identity.o034"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.replica-identity.o035"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.replica-identity.o036"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -34917,6 +36701,12 @@ id = "pg.ddl.alter-table.replica-identity.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.replica-identity.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.replica-identity.o022"
@@ -35005,16 +36795,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.reset.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.reset.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.reset.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.reset.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.reset.o006"
@@ -35035,6 +36825,27 @@ id = "pg.ddl.alter-table.reset.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.reset.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.reset.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.reset.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35102,6 +36913,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.reset.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.reset.o019"
 kind = "negative_neighbour"
 required = true
@@ -35160,16 +36977,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set.o029"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set.o030"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set.o006"
@@ -35190,6 +37007,27 @@ id = "pg.ddl.alter-table.set.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set.o031"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set.o032"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set.o033"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35283,6 +37121,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.set.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.set.o023"
 kind = "negative_neighbour"
 required = true
@@ -35341,16 +37185,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-access-method.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set-access-method.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-access-method.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set-access-method.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-access-method.o006"
@@ -35371,6 +37215,27 @@ id = "pg.ddl.alter-table.set-access-method.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-access-method.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-access-method.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-access-method.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35428,6 +37293,12 @@ id = "pg.ddl.alter-table.set-access-method.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-access-method.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-access-method.o018"
@@ -35494,16 +37365,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-logged-unlogged.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set-logged-unlogged.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-logged-unlogged.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set-logged-unlogged.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-logged-unlogged.o006"
@@ -35524,6 +37395,27 @@ id = "pg.ddl.alter-table.set-logged-unlogged.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-logged-unlogged.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-logged-unlogged.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-logged-unlogged.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35574,6 +37466,12 @@ id = "pg.ddl.alter-table.set-logged-unlogged.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-logged-unlogged.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-logged-unlogged.o017"
@@ -35721,16 +37619,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-tablespace.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set-tablespace.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-tablespace.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set-tablespace.o023"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-tablespace.o006"
@@ -35751,6 +37649,27 @@ id = "pg.ddl.alter-table.set-tablespace.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-tablespace.o024"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-tablespace.o025"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-tablespace.o026"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35805,6 +37724,12 @@ required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
 
 [[obligation]]
+id = "pg.ddl.alter-table.set-tablespace.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+
+[[obligation]]
 id = "pg.ddl.alter-table.set-tablespace.o017"
 kind = "negative_neighbour"
 required = true
@@ -35857,16 +37782,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-without-cluster.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set-without-cluster.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-without-cluster.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set-without-cluster.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-without-cluster.o006"
@@ -35887,6 +37812,27 @@ id = "pg.ddl.alter-table.set-without-cluster.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-cluster.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-cluster.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-cluster.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -35925,6 +37871,12 @@ id = "pg.ddl.alter-table.set-without-cluster.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-cluster.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-without-cluster.o015"
@@ -35985,16 +37937,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-without-oids.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.set-without-oids.o021"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.set-without-oids.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.set-without-oids.o022"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-without-oids.o006"
@@ -36015,6 +37967,27 @@ id = "pg.ddl.alter-table.set-without-oids.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-oids.o023"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-oids.o024"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-oids.o025"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -36053,6 +38026,12 @@ id = "pg.ddl.alter-table.set-without-oids.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.set-without-oids.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.set-without-oids.o015"
@@ -36113,16 +38092,16 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "pg.ddl.alter-table.validate-constraint.o004"
-kind = "option_present"
+id = "pg.ddl.alter-table.validate-constraint.o025"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → ONLY <name>"
 
 [[obligation]]
-id = "pg.ddl.alter-table.validate-constraint.o005"
-kind = "option_absent"
+id = "pg.ddl.alter-table.validate-constraint.o026"
+kind = "alternative"
 required = true
-target = "[ ONLY ]"
+target = "{ ONLY <name> | <name> [ * ] } → <name> [ * ]"
 
 [[obligation]]
 id = "pg.ddl.alter-table.validate-constraint.o006"
@@ -36143,6 +38122,27 @@ id = "pg.ddl.alter-table.validate-constraint.o008"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.validate-constraint.o027"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.alter-table.validate-constraint.o028"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.alter-table.validate-constraint.o029"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -36202,6 +38202,12 @@ id = "pg.ddl.alter-table.validate-constraint.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
+
+[[obligation]]
+id = "pg.ddl.alter-table.validate-constraint.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
 
 [[obligation]]
 id = "pg.ddl.alter-table.validate-constraint.o018"
@@ -52529,12 +54535,6 @@ id = "pg.ddl.create-materialized-view.o039"
 kind = "option_absent"
 required = true
 target = "[ NO ]"
-
-[[obligation]]
-id = "pg.ddl.create-materialized-view.o040"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MATERIALIZED"
 
 [[obligation]]
 id = "pg.ddl.create-materialized-view.o041"
