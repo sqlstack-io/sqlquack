@@ -2,7 +2,10 @@
 
 use crate::keywords::main::keyword::keyword;
 use crate::scan::_helpers::strings::{decode_escape_string, decode_unicode, quoted_end};
-use crate::scan::constants::{NAMEDATALEN, OP_CHARS, OP_KEEPS_SIGN, SINGLE_OPERATORS};
+use crate::scan::constants::{
+    FIRST_NON_ASCII, INT4_MAX, NAMEDATALEN, OP_CHARS, OP_KEEPS_SIGN, SINGLE_OPERATORS,
+};
+use crate::scan::main::digits::digits_value;
 use crate::scan::models::{Token, TokenKind};
 
 /// A lexical fault: its message, whether it is a syntax error, and where it is.
@@ -30,7 +33,7 @@ pub(crate) struct RawToken {
 }
 
 pub(crate) fn ident_start(byte: u8) -> bool {
-    byte.is_ascii_alphabetic() || byte == b'_' || byte >= 0x80
+    byte.is_ascii_alphabetic() || byte == b'_' || byte >= FIRST_NON_ASCII
 }
 
 fn ident_cont(byte: u8) -> bool {
@@ -407,7 +410,8 @@ impl<'sql> Scanner<'sql> {
             10 => &text,
             _ => &text[2..],
         };
-        let fits: bool = integer && i32::from_str_radix(digits, radix).is_ok();
+        let fits: bool =
+            integer && digits_value(digits, radix).is_some_and(|value| value <= INT4_MAX);
         let kind: TokenKind = match fits {
             true => TokenKind::Integer,
             false => TokenKind::Numeric,
@@ -415,8 +419,7 @@ impl<'sql> Scanner<'sql> {
         Ok(self.token(kind, text, start))
     }
 
-    /// An operator: the longest run of operator characters, cut before a comment start and any
-    /// trailing `+` or `-` unless it holds one of `~!@#^&|`?%`.
+    /// An operator: the longest run of operator characters, trimmed as scan.l's `{operator}` rule.
     fn operator(&mut self, start: usize) -> Result<RawToken, Fault> {
         let mut end: usize = start;
         while self.bytes.get(end).is_some_and(|&byte| op_char(byte)) {

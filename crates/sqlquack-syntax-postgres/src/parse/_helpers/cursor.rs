@@ -110,6 +110,20 @@ impl<'sql> Parser<'sql> {
         }
     }
 
+    /// `opt_nulls_order`: `Some(true)` after `NULLS FIRST`, `Some(false)` after `NULLS LAST`.
+    pub(crate) fn nulls_order(&mut self) -> Option<bool> {
+        if !self.kw("nulls") {
+            return None;
+        }
+        let first: bool = match self.keyword_at(1) {
+            Some("first") => true,
+            Some("last") => false,
+            _ => return None,
+        };
+        self.at += 2;
+        Some(first)
+    }
+
     /// Whether the token `offset` ahead is a string constant (`Sconst`): plain, `E''` or dollar.
     pub(crate) fn sconst_at(&self, offset: usize) -> bool {
         self.peek_at(offset).is_some_and(|token| {

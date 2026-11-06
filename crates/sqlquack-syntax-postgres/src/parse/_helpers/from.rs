@@ -7,15 +7,10 @@ use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
 
 use crate::parse::_helpers::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
 use crate::parse::_helpers::expressions::Flavor;
-use crate::parse::_helpers::nodes::{join, joined_table, lateral, subquery, table};
+use crate::parse::_helpers::nodes::{
+    JoinConstraint, TableAlias, join, joined_table, lateral, subquery, table,
+};
 use crate::parse::constants::VALUE_FUNCTIONS;
-
-/// A table alias: its name, its column names, and whether `AS` was written.
-struct TableAlias {
-    name: Identifier,
-    columns: Vec<Identifier>,
-    explicit: bool,
-}
 
 impl Parser<'_> {
     /// `from_list`: the comma-separated items, and every join, in order.
@@ -56,8 +51,7 @@ impl Parser<'_> {
             return Ok(join(
                 self.table_ref()?,
                 JoinKind::Cross,
-                None,
-                Vec::new(),
+                JoinConstraint::None,
                 (false, false),
             ));
         }
@@ -89,7 +83,7 @@ impl Parser<'_> {
         };
         let mut right: Expression = self.table_ref()?;
         if natural {
-            return Ok(join(right, kind, None, Vec::new(), (inner, outer)));
+            return Ok(join(right, kind, JoinConstraint::None, (inner, outer)));
         }
         if self.at_join() {
             let nested: Vec<Join> = self.joins()?;
@@ -98,7 +92,12 @@ impl Parser<'_> {
         let start: usize = self.offset();
         if self.eat_kw("on") {
             let on: Expression = self.a_expr()?;
-            return Ok(join(right, kind, Some(on), Vec::new(), (inner, outer)));
+            return Ok(join(
+                right,
+                kind,
+                JoinConstraint::On(Box::new(on)),
+                (inner, outer),
+            ));
         }
         self.expect_kw("using")?;
         let using: Vec<Identifier> = self.name_list()?;
@@ -106,7 +105,12 @@ impl Parser<'_> {
             self.name(is_col_id)?;
             self.gap("join_using_alias", start);
         }
-        Ok(join(right, kind, None, using, (inner, outer)))
+        Ok(join(
+            right,
+            kind,
+            JoinConstraint::Using(using),
+            (inner, outer),
+        ))
     }
 
     /// `table_ref` without its joins.
@@ -337,16 +341,7 @@ impl Parser<'_> {
         alias: Option<TableAlias>,
         is_lateral: bool,
     ) -> Expression {
-        match alias {
-            Some(alias) => subquery(
-                query,
-                Some(alias.name),
-                alias.columns,
-                alias.explicit,
-                is_lateral,
-            ),
-            None => subquery(query, None, Vec::new(), false, is_lateral),
-        }
+        subquery(query, alias, is_lateral)
     }
 
     /// `(` in FROM: a subquery, or a parenthesized joined table.

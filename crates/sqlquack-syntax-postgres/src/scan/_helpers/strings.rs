@@ -1,6 +1,8 @@
 //! Quoted bodies: where they end and how their escapes decode (scan.l and parser.c).
 
 use crate::scan::_helpers::scanner::Fault;
+use crate::scan::constants::HEX_RADIX;
+use crate::scan::main::digits::digits_value;
 
 const FIRST_SURROGATE: std::ops::RangeInclusive<u32> = 0xD800..=0xDBFF;
 const SECOND_SURROGATE: std::ops::RangeInclusive<u32> = 0xDC00..=0xDFFF;
@@ -21,10 +23,7 @@ pub(crate) fn quoted_end(bytes: &[u8], open: usize, quote: u8, escapes: bool) ->
 }
 
 fn hex_value(text: &str) -> Option<u32> {
-    match text.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        true => u32::from_str_radix(text, 16).ok(),
-        false => None,
-    }
+    digits_value(text, HEX_RADIX)
 }
 
 fn surrogate_pair(first: u32, second: u32) -> u32 {

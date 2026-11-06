@@ -195,14 +195,13 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
         },
     ];
     for test_case in test_cases {
-        let verdict: ExpectedVerdict = match parse(test_case.sql) {
-            Ok(parsed) => ExpectedVerdict::Accepted {
+        let verdict: ExpectedVerdict = parse(test_case.sql)
+            .map(|parsed| ExpectedVerdict::Accepted {
                 opaque: !parsed.gaps.is_empty(),
-            },
-            Err(error) => ExpectedVerdict::Rejected {
+            })
+            .unwrap_or_else(|error| ExpectedVerdict::Rejected {
                 syntax: error.syntax,
-            },
-        };
+            });
         assert_eq!(
             verdict, test_case.expected_verdict,
             "{}",

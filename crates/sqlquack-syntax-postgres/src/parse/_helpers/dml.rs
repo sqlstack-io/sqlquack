@@ -260,14 +260,7 @@ impl Parser<'_> {
         }
         let desc: bool = self.eat_kw("desc");
         let explicit_asc: bool = !desc && self.eat_kw("asc");
-        let nulls_first: Option<bool> =
-            match self.kw("nulls") && (self.kw_at(1, "first") || self.kw_at(1, "last")) {
-                true => {
-                    self.at += 2;
-                    Some(self.tokens[self.at - 1].value == "first")
-                }
-                false => None,
-            };
+        let nulls_first: Option<bool> = self.nulls_order();
         Ok(Expression::Ordered(Box::new(ordered(
             this,
             desc,

@@ -12,10 +12,12 @@ use sqlquack_syntax::expressions::typed_functions::models::AtTimeZone;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_id};
-use crate::parse::_helpers::nodes::{between, binary, cast, function, in_list, is_null, subquery};
+use crate::parse::_helpers::nodes::{
+    between, binary, cast, function, in_list, null_test, subquery,
+};
 use crate::parse::constants::{
-    ADD, AND, AT, COLLATE, COMPARE, EXPONENT, IS, LIKE, MULTIPLY, NOT, OPERATOR, OR, TYPECAST,
-    UNARY,
+    ADD, AND, AT, BITWISE_NOT, COLLATE, COMPARE, EXPONENT, ILIKE, IS, LIKE, MULTIPLY, NOT,
+    OPERATOR, OR, TYPECAST, UNARY,
 };
 use crate::scan::models::{Token, TokenKind};
 
@@ -79,14 +81,21 @@ fn unary(kind: fn(Box<UnaryOp>) -> Expression, this: Expression) -> Expression {
     kind(Box::new(UnaryOp::new(this)))
 }
 
-fn like(
+/// `left [NOT] LIKE|ILIKE right` before its `ESCAPE` or quantifier.
+struct LikeTest {
     ilike: bool,
     negated: bool,
     left: Expression,
     right: Expression,
-    escape: Option<Expression>,
-    quantifier: Option<String>,
-) -> Expression {
+}
+
+fn like(test: LikeTest, escape: Option<Expression>, quantifier: Option<String>) -> Expression {
+    let LikeTest {
+        ilike,
+        negated,
+        left,
+        right,
+    } = test;
     let node = Box::new(LikeOp {
         negated,
         left,
@@ -183,7 +192,7 @@ impl Parser<'_> {
         flavor: Flavor,
     ) -> Parsing<Expression> {
         let operand: Expression = self.climb(OPERATOR + 1, flavor)?;
-        if operator == "~" {
+        if operator == BITWISE_NOT {
             return Ok(unary(Expression::BitwiseNot, operand));
         }
         self.gap("prefix_operator", start);
@@ -242,8 +251,7 @@ impl Parser<'_> {
         }
     }
 
-    /// Keyword operators continue only when what follows can complete them; otherwise a bare
-    /// label such as `like` in `SELECT 1 like FROM t` is left for the select list's alias.
+    /// The level of keyword operator `name`, when what follows can complete it.
     fn keyword_level(&self, name: &str, flavor: Flavor) -> Option<u8> {
         let a: bool = flavor == Flavor::A;
         let quantified =
@@ -307,8 +315,7 @@ impl Parser<'_> {
         }
     }
 
-    /// The operator at the cursor applied to `left`, and whether it leaves a non-associative
-    /// operator pending, which the same level may not follow.
+    /// The operator at the cursor applied to `left`, and whether it is non-associative.
     fn infix(
         &mut self,
         left: Expression,
@@ -322,7 +329,7 @@ impl Parser<'_> {
                 let to = self.typename()?;
                 return Ok((cast(left, to, true), false));
             }
-            return self.binary_or_quantified(left, operator_text(&token), level, flavor, start);
+            return self.binary_or_quantified(left, operator_text(&token), (level, flavor), start);
         };
         match keyword.name {
             "or" => Ok((
@@ -333,9 +340,9 @@ impl Parser<'_> {
                 binary(Expression::And, left, self.climb(AND + 1, flavor)?),
                 false,
             )),
-            "is" => self.is_test(left, flavor, start),
-            "isnull" => Ok((is_null(left, false, true), false)),
-            "notnull" => Ok((is_null(left, true, true), false)),
+            "is" => self.after_is(left, flavor, start),
+            "isnull" => Ok((null_test(left, false, true), false)),
+            "notnull" => Ok((null_test(left, true, true), false)),
             "not" => self.like_family(left, true, start),
             "between" | "in" | "like" | "ilike" | "similar" => {
                 self.at -= 1;
@@ -374,20 +381,20 @@ impl Parser<'_> {
             }
             _ => {
                 let operator: String = self.operator_name()?;
-                self.binary_or_quantified(left, operator, level, flavor, start)
+                self.binary_or_quantified(left, operator, (level, flavor), start)
             }
         }
     }
 
-    /// `left op right`, or `left op ANY|SOME|ALL (...)`.
+    /// `left op right`, or `left op ANY|SOME|ALL (...)`, at `precedence` (level, flavor).
     fn binary_or_quantified(
         &mut self,
         left: Expression,
         operator: String,
-        level: u8,
-        flavor: Flavor,
+        precedence: (u8, Flavor),
         start: usize,
     ) -> Parsing<(Expression, bool)> {
+        let (level, flavor) = precedence;
         if flavor == Flavor::A
             && matches!(self.keyword_at(0), Some("any" | "some" | "all"))
             && self.char_at(1, '(')
@@ -425,7 +432,7 @@ impl Parser<'_> {
     fn sublink_operand(&mut self) -> Parsing<Expression> {
         if self.starts_query_at(1) {
             let reached: usize = match self.attempt(|parser| parser.select_with_parens()) {
-                Ok(query) => return Ok(subquery(query, None, Vec::new(), false, false)),
+                Ok(query) => return Ok(subquery(query, None, false)),
                 Err((error, _)) => error.position,
             };
             return self
@@ -466,7 +473,7 @@ impl Parser<'_> {
                 let low: Expression = self.b_expr()?;
                 self.expect_kw("and")?;
                 let high: Expression = self.climb(LIKE + 1, Flavor::A)?;
-                Ok((between(left, low, high, negated, symmetric), true))
+                Ok((between(left, (low, high), negated, symmetric), true))
             }
             "in" => {
                 if self.starts_query_at(1)
@@ -480,7 +487,7 @@ impl Parser<'_> {
                 Ok((in_list(left, list, None, negated), false))
             }
             "like" | "ilike" => {
-                let ilike: bool = word == "ilike";
+                let ilike: bool = word == ILIKE;
                 if matches!(self.keyword_at(0), Some("any" | "some" | "all"))
                     && self.char_at(1, '(')
                 {
@@ -490,13 +497,28 @@ impl Parser<'_> {
                     };
                     let operand: Expression = self.sublink_operand()?;
                     return Ok((
-                        like(ilike, negated, left, operand, None, Some(quantifier)),
+                        like(
+                            LikeTest {
+                                ilike,
+                                negated,
+                                left,
+                                right: operand,
+                            },
+                            None,
+                            Some(quantifier),
+                        ),
                         false,
                     ));
                 }
                 let right: Expression = self.climb(LIKE + 1, Flavor::A)?;
                 let escape: Option<Expression> = self.escape()?;
-                Ok((like(ilike, negated, left, right, escape, None), true))
+                let test: LikeTest = LikeTest {
+                    ilike,
+                    negated,
+                    left,
+                    right,
+                };
+                Ok((like(test, escape, None), true))
             }
             "similar" => {
                 self.expect_kw("to")?;
@@ -530,7 +552,7 @@ impl Parser<'_> {
     }
 
     /// The test after `IS`: `[NOT] NULL|TRUE|FALSE|UNKNOWN`, `[NOT] DISTINCT FROM`, or a gap.
-    fn is_test(
+    fn after_is(
         &mut self,
         left: Expression,
         flavor: Flavor,
@@ -547,7 +569,7 @@ impl Parser<'_> {
             }
         };
         match word {
-            "null" | "unknown" => Ok((is_null(left, not, false), false)),
+            "null" | "unknown" => Ok((null_test(left, not, false), false)),
             "true" => Ok((truth(true, left), false)),
             "false" => Ok((truth(false, left), false)),
             "distinct" => {

@@ -119,13 +119,14 @@ pub(crate) fn in_list(
     }))
 }
 
+/// `this [NOT] BETWEEN [SYMMETRIC] low AND high`, with `bounds` as `(low, high)`.
 pub(crate) fn between(
     this: Expression,
-    low: Expression,
-    high: Expression,
+    bounds: (Expression, Expression),
     not: bool,
     symmetric: Option<bool>,
 ) -> Expression {
+    let (low, high) = bounds;
     Expression::Between(Box::new(Between {
         this,
         low,
@@ -136,7 +137,7 @@ pub(crate) fn between(
     }))
 }
 
-pub(crate) fn is_null(this: Expression, not: bool, postfix_form: bool) -> Expression {
+pub(crate) fn null_test(this: Expression, not: bool, postfix_form: bool) -> Expression {
     Expression::IsNull(Box::new(IsNull {
         this,
         not,
@@ -252,13 +253,25 @@ pub(crate) fn table(mut name: Vec<Identifier>) -> TableRef {
     table
 }
 
-pub(crate) fn subquery(
-    this: Expression,
-    alias: Option<Identifier>,
-    column_aliases: Vec<Identifier>,
-    alias_explicit_as: bool,
-    lateral: bool,
-) -> Expression {
+/// A table alias: its name, its column names, and whether `AS` was written.
+pub(crate) struct TableAlias {
+    pub(crate) name: Identifier,
+    pub(crate) columns: Vec<Identifier>,
+    pub(crate) explicit: bool,
+}
+
+/// What follows a join's right side: nothing, `ON condition`, or `USING (columns)`.
+pub(crate) enum JoinConstraint {
+    None,
+    On(Box<Expression>),
+    Using(Vec<Identifier>),
+}
+
+pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: bool) -> Expression {
+    let (alias, column_aliases, alias_explicit_as) = match alias {
+        Some(alias) => (Some(alias.name), alias.columns, alias.explicit),
+        None => (None, Vec::new(), false),
+    };
     Expression::Subquery(Box::new(Subquery {
         this,
         alias,
@@ -298,13 +311,18 @@ pub(crate) fn lateral(
     }))
 }
 
+/// A join of `kind`, with `keywords` as whether `INNER` and `OUTER` were written.
 pub(crate) fn join(
     this: Expression,
     kind: JoinKind,
-    on: Option<Expression>,
-    using: Vec<Identifier>,
+    constraint: JoinConstraint,
     keywords: (bool, bool),
 ) -> Join {
+    let (on, using) = match constraint {
+        JoinConstraint::None => (None, Vec::new()),
+        JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
+        JoinConstraint::Using(columns) => (None, columns),
+    };
     Join {
         this,
         on,
@@ -338,14 +356,14 @@ pub(crate) fn joined_table(
     }))
 }
 
-/// UNION, INTERSECT or EXCEPT of `left` and `right`.
+/// UNION, INTERSECT or EXCEPT of `left` and `right`, with `quantifier` as (`ALL`, `DISTINCT`).
 pub(crate) fn set_operation(
     operator: &str,
     left: Expression,
     right: Expression,
-    all: bool,
-    distinct: bool,
+    quantifier: (bool, bool),
 ) -> Expression {
+    let (all, distinct) = quantifier;
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {

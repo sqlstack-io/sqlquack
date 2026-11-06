@@ -13,6 +13,7 @@ use crate::parse::_helpers::cursor::{Parser, Parsing, is_bare_label, is_col_id, 
 use crate::parse::_helpers::nodes::{
     cte, function, literal, null, set_operation, star, subquery, table, tuple, values,
 };
+use crate::parse::constants::MAX_QUALIFIED_NAME_PARTS;
 use crate::scan::models::TokenKind;
 
 /// `LIMIT`, `FETCH` and `OFFSET` as written after a query.
@@ -30,6 +31,15 @@ struct Locking {
     skip_locked: bool,
 }
 
+/// The options gram.y's `insertSelectOptions` applies to a query body.
+struct SelectOptions {
+    order: Option<Vec<Ordered>>,
+    order_position: usize,
+    limits: Limits,
+    locking: Locking,
+    with: Option<With>,
+}
+
 fn boolean_box(value: bool) -> Box<Expression> {
     Box::new(Expression::Boolean(BooleanLiteral { value }))
 }
@@ -41,7 +51,7 @@ fn selectable(body: Expression) -> Expression {
             let mut select: Select = Select::new();
             select.expressions = vec![star(None)];
             select.from = Some(From {
-                expressions: vec![subquery(body, None, Vec::new(), false, false)],
+                expressions: vec![subquery(body, None, false)],
             });
             Expression::Select(Box::new(select))
         }
@@ -89,7 +99,7 @@ impl Parser<'_> {
             let all: bool = self.eat_kw("all");
             let distinct: bool = !all && self.eat_kw("distinct");
             let right: Expression = self.deeper(|parser| parser.set_expression(level + 1))?;
-            left = set_operation(operator, left, right, all, distinct);
+            left = set_operation(operator, left, right, (all, distinct));
         }
     }
 
@@ -127,8 +137,7 @@ impl Parser<'_> {
         Ok(values(rows))
     }
 
-    /// `SELECT [ALL | DISTINCT [ON (...)]] targets [INTO] [FROM] [WHERE] [GROUP BY] [HAVING]
-    /// [WINDOW]`.
+    /// `simple_select`'s `SELECT` form, from its target list to its `WINDOW` clause.
     fn simple_select(&mut self) -> Parsing<Expression> {
         self.expect_kw("select")?;
         let mut select: Select = Select::new();
@@ -280,8 +289,7 @@ impl Parser<'_> {
         })
     }
 
-    /// `common_table_expr`: `name [(columns)] AS [[NOT] MATERIALIZED] ( statement )` with
-    /// `SEARCH` and `CYCLE` recorded as gaps.
+    /// `common_table_expr`, with `SEARCH` and `CYCLE` recorded as gaps.
     fn common_table_expression(&mut self) -> Parsing<Cte> {
         let alias: Identifier = self.name(is_col_id)?;
         let columns: Vec<Identifier> = match self.is_char('(') {
@@ -357,29 +365,35 @@ impl Parser<'_> {
                 (limits, locking)
             }
         };
-        let options: bool = order.is_some()
+        let any_option: bool = order.is_some()
             || limits.limit.is_some()
             || limits.fetch.is_some()
             || limits.offset.is_some()
             || !locking.locks.is_empty()
             || with.is_some();
-        if !options {
+        if !any_option {
             return Ok(body);
         }
         let mut body: Expression = selectable(body);
-        self.apply_options(&mut body, order, order_position, limits, locking, with)?;
+        let options: SelectOptions = SelectOptions {
+            order,
+            order_position,
+            limits,
+            locking,
+            with,
+        };
+        self.apply_options(&mut body, options)?;
         Ok(body)
     }
 
-    fn apply_options(
-        &mut self,
-        body: &mut Expression,
-        order: Option<Vec<Ordered>>,
-        order_position: usize,
-        limits: Limits,
-        locking: Locking,
-        with: Option<With>,
-    ) -> Parsing<()> {
+    fn apply_options(&mut self, body: &mut Expression, options: SelectOptions) -> Parsing<()> {
+        let SelectOptions {
+            order,
+            order_position,
+            limits,
+            locking,
+            with,
+        } = options;
         let with_ties: bool = limits.fetch.as_ref().is_some_and(|fetch| fetch.with_ties);
         let start: usize = self.offset();
         macro_rules! set_operation_options {
@@ -541,12 +555,11 @@ impl Parser<'_> {
             false => Some(self.fetch_value()?),
         };
         let rows: bool = match self.keyword_at(0) {
-            Some(word @ ("row" | "rows")) => {
-                self.at += 1;
-                word == "rows"
-            }
+            Some("row") => false,
+            Some("rows") => true,
             _ => return Err(self.error()),
         };
+        self.at += 1;
         let with_ties: bool = match self.eat_kw("only") {
             true => false,
             false => {
@@ -611,8 +624,7 @@ impl Parser<'_> {
         })
     }
 
-    /// `for_locking_clause`: `FOR READ ONLY`, or one or more `FOR ... [OF ...] [NOWAIT|SKIP
-    /// LOCKED]`.
+    /// `for_locking_clause`: `FOR READ ONLY`, or one or more locking items.
     fn locking(&mut self) -> Parsing<Locking> {
         let mut locking: Locking = Locking {
             locks: Vec::new(),
@@ -663,7 +675,7 @@ impl Parser<'_> {
     pub(crate) fn table_name(&mut self) -> Parsing<Vec<Identifier>> {
         let start: usize = self.offset();
         let name: Vec<Identifier> = self.qualified_name()?;
-        if name.len() > 3 {
+        if name.len() > MAX_QUALIFIED_NAME_PARTS {
             let text: String = name
                 .iter()
                 .map(|part| part.name.as_str())

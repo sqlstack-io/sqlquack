@@ -4,7 +4,9 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
-use crate::parse::constants::INTERVAL_FIELDS;
+use crate::parse::constants::{FLOAT4_MAX_PRECISION, INTERVAL_FIELDS, SECOND_FIELD};
+use crate::scan::constants::DECIMAL_RADIX;
+use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
 
 /// Generic type names the shared tree has a type for, unquoted and unqualified.
@@ -44,7 +46,7 @@ fn generic(name: &str) -> Option<DataType> {
 }
 
 fn integer(text: &str) -> Option<u32> {
-    text.parse::<u32>().ok()
+    digits_value(text, DECIMAL_RADIX)
 }
 
 impl Parser<'_> {
@@ -162,7 +164,7 @@ impl Parser<'_> {
                 self.at += 1;
                 let precision: Option<u32> = self.precision()?;
                 Ok(match precision {
-                    Some(bits) if bits <= 24 => DataType::Float {
+                    Some(bits) if bits <= FLOAT4_MAX_PRECISION => DataType::Float {
                         precision: None,
                         scale: None,
                         real_spelling: true,
@@ -242,10 +244,14 @@ impl Parser<'_> {
     /// `CHARACTER [VARYING] [(n)]` and its spellings `CHAR`, `VARCHAR`, `NATIONAL ...`, `NCHAR`.
     fn character(&mut self) -> Parsing<DataType> {
         let first: String = self.advance()?.value;
-        if first == "national" && !(self.eat_kw("character") || self.eat_kw("char")) {
-            return Err(self.error());
-        }
-        let varying: bool = first == "varchar" || self.eat_kw("varying");
+        let varchar: bool = match first.as_str() {
+            "national" if !(self.eat_kw("character") || self.eat_kw("char")) => {
+                return Err(self.error());
+            }
+            "varchar" => true,
+            _ => false,
+        };
+        let varying: bool = varchar || self.eat_kw("varying");
         let length: Option<u32> = self.precision()?;
         Ok(match varying {
             true => DataType::VarChar {
@@ -276,7 +282,7 @@ impl Parser<'_> {
             });
         };
         self.at += 1;
-        if *unit == "second" {
+        if *unit == SECOND_FIELD {
             self.precision()?;
         }
         if !self.eat_kw("to") {
@@ -296,7 +302,7 @@ impl Parser<'_> {
             return Err(self.error());
         };
         self.at += 1;
-        if *to == "second" {
+        if *to == SECOND_FIELD {
             self.precision()?;
         }
         Ok(DataType::Interval {

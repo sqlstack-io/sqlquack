@@ -177,5 +177,18 @@ pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
     "timestamp",
 ];
 
+/// The prefix operator the shared tree holds as bitwise not.
+pub(crate) const BITWISE_NOT: &str = "~";
+/// The case-insensitive member of the `LIKE` family.
+pub(crate) const ILIKE: &str = "ilike";
+/// The `INTERVAL` field that takes a fractional-seconds precision.
+pub(crate) const SECOND_FIELD: &str = "second";
+/// `FLOAT(p)` with at most this many bits is `real`; more is `double precision`.
+pub(crate) const FLOAT4_MAX_PRECISION: u32 = 24;
+/// An `any_name` has at most this many dotted parts: catalog, schema and name.
+pub(crate) const MAX_QUALIFIED_NAME_PARTS: usize = 3;
+/// `implicit_row`: a parenthesized list is a row only with at least this many items.
+pub(crate) const MIN_IMPLICIT_ROW_ITEMS: usize = 2;
+
 /// Fields an `INTERVAL` may name, and those that may follow `TO`.
 pub(crate) const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];

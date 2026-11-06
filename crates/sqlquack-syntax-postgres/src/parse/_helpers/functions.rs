@@ -294,14 +294,7 @@ impl Parser<'_> {
                 _ => self.gap("order_by_using_operator", start),
             }
         }
-        let nulls_first: Option<bool> =
-            match self.kw("nulls") && (self.kw_at(1, "first") || self.kw_at(1, "last")) {
-                true => {
-                    self.at += 2;
-                    Some(self.tokens[self.at - 1].value == "first")
-                }
-                false => None,
-            };
+        let nulls_first: Option<bool> = self.nulls_order();
         Ok(ordered(this, desc, explicit_asc, nulls_first))
     }
 

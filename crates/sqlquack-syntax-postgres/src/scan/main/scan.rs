@@ -1,7 +1,7 @@
 //! `scan`: the tokens the grammar reads, ending in a fault token where scanning stopped.
 
 use crate::scan::_helpers::scanner::{Fault, RawToken, Scanner, decode_unicode_token};
-use crate::scan::constants::UESCAPE_FORBIDDEN;
+use crate::scan::constants::{UESCAPE, UESCAPE_FORBIDDEN};
 use crate::scan::models::{Token, TokenKind};
 
 fn fault_token(fault: Fault) -> Token {
@@ -43,7 +43,7 @@ pub fn scan(sql: &str) -> Vec<Token> {
             continue;
         }
         let uescape: bool = raws.peek().is_some_and(|next| {
-            next.token.kind != TokenKind::QuotedIdent && next.token.value == "uescape"
+            next.token.kind != TokenKind::QuotedIdent && next.token.value == UESCAPE
         });
         let escape: Result<char, Fault> = match uescape {
             false => Ok('\\'),

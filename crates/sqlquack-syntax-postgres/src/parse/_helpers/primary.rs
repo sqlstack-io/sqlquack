@@ -16,8 +16,8 @@ use crate::parse::_helpers::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
     tuple,
 };
-use crate::parse::constants::TYPE_KEYWORDS;
 use crate::parse::constants::{GAP_CALL_XMLSERIALIZE, GAP_CALLS, VALUE_FUNCTIONS};
+use crate::parse::constants::{MIN_IMPLICIT_ROW_ITEMS, TYPE_KEYWORDS};
 use crate::scan::models::{Token, TokenKind};
 
 /// A column reference from its dotted names: `a`, `t.a`, or a field of `s.t.a` as dot access.
@@ -88,15 +88,18 @@ impl Parser<'_> {
         }
     }
 
-    /// A keyword-led primary: constants, `CASE`, `CAST`, `ARRAY`, rows, typed literals, special
-    /// calls, or a keyword standing as a name.
+    /// A keyword-led primary, such as a constant, `CASE`, `CAST`, `ARRAY` or a special call.
     fn keyword_expression(&mut self, name: &'static str, flavor: Flavor) -> Parsing<Expression> {
         let start: usize = self.offset();
         let call: bool = self.char_at(1, '(');
         match name {
-            "true" | "false" => {
+            "true" => {
                 self.at += 1;
-                Ok(boolean(name == "true"))
+                Ok(boolean(true))
+            }
+            "false" => {
+                self.at += 1;
+                Ok(boolean(false))
             }
             "null" => {
                 self.at += 1;
@@ -333,7 +336,7 @@ impl Parser<'_> {
         }
         let reached: usize = match self.attempt(|parser| parser.select_with_parens()) {
             Ok(query) => {
-                return self.indirection(subquery(query, None, Vec::new(), false, false));
+                return self.indirection(subquery(query, None, false));
             }
             Err((error, _)) => error.position,
         };
@@ -399,7 +402,7 @@ impl Parser<'_> {
         }
         self.expect_char('(')?;
         let items: Vec<Expression> = self.expr_list()?;
-        if items.len() < 2 {
+        if items.len() < MIN_IMPLICIT_ROW_ITEMS {
             return Err(self.error());
         }
         self.expect_char(')')?;
