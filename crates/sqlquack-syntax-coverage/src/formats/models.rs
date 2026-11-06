@@ -640,6 +640,8 @@ pub struct Dialect {
 pub enum LocalParser {
     /// `sqlquack_syntax` in the Snowflake dialect, through the isolated worker.
     Snowflake,
+    /// `sqlquack_syntax_postgres`, through the isolated worker.
+    Postgres,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

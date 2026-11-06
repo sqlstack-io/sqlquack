@@ -13,7 +13,9 @@ use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{
     CheckResult, FormResult, LocalFailure, LocalVerdict, ObligationResult, Reason,
 };
-use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
+use crate::cli::_helpers::local::{
+    frozen_catalogue, parser_tree, postgres_verdict, snowflake_verdict,
+};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
@@ -50,13 +52,17 @@ const PARSE_BOUND: Duration = Duration::from_secs(10);
 const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 
 /// The worker command: this binary, its memory bounded by the shell before it starts.
-fn worker_command(binary: PathBuf) -> Box<dyn Fn() -> Command> {
+fn worker_command(binary: PathBuf, local_parser: LocalParser) -> Box<dyn Fn() -> Command> {
+    let worker: &str = match local_parser {
+        LocalParser::Postgres => "parse-worker --postgres",
+        LocalParser::Snowflake | LocalParser::None => "parse-worker",
+    };
     Box::new(move || {
         let mut command = Command::new("sh");
         command
             .arg("-c")
             .arg(format!(
-                "ulimit -v {PARSE_MEMORY_KIB} && exec \"$0\" parse-worker"
+                "ulimit -v {PARSE_MEMORY_KIB} && exec \"$0\" {worker}"
             ))
             .arg(&binary);
         command
@@ -90,10 +96,13 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
         ));
         ExitCode::FAILURE
     })?;
-    let worker: RefCell<Worker> = RefCell::new(Worker::new(worker_command(binary), PARSE_BOUND));
     let local_parser: LocalParser = current_dialect().local_parser;
+    let worker: RefCell<Worker> = RefCell::new(Worker::new(
+        worker_command(binary, local_parser),
+        PARSE_BOUND,
+    ));
     let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| match local_parser {
-        LocalParser::Snowflake => worker.borrow_mut().verdict(sql),
+        LocalParser::Snowflake | LocalParser::Postgres => worker.borrow_mut().verdict(sql),
         LocalParser::None => LocalVerdict::Failed {
             failure: LocalFailure::NoParser,
         },
@@ -512,13 +521,17 @@ pub(crate) fn diff(
 }
 
 /// Reads one JSON string of SQL per line and prints the local verdict on each, flushed.
-pub(crate) fn parse_worker() -> Result<ExitCode, ExitCode> {
+pub(crate) fn parse_worker(postgres: bool) -> Result<ExitCode, ExitCode> {
+    let verdict_of: fn(&str) -> LocalVerdict = match postgres {
+        true => postgres_verdict,
+        false => snowflake_verdict,
+    };
     let stdout = std::io::stdout();
     for line in std::io::stdin().lock().lines() {
         let line: String = line.map_err(|_| ExitCode::FAILURE)?;
         let sql: String = serde_json::from_str(&line).map_err(|_| ExitCode::FAILURE)?;
         let verdict: String =
-            serde_json::to_string(&snowflake_verdict(&sql)).map_err(|_| ExitCode::FAILURE)?;
+            serde_json::to_string(&verdict_of(&sql)).map_err(|_| ExitCode::FAILURE)?;
         let mut out = stdout.lock();
         writeln!(out, "{verdict}")
             .and_then(|()| out.flush())

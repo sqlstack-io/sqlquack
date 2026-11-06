@@ -41,7 +41,7 @@ pub fn run_cli() -> ExitCode {
             &common,
         ),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
-        Command::ParseWorker => parse_worker(),
+        Command::ParseWorker { postgres } => parse_worker(postgres),
     };
     result.unwrap_or_else(|code| code)
 }

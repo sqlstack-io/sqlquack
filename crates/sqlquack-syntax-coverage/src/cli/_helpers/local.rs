@@ -12,6 +12,21 @@ use crate::formats::main::current_dialect::current_dialect;
 /// The code prefix of every complexity-guard error, which is never a syntax verdict.
 const GUARD_PREFIX: &str = "E_GUARD_";
 
+/// An accepted parse; opaque when `gapped` or a Command or Raw node appears anywhere.
+fn accepted(statements: &[Expression], gapped: bool) -> LocalVerdict {
+    LocalVerdict::Accepted {
+        opaque: gapped
+            || statements.iter().any(|statement| {
+                statement
+                    .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
+            }),
+        tree_sha256: Some(match serde_json::to_string(&statements) {
+            Ok(tree) => content_sha256(tree.as_bytes()),
+            Err(error) => content_sha256(format!("unserialisable tree: {error}").as_bytes()),
+        }),
+    }
+}
+
 /// SQLQuack's Snowflake verdict; a Command or Raw node anywhere makes the parse opaque.
 pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
     match sqlquack_syntax::parse_statements_with(
@@ -20,22 +35,25 @@ pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
         &ParseOptions::default(),
         CallMode::Faithful,
     ) {
-        Ok(statements) => LocalVerdict::Accepted {
-            opaque: statements.iter().any(|statement| {
-                statement
-                    .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
-            }),
-            tree_sha256: Some(match serde_json::to_string(&statements) {
-                Ok(tree) => content_sha256(tree.as_bytes()),
-                Err(error) => content_sha256(format!("unserialisable tree: {error}").as_bytes()),
-            }),
-        },
+        Ok(statements) => accepted(&statements, false),
         Err(sqlquack_syntax::Error::Parse { message, .. }) if message.starts_with(GUARD_PREFIX) => {
             LocalVerdict::Failed {
                 failure: LocalFailure::Guard,
             }
         }
         Err(_) => LocalVerdict::Rejected,
+    }
+}
+
+/// SQLQuack's PostgreSQL verdict; a gap makes the parse opaque, as does a non-42601 parser error.
+pub(crate) fn postgres_verdict(sql: &str) -> LocalVerdict {
+    match sqlquack_syntax_postgres::parse(sql) {
+        Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
+        Err(error) if error.syntax => LocalVerdict::Rejected,
+        Err(_) => LocalVerdict::Accepted {
+            opaque: true,
+            tree_sha256: None,
+        },
     }
 }
 

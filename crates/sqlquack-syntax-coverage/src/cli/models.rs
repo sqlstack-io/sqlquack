@@ -102,7 +102,11 @@ pub enum Command {
     },
     /// Internal: one verdict line per SQL line on stdin, for the isolated local parse.
     #[command(hide = true)]
-    ParseWorker,
+    ParseWorker {
+        /// Parse with the PostgreSQL parser instead of the Snowflake one.
+        #[arg(long)]
+        postgres: bool,
+    },
     /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
     Translation {
         #[command(flatten)]

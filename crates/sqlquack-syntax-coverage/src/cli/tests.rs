@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_local.rs"]
+mod test_local;
 #[path = "tests/test_parser_tree.rs"]
 mod test_parser_tree;
 #[path = "tests/test_types.rs"]

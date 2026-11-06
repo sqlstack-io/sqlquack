@@ -1499,6 +1499,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
  "tempfile",
  "toml",
 ]

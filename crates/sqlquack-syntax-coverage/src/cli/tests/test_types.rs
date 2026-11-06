@@ -17,3 +17,15 @@ pub(crate) struct ParserTreeTestCase {
     /// `error`, `none` or `tree`.
     pub(crate) expected_outcome: &'static str,
 }
+
+/// A SQL text and the PostgreSQL verdict the checker must give it.
+pub(crate) struct PostgresVerdictTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    /// `accepted` or `rejected`.
+    pub(crate) expected_verdict: &'static str,
+    /// Whether an accepted parse is opaque; `None` for a rejection.
+    pub(crate) expected_opaque: Option<bool>,
+    /// Whether the verdict carries a tree fingerprint.
+    pub(crate) expected_tree: bool,
+}
