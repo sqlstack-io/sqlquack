@@ -99,20 +99,20 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 					</div>
 					<div class="problem">
 						<div class="card">
-							<h3>It transpiles, runs, and differs</h3>
-							<p>NULL handling, decimal arithmetic and implicit casts behave differently on DuckDB, with no error.</p>
+							<h3>Snowflake rejects it at runtime</h3>
+							<p>Invalid Snowflake SQL only shows up when the query runs on the warehouse, often mid-pipeline.</p>
 						</div>
 						<div class="card">
 							<h3>Tests pass for the wrong engine</h3>
-							<p>Local tests pass for behaviour your warehouse doesn't have.</p>
+							<p>On DuckDB, NULLs, decimals and casts behave differently, with no error. Your tests go green locally and the numbers differ in production.</p>
 						</div>
 						<div class="card">
-							<h3>"Supported" isn't one fact</h3>
-							<p>A function can convert for one precision and overflow on another. Support depends on the types involved.</p>
+							<h3>Support depends on the types</h3>
+							<p>A function can convert for one precision and overflow on another. "Supported" means nothing without the types involved.</p>
 						</div>
 						<div class="card">
-							<h3>Two kinds of error, mixed up</h3>
-							<p>SQL that is invalid on Snowflake and valid SQL that can't be translated safely need different fixes.</p>
+							<h3>Best effort means guessing</h3>
+							<p>Most transpilers rewrite what they don't understand and hope. There's no way to tell which parts are guesses.</p>
 						</div>
 					</div>
 				</div>
