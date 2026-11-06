@@ -53747,6 +53747,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-function.o154"
+kind = "option_present"
+required = true
+target = "{ ... } ..."
+anchor = "doc.sql-createfunction / Synopsis"
+note = "several options together: a language, a volatility, a null-input behaviour, a parallel mode and a body"
+
+[[obligation]]
 id = "pg.ddl.create-function.sql-body-atomic.o001"
 kind = "positive"
 required = true
@@ -54138,6 +54146,14 @@ required = true
 target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-function.sql-body-atomic.o062"
+kind = "option_present"
+required = true
+target = "<statement> ; [ ... ]"
+anchor = "doc.sql-createfunction / Parameters"
+note = "several statements in one BEGIN ATOMIC block"
 
 [[obligation]]
 id = "pg.ddl.create-function.sql-body-return.o001"
@@ -57688,6 +57704,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-procedure.sql-body-atomic.o043"
+kind = "option_present"
+required = true
+target = "<statement> ; [ ... ]"
+anchor = "doc.sql-createprocedure / Parameters"
+note = "several statements in one BEGIN ATOMIC block"
 
 [[obligation]]
 id = "pg.ddl.create-publication.o001"
