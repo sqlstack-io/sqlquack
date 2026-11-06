@@ -38,6 +38,12 @@ reason = "the form is absent_from_source; its grammar is carried by sf.query.ord
 replaced_by = ["sf.query.order-by.orderitem.t005"]
 
 [[retired]]
+id = "sf.query.order-by.t002"
+form = "sf.query.order-by"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.order-by.all"
+replaced_by = ["sf.query.order-by.all.t003"]
+
+[[retired]]
 id = "sf.query.order-by.t003"
 form = "sf.query.order-by"
 reason = "the form is absent_from_source; its grammar is carried by sf.query.order-by.orderitem"

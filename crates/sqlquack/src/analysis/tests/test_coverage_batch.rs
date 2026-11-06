@@ -1403,6 +1403,58 @@ fn given_urls_when_converting_parse_url_then_parts_and_parameters_are_read_as_re
 }
 
 #[test]
+fn given_nvl2_when_converting_then_the_branch_follows_whether_the_first_is_null_or_it_refuses() {
+    let test_cases = [
+        FirstValueTestCase {
+            description: "the second argument where the first is not NULL",
+            sql: "SELECT NVL2(1, 'set', 'unset') AS v",
+            expected_outcome: Ok("set"),
+        },
+        FirstValueTestCase {
+            description: "the third argument where the first is NULL",
+            sql: "SELECT NVL2(NULL, 'set', 'unset') AS v",
+            expected_outcome: Ok("unset"),
+        },
+        FirstValueTestCase {
+            description: "a NUMBER and a FLOAT branch unify to FLOAT",
+            sql: "SELECT NVL2(NULL, 1, 2.5::FLOAT) AS v",
+            expected_outcome: Ok("2.5"),
+        },
+        FirstValueTestCase {
+            description: "text beside a NUMBER, whose reading no recording shows",
+            sql: "SELECT NVL2(1, '7', 8) AS v",
+            expected_outcome: Err("no proven common type"),
+        },
+        FirstValueTestCase {
+            description: "a semi-structured first argument",
+            sql: "SELECT NVL2(PARSE_JSON('null'), 1, 2) AS v",
+            expected_outcome: Err("semi-structured"),
+        },
+        FirstValueTestCase {
+            description: "four arguments, which Snowflake rejects",
+            sql: "SELECT NVL2(1, 2, 3, 4) AS v",
+            expected_outcome: Err("NVL2"),
+        },
+        FirstValueTestCase {
+            description: "two arguments, which Snowflake rejects",
+            sql: "SELECT NVL2(1, 2) AS v",
+            expected_outcome: Err("NVL2"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_each_documented_format_element_when_writing_text_then_it_converts_as_recorded_or_refuses()
 {
     let test_cases = [

@@ -104,3 +104,30 @@ rows = [
 query = "SELECT STDDEV_POP(x) AS r FROM input WHERE ordinal < 0"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "t007_large_mean"
+description = "Values near 1e9 with a spread of 1. Catches: a sum-of-squares formula losing the digits of the spread"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1000000001"],
+  ["1000000002"],
+  ["1000000003"],
+  ["1000000004"],
+]
+query = "SELECT STDDEV_POP(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t008_decimal"
+description = "A NUMBER(10,2) column. Catches: the result type or scale of a decimal input"
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["2.50"],
+  ["4.10"],
+]
+query = "SELECT STDDEV_POP(x) AS r, SYSTEM$TYPEOF(STDDEV_POP(x)) AS t FROM input"
+order = "ordered"
+tags = ["type-combination"]

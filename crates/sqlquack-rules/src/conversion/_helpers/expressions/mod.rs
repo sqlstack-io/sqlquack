@@ -18,6 +18,7 @@ pub(crate) mod result_types;
 pub(crate) mod scalar;
 pub(crate) mod semi_structured;
 pub(crate) mod spellings;
+pub(crate) mod statistics;
 pub(crate) mod strings;
 pub(crate) mod temporal;
 pub(crate) mod temporal_functions;

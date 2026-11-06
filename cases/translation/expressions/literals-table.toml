@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.expressions.literals-table"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_from_literal"
+description = "The input relation named by TABLE() over a string literal; the page does not say whether a CTE name resolves; Snowflake compiles it. Catches: TABLE() read as a table function call, or the relation not found"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM TABLE('input') ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_uppercase"
+description = "The name in the string resolves like an unquoted identifier, so INPUT finds the relation input. Catches: the name matched case-sensitively, so INPUT is not found"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM TABLE('INPUT') ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "A NULL value read through the named relation. Catches: the NULL replaced or the row dropped"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM TABLE('input') ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

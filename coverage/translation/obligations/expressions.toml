@@ -3,6 +3,116 @@
 # cases under cases/translation. Hand-written; see coverage/translation/README.md.
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.datetime.t001"
+form = "sf.expressions.data-types-datetime.datetime"
+kind = "type_combination"
+target = "VARCHAR to DATETIME"
+note = "Text cast to DATETIME and to TIMESTAMP_NTZ side by side, with fractional seconds; the two must be equal and keep the wall-clock time."
+catches = "DATETIME read as a time-zone-aware type (an offset applied) or as DATE (time dropped)"
+reading = "the date and time page: DATETIME is synonymous with TIMESTAMP_NTZ"
+cases = ["cases/translation/expressions/data-types-datetime.datetime.toml#t001_from_text"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.datetime.t002"
+form = "sf.expressions.data-types-datetime.datetime"
+kind = "type_combination"
+target = "DATE to DATETIME"
+note = "A DATE cast to DATETIME is that day at midnight."
+catches = "the date shifted by a time zone, or a DATE result"
+reading = "the date and time page: DATETIME is synonymous with TIMESTAMP_NTZ"
+cases = ["cases/translation/expressions/data-types-datetime.datetime.toml#t002_from_date"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.datetime.t003"
+form = "sf.expressions.data-types-datetime.datetime"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the date and time page: DATETIME is synonymous with TIMESTAMP_NTZ"
+cases = ["cases/translation/expressions/data-types-datetime.datetime.toml#t003_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.t001"
+form = "sf.expressions.data-types-datetime.interval"
+kind = "type_combination"
+target = "DATE + INTERVAL 'Y-MM' YEAR TO MONTH"
+note = "The page's examples: 2024-01-01 plus INTERVAL '1-1' YEAR TO MONTH is 2025-02-01, and plus '-1-1' is 2022-12-01; a month-end date shows how the month step clamps, which the page doesn't state, so the recording decides."
+catches = "the year and month parts swapped, the sign applied to one part only, or the interval read as days"
+reading = "the date and time page, interval literals: INTERVAL '[sign]<string>' with a year-month or day-time qualifier; singular and plural parts are equivalent; the year-month format is Y-MM and the day-time format D HH24:MI:SS.F; a date plus INTERVAL '1-1' YEAR TO MONTH from 2024-01-01 is 2025-02-01"
+cases = ["cases/translation/expressions/data-types-datetime.interval.toml#t001_year_month"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.t002"
+form = "sf.expressions.data-types-datetime.interval"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ + INTERVAL 'D HH:MI:SS.F' DAY TO SECOND"
+note = "A day-time literal with fractional seconds added to a timestamp, as in the page's example."
+catches = "the fraction dropped, the day part read as hours, or the timestamp converted to a zone"
+reading = "the date and time page, interval literals: INTERVAL '[sign]<string>' with a year-month or day-time qualifier; singular and plural parts are equivalent; the year-month format is Y-MM and the day-time format D HH24:MI:SS.F; a date plus INTERVAL '1-1' YEAR TO MONTH from 2024-01-01 is 2025-02-01"
+cases = ["cases/translation/expressions/data-types-datetime.interval.toml#t002_day_second"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.t003"
+form = "sf.expressions.data-types-datetime.interval"
+kind = "type_combination"
+target = "INTERVAL '3' DAYS"
+note = "The page: INTERVAL '3' DAY and INTERVAL '3' DAYS are equivalent; 2026-04-01 plus three days is 2026-04-04."
+catches = "the plural part rejected or read as another unit"
+reading = "the date and time page, interval literals: INTERVAL '[sign]<string>' with a year-month or day-time qualifier; singular and plural parts are equivalent; the year-month format is Y-MM and the day-time format D HH24:MI:SS.F; a date plus INTERVAL '1-1' YEAR TO MONTH from 2024-01-01 is 2025-02-01"
+cases = ["cases/translation/expressions/data-types-datetime.interval.toml#t003_plural"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.t004"
+form = "sf.expressions.data-types-datetime.interval"
+kind = "null_argument"
+target = "NULL date"
+note = "NULL plus an interval literal; the page gives no special rule."
+catches = "a value returned for a NULL operand"
+reading = "the date and time page, interval literals: INTERVAL '[sign]<string>' with a year-month or day-time qualifier; singular and plural parts are equivalent; the year-month format is Y-MM and the day-time format D HH24:MI:SS.F; a date plus INTERVAL '1-1' YEAR TO MONTH from 2024-01-01 is 2025-02-01"
+cases = ["cases/translation/expressions/data-types-datetime.interval.toml#t004_null_date"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.t001"
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ - TIMESTAMP_NTZ cast to INTERVAL DAY(2) TO SECOND(2)"
+note = "The page's example: 2025-10-05 01:02:03 minus 2025-09-15 11:36:22 cast to INTERVAL DAY(2) TO SECOND(2) and then VARCHAR is +19 13:25:41.00."
+catches = "another sign or field layout, the day count folded into hours, or the fraction width ignored"
+reading = "the date and time page: INTERVAL { yearMonthQualifier | dayTimeQualifier } names an interval data type, such as INTERVAL YEAR(2) TO MONTH or INTERVAL DAY(2) TO SECOND(2); cast to VARCHAR it prints the interval format with a sign, such as +19 13:25:41.00"
+cases = ["cases/translation/expressions/data-types-datetime.interval-yearmonthqualifier-daytimequalifier.toml#t001_day_to_second"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.t002"
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "type_combination"
+target = "VARCHAR cast to INTERVAL YEAR(2) TO MONTH"
+note = "Year-month text cast to the type and back to VARCHAR; the page's loaded rows print as +1-02 and -3-02."
+catches = "the month field read as days, or the sign dropped"
+reading = "the date and time page: INTERVAL { yearMonthQualifier | dayTimeQualifier } names an interval data type, such as INTERVAL YEAR(2) TO MONTH or INTERVAL DAY(2) TO SECOND(2); cast to VARCHAR it prints the interval format with a sign, such as +19 13:25:41.00"
+cases = ["cases/translation/expressions/data-types-datetime.interval-yearmonthqualifier-daytimequalifier.toml#t002_year_to_month"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.t003"
+form = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the date and time page: INTERVAL { yearMonthQualifier | dayTimeQualifier } names an interval data type, such as INTERVAL YEAR(2) TO MONTH or INTERVAL DAY(2) TO SECOND(2); cast to VARCHAR it prints the interval format with a sign, such as +19 13:25:41.00"
+cases = ["cases/translation/expressions/data-types-datetime.interval-yearmonthqualifier-daytimequalifier.toml#t003_null"]
+required = true
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.time.t001"
 form = "sf.expressions.data-types-datetime.time"
 kind = "type_combination"
@@ -67,6 +177,94 @@ note = "NULL beside a set row, cast to the type; the page gives no special rule,
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
 cases = ["cases/translation/expressions/data-types-datetime.timestamp.toml#t003_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.t001"
+form = "sf.expressions.data-types-ipaddress"
+kind = "type_combination"
+target = "VARCHAR cast to IPADDRESS and back"
+note = "The page: 2001:0db8:0000:0000:0000:0000:0000:0001 is stored and displayed as 2001:db8::1; upper-case hex prints lower case; IPv4 stays dotted decimal."
+catches = "the text kept as written (no canonical form)"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text"
+cases = ["cases/translation/expressions/data-types-ipaddress.toml#t001_canonical"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.t002"
+form = "sf.expressions.data-types-ipaddress"
+kind = "type_combination"
+target = "IPADDRESS < IPADDRESS"
+note = "The page: comparison follows the numeric address, not the text: 10.0.0.9 is below 10.0.0.10, and the IPv4 address is below the IPv6 one (its MIN/MAX example)."
+catches = "text order (10.0.0.10 below 10.0.0.9)"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text"
+cases = ["cases/translation/expressions/data-types-ipaddress.toml#t002_numeric_order"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.t003"
+form = "sf.expressions.data-types-ipaddress"
+kind = "error_parity"
+target = "invalid IPADDRESS text"
+note = "The page: a CIDR prefix such as 192.0.2.0/24 is not a valid IPADDRESS, and CAST raises for invalid text."
+catches = "the prefix stripped and the address accepted, or NULL instead of an error"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text"
+cases = ["cases/translation/expressions/data-types-ipaddress.toml#t003_cidr"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.t004"
+form = "sf.expressions.data-types-ipaddress"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text"
+cases = ["cases/translation/expressions/data-types-ipaddress.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.typed-literal.t001"
+form = "sf.expressions.data-types-ipaddress.typed-literal"
+kind = "type_combination"
+target = "IPADDRESS '2001:db8::1'"
+note = "The page's example returns 2001:db8::1; an uncompressed spelling gives the same value."
+catches = "the literal kept as text, or two spellings unequal"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text; IPADDRESS '<address>' is the ANSI literal form"
+cases = ["cases/translation/expressions/data-types-ipaddress.typed-literal.toml#t001_v6"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.typed-literal.t002"
+form = "sf.expressions.data-types-ipaddress.typed-literal"
+kind = "type_combination"
+target = "IPADDRESS '...' against a column"
+note = "A literal compared with addresses from text, in numeric order."
+catches = "text comparison"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text; IPADDRESS '<address>' is the ANSI literal form"
+cases = ["cases/translation/expressions/data-types-ipaddress.typed-literal.toml#t002_v4_compare"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.typed-literal.t003"
+form = "sf.expressions.data-types-ipaddress.typed-literal"
+kind = "error_parity"
+target = "IPADDRESS 'localhost'"
+note = "The page: DNS hostnames are not valid IPADDRESS values."
+catches = "the hostname resolved or accepted"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text; IPADDRESS '<address>' is the ANSI literal form"
+cases = ["cases/translation/expressions/data-types-ipaddress.typed-literal.toml#t003_hostname"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-ipaddress.typed-literal.t004"
+form = "sf.expressions.data-types-ipaddress.typed-literal"
+kind = "null_argument"
+target = "NULL against the literal"
+note = "A NULL address compared with a literal; standard NULL handling gives NULL."
+catches = "NULL compared as a value (FALSE)"
+reading = "the IPADDRESS page: IPv4 dotted decimal and IPv6 (compressed or not) are accepted; output is canonical (RFC 5952: lowercase, compressed zeros); comparison uses numeric 128-bit order; CIDR prefixes, brackets, zone ids and hostnames are invalid, and CAST raises for invalid text; IPADDRESS '<address>' is the ANSI literal form"
+cases = ["cases/translation/expressions/data-types-ipaddress.typed-literal.toml#t004_null"]
 required = true
 
 [[obligation]]
@@ -181,6 +379,62 @@ cases = ["cases/translation/expressions/data-types-logical.toml#t010_from_float"
 required = true
 
 [[obligation]]
+id = "sf.expressions.data-types-numeric.decfloat.t001"
+form = "sf.expressions.data-types-numeric.decfloat"
+kind = "type_combination"
+target = "VARCHAR cast to DECFLOAT"
+note = "The page's rows: '12345678901234567890123456789' stays exact and '-4.2e-5432' keeps its tiny exponent; printed as text."
+catches = "a FLOAT approximation (1.23456789012346e+28, -0)"
+reading = "the numeric data types page: DECFLOAT stores up to 38 significant digits exactly with a base-10 exponent from -16383 to 16384; results beyond 38 digits round half up; string literals or DECFLOAT literals keep exactness; NaN and inf are not supported; mixing DECFLOAT with other numerics gives DECFLOAT"
+cases = ["cases/translation/expressions/data-types-numeric.decfloat.toml#t001_exact"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decfloat.t002"
+form = "sf.expressions.data-types-numeric.decfloat"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "39 significant digits"
+note = "The page's rows 4 and 5: the 39th digit rounds half up, so ...14 gives ...1 and ...15 gives ...2 at the 38th."
+catches = "truncation instead of half-up rounding, or rounding to FLOAT"
+reading = "the numeric data types page: DECFLOAT stores up to 38 significant digits exactly with a base-10 exponent from -16383 to 16384; results beyond 38 digits round half up; string literals or DECFLOAT literals keep exactness; NaN and inf are not supported; mixing DECFLOAT with other numerics gives DECFLOAT"
+cases = ["cases/translation/expressions/data-types-numeric.decfloat.toml#t002_round_38"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decfloat.t003"
+form = "sf.expressions.data-types-numeric.decfloat"
+kind = "type_combination"
+target = "DECFLOAT + NUMBER"
+note = "The page: a DECFLOAT plus a NUMBER is a DECFLOAT, with no scale limit."
+catches = "the sum typed as NUMBER or FLOAT (digits lost)"
+reading = "the numeric data types page: DECFLOAT stores up to 38 significant digits exactly with a base-10 exponent from -16383 to 16384; results beyond 38 digits round half up; string literals or DECFLOAT literals keep exactness; NaN and inf are not supported; mixing DECFLOAT with other numerics gives DECFLOAT"
+cases = ["cases/translation/expressions/data-types-numeric.decfloat.toml#t003_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decfloat.t004"
+form = "sf.expressions.data-types-numeric.decfloat"
+kind = "error_parity"
+target = "'NaN' cast to DECFLOAT"
+note = "The page: DECFLOAT does not support NaN, inf or -inf."
+catches = "NaN accepted as in FLOAT"
+reading = "the numeric data types page: DECFLOAT stores up to 38 significant digits exactly with a base-10 exponent from -16383 to 16384; results beyond 38 digits round half up; string literals or DECFLOAT literals keep exactness; NaN and inf are not supported; mixing DECFLOAT with other numerics gives DECFLOAT"
+cases = ["cases/translation/expressions/data-types-numeric.decfloat.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decfloat.t005"
+form = "sf.expressions.data-types-numeric.decfloat"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the numeric data types page: DECFLOAT stores up to 38 significant digits exactly with a base-10 exponent from -16383 to 16384; results beyond 38 digits round half up; string literals or DECFLOAT literals keep exactness; NaN and inf are not supported; mixing DECFLOAT with other numerics gives DECFLOAT"
+cases = ["cases/translation/expressions/data-types-numeric.decfloat.toml#t005_null"]
+required = true
+
+[[obligation]]
 id = "sf.expressions.data-types-numeric.double.t001"
 form = "sf.expressions.data-types-numeric.double"
 kind = "type_combination"
@@ -256,6 +510,94 @@ note = "NULL beside a set row, cast to the type; the page gives no special rule,
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
 cases = ["cases/translation/expressions/data-types-numeric.int.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.t001"
+form = "sf.expressions.data-types-period"
+kind = "type_combination"
+target = "VARCHAR cast to PERIOD(DATE)"
+note = "Canonical text cast to PERIOD(DATE) and back, as in the page example."
+catches = "another text form, or the bounds reordered"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end"
+cases = ["cases/translation/expressions/data-types-period.toml#t001_date_text"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.t002"
+form = "sf.expressions.data-types-period"
+kind = "type_combination"
+target = "ORDER BY PERIOD"
+note = "The page's ordering example: [2024-01-01, 2024-06-01) before [2024-01-01, 2024-12-31) before [2024-02-01, 2024-03-01)."
+catches = "ordering by text or by the end bound first"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end"
+cases = ["cases/translation/expressions/data-types-period.toml#t002_order"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.t003"
+form = "sf.expressions.data-types-period"
+kind = "error_parity"
+target = "begin >= end"
+note = "The page: \"the constructor and casts require begin < end\", so casting [2024-12-31, 2024-01-01) raises."
+catches = "an inverted or empty period accepted"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end"
+cases = ["cases/translation/expressions/data-types-period.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.t004"
+form = "sf.expressions.data-types-period"
+kind = "null_argument"
+target = "NULL"
+note = "The page: casting NULL to PERIOD follows standard null handling."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end"
+cases = ["cases/translation/expressions/data-types-period.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.t001"
+form = "sf.expressions.data-types-period.typed-literal"
+kind = "type_combination"
+target = "PERIOD(DATE) '[...)'"
+note = "The page's half-open example: the begin bound is contained and the end bound is not. The typed literal is an input cell, because PERIOD_CONTAINS over a constant period made Snowflake abort with internal error 300010."
+catches = "a closed interval (end contained)"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end; PERIOD(type) '<period_string>' is the typed literal, parsed with the element type's input format"
+cases = ["cases/translation/expressions/data-types-period.typed-literal.toml#t001_date"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.t002"
+form = "sf.expressions.data-types-period.typed-literal"
+kind = "type_combination"
+target = "PERIOD(TIMESTAMP_NTZ) '[...)'"
+note = "The page's shift example as text, and its bounds."
+catches = "the time of day dropped from the bounds"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end; PERIOD(type) '<period_string>' is the typed literal, parsed with the element type's input format"
+cases = ["cases/translation/expressions/data-types-period.typed-literal.toml#t002_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.t003"
+form = "sf.expressions.data-types-period.typed-literal"
+kind = "error_parity"
+target = "PERIOD(DATE) with begin = end"
+note = "The page: empty periods aren't allowed."
+catches = "an empty period accepted"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end; PERIOD(type) '<period_string>' is the typed literal, parsed with the element type's input format"
+cases = ["cases/translation/expressions/data-types-period.typed-literal.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-period.typed-literal.t004"
+form = "sf.expressions.data-types-period.typed-literal"
+kind = "null_argument"
+target = "NULL instant"
+note = "A NULL date tested against a period literal; the page gives no special rule, so standard NULL handling gives NULL."
+catches = "FALSE instead of NULL"
+reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end; PERIOD(type) '<period_string>' is the typed literal, parsed with the element type's input format"
+cases = ["cases/translation/expressions/data-types-period.typed-literal.toml#t004_null_instant"]
 required = true
 
 [[obligation]]
@@ -482,6 +824,194 @@ cases = ["cases/translation/expressions/data-types-semistructured.subscript-dot.
 required = true
 
 [[obligation]]
+id = "sf.expressions.data-types-structured.array.t001"
+form = "sf.expressions.data-types-structured.array"
+kind = "type_combination"
+target = "ARRAY cast to ARRAY(VARCHAR)"
+note = "The page: casting [1,2,3] to ARRAY(VARCHAR) converts each element to VARCHAR; shown through its text after a cast back to ARRAY, where the elements are quoted strings, and the size."
+catches = "elements left as numbers, or the array flattened"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.array.toml#t001_to_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.array.t002"
+form = "sf.expressions.data-types-structured.array"
+kind = "null_argument"
+target = "JSON null element"
+note = "The page: a JSON null element becomes SQL NULL in ARRAY(NUMBER); counted with IS NULL on that element."
+catches = "the JSON null kept as a value"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.array.toml#t002_json_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.array.t003"
+form = "sf.expressions.data-types-structured.array"
+kind = "error_parity"
+target = "ARRAY(NUMBER NOT NULL) with a NULL"
+note = "The page: casting [1, NULL, 3] to ARRAY(NUMBER NOT NULL) fails."
+catches = "NULL accepted or dropped"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.array.toml#t003_not_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.array.t004"
+form = "sf.expressions.data-types-structured.array"
+kind = "error_parity"
+target = "['a','b','c'] to ARRAY(NUMBER)"
+note = "The page: casting ['a','b','c'] to ARRAY(NUMBER) fails."
+catches = "NULL elements instead of an error"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.array.toml#t004_bad_element"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.map.t001"
+form = "sf.expressions.data-types-structured.map"
+kind = "type_combination"
+target = "OBJECT cast to MAP(NUMBER, VARCHAR)"
+note = "The page: {'-10': 'CA', '-20': 'OR'} cast to MAP(NUMBER, VARCHAR) is {-10->'CA', -20->'OR'}; read with a numeric key."
+catches = "keys kept as text (lookup by number fails)"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.map.toml#t001_number_keys"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.map.t002"
+form = "sf.expressions.data-types-structured.map"
+kind = "type_combination"
+target = "MAP(VARCHAR, NUMBER)"
+note = "The page: values that do not match are converted to the value type; text digits become numbers."
+catches = "values left as text"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.map.toml#t002_value_convert"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.map.t003"
+form = "sf.expressions.data-types-structured.map"
+kind = "null_argument"
+target = "JSON null value"
+note = "The page: a JSON null value becomes SQL NULL in MAP(VARCHAR, VARCHAR)."
+catches = "the JSON null kept"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL"
+cases = ["cases/translation/expressions/data-types-structured.map.toml#t003_json_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.object.t001"
+form = "sf.expressions.data-types-structured.object"
+kind = "type_combination"
+target = "OBJECT cast to OBJECT(city VARCHAR, zip NUMBER)"
+note = "The page's example with a numeric field; fields read by name."
+catches = "fields left semi-structured (zip as text)"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL; OBJECT() with keys in a declared order; accessing a missing key of a structured OBJECT is a compile-time error"
+cases = ["cases/translation/expressions/data-types-structured.object.toml#t001_fields"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.object.t002"
+form = "sf.expressions.data-types-structured.object"
+kind = "null_argument"
+target = "JSON null value"
+note = "The page: a JSON null value for a VARCHAR field becomes SQL NULL."
+catches = "the JSON null kept"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL; OBJECT() with keys in a declared order; accessing a missing key of a structured OBJECT is a compile-time error"
+cases = ["cases/translation/expressions/data-types-structured.object.toml#t002_json_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-structured.object.t003"
+form = "sf.expressions.data-types-structured.object"
+kind = "error_parity"
+target = "missing key access"
+note = "The page: for a structured OBJECT, using a key that does not exist is a compile-time error."
+catches = "NULL returned as for a semi-structured OBJECT"
+reading = "the structured data types page: semi-structured ARRAY/OBJECT/VARIANT values cast to ARRAY(type), OBJECT(key type, ...) and MAP(key, value); each element or value is cast to its type and the cast fails if it cannot be; NOT NULL makes a NULL element fail the cast; JSON null becomes SQL NULL unless the target type is semi-structured; MAP keys are VARCHAR or NUMBER with scale 0 and cannot be NULL; OBJECT() with keys in a declared order; accessing a missing key of a structured OBJECT is a compile-time error"
+cases = ["cases/translation/expressions/data-types-structured.object.toml#t003_missing_key"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.binary.t001"
+form = "sf.expressions.data-types-text.binary"
+kind = "type_combination"
+target = "BINARY(4) from hex"
+note = "The page: BINARY holds bytes and displays them as hex (HELP is 48454C50); length counts bytes."
+catches = "length counted in characters, or the text kept"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.binary.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.binary.t002"
+form = "sf.expressions.data-types-text.binary"
+kind = "type_combination"
+target = "BINARY from UTF-8 text"
+note = "A multi-byte character as BINARY: its UTF-8 bytes."
+catches = "Latin-1 or one byte per character"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.binary.toml#t002_utf8"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.binary.t003"
+form = "sf.expressions.data-types-text.binary"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.binary.toml#t003_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.t001"
+form = "sf.expressions.data-types-text.char"
+kind = "type_combination"
+target = "CAST to CHAR(5)"
+note = "The page: Snowflake does not space-pad shorter strings, so 'ab' as CHAR(5) has length 2."
+catches = "blank padding to the declared length (length 5)"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.char.toml#t001_no_padding"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.t002"
+form = "sf.expressions.data-types-text.char"
+kind = "type_combination"
+target = "CHARACTER and NCHAR"
+note = "The page: CHAR, CHARACTER and NCHAR are synonyms; NCHAR stores the same Unicode."
+catches = "NCHAR treated differently, or one spelling padded"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.char.toml#t002_spellings"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.t003"
+form = "sf.expressions.data-types-text.char"
+kind = "boundary"
+subkind = "magnitude"
+target = "CHAR without a length"
+note = "The page: CHAR without a length is CHAR(1); casting a longer string to it shows whether the value is cut or rejected, which the page does not say, so the recording decides."
+catches = "CHAR without a length read as an unlimited VARCHAR"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.char.toml#t003_default_1"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.t004"
+form = "sf.expressions.data-types-text.char"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.char.toml#t004_null"]
+required = true
+
+[[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t001"
 form = "sf.expressions.data-types-text.dollar-quoted-string-constant"
 kind = "type_combination"
@@ -535,6 +1065,292 @@ note = "An empty dollar-quoted constant; the page does not mention it, so the re
 catches = "the empty string read as NULL, or the four dollars read as text"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
 cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t005_empty"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.varbinary.t001"
+form = "sf.expressions.data-types-text.varbinary"
+kind = "type_combination"
+target = "VARBINARY(3) and BINARY(3)"
+note = "The page: VARBINARY is synonymous with BINARY."
+catches = "VARBINARY padded, or unequal to BINARY"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.varbinary.toml#t001_synonym"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-text.varbinary.t002"
+form = "sf.expressions.data-types-text.varbinary"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the string and binary data types page: CHAR, CHARACTER and NCHAR are synonyms of VARCHAR except that without a length the default is CHAR(1); values shorter than the length are not space-padded; BINARY and VARBINARY are synonyms, measured in bytes, displayed as hex"
+cases = ["cases/translation/expressions/data-types-text.varbinary.toml#t002_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-uuid.t001"
+form = "sf.expressions.data-types-uuid"
+kind = "type_combination"
+target = "VARCHAR cast to UUID"
+note = "The page: UUID values are case-insensitive; upper- and lower-case spellings are equal, and the output case is recorded."
+catches = "case-sensitive comparison"
+reading = "the UUID page: UUID values are 36-character 8-4-4-4-12 hex strings, case-insensitive, any version; the ANSI literal is accepted; casts from VARCHAR and VARIANT; drivers treat values as text"
+cases = ["cases/translation/expressions/data-types-uuid.toml#t001_case"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-uuid.t002"
+form = "sf.expressions.data-types-uuid"
+kind = "type_combination"
+target = "VARIANT cast to UUID"
+note = "The page's example reads a UUID back out of a VARIANT with ::UUID."
+catches = "the JSON quotes kept"
+reading = "the UUID page: UUID values are 36-character 8-4-4-4-12 hex strings, case-insensitive, any version; the ANSI literal is accepted; casts from VARCHAR and VARIANT; drivers treat values as text"
+cases = ["cases/translation/expressions/data-types-uuid.toml#t002_variant"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-uuid.t003"
+form = "sf.expressions.data-types-uuid"
+kind = "error_parity"
+target = "malformed UUID text"
+note = "Text that is not in the 8-4-4-4-12 format; the page defines only that format, so a cast is expected to fail."
+catches = "the text accepted unchanged"
+reading = "the UUID page: UUID values are 36-character 8-4-4-4-12 hex strings, case-insensitive, any version; the ANSI literal is accepted; casts from VARCHAR and VARIANT; drivers treat values as text"
+cases = ["cases/translation/expressions/data-types-uuid.toml#t003_malformed"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-uuid.t004"
+form = "sf.expressions.data-types-uuid"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the UUID page: UUID values are 36-character 8-4-4-4-12 hex strings, case-insensitive, any version; the ANSI literal is accepted; casts from VARCHAR and VARIANT; drivers treat values as text"
+cases = ["cases/translation/expressions/data-types-uuid.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-vector.t001"
+form = "sf.expressions.data-types-vector"
+kind = "type_combination"
+target = "ARRAY cast to VECTOR(FLOAT, 3) and back"
+note = "The page's example [1, 2, 3]::VECTOR(FLOAT, 3), returned as an ARRAY; 2.2 shows 32-bit float rounding, which the recording decides."
+catches = "64-bit floats kept, or elements reordered"
+reading = "the vector data types page: VECTOR(INT | FLOAT, dimension) holds 32-bit integers or floats, dimension from 1 to 4096; ARRAY and VARIANT ARRAY values cast to VECTOR and back to ARRAY; the element count must match the dimension"
+cases = ["cases/translation/expressions/data-types-vector.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-vector.t002"
+form = "sf.expressions.data-types-vector"
+kind = "type_combination"
+target = "ARRAY cast to VECTOR(INT, 2)"
+note = "Integer elements as a 32-bit INT vector."
+catches = "the vector typed as FLOAT"
+reading = "the vector data types page: VECTOR(INT | FLOAT, dimension) holds 32-bit integers or floats, dimension from 1 to 4096; ARRAY and VARIANT ARRAY values cast to VECTOR and back to ARRAY; the element count must match the dimension"
+cases = ["cases/translation/expressions/data-types-vector.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-vector.t003"
+form = "sf.expressions.data-types-vector"
+kind = "error_parity"
+target = "element count other than the dimension"
+note = "The page: the element count must match the dimension."
+catches = "the vector padded or cut"
+reading = "the vector data types page: VECTOR(INT | FLOAT, dimension) holds 32-bit integers or floats, dimension from 1 to 4096; ARRAY and VARIANT ARRAY values cast to VECTOR and back to ARRAY; the element count must match the dimension"
+cases = ["cases/translation/expressions/data-types-vector.toml#t003_dimension"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.data-types-vector.t004"
+form = "sf.expressions.data-types-vector"
+kind = "null_argument"
+target = "NULL"
+note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
+catches = "NULL replaced by a value, or the cast raising for NULL"
+reading = "the vector data types page: VECTOR(INT | FLOAT, dimension) holds 32-bit integers or floats, dimension from 1 to 4096; ARRAY and VARIANT ARRAY values cast to VECTOR and back to ARRAY; the element count must match the dimension"
+cases = ["cases/translation/expressions/data-types-vector.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t001"
+form = "sf.expressions.identifier-literal"
+kind = "type_combination"
+target = "FROM IDENTIFIER('input')"
+note = "The input relation named by a string literal; the page does not say whether IDENTIFIER() resolves a CTE name; Snowflake compiles it."
+catches = "the string read as a value, or the relation not found"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t001_from_literal"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t002"
+form = "sf.expressions.identifier-literal"
+kind = "type_combination"
+target = "IDENTIFIER('a') as a column"
+note = "A column named by a string literal in an expression; the page names objects in general and does not say whether a column resolves; the recording decides."
+catches = "the literal returned as the text 'a' instead of the column's value"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t002_column"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t003"
+form = "sf.expressions.identifier-literal"
+kind = "error_parity"
+target = "IDENTIFIER('\"input\"')"
+note = "The page: a double-quoted name in the string is case-sensitive, as in IDENTIFIER('\"my_table\"'); the unquoted relation input is stored as INPUT, so \"input\" is not found."
+catches = "the quoted name resolved case-insensitively"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t003_quoted_lowercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t004"
+form = "sf.expressions.identifier-literal"
+kind = "null_argument"
+target = "NULL read through IDENTIFIER('input')"
+note = "A NULL value read through the named relation."
+catches = "the NULL replaced or the row dropped"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t001"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "\"v\" and \"V\" as two columns"
+note = "The page: \"TABLENAME\", \"tablename\", \"tableName\" and \"TableName\" are distinct, so \"v\" and \"V\" are two columns."
+catches = "the two names merged, so one value is returned twice or the names collide"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t001_case_distinct"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t002"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "blanks, a period, a doubled quote and non-ASCII letters"
+note = "The page: double-quoted identifiers may contain blanks, periods and non-ASCII characters, and two quotes stand for one, as in \"quote\"\"andunquote\"\"\"."
+catches = "the period read as a qualifier, the doubled quote kept twice, or the non-ASCII name rejected"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t002_special_characters"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t003"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "\"A\" for the unquoted column a"
+note = "The page: an unquoted identifier is equivalent to the capitalised double-quoted one, so \"A\" finds the column a."
+catches = "the unquoted column kept in lowercase, so \"A\" does not resolve"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t003_uppercase_equals_unquoted"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t004"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "error_parity"
+target = "\"Mixed\" for a column named \"MIXED\""
+note = "The page: a double-quoted identifier must be written exactly as created; \"Mixed\" does not find \"MIXED\"."
+catches = "the quoted name resolved case-insensitively"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t004_case_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t005"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "null_argument"
+target = "NULL under a quoted alias"
+note = "A NULL value under a case-sensitive alias; nothing special applies."
+catches = "the NULL replaced or the row dropped"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t005_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t001"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "type_combination"
+target = "unquoted MyCol resolved as \"MYCOL\""
+note = "The page: an unquoted identifier is stored and resolved in uppercase, so a column aliased MyCol is \"MYCOL\"."
+catches = "the alias kept in its written case, so \"MYCOL\" does not resolve"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t001_folds_upper"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t002"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "type_combination"
+target = "unquoted _my$col"
+note = "The page lists _my_identifier and My$identifier as valid unquoted identifiers: a leading underscore and a dollar sign inside."
+catches = "the dollar sign read as a parameter or the identifier rejected"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t002_dollar_underscore"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t003"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "error_parity"
+target = "unquoted mycol referenced as \"mycol\""
+note = "The page: unquoted names are stored in uppercase and double-quoted names resolve exactly, so \"mycol\" does not find the column MYCOL."
+catches = "the quoted name resolved case-insensitively and the column returned"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t003_quoted_lowercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t004"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "null_argument"
+target = "NULL under an unquoted alias"
+note = "A NULL value under a folded alias; nothing special applies."
+catches = "the NULL replaced or the row dropped"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t001"
+form = "sf.expressions.literals-table"
+kind = "type_combination"
+target = "FROM TABLE('input')"
+note = "The input relation named by TABLE() over a string literal; the page does not say whether a CTE name resolves; Snowflake compiles it."
+catches = "TABLE() read as a table function call, or the relation not found"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t001_from_literal"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t002"
+form = "sf.expressions.literals-table"
+kind = "type_combination"
+target = "FROM TABLE('INPUT')"
+note = "The name in the string resolves like an unquoted identifier, so INPUT finds the relation input."
+catches = "the name matched case-sensitively, so INPUT is not found"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t002_uppercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t003"
+form = "sf.expressions.literals-table"
+kind = "null_argument"
+target = "NULL read through TABLE('input')"
+note = "A NULL value read through the named relation."
+catches = "the NULL replaced or the row dropped"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t003_null"]
 required = true
 
 [[obligation]]
@@ -1668,6 +2484,83 @@ note = "NULL as b, beside a set row; the page does not say, so the recording dec
 catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
 reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
 cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t001"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** [3, 4])"
+note = "The page's example: col1 IN (** [3, 4]) keeps the rows 3 and 4."
+catches = "the array compared as one value (no row kept), or only its first element used"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t001_in_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t002"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** ['b', 'd'])"
+note = "The page's example: col2 IN (** ['b', 'd']) keeps the rows b and d."
+catches = "the strings compared with their JSON quotes, so nothing matches"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t002_in_strings"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t003"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** [1, 2], 4, 5)"
+note = "The page's example: a spread array beside plain values in one IN list keeps 1, 2, 4 and 5."
+catches = "the plain values or the spread values dropped from the list"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t003_in_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t004"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "COALESCE(** [...]) and GREATEST(** [...])"
+note = "The page's examples: COALESCE(** [NULL, NULL, 'my_string_1', 'my_string_2']) is my_string_1 and GREATEST(** [1, 2, 5, 4, 5]) is 5."
+catches = "the array passed as a single argument, so COALESCE returns the array or GREATEST compares one value"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t004_function_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t005"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "DATE IN (** ['2024-01-02', '2024-01-04'])"
+note = "The page lists date and time values as supported in the array; date text in the array compared with a DATE column. The page does not say how the VARIANT elements convert; the recording decides."
+catches = "the elements compared as text against the date, so nothing matches"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t005_dates"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t006"
+form = "sf.expressions.operators-expansion"
+kind = "null_argument"
+target = "NULL tested against a spread list"
+note = "A NULL value tested with NOT (a IN (** [3, 4])); the page gives no special rule, so standard NULL handling makes the test NULL and the WHERE drops the row."
+catches = "NULL read as not in the list, so the NULL row is kept"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t006_null_operand"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t007"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "a spread array built from a column"
+note = "The page limits the input to an array of constant values, but Snowflake accepts an array built from a column: the recording keeps both rows, since 1 is in [1, 2] and 2 is in [2, 2]."
+catches = "the column array refused, or a row dropped"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t007_non_constant"]
 required = true
 
 [[obligation]]
