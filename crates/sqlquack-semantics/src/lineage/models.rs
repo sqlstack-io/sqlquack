@@ -9,18 +9,20 @@ use sqlquack_syntax::tokens::models::Span;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::types::{LineageSchema, SharedColumns};
 
-/// How an output column is derived from its source columns.
+/// How an output column is derived: the most significant step on its path, in variant order.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum TransformKind {
-    /// It reads no source column.
+    /// It reads no source column, through no aggregate or window.
     Constant,
-    /// It is one source column unchanged.
+    /// It is a source column unchanged; every branch of a set operation passes one through.
     Direct,
-    /// It is a cast of what it reads.
+    /// It is a cast of what it reads, explicit or a set operation's implicit one.
     Cast,
     /// It computes a value from what it reads.
     Expression,
-    /// It aggregates what it reads, as a group or window aggregate.
+    /// It is a window function over what it reads.
+    Window,
+    /// It aggregates what it reads in groups.
     Aggregation,
 }
 

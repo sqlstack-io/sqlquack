@@ -3,7 +3,11 @@ use sqlquack_syntax::{Dialect, ParseOptions};
 use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{duckdb_shop_schema, lineage_outputs, shop_schema};
+use crate::lineage::tests::helpers::{
+    duckdb_shop_schema, lineage_outputs, shop_schema, typed_duckdb_shop_schema,
+    typed_postgres_shop_schema, typed_shop_schema,
+};
+use crate::lineage::tests::test_types::TypedShopSchema;
 use crate::lineage::tests::test_types::{QueryLineageTestCase, ResolvedReadTestCase};
 
 #[test]
@@ -57,13 +61,13 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_open_star: false,
         },
         QueryLineageTestCase {
-            description: "a union output reads every branch's column at its position, an expression of several",
+            description: "a union output reads every branch's column at its position, direct when each passes one through",
             sql: "SELECT id FROM orders UNION ALL SELECT sku FROM shop.products",
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[(
                 "id",
-                TransformKind::Expression,
+                TransformKind::Direct,
                 &["ORDERS.ID", "SHOP.PRODUCTS.SKU"],
             )],
             expected_open_star: false,
@@ -105,14 +109,10 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[
-                (
-                    "id",
-                    TransformKind::Expression,
-                    &["CUSTOMERS.ID", "ORDERS.ID"],
-                ),
+                ("id", TransformKind::Direct, &["CUSTOMERS.ID", "ORDERS.ID"]),
                 (
                     "status",
-                    TransformKind::Expression,
+                    TransformKind::Direct,
                     &["CUSTOMERS.COUNTRY", "ORDERS.STATUS"],
                 ),
             ],
@@ -127,12 +127,12 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_outputs: &[
                 (
                     "rank_in_customer",
-                    TransformKind::Expression,
+                    TransformKind::Window,
                     &["ORDERS.AMOUNT", "ORDERS.CUSTOMER_ID"],
                 ),
                 (
                     "customer_total",
-                    TransformKind::Aggregation,
+                    TransformKind::Window,
                     &["ORDERS.AMOUNT", "ORDERS.CUSTOMER_ID"],
                 ),
             ],
@@ -193,7 +193,7 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             profile: &SNOWFLAKE,
             expected_outputs: &[(
                 "id",
-                TransformKind::Expression,
+                TransformKind::Direct,
                 &["CUSTOMERS.ID", "ORDERS.ID", "SHOP.PRODUCTS.SKU"],
             )],
             expected_open_star: false,
@@ -255,7 +255,7 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
                 ("field", TransformKind::Constant, &[]),
                 (
                     "reading",
-                    TransformKind::Expression,
+                    TransformKind::Direct,
                     &["CUSTOMERS.COUNTRY", "CUSTOMERS.NAME"],
                 ),
             ],
@@ -532,6 +532,239 @@ fn given_unaliased_postgres_outputs_when_tracing_lineage_then_each_takes_figurec
                 .map(|(name, kind, sources)| (*name, *kind, sources.to_vec()))
                 .collect::<Vec<_>>(),
             "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_derivation_steps_when_tracing_lineage_then_each_output_takes_its_most_significant_kind() {
+    let test_cases = [
+        QueryLineageTestCase {
+            description: "a cast of a constant is constant, of an aggregate aggregation; COUNT(*) is aggregation",
+            sql: "SELECT CAST(NULL AS INT) AS a, CAST(SUM(amount) AS VARCHAR) AS b, COUNT(*) AS c FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("a", TransformKind::Constant, &[]),
+                ("b", TransformKind::Aggregation, &["ORDERS.AMOUNT"]),
+                ("c", TransformKind::Aggregation, &[]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "window functions are window, COUNT(*) OVER () too though it reads no column",
+            sql: "SELECT COUNT(*) OVER () AS w, ROW_NUMBER() OVER (ORDER BY id) AS r FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("w", TransformKind::Window, &[]),
+                ("r", TransformKind::Window, &["ORDERS.ID"]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a CTE's pass-through composes with the cast outside it",
+            sql: "WITH d AS (SELECT amount FROM orders) SELECT CAST(amount AS VARCHAR) AS v FROM d",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("v", TransformKind::Cast, &["ORDERS.AMOUNT"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union passing one column of the same type through each branch is direct",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT customer_id FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Direct,
+                &["ORDERS.CUSTOMER_ID", "ORDERS.ID"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union whose branch is implicitly coerced is a cast",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT amount FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("v", TransformKind::Cast, &["ORDERS.AMOUNT", "ORDERS.ID"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union with an expression branch is an expression though another branch is a cast",
+            sql: "SELECT id + 1 AS v FROM orders UNION ALL SELECT CAST(amount AS INT) FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Expression,
+                &["ORDERS.AMOUNT", "ORDERS.ID"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a cast of a constant is constant, of an aggregate aggregation; COUNT(*) is aggregation",
+            sql: "SELECT CAST(NULL AS INTEGER) AS a, CAST(SUM(price) AS VARCHAR) AS b, COUNT(*) AS c FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                ("a", TransformKind::Constant, &[]),
+                ("b", TransformKind::Aggregation, &["orders.price"]),
+                ("c", TransformKind::Aggregation, &[]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "window functions are window, COUNT(*) OVER () too though it reads no column",
+            sql: "SELECT COUNT(*) OVER () AS w, ROW_NUMBER() OVER (ORDER BY id) AS r FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                ("w", TransformKind::Window, &[]),
+                ("r", TransformKind::Window, &["orders.id"]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a CTE's pass-through composes with the cast outside it",
+            sql: "WITH d AS (SELECT price FROM orders) SELECT CAST(price AS VARCHAR) AS v FROM d",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[("v", TransformKind::Cast, &["orders.price"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union passing one column of the same type through each branch is direct",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT quantity FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Direct,
+                &["orders.id", "orders.quantity"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union whose branch is implicitly coerced is a cast",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT price FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[("v", TransformKind::Cast, &["orders.id", "orders.price"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union with an expression branch is an expression though another branch is a cast",
+            sql: "SELECT id + 1 AS v FROM orders UNION ALL SELECT CAST(price AS INTEGER) FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Expression,
+                &["orders.id", "orders.price"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a cast of a constant is constant, of an aggregate aggregation; COUNT(*) is aggregation",
+            sql: "SELECT CAST(NULL AS integer) AS a, CAST(SUM(price) AS text) AS b, COUNT(*) AS c FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[
+                ("a", TransformKind::Constant, &[]),
+                ("b", TransformKind::Aggregation, &["orders.price"]),
+                ("c", TransformKind::Aggregation, &[]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "window functions are window, COUNT(*) OVER () too though it reads no column",
+            sql: "SELECT COUNT(*) OVER () AS w, ROW_NUMBER() OVER (ORDER BY id) AS r FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[
+                ("w", TransformKind::Window, &[]),
+                ("r", TransformKind::Window, &["orders.id"]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a CTE's pass-through composes with the cast outside it",
+            sql: "WITH d AS (SELECT price FROM orders) SELECT CAST(price AS text) AS v FROM d",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[("v", TransformKind::Cast, &["orders.price"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union passing one column of the same type through each branch is direct",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT quantity FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Direct,
+                &["orders.id", "orders.quantity"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union whose branch is implicitly coerced is a cast",
+            sql: "SELECT id AS v FROM orders UNION ALL SELECT price FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[("v", TransformKind::Cast, &["orders.id", "orders.price"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a union with an expression branch is an expression though another branch is a cast",
+            sql: "SELECT id + 1 AS v FROM orders UNION ALL SELECT CAST(price AS integer) FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[(
+                "v",
+                TransformKind::Expression,
+                &["orders.id", "orders.price"],
+            )],
+            expected_open_star: false,
+        },
+    ];
+    let schemas: [(Dialect, TypedShopSchema); 3] = [
+        (Dialect::Snowflake, typed_shop_schema()),
+        (Dialect::DuckDB, typed_duckdb_shop_schema()),
+        (Dialect::PostgreSQL, typed_postgres_shop_schema()),
+    ];
+    for test_case in test_cases {
+        let schema: &TypedShopSchema = schemas
+            .iter()
+            .find(|(dialect, _)| *dialect == test_case.dialect)
+            .map(|(_, schema)| schema)
+            .unwrap_or_else(|| panic!("no typed schema for {:?}", test_case.dialect));
+        let traced = lineage_outputs(
+            test_case.sql,
+            (test_case.dialect, test_case.profile),
+            schema,
+        );
+        let traced: Vec<(&str, TransformKind, Vec<&str>)> = traced
+            .iter()
+            .map(|(name, kind, sources)| {
+                (
+                    name.as_str(),
+                    *kind,
+                    sources.iter().map(String::as_str).collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            traced,
+            test_case
+                .expected_outputs
+                .iter()
+                .map(|(name, kind, sources)| (*name, *kind, sources.to_vec()))
+                .collect::<Vec<_>>(),
+            "{:?}: {}",
+            test_case.dialect,
             test_case.description
         );
     }
