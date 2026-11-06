@@ -2851,3 +2851,58 @@ catches = "NULL matched to NULL"
 reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
 cases = ["cases/translation/expressions/operators-subquery.in.toml#t004_null_expr"]
 required = true
+
+[[obligation]]
+id = "sf.expressions.session-variables.t001"
+form = "sf.expressions.session-variables"
+kind = "type_combination"
+target = "SET (min, max) = (40, 70) and BETWEEN $min AND $max"
+note = "The page's example: two variables set in one statement bound a BETWEEN, so 40, 55 and 70 are kept."
+catches = "the variables read as text so the comparison is lexical, or only the first of the pair set"
+reading = "the SQL variables page: SET <name> = <expr> or SET (<n1>, <n2>) = (<e1>, <e2>) sets session variables, read as $<name> wherever a literal constant is allowed; the type comes from the expression; names are case-insensitive"
+cases = ["cases/translation/expressions/session-variables.toml#t001_between"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.session-variables.t002"
+form = "sf.expressions.session-variables"
+kind = "type_combination"
+target = "a number and a text variable"
+note = "The page's SET my_variable1 = 10 and SET my_variable2 = 'example': a number adds to a column and the text concatenates; the type comes from the expression."
+catches = "the number variable read as text (concatenated), or the text quoted twice"
+reading = "the SQL variables page: SET <name> = <expr> or SET (<n1>, <n2>) = (<e1>, <e2>) sets session variables, read as $<name> wherever a literal constant is allowed; the type comes from the expression; names are case-insensitive"
+cases = ["cases/translation/expressions/session-variables.toml#t002_types"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.session-variables.t003"
+form = "sf.expressions.session-variables"
+kind = "type_combination"
+target = "SET MyVar, read as $myvar and $MYVAR"
+note = "The page: SQL variables are identified by case-insensitive names."
+catches = "the name matched case-sensitively, so $myvar is unknown"
+reading = "the SQL variables page: SET <name> = <expr> or SET (<n1>, <n2>) = (<e1>, <e2>) sets session variables, read as $<name> wherever a literal constant is allowed; the type comes from the expression; names are case-insensitive"
+cases = ["cases/translation/expressions/session-variables.toml#t003_case_insensitive"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.session-variables.t004"
+form = "sf.expressions.session-variables"
+kind = "type_combination"
+target = "SET v = (SELECT ...)"
+note = "The page: a variable can be set from a query that returns a single result; here MAX over a table the setup creates, which is 7."
+catches = "the subquery stored as text, or evaluated per row"
+reading = "the SQL variables page: SET <name> = <expr> or SET (<n1>, <n2>) = (<e1>, <e2>) sets session variables, read as $<name> wherever a literal constant is allowed; the type comes from the expression; names are case-insensitive"
+cases = ["cases/translation/expressions/session-variables.toml#t004_from_query"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.session-variables.t005"
+form = "sf.expressions.session-variables"
+kind = "null_argument"
+target = "NULL column beside a variable"
+note = "A NULL column added to a variable; the page gives no special rule, so standard NULL handling gives NULL."
+catches = "the NULL replaced by the variable"
+reading = "the SQL variables page: SET <name> = <expr> or SET (<n1>, <n2>) = (<e1>, <e2>) sets session variables, read as $<name> wherever a literal constant is allowed; the type comes from the expression; names are case-insensitive"
+cases = ["cases/translation/expressions/session-variables.toml#t005_null"]
+required = true
