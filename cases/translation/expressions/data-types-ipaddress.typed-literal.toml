@@ -27,6 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_hostname"
+compile_error = true
 description = "The page: DNS hostnames are not valid IPADDRESS values. Catches: the hostname resolved or accepted"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [

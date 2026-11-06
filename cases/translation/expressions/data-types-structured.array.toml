@@ -4,13 +4,13 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_to_varchar"
-description = "The page: casting [1,2,3] to ARRAY(VARCHAR) converts each element to VARCHAR; shown through ARRAY_TO_STRING and the size. Catches: elements left as numbers, or the array flattened"
+description = "The page: casting [1,2,3] to ARRAY(VARCHAR) converts each element to VARCHAR; shown through its text after a cast back to ARRAY, where the elements are quoted strings, and the size. Catches: elements left as numbers, or the array flattened"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'[1,2,3]'"],
   ["'[10,-5]'"],
 ]
-query = "SELECT ordinal, ARRAY_TO_STRING(PARSE_JSON(a)::ARRAY(VARCHAR), '|') AS r, ARRAY_SIZE(PARSE_JSON(a)::ARRAY(VARCHAR)) AS n FROM input ORDER BY ordinal"
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY(VARCHAR)::ARRAY::VARCHAR AS r, ARRAY_SIZE(PARSE_JSON(a)::ARRAY(VARCHAR)) AS n FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

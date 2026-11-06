@@ -29,7 +29,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_empty"
-description = "The page: empty periods aren't allowed; TRY_CAST of [2024-12-31, 2024-01-01) is NULL, so CAST raises. Catches: an inverted or empty period accepted"
+description = "The page: \"the constructor and casts require begin < end\", so casting [2024-12-31, 2024-01-01) raises. Catches: an inverted or empty period accepted"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'[2024-12-31, 2024-01-01)'"],

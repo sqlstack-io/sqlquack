@@ -10,7 +10,7 @@ rows = [
   ["'2024-01-01'"],
   ["'2024-01-31'"],
 ]
-query = "SELECT ordinal, d + INTERVAL '1-1' YEAR TO MONTH AS plus, d + INTERVAL '-1-1' YEAR TO MONTH AS minus FROM input ORDER BY ordinal"
+query = "SELECT ordinal, d + INTERVAL '1-1' YEAR TO MONTH AS plus, d + INTERVAL '-1-1' YEAR TO MONTH AS less FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
