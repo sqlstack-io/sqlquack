@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.least"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "LEAST across numeric types, with a negative. Catches: the result type taken from one argument (scale lost)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(10,2)" }, { name = "c", type = "FLOAT" }]
+rows = [
+  ["3", "2.75", "-1e1"],
+  ["-5", "-5.25", "0.5"],
+]
+query = "SELECT LEAST(a, b, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_first_type"
+description = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result, so the string converts to a number. Catches: string comparison ('10' for LEAST('10', 9), '11' for LEAST('2', 11)) or a VARCHAR result"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["'10'", "9"],
+  ["'2'", "11"],
+]
+query = "SELECT LEAST(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_varchar"
+description = "Strings in binary order. Catches: case-insensitive order"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'apple'", "'Banana'"],
+  ["'\u00e9'", "'z'"],
+]
+query = "SELECT LEAST(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_date"
+description = "Dates. Catches: string order of another format"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-02-29'", "'2023-12-31'"],
+]
+query = "SELECT LEAST(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_expr"
+description = "NULL beside larger and smaller values. Catches: NULL skipped (DuckDB and Postgres ignore NULLs) instead of returning NULL"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "4"],
+  ["7", "NULL"],
+  ["1", "2"],
+]
+query = "SELECT LEAST(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

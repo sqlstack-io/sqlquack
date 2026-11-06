@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.datediff.syntax"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "Day differences in both directions and across a leap day. Catches: an INTERVAL instead of an integer, or the sign reversed"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-02-28'", "'2024-03-01'"],
+  ["'2024-03-01'", "'2023-03-01'"],
+]
+query = "SELECT b - a AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_date_expr1"
+description = "NULL first date: the page says this is an error; records what Snowflake returns. Catches: NULL where Snowflake raises an error, or the reverse"
+columns = [{ name = "a", type = "DATE" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT '2024-01-10'::DATE - a AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_null_date_expr2"
+description = "NULL second date: the page says this is an error; records what Snowflake returns. Catches: NULL where Snowflake raises an error, or the reverse"
+columns = [{ name = "b", type = "DATE" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT b - '2024-01-10'::DATE AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_leap"
+description = "A year containing 29 February. Catches: a fixed 365-day year"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-01-01'", "'2025-01-01'"],
+  ["'2023-01-01'", "'2024-01-01'"],
+]
+query = "SELECT b - a AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

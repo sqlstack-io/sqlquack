@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.rtrimmed-length"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "RTRIMMED_LENGTH with trailing and leading blanks and a trailing tab. Catches: LENGTH semantics (trailing whitespace counted), leading blanks removed, or only blanks trimmed (a trailing tab kept)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'ab  '"],
+  ["'  ab'"],
+  ["'ab\t'"],
+  ["'\u00e9 '"],
+]
+query = "SELECT RTRIMMED_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_string_expr"
+description = "NULL next to a set value. Catches: NULL read as 0"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a '"],
+]
+query = "SELECT RTRIMMED_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_blanks_only"
+description = "The empty string and a blanks-only string. Catches: NULL for the empty string, or the blanks counted"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'   '"],
+]
+query = "SELECT RTRIMMED_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

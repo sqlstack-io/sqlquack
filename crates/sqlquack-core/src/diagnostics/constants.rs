@@ -10,6 +10,11 @@ pub const CASE_ONLY_MATCH: &str = "only without regard to case";
 pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper case, so declare \
     the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
+/// The words of an unresolved name's reason when two result columns share a name.
+pub const REPEATED_RESULT_NAME: &str = "repeats, possibly differing only in case";
+/// The help for such a name, replacing SQ0004's own.
+pub const REPEATED_RESULT_NAME_HELP: &str =
+    "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";
 /// The words of a refusal reading a TIMESTAMP_TZ's local time, which needs the offset DuckDB drops.
 pub const ZONED_LOCAL_TIME: &str =
     "which reads the local time of an offset DuckDB's TIMESTAMPTZ drops";
@@ -150,7 +155,7 @@ pub const CODES: &[CodeEntry] = &[
         help: Some(
             "the help names the divergence and the fixes that work in the current mode: allow \
              it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; --builtin-policy refuses every one",
+             assumption; the built-in policy refuses every one",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \
@@ -168,11 +173,15 @@ pub const CODES: &[CodeEntry] = &[
         help: Some("add an alias, e.g. `AS one`"),
         explanation: "Snowflake names an unaliased select item after the expression's text, and \
             a converted query must return the same column names. SQLQuack emits Snowflake's name \
-            only for the expression shapes whose names are verified against recorded results; \
-            the expression at the span is not one of them, so the statement is refused rather \
-            than converted with a different column name. An alias fixes the name in both \
+            only for the shapes recorded results verify, named by their text upper-cased as \
+            written: literals, columns and COUNT, SUM, MAX, AVG, LOWER, UPPER and COALESCE of \
+            columns, ROUND of a column, a column plus, minus, times, divided by or concatenated \
+            with a literal, a column cast to INTEGER, and CURRENT_DATE, CURRENT_DATE() or \
+            CURRENT_TIMESTAMP(), written with single spaces and at most one line break. \
+            Other items, such as paths, CASE, nested calls or other functions, are refused \
+            rather than converted with a different column name. An alias fixes the name in both \
             engines.",
-        example: r#"echo "SELECT 'a' || 'b'" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: "SQ0101",

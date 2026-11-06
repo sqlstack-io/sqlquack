@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.to-ipaddress"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_canonical"
+description = "An IPv4 address and an IPv6 address written with upper-case hex and zero runs, compared as text. Catches: the input text returned unchanged instead of the canonical form"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'192.168.0.1'"],
+  ["'2001:0DB8:0000:0000:0000:0000:0000:0001'"],
+]
+query = "SELECT TO_VARCHAR(TO_IPADDRESS(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "An IPv4 address with an octet above 255, which the page says raises an error. Catches: NULL returned, or the octet wrapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'256.1.1.1'"],
+]
+query = "SELECT TO_VARCHAR(TO_IPADDRESS(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL, which the page says gives NULL. Catches: an error"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TO_IPADDRESS(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -170,6 +170,8 @@ pub(crate) struct Context<'a> {
     pub(crate) order: &'a OrderTrack,
     /// The subquery values emitted so far, which DuckDB cannot bind inside a lambda body.
     pub(crate) subqueries: &'a SubqueryTrack,
+    /// The name each schema relation was written as so far.
+    pub(crate) qualifiers: &'a QualifierTrack,
     /// Whether query results may keep unordered arrays: CTE and FROM subquery bodies.
     pub(crate) free_projections: bool,
     /// Whether this converts a case's input fixture, whose literals stand for source data.
@@ -204,6 +206,24 @@ impl OrderTrack {
 pub(crate) struct StatementTracks {
     pub(crate) order: OrderTrack,
     pub(crate) subqueries: SubqueryTrack,
+    pub(crate) qualifiers: QualifierTrack,
+}
+
+/// The name each schema relation was written as, so two written relations never read one.
+#[derive(Debug, Default)]
+pub(crate) struct QualifierTrack {
+    read: std::cell::RefCell<std::collections::HashMap<String, String>>,
+}
+
+impl QualifierTrack {
+    /// Records the relation `key` read as `written`; the earlier name when it was written otherwise.
+    pub(crate) fn read(&self, key: &str, written: &str) -> Option<String> {
+        let mut read = self.read.borrow_mut();
+        let earlier = read
+            .entry(key.to_owned())
+            .or_insert_with(|| written.to_owned());
+        (earlier != written).then(|| earlier.clone())
+    }
 }
 
 /// A subquery value emitted in a statement's conversion.

@@ -1,0 +1,84 @@
+category = "translation"
+construct = "sf.functions.date-trunc"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "Calendar parts of a Sunday in a leap year. Catches: week truncated to Sunday, quarter to the wrong month, or a TIMESTAMP returned for a DATE"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-31'"],
+  ["'2024-01-01'"],
+]
+query = "SELECT DATE_TRUNC('year', d) AS year, DATE_TRUNC('quarter', d) AS quarter, DATE_TRUNC('month', d) AS month, DATE_TRUNC('week', d) AS week, DATE_TRUNC('day', d) AS day FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp_ntz"
+description = "Time parts with fractional seconds. Catches: rounding instead of truncation (12:00 for 11:59:59.999)"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-29 11:59:59.999'"],
+]
+query = "SELECT DATE_TRUNC('day', t) AS day, DATE_TRUNC('hour', t) AS hour, DATE_TRUNC('minute', t) AS minute, DATE_TRUNC('second', t) AS second, DATE_TRUNC('millisecond', t) AS millisecond FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp_tz"
+description = "A TIMESTAMP_TZ truncated in its own offset. Catches: truncation in UTC (2025-01-01) instead of the wall clock (2024-12-31 00:00 -0800), or the offset dropped (the wall columns show the offset, which the instant comparison ignores)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT DATE_TRUNC('day', t) AS day, CAST(DATE_TRUNC('day', t) AS TIMESTAMP_NTZ) AS day_wall, DATE_TRUNC('month', t) AS month, CAST(DATE_TRUNC('month', t) AS TIMESTAMP_NTZ) AS month_wall, DATE_TRUNC('year', t) AS year, CAST(DATE_TRUNC('year', t) AS TIMESTAMP_NTZ) AS year_wall FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_time"
+description = "A TIME truncated to hour and minute. Catches: an error for a TIME, or a timestamp returned"
+columns = [{ name = "t", type = "TIME" }]
+rows = [
+  ["'17:59:59.999'"],
+]
+query = "SELECT DATE_TRUNC('hour', t) AS hour, DATE_TRUNC('minute', t) AS minute FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_date_or_time_expr"
+description = "NULL next to a set date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-05-05'"],
+]
+query = "SELECT DATE_TRUNC('month', d) AS month FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_dst"
+description = "TIMESTAMP_TZ values on both sides of a DST change. Catches: the offset re-derived from a zone rule (or UTC) instead of kept (the wall columns show the offset, which the instant comparison ignores)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-10 03:30:00 -0400'"],
+  ["'2024-11-03 01:30:00 -0500'"],
+]
+query = "SELECT DATE_TRUNC('hour', t) AS hour, CAST(DATE_TRUNC('hour', t) AS TIMESTAMP_NTZ) AS hour_wall, DATE_TRUNC('day', t) AS day, CAST(DATE_TRUNC('day', t) AS TIMESTAMP_NTZ) AS day_wall FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t007_time_day"
+compile_error = true
+description = "A TIME truncated to day, which the page says is an error. Catches: midnight returned instead of an error"
+columns = [{ name = "t", type = "TIME" }]
+rows = [
+  ["'10:00:00'"],
+]
+query = "SELECT DATE_TRUNC('day', t) AS day FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

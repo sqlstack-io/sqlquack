@@ -1,0 +1,61 @@
+category = "translation"
+construct = "sf.functions.hex-decode-string"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "HEX_DECODE_STRING of upper- and lower-case hex digits. Catches: lower-case digits rejected, nibble order swapped, or UTF-8 read as Latin-1"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'48C3A96C6C6F'"],
+  ["'e282ac'"],
+]
+query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_input"
+description = "NULL input next to a set one. Catches: NULL decoded as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'41'"],
+]
+query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string. Catches: NULL or an error for empty input"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'42'"],
+]
+query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t004_invalid"
+description = "A non-hex digit. Catches: NULL (the TRY_ behaviour) or a partial decode where Snowflake raises an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'4G'"],
+]
+query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_odd_length"
+description = "An odd number of hex digits. Catches: the last nibble dropped or zero-padded instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'414'"],
+]
+query = "SELECT HEX_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

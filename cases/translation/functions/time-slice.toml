@@ -1,0 +1,87 @@
+category = "translation"
+construct = "sf.functions.time-slice"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "The page's 4-month slice, and a 3-day slice. Catches: slices aligned to the year start or to the date itself, or END returning the last day inside the slice"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2019-02-28'"],
+  ["'2024-02-29'"],
+]
+query = "SELECT TIME_SLICE(d, 4, 'MONTH', 'START') AS ms, TIME_SLICE(d, 4, 'MONTH', 'END') AS me, TIME_SLICE(d, 3, 'DAY') AS d3 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp"
+description = "Slices of 11 hours and 11 minutes; 2019-02-28 (epoch day 17955) is not a multiple of either slice, so epoch and day-start alignment differ. Catches: slices aligned to the day start for minutes, or the fraction kept"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2019-02-28 01:23:45.678'"],
+  ["'2019-02-28 12:34:56.789'"],
+]
+query = "SELECT TIME_SLICE(t, 11, 'HOUR') AS h11, TIME_SLICE(t, 11, 'minute') AS m11 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_week"
+description = "Two-week slices, aligned to the week that holds 1970-01-01. Catches: week slices aligned to 1970-01-01 itself (a Thursday)"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-06'"],
+  ["'2024-03-13'"],
+]
+query = "SELECT TIME_SLICE(d, 2, 'WEEK') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date_or_time_expr"
+description = "NULL date. Catches: NULL read as 1970-01-01"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT TIME_SLICE(d, 1, 'MONTH') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_slice_length"
+description = "NULL length. Catches: NULL read as 1"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT TIME_SLICE('2024-05-05'::DATE, n, 'MONTH') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_pre_1970"
+description = "Dates before 1970, which the page says are valid. Catches: truncation toward 1970 instead of floor"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'1969-12-31'"],
+  ["'1955-06-01'"],
+]
+query = "SELECT TIME_SLICE(d, 15, 'YEAR') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t007_zero_length"
+compile_error = true
+description = "A slice length of 0, below the documented minimum of 1. Catches: a division by zero yielding NULL instead of an error"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+]
+query = "SELECT TIME_SLICE(d, 0, 'DAY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

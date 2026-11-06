@@ -1,0 +1,33 @@
+category = "translation"
+construct = "sf.functions.approx-top-k-accumulate"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_state"
+description = "A state per group, read with APPROX_TOP_K_ESTIMATE. Catches: the whole input's state, or the top-2 read ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'q'", "'z'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+  ["'p'", "'c'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+]
+query = "SELECT g, APPROX_TOP_K_ESTIMATE(APPROX_TOP_K_ACCUMULATE(x, 10), 2) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr"
+description = "NULL as the most frequent value. Catches: NULL treated the opposite way to Snowflake"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT APPROX_TOP_K_ESTIMATE(APPROX_TOP_K_ACCUMULATE(x, 10), 2) AS r FROM input"
+order = "ordered"
+tags = ["null"]

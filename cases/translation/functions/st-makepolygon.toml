@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.st-makepolygon"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A closed 10 by 10 loop, giving area 100, with the SRID kept. Catches: the line string returned (area 0), or the SRID dropped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,10 0,10 10,0 10,0 0)'"],
+]
+query = "SELECT ST_AREA(ST_MAKEPOLYGON(TO_GEOMETRY(v, 3857))) AS a, ST_SRID(ST_MAKEPOLYGON(TO_GEOMETRY(v, 3857))) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "A closed loop as GEOGRAPHY, measured by its dimension and point count. Catches: the loop left open"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 0,1 1,0 1,0 0)'"],
+]
+query = "SELECT ST_DIMENSION(ST_MAKEPOLYGON(TO_GEOGRAPHY(v))) AS dim, ST_NPOINTS(ST_MAKEPOLYGON(TO_GEOGRAPHY(v))) AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_open_loop"
+description = "A line string whose last point differs from the first, which the page says must form a loop; Snowflake returns rows rather than an error, so the recording decides. Catches: an error raised where Snowflake returns rows, or the loop closed differently"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,10 0,10 10,0 10)'"],
+]
+query = "SELECT ST_ASWKT(ST_MAKEPOLYGON(TO_GEOMETRY(v))) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_MAKEPOLYGON(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

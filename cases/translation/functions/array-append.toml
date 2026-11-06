@@ -1,0 +1,40 @@
+category = "translation"
+construct = "sf.functions.array-append"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_mixed_type"
+description = "A decimal appended to an array of a number and text. Catches: the element added at the front, or the decimal converted to text or an integer"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "e", type = "NUMBER(10,1)" }]
+rows = [
+  ["'[1,\"x\"]'", "2.5"],
+  ["'[]'", "-0.5"],
+]
+query = "SELECT ARRAY_APPEND(PARSE_JSON(a), e) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nested_array"
+description = "An array appended as one element. Catches: the two arrays concatenated (ARRAY_CAT) instead of nested"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1]'", "'[2,3]'"],
+  ["'[[0]]'", "'[]'"],
+]
+query = "SELECT ARRAY_APPEND(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_array"
+description = "A NULL array, and a NULL element appended to an array. Catches: a NULL array read as empty ([1]), or the NULL element dropped (the array unchanged)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "e", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1"],
+  ["'[1]'", "NULL"],
+]
+query = "SELECT ARRAY_APPEND(PARSE_JSON(a), e) AS r, ARRAY_SIZE(ARRAY_APPEND(PARSE_JSON(a), e)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null"]

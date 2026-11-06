@@ -85,7 +85,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_RELATION,
         constructs: &["node:table"],
-        conditions: "The relation is a CTE or has typed columns in the schema.",
+        conditions: "The relation is a CTE or has typed columns in the schema. A schema relation may be declared as TABLE, SCHEMA.TABLE or DATABASE.SCHEMA.TABLE, and a name reads the declared relation whose parts agree with the parts it writes, the longest agreement winning; it is written as the declared name. A name matching several declared relations equally, a qualified name a CTE of its declared name would capture, and two differently written names reading one declared relation are refused.",
         failures: &[],
     },
     RuleSpec {
@@ -194,7 +194,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ALIAS,
         constructs: &["node:alias"],
-        conditions: "A single name.",
+        conditions: "A single name. An unaliased select item that is not a column takes Snowflake's name for it: its text upper-cased as written, spacing, line breaks and quotes kept, as recorded; text outside ASCII or holding a comment is refused with SQ0009.",
         failures: &[],
     },
     RuleSpec {
@@ -384,7 +384,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:DATE_PART",
             "node:extract",
         ],
-        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, or as the operand of DATE_PART, EXTRACT and the single-part functions: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
+        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, as the operand of DATE_PART, EXTRACT and the single-part functions, or as a result column of the statement: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
         failures: &[],
     },
     RuleSpec {
@@ -904,7 +904,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: POWER_RULE,
         constructs: &["fn:POWER"],
-        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
+        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. POWER of the constant 2 to a whole NUMBER exponent is the exact power of two a double holds, from 2^-1074 to 2^1023, as recorded; NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
         failures: &[],
     },
     RuleSpec {
@@ -993,7 +993,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FLATTEN_RULE,
         constructs: &["node:lateral", "fn:FLATTEN"],
-        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows. Under OUTER => TRUE an input with no rows gives one row: PATH '' and THIS the input for an empty container MODE takes, every column NULL otherwise (JSON null, NULL, a missing path, a scalar, a kind MODE skips), as recorded. MODE => 'ARRAY' or 'OBJECT' without RECURSIVE takes only that kind. RECURSIVE => TRUE walks every depth with keys in byte order, writing a key of letters, digits, `_`, spaces and dots that is not a plain name as ['key'] and raising for any other, MODE => 'BOTH', 'OBJECT' or 'ARRAY' choosing what it descends into, a scalar input giving one row of itself under BOTH and raising under OBJECT or ARRAY; RECURSIVE with OUTER, SEQ and PATH => are not converted.",
+        conditions: "LATERAL FLATTEN of a VARIANT input after another FROM source or after JOIN ... ON clauses, as a comma or CROSS JOIN source, with OUTER => a boolean literal at most: INDEX and PATH [i] for array elements, KEY and PATH for object keys (raising for keys that are not plain names), VALUE and THIS; scalars, JSON null and NULL give no rows. Under OUTER => TRUE an input with no rows gives one row: PATH '' and THIS the input for an empty container MODE takes, every column NULL otherwise (JSON null, NULL, a missing path, a scalar, a kind MODE skips), as recorded. MODE => 'ARRAY' or 'OBJECT' without RECURSIVE takes only that kind. RECURSIVE => TRUE walks every depth with keys in byte order, writing a key of letters, digits, `_`, spaces and dots that is not a plain name as ['key'] and raising for any other, MODE => 'BOTH', 'OBJECT' or 'ARRAY' choosing what it descends into, a scalar input giving one row of itself under BOTH and raising under OBJECT or ARRAY; PATH => a literal of dot-separated plain keys flattens the value at that path, PATH prefixed with it ('x.y[0]'), a missing path giving no rows, as recorded; other PATHs, PATH with RECURSIVE or OUTER, RECURSIVE with OUTER, and SEQ are not converted.",
         failures: &[],
     },
     RuleSpec {
@@ -1169,7 +1169,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEMPORAL_TEXT_FORMAT,
         constructs: &["fn:TO_VARCHAR", "fn:TO_CHAR"],
-        conditions: "A TIME and a format of only HH24, MI, SS and FF1 to FF6 fields, truncating, as recorded; a DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it.",
+        conditions: "A TIME and a format of only HH24, MI, SS and FF1 to FF6 fields, truncating, as recorded; a DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it. MON and MMMM, written in upper case, write the English month's abbreviation (Jan) and full name (January) in title case, as recorded for every month. MMMM directly before DD writes the name then the day (MMMMDD is September05), as recorded. A format where two adjacent fields would spell a longer run of one letter (MMMMMM, DDDD, SSSS), where a field follows MON directly (MONMM writes the full name, as recorded), where a field other than DD follows MMMM directly, or where a month name directly follows another field, is not converted, nor any element other than these.",
         failures: &[],
     },
     RuleSpec {
@@ -1235,7 +1235,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: COUNT,
         constructs: &["fn:COUNT"],
-        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused.",
+        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused. COUNT over a qualified star (t.*) or a star with EXCLUDE, ILIKE, RENAME or REPLACE is refused, as it counts other rows than COUNT(*).",
         failures: &[],
     },
     RuleSpec {
@@ -1250,7 +1250,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: AVERAGE,
         constructs: &["fn:AVG"],
-        conditions: "A NUMBER of scale at most 6 and precision at most 26.",
+        conditions: "A NUMBER of scale at most 6 and precision at most 26. AVG(DISTINCT) of a NUMBER is refused, since Snowflake types it with 3 more decimal places and no recording shows how it rounds.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1441,7 +1441,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: INTERVAL_ARITHMETIC,
         constructs: &["node:add", "node:sub", "node:interval"],
-        conditions: "A DATE or TIMESTAMP_NTZ plus or minus an INTERVAL literal of one whole number of days, hours, minutes or seconds, written '<n> <unit>' with the unit singular or plural in any case: DATEADD of n or -n of that unit. A DATE takes only days and stays a DATE; a TIMESTAMP_NTZ of any precision becomes a TIMESTAMP_NTZ(9), relying on timestamp_range. Other intervals and operands stay refused.",
+        conditions: "A DATE or TIMESTAMP_NTZ plus or minus an INTERVAL literal of one whole number of days, hours, minutes or seconds, written '<n> <unit>' with the unit singular or plural in any case: DATEADD of n or -n of that unit. A DATE takes only days: with the unit inside the quotes ('7 days') it stays a DATE, and with the unit after them (INTERVAL '3' DAY) it becomes a TIMESTAMP_NTZ(9) at midnight, as recorded, relying on timestamp_range; a TIMESTAMP_NTZ of any precision becomes a TIMESTAMP_NTZ(9), relying on timestamp_range. Other intervals and operands stay refused.",
         failures: &[],
     },
     RuleSpec {

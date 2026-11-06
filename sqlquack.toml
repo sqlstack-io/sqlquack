@@ -197,6 +197,10 @@ STRICT_JSON_OUTPUT = false
 GEOGRAPHY_OUTPUT_FORMAT = "GeoJSON"
 GEOMETRY_OUTPUT_FORMAT = "GeoJSON"
 
+[edge_cases.translation]
+description = "Per-form translation obligations: each documented form's cases, measured against Snowflake's recorded results."
+required = ["type-combination"]
+
 [edge_cases.numeric]
 description = "Arithmetic, rounding and numeric conversion."
 required = ["null", "zero", "negative", "boundary"]

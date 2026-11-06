@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.ascii"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "ASCII of strings whose first and last characters differ. Catches: the code of the last character, or the string length, instead of the first character's code, or the first UTF-8 byte (195 for \u00e9) instead of the code point (records what Snowflake returns)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'Zed'"],
+  ["'7x'"],
+  ["'\u00e9lan'"],
+]
+query = "SELECT ASCII(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_input"
+description = "NULL input next to a set one. Catches: NULL read as an empty string (0 instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'b'"],
+]
+query = "SELECT ASCII(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string, which the page says gives 0. Catches: NULL for an empty string instead of 0"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'A'"],
+]
+query = "SELECT ASCII(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

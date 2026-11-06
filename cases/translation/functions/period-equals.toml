@@ -1,0 +1,33 @@
+category = "translation"
+construct = "sf.functions.period-equals"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_relations"
+description = "The six period pairs, plus a pair with equal begins and different ends and a pair with different begins and equal ends. Catches: only the begins compared, or only the ends"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }, { name = "b2", type = "DATE" }, { name = "e2", type = "DATE" }]
+rows = [
+  ["'2024-01-01'", "'2024-03-01'", "'2024-02-01'", "'2024-04-01'"],
+  ["'2024-01-01'", "'2024-02-01'", "'2024-02-01'", "'2024-03-01'"],
+  ["'2024-01-01'", "'2024-12-31'", "'2024-03-01'", "'2024-04-01'"],
+  ["'2024-01-01'", "'2024-02-01'", "'2024-06-01'", "'2024-07-01'"],
+  ["'2024-01-01'", "'2024-02-01'", "'2024-01-01'", "'2024-02-01'"],
+  ["'2024-02-01'", "'2024-03-01'", "'2024-01-01'", "'2024-02-01'"],
+  ["'2024-01-01'", "'2024-02-01'", "'2024-01-01'", "'2024-03-01'"],
+  ["'2024-01-01'", "'2024-03-01'", "'2024-02-01'", "'2024-03-01'"],
+]
+query = "SELECT ordinal, PERIOD_EQUALS(PERIOD_CONSTRUCT(b1, e1), PERIOD_CONSTRUCT(b2, e2)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_period1"
+description = "A NULL period; the page does not say; the recording decides. Catches: FALSE returned"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }]
+rows = [
+  ["NULL", "'2024-02-01'"],
+  ["'2024-01-01'", "'2024-02-01'"],
+]
+query = "SELECT ordinal, PERIOD_EQUALS(PERIOD_CONSTRUCT(b1, e1), PERIOD_CONSTRUCT(DATE '2024-02-01', DATE '2024-03-01')) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -882,6 +882,8 @@ pub const TEMPORAL_TEXT_FORMAT: &str = "rule.temporal_text_format";
 /// Format fields: the Snowflake token, its strftime spelling, and whether it is a time field.
 pub const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
     ("YYYY", "%Y", false),
+    ("MMMM", "%B", false),
+    ("MON", "%b", false),
     ("MM", "%m", false),
     ("DD", "%d", false),
     ("HH24", "%H", true),
@@ -891,6 +893,10 @@ pub const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
     ("FF6", "%f", true),
     ("FF3", "%g", true),
 ];
+/// Fields writing an English month name, recorded only as written in upper case.
+pub(crate) const MONTH_NAME_FIELDS: &[&str] = &["MMMM", "MON"];
+/// The fields recorded directly after each month name: none after MON, whose MONMM writes the full name.
+pub(crate) const MONTH_NAME_FOLLOWERS: &[(&str, &[&str])] = &[("MON", &[]), ("MMMM", &["DD"])];
 /// The format element writing as many fraction digits as the timestamp's precision.
 pub(crate) const BARE_FRACTION: &str = "FF";
 /// What FF writes for each precision recorded: none for 0, then milli-, micro- and nanoseconds.
@@ -1272,8 +1278,10 @@ pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
 pub const LOGARITHM: &str = "rule.logarithm";
 /// POWER(10, n) of a whole exponent.
 pub const POWER_RULE: &str = "rule.power";
-/// The one base POWER converts, as its literal is written.
+/// The base POWER converts as the FLOAT nearest the power, as its literal is written.
 pub(crate) const POWER_BASE: &str = "10";
+/// The other POWER base converted: 2, whose whole powers a double holds exactly.
+pub(crate) const POWER_BASE_TWO: &str = "2";
 /// The natural logarithm's name, beside EXP.
 pub(crate) const LN_NAME: &str = "LN";
 /// ARRAY_SORT of one array.
@@ -1981,3 +1989,12 @@ pub(crate) const CORRELATED_DERIVED: &str =
 pub(crate) const AMBIGUOUS_SUFFIX: &str = "is ambiguous";
 /// A JSON-held VARIANT as a sort key, in ARRAY_SORT's recorded order of kinds.
 pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";
+
+/// Aggregates whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_AGGREGATES: &[&str] = &["COUNT", "SUM", "MAX", "AVG"];
+/// Scalar functions whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_FUNCTIONS: &[&str] = &["LOWER", "UPPER", "COALESCE"];
+/// Arithmetic whose unaliased column names, a column then a number, receipts record.
+pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"];
+/// The cast target spellings whose unaliased column names receipts record.
+pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];

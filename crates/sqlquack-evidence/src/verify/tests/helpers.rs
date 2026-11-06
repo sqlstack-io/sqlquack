@@ -485,6 +485,7 @@ pub(crate) fn undeclared_compile_error_for(
         .into_iter()
         .take(usize::from(with_setup))
         .collect(),
+        setup: Vec::new(),
         inputs: Vec::new(),
         row_sources: Vec::new(),
     };

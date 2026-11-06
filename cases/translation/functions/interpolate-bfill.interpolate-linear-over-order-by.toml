@@ -1,0 +1,59 @@
+category = "translation"
+construct = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_spacing"
+description = "Unevenly spaced order keys (2, 4, 5). The page requires a single numeric, DATE or TIMESTAMP order key, which implies weighting by distance: the NULL at 4 lies two thirds of the way from 10 to 40. Catches: interpolation by row count (25 instead of 30), or ends filled instead of left NULL"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "10"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "40"],
+  ["'a'", "7", "NULL"],
+  ["'b'", "1", "7"],
+  ["'b'", "3", "9"],
+]
+query = "SELECT ordinal, INTERPOLATE_LINEAR(x) OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_date_key"
+description = "A DATE order key with a gap of two days then one; distance weighting, as the required DATE key implies, gives 3.00 on 29 February. Catches: the dates treated as evenly spaced"
+columns = [{ name = "d", type = "DATE" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["'2024-02-27'", "1.0"],
+  ["'2024-02-29'", "NULL"],
+  ["'2024-03-01'", "4.0"],
+]
+query = "SELECT ordinal, INTERPOLATE_LINEAR(x) OVER (ORDER BY d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_text"
+description = "A text column, which the page says INTERPOLATE_LINEAR does not accept; Snowflake compiles the call, so the error comes at run time. Catches: the text interpolated or copied"
+columns = [{ name = "o", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["1", "'a'"],
+  ["2", "NULL"],
+  ["3", "'c'"],
+]
+query = "SELECT ordinal, INTERPOLATE_LINEAR(v) OVER (ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_expr"
+description = "A partition whose values are all NULL, which stay NULL. Catches: values taken from another partition, or 0"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'c'", "1", "NULL"],
+  ["'c'", "2", "NULL"],
+  ["'a'", "1", "4"],
+]
+query = "SELECT ordinal, INTERPOLATE_LINEAR(x) OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

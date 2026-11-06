@@ -1,0 +1,66 @@
+category = "translation"
+construct = "sf.functions.search"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_or"
+description = "The default OR mode, case-insensitive. Catches: a substring match (TRUE for quickly), case-sensitive tokens, or AND semantics"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'The Quick brown'"],
+  ["'a fox'"],
+  ["'quickly'"],
+  ["'nothing'"],
+]
+query = "SELECT SEARCH(a, 'quick fox') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_modes"
+description = "AND, PHRASE and EXACT modes on the same data. Catches: SEARCH_MODE ignored, AND read as OR, or EXACT read as PHRASE"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'fox the quick'"],
+  ["'the quick fox'"],
+  ["'the quick dog'"],
+  ["'the Quick fox'"],
+]
+query = "SELECT SEARCH(a, 'quick fox', SEARCH_MODE => 'AND') AS r_and, SEARCH(a, 'quick fox', SEARCH_MODE => 'PHRASE') AS r_phrase, SEARCH(a, 'quick fox', SEARCH_MODE => 'EXACT') AS r_exact FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_analyzer"
+description = "The NO_OP_ANALYZER, which does not tokenize. Catches: the analyzer ignored (TRUE for a token inside the data)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'quick fox'"],
+  ["'quick'"],
+]
+query = "SELECT SEARCH(a, 'quick', ANALYZER => 'NO_OP_ANALYZER') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_search_data"
+description = "NULL data. Catches: NULL read as empty (FALSE instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'x'"],
+]
+query = "SELECT SEARCH(a, 'x') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty"
+description = "Empty data. Catches: NULL or TRUE for empty data"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT SEARCH(a, 'x') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

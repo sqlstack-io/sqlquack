@@ -100,6 +100,8 @@ pub const EPOCH_TEXT_PATTERN: &str = "[0-9]{1,18}";
 /// Epoch magnitudes below which integer text counts seconds, milliseconds and microseconds.
 pub const EPOCH_SCALE_LIMITS: [i64; 3] =
     [31_536_000_000, 31_536_000_000_000, 31_536_000_000_000_000];
+/// What separates the catalog, schema and table parts of a relation name.
+pub const NAME_SEPARATOR: &str = ".";
 /// Quoted identifiers: `duckdb.quoted_identifier`.
 pub const QUOTED_IDENTIFIER: &str = "duckdb.quoted_identifier";
 /// String literals: `duckdb.string_literal`.

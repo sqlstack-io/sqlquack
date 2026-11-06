@@ -8,6 +8,7 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
+use sqlquack_semantics::names::constants::RELATION_KEY_SEPARATOR;
 use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
@@ -66,12 +67,19 @@ pub(crate) fn inspect_files(
     for _ in 0..usize::from(options.chain_models) * files.len() {
         let mut added = 0usize;
         for (path, census) in files.iter().zip(&censuses) {
-            if let (Some(columns), Some(relation)) = (&census.outputs, model_relation(path))
-                && let std::collections::btree_map::Entry::Vacant(entry) =
-                    schema.relations.entry(relation)
+            let Some(columns) = &census.outputs else {
+                continue;
+            };
+            for relation in model_relation(path)
+                .into_iter()
+                .chain(model_plain_name(path))
             {
-                entry.insert(columns.clone());
-                added += 1;
+                if let std::collections::btree_map::Entry::Vacant(entry) =
+                    schema.relations.entry(relation)
+                {
+                    entry.insert(columns.clone());
+                    added += 1;
+                }
             }
         }
         if added == 0 {
@@ -114,6 +122,19 @@ pub(crate) fn inspect_files(
 pub(crate) fn model_relation(path: &Path) -> Option<String> {
     let stem = path.file_stem()?.to_str()?;
     Some(relation_name(stem.as_bytes()).to_ascii_uppercase())
+}
+
+/// The relation dbt's compiled SQL reads a model file by, qualifiers aside: its file name, upper case.
+pub(crate) fn model_plain_name(path: &Path) -> Option<String> {
+    Some(path.file_stem()?.to_str()?.to_ascii_uppercase())
+}
+
+/// The model relation a reference reads, upper case: a qualified name by its last part, as dbt writes.
+pub(crate) fn referenced_model(relation: &str) -> String {
+    match relation.rsplit_once(RELATION_KEY_SEPARATOR) {
+        Some((_, name)) => relation_name(name.as_bytes()).to_ascii_uppercase(),
+        None => relation.to_ascii_uppercase(),
+    }
 }
 
 /// Whether a relation's schema columns declare an offset for any column.

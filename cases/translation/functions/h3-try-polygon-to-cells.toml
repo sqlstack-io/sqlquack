@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.h3-try-polygon-to-cells"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_centroids"
+description = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one. Catches: cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((-122.4185 37.7726,-122.4180 37.7726,-122.4182 37.7729,-122.4185 37.7726))'"],
+  ["'POLYGON((-122.418571 37.773215,-122.417971 37.773215,-122.417971 37.773815,-122.418571 37.773815,-122.418571 37.773215))'"],
+]
+query = "SELECT ordinal, ARRAY_SIZE(H3_TRY_POLYGON_TO_CELLS(TO_GEOGRAPHY(g), 9)) AS n, ARRAY_CONTAINS(617700169957507071::VARIANT, H3_TRY_POLYGON_TO_CELLS(TO_GEOGRAPHY(g), 9)) AS cell FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_resolution_range"
+description = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too, but Snowflake returns rows rather than an error, so the recording decides. Catches: an error raised where Snowflake returns rows, or the resolution clamped to 15"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((-122.418571 37.773215,-122.417971 37.773215,-122.417971 37.773815,-122.418571 37.773815,-122.418571 37.773215))'"],
+]
+query = "SELECT H3_TRY_POLYGON_TO_CELLS(TO_GEOGRAPHY(g), 16) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_polygon"
+description = "A NULL polygon; the page does not say; the recording decides. Catches: an error, or an empty array returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT H3_TRY_POLYGON_TO_CELLS(TO_GEOGRAPHY(g), 9) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

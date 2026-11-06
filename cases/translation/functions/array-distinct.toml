@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.array-distinct"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number_vs_text"
+description = "Repeated numbers beside the same digits as text. Catches: the number 1 and the text \"1\" merged (2 left), or duplicates kept (5)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,1,\"1\",2]'"],
+]
+query = "SELECT ARRAY_SIZE(ARRAY_DISTINCT(PARSE_JSON(a))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_objects"
+description = "Identical objects and one with an extra key. Catches: objects matched on a shared key (1 left) or never matched (3)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[{\"a\":1},{\"a\":1},{\"a\":1,\"b\":2}]'"],
+]
+query = "SELECT ARRAY_SIZE(ARRAY_DISTINCT(PARSE_JSON(a))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_sql_null_elements"
+description = "Two undefined elements beside a value; the page treats NULL as a known value. Catches: the undefined elements dropped (1 left) or kept apart (3)"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ARRAY_SIZE(ARRAY_DISTINCT(ARRAY_CONSTRUCT(x, x, 1))) AS n FROM input"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_array"
+description = "A NULL argument. Catches: an empty array returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'[1,1]'"],
+]
+query = "SELECT ARRAY_DISTINCT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

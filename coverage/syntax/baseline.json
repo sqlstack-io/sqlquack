@@ -2637,7 +2637,7 @@
     "sf.functions.trim": "verified",
     "sf.functions.trunc.trunc": "verified",
     "sf.functions.trunc.truncate": "verified",
-    "sf.functions.trunc2": "unverified",
+    "sf.functions.trunc2": "verified",
     "sf.functions.try-base64-decode-binary": "verified",
     "sf.functions.try-base64-decode-string": "verified",
     "sf.functions.try-cast": "verified",

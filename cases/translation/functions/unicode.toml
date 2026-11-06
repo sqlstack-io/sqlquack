@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.unicode"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "UNICODE of multi-byte and multi-character strings. Catches: the first UTF-8 byte (195 for \u00e9) instead of the code point, or the last character"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\u00e9'"],
+  ["'\u20acx'"],
+  ["'cde'"],
+  ["'\u2744'"],
+]
+query = "SELECT UNICODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_input"
+description = "NULL input next to a set one. Catches: NULL read as an empty string (0 instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT UNICODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string, which the example shows as 0. Catches: NULL or an error for an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'z'"],
+]
+query = "SELECT UNICODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

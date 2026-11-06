@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.st-coveredby"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A point inside a square, on its edge and outside (TRUE, TRUE, FALSE). Catches: the arguments read the other way round, or a boundary point excluded"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(5 5)'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(10 5)'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(20 5)'"],
+]
+query = "SELECT ordinal, ST_COVEREDBY(TO_GEOMETRY(w), TO_GEOMETRY(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "The inside and outside points as GEOGRAPHY. Catches: GEOGRAPHY rejected"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(5 5)'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(20 5)'"],
+]
+query = "SELECT ordinal, ST_COVEREDBY(TO_GEOGRAPHY(w), TO_GEOGRAPHY(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_srid_mismatch"
+description = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error. Catches: a result computed as if the SRIDs matched"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'", "'POINT(5 5)'"],
+]
+query = "SELECT ST_COVEREDBY(TO_GEOMETRY(w), TO_GEOMETRY(v, 3857)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_geography_expression_1"
+description = "A NULL first shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_COVEREDBY(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

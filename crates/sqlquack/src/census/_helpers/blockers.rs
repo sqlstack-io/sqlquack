@@ -8,7 +8,7 @@ use sqlquack_core::refusals::models::RefusalCategory;
 use sqlquack_semantics::types::models::Schema;
 
 use crate::census::_helpers::combinations::combinations;
-use crate::census::_helpers::corpus::model_relation;
+use crate::census::_helpers::corpus::{model_relation, referenced_model};
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::constants::{
     CYCLE_ROOT, MODEL_ROOT_PREFIX, RELATION_ROOT_PREFIX, UNKNOWN_RELATION_ROOT,
@@ -163,7 +163,8 @@ impl Graph {
                 .collect(),
         };
         for (index, census) in censuses.iter().enumerate() {
-            let model_of = |relation: &String| by_relation.get(&folded(relation)).copied();
+            let model_of =
+                |relation: &String| by_relation.get(&referenced_model(relation)).copied();
             let upstream: BTreeSet<usize> = census
                 .references
                 .iter()
@@ -294,7 +295,7 @@ fn model_reads(files: &[PathBuf], censuses: &[FileCensus], schema: &Schema) -> M
     let models_of = |index: usize, relations: &BTreeSet<String>| {
         let mut models: BTreeSet<usize> = BTreeSet::new();
         for relation in relations {
-            if let Some(model) = by_relation.get(&folded(relation))
+            if let Some(model) = by_relation.get(&referenced_model(relation))
                 && *model != index
             {
                 models.insert(*model);

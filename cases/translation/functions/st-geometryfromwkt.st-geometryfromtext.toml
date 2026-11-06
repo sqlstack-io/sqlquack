@@ -1,0 +1,70 @@
+category = "translation"
+construct = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_wkt"
+description = "A point and a line string in WKT, which the page says get SRID 0. Catches: longitude and latitude swapped, or SRID 4326 assumed"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'LINESTRING(0 0,1 2)'"],
+]
+query = "SELECT ordinal, ST_ASWKT(ST_GEOMETRYFROMTEXT(v)) AS r, ST_SRID(ST_GEOMETRYFROMTEXT(v)) AS srid FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_srid"
+description = "WKT with an srid argument. Catches: the srid argument ignored (SRID 0)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOMETRYFROMTEXT(v, 3857)) AS r, ST_SRID(ST_GEOMETRYFROMTEXT(v, 3857)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_ewkt"
+description = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633. Catches: the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'SRID=3857;POINT(10 20)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOMETRYFROMTEXT(v)) AS r, ST_SRID(ST_GEOMETRYFROMTEXT(v)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_unparsable"
+description = "Text that is not WKT, which the page says is an error. Catches: NULL returned, or the text read as an empty shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOMETRYFROMTEXT(v)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_allow_invalid"
+description = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid. Catches: the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
+]
+query = "SELECT ST_ISVALID(ST_GEOMETRYFROMTEXT(v, TRUE)) AS valid, ST_ISVALID(ST_GEOMETRYFROMTEXT(v, 3857, TRUE)) AS valid_srid, ST_SRID(ST_GEOMETRYFROMTEXT(v, 3857, TRUE)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_varchar_expression"
+description = "A NULL text; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOMETRYFROMTEXT(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]
