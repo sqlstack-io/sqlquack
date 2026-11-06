@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.st-length"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A 3-4-5 line string, a polygon, and a collection of two line strings (5 and 1). Catches: a polygon given its perimeter"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,3 4)'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+  ["'GEOMETRYCOLLECTION(LINESTRING(0 0,3 4),LINESTRING(0 0,1 0))'"],
+]
+query = "SELECT ordinal, ST_LENGTH(TO_GEOMETRY(v)) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "One degree along the equator in kilometres, rounded (111 on any earth model). Catches: degrees returned (1)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 0)'"],
+]
+query = "SELECT ROUND(ST_LENGTH(TO_GEOGRAPHY(v)) / 1000) AS km FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_LENGTH(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

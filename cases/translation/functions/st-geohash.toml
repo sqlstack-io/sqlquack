@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.st-geohash"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_precision"
+description = "A point inside cell ezs42 at precisions 5 and 1, and the default length (20). Catches: latitude encoded first, or the precision ignored"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(-5.6 42.6)'"],
+]
+query = "SELECT ST_GEOHASH(TO_GEOGRAPHY(v), 5) AS p5, ST_GEOHASH(TO_GEOGRAPHY(v), 1) AS p1, LENGTH(ST_GEOHASH(TO_GEOGRAPHY(v))) AS len FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geometry"
+description = "The same point as a GEOMETRY with SRID 4326. Catches: the GEOMETRY rejected"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(-5.6 42.6)'"],
+]
+query = "SELECT ST_GEOHASH(TO_GEOMETRY(v, 4326), 5) AS p5 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_precision_zero"
+description = "Precision 0, below the range of 1 to 20 that the page allows. Catches: an empty string returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(-5.6 42.6)'"],
+]
+query = "SELECT ST_GEOHASH(TO_GEOGRAPHY(v), 0) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_geography_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOHASH(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

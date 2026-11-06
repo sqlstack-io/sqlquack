@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.st-aswkt.st-astext"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geography"
+description = "A point and a line string, longitude first. Catches: latitude written first, or an SRID prefix added"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'LINESTRING(0 0,1 2,3 4)'"],
+]
+query = "SELECT ordinal, ST_ASTEXT(TO_GEOGRAPHY(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geometry"
+description = "A GEOMETRY with SRID 3857, whose text has no SRID prefix. Catches: EWKT returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_ASTEXT(TO_GEOMETRY(v, 3857)) AS r, STARTSWITH(ST_ASTEXT(TO_GEOMETRY(v, 3857)), 'POINT') AS plain FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_ASTEXT(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-makepolygonoriented"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_orientation"
+description = "The same square traced anticlockwise and clockwise: clockwise puts the rest of the globe inside, so its area is far larger. Catches: the smaller side taken whatever the orientation, as ST_MAKEPOLYGON does"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 0,1 1,0 1,0 0)'", "'LINESTRING(0 0,0 1,1 1,1 0,0 0)'"],
+]
+query = "SELECT ST_AREA(ST_MAKEPOLYGONORIENTED(TO_GEOGRAPHY(w))) > 1000 * ST_AREA(ST_MAKEPOLYGONORIENTED(TO_GEOGRAPHY(v))) AS cw_larger, ROUND(ST_AREA(ST_MAKEPOLYGONORIENTED(TO_GEOGRAPHY(v))) / ST_AREA(ST_MAKEPOLYGON(TO_GEOGRAPHY(v))), 2) AS ccw FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_MAKEPOLYGONORIENTED(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]
