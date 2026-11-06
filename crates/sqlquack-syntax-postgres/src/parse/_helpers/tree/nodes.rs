@@ -178,6 +178,32 @@ pub(crate) fn name_text(parts: &[Identifier]) -> String {
         .join(".")
 }
 
+/// Whether `c` may appear in a name `quote_ident` leaves bare.
+fn is_bare_char(c: char) -> bool {
+    c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_' || c == '$'
+}
+
+/// One type name part, quoted as written or as `quote_ident` would, quotes doubled.
+fn type_name_part(part: &Identifier) -> String {
+    let bare: bool = !part.quoted
+        && !part.name.is_empty()
+        && !part.name.starts_with(|c: char| c.is_ascii_digit())
+        && part.name.chars().all(is_bare_char);
+    match bare {
+        true => part.name.clone(),
+        false => format!("\"{}\"", part.name.replace('"', "\"\"")),
+    }
+}
+
+/// A type name's parts joined by `.`, each quoted as `type_name_part` gives it.
+pub(crate) fn type_name_text(parts: &[Identifier]) -> String {
+    parts
+        .iter()
+        .map(type_name_part)
+        .collect::<Vec<String>>()
+        .join(".")
+}
+
 /// A function call; a qualified name keeps its parts and joins them into `name`.
 pub(crate) fn function(name: Vec<Identifier>, args: Vec<Expression>) -> Function {
     let joined: String = name

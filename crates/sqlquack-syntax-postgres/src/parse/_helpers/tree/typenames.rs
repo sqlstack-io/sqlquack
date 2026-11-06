@@ -4,6 +4,7 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
+use crate::parse::_helpers::tree::nodes::type_name_text;
 use crate::parse::constants::{
     BIT_TYPE, CATALOGUE_SCHEMA, DEFAULT_LENGTH, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION,
     INTERVAL_FIELDS, INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, SETOF_PREFIX, VARBIT_TYPE,
@@ -438,11 +439,7 @@ impl Parser<'_> {
         {
             return Ok(known);
         }
-        let name: String = parts
-            .iter()
-            .map(|part| part.to_string())
-            .collect::<Vec<String>>()
-            .join(".");
+        let name: String = type_name_text(&parts);
         Ok(DataType::Custom {
             name: match modifiers {
                 Some(_) => format!("{name}{}", &self.sql[start..end.max(start)]),
