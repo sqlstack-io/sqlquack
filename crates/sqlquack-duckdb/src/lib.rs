@@ -9,6 +9,7 @@ pub mod checking;
 pub mod floats;
 pub mod hashing;
 pub mod held;
+pub mod layout;
 pub mod raises;
 pub mod semi_structured;
 pub mod temporal;

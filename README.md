@@ -107,7 +107,7 @@ A `VALUES` list of more than 1,000 rows is refused for now.
 session parameters yet and convert under `utc-v1`.
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
-exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
+use the built-in policy, which refuses every known divergence, as `--builtin-policy` asks for.
 They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
 `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
 on divergences whose converted SQL raises rather than returns another value). Every command with a report takes

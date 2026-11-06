@@ -1235,7 +1235,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: COUNT,
         constructs: &["fn:COUNT"],
-        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused.",
+        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused. COUNT over a qualified star (t.*) or a star with EXCLUDE, ILIKE, RENAME or REPLACE is refused, as it counts other rows than COUNT(*).",
         failures: &[],
     },
     RuleSpec {
@@ -1250,7 +1250,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: AVERAGE,
         constructs: &["fn:AVG"],
-        conditions: "A NUMBER of scale at most 6 and precision at most 26.",
+        conditions: "A NUMBER of scale at most 6 and precision at most 26. AVG(DISTINCT) of a NUMBER is refused, since Snowflake types it with 3 more decimal places and no recording shows how it rounds.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],

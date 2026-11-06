@@ -63,7 +63,7 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, list, node_construct, payload_object,
+    Payload, field, flag, function_construct, list, node_construct, node_kind, payload_object,
     require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
@@ -71,8 +71,8 @@ use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF,
-    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT,
-    TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
+    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, STAR_KIND, SUM,
+    SUM_FLOAT, TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
@@ -432,6 +432,17 @@ impl AggregateCall<'_> {
     fn count(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(COUNT);
+        let starred = self
+            .payload
+            .get("this")
+            .and_then(node_kind)
+            .is_some_and(|(kind, _)| kind == STAR_KIND);
+        if starred || (flag(self.payload, "star") && flag(self.payload, "distinct")) {
+            return Err(outside_conditions(
+                node_construct("count"),
+                "COUNT over a qualified star or a star with EXCLUDE, ILIKE, RENAME, REPLACE or DISTINCT, which counts other rows than COUNT(*)".to_owned(),
+            ));
+        }
         let inner = match flag(self.payload, "star") {
             true => "*".to_owned(),
             false => {
@@ -488,6 +499,14 @@ impl AggregateCall<'_> {
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
         let argument = self.argument("avg")?;
+        if !self.framed
+            && flag(self.payload, "distinct")
+            && matches!(argument.data_type, SnowflakeType::Number { .. })
+        {
+            return Err(refuse(
+                "AVG(DISTINCT) of a NUMBER, which Snowflake types with 3 more decimal places, not 6, and no recording shows how it rounds".to_owned(),
+            ));
+        }
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
         let data_type = match self.framed {
             true => framed_average(argument.data_type, log),
