@@ -264,6 +264,9 @@ pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
     "TABLE",
 ];
 
+/// The properties a column-form Snowflake external table needs; the first is its stage location.
+pub(crate) const SNOWFLAKE_EXTERNAL_TABLE_REQUIRED: &[&str] = &["LOCATION", "FILE_FORMAT"];
+
 /// The fields every semantic view verified query needs.
 pub(crate) const SNOWFLAKE_VERIFIED_QUERY_FIELDS: &[&str] = &["QUESTION", "SQL"];
 
