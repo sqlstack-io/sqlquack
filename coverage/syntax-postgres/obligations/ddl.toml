@@ -126,6 +126,30 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-aggregate.owner-to.o020"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "(*): an aggregate with no arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.owner-to.o021"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.owner-to.o022"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "ORDER BY with no direct arguments"
+
+[[obligation]]
 id = "pg.ddl.alter-aggregate.rename-to.o001"
 kind = "positive"
 required = true
@@ -250,6 +274,30 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-aggregate.rename-to.o019"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "(*): an aggregate with no arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.rename-to.o020"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.rename-to.o021"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "ORDER BY with no direct arguments"
+
+[[obligation]]
 id = "pg.ddl.alter-aggregate.set-schema.o001"
 kind = "positive"
 required = true
@@ -349,6 +397,30 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.set-schema.o016"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "(*): an aggregate with no arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.set-schema.o017"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+
+[[obligation]]
+id = "pg.ddl.alter-aggregate.set-schema.o018"
+kind = "alternative"
+required = true
+target = "<aggregate_signature>"
+anchor = "doc.sql-alteraggregate / Synopsis"
+note = "ORDER BY with no direct arguments"
 
 [[obligation]]
 id = "pg.ddl.alter-collation.owner-to.o001"
@@ -9925,6 +9997,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.called-on-null-input.o048"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-function.cost.o001"
 kind = "positive"
 required = true
@@ -10121,6 +10201,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.cost.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-function.depends-on-extension.o001"
@@ -10558,6 +10646,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.immutable-stable-volatile.o038"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-function.leakproof.o001"
 kind = "positive"
 required = true
@@ -10752,6 +10848,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.leakproof.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-function.owner-to.o001"
@@ -11177,6 +11281,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.parallel.o033"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-function.rename-to.o001"
 kind = "positive"
 required = true
@@ -11590,6 +11702,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.reset.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-function.reset-all.o001"
 kind = "positive"
 required = true
@@ -11778,6 +11898,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.reset-all.o030"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-function.rows.o001"
@@ -11976,6 +12104,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.rows.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-function.security-invoker-security-definer.o001"
@@ -12222,6 +12358,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.security-invoker-security-definer.o043"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-function.set.o001"
 kind = "positive"
 required = true
@@ -12463,6 +12607,30 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-function.set.o038"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
+id = "pg.ddl.alter-function.set.o039"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "a string value"
+
+[[obligation]]
+id = "pg.ddl.alter-function.set.o040"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "a list of values, a word and a string"
+
+[[obligation]]
 id = "pg.ddl.alter-function.set-from-current.o001"
 kind = "positive"
 required = true
@@ -12671,6 +12839,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.set-from-current.o033"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-function.set-schema.o001"
@@ -13061,6 +13237,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-function.support.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterfunction / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-index.all-in-tablespace-set.o001"
@@ -19951,6 +20135,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-procedure.reset.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-procedure.reset-all.o001"
 kind = "positive"
 required = true
@@ -20139,6 +20331,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-procedure.reset-all.o030"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-procedure.security-invoker-security-definer.o001"
@@ -20385,6 +20585,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-procedure.security-invoker-security-definer.o043"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-procedure.set.o001"
 kind = "positive"
 required = true
@@ -20626,6 +20834,30 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-procedure.set.o038"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
+id = "pg.ddl.alter-procedure.set.o039"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "a string value"
+
+[[obligation]]
+id = "pg.ddl.alter-procedure.set.o040"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "a list of values, a word and a string"
+
+[[obligation]]
 id = "pg.ddl.alter-procedure.set-from-current.o001"
 kind = "positive"
 required = true
@@ -20834,6 +21066,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-procedure.set-from-current.o033"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterprocedure / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-procedure.set-schema.o001"
@@ -21773,6 +22013,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.cost.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.depends-on-extension.o001"
 kind = "positive"
 required = true
@@ -22208,6 +22456,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.immutable-stable-volatile.o038"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.leakproof.o001"
 kind = "positive"
 required = true
@@ -22402,6 +22658,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.leakproof.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-routine.owner-to.o001"
@@ -22827,6 +23091,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.parallel.o033"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.rename-to.o001"
 kind = "positive"
 required = true
@@ -23240,6 +23512,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.reset.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.reset-all.o001"
 kind = "positive"
 required = true
@@ -23428,6 +23708,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.reset-all.o030"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-routine.rows.o001"
@@ -23626,6 +23914,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.rows.o031"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-routine.security-invoker-security-definer.o001"
@@ -23872,6 +24168,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.security-invoker-security-definer.o043"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.set.o001"
 kind = "positive"
 required = true
@@ -24113,6 +24417,30 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-routine.set.o038"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.set.o039"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "a string value"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.set.o040"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "a list of values, a word and a string"
+
+[[obligation]]
 id = "pg.ddl.alter-routine.set-from-current.o001"
 kind = "positive"
 required = true
@@ -24321,6 +24649,14 @@ required = true
 target = "<argname>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-routine.set-from-current.o033"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterroutine / Synopsis"
+note = "two actions in one statement"
 
 [[obligation]]
 id = "pg.ddl.alter-routine.set-schema.o001"
