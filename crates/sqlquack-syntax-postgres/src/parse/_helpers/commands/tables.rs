@@ -402,7 +402,7 @@ impl Parser<'_> {
     }
 
     /// One `ColConstraint`, and whether it is a `COLLATE` clause; `None` when none comes next.
-    fn column_constraint(&mut self) -> Parsing<Option<(Expression, bool)>> {
+    pub(crate) fn column_constraint(&mut self) -> Parsing<Option<(Expression, bool)>> {
         let attribute: Option<&str> = match self.keyword_at(0) {
             Some("deferrable") => Some("DEFERRABLE"),
             Some("not") if self.kw_at(1, "deferrable") => Some("NOT DEFERRABLE"),
@@ -895,7 +895,7 @@ impl Parser<'_> {
     }
 
     /// `func_expr_windowless`: a call by name, or a special call such as `CAST` or `COALESCE`.
-    fn windowless_call(&mut self) -> Parsing<Expression> {
+    pub(crate) fn windowless_call(&mut self) -> Parsing<Expression> {
         let Some(token) = self.peek().cloned() else {
             return Err(self.error());
         };
