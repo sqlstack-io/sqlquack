@@ -1,0 +1,800 @@
+name,kind,left_type,right_type,result_type
+!!,l,,tsquery,tsquery
+!~,b,character,text,boolean
+!~,b,name,text,boolean
+!~,b,text,text,boolean
+!~*,b,character,text,boolean
+!~*,b,name,text,boolean
+!~*,b,text,text,boolean
+!~~,b,bytea,bytea,boolean
+!~~,b,character,text,boolean
+!~~,b,name,text,boolean
+!~~,b,text,text,boolean
+!~~*,b,character,text,boolean
+!~~*,b,name,text,boolean
+!~~*,b,text,text,boolean
+#,l,,path,integer
+#,l,,polygon,integer
+#,b,bigint,bigint,bigint
+#,b,bit,bit,bit
+#,b,box,box,box
+#,b,integer,integer,integer
+#,b,line,line,point
+#,b,lseg,lseg,point
+#,b,smallint,smallint,smallint
+##,b,line,lseg,point
+##,b,lseg,box,point
+##,b,lseg,lseg,point
+##,b,point,box,point
+##,b,point,line,point
+##,b,point,lseg,point
+#-,b,jsonb,text[],jsonb
+#>,b,json,text[],json
+#>,b,jsonb,text[],jsonb
+#>>,b,json,text[],text
+#>>,b,jsonb,text[],text
+%,b,bigint,bigint,bigint
+%,b,integer,integer,integer
+%,b,numeric,numeric,numeric
+%,b,smallint,smallint,smallint
+&,b,bigint,bigint,bigint
+&,b,bit,bit,bit
+&,b,inet,inet,inet
+&,b,integer,integer,integer
+&,b,macaddr,macaddr,macaddr
+&,b,macaddr8,macaddr8,macaddr8
+&,b,smallint,smallint,smallint
+&&,b,anyarray,anyarray,boolean
+&&,b,anymultirange,anymultirange,boolean
+&&,b,anymultirange,anyrange,boolean
+&&,b,anyrange,anymultirange,boolean
+&&,b,anyrange,anyrange,boolean
+&&,b,box,box,boolean
+&&,b,circle,circle,boolean
+&&,b,inet,inet,boolean
+&&,b,polygon,polygon,boolean
+&&,b,tsquery,tsquery,tsquery
+&<,b,anymultirange,anymultirange,boolean
+&<,b,anymultirange,anyrange,boolean
+&<,b,anyrange,anymultirange,boolean
+&<,b,anyrange,anyrange,boolean
+&<,b,box,box,boolean
+&<,b,circle,circle,boolean
+&<,b,polygon,polygon,boolean
+&<|,b,box,box,boolean
+&<|,b,circle,circle,boolean
+&<|,b,polygon,polygon,boolean
+&>,b,anymultirange,anymultirange,boolean
+&>,b,anymultirange,anyrange,boolean
+&>,b,anyrange,anymultirange,boolean
+&>,b,anyrange,anyrange,boolean
+&>,b,box,box,boolean
+&>,b,circle,circle,boolean
+&>,b,polygon,polygon,boolean
+*,b,anymultirange,anymultirange,anymultirange
+*,b,anyrange,anyrange,anyrange
+*,b,bigint,bigint,bigint
+*,b,bigint,integer,bigint
+*,b,bigint,money,money
+*,b,bigint,smallint,bigint
+*,b,box,point,box
+*,b,circle,point,circle
+*,b,double precision,double precision,double precision
+*,b,double precision,interval,interval
+*,b,double precision,money,money
+*,b,double precision,real,double precision
+*,b,integer,bigint,bigint
+*,b,integer,integer,integer
+*,b,integer,money,money
+*,b,integer,smallint,integer
+*,b,interval,double precision,interval
+*,b,money,bigint,money
+*,b,money,double precision,money
+*,b,money,integer,money
+*,b,money,real,money
+*,b,money,smallint,money
+*,b,numeric,numeric,numeric
+*,b,path,point,path
+*,b,point,point,point
+*,b,real,double precision,double precision
+*,b,real,money,money
+*,b,real,real,real
+*,b,smallint,bigint,bigint
+*,b,smallint,integer,integer
+*,b,smallint,money,money
+*,b,smallint,smallint,smallint
+*<,b,record,record,boolean
+*<=,b,record,record,boolean
+*<>,b,record,record,boolean
+*=,b,record,record,boolean
+*>,b,record,record,boolean
+*>=,b,record,record,boolean
++,l,,bigint,bigint
++,l,,double precision,double precision
++,l,,integer,integer
++,l,,numeric,numeric
++,l,,real,real
++,l,,smallint,smallint
++,b,aclitem[],aclitem,aclitem[]
++,b,anymultirange,anymultirange,anymultirange
++,b,anyrange,anyrange,anyrange
++,b,bigint,bigint,bigint
++,b,bigint,inet,inet
++,b,bigint,integer,bigint
++,b,bigint,smallint,bigint
++,b,box,point,box
++,b,circle,point,circle
++,b,date,integer,date
++,b,date,interval,timestamp without time zone
++,b,date,time without time zone,timestamp without time zone
++,b,date,time with time zone,timestamp with time zone
++,b,double precision,double precision,double precision
++,b,double precision,real,double precision
++,b,inet,bigint,inet
++,b,integer,bigint,bigint
++,b,integer,date,date
++,b,integer,integer,integer
++,b,integer,smallint,integer
++,b,interval,date,timestamp without time zone
++,b,interval,interval,interval
++,b,interval,timestamp without time zone,timestamp without time zone
++,b,interval,timestamp with time zone,timestamp with time zone
++,b,interval,time without time zone,time without time zone
++,b,interval,time with time zone,time with time zone
++,b,money,money,money
++,b,numeric,numeric,numeric
++,b,numeric,pg_lsn,pg_lsn
++,b,path,path,path
++,b,path,point,path
++,b,pg_lsn,numeric,pg_lsn
++,b,point,point,point
++,b,real,double precision,double precision
++,b,real,real,real
++,b,smallint,bigint,bigint
++,b,smallint,integer,integer
++,b,smallint,smallint,smallint
++,b,timestamp without time zone,interval,timestamp without time zone
++,b,timestamp with time zone,interval,timestamp with time zone
++,b,time without time zone,date,timestamp without time zone
++,b,time without time zone,interval,time without time zone
++,b,time with time zone,date,timestamp with time zone
++,b,time with time zone,interval,time with time zone
+-,l,,bigint,bigint
+-,l,,double precision,double precision
+-,l,,integer,integer
+-,l,,interval,interval
+-,l,,numeric,numeric
+-,l,,real,real
+-,l,,smallint,smallint
+-,b,aclitem[],aclitem,aclitem[]
+-,b,anymultirange,anymultirange,anymultirange
+-,b,anyrange,anyrange,anyrange
+-,b,bigint,bigint,bigint
+-,b,bigint,integer,bigint
+-,b,bigint,smallint,bigint
+-,b,box,point,box
+-,b,circle,point,circle
+-,b,date,date,integer
+-,b,date,integer,date
+-,b,date,interval,timestamp without time zone
+-,b,double precision,double precision,double precision
+-,b,double precision,real,double precision
+-,b,inet,bigint,inet
+-,b,inet,inet,bigint
+-,b,integer,bigint,bigint
+-,b,integer,integer,integer
+-,b,integer,smallint,integer
+-,b,interval,interval,interval
+-,b,jsonb,integer,jsonb
+-,b,jsonb,text,jsonb
+-,b,jsonb,text[],jsonb
+-,b,money,money,money
+-,b,numeric,numeric,numeric
+-,b,path,point,path
+-,b,pg_lsn,numeric,pg_lsn
+-,b,pg_lsn,pg_lsn,numeric
+-,b,point,point,point
+-,b,real,double precision,double precision
+-,b,real,real,real
+-,b,smallint,bigint,bigint
+-,b,smallint,integer,integer
+-,b,smallint,smallint,smallint
+-,b,timestamp without time zone,interval,timestamp without time zone
+-,b,timestamp without time zone,timestamp without time zone,interval
+-,b,timestamp with time zone,interval,timestamp with time zone
+-,b,timestamp with time zone,timestamp with time zone,interval
+-,b,time without time zone,interval,time without time zone
+-,b,time without time zone,time without time zone,interval
+-,b,time with time zone,interval,time with time zone
+->,b,json,integer,json
+->,b,json,text,json
+->,b,jsonb,integer,jsonb
+->,b,jsonb,text,jsonb
+->>,b,json,integer,text
+->>,b,json,text,text
+->>,b,jsonb,integer,text
+->>,b,jsonb,text,text
+-|-,b,anymultirange,anymultirange,boolean
+-|-,b,anymultirange,anyrange,boolean
+-|-,b,anyrange,anymultirange,boolean
+-|-,b,anyrange,anyrange,boolean
+/,b,bigint,bigint,bigint
+/,b,bigint,integer,bigint
+/,b,bigint,smallint,bigint
+/,b,box,point,box
+/,b,circle,point,circle
+/,b,double precision,double precision,double precision
+/,b,double precision,real,double precision
+/,b,integer,bigint,bigint
+/,b,integer,integer,integer
+/,b,integer,smallint,integer
+/,b,interval,double precision,interval
+/,b,money,bigint,money
+/,b,money,double precision,money
+/,b,money,integer,money
+/,b,money,money,double precision
+/,b,money,real,money
+/,b,money,smallint,money
+/,b,numeric,numeric,numeric
+/,b,path,point,path
+/,b,point,point,point
+/,b,real,double precision,double precision
+/,b,real,real,real
+/,b,smallint,bigint,bigint
+/,b,smallint,integer,integer
+/,b,smallint,smallint,smallint
+<,b,anyarray,anyarray,boolean
+<,b,anyenum,anyenum,boolean
+<,b,anymultirange,anymultirange,boolean
+<,b,anyrange,anyrange,boolean
+<,b,bigint,bigint,boolean
+<,b,bigint,integer,boolean
+<,b,bigint,smallint,boolean
+<,b,bit,bit,boolean
+<,b,bit varying,bit varying,boolean
+<,b,boolean,boolean,boolean
+<,b,box,box,boolean
+<,b,bytea,bytea,boolean
+<,b,"""char""","""char""",boolean
+<,b,character,character,boolean
+<,b,circle,circle,boolean
+<,b,date,date,boolean
+<,b,date,timestamp without time zone,boolean
+<,b,date,timestamp with time zone,boolean
+<,b,double precision,double precision,boolean
+<,b,double precision,real,boolean
+<,b,inet,inet,boolean
+<,b,integer,bigint,boolean
+<,b,integer,integer,boolean
+<,b,integer,smallint,boolean
+<,b,interval,interval,boolean
+<,b,jsonb,jsonb,boolean
+<,b,lseg,lseg,boolean
+<,b,macaddr,macaddr,boolean
+<,b,macaddr8,macaddr8,boolean
+<,b,money,money,boolean
+<,b,name,name,boolean
+<,b,name,text,boolean
+<,b,numeric,numeric,boolean
+<,b,oid,oid,boolean
+<,b,oidvector,oidvector,boolean
+<,b,path,path,boolean
+<,b,pg_lsn,pg_lsn,boolean
+<,b,real,double precision,boolean
+<,b,real,real,boolean
+<,b,record,record,boolean
+<,b,smallint,bigint,boolean
+<,b,smallint,integer,boolean
+<,b,smallint,smallint,boolean
+<,b,text,name,boolean
+<,b,text,text,boolean
+<,b,tid,tid,boolean
+<,b,timestamp without time zone,date,boolean
+<,b,timestamp without time zone,timestamp without time zone,boolean
+<,b,timestamp without time zone,timestamp with time zone,boolean
+<,b,timestamp with time zone,date,boolean
+<,b,timestamp with time zone,timestamp without time zone,boolean
+<,b,timestamp with time zone,timestamp with time zone,boolean
+<,b,time without time zone,time without time zone,boolean
+<,b,time with time zone,time with time zone,boolean
+<,b,tsquery,tsquery,boolean
+<,b,tsvector,tsvector,boolean
+<,b,uuid,uuid,boolean
+<,b,xid8,xid8,boolean
+<->,b,box,box,double precision
+<->,b,box,lseg,double precision
+<->,b,box,point,double precision
+<->,b,circle,circle,double precision
+<->,b,circle,point,double precision
+<->,b,circle,polygon,double precision
+<->,b,line,line,double precision
+<->,b,line,lseg,double precision
+<->,b,line,point,double precision
+<->,b,lseg,box,double precision
+<->,b,lseg,line,double precision
+<->,b,lseg,lseg,double precision
+<->,b,lseg,point,double precision
+<->,b,path,path,double precision
+<->,b,path,point,double precision
+<->,b,point,box,double precision
+<->,b,point,circle,double precision
+<->,b,point,line,double precision
+<->,b,point,lseg,double precision
+<->,b,point,path,double precision
+<->,b,point,point,double precision
+<->,b,point,polygon,double precision
+<->,b,polygon,circle,double precision
+<->,b,polygon,point,double precision
+<->,b,polygon,polygon,double precision
+<->,b,tsquery,tsquery,tsquery
+<<,b,anymultirange,anymultirange,boolean
+<<,b,anymultirange,anyrange,boolean
+<<,b,anyrange,anymultirange,boolean
+<<,b,anyrange,anyrange,boolean
+<<,b,bigint,integer,bigint
+<<,b,bit,integer,bit
+<<,b,box,box,boolean
+<<,b,circle,circle,boolean
+<<,b,inet,inet,boolean
+<<,b,integer,integer,integer
+<<,b,point,point,boolean
+<<,b,polygon,polygon,boolean
+<<,b,smallint,integer,smallint
+<<=,b,inet,inet,boolean
+<<|,b,box,box,boolean
+<<|,b,circle,circle,boolean
+<<|,b,point,point,boolean
+<<|,b,polygon,polygon,boolean
+<=,b,anyarray,anyarray,boolean
+<=,b,anyenum,anyenum,boolean
+<=,b,anymultirange,anymultirange,boolean
+<=,b,anyrange,anyrange,boolean
+<=,b,bigint,bigint,boolean
+<=,b,bigint,integer,boolean
+<=,b,bigint,smallint,boolean
+<=,b,bit,bit,boolean
+<=,b,bit varying,bit varying,boolean
+<=,b,boolean,boolean,boolean
+<=,b,box,box,boolean
+<=,b,bytea,bytea,boolean
+<=,b,"""char""","""char""",boolean
+<=,b,character,character,boolean
+<=,b,circle,circle,boolean
+<=,b,date,date,boolean
+<=,b,date,timestamp without time zone,boolean
+<=,b,date,timestamp with time zone,boolean
+<=,b,double precision,double precision,boolean
+<=,b,double precision,real,boolean
+<=,b,inet,inet,boolean
+<=,b,integer,bigint,boolean
+<=,b,integer,integer,boolean
+<=,b,integer,smallint,boolean
+<=,b,interval,interval,boolean
+<=,b,jsonb,jsonb,boolean
+<=,b,lseg,lseg,boolean
+<=,b,macaddr,macaddr,boolean
+<=,b,macaddr8,macaddr8,boolean
+<=,b,money,money,boolean
+<=,b,name,name,boolean
+<=,b,name,text,boolean
+<=,b,numeric,numeric,boolean
+<=,b,oid,oid,boolean
+<=,b,oidvector,oidvector,boolean
+<=,b,path,path,boolean
+<=,b,pg_lsn,pg_lsn,boolean
+<=,b,real,double precision,boolean
+<=,b,real,real,boolean
+<=,b,record,record,boolean
+<=,b,smallint,bigint,boolean
+<=,b,smallint,integer,boolean
+<=,b,smallint,smallint,boolean
+<=,b,text,name,boolean
+<=,b,text,text,boolean
+<=,b,tid,tid,boolean
+<=,b,timestamp without time zone,date,boolean
+<=,b,timestamp without time zone,timestamp without time zone,boolean
+<=,b,timestamp without time zone,timestamp with time zone,boolean
+<=,b,timestamp with time zone,date,boolean
+<=,b,timestamp with time zone,timestamp without time zone,boolean
+<=,b,timestamp with time zone,timestamp with time zone,boolean
+<=,b,time without time zone,time without time zone,boolean
+<=,b,time with time zone,time with time zone,boolean
+<=,b,tsquery,tsquery,boolean
+<=,b,tsvector,tsvector,boolean
+<=,b,uuid,uuid,boolean
+<=,b,xid8,xid8,boolean
+<>,b,anyarray,anyarray,boolean
+<>,b,anyenum,anyenum,boolean
+<>,b,anymultirange,anymultirange,boolean
+<>,b,anyrange,anyrange,boolean
+<>,b,bigint,bigint,boolean
+<>,b,bigint,integer,boolean
+<>,b,bigint,smallint,boolean
+<>,b,bit,bit,boolean
+<>,b,bit varying,bit varying,boolean
+<>,b,boolean,boolean,boolean
+<>,b,bytea,bytea,boolean
+<>,b,"""char""","""char""",boolean
+<>,b,character,character,boolean
+<>,b,circle,circle,boolean
+<>,b,date,date,boolean
+<>,b,date,timestamp without time zone,boolean
+<>,b,date,timestamp with time zone,boolean
+<>,b,double precision,double precision,boolean
+<>,b,double precision,real,boolean
+<>,b,inet,inet,boolean
+<>,b,integer,bigint,boolean
+<>,b,integer,integer,boolean
+<>,b,integer,smallint,boolean
+<>,b,interval,interval,boolean
+<>,b,jsonb,jsonb,boolean
+<>,b,lseg,lseg,boolean
+<>,b,macaddr,macaddr,boolean
+<>,b,macaddr8,macaddr8,boolean
+<>,b,money,money,boolean
+<>,b,name,name,boolean
+<>,b,name,text,boolean
+<>,b,numeric,numeric,boolean
+<>,b,oid,oid,boolean
+<>,b,oidvector,oidvector,boolean
+<>,b,pg_lsn,pg_lsn,boolean
+<>,b,point,point,boolean
+<>,b,real,double precision,boolean
+<>,b,real,real,boolean
+<>,b,record,record,boolean
+<>,b,smallint,bigint,boolean
+<>,b,smallint,integer,boolean
+<>,b,smallint,smallint,boolean
+<>,b,text,name,boolean
+<>,b,text,text,boolean
+<>,b,tid,tid,boolean
+<>,b,timestamp without time zone,date,boolean
+<>,b,timestamp without time zone,timestamp without time zone,boolean
+<>,b,timestamp without time zone,timestamp with time zone,boolean
+<>,b,timestamp with time zone,date,boolean
+<>,b,timestamp with time zone,timestamp without time zone,boolean
+<>,b,timestamp with time zone,timestamp with time zone,boolean
+<>,b,time without time zone,time without time zone,boolean
+<>,b,time with time zone,time with time zone,boolean
+<>,b,tsquery,tsquery,boolean
+<>,b,tsvector,tsvector,boolean
+<>,b,uuid,uuid,boolean
+<>,b,xid,integer,boolean
+<>,b,xid,xid,boolean
+<>,b,xid8,xid8,boolean
+<@,b,anyarray,anyarray,boolean
+<@,b,anyelement,anymultirange,boolean
+<@,b,anyelement,anyrange,boolean
+<@,b,anymultirange,anymultirange,boolean
+<@,b,anymultirange,anyrange,boolean
+<@,b,anyrange,anymultirange,boolean
+<@,b,anyrange,anyrange,boolean
+<@,b,box,box,boolean
+<@,b,circle,circle,boolean
+<@,b,jsonb,jsonb,boolean
+<@,b,lseg,box,boolean
+<@,b,lseg,line,boolean
+<@,b,point,box,boolean
+<@,b,point,circle,boolean
+<@,b,point,line,boolean
+<@,b,point,lseg,boolean
+<@,b,point,path,boolean
+<@,b,point,polygon,boolean
+<@,b,polygon,polygon,boolean
+<@,b,tsquery,tsquery,boolean
+<^,b,box,box,boolean
+<^,b,point,point,boolean
+=,b,aclitem,aclitem,boolean
+=,b,anyarray,anyarray,boolean
+=,b,anyenum,anyenum,boolean
+=,b,anymultirange,anymultirange,boolean
+=,b,anyrange,anyrange,boolean
+=,b,bigint,bigint,boolean
+=,b,bigint,integer,boolean
+=,b,bigint,smallint,boolean
+=,b,bit,bit,boolean
+=,b,bit varying,bit varying,boolean
+=,b,boolean,boolean,boolean
+=,b,box,box,boolean
+=,b,bytea,bytea,boolean
+=,b,"""char""","""char""",boolean
+=,b,character,character,boolean
+=,b,cid,cid,boolean
+=,b,circle,circle,boolean
+=,b,date,date,boolean
+=,b,date,timestamp without time zone,boolean
+=,b,date,timestamp with time zone,boolean
+=,b,double precision,double precision,boolean
+=,b,double precision,real,boolean
+=,b,inet,inet,boolean
+=,b,integer,bigint,boolean
+=,b,integer,integer,boolean
+=,b,integer,smallint,boolean
+=,b,interval,interval,boolean
+=,b,jsonb,jsonb,boolean
+=,b,line,line,boolean
+=,b,lseg,lseg,boolean
+=,b,macaddr,macaddr,boolean
+=,b,macaddr8,macaddr8,boolean
+=,b,money,money,boolean
+=,b,name,name,boolean
+=,b,name,text,boolean
+=,b,numeric,numeric,boolean
+=,b,oid,oid,boolean
+=,b,oidvector,oidvector,boolean
+=,b,path,path,boolean
+=,b,pg_lsn,pg_lsn,boolean
+=,b,real,double precision,boolean
+=,b,real,real,boolean
+=,b,record,record,boolean
+=,b,smallint,bigint,boolean
+=,b,smallint,integer,boolean
+=,b,smallint,smallint,boolean
+=,b,text,name,boolean
+=,b,text,text,boolean
+=,b,tid,tid,boolean
+=,b,timestamp without time zone,date,boolean
+=,b,timestamp without time zone,timestamp without time zone,boolean
+=,b,timestamp without time zone,timestamp with time zone,boolean
+=,b,timestamp with time zone,date,boolean
+=,b,timestamp with time zone,timestamp without time zone,boolean
+=,b,timestamp with time zone,timestamp with time zone,boolean
+=,b,time without time zone,time without time zone,boolean
+=,b,time with time zone,time with time zone,boolean
+=,b,tsquery,tsquery,boolean
+=,b,tsvector,tsvector,boolean
+=,b,uuid,uuid,boolean
+=,b,xid,integer,boolean
+=,b,xid,xid,boolean
+=,b,xid8,xid8,boolean
+>,b,anyarray,anyarray,boolean
+>,b,anyenum,anyenum,boolean
+>,b,anymultirange,anymultirange,boolean
+>,b,anyrange,anyrange,boolean
+>,b,bigint,bigint,boolean
+>,b,bigint,integer,boolean
+>,b,bigint,smallint,boolean
+>,b,bit,bit,boolean
+>,b,bit varying,bit varying,boolean
+>,b,boolean,boolean,boolean
+>,b,box,box,boolean
+>,b,bytea,bytea,boolean
+>,b,"""char""","""char""",boolean
+>,b,character,character,boolean
+>,b,circle,circle,boolean
+>,b,date,date,boolean
+>,b,date,timestamp without time zone,boolean
+>,b,date,timestamp with time zone,boolean
+>,b,double precision,double precision,boolean
+>,b,double precision,real,boolean
+>,b,inet,inet,boolean
+>,b,integer,bigint,boolean
+>,b,integer,integer,boolean
+>,b,integer,smallint,boolean
+>,b,interval,interval,boolean
+>,b,jsonb,jsonb,boolean
+>,b,lseg,lseg,boolean
+>,b,macaddr,macaddr,boolean
+>,b,macaddr8,macaddr8,boolean
+>,b,money,money,boolean
+>,b,name,name,boolean
+>,b,name,text,boolean
+>,b,numeric,numeric,boolean
+>,b,oid,oid,boolean
+>,b,oidvector,oidvector,boolean
+>,b,path,path,boolean
+>,b,pg_lsn,pg_lsn,boolean
+>,b,real,double precision,boolean
+>,b,real,real,boolean
+>,b,record,record,boolean
+>,b,smallint,bigint,boolean
+>,b,smallint,integer,boolean
+>,b,smallint,smallint,boolean
+>,b,text,name,boolean
+>,b,text,text,boolean
+>,b,tid,tid,boolean
+>,b,timestamp without time zone,date,boolean
+>,b,timestamp without time zone,timestamp without time zone,boolean
+>,b,timestamp without time zone,timestamp with time zone,boolean
+>,b,timestamp with time zone,date,boolean
+>,b,timestamp with time zone,timestamp without time zone,boolean
+>,b,timestamp with time zone,timestamp with time zone,boolean
+>,b,time without time zone,time without time zone,boolean
+>,b,time with time zone,time with time zone,boolean
+>,b,tsquery,tsquery,boolean
+>,b,tsvector,tsvector,boolean
+>,b,uuid,uuid,boolean
+>,b,xid8,xid8,boolean
+>=,b,anyarray,anyarray,boolean
+>=,b,anyenum,anyenum,boolean
+>=,b,anymultirange,anymultirange,boolean
+>=,b,anyrange,anyrange,boolean
+>=,b,bigint,bigint,boolean
+>=,b,bigint,integer,boolean
+>=,b,bigint,smallint,boolean
+>=,b,bit,bit,boolean
+>=,b,bit varying,bit varying,boolean
+>=,b,boolean,boolean,boolean
+>=,b,box,box,boolean
+>=,b,bytea,bytea,boolean
+>=,b,"""char""","""char""",boolean
+>=,b,character,character,boolean
+>=,b,circle,circle,boolean
+>=,b,date,date,boolean
+>=,b,date,timestamp without time zone,boolean
+>=,b,date,timestamp with time zone,boolean
+>=,b,double precision,double precision,boolean
+>=,b,double precision,real,boolean
+>=,b,inet,inet,boolean
+>=,b,integer,bigint,boolean
+>=,b,integer,integer,boolean
+>=,b,integer,smallint,boolean
+>=,b,interval,interval,boolean
+>=,b,jsonb,jsonb,boolean
+>=,b,lseg,lseg,boolean
+>=,b,macaddr,macaddr,boolean
+>=,b,macaddr8,macaddr8,boolean
+>=,b,money,money,boolean
+>=,b,name,name,boolean
+>=,b,name,text,boolean
+>=,b,numeric,numeric,boolean
+>=,b,oid,oid,boolean
+>=,b,oidvector,oidvector,boolean
+>=,b,path,path,boolean
+>=,b,pg_lsn,pg_lsn,boolean
+>=,b,real,double precision,boolean
+>=,b,real,real,boolean
+>=,b,record,record,boolean
+>=,b,smallint,bigint,boolean
+>=,b,smallint,integer,boolean
+>=,b,smallint,smallint,boolean
+>=,b,text,name,boolean
+>=,b,text,text,boolean
+>=,b,tid,tid,boolean
+>=,b,timestamp without time zone,date,boolean
+>=,b,timestamp without time zone,timestamp without time zone,boolean
+>=,b,timestamp without time zone,timestamp with time zone,boolean
+>=,b,timestamp with time zone,date,boolean
+>=,b,timestamp with time zone,timestamp without time zone,boolean
+>=,b,timestamp with time zone,timestamp with time zone,boolean
+>=,b,time without time zone,time without time zone,boolean
+>=,b,time with time zone,time with time zone,boolean
+>=,b,tsquery,tsquery,boolean
+>=,b,tsvector,tsvector,boolean
+>=,b,uuid,uuid,boolean
+>=,b,xid8,xid8,boolean
+>>,b,anymultirange,anymultirange,boolean
+>>,b,anymultirange,anyrange,boolean
+>>,b,anyrange,anymultirange,boolean
+>>,b,anyrange,anyrange,boolean
+>>,b,bigint,integer,bigint
+>>,b,bit,integer,bit
+>>,b,box,box,boolean
+>>,b,circle,circle,boolean
+>>,b,inet,inet,boolean
+>>,b,integer,integer,integer
+>>,b,point,point,boolean
+>>,b,polygon,polygon,boolean
+>>,b,smallint,integer,smallint
+>>=,b,inet,inet,boolean
+>^,b,box,box,boolean
+>^,b,point,point,boolean
+?,b,jsonb,text,boolean
+?#,b,box,box,boolean
+?#,b,line,box,boolean
+?#,b,line,line,boolean
+?#,b,lseg,box,boolean
+?#,b,lseg,line,boolean
+?#,b,lseg,lseg,boolean
+?#,b,path,path,boolean
+?&,b,jsonb,text[],boolean
+?-,l,,line,boolean
+?-,l,,lseg,boolean
+?-,b,point,point,boolean
+?-|,b,line,line,boolean
+?-|,b,lseg,lseg,boolean
+?|,l,,line,boolean
+?|,l,,lseg,boolean
+?|,b,jsonb,text[],boolean
+?|,b,point,point,boolean
+?||,b,line,line,boolean
+?||,b,lseg,lseg,boolean
+@,l,,bigint,bigint
+@,l,,double precision,double precision
+@,l,,integer,integer
+@,l,,numeric,numeric
+@,l,,real,real
+@,l,,smallint,smallint
+@-@,l,,lseg,double precision
+@-@,l,,path,double precision
+@>,b,aclitem[],aclitem,boolean
+@>,b,anyarray,anyarray,boolean
+@>,b,anymultirange,anyelement,boolean
+@>,b,anymultirange,anymultirange,boolean
+@>,b,anymultirange,anyrange,boolean
+@>,b,anyrange,anyelement,boolean
+@>,b,anyrange,anymultirange,boolean
+@>,b,anyrange,anyrange,boolean
+@>,b,box,box,boolean
+@>,b,box,point,boolean
+@>,b,circle,circle,boolean
+@>,b,circle,point,boolean
+@>,b,jsonb,jsonb,boolean
+@>,b,path,point,boolean
+@>,b,polygon,point,boolean
+@>,b,polygon,polygon,boolean
+@>,b,tsquery,tsquery,boolean
+@?,b,jsonb,jsonpath,boolean
+@@,l,,box,point
+@@,l,,circle,point
+@@,l,,lseg,point
+@@,l,,polygon,point
+@@,b,jsonb,jsonpath,boolean
+@@,b,text,text,boolean
+@@,b,text,tsquery,boolean
+@@,b,tsquery,tsvector,boolean
+@@,b,tsvector,tsquery,boolean
+@@@,b,tsquery,tsvector,boolean
+@@@,b,tsvector,tsquery,boolean
+^,b,double precision,double precision,double precision
+^,b,numeric,numeric,numeric
+^@,b,text,text,boolean
+|,b,bigint,bigint,bigint
+|,b,bit,bit,bit
+|,b,inet,inet,inet
+|,b,integer,integer,integer
+|,b,macaddr,macaddr,macaddr
+|,b,macaddr8,macaddr8,macaddr8
+|,b,smallint,smallint,smallint
+|&>,b,box,box,boolean
+|&>,b,circle,circle,boolean
+|&>,b,polygon,polygon,boolean
+|/,l,,double precision,double precision
+|>>,b,box,box,boolean
+|>>,b,circle,circle,boolean
+|>>,b,point,point,boolean
+|>>,b,polygon,polygon,boolean
+||,b,anycompatible,anycompatiblearray,anycompatiblearray
+||,b,anycompatiblearray,anycompatible,anycompatiblearray
+||,b,anycompatiblearray,anycompatiblearray,anycompatiblearray
+||,b,anynonarray,text,text
+||,b,bit varying,bit varying,bit varying
+||,b,bytea,bytea,bytea
+||,b,jsonb,jsonb,jsonb
+||,b,text,anynonarray,text
+||,b,text,text,text
+||,b,tsquery,tsquery,tsquery
+||,b,tsvector,tsvector,tsvector
+||/,l,,double precision,double precision
+~,l,,bigint,bigint
+~,l,,bit,bit
+~,l,,inet,inet
+~,l,,integer,integer
+~,l,,macaddr,macaddr
+~,l,,macaddr8,macaddr8
+~,l,,smallint,smallint
+~,b,character,text,boolean
+~,b,name,text,boolean
+~,b,text,text,boolean
+~*,b,character,text,boolean
+~*,b,name,text,boolean
+~*,b,text,text,boolean
+~<=~,b,character,character,boolean
+~<=~,b,text,text,boolean
+~<~,b,character,character,boolean
+~<~,b,text,text,boolean
+~=,b,box,box,boolean
+~=,b,circle,circle,boolean
+~=,b,point,point,boolean
+~=,b,polygon,polygon,boolean
+~>=~,b,character,character,boolean
+~>=~,b,text,text,boolean
+~>~,b,character,character,boolean
+~>~,b,text,text,boolean
+~~,b,bytea,bytea,boolean
+~~,b,character,text,boolean
+~~,b,name,text,boolean
+~~,b,text,text,boolean
+~~*,b,character,text,boolean
+~~*,b,name,text,boolean
+~~*,b,text,text,boolean

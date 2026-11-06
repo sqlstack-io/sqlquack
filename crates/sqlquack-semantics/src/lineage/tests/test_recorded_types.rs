@@ -1,10 +1,10 @@
 use sqlquack_syntax::{Dialect, ParseOptions};
 
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
+use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::Nullability::{NonNull, Nullable, Unknown};
-use crate::lineage::tests::helpers::typed_shop_schema;
+use crate::lineage::tests::helpers::{typed_postgres_shop_schema, typed_shop_schema};
 use crate::lineage::tests::test_types::DialectTypeTestCase;
 
 #[test]
@@ -162,6 +162,66 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
         },
     ];
     let schema = typed_shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: test_case.profile,
+            schema: &schema,
+            sql: None,
+        };
+        let lineage = query_lineage(
+            test_case.sql,
+            test_case.dialect,
+            &ParseOptions::default(),
+            context,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error:?}", test_case.description));
+        let outputs: Vec<(&str, Option<&str>, _)> = lineage
+            .outputs
+            .iter()
+            .map(|output| {
+                (
+                    output.name.as_str(),
+                    output.data_type.as_deref(),
+                    output.nullability,
+                )
+            })
+            .collect();
+        assert_eq!(
+            outputs,
+            test_case.expected_outputs.to_vec(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_postgres_query_when_typing_outputs_then_types_follow_postgresql_18_6() {
+    let test_cases = [DialectTypeTestCase {
+        description: "literals, built-in calls, value functions and common types (18.6 format_type of a view)",
+        sql: "SELECT 'lit' AS a, upper(status) AS b, status || 'x' AS c, length(status) AS d, \
+              round(price) AS e, sqrt(quantity) AS f, coalesce(status, 'x') AS g, max(status) AS h, \
+              sum(quantity) AS i, avg(quantity) AS j, now() AS k, current_date AS l, \
+              CASE WHEN true THEN 'x' ELSE 'y' END AS m FROM orders GROUP BY status, price, quantity",
+        dialect: Dialect::PostgreSQL,
+        profile: &POSTGRES,
+        expected_outputs: &[
+            ("a", Some("TEXT"), NonNull),
+            ("b", Some("TEXT"), Unknown),
+            ("c", Some("TEXT"), Unknown),
+            ("d", Some("INT"), Unknown),
+            ("e", Some("NUMERIC"), Unknown),
+            ("f", Some("DOUBLE"), Unknown),
+            ("g", Some("VARCHAR"), NonNull),
+            ("h", Some("TEXT"), Unknown),
+            ("i", Some("BIGINT"), Unknown),
+            ("j", Some("NUMERIC"), Unknown),
+            ("k", Some("TIMESTAMPTZ"), Unknown),
+            ("l", Some("DATE"), Unknown),
+            ("m", Some("TEXT"), Unknown),
+        ],
+    }];
+    let schema = typed_postgres_shop_schema();
     for test_case in test_cases {
         let context = LineageContext {
             profile: test_case.profile,
