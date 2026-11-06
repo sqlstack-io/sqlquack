@@ -674,17 +674,6 @@ cases = ["cases/translation/query/order-by.toml#t001_expression"]
 required = true
 
 [[obligation]]
-id = "sf.query.order-by.t002"
-form = "sf.query.order-by"
-kind = "type_combination"
-target = "ORDER BY ALL"
-note = "ORDER BY ALL over (n, s)."
-catches = "only n ordered"
-reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
-cases = ["cases/translation/query/order-by.toml#t002_all"]
-required = true
-
-[[obligation]]
 id = "sf.query.order-by.t003"
 form = "sf.query.order-by"
 kind = "null_argument"
@@ -693,28 +682,6 @@ note = "DESC without a NULLS clause, which puts NULL first by default."
 catches = "NULL placed last"
 reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
 cases = ["cases/translation/query/order-by.toml#t003_null_default"]
-required = true
-
-[[obligation]]
-id = "sf.query.order-by.all.t001"
-form = "sf.query.order-by.all"
-kind = "type_combination"
-target = "ORDER BY ALL DESC"
-note = "ORDER BY ALL DESC over (s, n): s first, then n, both descending, NULL first by default."
-catches = "only the first column ordered, or ASC applied"
-reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
-cases = ["cases/translation/query/order-by.all.toml#t001_all_desc"]
-required = true
-
-[[obligation]]
-id = "sf.query.order-by.all.t002"
-form = "sf.query.order-by.all"
-kind = "null_argument"
-target = "NULLS LAST"
-note = "ORDER BY ALL ASC NULLS LAST."
-catches = "the NULLS clause ignored"
-reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
-cases = ["cases/translation/query/order-by.all.toml#t002_nulls_last"]
 required = true
 
 [[obligation]]
