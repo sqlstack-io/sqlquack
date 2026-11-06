@@ -389,7 +389,7 @@
     "pg.dml.delete": "unverified",
     "pg.dml.insert": "unverified",
     "pg.dml.merge": "unverified",
-    "pg.dml.truncate": "unverified",
+    "pg.dml.truncate": "verified",
     "pg.dml.update": "unverified",
     "pg.expressions.array.op-amp-amp": "verified",
     "pg.expressions.array.op-at-gt": "verified",
