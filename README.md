@@ -113,6 +113,17 @@ They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-
 on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
 `--format text|json`; `--json` is short for `--format json`.
 
+The folder holding the policy file is a project, laid out as a SQLBuild project. `convert` and
+`census` read the tables in `sources/*.yml` (SQLBuild's source format), the functions in
+`functions/sql/*.sql` (a `FUNCTION ( ... );` header, then the body) and `functions/python/*.py` (a
+`@udf(...)` decorator imported from `sqlbuild.functions` or `sqlquack`), and the
+overrides in `overrides/`, so a SQLBuild project's folders work unchanged. `sqlquack.toml` holds
+`[project.session]` (as `--session`) and `[project.confirm]` with `python_runtime`, `utc_session`
+and `declared_offsets` (as the confirmation flags), and folder paths under `[project]` only where
+they differ from the defaults. Flags apply on top for one run, `--schema` adds to the project's
+declarations, and a name declared twice is an error. The Python API takes the folder as
+`ConvertOptions(project=...)`.
+
 HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
 run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
 deduplication or change detection can opt in. A policy file is complete on its own, so start from

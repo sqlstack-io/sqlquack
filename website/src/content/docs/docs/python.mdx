@@ -73,14 +73,18 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 | `rendered` | `str` | The refusals as the command line prints them. |
 | `report` | `Mapping[str, Any]` | Exactly `sqlquack convert --json`'s report. |
 
-`ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
-`schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
+`ConvertOptions` has `project` and one field per [`convert`](/docs/cli/convert/) flag, with the
+same defaults: `schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
 `confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides` and
 `verified_overrides`. `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
 the parsed contents. `session` and `verified_overrides` take a mapping, such as
-`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings. With `policy` and
-`builtin_policy` both unset, `convert` reads `sqlquack.toml` from the current directory and raises
-`SqlQuackError` when there is none.
+`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
+
+`project` takes a [project](/docs/project/) folder: its `sqlquack.toml` is the policy unless
+`policy` names another, and its sources, functions, overrides, session and confirmations apply with
+the other options on top, as flags do. With `project`, `policy` and `builtin_policy` all unset,
+`convert` reads `sqlquack.toml` from the current directory and raises `SqlQuackError` when there is
+none.
 
 ## Diagnostics
 

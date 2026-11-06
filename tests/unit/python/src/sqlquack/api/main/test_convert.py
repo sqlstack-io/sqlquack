@@ -12,6 +12,7 @@ from tests.unit.python.src.sqlquack.api.main._test_types import (
     CommandLineTestCase,
     DeepChainTestCase,
     FailureTestCase,
+    ProjectTestCase,
     TypedDiagnosticTestCase,
 )
 from tests.unit.python.src.sqlquack.api.main.helpers import command_report, schema_file
@@ -173,3 +174,42 @@ def test_given_a_long_flat_chain_when_converting_then_the_interpreter_survives(
     )
     assert conversion.converted is test_case.expected_converted
     assert tuple(found.code for found in conversion.diagnostics) == test_case.expected_codes
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ProjectTestCase(
+            description="the project's sources type the query and its session applies",
+            session={},
+            arguments=(),
+            expected_notes=1,
+        ),
+        ProjectTestCase(
+            description="a session option replaces the project's value for the call",
+            session={"TIMEZONE": "UTC"},
+            arguments=("--session", "TIMEZONE=UTC"),
+            expected_notes=0,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_project_folder_when_converting_then_its_sources_and_settings_apply(
+    test_case: ProjectTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    project: Path = tmp_path / "project"
+    (project / "sources").mkdir(parents=True)
+    (project / "sqlquack.toml").write_text(
+        Path(POLICY).read_text() + '\n[project.session]\nTIMEZONE = "America/New_York"\n'
+    )
+    (project / "sources" / "raw.yml").write_text(
+        "sources:\n  - name: orders\n    columns:\n      - name: order_id\n"
+        "        type: NUMBER(38,0)\n"
+    )
+    monkeypatch.chdir(tmp_path)
+    sql: str = "SELECT order_id + 1 AS next_id FROM orders"
+    options: ConvertOptions = ConvertOptions(project=project, session=test_case.session)
+    conversion: Conversion = sqlquack.convert(sql=sql, options=options)
+    assert conversion.converted is True
+    assert conversion.report == command_report(sql, test_case.arguments, project)
+    assert len(conversion.notes) == test_case.expected_notes

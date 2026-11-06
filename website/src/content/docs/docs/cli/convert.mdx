@@ -52,9 +52,9 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 
 | Option | Meaning |
 |--------|---------|
-| `--schema <file>` | The relations and functions the SQL reads. See [Schema files](/docs/schema/). |
-| `--session NAME=VALUE` | A Snowflake session parameter of your session. Repeatable. See [Sessions](/docs/policy/#sessions). |
-| `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. |
+| `--schema <file>` | The relations and functions the SQL reads, added to the [project](/docs/project/)'s. See [Schema files](/docs/schema/). |
+| `--session NAME=VALUE` | A Snowflake session parameter of your session, replacing the project's. Repeatable. See [Sessions](/docs/policy/#sessions). |
+| `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 

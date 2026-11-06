@@ -49,6 +49,7 @@ rayon = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # The Python module; abi3, so one build loads into every CPython from 3.12.
+saphyr-parser = "0.1"
 pyo3 = { version = "0.30.1", features = ["abi3-py312"] }
 sha2 = "0.10"
 sqlquack = { path = "crates/sqlquack" }

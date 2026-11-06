@@ -3,6 +3,7 @@
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_core::refusals::constants::NEEDS_DIVERGENCE;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_core::refusals::models::Refusal;
@@ -68,8 +69,8 @@ fn rely_on_python(name: &str, construct: &Construct, context: &Context<'_>) -> R
     if !context.options.divergences.contains_key(PROJECT_UDF) {
         return Err(Refusal {
             reason: format!(
-                "the Python function {name}, which runs only where a Python runtime registers it: \
-                 assumption `{PROJECT_UDF}`, which needs --python-runtime"
+                "the Python function {name}, which runs only where a Python runtime registers it,\
+                 {NEEDS_DIVERGENCE}{PROJECT_UDF}`, an assumption the caller has not confirmed"
             ),
             ..refused_divergence(construct.clone(), PROJECT_UDF)
         });

@@ -293,3 +293,29 @@ pub(crate) struct SchemaErrorTestCase {
     pub(crate) schema: &'static str,
     pub(crate) expected_error: &'static str,
 }
+
+/// A file of a project, by its path under the project folder.
+#[derive(Clone, Copy)]
+pub(crate) struct ProjectFile {
+    pub(crate) path: &'static str,
+    pub(crate) text: &'static str,
+}
+
+/// A project's files and `[project]` settings, the convert flags, and what the report must hold.
+pub(crate) struct ProjectTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) files: &'static [ProjectFile],
+    /// TOML appended to the repository's policy file.
+    pub(crate) project: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) sql: &'static str,
+    pub(crate) expected_exit: Option<i32>,
+    pub(crate) expected_output: &'static str,
+}
+
+/// How `sqlquack convert --json` ended in a project folder.
+pub(crate) struct ProjectOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) stdout: String,
+    pub(crate) stderr: String,
+}

@@ -18,6 +18,8 @@ mod test_evidence_commands;
 mod test_explain;
 #[path = "cli/test_function.rs"]
 mod test_function;
+#[path = "cli/test_project.rs"]
+mod test_project;
 #[path = "cli/test_review.rs"]
 mod test_review;
 #[path = "cli/test_types.rs"]

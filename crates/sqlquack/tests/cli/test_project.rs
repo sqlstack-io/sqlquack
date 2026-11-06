@@ -1,0 +1,241 @@
+use crate::helpers::project_convert;
+use crate::test_types::{ProjectFile, ProjectTestCase};
+
+/// A SQLBuild source file, with keys SQLQuack does not read.
+const SOURCES: ProjectFile = ProjectFile {
+    path: "sources/raw.yml",
+    text: "sources:\n  - name: raw__orders\n    description: Orders, as loaded\n    contract: enforced\n    columns:\n      - name: id\n        type: INTEGER\n        nullable: false\n      - name: status\n        type: VARCHAR\n        audits: [not_null]\n  - name: raw__inline\n    expression: SELECT 1 AS id\n    columns:\n      - name: id\n        type: INTEGER\n",
+};
+/// A SQLBuild SQL function file, its description holding a comma and parentheses.
+const SQL_FUNCTION: ProjectFile = ProjectFile {
+    path: "functions/sql/is_done.sql",
+    text: "FUNCTION (\n  description \"Whether a status counts as done (shipped, or delivered)\",\n  arguments (order_status VARCHAR),\n  returns BOOLEAN,\n);\n\norder_status IN ('shipped', 'delivered')\n",
+};
+/// A SQLBuild Python function file, unchanged.
+const PYTHON_FUNCTION: ProjectFile = ProjectFile {
+    path: "functions/python/shout.py",
+    text: "from sqlbuild.functions import udf\n\n\n@udf(\n    arguments={\"text\": \"VARCHAR\"},\n    returns=\"VARCHAR\",\n    runtime_version=\"3.11\",\n    description=\"\"\"Upper case, with a comma, here.\"\"\",\n)\ndef main(text: str | None) -> str | None:\n    return None if text is None else text.upper()\n",
+};
+
+#[test]
+fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_functions() {
+    let test_cases = [
+        ProjectTestCase {
+            description: "a source table types the query without --schema",
+            files: &[SOURCES],
+            project: "",
+            flags: &[],
+            sql: "SELECT id + 1 AS n FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"converted\": true",
+        },
+        ProjectTestCase {
+            description: "an inline-expression source is not a table, so a query of it refuses",
+            files: &[SOURCES],
+            project: "",
+            flags: &[],
+            sql: "SELECT id + 1 AS n FROM raw__inline",
+            expected_exit: Some(1),
+            expected_output: "\"converted\": false",
+        },
+        ProjectTestCase {
+            description: "a SQL function file declares a function the query may call",
+            files: &[SOURCES, SQL_FUNCTION],
+            project: "",
+            flags: &[],
+            sql: "SELECT is_done(status) AS d FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"converted\": true",
+        },
+        ProjectTestCase {
+            description: "a Python function file is listed once the project confirms its runtime",
+            files: &[SOURCES, PYTHON_FUNCTION],
+            project: "[project.confirm]\npython_runtime = true\n",
+            flags: &[],
+            sql: "SELECT shout(status) AS s FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"name\": \"SHOUT\"",
+        },
+        ProjectTestCase {
+            description: "a Python function file may import udf from sqlquack instead",
+            files: &[
+                SOURCES,
+                ProjectFile {
+                    path: "functions/python/shout.py",
+                    text: "from sqlquack import udf\n\n@udf(arguments={'text': 'VARCHAR'}, returns='VARCHAR')\ndef main(text):\n    return text\n",
+                },
+            ],
+            project: "[project.confirm]\npython_runtime = true\n",
+            flags: &[],
+            sql: "SELECT shout(status) AS s FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"name\": \"SHOUT\"",
+        },
+        ProjectTestCase {
+            description: "folders named in [project] replace the defaults",
+            files: &[ProjectFile {
+                path: "tables/raw.yml",
+                text: SOURCES.text,
+            }],
+            project: "[project]\nsources = \"tables\"\n",
+            flags: &[],
+            sql: "SELECT id + 1 AS n FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"converted\": true",
+        },
+    ];
+    for test_case in test_cases {
+        let outcome = project_convert(&test_case);
+        assert_eq!(
+            outcome.exit_code, test_case.expected_exit,
+            "{}: {}",
+            test_case.description, outcome.stderr
+        );
+        assert!(
+            outcome.stdout.contains(test_case.expected_output),
+            "{}: {}",
+            test_case.description,
+            outcome.stdout
+        );
+    }
+}
+
+#[test]
+fn given_project_settings_when_flags_are_given_then_the_flags_win_for_the_run() {
+    let test_cases = [
+        ProjectTestCase {
+            description: "the project's session applies without flags",
+            files: &[SOURCES],
+            project: "[project.session]\nTIMEZONE = \"America/New_York\"\n",
+            flags: &[],
+            sql: "SELECT id AS n FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "TIMEZONE = America/New_York is not UTC",
+        },
+        ProjectTestCase {
+            description: "a --session flag replaces the project's value of that parameter",
+            files: &[SOURCES],
+            project: "[project.session]\nTIMEZONE = \"America/New_York\"\n",
+            flags: &["--session", "TIMEZONE=UTC"],
+            sql: "SELECT id AS n FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"notes\": []",
+        },
+        ProjectTestCase {
+            description: "a --python-runtime flag confirms what the project does not",
+            files: &[SOURCES, PYTHON_FUNCTION],
+            project: "",
+            flags: &["--python-runtime"],
+            sql: "SELECT shout(status) AS s FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"name\": \"SHOUT\"",
+        },
+        ProjectTestCase {
+            description: "--overrides replaces the project's overrides folder",
+            files: &[
+                SOURCES,
+                ProjectFile {
+                    path: "overrides/broken.sql",
+                    text: "not an override",
+                },
+                ProjectFile {
+                    path: "elsewhere/plain.sql",
+                    text: "FUNCTION (\n  arguments (x VARCHAR),\n  returns VARCHAR,\n  replaces UPPER,\n  dialect duckdb\n);\nupper(x)\n",
+                },
+            ],
+            project: "",
+            flags: &["--overrides", "elsewhere"],
+            sql: "SELECT UPPER(status) AS s FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"converted\": true",
+        },
+    ];
+    for test_case in test_cases {
+        let outcome = project_convert(&test_case);
+        assert_eq!(
+            outcome.exit_code, test_case.expected_exit,
+            "{}: {}",
+            test_case.description, outcome.stderr
+        );
+        assert!(
+            outcome.stdout.contains(test_case.expected_output),
+            "{}: {}",
+            test_case.description,
+            outcome.stdout
+        );
+    }
+}
+
+#[test]
+fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_says_what_to_change()
+{
+    let test_cases = [
+        ProjectTestCase {
+            description: "a table in both a source file and --schema is an error naming both",
+            files: &[
+                SOURCES,
+                ProjectFile {
+                    path: "schema.json",
+                    text: "{\"RAW__ORDERS\": [[\"id\", \"INTEGER\"]]}",
+                },
+            ],
+            project: "",
+            flags: &["--schema", "schema.json"],
+            sql: "SELECT id AS n FROM raw__orders",
+            expected_exit: Some(2),
+            expected_output: "the table RAW__ORDERS is declared twice, in ./sources/raw.yml and in schema.json",
+        },
+        ProjectTestCase {
+            description: "a SQL and a Python function of one name is an error",
+            files: &[
+                SQL_FUNCTION,
+                ProjectFile {
+                    path: "functions/python/is_done.py",
+                    text: PYTHON_FUNCTION.text,
+                },
+            ],
+            project: "",
+            flags: &[],
+            sql: "SELECT 1 AS n",
+            expected_exit: Some(2),
+            expected_output: "the function IS_DONE is declared twice",
+        },
+        ProjectTestCase {
+            description: "a Python function without the confirmation names the line to add",
+            files: &[SOURCES, PYTHON_FUNCTION],
+            project: "",
+            flags: &[],
+            sql: "SELECT shout(status) AS s FROM raw__orders",
+            expected_exit: Some(1),
+            expected_output: "add `python_runtime = true` under [project.confirm] in sqlquack.toml, or pass --python-runtime for one run",
+        },
+        ProjectTestCase {
+            description: "a Python function file not marked as SQLBuild marks one is an error",
+            files: &[ProjectFile {
+                path: "functions/python/plain.py",
+                text: "def main(text):\n    return text\n",
+            }],
+            project: "",
+            flags: &[],
+            sql: "SELECT 1 AS n",
+            expected_exit: Some(2),
+            expected_output: "plain.py: has no @udf(...) decorator",
+        },
+    ];
+    for test_case in test_cases {
+        let outcome = project_convert(&test_case);
+        assert_eq!(
+            outcome.exit_code, test_case.expected_exit,
+            "{}: {}",
+            test_case.description, outcome.stderr
+        );
+        assert!(
+            outcome.stdout.contains(test_case.expected_output)
+                || outcome.stderr.contains(test_case.expected_output),
+            "{}: {}{}",
+            test_case.description,
+            outcome.stdout,
+            outcome.stderr
+        );
+    }
+}

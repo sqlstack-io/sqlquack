@@ -21,8 +21,8 @@ use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::evidence::with_divergence_help;
-use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
+use crate::project::main::load_schema::load_schema;
 use sqlquack_rules::session::main::parse_session::parse_session;
 use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 

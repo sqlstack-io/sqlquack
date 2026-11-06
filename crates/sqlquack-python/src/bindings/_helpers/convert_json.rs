@@ -26,7 +26,11 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
             json: false,
         },
         conversion: PolicyArguments {
-            policy: request.policy.unwrap_or_else(|| POLICY_FILE_NAME.into()),
+            policy: match (request.policy, request.project) {
+                (Some(policy), _) => policy,
+                (None, Some(project)) => project.join(POLICY_FILE_NAME),
+                (None, None) => POLICY_FILE_NAME.into(),
+            },
             builtin_policy: request.builtin_policy,
             strict: request.strict,
             utc_session: request.utc_session,

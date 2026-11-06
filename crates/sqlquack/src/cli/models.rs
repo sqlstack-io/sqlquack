@@ -13,6 +13,7 @@ use sqlquack_evidence::constants::{
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::models::DivergenceFailure;
+use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
@@ -87,7 +88,7 @@ pub struct CheckArguments {
 }
 
 /// Arguments of `sqlquack convert`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct ConvertArguments {
     /// The SQL file; standard input when absent or `-`.
     pub path: Option<PathBuf>,
@@ -268,7 +269,7 @@ pub struct IndexArguments {
 }
 
 /// Arguments of `sqlquack census`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct CensusArguments {
     /// SQL files, or directories searched for `.sql` files: one query or compiled model per file.
     #[arg(required = true)]
@@ -309,7 +310,7 @@ pub struct CensusArguments {
 }
 
 /// The policy conversion relies on, and what the caller confirms about its sessions.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct PolicyArguments {
     /// The policy file whose known divergences conversion may rely on.
     #[arg(long, default_value = POLICY_FILE_NAME)]
@@ -345,7 +346,7 @@ pub enum OutputFormat {
 }
 
 /// The report format: `--format json`, or its short form `--json`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct OutputArguments {
     /// Print the report as text or as JSON.
     #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
@@ -441,4 +442,17 @@ pub(crate) struct Comparison {
     pub(crate) sql: PathBuf,
     /// Whether the rows compare in order.
     pub(crate) ordered: bool,
+}
+
+/// What a command reads from the project once the caller's flags are applied.
+#[derive(Debug)]
+pub struct ProjectChoices {
+    /// The schema of `--schema` merged with the project's sources and functions.
+    pub schema: Schema,
+    /// `[project.session]`, each parameter a `--session` flag gives replaced by the flag's value.
+    pub session: Vec<String>,
+    /// `--overrides`, or the project's overrides folder.
+    pub overrides: Option<PathBuf>,
+    /// The caller's flags with `[project.confirm]` added: a flag confirms on top of the file.
+    pub conversion: PolicyArguments,
 }

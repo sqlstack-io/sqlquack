@@ -9,8 +9,8 @@ use walkdir::WalkDir;
 
 use crate::test_types::{
     CommandOutcome, CompareTestCase, ConvertOutcome, CoverageOutcome, DivergenceOutcome,
-    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ReviewOutcome,
-    ReviewedRepository,
+    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ProjectOutcome, ProjectTestCase,
+    ReviewOutcome, ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -1093,4 +1093,35 @@ pub(crate) fn schema_failure(text: &str) -> (Option<i32>, String) {
         output.status.code(),
         String::from_utf8_lossy(&output.stderr).into_owned(),
     )
+}
+
+/// `sqlquack convert --json` run inside a project folder built from `test_case`.
+pub(crate) fn project_convert(test_case: &ProjectTestCase) -> ProjectOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let policy =
+        std::fs::read_to_string(repository_root().join("sqlquack.toml")).expect("policy read");
+    std::fs::write(
+        directory.path().join("sqlquack.toml"),
+        format!("{policy}\n{}", test_case.project),
+    )
+    .expect("policy written");
+    for file in test_case.files {
+        let path = directory.path().join(file.path);
+        std::fs::create_dir_all(path.parent().expect("a parent directory"))
+            .expect("directory created");
+        std::fs::write(path, file.text).expect("file written");
+    }
+    std::fs::write(directory.path().join("query.sql"), test_case.sql).expect("query written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--json"])
+        .args(test_case.flags)
+        .arg("query.sql")
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs");
+    ProjectOutcome {
+        exit_code: output.status.code(),
+        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+    }
 }

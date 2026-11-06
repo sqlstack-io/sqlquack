@@ -10,7 +10,7 @@ use sqlquack_policy::policy::constants::{
 };
 use sqlquack_policy::policy::models::{Policy, SessionValue};
 
-use crate::session::_helpers::session_profiles::{matching_profile, value_text};
+use crate::session::_helpers::session_profiles::matching_profile;
 use crate::session::constants::BUILTIN_PROFILE;
 use crate::session::main::confirm_utc_session::confirm_utc_session;
 use crate::session::main::conversion_options::conversion_options;
@@ -46,7 +46,7 @@ pub fn session_conversion_options(
         .session_profiles
         .get(&profile)
         .and_then(|matched| matched.snowflake.get(QUOTED_IDENTIFIERS_IGNORE_CASE))
-        .is_some_and(|value| value_text(value) == value_text(&SessionValue::Boolean(true)));
+        .is_some_and(|value| value.text() == SessionValue::Boolean(true).text());
     let mut options = ConversionOptions {
         quoted_identifiers_ignore_case: ignore_case,
         ..conversion_options(policy, strict)

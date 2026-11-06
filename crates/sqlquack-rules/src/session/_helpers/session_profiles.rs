@@ -46,7 +46,7 @@ pub(crate) fn matching_profile(
                 .snowflake
                 .get(name)
                 .or_else(|| defaults.pinned.get(name))
-                .map(value_text)
+                .map(SessionValue::text)
         })
     };
     let mut unmatched: BTreeSet<String> = BTreeSet::new();
@@ -79,22 +79,11 @@ pub(crate) fn matching_profile(
     ))
 }
 
-/// A parameter value as text: booleans in lower case, integers in digits, text as written.
-pub(crate) fn value_text(value: &SessionValue) -> String {
-    match value {
-        SessionValue::Boolean(flag) => flag.to_string(),
-        SessionValue::Integer(number) => number.to_string(),
-        SessionValue::Text(text) => text.clone(),
-    }
-}
-
 /// Whether a caller's value is the profile's: booleans ignoring case, others exactly.
 fn same_value(given: Option<&str>, recorded: &SessionValue) -> bool {
     match (given, recorded) {
-        (Some(given), SessionValue::Boolean(_)) => {
-            given.eq_ignore_ascii_case(&value_text(recorded))
-        }
-        (Some(given), _) => given == value_text(recorded),
+        (Some(given), SessionValue::Boolean(_)) => given.eq_ignore_ascii_case(&recorded.text()),
+        (Some(given), _) => given == recorded.text(),
         (None, _) => false,
     }
 }

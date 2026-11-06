@@ -13,13 +13,13 @@ use crate::analysis::models::PipelineConverter;
 use crate::census::main::inspect_corpus::inspect_corpus;
 use crate::census::models::CensusOptions;
 use crate::cli::_helpers::evidence::{chosen_policy, divergence_options};
-use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::IndexArguments;
 use crate::index::main::build_index::build_index;
 use crate::index::main::case_records::case_records;
 use crate::index::main::corpus_records::corpus_records;
 use crate::index::main::render_index_text::render_index_text;
 use crate::index::models::{ConversionRecord, ProvenanceIndex};
+use crate::project::main::load_schema::load_schema;
 
 /// The case directory indexed when no path is given.
 const DEFAULT_CASES: &str = "cases";
