@@ -322,9 +322,24 @@ fn given_interval_literals_when_converting_then_dates_and_timestamps_move_by_the
             expected_outcome: Ok("2024-02-27"),
         },
         FirstValueTestCase {
+            description: "a DATE plus days written after the quotes is a TIMESTAMP_NTZ at midnight",
+            sql: "SELECT ('2026-04-01'::DATE + INTERVAL '3' DAYS)::VARCHAR AS v",
+            expected_outcome: Ok("2026-04-04 00:00:00.000"),
+        },
+        FirstValueTestCase {
+            description: "a DATE minus one day written after the quotes is a TIMESTAMP_NTZ too",
+            sql: "SELECT ('2024-03-01'::DATE - INTERVAL '1' DAY)::VARCHAR AS v",
+            expected_outcome: Ok("2024-02-29 00:00:00.000"),
+        },
+        FirstValueTestCase {
             description: "a timestamp plus hours crosses midnight",
             sql: "SELECT ('2024-02-28 23:30:00'::TIMESTAMP_NTZ + INTERVAL '2 hours')::VARCHAR AS v",
             expected_outcome: Ok("2024-02-29 01:30:00.000"),
+        },
+        FirstValueTestCase {
+            description: "an interval of an unquoted number is refused",
+            sql: "SELECT '2024-03-05'::DATE + INTERVAL 3 DAY AS v",
+            expected_outcome: Err("not a quoted string"),
         },
         FirstValueTestCase {
             description: "a DATE plus hours stays refused",

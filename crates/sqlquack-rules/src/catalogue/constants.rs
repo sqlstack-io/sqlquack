@@ -1441,7 +1441,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: INTERVAL_ARITHMETIC,
         constructs: &["node:add", "node:sub", "node:interval"],
-        conditions: "A DATE or TIMESTAMP_NTZ plus or minus an INTERVAL literal of one whole number of days, hours, minutes or seconds, written '<n> <unit>' with the unit singular or plural in any case: DATEADD of n or -n of that unit. A DATE takes only days and stays a DATE; a TIMESTAMP_NTZ of any precision becomes a TIMESTAMP_NTZ(9), relying on timestamp_range. Other intervals and operands stay refused.",
+        conditions: "A DATE or TIMESTAMP_NTZ plus or minus an INTERVAL literal of one whole number of days, hours, minutes or seconds, written '<n> <unit>' with the unit singular or plural in any case: DATEADD of n or -n of that unit. A DATE takes only days: with the unit inside the quotes ('7 days') it stays a DATE, and with the unit after them (INTERVAL '3' DAY) it becomes a TIMESTAMP_NTZ(9) at midnight, as recorded, relying on timestamp_range; a TIMESTAMP_NTZ of any precision becomes a TIMESTAMP_NTZ(9), relying on timestamp_range. Other intervals and operands stay refused.",
         failures: &[],
     },
     RuleSpec {
