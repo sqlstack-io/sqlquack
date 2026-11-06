@@ -16,6 +16,7 @@ pub(crate) fn clause_constructs(node: &Expression) -> Vec<Construct> {
         Expression::Union(union) => union_clauses(union),
         Expression::Intersect(intersect) => intersect_clauses(intersect),
         Expression::Except(except) => except_clauses(except),
+        Expression::Table(table) => present(&[(table.table_sample.is_some(), "sample")]),
         _ => Vec::new(),
     };
     let mut constructs: Vec<Construct> = names
@@ -87,6 +88,10 @@ fn select_clauses(select: &Select) -> Vec<String> {
     } = select;
     present(&[
         (with.is_some(), "with"),
+        (
+            with.as_ref().is_some_and(|with| with.recursive),
+            "with_recursive",
+        ),
         (*distinct, "distinct"),
         (distinct_on.is_some(), "distinct_on"),
         (top.is_some(), "top"),
@@ -94,11 +99,23 @@ fn select_clauses(select: &Select) -> Vec<String> {
         (prewhere.is_some(), "prewhere"),
         (where_clause.is_some(), "where"),
         (group_by.is_some(), "group_by"),
+        (
+            group_by
+                .as_ref()
+                .is_some_and(|group_by| group_by.all == Some(true)),
+            "group_by_all",
+        ),
         (having.is_some(), "having"),
         (windows.is_some(), "window"),
         (qualify.is_some(), "qualify"),
         (connect.is_some(), "connect_by"),
         (order_by.is_some(), "order_by"),
+        (
+            order_by
+                .as_ref()
+                .is_some_and(|order_by| order_by.all.is_some()),
+            "order_by_all",
+        ),
         (distribute_by.is_some(), "distribute_by"),
         (cluster_by.is_some(), "cluster_by"),
         (sort_by.is_some(), "sort_by"),
@@ -159,7 +176,17 @@ macro_rules! set_operation_clauses {
                 (*strict, concat!($prefix, "_strict")),
                 (!on_columns.is_empty(), concat!($prefix, "_on_columns")),
                 (with.is_some(), "with"),
+                (
+                    with.as_ref().is_some_and(|with| with.recursive),
+                    "with_recursive",
+                ),
                 (order_by.is_some(), "order_by"),
+                (
+                    order_by
+                        .as_ref()
+                        .is_some_and(|order_by| order_by.all.is_some()),
+                    "order_by_all",
+                ),
                 (limit.is_some(), "limit"),
                 (offset.is_some(), "offset"),
                 (distribute_by.is_some(), "distribute_by"),

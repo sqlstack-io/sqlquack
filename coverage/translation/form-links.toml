@@ -78,12 +78,20 @@ constructs = ["clause:with"]
 forms = ["sf.query.with.select"]
 
 [[link]]
+constructs = ["clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
+[[link]]
 constructs = ["clause:where"]
 forms = ["sf.query.where"]
 
 [[link]]
 constructs = ["clause:group_by"]
 forms = ["sf.query.group-by.groupitem"]
+
+[[link]]
+constructs = ["clause:group_by_all"]
+forms = ["sf.query.group-by.all"]
 
 [[link]]
 constructs = ["clause:having"]
@@ -94,8 +102,16 @@ constructs = ["clause:order_by"]
 forms = ["sf.query.order-by.orderitem"]
 
 [[link]]
+constructs = ["clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
+[[link]]
 constructs = ["clause:qualify"]
 forms = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
+
+[[link]]
+constructs = ["clause:sample"]
+forms = ["sf.query.sample"]
 
 [[link]]
 constructs = ["clause:limit"]
