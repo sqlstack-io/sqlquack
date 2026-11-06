@@ -203,13 +203,11 @@ pub(crate) fn session_tree(positioned: &Value, ignore_quoted_case: bool) -> Resu
 }
 
 /// `value` with each node that only wrapped a comment replaced by the node it wrapped.
-///
-/// A select item's own wrapper stays: the comment is part of an unaliased item's written text,
-/// which names its column, so the projection rule reads the wrapper itself.
 fn without_comment_wrappers(value: &Value) -> Value {
     unwrap_comments(value, false)
 }
 
+/// `value` with its comment wrappers unwrapped, its own kept if `keep_wrapper`.
 fn unwrap_comments(value: &Value, keep_wrapper: bool) -> Value {
     match value {
         Value::Object(fields) => match fields.get("annotated").and_then(Value::as_object) {
@@ -218,31 +216,28 @@ fn unwrap_comments(value: &Value, keep_wrapper: bool) -> Value {
                     .get("this")
                     .map_or_else(|| value.clone(), without_comment_wrappers)
             }
-            _ => {
-                let select = fields.len() == 1 && fields.contains_key("select");
-                Value::Object(
-                    fields
-                        .iter()
-                        .map(|(key, field)| {
-                            let field = match (select, field.as_object()) {
-                                (true, Some(payload)) => Value::Object(
-                                    payload
-                                        .iter()
-                                        .map(|(name, clause)| {
-                                            (name.clone(), unwrap_clause(name, clause))
-                                        })
-                                        .collect(),
-                                ),
-                                _ => without_comment_wrappers(field),
-                            };
-                            (key.clone(), field)
-                        })
-                        .collect(),
-                )
-            }
+            _ => Value::Object(
+                fields
+                    .iter()
+                    .map(|(key, field)| (key.clone(), unwrap_field(key, field)))
+                    .collect(),
+            ),
         },
         Value::Array(items) => Value::Array(items.iter().map(without_comment_wrappers).collect()),
         other => other.clone(),
+    }
+}
+
+/// A node's field unwrapped; a SELECT keeps its select items' wrappers, which name their columns.
+fn unwrap_field(key: &str, field: &Value) -> Value {
+    match (key, field) {
+        ("select", Value::Object(clauses)) => Value::Object(
+            clauses
+                .iter()
+                .map(|(name, clause)| (name.clone(), unwrap_clause(name, clause)))
+                .collect(),
+        ),
+        _ => without_comment_wrappers(field),
     }
 }
 

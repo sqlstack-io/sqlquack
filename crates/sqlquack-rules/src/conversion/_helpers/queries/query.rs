@@ -610,7 +610,6 @@ fn convert_projection(
             let this = field(annotated, "this", &construct)?;
             match node_kind(this) {
                 Some((kind, _)) if named && !matches!(kind, "star" | "alias" | "column") => {
-                    // An unaliased item's name is its text, and no receipt records one holding a comment.
                     let refusal = missing(
                         Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
                         format!(
