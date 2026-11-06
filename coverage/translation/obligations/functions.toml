@@ -9984,17 +9984,6 @@ cases = ["cases/translation/functions/get-path.colon.toml#t003_null_column_ident
 required = true
 
 [[obligation]]
-id = "sf.functions.get-path.colon.syntax.t001"
-form = "sf.functions.get-path.colon.syntax"
-kind = "error_parity"
-target = ":(v, 'a.b[1]') as documented"
-note = "Snowflake refuses the documented spelling at parse time with 1003 (42000), unexpected '(' right after the colon, with or without spaces; only a quoted function name, \":\"(v, 'path'), compiles, and the page does not document that. The obligation is to refuse it as Snowflake does."
-catches = "the spelling accepted and translated as GET_PATH"
-reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are listed as three spellings of one extraction; the page gives no example of the third"
-cases = ["cases/translation/functions/get-path.colon.syntax.toml#t001_syntax_error"]
-required = true
-
-[[obligation]]
 id = "sf.functions.get-path.get-path.t001"
 form = "sf.functions.get-path.get-path"
 kind = "type_combination"

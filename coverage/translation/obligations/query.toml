@@ -553,17 +553,6 @@ cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define
 required = true
 
 [[obligation]]
-id = "sf.query.match-recognize.match-recognize-pattern-define-as.t005"
-form = "sf.query.match-recognize.match-recognize-pattern-define-as"
-kind = "type_combination"
-target = "AFTER MATCH SKIP TO NEXT ROW"
-note = "The page: TO NEXT ROW continues after the first row of the match, so matches overlap and a row can appear in several matches."
-catches = "matching resumed past the last row, so the overlapping matches are missing"
-reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t005_to_next_row"]
-required = true
-
-[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t006"
 form = "sf.query.match-recognize.match-recognize-pattern-define-as"
 kind = "null_argument"

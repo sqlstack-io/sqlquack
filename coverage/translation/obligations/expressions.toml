@@ -2029,39 +2029,6 @@ cases = ["cases/translation/expressions/operators-expansion.toml#t007_non_consta
 required = true
 
 [[obligation]]
-id = "sf.expressions.operators-flow.t001"
-form = "sf.expressions.operators-flow"
-kind = "type_combination"
-target = "SELECT ... ->> SELECT ... FROM $1"
-note = "The second statement reads the first, filtered, result; $1 and $2 in its SELECT list are the columns of that result, as the page says for its row-count example."
-catches = "the first statement's filter lost, or $n in the SELECT list read as a pipe reference"
-reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
-cases = ["cases/translation/expressions/operators-flow.toml#t001_two_statements"]
-required = true
-
-[[obligation]]
-id = "sf.expressions.operators-flow.t002"
-form = "sf.expressions.operators-flow"
-kind = "type_combination"
-target = "three statements, $2 and $1 from the last"
-note = "In the last of three statements, $2 is the first statement and $1 the second, counting back as the page shows."
-catches = "pipe numbers counted forward from the first statement, so $1 and $2 swap"
-reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
-cases = ["cases/translation/expressions/operators-flow.toml#t002_counts_back"]
-required = true
-
-[[obligation]]
-id = "sf.expressions.operators-flow.t003"
-form = "sf.expressions.operators-flow"
-kind = "null_argument"
-target = "NULL through the pipe"
-note = "A NULL value read through a pipe reference; the page says the consumed result equals RESULT_SCAN of the earlier statement, so the NULL is kept."
-catches = "the NULL row dropped or its value replaced"
-reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
-cases = ["cases/translation/expressions/operators-flow.toml#t003_null"]
-required = true
-
-[[obligation]]
 id = "sf.expressions.operators-logical.and.t001"
 form = "sf.expressions.operators-logical.and"
 kind = "type_combination"

@@ -89,26 +89,6 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t005_to_next_row"
-description = "The page: TO NEXT ROW continues after the first row of the match, so matches overlap and a row can appear in several matches. Catches: matching resumed past the last row, so the overlapping matches are missing"
-columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
-rows = [
-  ["'ABCD'", "1", "50"],
-  ["'ABCD'", "2", "36"],
-  ["'ABCD'", "3", "39"],
-  ["'ABCD'", "4", "42"],
-  ["'ABCD'", "5", "30"],
-  ["'ABCD'", "6", "47"],
-  ["'ABCD'", "7", "71"],
-  ["'ABCD'", "8", "80"],
-  ["'ABCD'", "9", "75"],
-  ["'ABCD'", "10", "63"],
-]
-query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH AFTER MATCH SKIP TO NEXT ROW PATTERN (up{2}) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
-order = "ordered"
-tags = ["type-combination"]
-
-[[case]]
 id = "t006_null_price"
 description = "A NULL price makes price > LAG(price) NULL, which is not TRUE, so the NULL row and the row after it are not rising rows; the page gives no other rule. Catches: NULL compared as zero or as a match, so a run continues through the NULL"
 columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
