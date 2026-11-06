@@ -2,7 +2,9 @@
 
 use sqlquack_core::provenance::models::ProvenanceLog;
 
-use crate::typing::_helpers::targets::{fractional, number_target, parse_arguments, text_target};
+use crate::typing::_helpers::targets::{
+    binary_target, fractional, number_target, parse_arguments, text_target,
+};
 use crate::typing::constants::{
     CAST_TARGET, NUMBER_38_0, STRUCTURED_TYPES, STRUCTURED_UNSUPPORTED,
 };
@@ -49,6 +51,7 @@ pub fn cast_target(name: &str, log: &ProvenanceLog) -> Result<CastTarget, String
             text_target(&arguments, None, name)
         }
         "CHAR" | "CHARACTER" | "NCHAR" => text_target(&arguments, Some(1), name),
+        "BINARY" | "VARBINARY" => binary_target(&arguments, name),
         "BOOLEAN" => plain(SnowflakeType::Boolean),
         "DATE" => plain(SnowflakeType::Date),
         "TIME" => fractional(&arguments, name).map(|precision| CastTarget {

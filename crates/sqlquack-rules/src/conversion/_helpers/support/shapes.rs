@@ -41,6 +41,7 @@ pub(crate) fn type_family(data_type: SnowflakeType) -> &'static str {
         SnowflakeType::Number { .. } => "decimal",
         SnowflakeType::Float => "float",
         SnowflakeType::Varchar => "text",
+        SnowflakeType::Binary => "binary",
         SnowflakeType::Boolean => "boolean",
         SnowflakeType::Date => "date",
         SnowflakeType::Time { .. } => "time",

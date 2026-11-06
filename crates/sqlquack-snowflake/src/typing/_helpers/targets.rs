@@ -50,6 +50,21 @@ pub(crate) fn text_target(
     })
 }
 
+/// BINARY or BINARY(n): bytes, at most `n` of them.
+pub(crate) fn binary_target(arguments: &[u32], name: &str) -> Result<CastTarget, String> {
+    match arguments {
+        [] => Ok(CastTarget {
+            data_type: SnowflakeType::Binary,
+            max_length: None,
+        }),
+        [length] => Ok(CastTarget {
+            data_type: SnowflakeType::Binary,
+            max_length: Some(*length),
+        }),
+        _ => Err(format!("too many arguments in `{name}`")),
+    }
+}
+
 pub(crate) fn fractional(arguments: &[u32], name: &str) -> Result<u8, String> {
     match arguments {
         [] => Ok(DEFAULT_FRACTIONAL_PRECISION),

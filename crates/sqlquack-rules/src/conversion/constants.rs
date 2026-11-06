@@ -615,6 +615,8 @@ pub const CAST_TO_TEXT: &str = "rule.cast_to_text";
 pub const CAST_BOOLEAN: &str = "rule.cast_boolean";
 /// CAST and TRY_CAST of text to NUMBER, FLOAT or BOOLEAN.
 pub const CAST_PARSED_TEXT: &str = "rule.cast_parsed_text";
+/// VARCHAR to BINARY under the pinned BINARY_INPUT_FORMAT HEX.
+pub const CAST_HEX_BINARY: &str = "rule.cast_hex_binary";
 /// Casts of string literals.
 pub const CAST_TEXT_LITERAL: &str = "rule.cast_text_literal";
 /// Casts to the operand's own type, and of NULL.

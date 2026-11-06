@@ -21,6 +21,14 @@ pub const CODE_POINT_TEXT: &str = "duckdb.code_point_text";
 /// HEX_ENCODE's hexadecimal digits of the UTF-8 bytes: `duckdb.hex_text`.
 pub const HEX_TEXT: &str = "duckdb.hex_text";
 
+/// Raising an error for bytes longer than a BINARY(n) target: `duckdb.binary_length_check`.
+pub const BINARY_LENGTH_CHECK: &str = "duckdb.binary_length_check";
+/// Hexadecimal text read as bytes, as under BINARY_INPUT_FORMAT HEX: `duckdb.hex_bytes`.
+pub const HEX_BYTES: &str = "duckdb.hex_bytes";
+/// What a cast of text that is not hex digits to BINARY raises with.
+pub const HEX_BYTES_MESSAGE: &str = "The following string is not a legal hex-encoded value";
+/// What a cast of bytes longer than its BINARY(n) target raises with.
+pub const BINARY_TOO_LONG_MESSAGE: &str = "Binary value is too long and would be truncated";
 /// TRY_HEX_DECODE_STRING's text from hexadecimal digits: `duckdb.hex_decoded_text`.
 pub const HEX_DECODED_TEXT: &str = "duckdb.hex_decoded_text";
 

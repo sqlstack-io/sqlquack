@@ -42,6 +42,8 @@ pub enum SnowflakeType {
         /// Fractional-second digits.
         precision: u8,
     },
+    /// `BINARY`; the declared length never changes a value it accepts.
+    Binary,
     /// `VARIANT`, `OBJECT` or `ARRAY`.
     SemiStructured,
     /// An untyped `NULL` literal, which takes the type of its context.
@@ -70,6 +72,7 @@ impl Display for SnowflakeType {
             Self::TimestampNtz { precision } => write!(formatter, "TIMESTAMP_NTZ({precision})"),
             Self::TimestampTz { precision } => write!(formatter, "TIMESTAMP_TZ({precision})"),
             Self::TimestampLtz { precision } => write!(formatter, "TIMESTAMP_LTZ({precision})"),
+            Self::Binary => formatter.write_str("BINARY"),
             Self::SemiStructured => formatter.write_str("VARIANT"),
             Self::Null => formatter.write_str("NULL"),
         }
@@ -81,6 +84,6 @@ impl Display for SnowflakeType {
 pub struct CastTarget {
     /// The target type.
     pub data_type: SnowflakeType,
-    /// For VARCHAR(n) and CHAR(n): `n`; longer values raise an error.
+    /// For VARCHAR(n) and CHAR(n) characters, for BINARY(n) bytes: `n`; longer values raise.
     pub max_length: Option<u32>,
 }

@@ -78,6 +78,11 @@ pub const STRING_TOO_LONG: SnowflakeCode = SnowflakeCode {
     errno: 100_078,
     sqlstate: "22000",
 };
+/// Bytes longer than a BINARY(n) target, which Snowflake does not truncate.
+pub const BINARY_TOO_LONG: SnowflakeCode = SnowflakeCode {
+    errno: 100_145,
+    sqlstate: "22000",
+};
 
 /// A function's array argument is not an array.
 pub const NOT_AN_ARRAY_ARGUMENT: SnowflakeCode = SnowflakeCode {
@@ -167,6 +172,7 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (JSON_NOT_PARSED, ErrorKind::JsonParse),
     (VARIANT_NOT_CAST, ErrorKind::VariantCast),
     (STRING_TOO_LONG, ErrorKind::StringTooLong),
+    (BINARY_TOO_LONG, ErrorKind::StringTooLong),
     (NOT_AN_ARRAY_ARGUMENT, ErrorKind::InvalidArgument),
     (OBJECT_KEY_EXISTS, ErrorKind::InvalidArgument),
     (INVALID_CHARACTER_CODE, ErrorKind::InvalidArgument),

@@ -25,6 +25,8 @@ use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
 use sqlquack_duckdb::temporal::main::text_to_zoned::text_to_zoned;
 use sqlquack_duckdb::temporal::main::utc_to_zone::utc_to_zone;
 use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
+use sqlquack_duckdb::text::main::binary_length_check::binary_length_check;
+use sqlquack_duckdb::text::main::hex_bytes::hex_bytes;
 use sqlquack_duckdb::times::main::text_to_time::text_to_time;
 use sqlquack_duckdb::times::main::time_text::time_text;
 use sqlquack_duckdb::times::main::timestamp_time::timestamp_time;
@@ -59,13 +61,13 @@ use crate::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, field, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
-    CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, FLOAT_SCALE_FACET,
-    FLOAT_TO_DOUBLE, KEEP_NULL_CONSTRUCTOR, KIND_CAST_TARGETS, MICROSECOND_DIGITS,
-    NTZ_OUTPUT_PATTERN, OBJECT_CONSTRUCTOR, OBJECT_TYPE_NAME, TARGET_FACET, TEXT_TYPE_PAIR,
-    TEXT_TYPE_SPELLINGS, TIME_CAST, TIMESTAMP_TIME_RULE, TO_BOOLEAN_RULE, TO_DOUBLE_PAIR,
-    TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_CAST, VARIANT_KIND_CAST,
-    VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
+    CAST_BOOLEAN, CAST_HEX_BINARY, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL,
+    CAST_TEXT_LITERAL, CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED,
+    FLOAT_SCALE_FACET, FLOAT_TO_DOUBLE, KEEP_NULL_CONSTRUCTOR, KIND_CAST_TARGETS,
+    MICROSECOND_DIGITS, NTZ_OUTPUT_PATTERN, OBJECT_CONSTRUCTOR, OBJECT_TYPE_NAME, TARGET_FACET,
+    TEXT_TYPE_PAIR, TEXT_TYPE_SPELLINGS, TIME_CAST, TIMESTAMP_TIME_RULE, TO_BOOLEAN_RULE,
+    TO_DOUBLE_PAIR, TO_NUMBER_PAIR, TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_CAST,
+    VARIANT_KIND_CAST, VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 use sqlquack_policy::policy::constants::{
     DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING,
@@ -293,6 +295,18 @@ fn cast_sql(
         (SnowflakeType::Varchar, SnowflakeType::Boolean, _) => {
             let _rule = cast_rule(CAST_PARSED_TEXT, log);
             Ok(text_to_boolean(&operand.sql, text_failure(trying), log))
+        }
+        (SnowflakeType::Varchar, SnowflakeType::Binary, _) => {
+            let _rule = cast_rule(CAST_HEX_BINARY, log);
+            let bytes = hex_bytes(&operand.sql, trying, log);
+            match (target.max_length, trying) {
+                (None, _) => Ok(bytes),
+                (Some(max_length), false) => Ok(binary_length_check(&bytes, max_length, log)),
+                (Some(_), true) => Err(
+                    "TRY_CAST to BINARY(n), whose result for longer bytes no recording shows"
+                        .to_owned(),
+                ),
+            }
         }
         (SnowflakeType::Varchar, SnowflakeType::Time { precision }, literal) => {
             let _rule = cast_rule(CAST_TEXT_TIME, log);
@@ -791,6 +805,7 @@ pub(crate) fn data_type_name(data_type: &Value) -> Option<String> {
         "text" => "VARCHAR".to_owned(),
         "char" => with_arguments("CHAR", &[number("length")]),
         "boolean" => "BOOLEAN".to_owned(),
+        "binary" | "var_binary" => with_arguments("BINARY", &[number("length")]),
         "date" => "DATE".to_owned(),
         "time" if !zoned => with_arguments("TIME", &[number("precision")]),
         "timestamp" if zoned => with_arguments("TIMESTAMP_TZ", &[number("precision")]),

@@ -97,7 +97,7 @@ fn set_type(spelling: &str) -> Option<SetType> {
             (Kind::Variant, None, 0)
         }
         SnowflakeType::SemiStructured => return None,
-        SnowflakeType::Null => return None,
+        SnowflakeType::Binary | SnowflakeType::Null => return None,
     };
     Some(SetType {
         kind,

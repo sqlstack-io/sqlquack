@@ -11,6 +11,7 @@ pub(crate) fn duckdb_type(data_type: SnowflakeType, log: &ProvenanceLog) -> Resu
         SnowflakeType::Number { precision, scale } => Ok(format!("DECIMAL({precision},{scale})")),
         SnowflakeType::Float => Ok("DOUBLE".to_owned()),
         SnowflakeType::Varchar => Ok("VARCHAR".to_owned()),
+        SnowflakeType::Binary => Ok("BLOB".to_owned()),
         SnowflakeType::Boolean => Ok("BOOLEAN".to_owned()),
         SnowflakeType::Date => Ok("DATE".to_owned()),
         SnowflakeType::Time { precision } if precision <= NANOSECOND_DIGITS => {
