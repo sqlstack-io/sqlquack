@@ -129,7 +129,7 @@ impl Parser {
     }
 
     /// Checks one name: an identifier, or a word Snowflake does not reserve.
-    fn expect_external_name(&mut self) -> Result<()> {
+    pub(super) fn expect_external_name(&mut self) -> Result<()> {
         let token_type = self.peek().token_type;
         let name_like = matches!(
             token_type,

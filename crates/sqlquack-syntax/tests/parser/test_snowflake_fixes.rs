@@ -1736,3 +1736,93 @@ fn given_a_snowflake_create_external_table_when_parsing_then_recorded_verdicts_h
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_dynamic_iceberg_or_interactive_table_when_parsing_then_recorded_verdicts_hold()
+{
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an untyped column, quoted warehouse and AS query (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = \"SELECT\" AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "REFRESH USING an INSERT INTO SELF (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( INSERT INTO SELF SELECT 1 ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a row access policy on no columns (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 ROW ACCESS POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "secondary roles ALL (recorded OK)",
+            sql: "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "no AS query (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value before the next (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a storage lifecycle policy on no columns (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 STORAGE LIFECYCLE POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION BY (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 PARTITION BY ( DAY ( 'v1' ) ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string column type (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 'INT' ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a lag but no warehouse (recorded OK)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) TARGET_LAG = '1 minute' AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a storage lifecycle policy (recorded OK)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 ) AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table without CLUSTER BY (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) BY ( 1 ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a query but no AS (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a row access policy on no columns (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) ROW ACCESS POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INTERACTIVE without TABLE (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE v1 CLUSTER BY ( 1 ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
