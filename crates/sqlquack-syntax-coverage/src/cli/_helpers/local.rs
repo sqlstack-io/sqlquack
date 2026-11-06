@@ -6,9 +6,8 @@ use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOption
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::main::content_sha256::content_sha256;
+use crate::formats::main::current_dialect::current_dialect;
 
-/// The parser crate, relative to the repository root.
-const PARSER_PATH: &str = "crates/sqlquack-syntax";
 /// The code prefix of every complexity-guard error, which is never a syntax verdict.
 const GUARD_PREFIX: &str = "E_GUARD_";
 
@@ -58,10 +57,15 @@ fn git_output(arguments: &[&str]) -> Result<String, String> {
     }
 }
 
-/// The committed parser tree, none when the parser has uncommitted changes, or why git failed.
+/// The committed tree of the dialect's parser path, none if uncommitted or absent, or git's failure.
 pub(crate) fn parser_tree() -> Result<Option<String>, String> {
-    let status: String = git_output(&["status", "--porcelain", "--", PARSER_PATH])?;
-    let tree: String = git_output(&["rev-parse", &format!("HEAD:{PARSER_PATH}")])?;
+    let parser_path: String = current_dialect().parser_path.clone();
+    let status: String = git_output(&["status", "--porcelain", "--", &parser_path])?;
+    let head_path: String = format!("HEAD:{parser_path}");
+    if git(&["cat-file", "-e", &head_path])?.0 != 0 {
+        return Ok(None);
+    }
+    let tree: String = git_output(&["rev-parse", &head_path])?;
     Ok(status.is_empty().then_some(tree))
 }
 

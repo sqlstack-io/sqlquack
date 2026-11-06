@@ -15,7 +15,7 @@ use crate::cli::models::{Arguments, Command};
 pub fn run_cli() -> ExitCode {
     let result: Result<ExitCode, ExitCode> = match Arguments::parse().command {
         Command::Validate { common } => validate(&common),
-        Command::Summary { common } => summary(&common),
+        Command::Summary { focus, common } => summary(focus.as_deref(), &common),
         Command::Family {
             family: name,
             common,

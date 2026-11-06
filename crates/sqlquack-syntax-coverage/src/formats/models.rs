@@ -283,7 +283,27 @@ pub struct Receipt {
     pub query_id: Option<String>,
     #[serde(default)]
     pub query_id_sha256: Option<String>,
-    pub warehouse_version: String,
+    /// Format `/1` only: the Snowflake release that answered.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub warehouse_version: Option<String>,
+    /// Format `/2` only: the engine, such as `postgres`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine: Option<String>,
+    /// Format `/2` only: the engine release, such as `18.6`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine_version: Option<String>,
+    /// Format `/2` only: the SHA-256 digest of the engine's container image.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine_image_sha256: Option<String>,
+    /// Format `/2` only: the engine's own code for the error that decided the phase, if any.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine_code: Option<String>,
+    /// Format `/2` only: which pass decided the syntax verdict, `do_block` or `live_only`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parser_check: Option<String>,
+    /// Format `/2` only: the parse-only pass's code; none when it parsed or was not judged.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parse_only_sqlstate: Option<String>,
     /// RFC 3339 in UTC.
     pub recorded_at: String,
     pub outcome: String,
@@ -575,4 +595,60 @@ pub struct SyntaxCoverage {
     pub file_hashes: BTreeMap<String, String>,
     /// Cases marked documented (D113), whose acceptance against a syntax error is intended.
     pub documented_cases: BTreeSet<String>,
+}
+
+/// `dialect.toml`: what makes a coverage root one dialect's; a root without one is Snowflake's.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Dialect {
+    /// Always `DIALECT_FORMAT`.
+    pub format: String,
+    /// The dialect a focus file names, such as `postgres`.
+    pub name: String,
+    /// The first segment of every form id, such as `pg`.
+    pub form_prefix: String,
+    /// The families the root has files for: a subset of `FAMILIES`, in report order.
+    pub families: Vec<String>,
+    /// The format every receipt under the root declares.
+    pub receipt_format: String,
+    /// The parser source path, relative to the repository, whose Git tree reviews bind.
+    pub parser_path: String,
+    /// What gives the local verdict.
+    pub local_parser: LocalParser,
+    /// Engine codes that are syntax errors, for `/2` receipts.
+    #[serde(default)]
+    pub syntax_codes: Vec<String>,
+}
+
+/// The parser the checker compares receipts with.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum LocalParser {
+    /// `sqlquack_syntax` in the Snowflake dialect, through the isolated worker.
+    Snowflake,
+    /// No parser yet: every case fails locally as `no_parser`.
+    None,
+}
+
+/// `focus/<dialect>.toml`: the forms one dialect works on first, in work order.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct FocusFile {
+    /// The dialect of the coverage root it is checked against.
+    pub dialect: String,
+    /// The SQLBuild commit whose uses the entries record.
+    pub sqlbuild_commit: String,
+    #[serde(default, rename = "focus")]
+    pub entries: Vec<FocusEntry>,
+}
+
+/// One focus form and the SQLBuild purposes that need it.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct FocusEntry {
+    pub form: String,
+    /// Sorted, distinct letters from `FOCUS_USES`.
+    pub uses: Vec<String>,
+    #[serde(default)]
+    pub note: Option<String>,
 }
