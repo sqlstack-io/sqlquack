@@ -3560,7 +3560,7 @@ before = "nesting_depth: statement operands nested; no documented bound"
 after = "option_present <statement> ; [ ... ]: several statements in one BEGIN ATOMIC block"
 
 [[retired]]
-retired_in = "pending"
+retired_in = "84836c7aca9aa76ae550c9e61e48cac8a1da9864"
 reason = "a string literal in a definition value was tagged a negative, but gram.y def_arg takes a string constant (Sconst) and PostgreSQL 18.6 parses it (the same pattern as the batch-21 notes, found in CREATE TYPE's LIKE and COLLATABLE); replaced by operand-class obligations under new ids"
 ids = [
   "pg.ddl.create-type.input-output.o052",
