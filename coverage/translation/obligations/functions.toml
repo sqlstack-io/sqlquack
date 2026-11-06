@@ -18874,7 +18874,7 @@ id = "sf.functions.period-contains.t002"
 form = "sf.functions.period-contains"
 kind = "type_combination"
 target = "PERIOD(DATE), DATE"
-note = "Instants at the begin, inside, at the end and after; the page says the end is not contained."
+note = "Instants at the begin, inside, at the end and after a period built from columns; the page says the end is not contained. A constant period here made Snowflake abort with internal error 300010 twice."
 catches = "the end bound treated as inclusive"
 reading = "the page: for two periods, TRUE when period2 lies within period1; for a value, TRUE when begin <= value < end"
 cases = ["cases/translation/functions/period-contains.toml#t002_instant"]
