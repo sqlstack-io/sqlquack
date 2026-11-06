@@ -4,7 +4,9 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_duckdb::checking::main::bound_outside_lambdas::bound_outside_lambdas;
+use sqlquack_semantics::types::models::Volatility;
 
 use crate::conversion::_helpers::expressions::atoms::{
     boolean_literal, column, commented, literal, negate, null_literal, parentheses,
@@ -42,15 +44,16 @@ use crate::conversion::_helpers::expressions::windows::convert_window;
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, placeholder, record, stopped,
 };
-use crate::conversion::_helpers::support::scope::Emitted;
+use crate::conversion::_helpers::support::scope::{Context, Emitted, SubqueryTrack, SubqueryValue};
 use crate::conversion::_helpers::support::shapes::{shape_argument, shape_construct};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
     function_construct, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, IFF_NAME, OBJECT_CONSTANT_KIND, RLIKE_PAIR,
-    SYSTEM_TYPEOF_NAME, TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
+    AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, IFF_NAME, NONDETERMINISTIC_FUNCTIONS,
+    OBJECT_CONSTANT_KIND, RLIKE_PAIR, SUBQUERY_READS_LAMBDA, SYSTEM_TYPEOF_NAME,
+    TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD, VOLATILE_SUBQUERY_IN_LAMBDA,
 };
 
 /// One scalar expression, located; VARIANT-held values refused, collected refusals as placeholders.
@@ -68,6 +71,7 @@ fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusa
     let reads = typed.reads();
     let order = site.context.order;
     let mark = order.mark();
+    let subqueries = site.context.subqueries.mark();
     let free = site.placement.order_free
         && !(site.scope.grouped
             && site.placement.aggregates
@@ -85,6 +89,11 @@ fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusa
             ..emitted
         }
     })?;
+    let emitted = Emitted {
+        sql: bound_subqueries(emitted.sql.clone(), site.context.subqueries, subqueries)
+            .map_err(|refusal| site.context.locator.placed(refusal, node))?,
+        ..emitted
+    };
     match (emitted.unordered, free) {
         (false, _) => Ok(emitted),
         (true, true) => {
@@ -94,6 +103,33 @@ fn converted(node: &Value, site: Site<'_>, held: bool) -> Result<Emitted, Refusa
         (true, false) => order_checked(emitted, site.context)
             .map_err(|refusal| site.context.locator.placed(refusal, node)),
     }
+}
+
+/// `sql` with the subquery values since `mark` bound outside lambdas, unless volatile or captured.
+fn bound_subqueries(
+    sql: String,
+    subqueries: &SubqueryTrack,
+    mark: usize,
+) -> Result<String, Refusal> {
+    subqueries
+        .since(mark)
+        .into_iter()
+        .try_fold(sql, |sql, value| {
+            let refused = |reason: String| Refusal {
+                construct: Some(node_construct("subquery")),
+                location: value.location,
+                category: RefusalCategory::NotExpressible,
+                reason,
+            };
+            match bound_outside_lambdas(&sql, &value.sql, &subqueries.parameter()) {
+                Ok(None) => Ok(sql),
+                Err(_parameter) => Err(refused(SUBQUERY_READS_LAMBDA.to_owned())),
+                Ok(Some(_)) if value.volatile => {
+                    Err(refused(VOLATILE_SUBQUERY_IN_LAMBDA.to_owned()))
+                }
+                Ok(Some(bound)) => Ok(bound),
+            }
+        })
 }
 
 /// Whether `node` passes an unordered value up as it is: a column read or a branch choice.
@@ -177,7 +213,48 @@ fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     );
     let mut emitted = converted.map_err(|refusal| locator.placed(refusal, node))?;
     emitted.sql = locator.identified(&emitted.sql, node);
+    if reads_subquery(node) {
+        site.context.subqueries.record(SubqueryValue {
+            sql: emitted.sql.clone(),
+            volatile: calls_volatile(node, site.context),
+            location: locator.locate(node),
+        });
+    }
     Ok(emitted)
+}
+
+/// Whether `node` is a value DuckDB computes with a subquery: a scalar subquery, EXISTS or IN one.
+fn reads_subquery(node: &Value) -> bool {
+    match node_kind(node) {
+        Some(("subquery" | "exists", _)) => true,
+        Some(("in", payload)) => payload.get("query").is_some_and(|query| !query.is_null()),
+        _ => false,
+    }
+}
+
+/// Whether `node` may call a non-deterministic built-in, a volatile project function or an override.
+fn calls_volatile(node: &Value, context: &Context<'_>) -> bool {
+    match node {
+        Value::Object(fields) => fields.iter().any(|(kind, value)| {
+            let called = (kind == CALL_KIND || kind == AGGREGATE_CALL_KIND)
+                .then(|| call_name(value))
+                .is_some_and(|name| volatile_call(&name, context));
+            called || calls_volatile(value, context)
+        }),
+        Value::Array(items) => items.iter().any(|item| calls_volatile(item, context)),
+        _ => false,
+    }
+}
+
+/// Whether a call to `name` may return another value each time.
+fn volatile_call(name: &str, context: &Context<'_>) -> bool {
+    NONDETERMINISTIC_FUNCTIONS.contains(&name)
+        || context.options.overrides.contains_key(name)
+        || context
+            .schema
+            .functions
+            .get(name)
+            .is_some_and(|spec| spec.traits.volatility != Volatility::Immutable)
 }
 
 /// The construct a VARIANT-held value was built by, which a reader cannot take.

@@ -340,6 +340,21 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
+            description: "a subquery reading a lambda's parameter refuses: it cannot be bound outside",
+            sql: "SELECT TRANSFORM(SPLIT('a,b', ','), x VARCHAR -> (SELECT UPPER(x))) AS t",
+            flags: &[],
+            mention: "a subquery that reads a lambda's parameter",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a subquery calling a volatile function refuses where a lambda wraps it",
+            sql: "SELECT DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events \
+                  WHERE event_id > LOOKBACK())) AS d",
+            flags: &["--schema", "tests/cli/fixtures/volatile_lookback.json"],
+            mention: "a subquery calling a function whose result can change between calls",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "comment-only input is a usage error",
             sql: "-- no statement here\n",
             flags: &[],
@@ -1014,6 +1029,37 @@ fn given_recorded_shapes_when_converting_then_they_convert_or_refuse_as_recorded
 }
 
 #[test]
+fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside_lambdas() {
+    let test_cases = [
+        ValueTestCase {
+            description: "an incremental lookback from the latest row keeps the last three days",
+            sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
+                  occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
+                  WHERE occurred_at >= DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events))",
+            expected_value: "2",
+        },
+        ValueTestCase {
+            description: "a DATEADD of a DATEADD of a subquery binds it once, outside both",
+            sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
+                  occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
+                  WHERE occurred_at >= \
+                  DATEADD(hour, 37, DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events)))",
+            expected_value: "1",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_connect_by_root_of_a_qualified_column_when_running_then_it_reads_the_root_value() {
     let test_cases = [ValueTestCase {
         description: "CONNECT_BY_ROOT of a qualified column reads the root row's value",
@@ -1652,6 +1698,13 @@ fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fi
             flags: &["--strict"],
             expected_help: "to rely on `hash`: set default and strict = \"warn\" under \
                 [divergences.hash] in <policy>",
+        },
+        DivergenceHelpTestCase {
+            description: "a divergence a rule's type check needs is still SQ0008, with policy help",
+            sql: "SELECT CAST(1 AS NUMBER(38,0)) - CAST(1 AS NUMBER(38,2)) AS d",
+            flags: &["--strict"],
+            expected_help: "to rely on `numeric_range`: drop --strict, or set strict = \"warn\" \
+                under [divergences.numeric_range] in <policy>",
         },
         DivergenceHelpTestCase {
             description: "a value divergence under --loud-divergences-only",

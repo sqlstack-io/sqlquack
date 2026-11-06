@@ -44,6 +44,28 @@ pub const TIMESTAMP_NTZ_NAME: &str = "TIMESTAMP_NTZ(9)";
 pub const LAMBDA_KIND: &str = "lambda";
 /// What a lambda parameter's DuckDB name starts with.
 pub const LAMBDA_PARAMETER_PREFIX: &str = "lambda_";
+/// What the DuckDB name of a lambda parameter holding a subquery's value starts with.
+pub const SUBQUERY_PARAMETER_PREFIX: &str = "subquery_value_";
+/// Built-in functions whose result can change between calls, which a subquery must not share.
+pub const NONDETERMINISTIC_FUNCTIONS: &[&str] = &[
+    "RANDOM",
+    "RANDSTR",
+    "UUID_STRING",
+    "NORMAL",
+    "UNIFORM",
+    "ZIPF",
+    "SEQ1",
+    "SEQ2",
+    "SEQ4",
+    "SEQ8",
+];
+/// Why a subquery reading a lambda's parameter is refused where the conversion wraps it in one.
+pub const SUBQUERY_READS_LAMBDA: &str = "a subquery that reads a lambda's parameter, which \
+    DuckDB cannot bind inside the lambda, so it cannot be computed once outside it either";
+/// Why a subquery calling a volatile function is refused where the conversion wraps it in a lambda.
+pub const VOLATILE_SUBQUERY_IN_LAMBDA: &str = "a subquery calling a function whose result can \
+    change between calls, inside a lambda DuckDB cannot bind it in; computing it once outside \
+    could change how often it runs compared with Snowflake";
 /// The window aggregate that converts with DISTINCT, over whole partitions.
 pub const DISTINCT_WINDOW_AGGREGATE: &str = "count";
 /// The named aggregates that convert over a window.
