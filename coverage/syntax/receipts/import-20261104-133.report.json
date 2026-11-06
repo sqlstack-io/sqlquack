@@ -1,0 +1,224 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k0f0f79a244fa",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k137093b200f9",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k13791c3f93f3",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k2158b776d542",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k5e329a46b47e",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k709bdc1e872d",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.ka45a326faa4d",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kb484d772fb26",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kbd3c84686a4b",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kd95a74d046f2",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kf17853d8e491",
+   "reason": "message echoes '@' or '://' text the receipt format forbids",
+   "run_id": "define-def-02"
+  }
+ ],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-task.define-task.k1825f14c16a8",
+   "kind": "held",
+   "raw_record_sha256": "48712114e1114b11757f7cec5c510471d90a79b5a253d3fce4c99e5fcedc7625",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k390481c86c6c",
+   "kind": "held",
+   "raw_record_sha256": "e0350f45e2302c0c72e7cd9355fa720a4f9a837f4a5d1d3947ae9d0494d64949",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k4481b25317ac",
+   "kind": "held",
+   "raw_record_sha256": "cd3526f4623129f6b6ae92999175f7e87002b632d87c76830dd192c7fa7e8878",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k47427d3f7a7e",
+   "kind": "held",
+   "raw_record_sha256": "fac3550efaf745f07906181271ed0aa2b8cd13ee6668df1619d8135b1bc46194",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k6c2a208faacc",
+   "kind": "held",
+   "raw_record_sha256": "46ff22ad928d33c12821177b047cea2104c306655adbad100a1a8c52a9d4e2cb",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-alert.define-alert.ke1a16b8bd96e",
+   "kind": "held",
+   "raw_record_sha256": "ac2a6ad509118e407073f0f6c140649612e68f66d7a4ad882631e70ba7c91f28",
+   "reason": "execution-wrapper failure, errno 91440 has no statement ruling (hold for C)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-database.define-database.k2650deb858f1",
+   "kind": "held",
+   "raw_record_sha256": "97d7272558c87f8f43b35797ad467b079fdd32a9e6d2ae9881b886c1c481f8eb",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-database.define-database.k86935b1faaef",
+   "kind": "held",
+   "raw_record_sha256": "8cddedbec062920772c06541cf76c8125f73399baf2e1a97550b275cfd341e1d",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-database.define-database.ka20fb04f1f77",
+   "kind": "held",
+   "raw_record_sha256": "ea0e979210c793b3019607ff4877114c6590412c2e0554bd09e0d1365ca7daea",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-database.define-database.kc446aabedc55",
+   "kind": "held",
+   "raw_record_sha256": "eac81fb941fd526095cd655c530029549f24309b2f7b17ca7818af725d2305ea",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-02"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k36d2be1f931c",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-02",
+   "sql_sha256": "36d2be1f931cc6103bc36b3c74b6a1f3f6915af258908f2611a8746b66f7d1c4"
+  }
+ ],
+ "receipts": 278,
+ "repositioned_by_import": [
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.k572cd7d85281",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.k5c63c6dd6847",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.k930c0ac383fa",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.ka3d62089906a",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.kcb01a25e5320",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.kdbf9654aadaa",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-data-metric-function.define-data-metric-function.kfa18606f48cc",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  }
+ ],
+ "runs": [
+  "define-def-02"
+ ]
+}

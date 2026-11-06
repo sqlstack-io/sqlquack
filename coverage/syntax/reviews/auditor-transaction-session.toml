@@ -1,0 +1,189 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "auditor-transaction-session-001"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "02250357e9eb979f37deb92221e8d382917f3701"
+reviewed_utc = "2026-11-04T18:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.commit",
+  "sf.transaction_session.rollback",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 9f38f55eb2d0; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.commit" = "1caab3a0cc61ca51248225f80f356cde43a6641833e374a986921f56fdfb8e34"
+"sf.transaction_session.rollback" = "97538ebb905e6c8b491d15965cd18b3d5ba99b369b9e934a0d450eb3422f4607"
+
+[review.definitions]
+"sf.transaction_session.commit" = "cc28b61b9bba960564bcfd3d0ef718c692d5bb587ca563a2953abc9b9da4a17c"
+"sf.transaction_session.rollback" = "ed13fda3533497e6b73dad549848f189908efbd5ed8c9a58bbf7f9adbf6e3812"
+
+[[review]]
+id = "auditor-transaction-session-002"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T22:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.use-database",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.use-database" = "da18ce6b8b37f1571743fa4820424a84f57e38d8a2b3e2e4ab1dce43e9c36189"
+
+[review.definitions]
+"sf.transaction_session.use-database" = "f3ed3ce7a2fe18cd045617e59ea13af0d28f44aecb3e1901e80c22e593e8f146"
+
+[[review]]
+id = "auditor-transaction-session-003"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.alter-session.unset",
+  "sf.transaction_session.show-locks",
+  "sf.transaction_session.show-transactions",
+  "sf.transaction_session.show-variables",
+  "sf.transaction_session.unset.unset",
+  "sf.transaction_session.unset.unset.syntax",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.alter-session.unset" = "ee89b55e0c6e4e1f840e42c8e89208b683421305513c7ea7fa037d3e48bbc07e"
+"sf.transaction_session.show-locks" = "fd6e2ab5220df918fa7bdafc89a9e95c5124bb6d254385729f07182d1d3d187b"
+"sf.transaction_session.show-transactions" = "f3a6b66fd909793a254d5baea130efade56578a1548cb0776ef320aec64e541d"
+"sf.transaction_session.show-variables" = "3cc8dc1d12887c60132c08686e575be37d1ad9610cb5faa936f4f357317aa270"
+"sf.transaction_session.unset.unset" = "008e3331c73a8a7ded40a3d1cdbdf7c6841cfbe8003d1e6823e2c6b0896e46bd"
+"sf.transaction_session.unset.unset.syntax" = "a52e882bebc7e314edaf1c537082e0cb0dc2635e38041ed333f6cdd22eb78825"
+
+[review.definitions]
+"sf.transaction_session.alter-session.unset" = "82b24c9910fbf8774b0bb232d2677e1698378f11924e95495e9b9f1a5f18ce87"
+"sf.transaction_session.show-locks" = "9340ca356032a17bd7c9775b56a0ca6bc71ce618eb53f4a84c4dc7888f7e728d"
+"sf.transaction_session.show-transactions" = "0d128636479656d0e8cd875612dbf977bc9f15967a757af305d6ae5ec7cd5b4a"
+"sf.transaction_session.show-variables" = "05c0ea2f888fe886f9d23d78190b70b0c42649411e437aef54cea9963adb200a"
+"sf.transaction_session.unset.unset" = "14e4f5ab8e93dfb8c421a8fb09bf44eeb82bd8d2d3b221b404e8625792de07a7"
+"sf.transaction_session.unset.unset.syntax" = "51fd2868220143f3d28df754e965aa9e2e5db71c632c268f386c14c4599561db"
+
+[[review]]
+id = "auditor-transaction-session-004"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "8067a98cd6e46bf4aa559f564d592abcc74b18c5"
+reviewed_utc = "2026-11-05T03:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.begin.start-transaction",
+  "sf.transaction_session.use-secondary-roles",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 174f4f1af7cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.begin.start-transaction" = "c6bf3f81aa20eead4020d14dc73b95b0e65bef8c2404ad2c8bf854f4912ea063"
+"sf.transaction_session.use-secondary-roles" = "d0057697250b98089dea342b797568510d9584e0aa99ffb12dcd436b821e0ba1"
+
+[review.definitions]
+"sf.transaction_session.begin.start-transaction" = "d387f27ccea5a943f1167427cc4b042bd630e5e1ea2fd44d48e665f79e344d65"
+"sf.transaction_session.use-secondary-roles" = "9da87835b94e0f106abc8b561abf20e484b47bcd0e98fa178ea8b501a4840a42"
+
+[[review]]
+id = "auditor-transaction-session-005"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "a8d9cb164ed163f3c02fff0e18aedb62c1dde5be"
+reviewed_utc = "2026-11-05T10:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.set.set.syntax",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.set.set.syntax" = "03c2e46bc91b504ec809b208e46a71ef3dbe1814dc9820bec9b09e94eae760c9"
+
+[review.definitions]
+"sf.transaction_session.set.set.syntax" = "47fdbef9f9d508a46bb888f0b4fa035c623824a89702b532bf536d3b539cddd8"
+
+[[review]]
+id = "auditor-transaction-session-006"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "464a70bb8f8057d3224c6eb8090d7ad3d7b0826f"
+reviewed_utc = "2026-11-05T11:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.begin.begin",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f3c75ab3a132; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.begin.begin" = "23e9c8ca7b07e1a81cbbdd8f3a3633d39584e927264d00ee8b114e50fac14db5"
+
+[review.definitions]
+"sf.transaction_session.begin.begin" = "a88c07327bb270513b5a48c72ab14d76cde962e734e1f4339e97c3a206970618"
+
+[[review]]
+id = "auditor-transaction-session-007"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.use-role",
+  "sf.transaction_session.use-warehouse",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.use-role" = "51d865924f345fd4a0e8ed3095f7b82ca553d3e06ec5dcbda26c51fdd3c0f296"
+"sf.transaction_session.use-warehouse" = "38cc7ec0c1f060491fef313bffcb756aefaefc4f222ecf001f33119e015514ec"
+
+[review.definitions]
+"sf.transaction_session.use-role" = "c4e9567e29102bc8d8c14b337f5d0c89fd3a0241449a90148a29dcfae260dbf5"
+"sf.transaction_session.use-warehouse" = "3661aad31af299a6b5d605770ad52dd20e866d91a5dd05327a7a1b089e13ae9f"
+
+[[review]]
+id = "auditor-transaction-session-008"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "f2ee1c0842ba86b9eaad6fae4ccb9d9d99fad654"
+reviewed_utc = "2026-11-05T17:58:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.use-schema",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main abd037fd461e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.use-schema" = "85f31d4405727d15c358f4e65a1bdb7d01e50a84bb6334d96ba5818a76a89600"
+
+[review.definitions]
+"sf.transaction_session.use-schema" = "802e5f0bb91b528675ec9bccc3fc1ab520196b0dacdc02feb2bfb8938dc2b00b"
+
+[[review]]
+id = "auditor-transaction-session-009"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T21:15:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.desc-result",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.desc-result" = "4815c05567ebf0e3b4f8a66a460617fea1b309a21b1b93a11e6de852a674ece1"
+
+[review.definitions]
+"sf.transaction_session.desc-result" = "2128a9b1b7fab1f24e8eebb4c77e28baff1adf4ef6ac1d4699caf8577edf8c3c"

@@ -1,0 +1,164 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( BUCKET ( 1 , v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "049e410f30e105c8cd1e779f199aa1d6d2254e22331be606969e27925234bb52"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( DAY ( v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "0f54ebb8a13c7690a23bed1b5f1c70dd7d8a1061b7c6d2734b6a481a2912951d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( HOUR ( v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "1cc8c00a5ce39d3b81f1e53a303116e518f210f8f99bb778a7d70e2bc92f0fc2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( TRUNCATE ( 10 , v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "207985b5e992342f35b5bb9ca37ce917c9e333e217eae3380191fb2c5b377b04"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( YEAR ( v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "3617da7c2dcd2c69ed0aa8d79c3fd5ed49fdc937cf194fe26211946497063afa"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 PATH_LAYOUT = HIERARCHICAL REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "521854d5b292d1f7a7250e2b2683f221f3e84c7e24acd5786c0bc6974f1c78b9"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 INITIALIZE = ON_SCHEDULE REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "79788441eee788275d7f8153738295d4e938ce8355eeb266bd218e408acf0468"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( v1 , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 AS SELECT 1 ;",
+   "sql_sha256": "82d44e6f830753e4e905fd6257903239d350a0ecc4af2ce11424c89fcc645427"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "8a8331e6dee42d78daada08ca9f63d2feafaf291bf7cdf3f11018dfc1e557683"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( DELETE FROM t1 ) ;",
+   "sql_sha256": "8b72e7ba4b51585525c7fcfa1965bb1b350b42ec525617ab7bc6c647443ba641"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' , v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXTERNAL_VOLUME = 'm' CATALOG = 'SNOWFLAKE' BASE_LOCATION = 'm' TARGET_FILE_SIZE = 'AUTO' PARTITION BY ( MONTH ( v1 ) , v1 ) PATH_LAYOUT = FLAT ICEBERG_VERSION = 1 REFRESH_MODE = AUTO FROZEN WHERE ( 1 ) INITIALIZE = ON_CREATE CLUSTER BY ( 1 , 1 ) DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 COMMENT = 'm' REQUIRE USER EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+   "sql_sha256": "c259fcaa28966de71f2a4e486b44eaeb35986627cfef8c52ae7e39f01c697ade"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 REFRESH ( DELETE FROM t1 ) ;",
+   "sql_sha256": "e38456c6bc083ac6fe4f310a0f817ba6cc5115e65167b8611a0091abee68b6d0"
+  }
+ ],
+ "receipts": 230,
+ "receipts_file_sha256": "3bc664ab8abeb96d1d7d8f050df528cb87c52a59f57d3ddb4b24cc3807eaedf0",
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "2d7f261af9e649e130977415f79290548ffe0b119167e619598d4fa38ba3de31",
+   "receipts": 230,
+   "refused_rows": 0,
+   "run_id": "d104-standalone-20261104T070037Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

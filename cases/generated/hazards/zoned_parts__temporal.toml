@@ -11,7 +11,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "DATE_PART(epoch_second, x0)"
 tags = ["null", "boundary"]
@@ -23,7 +23,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "DATE_PART(epoch_second, x0)"
 tags = ["null", "boundary"]
@@ -35,7 +35,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "EXTRACT(year FROM x0)"
 tags = ["null", "boundary"]
@@ -47,7 +47,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "EXTRACT(year FROM x0)"
 tags = ["null", "boundary"]
@@ -59,7 +59,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "HOUR(x0)"
 tags = ["null", "boundary"]
@@ -71,7 +71,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "HOUR(x0)"
 tags = ["null", "boundary"]
@@ -83,7 +83,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "YEAR(x0)"
 tags = ["null", "boundary"]
@@ -95,7 +95,7 @@ description = "fn:DATE_PART over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "YEAR(x0)"
 tags = ["null", "boundary"]

@@ -10,8 +10,10 @@ id = "node_concat_combination_0_text_text"
 description = "node:concat over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "x0 || x1"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -59,7 +61,7 @@ description = "node:concat over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15'", "'a'"],
-  ["'2024-01-16'", "'b'"],
+  ["'2024-05-17'", "'b'"],
 ]
 expression = "x0 || x1"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -107,7 +109,7 @@ description = "node:concat over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'b'", "'2024-01-16'"],
+  ["'b'", "'2024-05-17'"],
 ]
 expression = "x0 || x1"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -420,8 +422,10 @@ id = "fn_concat_1_combination_0_text_text"
 description = "fn:CONCAT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "CONCAT(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -469,7 +473,7 @@ description = "fn:CONCAT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'2024-01-15'", "'a'"],
-  ["'2024-01-16'", "'b'"],
+  ["'2024-05-17'", "'b'"],
 ]
 expression = "CONCAT(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -517,7 +521,7 @@ description = "fn:CONCAT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'b'", "'2024-01-16'"],
+  ["'b'", "'2024-05-17'"],
 ]
 expression = "CONCAT(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]

@@ -37,3 +37,21 @@ rows = [
 query = "SELECT 'i' AS op, TO_JSON(v) AS t FROM (SELECT PARSE_JSON(s) AS v FROM input WHERE side = 'l' INTERSECT SELECT PARSE_JSON(s) FROM input WHERE side = 'r') UNION ALL SELECT 'u', TO_JSON(v) FROM (SELECT PARSE_JSON(s) AS v FROM input WHERE side = 'l' UNION SELECT PARSE_JSON(s) FROM input WHERE side = 'r') ORDER BY op, t"
 order = "ordered"
 tags = ["null", "json-null", "nested"]
+
+[[case]]
+id = "intersect_duplicates_both_sides"
+description = "INTERSECT of VARIANTs duplicated on both sides keeps one of each shared value; catches INTERSECT ALL, a UNION, or a side treated as empty."
+columns = [{ name = "s", type = "VARCHAR" }, { name = "side", type = "VARCHAR" }]
+rows = [
+  ["'\"x\"'", "'l'"],
+  ["'\"x\"'", "'l'"],
+  ["'{\"a\":1,\"b\":2}'", "'l'"],
+  ["'1'", "'l'"],
+  ["'\"x\"'", "'r'"],
+  ["'\"x\"'", "'r'"],
+  ["'{\"b\":2,\"a\":1}'", "'r'"],
+  ["'2'", "'r'"],
+]
+query = "SELECT TO_JSON(v) AS t FROM (SELECT PARSE_JSON(s) AS v FROM input WHERE side = 'l' INTERSECT SELECT PARSE_JSON(s) FROM input WHERE side = 'r') ORDER BY t"
+order = "ordered"
+tags = ["null", "json-null", "nested"]

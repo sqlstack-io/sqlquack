@@ -1,0 +1,1074 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "auditor-security-admin-001"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "a4401f7188959d817692dc26030a919f5a59a503"
+reviewed_utc = "2026-11-04T23:50:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-aggregation-policy.rename-to",
+  "sf.security_admin.alter-authentication-policy.rename-to",
+  "sf.security_admin.alter-backup-policy.rename-to",
+  "sf.security_admin.alter-backup-policy.unset-comment-schedule-expire-after-days",
+  "sf.security_admin.alter-connection.unset-comment",
+  "sf.security_admin.alter-data-movement-policy.rename-to",
+  "sf.security_admin.alter-data-movement-policy.unset-comment",
+  "sf.security_admin.alter-failover-group.add-to-allowed-databases",
+  "sf.security_admin.alter-failover-group.add-to-allowed-external-volumes",
+  "sf.security_admin.alter-failover-group.add-to-allowed-shares",
+  "sf.security_admin.alter-failover-group.move-databases-to-failover",
+  "sf.security_admin.alter-failover-group.move-external-volumes-to",
+  "sf.security_admin.alter-failover-group.move-shares-to-failover",
+  "sf.security_admin.alter-failover-group.primary",
+  "sf.security_admin.alter-failover-group.refresh",
+  "sf.security_admin.alter-failover-group.remove-from-allowed-databases",
+  "sf.security_admin.alter-failover-group.remove-from-allowed-external-volumes",
+  "sf.security_admin.alter-failover-group.remove-from-allowed-shares",
+  "sf.security_admin.alter-failover-group.rename-to",
+  "sf.security_admin.alter-failover-group.resume",
+  "sf.security_admin.alter-failover-group.set-optimized-refresh-true-false",
+  "sf.security_admin.alter-failover-group.set-read-only-true",
+  "sf.security_admin.alter-failover-group.set-rpo-assurance-true-false",
+  "sf.security_admin.alter-failover-group.suspend",
+  "sf.security_admin.alter-feature-policy.rename-to",
+  "sf.security_admin.alter-ingress-policy.unset-comment",
+  "sf.security_admin.alter-join-policy.rename-to",
+  "sf.security_admin.alter-maintenance-policy.rename-to",
+  "sf.security_admin.alter-masking-policy.rename-to",
+  "sf.security_admin.alter-multi-party-approval-policy.rename-to",
+  "sf.security_admin.alter-network-policy.rename-to",
+  "sf.security_admin.alter-network-rule.unset-value-list-comment",
+  "sf.security_admin.alter-organization-profile.abort",
+  "sf.security_admin.alter-organization-profile.add-live-version-from",
+  "sf.security_admin.alter-organization-profile.commit",
+  "sf.security_admin.alter-organization-set-event-routing-table",
+  "sf.security_admin.alter-organization-unset-event-routing-table",
+  "sf.security_admin.alter-organization.set-default-tenant-type-internal-external",
+  "sf.security_admin.alter-organization.unset-domain-names",
+  "sf.security_admin.alter-password-policy.rename-to",
+  "sf.security_admin.alter-session-policy.rename-to",
+  "sf.security_admin.alter-snapshot-policy.rename-to",
+  "sf.security_admin.alter-snapshot-policy.unset-comment-schedule-expire-after-days",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main c12439e8c2e1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-aggregation-policy.rename-to" = "b7785db91fa093dc82692ab7ad1e0074d844901a17069c968782585460d5e2f2"
+"sf.security_admin.alter-authentication-policy.rename-to" = "e610d421dcfe144bb74de6a3626e83ec06b4f2f22893797bb01eaf3b68e41a54"
+"sf.security_admin.alter-backup-policy.rename-to" = "34cc38d686ce5e4a60e1119f7d20a3ad6d5b070b98c2c216780e25fd811b36ca"
+"sf.security_admin.alter-backup-policy.unset-comment-schedule-expire-after-days" = "1e3dabdd338d9bcbc094374c383deb87fbecee8022123a3e27f89bdd51b4ea0d"
+"sf.security_admin.alter-connection.unset-comment" = "4d6d377017d61c624dc887cba038b5942e0945b5ca1cedacf13131773e797357"
+"sf.security_admin.alter-data-movement-policy.rename-to" = "4938411d46cc67373d055e0c2bd180e1a39d9a2dbec93d584bfd1989bcecaa6e"
+"sf.security_admin.alter-data-movement-policy.unset-comment" = "517ce9e943ae1b8882cd24e5d96cf11ff4ce819294b36ed618a6d20e1f5b96a4"
+"sf.security_admin.alter-failover-group.add-to-allowed-databases" = "0aba9deb82ee6ea8a350e093996cfa4eac9a739ca56cc3ae193a89dbfac7ec6f"
+"sf.security_admin.alter-failover-group.add-to-allowed-external-volumes" = "b76f23bc977185d9533cc7c0b385ca3d32b933ff9baa17c0cc8567404c0de4fd"
+"sf.security_admin.alter-failover-group.add-to-allowed-shares" = "b21a30fabf8409b0ca372cd7a3a8de0a4ffc21169b1242503a41829089aa68e6"
+"sf.security_admin.alter-failover-group.move-databases-to-failover" = "a4361818988054320db1eee4c79adf017001beadbc62b873add3eaeb0a4aaa58"
+"sf.security_admin.alter-failover-group.move-external-volumes-to" = "50c0d3597fbf5d003f05981b061aa494914a20b3d820afa35499a202140291f6"
+"sf.security_admin.alter-failover-group.move-shares-to-failover" = "3eb28648db1b994d661da5b3ad5340d5626556c5210afcad07d250077ac00f5e"
+"sf.security_admin.alter-failover-group.primary" = "fc66d1df021a0d453339ac44fc7d6351500bc07a63618bb08483a074d2dd40ed"
+"sf.security_admin.alter-failover-group.refresh" = "b6e8813e213df4f949015742844f4f57ea543dffba6540ea28873e41a6cedc46"
+"sf.security_admin.alter-failover-group.remove-from-allowed-databases" = "257be7311e420f405e4cec1948507aed5e7856385140357393d659313c29e40b"
+"sf.security_admin.alter-failover-group.remove-from-allowed-external-volumes" = "e46a97beeb6b70842b0a5e3eeaea85ac7959b8e69f74e2c2d47ce15dbb737d4b"
+"sf.security_admin.alter-failover-group.remove-from-allowed-shares" = "58be3488129f42b2fda1627de332a1360268f90e4b268f6a87f646ecf74a8047"
+"sf.security_admin.alter-failover-group.rename-to" = "bae3e66c2ad4f3f70f16035547c41559cd1000dc116d60ef06af58cfa8c92048"
+"sf.security_admin.alter-failover-group.resume" = "aff3c92fdc48aa8d468fc455adc3a3439389cc3f9da7977385695d65b2d39a50"
+"sf.security_admin.alter-failover-group.set-optimized-refresh-true-false" = "9794438d80d249d828a00970241ce4aac56e04383d6859762dbff7d7ebcd2edf"
+"sf.security_admin.alter-failover-group.set-read-only-true" = "594e218877ecc299b928a33da25261d873852be8675d719e05d476f9e0e77743"
+"sf.security_admin.alter-failover-group.set-rpo-assurance-true-false" = "f285469caf1005943f0760d9d5fcccefbbb815d7e9838135a77534650dcc38d2"
+"sf.security_admin.alter-failover-group.suspend" = "bb682ab6d44c0b13145285a8720489b935ed44611fb756dd699cf2f081f6ab21"
+"sf.security_admin.alter-feature-policy.rename-to" = "008592c656e30294c338ceed6c53534305df14f0a6cb6a02451b50beb18f3bf1"
+"sf.security_admin.alter-ingress-policy.unset-comment" = "597ffd6ff03817bb0b42acae14a587c99abafb855dfc065a25d582c290666ffd"
+"sf.security_admin.alter-join-policy.rename-to" = "5a502bde5867e5138c4536e8b0cd2333e911f4713ae13dc0075fbc429b11ed7a"
+"sf.security_admin.alter-maintenance-policy.rename-to" = "024be50b4bb8d7083276d2e79b36a8192bc8a48189af3b523c44e5a84e07f55a"
+"sf.security_admin.alter-masking-policy.rename-to" = "d2ac33aa515790875c65be847e64fef2f7979f5a8e1f303380bdca06ba7f5b86"
+"sf.security_admin.alter-multi-party-approval-policy.rename-to" = "baecbbf0f45a135c56893558267534c157b3bf8012f31ea5eb6bc8f86423add2"
+"sf.security_admin.alter-network-policy.rename-to" = "9bbe070103a9663fe48a194866e3e79fabee526b71de1355d1516925e35e3e2d"
+"sf.security_admin.alter-network-rule.unset-value-list-comment" = "02fe5652f480e4b53e331b193c28af3c7c539ec6f038c2db653016d37414aafd"
+"sf.security_admin.alter-organization-profile.abort" = "d8caed93fea1eb03fe71af5e62cf05054260c0e7bea07317d072dad406e02991"
+"sf.security_admin.alter-organization-profile.add-live-version-from" = "1f89240f0b1fcf82438ebda642543c61278f2e7adef94b836b59c3a7e4ced2b3"
+"sf.security_admin.alter-organization-profile.commit" = "e6b6459b5c5fecd86c12ff3286906530ffb66376e0ba3582c0296445763f35cf"
+"sf.security_admin.alter-organization-set-event-routing-table" = "8ffc248fed50071f07e2997f1565f756d790b11fdd0a86efdeade1a4eed4295e"
+"sf.security_admin.alter-organization-unset-event-routing-table" = "ff7586e5e14767127b7321804df23c6786b807809002ec3484a73aa235452d76"
+"sf.security_admin.alter-organization.set-default-tenant-type-internal-external" = "97df0b8d977d9caaf798bafb0968dee506abcb41e509473e7b228b75297f0b24"
+"sf.security_admin.alter-organization.unset-domain-names" = "7bf29a7ecc8e96b5e57f03081a6f8f11dd5b44019579a16b5c39506d2efa9b79"
+"sf.security_admin.alter-password-policy.rename-to" = "d7171686c1a9ce6643b0cbe2d541bf2540af8f5f1831d0afa43240fbc236ef47"
+"sf.security_admin.alter-session-policy.rename-to" = "40031d1120d5bdbc2655d04bf75c79fdb1ec8287a8287826c789e7b986a61aec"
+"sf.security_admin.alter-snapshot-policy.rename-to" = "ecc7156320fa9ee874697bcdc23c4591be265e4f66a75174b4093b2450fec106"
+"sf.security_admin.alter-snapshot-policy.unset-comment-schedule-expire-after-days" = "7eba39a282be343b02be145efd69113834635e5e7f1570849467d8b953060a5e"
+
+[review.definitions]
+"sf.security_admin.alter-aggregation-policy.rename-to" = "e3fab5fa7ec624010d3a9e1b8e84aac17fbdb959a90a991d98afb8aca826e6d3"
+"sf.security_admin.alter-authentication-policy.rename-to" = "bfaf10e25e6190a8443f732031bdc0392c6dff9bdc875793899b3e174ad3a803"
+"sf.security_admin.alter-backup-policy.rename-to" = "054a5cddfd495c9354d4309724185fb4d20912ca7678464588ba32a69a2156ac"
+"sf.security_admin.alter-backup-policy.unset-comment-schedule-expire-after-days" = "a435cda9c539f7a44fe1de89240ee3d0030573e0c1c5d495c0d1b350a4a6da4f"
+"sf.security_admin.alter-connection.unset-comment" = "0475e8ea4d0a37b9656c32dfcc99ef8c539b8c57c5ffe41881513a472d5ef2d8"
+"sf.security_admin.alter-data-movement-policy.rename-to" = "17df716470033e73c4947ed61c4c71f66225fe4b70997eb5733f234d8e670929"
+"sf.security_admin.alter-data-movement-policy.unset-comment" = "afa9a26b94265a57a8921df96cb4b218139bcaeac1840ff9c22b8ed5c0fa93b7"
+"sf.security_admin.alter-failover-group.add-to-allowed-databases" = "3bb5a3962fdd1c300bf6cc9d2e06d35cb99e5ed9f0b6542e66c63702228b4310"
+"sf.security_admin.alter-failover-group.add-to-allowed-external-volumes" = "0b0c2cf6d69757a45807f86d6b3c30f8140da3a5fa8d24b8f0a85ae101bd0019"
+"sf.security_admin.alter-failover-group.add-to-allowed-shares" = "cf22f998dcafd193186c94b6d47419d4c8bc9571d048d3dac35322e99fdff3c7"
+"sf.security_admin.alter-failover-group.move-databases-to-failover" = "bf169923dac1e5975f3e118bc83c82ad007b9c031d3e1ee52fd9ffe3658d1cdb"
+"sf.security_admin.alter-failover-group.move-external-volumes-to" = "c7d52f5186e9944194f75857a15136545dccd52be19d9b1cdbbc12e11eb1b8a4"
+"sf.security_admin.alter-failover-group.move-shares-to-failover" = "04f5d458bb8088fd893e01632bdb69a42a1620cbaa87d41404311e447e4750b2"
+"sf.security_admin.alter-failover-group.primary" = "73ebe3bf54a133ccc606a774ec8db8a1fb8b3efd20b77b7ff69179065031eb5f"
+"sf.security_admin.alter-failover-group.refresh" = "012378ce2cb9625ff4076d92df005f9b979f75d0f745ba7b13b0fcd082bff781"
+"sf.security_admin.alter-failover-group.remove-from-allowed-databases" = "1d23741517f16483c8d4bee24bed065063c02487f561ef76c8b5b9c635c31d85"
+"sf.security_admin.alter-failover-group.remove-from-allowed-external-volumes" = "2f3b9caac4861e53e32a834fbadfcbb3d120241ec0e15942c4f6ee53322029c5"
+"sf.security_admin.alter-failover-group.remove-from-allowed-shares" = "510dc8fd82cd95184cf19987b723f57e32c7b6119b8f6533577cfadd434bb46e"
+"sf.security_admin.alter-failover-group.rename-to" = "41d6d59b55324cdb0f9dc6cf1b398ef962736941cc2daa189a58eeca3321d5f1"
+"sf.security_admin.alter-failover-group.resume" = "96d82cc12461065e892352b63f43bdc0a2b1e1346dede2c17d489a2db98f28ef"
+"sf.security_admin.alter-failover-group.set-optimized-refresh-true-false" = "7548913e6373036b5497e0cd05fc58c0b801acf81d7dd52aec36221a21a76bc9"
+"sf.security_admin.alter-failover-group.set-read-only-true" = "a77a1c89c90595c1ddf9c7506d10f5d10b2d59704bd1204059fa59489a9bf171"
+"sf.security_admin.alter-failover-group.set-rpo-assurance-true-false" = "18948de90e5d66cb33a9be25c0c781b979d080c28732f8388f905832ad230fb5"
+"sf.security_admin.alter-failover-group.suspend" = "9f052b353538b46d47ff7a4971395749899adc94f31c5cfb55c5f762115f51b0"
+"sf.security_admin.alter-feature-policy.rename-to" = "62bb19363683c9d28c2cd0f213d869c5990587b737c73eb59937a084456d4c2d"
+"sf.security_admin.alter-ingress-policy.unset-comment" = "526f90b2b948c4c6efa99d7a0ec98c4f758d4c893eea84de70698253669701f2"
+"sf.security_admin.alter-join-policy.rename-to" = "587adc609b32ac3202dd163e26bb4c11eb8408e523060247c96028de8cc9dc88"
+"sf.security_admin.alter-maintenance-policy.rename-to" = "e2803ba20aecff36beaaafb9e7fe467c656dcf7a198452b831584a6e340e7a8c"
+"sf.security_admin.alter-masking-policy.rename-to" = "fd3c8e090e035ca6374d6fe031420a6a031ec674265c59065e5e19a3bcae0fbe"
+"sf.security_admin.alter-multi-party-approval-policy.rename-to" = "a1b3c964c1566da4bee8b53d26f9074624b181bbc3c364c9c36069fee223dbe5"
+"sf.security_admin.alter-network-policy.rename-to" = "8d93c10d31e9bc8bc3bc0f2ae22745ba5c04ca6859a79d5519641c8f84fc5b1e"
+"sf.security_admin.alter-network-rule.unset-value-list-comment" = "1a844f46862e4411129cd9c87afab93c01a345308e075bdd62e3a0b823406d8d"
+"sf.security_admin.alter-organization-profile.abort" = "e903de18b7655aa3f3d3927dd1209e1528c0bae46867f440bf93aab7040d95ab"
+"sf.security_admin.alter-organization-profile.add-live-version-from" = "6a7749b99110a0a0dd5688adfabc262526d38b0139dcc185b4030560ac44be62"
+"sf.security_admin.alter-organization-profile.commit" = "09bba2d905d8987cd223f7cd6ddca105735e8fc211da6674720b077eab5093d2"
+"sf.security_admin.alter-organization-set-event-routing-table" = "431c6998cd242bd0e502a837840cb88179dd5a9eaa0525bcd9dca2c9788da937"
+"sf.security_admin.alter-organization-unset-event-routing-table" = "78bbcde13ad1c92dd0bad3cf1155800323c41de65c7ae1453b3123582d7be583"
+"sf.security_admin.alter-organization.set-default-tenant-type-internal-external" = "b09fc24dbcad40ef9733a308d71d855916b9573994f240614ca74d22da3237e4"
+"sf.security_admin.alter-organization.unset-domain-names" = "112a09c28c343f3367e3c3875349a77f733787af81ac7c261dd9110431c4c19a"
+"sf.security_admin.alter-password-policy.rename-to" = "89f4ac29b54b6d4981641fc0cd026f572c9c0cc11b54ff16859da89012a911f7"
+"sf.security_admin.alter-session-policy.rename-to" = "b21cdcde47512a1af8fa8893a10ff8d4ef1f253c46c969bc8634fffc18ce10bd"
+"sf.security_admin.alter-snapshot-policy.rename-to" = "610130c03f8d282e3db4c070c1825206a3e1a6a6f9d224941b5dad94d86b2299"
+"sf.security_admin.alter-snapshot-policy.unset-comment-schedule-expire-after-days" = "97206ae44cec2bd8fbaac8f4a490588a2041ba3ec47b601ab8bb18f012502219"
+
+[[review]]
+id = "auditor-security-admin-002"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "8067a98cd6e46bf4aa559f564d592abcc74b18c5"
+reviewed_utc = "2026-11-05T03:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-failover-group.add-to-allowed-accounts",
+  "sf.security_admin.alter-failover-group.remove-from-allowed-accounts",
+  "sf.security_admin.desc-aggregation-policy",
+  "sf.security_admin.desc-authentication-policy",
+  "sf.security_admin.desc-available-organization-profile",
+  "sf.security_admin.desc-backup-policy",
+  "sf.security_admin.desc-catalog-integration",
+  "sf.security_admin.desc-data-movement-policy",
+  "sf.security_admin.desc-feature-policy",
+  "sf.security_admin.desc-ingress-policy",
+  "sf.security_admin.desc-join-policy",
+  "sf.security_admin.desc-maintenance-policy",
+  "sf.security_admin.desc-masking-policy",
+  "sf.security_admin.desc-multi-party-approval-policy",
+  "sf.security_admin.desc-network-policy",
+  "sf.security_admin.desc-network-rule",
+  "sf.security_admin.desc-notification-integration",
+  "sf.security_admin.desc-oflow-data-plane-integration",
+  "sf.security_admin.desc-packages-policy",
+  "sf.security_admin.desc-password-policy",
+  "sf.security_admin.desc-privacy-policy",
+  "sf.security_admin.desc-projection-policy",
+  "sf.security_admin.desc-row-access-policy",
+  "sf.security_admin.desc-session-policy",
+  "sf.security_admin.desc-share.share.syntax",
+  "sf.security_admin.desc-storage-lifecycle-policy",
+  "sf.security_admin.show-available-organization-profiles",
+  "sf.security_admin.show-catalog-integrations",
+  "sf.security_admin.show-global-accounts",
+  "sf.security_admin.show-listings-in-failover-group",
+  "sf.security_admin.show-managed-accounts",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 174f4f1af7cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-failover-group.add-to-allowed-accounts" = "6ddd6abc99394769c2dc6ce8536c224a9c49b986a0b991a71c9f7f3a64cbcac3"
+"sf.security_admin.alter-failover-group.remove-from-allowed-accounts" = "97bf5e90e1164372d3ad5c06590f22851dd0e7668ec464d86be0b77f9f027da9"
+"sf.security_admin.desc-aggregation-policy" = "0c4391993cc9232554bce84e62f41d25dd7ddff75af0f84897e5f4cafe1f1801"
+"sf.security_admin.desc-authentication-policy" = "c369c5c80952b450c4a43f32e3c8624ac0b76b816c3e82160a30cced5833e406"
+"sf.security_admin.desc-available-organization-profile" = "dacd8d81d7bc1f786f580287b57259ce5598440d0c82ee9b16e12c8754cf2360"
+"sf.security_admin.desc-backup-policy" = "7c11970dfdc9b17b5fff341c11fcc4050213b319c5719033854b1be3203282b9"
+"sf.security_admin.desc-catalog-integration" = "6216da28375061d4b4d2735a7a7963f5d8a9e64737067962d0f06a505355924a"
+"sf.security_admin.desc-data-movement-policy" = "a99a48ce00ca5102067c25c35411441141408dc09ed85d138e836a7373dff628"
+"sf.security_admin.desc-feature-policy" = "001ad7cdf408914cfdd1c3c7cee8ce141bd37fc38b1da2fd27b0aa3a88fc1275"
+"sf.security_admin.desc-ingress-policy" = "7fd6a5d50e89fe76bcedad603338ac62d333737b73368ef23711c1828016493a"
+"sf.security_admin.desc-join-policy" = "28bead03d0fc23eec1121817cc793de91661a0efa07b268725972d7f0bb1a46c"
+"sf.security_admin.desc-maintenance-policy" = "171147cb94b655202619bf07badf0e787f1d7d29e11aaab0cd0c7ff2cdb05f4d"
+"sf.security_admin.desc-masking-policy" = "c2a5b0708d6605ffefa7023493cf8711fb1c0aefafcd183e71c5aacb436e089e"
+"sf.security_admin.desc-multi-party-approval-policy" = "e569ca1385f524fd2db903e094946ca0bee79412a4263a3ca6727cdcbdacec62"
+"sf.security_admin.desc-network-policy" = "def0e4e04465574d7573ae9772f96e33929ba66f58112cc29fa59ecf69015241"
+"sf.security_admin.desc-network-rule" = "f2f31c57dc240777aa1484b17e53bf33177a7b37779ef98f8b82a8ac17c5bcf5"
+"sf.security_admin.desc-notification-integration" = "d734eb3c97ab3aae7986b0595a29bcc39298b03d2a78383d075b78a0a44d0caf"
+"sf.security_admin.desc-oflow-data-plane-integration" = "7691051747b14cc0c6b9b07b81777edda49674b8e5424668490813e48d0cfc55"
+"sf.security_admin.desc-packages-policy" = "df9f78a15ce36c440b3439c9a24a85c61ccda97bbfc18ca27473aec9dffca2c4"
+"sf.security_admin.desc-password-policy" = "4831b87b326a4360ee8180f21972a1a6bc60516aab5ba83ebedd8f592c158589"
+"sf.security_admin.desc-privacy-policy" = "80a16dff909eb89a14b265e41d13c8136a0c42118ecd39b675dec66e1fc7844c"
+"sf.security_admin.desc-projection-policy" = "3de44238b36eb45fd721d6c955782f4b32e481abe3a65c264e9c15d54b889ac7"
+"sf.security_admin.desc-row-access-policy" = "3ece29628bbb6fe20376388af6a38c0805b620351e070f6856ddd102e2dd81f2"
+"sf.security_admin.desc-session-policy" = "70d87208acaa1ab566df1985ef4fbbd459a6ee13ebd82034ebbbc8994627eed0"
+"sf.security_admin.desc-share.share.syntax" = "17c4eeca99529e560bf191c724f0a1a0e7934488f19381c6c9b07776ee3c6d09"
+"sf.security_admin.desc-storage-lifecycle-policy" = "c74894efe3670d9b1cb99fe2db063d1c3ce130f90d264967ef0e07b8f64f43c2"
+"sf.security_admin.show-available-organization-profiles" = "b60cf12178802e8b42131e482010544fbf1267803c54feef8df57c3240ce31df"
+"sf.security_admin.show-catalog-integrations" = "06269cd53bc99436623712c23fc6dfe07191e971e2ff5d3e0f6e57b751f9be86"
+"sf.security_admin.show-global-accounts" = "fb34b7d88e85660949cd5d288df5327eddab2e3adedfdfb07700a1b654773cc4"
+"sf.security_admin.show-listings-in-failover-group" = "34b0a12ba22ca5efa897ecfcb87bcd81dc92a494f91417027a47f450f4fd049f"
+"sf.security_admin.show-managed-accounts" = "3214f962d8bf705344353db2052f9a781e1a5cdc21508032c95949d81a9e9ba1"
+
+[review.definitions]
+"sf.security_admin.alter-failover-group.add-to-allowed-accounts" = "81ea351979d1fe269ce26040be42bfa3de6fa66b11064a474a24d1e68a714bf9"
+"sf.security_admin.alter-failover-group.remove-from-allowed-accounts" = "7c40059cf04f588b134d1d4b91130b5e29e20f7a94601a39e05cdb4e9d15b6f7"
+"sf.security_admin.desc-aggregation-policy" = "7665cdd0ac6e5864bed7d78d0077f1d1700217ef22fa7f6e5d0d9d445b5e4612"
+"sf.security_admin.desc-authentication-policy" = "176bbd919381f133a27c321ad70b07b0b90d942f3d147dab7163cad3101545d1"
+"sf.security_admin.desc-available-organization-profile" = "3e485bfa8da4b3e7ba944d3a14425492fa76cbf10ecb72fc16a5fe08dfda569a"
+"sf.security_admin.desc-backup-policy" = "ac591829867d5fc7a50234ceb077a63eb9de4abd3f648eaf09481e3340d50587"
+"sf.security_admin.desc-catalog-integration" = "9566dcfd942d8720e40b799117b91229d30b8eafacf0d038f16975bceca1de13"
+"sf.security_admin.desc-data-movement-policy" = "2ae6d047ad6470a4f62f9fe55393f350c2a468a599ccff05640981ad83ee1a64"
+"sf.security_admin.desc-feature-policy" = "bae73f6497c02a1ec700adaeee4b3dcb44e43adee32520562d7859486efc580e"
+"sf.security_admin.desc-ingress-policy" = "e465946ad57168bec33908f932dcbea9c7d1d71d9c4e50979a8518d70420149b"
+"sf.security_admin.desc-join-policy" = "d0daee815f69617689128745562a799195f90f2b5b4556903bd7253a9bd97a6a"
+"sf.security_admin.desc-maintenance-policy" = "fcd10de19a125dfa7a557321cf9f7d28277745ae80b403fd4c86d215f6091b99"
+"sf.security_admin.desc-masking-policy" = "79fd81d886f7a5039492b24f84f78cc1c4c41b6701bbbbefe03a9b51256b65eb"
+"sf.security_admin.desc-multi-party-approval-policy" = "0086b824646495ea62aae651bcede8e7ad332c320c5c836235df0dc309317896"
+"sf.security_admin.desc-network-policy" = "51baad57baecd8ccc7c78eb9cb291d9afb240f695346d35894da2272ed7e5ec1"
+"sf.security_admin.desc-network-rule" = "43854647000f80f2383c2d76c083528a325c7d06b9b67775f0c6f460fe094cd8"
+"sf.security_admin.desc-notification-integration" = "f76af5f61e2a6493e6f35373da162b69dc1aa9cbd60e1ff3b129c9cb04973dd1"
+"sf.security_admin.desc-oflow-data-plane-integration" = "ec5bceba717e2e172859e8a0217f7f624f7516c69039ca87d49acd6ca833ed93"
+"sf.security_admin.desc-packages-policy" = "32e1594857ca517fdcfc3aa2036db0ddb4e8389479ba025a0284c13f9e9dfe88"
+"sf.security_admin.desc-password-policy" = "5037eb264be6fd3b4f7a36304f85ffe8e6b61d7fdd6714b3070f147de96edf55"
+"sf.security_admin.desc-privacy-policy" = "3b456dbd2394510cf7001fcb2555e81db84f839a1a74aaf940feea5abdd8ef71"
+"sf.security_admin.desc-projection-policy" = "00779abcec5cb060cb843ac06be40bce2018ae5021e57bedd58dbabf1c011761"
+"sf.security_admin.desc-row-access-policy" = "963d9a6ecccaddbc21725fca932da0349761f1845c5e9ea34f3cc56039edea14"
+"sf.security_admin.desc-session-policy" = "6ddb64c2734b6017a8cb67310e6b039bfbccc020daa9e498b9022c44f60e5822"
+"sf.security_admin.desc-share.share.syntax" = "5906c85bdd80fba51307c6579898ecbc81cc6da3818d359b1fbfe38c08fb3c0b"
+"sf.security_admin.desc-storage-lifecycle-policy" = "eef089bfc2c4e19ab3ae160627775430ebb3f5e4220b4b06016cece166141373"
+"sf.security_admin.show-available-organization-profiles" = "e69d62138919b3cb8db22b5df5ac21a6eaaab447ce842bcf155ceaf05c97f4c7"
+"sf.security_admin.show-catalog-integrations" = "5e521c5d8f9262a6584194168f9a958505d3ed8b5899b06787389ae8d7f6d8d9"
+"sf.security_admin.show-global-accounts" = "6d5b12b2d9f0f7d4a37f46bf74c5a0236b00b52a5a2e7bb1aecd55b2a17363ab"
+"sf.security_admin.show-listings-in-failover-group" = "de7a8953d532741e046aa6a9ba4086becef8853dfa4d384d3e96afead0455725"
+"sf.security_admin.show-managed-accounts" = "d31ea13c66b9f6a486c734edb3c4a0818d27695641eae46b6c2dad67df4e1bfa"
+
+[[review]]
+id = "auditor-security-admin-003"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "c17d619ed963b200eb573500e173f2f62f863a67"
+reviewed_utc = "2026-11-05T03:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-organization-user-group.add-organization-users",
+  "sf.security_admin.alter-organization-user-group.remove-organization-users",
+  "sf.security_admin.alter-share.unset-comment",
+  "sf.security_admin.drop-aggregation-policy",
+  "sf.security_admin.drop-authentication-policy",
+  "sf.security_admin.drop-backup-policy",
+  "sf.security_admin.drop-catalog-integration",
+  "sf.security_admin.drop-connection",
+  "sf.security_admin.drop-data-movement-policy",
+  "sf.security_admin.drop-failover-group",
+  "sf.security_admin.drop-feature-policy",
+  "sf.security_admin.drop-ingress-policy",
+  "sf.security_admin.drop-join-policy",
+  "sf.security_admin.drop-maintenance-policy",
+  "sf.security_admin.drop-masking-policy",
+  "sf.security_admin.drop-multi-party-approval-policy",
+  "sf.security_admin.drop-network-policy",
+  "sf.security_admin.drop-network-rule",
+  "sf.security_admin.drop-organization-user-group",
+  "sf.security_admin.drop-packages-policy",
+  "sf.security_admin.drop-password-policy",
+  "sf.security_admin.drop-privacy-policy",
+  "sf.security_admin.drop-projection-policy",
+  "sf.security_admin.drop-replication-group",
+  "sf.security_admin.drop-resource-monitor",
+  "sf.security_admin.drop-role",
+  "sf.security_admin.drop-row-access-policy",
+  "sf.security_admin.drop-secret",
+  "sf.security_admin.drop-session-policy",
+  "sf.security_admin.drop-share",
+  "sf.security_admin.drop-storage-lifecycle-policy",
+  "sf.security_admin.drop-user",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 6a89ed297106; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-organization-user-group.add-organization-users" = "9dbda80b7a22b8295707b86a723ab698a6f8b9ffbe16101141f0a703e39115e7"
+"sf.security_admin.alter-organization-user-group.remove-organization-users" = "07fb530c4c241705d58890b09f20e81a55c3b2945c61525383ff3bdd68e07dee"
+"sf.security_admin.alter-share.unset-comment" = "a77091bb545f51d3e8b9cccef71bd2d1945e47b7dc2eb674e4dab14c2dbfe2c0"
+"sf.security_admin.drop-aggregation-policy" = "a5dfb397737d0bfcfc5fc76554af372df758c52ea97c639dc4660ce232f67636"
+"sf.security_admin.drop-authentication-policy" = "bc62572d9fe59504a8e33f8cc2088d0d1d317b2be2bf656516edeef0c23ec407"
+"sf.security_admin.drop-backup-policy" = "54d95e056563a4b2bb659d2b1de687093be46c32888937992a775636a781d143"
+"sf.security_admin.drop-catalog-integration" = "6cff35eab80a15f8d8e377169b87ac076e4b446db69fb467ac37a776231f094e"
+"sf.security_admin.drop-connection" = "17b815d32f4a3522b6b2dcbcb4fd75986fcdd857aa00d8314de37bf6f940bf50"
+"sf.security_admin.drop-data-movement-policy" = "37e1e5063acf5fa16a12680b577496795df6872eac9e49b473117a53ba092ed6"
+"sf.security_admin.drop-failover-group" = "3355d3dde8a59deeff59514687767e05c6d4bb9cc2861f3fa51cc5fbd46bfb59"
+"sf.security_admin.drop-feature-policy" = "14f05dfcd7789a1cecdbe7a5cef1cd79c6f663fb0641073a1d999d45535d2647"
+"sf.security_admin.drop-ingress-policy" = "a62c618775a6e37a40028113ef702548fdd1523e595a5f4f8c6a4ab4c086677c"
+"sf.security_admin.drop-join-policy" = "4989e381d75f3e34ced214e8525af37b24b207882f7c6113ff71c642dc171a56"
+"sf.security_admin.drop-maintenance-policy" = "ceb5836ea9ac3dea2b93ee8e27da60f24872e98284cd123872cb7a864722772f"
+"sf.security_admin.drop-masking-policy" = "c34b88d43f0b2ed7db4dd259b59a9363ccbc7fc307e3b77104f5f240dd250164"
+"sf.security_admin.drop-multi-party-approval-policy" = "5da6d7b7345ce01cbda9a429a1227cfbaf5715481ed13d8033a18586aafb293b"
+"sf.security_admin.drop-network-policy" = "2ff5055b0e33f826e9c4fa9e434031ea48c0e46df3818f58c460cd1c35d3a4e7"
+"sf.security_admin.drop-network-rule" = "c1a2936d12704674b52fdaf8f9d2df99e934e75cd1f3ad2abf93a3c0b7ae861a"
+"sf.security_admin.drop-organization-user-group" = "f8bfb644941e1d895f08145550808bf05f855444a7c427b3fe7574e078f70784"
+"sf.security_admin.drop-packages-policy" = "d243f2d4df1a8fdffcefdb0c166d31f4c15f259dc9c3f46d5aa1058ef26f859f"
+"sf.security_admin.drop-password-policy" = "d95ca1724eba5fe3cb3db92a4b39d2a07f3fb22cb3eb70bb50ffc3155c1851a8"
+"sf.security_admin.drop-privacy-policy" = "f1af7cf85027c06f4c6d727140f99c7e23a353b500625246dcfef753dbd205b2"
+"sf.security_admin.drop-projection-policy" = "28bb23ca23fc3d3b63adea4c2d16d07f3ab0ecc877808492b725f0a0a07173e5"
+"sf.security_admin.drop-replication-group" = "c214ba67c9ce48f3f9c8dbe7a71467a119c18d991d86e2b8b8890cf80fa7c707"
+"sf.security_admin.drop-resource-monitor" = "06f409587e6a5c72659febfed56bac9ae6605addf841019141311a434579c694"
+"sf.security_admin.drop-role" = "33fb6b0d26cc5f2785782b874e699bbc586eb579c9b3c25aa5d468b089e8b401"
+"sf.security_admin.drop-row-access-policy" = "81da541807a4ea1b323364873f33561e7381dbe38b13d77f55a1d7676d1e9953"
+"sf.security_admin.drop-secret" = "9cf67c8ece7640209d078a75a893bf0f594357db6b00625a0dd70e8b2e2799af"
+"sf.security_admin.drop-session-policy" = "1b97eae4b0f7a78ab51e7d0b0c1d9dbe29924dc8c861ae907dddfeda4668c20a"
+"sf.security_admin.drop-share" = "2b8c7c01a903aad4c97c3c4fd0014f26afbf2f3086e29cceac83016f475cf84e"
+"sf.security_admin.drop-storage-lifecycle-policy" = "96ba49f0ba78b17b769e964beda5ab52ee581f4a449152bb29466997976b0671"
+"sf.security_admin.drop-user" = "3096384e65097500836e1a5da23cb55b65c0c0bed0732966900d39e7d3564599"
+
+[review.definitions]
+"sf.security_admin.alter-organization-user-group.add-organization-users" = "203c4a3da5cc05f18f968300b057f1fc8c1f3a8e29f66813ab59fc3a31563a1f"
+"sf.security_admin.alter-organization-user-group.remove-organization-users" = "0280c9ee353e1debf4c0055e792cf8e4e0f4e2cbf756b2491c034726d662ee51"
+"sf.security_admin.alter-share.unset-comment" = "b29f6465e05da2c94aeba293b91ec737526a15b719189c7357493a7e8ca6b61d"
+"sf.security_admin.drop-aggregation-policy" = "4e4d7e5919e0434773321f5d3d48b27368c40259758dd3d10e2f6fa533e4b86d"
+"sf.security_admin.drop-authentication-policy" = "5ba7d5561e0a3db93407aace2db4f1a692c634b251183fe24e05d18ba127493a"
+"sf.security_admin.drop-backup-policy" = "04c2beee41dd1bcae37e7c81a351cf48ab3d932cefa845528b4a71e4139ce8cf"
+"sf.security_admin.drop-catalog-integration" = "f62fffd0dfb06d4dacccd4a30eab1167adcd5c89833b13fbafcccadf61f3ecbc"
+"sf.security_admin.drop-connection" = "60ee6ef449722dee702b1f539c41b57929e5b26e3b0e4bd435af0ec41583f748"
+"sf.security_admin.drop-data-movement-policy" = "7907fb4082851c93ae2adac0ae36d25c36595815a46ac816e42fc1cbeb1a1670"
+"sf.security_admin.drop-failover-group" = "64ba2155a1d7a15e6d4a81c2be605bc3394b9217032f1e8ef8d203af8df652c4"
+"sf.security_admin.drop-feature-policy" = "fac3a3d53c28de41509722d9cdddfafea4b99005a0b9df9dfe52a4cb0b601726"
+"sf.security_admin.drop-ingress-policy" = "a33b0e07756a1fd017afe0dc74c1d3c0a443cafff233eb37174d7090eeebd3a3"
+"sf.security_admin.drop-join-policy" = "706dd7b9e685822f90700284c9e9b8d534c6e56bf3dd804d0f40a82084e77e07"
+"sf.security_admin.drop-maintenance-policy" = "ff43c442d0644afc2dbbdfb1ec7e7e5003db6c5eef50526771152de294cbd164"
+"sf.security_admin.drop-masking-policy" = "f2642cfb1e5ccae915a1f8739a10bfa50e40df30622beab7b289b75805c46fbb"
+"sf.security_admin.drop-multi-party-approval-policy" = "e504d820730d0e2094654d98573bac4412a570c0dfe38a9c52041453de5d58ec"
+"sf.security_admin.drop-network-policy" = "2c7365e446cd6e2cfa2a7b9c8654a7ae0e583a2d1a2a7bd63be164a2185ff759"
+"sf.security_admin.drop-network-rule" = "13da172a1b1365518990e4a04d99b20951c4dcd34e3519eca242d1d22b344818"
+"sf.security_admin.drop-organization-user-group" = "dc53a0580b6c8e15891f8d5f56b5edf5b42a9b4e843c03d1d0a814c612ac68a7"
+"sf.security_admin.drop-packages-policy" = "eb1af854e7ac71d1c5f0e978fd6526f13385ac7b4c398e8e7fbdf491d80743dc"
+"sf.security_admin.drop-password-policy" = "894513f5bd72d49825f479db9d6201d0610bd0fba75b20c8f390ffdd95df4c31"
+"sf.security_admin.drop-privacy-policy" = "0fd2fa7765d78f9ddddce6e975d506041d5a85ac4a18e31b15c3b516f220555e"
+"sf.security_admin.drop-projection-policy" = "e8d4c512f63683f69fc23d66735b37ed94150b155d19ea983041aaff4b41eeef"
+"sf.security_admin.drop-replication-group" = "1b429c384c68e77964e4756d381cfe234c6a4930595bdba968f54602e56edaaa"
+"sf.security_admin.drop-resource-monitor" = "8a94fa0261ef2f30ee2ce7d9f9b386471e67788a8375c7986b107ec847ad009b"
+"sf.security_admin.drop-role" = "b267b5cb20c67902ef3325b9762444914cfc24e76f1f03ea3ad182bfd290842f"
+"sf.security_admin.drop-row-access-policy" = "4734ab2969a9aca19a4954858d9faef979b573535934fea66434775e4f0ba259"
+"sf.security_admin.drop-secret" = "227b1cf794b9ee8365a1e8dd36bf458b96d67994c7953a595f8cd3ffe42dc51c"
+"sf.security_admin.drop-session-policy" = "49f56f6227a60ab6f972b3c3e6c96b07ed60a42947348620db66c7d5fe07d9d7"
+"sf.security_admin.drop-share" = "c04f1febeba7771361ad940dec125d48136db95b5be33e9aaed911d6a9d6ba9a"
+"sf.security_admin.drop-storage-lifecycle-policy" = "886df19d3acc5ccb5e69ae37777a9d92e12a1bbcc03839290a2190169bad88f6"
+"sf.security_admin.drop-user" = "baa1a5aef2775ece92f471a409b8b73e0b7066cf5ec5ffd21e5a7bac1bfbf238"
+
+[[review]]
+id = "auditor-security-admin-004"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "584e207833528593e10f3a72688158bff76f9800"
+reviewed_utc = "2026-11-05T05:00:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.show-notification-integrations",
+  "sf.security_admin.show-organization-accounts",
+  "sf.security_admin.show-organization-contracts",
+  "sf.security_admin.show-organization-profiles",
+  "sf.security_admin.show-organization-users",
+  "sf.security_admin.show-privileges",
+  "sf.security_admin.show-replication-accounts",
+  "sf.security_admin.show-resource-monitors",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 0c8952e0a7d1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.show-notification-integrations" = "3ebf3814171f98cadbcf4ff429c0120387b4a9266f66403b0d7bc459740e2ab1"
+"sf.security_admin.show-organization-accounts" = "6b75bfa85f43c243b6b276e4b94dd0085686d3dc42985de2ef0ffa1c8d3d5aa9"
+"sf.security_admin.show-organization-contracts" = "0354aed64f20a44ca9cecaa27a0dc68d6570b39a9c7b979d6db34bf3d45835b5"
+"sf.security_admin.show-organization-profiles" = "3cf22cea4a1775114a21d5566c12a4560d1ad183d77276e0ef391ef9d9a1e6d8"
+"sf.security_admin.show-organization-users" = "2975694f8094b99a996b6ed4ea3b686d3554c29b445d837a47c2a6e7e5f13e72"
+"sf.security_admin.show-privileges" = "fa26e372a0b3cbfa3bf8d27f10d3c8bad20a402afdd13ea4f30da6cc9087ae5c"
+"sf.security_admin.show-replication-accounts" = "8890a95245dc4823cd9e598c3b0a1a7d60e179ffebb676dbeb894dbf1ea7d3ae"
+"sf.security_admin.show-resource-monitors" = "e79e8413ecb193e3148e78ebbf807b8e5515a25a76f648aa24baa27860d17381"
+
+[review.definitions]
+"sf.security_admin.show-notification-integrations" = "5c8aa996c94a3c018814ed4c5d90f51817269db5475c14e218b40dbf11305e01"
+"sf.security_admin.show-organization-accounts" = "a77e0ae6653459c3d782ae7a494646bf6f2b4419446907a22dd1abd15eb7e083"
+"sf.security_admin.show-organization-contracts" = "55b052a8d828f1140eacb8a4e6fa70897658acbfcb59205003392691566c9eda"
+"sf.security_admin.show-organization-profiles" = "0f4324d5b02c2af9d98877dcd4876fb29601b3c8e3f19dcf1f1d3a7f6d18e2e0"
+"sf.security_admin.show-organization-users" = "cb2d570c01d560668d5184ee4f134d55cb23e3bf73f9782f24d1fbddf6a4b018"
+"sf.security_admin.show-privileges" = "70909426e63d97e16e825ced9fcba4ffae2f3f9ed2eb3d068f8a40871388200c"
+"sf.security_admin.show-replication-accounts" = "72b3ab9ed26e2b41a313f59f3409c4c85667c74a3a461906d0f5417be5e7ec6a"
+"sf.security_admin.show-resource-monitors" = "3683eb7c8ce4a597f4cd2067799513ac5f0b491107f640d8c3ef6775380a2361"
+
+[[review]]
+id = "auditor-security-admin-005"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "ec36eaa7279269463ecc99566a35e53196da2788"
+reviewed_utc = "2026-11-05T07:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.show-accounts",
+  "sf.security_admin.show-connections",
+  "sf.security_admin.show-grants.grants",
+  "sf.security_admin.show-network-policies",
+  "sf.security_admin.show-packages-policies",
+  "sf.security_admin.show-users",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77e10eeb25a7; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.show-accounts" = "88623b28f9ef691cdcd506f6392a64044dee9986c57261da2d91e115504541ff"
+"sf.security_admin.show-connections" = "4db29c1531a893215f5df6e36f4c02e81ea4ff272757cafe9e157b9dd48c6da5"
+"sf.security_admin.show-grants.grants" = "345f124a9c5c1b7f58d49d18e9579608aba402479746c8b2c289ebc358439cfb"
+"sf.security_admin.show-network-policies" = "95699d14682f52bea266ff2561bd78e6de82194f2949f0410471bd93f291a271"
+"sf.security_admin.show-packages-policies" = "691f3982929e19093f8335cec6bdee268a8f5b68d5fa8c09bb50f0786b3c6850"
+"sf.security_admin.show-users" = "2d4a82edc96e630b1aa13854cfcbcde99734eb13a2b2a9fc68d95e22ba95552a"
+
+[review.definitions]
+"sf.security_admin.show-accounts" = "290df66be42cc8af14ac6f0aa3abea6e5f2a55c341631ae87e8050b92b539740"
+"sf.security_admin.show-connections" = "ccc637c4f0521009e88e2fba15c5c1390d091701844d2eb0aa6984e130875e0d"
+"sf.security_admin.show-grants.grants" = "fb6763e8768c8bfee95488440d82f587eb52efab80f32f6732228fdddb8e4ca1"
+"sf.security_admin.show-network-policies" = "5e225cf3e68c7ee3a9ca96b2c5dd99a9fa86d58a4f925714bf921546d37785c1"
+"sf.security_admin.show-packages-policies" = "8e4560c3e85f9d49f09948a212d03c7cba9abd60c9fc72176d8d4c418cd80f96"
+"sf.security_admin.show-users" = "135dacffd6fb08f034c743ca2c016089868a9ad1972f6051907678714fa03ccd"
+
+[[review]]
+id = "auditor-security-admin-006"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "a8d9cb164ed163f3c02fff0e18aedb62c1dde5be"
+reviewed_utc = "2026-11-05T10:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-aggregation-policy.set-tag",
+  "sf.security_admin.alter-aggregation-policy.unset-tag",
+  "sf.security_admin.alter-api-integration.set-tag",
+  "sf.security_admin.alter-api-integration.unset-tag",
+  "sf.security_admin.alter-application-role.rename-to",
+  "sf.security_admin.alter-application-role.set-comment",
+  "sf.security_admin.alter-application-role.unset-comment",
+  "sf.security_admin.alter-backup-policy.set-tag",
+  "sf.security_admin.alter-backup-policy.unset-tag",
+  "sf.security_admin.alter-data-movement-policy.add-alert-rules",
+  "sf.security_admin.alter-data-movement-policy.add-enforce-rules",
+  "sf.security_admin.alter-data-movement-policy.remove-alert-rules",
+  "sf.security_admin.alter-data-movement-policy.remove-enforce-rules",
+  "sf.security_admin.alter-data-movement-policy.set-alert-rules",
+  "sf.security_admin.alter-data-movement-policy.set-comment",
+  "sf.security_admin.alter-data-movement-policy.set-enforce-rules",
+  "sf.security_admin.alter-database-role.rename-to",
+  "sf.security_admin.alter-database-role.set-tag",
+  "sf.security_admin.alter-database-role.unset-tag",
+  "sf.security_admin.alter-failover-group.set-comment",
+  "sf.security_admin.alter-failover-group.set-error-integration",
+  "sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types",
+  "sf.security_admin.alter-failover-group.set-replication-schedule",
+  "sf.security_admin.alter-failover-group.set-tag",
+  "sf.security_admin.alter-failover-group.unset-tag",
+  "sf.security_admin.alter-feature-policy.as",
+  "sf.security_admin.alter-feature-policy.set-tag",
+  "sf.security_admin.alter-feature-policy.unset-tag",
+  "sf.security_admin.alter-ingress-policy.as",
+  "sf.security_admin.alter-ingress-policy.set-comment",
+  "sf.security_admin.alter-ingress-policy.set-comment-as",
+  "sf.security_admin.alter-join-policy.set-tag",
+  "sf.security_admin.alter-join-policy.unset-tag",
+  "sf.security_admin.alter-masking-policy.set-tag",
+  "sf.security_admin.alter-masking-policy.unset-tag",
+  "sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations",
+  "sf.security_admin.alter-network-policy.set-tag",
+  "sf.security_admin.alter-network-policy.unset-tag",
+  "sf.security_admin.alter-network-rule.set-value-list",
+  "sf.security_admin.alter-notification-integration-email.set-tag",
+  "sf.security_admin.alter-notification-integration-email.unset-tag",
+  "sf.security_admin.alter-organization-account.set-resource-monitor",
+  "sf.security_admin.alter-organization-user-group.set-is-grantable-true-false",
+  "sf.security_admin.alter-organization.set-domain-names",
+  "sf.security_admin.alter-password-policy.set-tag",
+  "sf.security_admin.alter-security-integration.set-tag",
+  "sf.security_admin.alter-security-integration.unset-tag",
+  "sf.security_admin.alter-session-policy.set-tag",
+  "sf.security_admin.alter-session-policy.unset-tag",
+  "sf.security_admin.alter-snapshot-policy.set-tag",
+  "sf.security_admin.alter-snapshot-policy.unset-tag",
+  "sf.security_admin.alter-storage-integration.set-tag",
+  "sf.security_admin.alter-storage-integration.unset-tag",
+  "sf.security_admin.create-database-role.create-database-role",
+  "sf.security_admin.show-failover-groups",
+  "sf.security_admin.show-replication-groups",
+  "sf.security_admin.show-shares",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-aggregation-policy.set-tag" = "6348e372588e50d22107ea1e576eb82742f997a879a143b972f836c04234e41d"
+"sf.security_admin.alter-aggregation-policy.unset-tag" = "cc1890cda70e39bd2e740bff791d989a049ebafdf66e7e0bc0b8a49e501d94fb"
+"sf.security_admin.alter-api-integration.set-tag" = "2e774c705828945a6ae961ba0e1735f2036ae44e60a084be1cf969b3e87202ee"
+"sf.security_admin.alter-api-integration.unset-tag" = "93b5d1e9fb11091e8773925f2492610647c25e100e8b9a3916f16fb34dad5ca4"
+"sf.security_admin.alter-application-role.rename-to" = "3942a9aa21d585c320f7c6be491fc434618ec6b6fdf7c1f65b8584c79ce92d46"
+"sf.security_admin.alter-application-role.set-comment" = "25d60498d7639e4eb58dc58b4b1a95174a1e013050e32109685aa4033830e224"
+"sf.security_admin.alter-application-role.unset-comment" = "bc8fbe51eac5ce9dc0529e54f0b31166ba10a7deeca63e68bd82f585632d8b3b"
+"sf.security_admin.alter-backup-policy.set-tag" = "41ceff5f45bc705f0972d7968b447bc28e9e9119c313b2382025fd7c63c5b660"
+"sf.security_admin.alter-backup-policy.unset-tag" = "677798aa6cfdd522024b234c2f05d682b3348e132b72a14d35c68afe5573acd2"
+"sf.security_admin.alter-data-movement-policy.add-alert-rules" = "2128d68b26f2fefc2005514db479e09e3dab06884a9953b3ec8c4aae243fa8b5"
+"sf.security_admin.alter-data-movement-policy.add-enforce-rules" = "dbf0ef4484dcd6bac2fad1ebd5424303c596dbd3a503e121c1fabf86395fc98e"
+"sf.security_admin.alter-data-movement-policy.remove-alert-rules" = "170c75ae2e4a169ed40ca15e0b31b0a3a05f0163628411565330013c9d2af8a3"
+"sf.security_admin.alter-data-movement-policy.remove-enforce-rules" = "14a270eac3fbe7b5bbe74f40ca9d6eb8e38e0737cc5a248cf5677d5a05f1d62e"
+"sf.security_admin.alter-data-movement-policy.set-alert-rules" = "222f06005cd046672708c171185b8c1128502473913093b552abd562c5f0cd38"
+"sf.security_admin.alter-data-movement-policy.set-comment" = "b5fc3059152d849e7662c38a95f7cc812cce6b69eae4d79bac28c6f95a25d20e"
+"sf.security_admin.alter-data-movement-policy.set-enforce-rules" = "bc47acad4c137618a677f5eb881380470134edf207e14858740be46113f5e9ad"
+"sf.security_admin.alter-database-role.rename-to" = "2f5c37c1e1a28a761e18742707496d2fe192bb698c8ef81f80bc99b901ec4625"
+"sf.security_admin.alter-database-role.set-tag" = "857bad35391bd6b27f71bbcd20bde53779df252bded502ad95cf702506aa7f17"
+"sf.security_admin.alter-database-role.unset-tag" = "d7e8413d82b1ef37eb3fa1260a42c00bfd59b1679b78c0976f8ed9c830668bbb"
+"sf.security_admin.alter-failover-group.set-comment" = "742a1d702c5115bb0fa38488f19255524a53b2bec02f05015aa21bfb92b823c7"
+"sf.security_admin.alter-failover-group.set-error-integration" = "6f4db07552be298dc70ef93d5c23cdb64cf4bc86a8f1c7eed0149ebe58addaa8"
+"sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types" = "59b5c783e9dd0aa241508d4c8ff398759d9bdb8adfd2dad8235901a5b9925301"
+"sf.security_admin.alter-failover-group.set-replication-schedule" = "ba47b63c25fbbe00419c08e09ead04119dbc675e37fc380dd972d0b7c08951dd"
+"sf.security_admin.alter-failover-group.set-tag" = "14d3183bd47005a1ecd95ef7f3d9dc88d66222bc78e3b95de2efaa95194b5584"
+"sf.security_admin.alter-failover-group.unset-tag" = "c04e1814f4c1a054e87fb0492c371f300056107ea005b2ac6b2857966c98850b"
+"sf.security_admin.alter-feature-policy.as" = "a1480217f196d036030650ac5eacbcf947291f97cb7501b3b7ed49edd60dad34"
+"sf.security_admin.alter-feature-policy.set-tag" = "2afe59596e6b1ecae755f658d4334ac27dce836cd92a59f3ba204e84a6435773"
+"sf.security_admin.alter-feature-policy.unset-tag" = "ad0fd503d11429b8eafa016cc11dbefd3409ac30f517f17b488ccdcad3f58466"
+"sf.security_admin.alter-ingress-policy.as" = "2e3bb18984a6f668845bb810dee99aae4deeb0153e9b5e3e032dc01f1afe94e3"
+"sf.security_admin.alter-ingress-policy.set-comment" = "b014a0f78120c31b56c7e346a1d70211c8d8a90b10f426e1157c1f8885b23602"
+"sf.security_admin.alter-ingress-policy.set-comment-as" = "481ffe2b1fdb071904787ac5bd7c046f9178344755289824e1eb9cbb470834df"
+"sf.security_admin.alter-join-policy.set-tag" = "53582a9ca1aa791612fe9eac751092520433b99f06b7da25c6c8127e720e851e"
+"sf.security_admin.alter-join-policy.unset-tag" = "98bef46af26e8d550b2264fcc3ef256ae930a0dd0243ae031e7d0953a28f3b0a"
+"sf.security_admin.alter-masking-policy.set-tag" = "62e0f24b8a04da1890c865fa960eddbd3b7e9fd44288b5da46959c3f2b599e66"
+"sf.security_admin.alter-masking-policy.unset-tag" = "fe66a5d6e08e2dc875024fef7a66af95f33dbfb365212b49b5a424a668a01554"
+"sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations" = "ee50b7bb7ef2168b54a9b65624766586f86b96df6c943f61bf7c5041e9f35735"
+"sf.security_admin.alter-network-policy.set-tag" = "e2122b97f108c55918662a58ace08a1c6e232b9eb7b3f0736e45ef602157cbe9"
+"sf.security_admin.alter-network-policy.unset-tag" = "fcd00dcbe02e95b9e995424dbad7c9a41338af12ff84703f603aaba0f0bc54af"
+"sf.security_admin.alter-network-rule.set-value-list" = "43c3132ca5280737455100b6288bc2964b7c142da3695d42c55e39814f35f139"
+"sf.security_admin.alter-notification-integration-email.set-tag" = "fbb76c8b1383336979ad24b3fa2648655ae5d5ca21408fd00d845f67d11eedb1"
+"sf.security_admin.alter-notification-integration-email.unset-tag" = "feb0effccc15da6c69f366157019a44dca4fb665ac22b23653cb27a6c94e5b71"
+"sf.security_admin.alter-organization-account.set-resource-monitor" = "360758b4bf468bc7ba07beba242ac7713eb739de1e008b0ae5e30903ad9486ca"
+"sf.security_admin.alter-organization-user-group.set-is-grantable-true-false" = "059137e8c06cfeb3876443770d4dc4110e4c77fe91b27c97e76bb2c83688aeeb"
+"sf.security_admin.alter-organization.set-domain-names" = "fdb6853e2b86fee949ff1ff97313aff1504829ff835d0c89fa13f362a84bec61"
+"sf.security_admin.alter-password-policy.set-tag" = "154d059d55d8ac328f99eeb48d2fba8a1b36f1989f38d6efb282e23024bf6e92"
+"sf.security_admin.alter-security-integration.set-tag" = "ad0d0b7ea25abb267a23058a97e44bfeb0623b1bd5d2a5ee7fe79d6bb98cdd22"
+"sf.security_admin.alter-security-integration.unset-tag" = "e5e39172fbca6966354434dcc2b70b226facc5cbde2f9806071d29268e7b0fc9"
+"sf.security_admin.alter-session-policy.set-tag" = "44902fdd167616e0cb36d8020ea7b88798d14ada8b8b330a62a45ee815f8c905"
+"sf.security_admin.alter-session-policy.unset-tag" = "9557f8464b81933068a89192f7e414e50a5536359825879ec4cb2985d5ccca5f"
+"sf.security_admin.alter-snapshot-policy.set-tag" = "1fbeb87766e0e21edfe4cf3cae8f9ce5ce51873f8d19f7efde196ad35d6c0705"
+"sf.security_admin.alter-snapshot-policy.unset-tag" = "9f8f809ed019b9a05dd6f6b6fb771df36bed13988bd84beef234778e3ecbc573"
+"sf.security_admin.alter-storage-integration.set-tag" = "5106d9e60e0529c1c8aeaf9a5a8b154dfd26ba78746e0fcc3836a98caffe513a"
+"sf.security_admin.alter-storage-integration.unset-tag" = "7335a33f74454c213e55e2ad3de3b8fbe9f0fb537239a9f05ba6b11d44e24236"
+"sf.security_admin.create-database-role.create-database-role" = "d8fa00e7949cd7d75a7873c76b9054d60b66283328df856fb89773ca44fd870b"
+"sf.security_admin.show-failover-groups" = "9bbd361fb157d67388aa08cab5d369e5ea5c914cdb8542740a77de234f7e770a"
+"sf.security_admin.show-replication-groups" = "df70fd9be33b768b29eb3763a880cd9a9b2c81584864936eb7e3391b8bdd7e7f"
+"sf.security_admin.show-shares" = "46f9c788b1932e2d4771f4695c7fed953dee338b66ae3119de7e4c5a34c49256"
+
+[review.definitions]
+"sf.security_admin.alter-aggregation-policy.set-tag" = "c0b74c85e58447cf1edfd7e84735db2a09fa54a230bbab50bac11af12680f0da"
+"sf.security_admin.alter-aggregation-policy.unset-tag" = "3c04739cb3187acf2a4a49635ab31eae658b45a21dc20917d541093adbc54fc0"
+"sf.security_admin.alter-api-integration.set-tag" = "031582a11ebdefd8f7fbc2d16100770b9964827922f8b73083979949f8501864"
+"sf.security_admin.alter-api-integration.unset-tag" = "32d0f6af1fa485c7a972db51ec334bbf90f04d23abf6886c4f86394367dc4088"
+"sf.security_admin.alter-application-role.rename-to" = "aac32e4a66118fdb4ed0891a67b9e450440a07b21f4bd52407841c7ab90bf9e0"
+"sf.security_admin.alter-application-role.set-comment" = "5f26edaf7055097b7ddb2c0ea55c31a86306715691f007014521ea02b5119abf"
+"sf.security_admin.alter-application-role.unset-comment" = "a78bc6842a64a3d4c355d4d67f5b3101d30d5429a3e53a157f47a9d058a7ad09"
+"sf.security_admin.alter-backup-policy.set-tag" = "1ff86ff67617a377bd17efe8e55682cd3899f43cd966664d43400025cdc094f9"
+"sf.security_admin.alter-backup-policy.unset-tag" = "c109d75a56e3330c679853f013d9ebf4dad0151c54e270f4e8f32328aa9bc34a"
+"sf.security_admin.alter-data-movement-policy.add-alert-rules" = "fa0f83624c508d8dfce9ac761432eb1970693561c9f63ffc89d8af4404f6517a"
+"sf.security_admin.alter-data-movement-policy.add-enforce-rules" = "dc48b6d5c41721aed5f2e938d4abdfab97be77acb4ad33ffe5308ebdb6772458"
+"sf.security_admin.alter-data-movement-policy.remove-alert-rules" = "d1c7afee7db57df19b667f351fc76a80c7230d3cf1f305ca0b522fc7c5315231"
+"sf.security_admin.alter-data-movement-policy.remove-enforce-rules" = "f6cf71e9d250cb5ceb2b370f8cb0a44736d5df580e8c0bc194514e212c123509"
+"sf.security_admin.alter-data-movement-policy.set-alert-rules" = "12f1518c526bedceff57780bfca0401b74d8fea8a44de9e0eac2b0499ccefd05"
+"sf.security_admin.alter-data-movement-policy.set-comment" = "391fe0282b449a29744899978c6b9e29c081aba0120951d69bdac1e408636ab8"
+"sf.security_admin.alter-data-movement-policy.set-enforce-rules" = "7cedefe4fc6d926af5ce1a38632ac7d0bd84fa8f8a778b8ab2d60e7e35f76f38"
+"sf.security_admin.alter-database-role.rename-to" = "6e0aa6c73e4f02e39bd762e883ca105117e2f6d42fb82cd4fdf1449bfb4fb399"
+"sf.security_admin.alter-database-role.set-tag" = "1e46ef807cef595e614b947679c97e22610855280c1fa224f0e888db48a34d86"
+"sf.security_admin.alter-database-role.unset-tag" = "4b365c268302dabc8b9117f8ed2289f79fe5e2425ed3237121ebedd5a21bf9f7"
+"sf.security_admin.alter-failover-group.set-comment" = "2a33f2ef42aa69f34f2dd2712946a990b72f03fe1f2ffb98a95cfec7e0225f54"
+"sf.security_admin.alter-failover-group.set-error-integration" = "ad4b0b9de53831408e043c24501aa9af3f69c856809f8918eca16c9700e364e4"
+"sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types" = "aec7325eb635b684f2bc356e34b621d4edd1759a93843c877b1bad760ee2eefc"
+"sf.security_admin.alter-failover-group.set-replication-schedule" = "915198050953ae16a4854db5d1a29637ccfc6e1c268eb820d092e20a1a289f11"
+"sf.security_admin.alter-failover-group.set-tag" = "c3de19f59c99524cffe16dc769e9c90948967306b6545ca8cdfcc8ba46f25779"
+"sf.security_admin.alter-failover-group.unset-tag" = "ddb7a31e1cf4b1bad66f49b02a7de710a3debfeb15572484e911f5d95c17cae9"
+"sf.security_admin.alter-feature-policy.as" = "2d6d53bdb7967a8a212f7025dd62c64b9c6d7ea080087c0c5e50bcb41543a68f"
+"sf.security_admin.alter-feature-policy.set-tag" = "2dcedae91c16b966d9cae23a8c479cafe671af56a7f4cb565d1157b4da937e75"
+"sf.security_admin.alter-feature-policy.unset-tag" = "44d46e5c6fbb214ef2c9d946669ac945ac893767c29cbde4db04d4523ac642e9"
+"sf.security_admin.alter-ingress-policy.as" = "33ab136484d9f5e3424894f7650cabf2ac10b125f22f987d2c6b60286deabb67"
+"sf.security_admin.alter-ingress-policy.set-comment" = "cdd1e12558a6e03e851a559a02b724dbd60a85a12849f4a81370887da96992b0"
+"sf.security_admin.alter-ingress-policy.set-comment-as" = "3936cfc8dc54ea8467e5de9ca948bd3d76395bea973e8930965cc1de1019d223"
+"sf.security_admin.alter-join-policy.set-tag" = "efe321a1b0c91c018b64e0e9ee704f27a57c53407fcd37fde448cb63b0340c04"
+"sf.security_admin.alter-join-policy.unset-tag" = "c4523c3ad87159543e0f0588bbf06b425e8bbd68145c19b1fcd649c41f927c24"
+"sf.security_admin.alter-masking-policy.set-tag" = "84e58dba089d8d3721c72bb90915e3fde14efde4284f238f9cc4a321d9418bd2"
+"sf.security_admin.alter-masking-policy.unset-tag" = "8efc3e3fedff45015f6e26153303910d84826d1b16594956c1309a03a5f6645e"
+"sf.security_admin.alter-multi-party-approval-policy.as-rules-name-operations" = "4b0702545805933d4ac5997b32709d0f9972b8e2fa891bb26ce938255dcb5a30"
+"sf.security_admin.alter-network-policy.set-tag" = "36048a6fe4f41f8976e5a930511c9caca94bcdc737871d7d2278382a7cb61f8c"
+"sf.security_admin.alter-network-policy.unset-tag" = "cabd31d4fdacfec5020d3ad16dc71d1fd79293771e3550ae435770dc9277e6bc"
+"sf.security_admin.alter-network-rule.set-value-list" = "63513be3a5499952f7269d7b8166f57e6a4c2612156b71f11641cb576ef5f23d"
+"sf.security_admin.alter-notification-integration-email.set-tag" = "973933a48ad9e176a6b21e484cef2368479a30f665f37f14605272f37b62e172"
+"sf.security_admin.alter-notification-integration-email.unset-tag" = "853f8b4ffdf3734f57085a6bce18560bb3f37bceb54c0bf388a6631f6d38cb81"
+"sf.security_admin.alter-organization-account.set-resource-monitor" = "86229bdbf765fdac44a4e743b21f633aba58fb1b669a38926dd9c30f225f4a9d"
+"sf.security_admin.alter-organization-user-group.set-is-grantable-true-false" = "30093b807f4719f25f1edb71a1acb18ffd899194b840a7fbba37181e58734a68"
+"sf.security_admin.alter-organization.set-domain-names" = "61c9b10868910ca9ac25cbc2581074c9dda4afa54b0234aed78c7dced4e971e7"
+"sf.security_admin.alter-password-policy.set-tag" = "d6637a6383fb3abb37397b7ac4f70f4b547e9b627ed3fb459a2f27e1c094c8a3"
+"sf.security_admin.alter-security-integration.set-tag" = "4ddd97110674bf20f1a862a8eecf2841ea973fe6e5e9f49a891f85d85071e957"
+"sf.security_admin.alter-security-integration.unset-tag" = "06ef2ec9754e04ad7470d437ca5912fdbaff72da68deb6499820f961c966c0f8"
+"sf.security_admin.alter-session-policy.set-tag" = "02c04ff13f88b358b778de822f085c61ed5bc73ffd76a0a46d9a07d87b113020"
+"sf.security_admin.alter-session-policy.unset-tag" = "e4e3bffcdee805f0b02a389c50671bc9593e9ad3ac31d43b6f83539a94a18c59"
+"sf.security_admin.alter-snapshot-policy.set-tag" = "4d7bf3003aac52b65e8b4d8e778317734af32cdafadddd98c13f452c0c3f213e"
+"sf.security_admin.alter-snapshot-policy.unset-tag" = "dec141ba9896c296b8133633ef9b2a4ae7f3c1b4ab1099dae547a3755faa88a2"
+"sf.security_admin.alter-storage-integration.set-tag" = "fd7e7a8afce199d8e37d231ff03fc3b6a005ec8b6d689cc02eaf920781148b62"
+"sf.security_admin.alter-storage-integration.unset-tag" = "9b6d47b2f2e23cda1e6e9b24e34edfe5383d77232b9b730041a6bd0d6b9bf78b"
+"sf.security_admin.create-database-role.create-database-role" = "ca5422e6ee1db66575a025487b28d4a75cb1a4932bee4e04acb49d10926509ac"
+"sf.security_admin.show-failover-groups" = "fd5fde9c5fcc43e03e616de53ba84b63e17f020fd834fce95e32ce72cd7473aa"
+"sf.security_admin.show-replication-groups" = "74f8cfd4d1751ea79001f48b0af2f8e4f27d71e684b0ea69c5ea68d730e45bac"
+"sf.security_admin.show-shares" = "13600c8d37d580a19baf44fa8ffd13646b87b243ee3399b46c4e3d8353e51836"
+
+[[review]]
+id = "auditor-security-admin-007"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "1a31cbb8716db274d8f16c7d2da3dbfabfff06a6"
+reviewed_utc = "2026-11-05T13:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-backup-policy.set",
+  "sf.security_admin.alter-connection.set-comment",
+  "sf.security_admin.alter-organization-account.unset",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f28341e6c376; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-backup-policy.set" = "712ca8237c93497418d5c66b405b707b02178c08094120c9599b0dbfca25eaa4"
+"sf.security_admin.alter-connection.set-comment" = "e2bf6c2886d5fad10dc84878700274fa21e6ada388367306b144f6c17c940abe"
+"sf.security_admin.alter-organization-account.unset" = "4473942a34f7a4fc3450a0105f4777360f44c34f3f4d8af881e0e5a746eff721"
+
+[review.definitions]
+"sf.security_admin.alter-backup-policy.set" = "38d482f3f6d3e772347fae244abed3c691bbfe662deb8d55a196f19bf7bd50e7"
+"sf.security_admin.alter-connection.set-comment" = "5a5ddfdaaee07388032f3727386cb8ff06eed1f885308a93e500a30e203e65f1"
+"sf.security_admin.alter-organization-account.unset" = "a88384eec8d168c7e53c23d4d6d8aea1e06d82e190a9107a6ca0683f998f8eb4"
+
+[[review]]
+id = "auditor-security-admin-008"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "054a1aaf89626438ecacc98ad8afe6c0284d3d1f"
+reviewed_utc = "2026-11-05T15:00:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true",
+  "sf.security_admin.create-api-integration.azure-api-management-azure-tenant-id-azure-ad-application-id-api-allowed-prefixes",
+  "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type",
+  "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true",
+  "sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled",
+  "sf.security_admin.create-authentication-policy.create-authentication-policy",
+  "sf.security_admin.create-authentication-policy.create-or-alter-authentication",
+  "sf.security_admin.create-backup-policy.backup-policy",
+  "sf.security_admin.create-backup-policy.or-alter-backup-policy",
+  "sf.security_admin.create-catalog-integration-glue",
+  "sf.security_admin.create-catalog-integration-object-storage",
+  "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication",
+  "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth",
+  "sf.security_admin.create-catalog-integration-snowflake-postgres",
+  "sf.security_admin.create-feature-policy",
+  "sf.security_admin.create-ingress-policy",
+  "sf.security_admin.create-integration",
+  "sf.security_admin.create-multi-party-approval-policy",
+  "sf.security_admin.create-network-policy.create-network-policy",
+  "sf.security_admin.create-network-policy.create-or-alter-network",
+  "sf.security_admin.create-network-rule.create-or-alter-network",
+  "sf.security_admin.create-notification-integration-email",
+  "sf.security_admin.create-notification-integration-queue-inbound-azure",
+  "sf.security_admin.create-notification-integration-queue-inbound-gcp",
+  "sf.security_admin.create-notification-integration-queue-outbound-aws",
+  "sf.security_admin.create-notification-integration-queue-outbound-azure",
+  "sf.security_admin.create-notification-integration-queue-outbound-gcp",
+  "sf.security_admin.create-notification-integration-webhooks",
+  "sf.security_admin.create-password-policy",
+  "sf.security_admin.create-security-integration",
+  "sf.security_admin.create-security-integration-api-auth-external-secret-provider",
+  "sf.security_admin.create-security-integration-api-auth.false",
+  "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer",
+  "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow",
+  "sf.security_admin.create-security-integration-aws-iam",
+  "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri",
+  "sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants",
+  "sf.security_admin.create-security-integration-scim",
+  "sf.security_admin.create-storage-integration-postgres-internal",
+  "sf.security_admin.grant-application-role.role",
+  "sf.security_admin.grant-caller.all-caller-privileges-on",
+  "sf.security_admin.grant-database-role-share",
+  "sf.security_admin.grant-database-role.application",
+  "sf.security_admin.grant-database-role.user",
+  "sf.security_admin.grant-role.role",
+  "sf.security_admin.grant-role.user",
+  "sf.security_admin.revoke-application-role.role",
+  "sf.security_admin.revoke-caller.all-caller-privileges-on",
+  "sf.security_admin.revoke-database-role-share",
+  "sf.security_admin.revoke-database-role.application",
+  "sf.security_admin.revoke-role.role",
+  "sf.security_admin.revoke-role.user",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 4203044e5c6b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true" = "8e6f41ddb5645500f58f8274365f5dd56c4d60d94e7074a49ae6bb55e280c19a"
+"sf.security_admin.create-api-integration.azure-api-management-azure-tenant-id-azure-ad-application-id-api-allowed-prefixes" = "0991fb6f34f2fb0ceca506eff481e41317a2cfc5dbce42a2ff14f5bc0a097468"
+"sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type" = "7ccd99668578dc4f9c3314b20c49bfd33c518b689edb9de2239040fcc1b605d9"
+"sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server" = "c0bb3220e49c5f24167a2ac375d207a68fbc4ad736bb1d5c5bda08e604cc5835"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "9d1f586b95ede9c41249c58daac9669ef6b4bef53ebdfaed6468d47ec4ce5d89"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "b425411fc35a1f10a0260fea6da6422dfd86e579791bcd2db083fdcbda008f9d"
+"sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled" = "bca5593e42aca299bb8901ffb379252f2f0bce4ddd546e75f1defeeb9859ce41"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "1ac805023f93485a39472cca39ed9a5e29984fceaf572cfdf1f80dc926f4bc82"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "9b8685baed0764295b6e277db089891b7d11493adb2acd179cebb3a502974ffa"
+"sf.security_admin.create-backup-policy.backup-policy" = "d74d4c16ab478ac69b726891be4b0170e61852e0b921a7bdb2478bde6fb8d8d9"
+"sf.security_admin.create-backup-policy.or-alter-backup-policy" = "3246e30842afe512df48ccdc85186d39758bf2b18b7039ea14e28ee20d6a9af5"
+"sf.security_admin.create-catalog-integration-glue" = "e07dcbca86daa0926ea3c88314a889c34186a10d563468a668c5d29f5bf30294"
+"sf.security_admin.create-catalog-integration-object-storage" = "219ec99720de4cfc4d3b71a4e7f09a604d420f4c8f315cdb36143db97e8031a0"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication" = "c83b6b97960a172db2d6231e36872f66155e335d55eaf212d8b3d8c9053fe506"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth" = "268161515a07739420490616db7319f65c31e0142c2a92911309629d82478265"
+"sf.security_admin.create-catalog-integration-snowflake-postgres" = "e27721da5a59ac9dd2f016ad13cf78b1bd93b3d46a38702d98e789856b8a644f"
+"sf.security_admin.create-feature-policy" = "8b045951e4e5d00d7a499e0bfc1e02fa1c47327a56447c5ed4efdd519a196950"
+"sf.security_admin.create-ingress-policy" = "4e2a1adfe4e7655ae29415c5d4793b141c470be8f0536bfa830af7c6ccfa70a3"
+"sf.security_admin.create-integration" = "c72bac9e12129289d7076f0b786034498774a6ed6d93acc1b0b738898f9d5cc6"
+"sf.security_admin.create-multi-party-approval-policy" = "05c25028c9ff57a0fb013bb8c452de0b92f083104c59fac01e26c88426e1f6d4"
+"sf.security_admin.create-network-policy.create-network-policy" = "bd4915dd964bf4f02df252d34e7d0d5e8f2161ba0a3cab93b1450ec5e22582d9"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "efcdbffd0fd322b4f0cb3b119498d71eb50c8dcb9c5e61bddddfae2d117b2ace"
+"sf.security_admin.create-network-rule.create-or-alter-network" = "7c123f758fff1e6cdb15223ffd5c383cf867cd2382616204ba792e11cb7c1b65"
+"sf.security_admin.create-notification-integration-email" = "bb9b885a62fa6eef5ab90210be94fd0d33546fe69dd3ca0f2e561c46b35aed75"
+"sf.security_admin.create-notification-integration-queue-inbound-azure" = "633e6febf4d06a5ced3b90e86393797e9b520a768cf9ee4f83cab01618572471"
+"sf.security_admin.create-notification-integration-queue-inbound-gcp" = "f8890bdf7e1c7de7ea170b640224e885b51c1bc70aa305b40a603f6f1ab45828"
+"sf.security_admin.create-notification-integration-queue-outbound-aws" = "a6176784f21e9a126c968ff9f6c07f34574ba29ff941736dbdaa3534c385a3ac"
+"sf.security_admin.create-notification-integration-queue-outbound-azure" = "90e27212df00817e83d9e68c2f08a7ed1a5eebca2ab0a6571f9494b3f6310289"
+"sf.security_admin.create-notification-integration-queue-outbound-gcp" = "7c0fe069fcc93fa056c0a94b9148537797c030188cd3c62722a57988bdec27aa"
+"sf.security_admin.create-notification-integration-webhooks" = "2aa180880ef0304e7a0372b9e6aaa07b28257daf1502963215dfddfa8442867a"
+"sf.security_admin.create-password-policy" = "a91d41494dc41fe63d765aba6636aec8ddc4081cb7b201a4131093a5f135dc93"
+"sf.security_admin.create-security-integration" = "4a4f79e9bf6f0bdeaa27c39e33a9e6f32e8894d7d366ed1c11063225b58cdce1"
+"sf.security_admin.create-security-integration-api-auth-external-secret-provider" = "c577fcd6fc4c66b939dbc568ceec01798d980266b8981f2c54ca147b471747be"
+"sf.security_admin.create-security-integration-api-auth.false" = "e310065ab4efaed4ee139e8ad68e13033d24e0f00ae22592532ef2b01fc5581b"
+"sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer" = "302ba94ef615e6456d2d9b8d2da9b139fed5de3fc92e206c5d8c706b4d8fe7ab"
+"sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow" = "8f104420232df36b75a9b50a6cdcab7e7b908681b484e1179325ebeead248d04"
+"sf.security_admin.create-security-integration-aws-iam" = "33931be40a9ea05b6a4bbf27982e044773b6fafcae7c84127ceaaa18b56cf686"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "9a36af6f5e5fb2c50d0484bcbe78beb29ee28c7391c89c1375cbecd9a31e6eae"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants" = "3020d8211365f059b847e8db6564fd9de913704b063fd73dcb441bff7f4d7c04"
+"sf.security_admin.create-security-integration-scim" = "c234be26958cbb80ea227df3304ae2979b6dce4a0dd5bb587b2e110c0f944855"
+"sf.security_admin.create-storage-integration-postgres-internal" = "b17c7db6bfd144b6f1377901c75379fb4bf5f7795c25634a7bfd7677f205fef7"
+"sf.security_admin.grant-application-role.role" = "e56eb0a68d4246b1bd3b63b55aae89d04d9b4fc22ec7f12812d85da08c420399"
+"sf.security_admin.grant-caller.all-caller-privileges-on" = "7b3c18e9fcaec99eaff5a49239c9c9d070e482d7c91914501c1b096facd1da49"
+"sf.security_admin.grant-database-role-share" = "436bd0247732285efdd255637b1188d69b7b0779ab03bfc7cea9eda16fb877f6"
+"sf.security_admin.grant-database-role.application" = "a7d839464bd42e044aa1aa52a1fbb9aa846212872c3177c0d4ef42f7bf06d44d"
+"sf.security_admin.grant-database-role.user" = "834190bb6086d302947fad662be0a90ed36ae6bc71f1d338b32582aeb76eabf4"
+"sf.security_admin.grant-role.role" = "f5ace5ec923068966ce32d9b975f948ea9ab6e26f67ab66b8889b09806de83e5"
+"sf.security_admin.grant-role.user" = "d7e023614bf1efcb506324a88591982b8dd7c71038ccdf94aa0db98ff5f9d338"
+"sf.security_admin.revoke-application-role.role" = "295a00d7566aeac2d6a823e20acccabd5ee2230ac7882024a45713ac2aa2d107"
+"sf.security_admin.revoke-caller.all-caller-privileges-on" = "4df1b84b65dee6cf959603d6f9d8ca99b25ee0b073181e13a78c33034b177c06"
+"sf.security_admin.revoke-database-role-share" = "424ed938ec9afe236a706ca68bdabc0d08bac85eb285b36bcfc0d4256963abfe"
+"sf.security_admin.revoke-database-role.application" = "f646c9c801a973d10f87be62e9122183672e2e60c4fae23bd503eada57ad389b"
+"sf.security_admin.revoke-role.role" = "e2e30fad0003d39a03d45662040441cf6803d9c0d099e3d36ab30d50e8014e80"
+"sf.security_admin.revoke-role.user" = "4d1e23f15f69fc817e7698d3d7491a6b9ceb9da64114989b90db3d864b313368"
+
+[review.definitions]
+"sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true" = "1f7709574f0394f8cbe864508c2ebdef5bbabb60056b2632ad72ca1f2b93e30e"
+"sf.security_admin.create-api-integration.azure-api-management-azure-tenant-id-azure-ad-application-id-api-allowed-prefixes" = "5efd08f7cc3bbb0e7738236589eb3da602eba96a53973d067b665b00d62a5300"
+"sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type" = "8c3a0272d369cb3bc429dc9dcd4af82317c34b5fee82dc3283609020c0d2b70e"
+"sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.for-external-mcp-server" = "5376c25d2bee7356b3a2b7ffbcb162176c8758b90613acfbbfd5673fb032bc5f"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "308cabb56c21e112bedfe2867c8dcf1a5ab0706278f02b037865911786bf0229"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "896ced79318d9b162613fc89a1b74e024fdeb9af00ccd2902b9629e76d89457f"
+"sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled" = "27043fabac4f318e1bab9fc02228c960020b456ac0226471d50c51538b418ff0"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "51a0729f323b7f1c20a0ef6f7b5661d5738c52720f32338cd35bd852aff48cfa"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "92bff9f890ebf7b3f05d8792a74f3199d6fc0f3f8c8fd99ecc7b3e530aa7c676"
+"sf.security_admin.create-backup-policy.backup-policy" = "bf5450c51f432be5d9067c6040ab23f942373bb9c10c1700ab76651925a22eae"
+"sf.security_admin.create-backup-policy.or-alter-backup-policy" = "488267c8dc7ed1356a063ae473b5d508f07d9dd643f001ae19bb15451b821c14"
+"sf.security_admin.create-catalog-integration-glue" = "54c5c1facc759f6519ad73061e2e5eb586394c794a080c9c7215ab3e45d9598b"
+"sf.security_admin.create-catalog-integration-object-storage" = "c935d3239e14914b8b628832fd2d2deb19600afc35614266c809e87f48cb6c70"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication" = "0623e2a8fc818b53e52edc761690563a1b8653d8fc4857448729821f79513fbd"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth" = "5ea51062dd627230cccf07d1b099065c77ee7f8fe0a3da20514cf89fb98e6e76"
+"sf.security_admin.create-catalog-integration-snowflake-postgres" = "e51bf424afeb77d39c7ab134bf19cfff58783fdf16dc935a3340583cda875db1"
+"sf.security_admin.create-feature-policy" = "fa7f156cdc9453973f15a1df93a4f020e1dd149de6313441aeb3eb5d35fbe7af"
+"sf.security_admin.create-ingress-policy" = "e4b8c10489fe3423768a7dc6542a2c36890843ca840f3eeaf81dd78f78bed977"
+"sf.security_admin.create-integration" = "cdf2476889c67084b6ae76fceb9c4654f790b0a7cc9a26c10df6396fa9600720"
+"sf.security_admin.create-multi-party-approval-policy" = "a113c114171b846be8840b6e41592bce16e66a1587d8e0f2e7adf96323e35fa8"
+"sf.security_admin.create-network-policy.create-network-policy" = "cee9dcf89036396c288ac6d7db544a40fbd5b8a343afbc5ccbe9949800d7ceb6"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "8d23dbd4dda98be372ef3780446d094f7bef517345c56c71e4dea2780750b0ca"
+"sf.security_admin.create-network-rule.create-or-alter-network" = "1c84ae4e1fb1850990e9915902a1cae22cea793efc86c30dbbf7d3422d145141"
+"sf.security_admin.create-notification-integration-email" = "b64764a7431703506fbb0c69914b646729aa3da0c3ffb7e0526cc8f435e9c6b1"
+"sf.security_admin.create-notification-integration-queue-inbound-azure" = "ebf86cf94da634fcce9effffe9be1a6c67a15fd3d864b5c8fa4b9f184f017898"
+"sf.security_admin.create-notification-integration-queue-inbound-gcp" = "539ef6b7398fa6692306b5bae93f60c57e372420f65e64e82cc5a3ef168a1f24"
+"sf.security_admin.create-notification-integration-queue-outbound-aws" = "4ff7083c892d014b0ccb58ae629cb896a1e48279c7d82383d1c6d0dd2fe13101"
+"sf.security_admin.create-notification-integration-queue-outbound-azure" = "846c75d426b7d36f4fc7d53ac900391ebd4d4cea5ce1a367ebfb63aef271ab2f"
+"sf.security_admin.create-notification-integration-queue-outbound-gcp" = "2588821a93f87c46000aa3f5ff29233bca1d65f8e35fc55c9f26d77614ca3a2a"
+"sf.security_admin.create-notification-integration-webhooks" = "341acd18b1e18ea170e9af94989ac6375df53595310d06f0094eb017f972a2f3"
+"sf.security_admin.create-password-policy" = "d52e567e028c1ca5c3112f51034b05eba2cd4ed2ec9aa2751f7dd13388f74c8b"
+"sf.security_admin.create-security-integration" = "612615439b9b363e233358e66536660fa72e62991033b300a4b03003e93992ae"
+"sf.security_admin.create-security-integration-api-auth-external-secret-provider" = "7a63823d8c5fdd9078ae78c2c9b8982b4983dd1bc84166b95d7ea5f4d92bc573"
+"sf.security_admin.create-security-integration-api-auth.false" = "58bba52f3618a994508fc5ff79a59deb801bc7a9bf7daf586bb7f66d8c6b0c6e"
+"sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer" = "2f97297ae8a77caf05160a3d64339c48b547c9fea4b06e6546362dd155604adc"
+"sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow" = "0981b1ba2f820f7f361959ffdf6f0a61f1a9fb19d95ce25525ea9658b8e07e6c"
+"sf.security_admin.create-security-integration-aws-iam" = "65bd42cd794deda3e66ea010b946c2a88beebb11e94ba1d5f2a25be61d282fa8"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "e313e9c5116e7d3150dcd86e4b0fffc3d9c5ed346c67b92c4f0e0fe8d74f306a"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants" = "f3e17170e68165fe44572c34d06ec0243a0a1cf5782bae59e695a3c917aa15e9"
+"sf.security_admin.create-security-integration-scim" = "ca86f21fb6d2885bdacdf9262102973a6ebc70d327415474ee4a833b7a01e998"
+"sf.security_admin.create-storage-integration-postgres-internal" = "76481f8cc8ceb166d463046715305012b82e4e52875fc69fb8da8b0a38ef38bb"
+"sf.security_admin.grant-application-role.role" = "60e5f3d1360cf0b2c7cbdaccab17c0d8fa907066f149fdcfe1a17f72edcd0462"
+"sf.security_admin.grant-caller.all-caller-privileges-on" = "48e6b79f13d14da83965bd5c8d96556d55c155fdd1890512f65cb8b982bb400f"
+"sf.security_admin.grant-database-role-share" = "90d08b10b48cbfeada204347caf89550ec6c021cb5cda63fc3e1cf682cfc3ffb"
+"sf.security_admin.grant-database-role.application" = "8aa61f353fc46819e790d44fed5af9adbd0af617a717512fea739721ee196f43"
+"sf.security_admin.grant-database-role.user" = "1b85f07654d7e6ef31cf973b5b6f31a176314486f7f796db9af6e3f004ecd55a"
+"sf.security_admin.grant-role.role" = "2e1bd1a0b3c8384f858e7f95731288bb3ac05fc85117c39289cf2c112ffea31e"
+"sf.security_admin.grant-role.user" = "ea435ac8486a5f12aa3f51ba70b7dd45135ddbe649086d216f93a6bb146534c1"
+"sf.security_admin.revoke-application-role.role" = "554d17a0ab1bf3998fccd2c63e16d2420fbbb3b75f388fdac30dd1ee6c1b5a16"
+"sf.security_admin.revoke-caller.all-caller-privileges-on" = "41ac46ca67086e1ff5ec9fb370651dbd7c0aa2cb3819b7e0ff3914923ad4a0e2"
+"sf.security_admin.revoke-database-role-share" = "0b22d74acb46556777b13066ebcf3099fbf54be05fd08ff0f4967fb8a8000dbc"
+"sf.security_admin.revoke-database-role.application" = "2073abf53a6781d8073e3975a629c92e7dd79ff4dfc11afad1149da198089907"
+"sf.security_admin.revoke-role.role" = "55885b7e600b4527784ef808465e892fee5d6354190a81c3fa6774cbe6062b80"
+"sf.security_admin.revoke-role.user" = "0aaf7442033a681841a2163fe769895edbd82847bbbc3de058742a0a61ba8b2f"
+
+[[review]]
+id = "auditor-security-admin-009"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "e792d6e8f27909ce93bc04d35d415b3fd2c288cb"
+reviewed_utc = "2026-11-05T16:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-storage-lifecycle-policy.rename-to",
+  "sf.security_admin.show-event-routing-table-on-organization",
+  "sf.security_admin.show-external-consumer-programmatic-access-tokens.pats-for-external-consumer",
+  "sf.security_admin.show-external-consumer-programmatic-access-tokens.programmatic-access-tokens-for",
+  "sf.security_admin.show-feature-policies.policies-on-account",
+  "sf.security_admin.show-feature-policies.policies-on-application",
+  "sf.security_admin.show-feature-policies.policies-on-database",
+  "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm",
+  "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project",
+  "sf.security_admin.show-grants.future-grants-in-schema",
+  "sf.security_admin.show-grants.future-grants-to-database",
+  "sf.security_admin.show-grants.future-grants-to-role",
+  "sf.security_admin.show-multi-party-approval-policies.policies-on-account",
+  "sf.security_admin.show-organization-user-groups",
+  "sf.security_admin.show-user-key-pairs",
+  "sf.security_admin.show-user-workload-identity-authentication-methods",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-storage-lifecycle-policy.rename-to" = "7945cebe47bd12951de609162082b5bd7be6e83dfba9c3ee9a1b4a520e5eaf5d"
+"sf.security_admin.show-event-routing-table-on-organization" = "31b73ebc056c559fc29a942b0155116c0d5e5116269e86dd0d7ab7023d253a08"
+"sf.security_admin.show-external-consumer-programmatic-access-tokens.pats-for-external-consumer" = "423ecf0973701d204425236c5f1b3a3138b8090c3ba417855f3fb62c7200ec4e"
+"sf.security_admin.show-external-consumer-programmatic-access-tokens.programmatic-access-tokens-for" = "e2358863730c09a5f3d163ce617e8d88ae04e1f4ce73e85957a89aa21f05f41b"
+"sf.security_admin.show-feature-policies.policies-on-account" = "957e9950b7e74d8af30dfe5157cb6fb401cc7b6f77352dbd1b410fb5cd22782b"
+"sf.security_admin.show-feature-policies.policies-on-application" = "4f52070f4c1189bcfafb573ab42110bf3feb624fd86c3cf33e8929ff296fca8c"
+"sf.security_admin.show-feature-policies.policies-on-database" = "2c224b31bfec1bbbb106e988aba229db8b2da8178c2b23acdd571656ef72b06b"
+"sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm" = "47dbf8173012f9d5307a177bcf1b2d675fb5bf1337da0becc3590ca5a30fbdec"
+"sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project" = "8ca274a2108cf73924e9ceeabc51061145a58b5cea4f3116f2419784816fd145"
+"sf.security_admin.show-grants.future-grants-in-schema" = "9cca6b2fa56aa760be0f0294f856ea2f43080dbbfcbc5f3ae477e63fa1746336"
+"sf.security_admin.show-grants.future-grants-to-database" = "021f2f4751f0dd66dfba50fd06de74ffc8f0e27f6e06840215c82e7f78eec2c4"
+"sf.security_admin.show-grants.future-grants-to-role" = "76cb52bf555980247c43997f23891cfac693c6a4401c290b1e1d933a7b5dee3e"
+"sf.security_admin.show-multi-party-approval-policies.policies-on-account" = "5718c59dc7bd94e7d5eced21cbf5142304a45ae0185d69ddc7dd4bb48a61fe4b"
+"sf.security_admin.show-organization-user-groups" = "db3d723498ed14ea7e9efdb0379aef34ecec75e8beac977e41b032309d0df2cd"
+"sf.security_admin.show-user-key-pairs" = "5bdf5feb1569f572a841b41fd506a2801cffa925b4415e624a90b71380113a5a"
+"sf.security_admin.show-user-workload-identity-authentication-methods" = "55d4780c7f1fe480863d8c98886e44fcff4e110510dcf95238608fa0e999a9b7"
+
+[review.definitions]
+"sf.security_admin.alter-storage-lifecycle-policy.rename-to" = "733bec88dab52f253d3fc184b709d910a80bf9c551e5bfa898d595736ff334f2"
+"sf.security_admin.show-event-routing-table-on-organization" = "01ea8248470842342735bb4443e70d4acc7c41ee71d07fd8fcd690fddd4e6f34"
+"sf.security_admin.show-external-consumer-programmatic-access-tokens.pats-for-external-consumer" = "66f0994ddf794aa8df5ba333dcc3951fa3c0c46cc093946c47311c95ddb29576"
+"sf.security_admin.show-external-consumer-programmatic-access-tokens.programmatic-access-tokens-for" = "a87d8772b86b2491cd69641f9ead70df85c990cb2741744e9b3b5d157887aa71"
+"sf.security_admin.show-feature-policies.policies-on-account" = "87f3b215789367708ad22d704d77591483edd24cd32952d8e39dbd2dcfd369d7"
+"sf.security_admin.show-feature-policies.policies-on-application" = "1740299947694d1e1e23a2affce307328c36eee4051640690207223d1ef8d7f0"
+"sf.security_admin.show-feature-policies.policies-on-database" = "84dfa7ca6be471fffe7b3ade1ea16c6e7ec2d843e864851a30a750de4559e938"
+"sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm" = "34e17aeb9aa343b48118e83046cf62ad6201301546beb0dab14460eb762150c9"
+"sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project" = "fb7a7fe99ef20970f679bfc2b8dc0c04d127ca62e033272d7dceeed753ef1705"
+"sf.security_admin.show-grants.future-grants-in-schema" = "6c590c23389fb16caa51ebadce2edc69585b0f64524679f650b7f0c928721f00"
+"sf.security_admin.show-grants.future-grants-to-database" = "67669e0bc4432819ccff9fa73ca0cd3fd3e0293430f417d76b2f957e8330cf7d"
+"sf.security_admin.show-grants.future-grants-to-role" = "712214d6ec4b7b33d76bd3fa7a817668324af5b5413c141be58704c46fddea68"
+"sf.security_admin.show-multi-party-approval-policies.policies-on-account" = "c4cb96aa6d31a827882bf31d325db55fe8ff36b76bc43facb3efc8876f88452c"
+"sf.security_admin.show-organization-user-groups" = "c4d109ec4a6ce842a66066c3c4950b377a52a6cf9a11a0e01955c5c39d835b16"
+"sf.security_admin.show-user-key-pairs" = "2baa57165911876e174884b51d357a822f9ed600d353cb3a3060349c7d440640"
+"sf.security_admin.show-user-workload-identity-authentication-methods" = "8aea318b57e5808d906dfc417f013c8f4a6d182a05e36446d6896c17b50f7bbc"
+
+[[review]]
+id = "auditor-security-admin-010"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.desc-secret",
+  "sf.security_admin.desc-share.share",
+  "sf.security_admin.desc-user",
+  "sf.security_admin.show-aggregation-policies",
+  "sf.security_admin.show-join-policies",
+  "sf.security_admin.show-maintenance-policies",
+  "sf.security_admin.show-privacy-policies",
+  "sf.security_admin.show-projection-policies",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.desc-secret" = "cca2665f539489c414b5a61cad736d27d2d8f510147f8d7c2fa538ae32494c98"
+"sf.security_admin.desc-share.share" = "d008c4533bf94d6c28ea38f081d4439d6056c2ee1ef6fd07662a50aee2d4f4e2"
+"sf.security_admin.desc-user" = "1f0e89425b7ffb728bb4c21c0ef0a61b20ebe9e70d255d68af21811316f653f6"
+"sf.security_admin.show-aggregation-policies" = "0e149b5825d693740c10d69ec4a8f3a8a1533324ae6cd56877425af32187fd37"
+"sf.security_admin.show-join-policies" = "317f120ecd8d3e7583d1585081585db8d1e2a9f42a38d68cb8fe9400af43be24"
+"sf.security_admin.show-maintenance-policies" = "e257e20864f32c83056414c8a214e0c543b1d72f1a1b6c89df248f68925c24c5"
+"sf.security_admin.show-privacy-policies" = "c5f10ae8292d4c77ceaeafd0489f8bc05bcd6eb67b9ad138da405ab9934b07ab"
+"sf.security_admin.show-projection-policies" = "251d6a37e7afeae7684053cc894a06fe7a84c8a3f952194321b8da80cea6f3ed"
+
+[review.definitions]
+"sf.security_admin.desc-secret" = "4bd4d4d21eed65aac316ee5356e29a0f00dadd9f379aa54168488c3aa3f3134a"
+"sf.security_admin.desc-share.share" = "1ac58bc3af85174585697dfc44ed762a3a52e3c827633581210b283381e84d47"
+"sf.security_admin.desc-user" = "6327ed739490b58903150f3d7ca74c558604220c51a4fb37276af5cdb6965602"
+"sf.security_admin.show-aggregation-policies" = "12312490686b025c30e6956c616aeaae68bc0fb5fbc9c8ec5b5c6d0a12bce709"
+"sf.security_admin.show-join-policies" = "68f1d9cf57364a564d3f8be50ea4d1f25182f2939a83efca18217a5048181809"
+"sf.security_admin.show-maintenance-policies" = "90f4ab790f32e9205c39cbe84df2ff362e25fde0237b2844ee4662623477c763"
+"sf.security_admin.show-privacy-policies" = "70c24287cd97df2364aeb4950e6786c1d4d6a73cae229fb2c384b7881fb48d62"
+"sf.security_admin.show-projection-policies" = "1c88e8a2613616adfd3ef468fa97b71b58d5ff64bce108a4b390651bf60de021"
+
+[[review]]
+id = "auditor-security-admin-011"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "cf8abdf7fa9e42f723fbc23ef97a6e8833a53cbd"
+reviewed_utc = "2026-11-05T17:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-share.set-tag",
+  "sf.security_admin.alter-share.unset-tag",
+  "sf.security_admin.grant-caller.caller-on-to-role",
+  "sf.security_admin.revoke-caller.caller-on-from-role",
+  "sf.security_admin.show-databases-in-replication-group",
+  "sf.security_admin.show-grants.grants-of-share",
+  "sf.security_admin.show-grants.grants-on",
+  "sf.security_admin.show-shares-in-replication-group",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 97044b8f206d; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-share.set-tag" = "c64e61d58063c5e721b56a57b12177eaf51dc2bee51929f4611173b38c938291"
+"sf.security_admin.alter-share.unset-tag" = "eb45061e3c7f54759996a66ae223935ea5c8a043ccaec2b2ddb643fbd3f6ab51"
+"sf.security_admin.grant-caller.caller-on-to-role" = "cfe195071e0cd908ee38f54f4bdfa0bd2e2f50a903109299f9fb86f874baa5e1"
+"sf.security_admin.revoke-caller.caller-on-from-role" = "10bc2b023188d902fd07cd6e30ddb04453322ad2175fc963b5ea37dc74b54cf1"
+"sf.security_admin.show-databases-in-replication-group" = "75ec60d2468b2fecee6ab51c3cb3aa3f8968a19a6d1d279f95e088de0a5d29bc"
+"sf.security_admin.show-grants.grants-of-share" = "b2d0baa50c861213b0d529fc3ca892180a0669645c205ccfe2c538de3f77673d"
+"sf.security_admin.show-grants.grants-on" = "4a9e8c3388aec7583e8a0542094f3609e1ed55aec9ca1581ecc5b645d678c720"
+"sf.security_admin.show-shares-in-replication-group" = "ac0747bf1567558df56f3eee9c78f3799d8a0f9ba0a69b1f5cb5c0cbfd577708"
+
+[review.definitions]
+"sf.security_admin.alter-share.set-tag" = "16bc320ec914175ae9565618cf04149426a8711f2e0274d7f7ad2df746135221"
+"sf.security_admin.alter-share.unset-tag" = "258e1a0b303871ad85e62c58e2f4c04e48a6bc52a217147d552df15bcecc037d"
+"sf.security_admin.grant-caller.caller-on-to-role" = "06ab0b63cc7e2849c821a8118c3952125a0080c1206e7d2774031d679023d352"
+"sf.security_admin.revoke-caller.caller-on-from-role" = "3d367139368b59325ca6c214e0b7ce3732d0da1f41c4df096d0e742c935fccf5"
+"sf.security_admin.show-databases-in-replication-group" = "1073e140cfcb4673af4c9f121e89b2a3227c8eaaaa71c8ffbc429a03e0368ba6"
+"sf.security_admin.show-grants.grants-of-share" = "2ec94a5de363c9a12ccd29abc513f393853d104aa8f4b69986cbb36438b2677d"
+"sf.security_admin.show-grants.grants-on" = "56607b24b39eba991f217261e28fc611315bd0b292358097da4ce1712776e64f"
+"sf.security_admin.show-shares-in-replication-group" = "4b79b542a168be29d8518c53f1b4d5693c30c7a5d83e7d4be9fd606f4809f7db"
+
+[[review]]
+id = "auditor-security-admin-012"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "91f493b96874fc1febef9f6666a03901a9deef8b"
+reviewed_utc = "2026-11-05T19:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-organization-profile.rename-to",
+  "sf.security_admin.desc-organization-profile",
+  "sf.security_admin.desc-snapshot-policy",
+  "sf.security_admin.drop-application-role",
+  "sf.security_admin.drop-database-role",
+  "sf.security_admin.drop-organization-profile",
+  "sf.security_admin.drop-organization-user",
+  "sf.security_admin.drop-snapshot-policy",
+  "sf.security_admin.show-application-roles",
+  "sf.security_admin.show-database-roles",
+  "sf.security_admin.show-databases-in-failover-group",
+  "sf.security_admin.show-grants.grants-on-account",
+  "sf.security_admin.show-roles",
+  "sf.security_admin.show-roles-in-service",
+  "sf.security_admin.show-shares-in-failover-group",
+  "sf.security_admin.show-versions-in-organization-profile",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f93bd77e5c3b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-organization-profile.rename-to" = "0595305576222603f3cfed9c10f27648e5f37295d2ba434599aeefb0fc2eefc3"
+"sf.security_admin.desc-organization-profile" = "5d50dd574b5fc24ca11c9c37411f16510ee8e1a63e28c1b45873792aa05f25e6"
+"sf.security_admin.desc-snapshot-policy" = "ce5cf8723e1088e14a6d8283ae0f47fddcc46b347ba4115083c67628add03a18"
+"sf.security_admin.drop-application-role" = "ccdc81dac6b2b49443d4f48fd7a91c1d2af7028a8f4efaf3cc941fecf0568525"
+"sf.security_admin.drop-database-role" = "a6172f9269d7629f45a014f0dba4f512732d4de7e3210772cbdea2c88e53e605"
+"sf.security_admin.drop-organization-profile" = "b720bb836155b92dd856afa0e95dc39e917fc85a12b38d572e67b0a83c9ef726"
+"sf.security_admin.drop-organization-user" = "53ba2dd9b248d61d48209d7b2d20477d1371bc5ceef55cfa1ab11a22971daf9f"
+"sf.security_admin.drop-snapshot-policy" = "92d6f98566dd775b45b68360cdd5a063e40bebcbec7fc1c7d743474da9a6ff58"
+"sf.security_admin.show-application-roles" = "d4c4a47423313027249e6ccd20a52a8eb085f4f64c4f1cb173e09c9ff0a3682d"
+"sf.security_admin.show-database-roles" = "a69d9963a7ca6d9b1a05b297eab77a18ff6ef0d342faebfd6b4b2463fcf31217"
+"sf.security_admin.show-databases-in-failover-group" = "b987603fbf53a64d1ebd6c72004b0984377307927f3abbc3ded1e544c88cfee6"
+"sf.security_admin.show-grants.grants-on-account" = "b897de1e3bff5653accdd8c760b0b84af3931e9283db17d9ff1ea976efc79f00"
+"sf.security_admin.show-roles" = "88daae3ba9c18207584a1f71cfef72b6c4085614b370707476a69afb2408349c"
+"sf.security_admin.show-roles-in-service" = "a10f9b509ae9123379b84c1c54285c0784092ecabbe16fabf6da6cc159391206"
+"sf.security_admin.show-shares-in-failover-group" = "ee34a802d9d03d1da52e6733101ca107c7fd3871f42cc64d608527d490bd696e"
+"sf.security_admin.show-versions-in-organization-profile" = "84740f65b07ede51c3fdf3ffecd7ed492d9ec4942661ff7d23d814cf8a891f3f"
+
+[review.definitions]
+"sf.security_admin.alter-organization-profile.rename-to" = "96c3c5cfb19bc9e7b9d6ce9b1f5f833a0eb1bc8a30210e4ec7c0f1c9fc8e2646"
+"sf.security_admin.desc-organization-profile" = "5036eb49bbe8961ce318c91e952e93c4579de3ab68e850eec143fd3784293474"
+"sf.security_admin.desc-snapshot-policy" = "b180843bddbc8a69c5caed598bd34e008bd42d0c41fa29d0d67ea1b690a34231"
+"sf.security_admin.drop-application-role" = "37682b2a18b6ba7dd7bc1ac1015c97123a15dc155dc71cea0d2219affcba6518"
+"sf.security_admin.drop-database-role" = "071fc8fd1c00f89372aaa0a71b3d5666257639458fe264ae048937f66a0ace95"
+"sf.security_admin.drop-organization-profile" = "652dd4e7b314d72646000524c101e124bc49db742018b6cfe999276956731d9b"
+"sf.security_admin.drop-organization-user" = "d26fe171d967097fc91a34656c6bf46ca80c8501ec31c5a8c30d7213d7d92bd0"
+"sf.security_admin.drop-snapshot-policy" = "440033929c707777b9a6744a6320bf1c6fadcaaba825f14ccebc363be7fa9e7a"
+"sf.security_admin.show-application-roles" = "884218e4e57453804f49258515ba3185a8a907b700053c2beac1323596f09428"
+"sf.security_admin.show-database-roles" = "5cd796210cce6a2f36a2fc4eb2171f0bedbd79842a658fded454b1c814e47eb9"
+"sf.security_admin.show-databases-in-failover-group" = "cd4a65286a381fa60e89cc55532117316f0741358c8e27117379114ff50331a5"
+"sf.security_admin.show-grants.grants-on-account" = "1ca93891e633631cb89db446d3c31d70688d5523c2a2bec498002123054a1af6"
+"sf.security_admin.show-roles" = "b9d7fcf80f524ff7817e8105dd7b4cc59037651b2830ebd7111d08152f24451b"
+"sf.security_admin.show-roles-in-service" = "1b3f26995813d3832aa55fb588abfdd15f1d93a4753b43125063fe8236883e28"
+"sf.security_admin.show-shares-in-failover-group" = "406511ea89b8c90f5d8d78c306b5a59c8d22004523884bf3bd6e484880e45b16"
+"sf.security_admin.show-versions-in-organization-profile" = "c68a4d42c969c455e2165f2d4f0acd0b0c8f68ad6d05960f9f3e75bf5fe36388"
+
+[[review]]
+id = "auditor-security-admin-013"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T23:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-connection.disable-failover",
+  "sf.security_admin.create-api-integration.aws-api-gateway-aws-private-api-gateway-aws-gov-api-gateway-aws-gov-private-api-gateway",
+  "sf.security_admin.create-external-access-integration",
+  "sf.security_admin.create-security-integration-oauth-external",
+  "sf.security_admin.create-session-policy",
+  "sf.security_admin.grant-application-role.application-role-application-user",
+  "sf.security_admin.revoke-application-role.application-role-application-user",
+  "sf.security_admin.show-data-movement-policies",
+  "sf.security_admin.show-network-rules",
+  "sf.security_admin.show-storage-lifecycle-policies",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-connection.disable-failover" = "7cabf2f63a632b10c3899529d7f5cf4e1967568c7f1e8a271792bcc03b681b83"
+"sf.security_admin.create-api-integration.aws-api-gateway-aws-private-api-gateway-aws-gov-api-gateway-aws-gov-private-api-gateway" = "aa6ce32449045941f0035de2609f59d4abc409a0750b0dd3588cd6f12c34a7b5"
+"sf.security_admin.create-external-access-integration" = "d87953da435b57c6dd0d8932b90bbe2438bfc8ec3ff63cd4ad21044796a93a87"
+"sf.security_admin.create-security-integration-oauth-external" = "96fd6cde402db4ffa4a5c172a43303bb9ea2dd00e1e8bbc1e7c830e0f9be28b7"
+"sf.security_admin.create-session-policy" = "d78e134d59707d1c430c824a2e07ec74e40ad8fc1a789ab4226d6311457e31a5"
+"sf.security_admin.grant-application-role.application-role-application-user" = "1ef1ace1290a9966f3518e8a3c52f7e90606a9a43233053750af36c8e4241cef"
+"sf.security_admin.revoke-application-role.application-role-application-user" = "165b81568779c9c28b7fe4a5400187ba91b37625975cb80e10d8301489699f6f"
+"sf.security_admin.show-data-movement-policies" = "51f7fc2fb02fe05eb6ae272c8d346afa7f84ef7688740080a5c7fa175daa3b88"
+"sf.security_admin.show-network-rules" = "ac06d026829ab11e95d56dd7fc2fb55fa2999f6a637b8d9748c3bbdf11e4468f"
+"sf.security_admin.show-storage-lifecycle-policies" = "1a0854cb0ed98c14fa198c09b9641d5b20a201a80b0936bb28301cbab92a18a7"
+
+[review.definitions]
+"sf.security_admin.alter-connection.disable-failover" = "2e2b0116cc5d58f8d13ec6ee6a735ee1ba98cd633504137007aaa0d566b556d1"
+"sf.security_admin.create-api-integration.aws-api-gateway-aws-private-api-gateway-aws-gov-api-gateway-aws-gov-private-api-gateway" = "32d45e829bd4a3ab4bed3364d773f5bab90ecbd20d908f9b9c568fed29722080"
+"sf.security_admin.create-external-access-integration" = "11084e757ea5ce85d61e2dc283778a5377ae28ef47d4c27b4d36747e0d476e54"
+"sf.security_admin.create-security-integration-oauth-external" = "1872588215420f42497f03341b9e7fc62289db9072ddbc1649389642991e79b4"
+"sf.security_admin.create-session-policy" = "c6e0d5e5ae9e9a8561b4a4f7d9213e39f69fa43fe1d0165a791d6284cf9036c8"
+"sf.security_admin.grant-application-role.application-role-application-user" = "21f0b206ca44db3b9d1ce92c0e1b419d49e423ac03769653e99ca97b8bae6306"
+"sf.security_admin.revoke-application-role.application-role-application-user" = "a89d8ee96d6abe6c395b42b7580b3d088822f2020efb4d772d837accab0460d8"
+"sf.security_admin.show-data-movement-policies" = "2de8dece32aa7710174398af6a394657d5a9d675e905e503e2db713fadfeaca9"
+"sf.security_admin.show-network-rules" = "8297db5cda1f2464c7904d8aefad74630f80e1b68c5e3a3c8e06eae0e1ae2166"
+"sf.security_admin.show-storage-lifecycle-policies" = "42be8abc286dc7fcca8cc254c9d949b788f55e08ea10156c13ba7d1ecf64bedc"

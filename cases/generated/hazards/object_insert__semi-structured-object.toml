@@ -10,8 +10,10 @@ id = "fn_object_insert_combination_0_variant_text_literal_variant"
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "OBJECT_INSERT(x0, 'k', x2)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -130,7 +132,7 @@ id = "fn_object_insert_1_text_null"
 description = "fn:OBJECT_INSERT with SQL NULL in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, NULL, x2) AS r0 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -142,7 +144,7 @@ id = "fn_object_insert_1_text_empty"
 description = "fn:OBJECT_INSERT with The empty string; a JSON path reads the empty key as the whole document in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, '', x2) AS r0 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -154,7 +156,7 @@ id = "fn_object_insert_1_text_dollar_prefix"
 description = "fn:OBJECT_INSERT with Text starting with $, which DuckDB's JSON functions read as a path (GET with a computed key) in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, '$.a', x2) AS r0, OBJECT_INSERT(x0, '$', x2) AS r1 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -166,7 +168,7 @@ id = "fn_object_insert_1_text_slash_prefix"
 description = "fn:OBJECT_INSERT with Text starting with /, which DuckDB's JSON functions read as a JSON pointer in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, '/a', x2) AS r0, OBJECT_INSERT(x0, '/', x2) AS r1 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -178,7 +180,7 @@ id = "fn_object_insert_1_text_dots_brackets"
 description = "fn:OBJECT_INSERT with Dots, brackets and the wildcard, which paths and patterns read specially in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, 'a.b', x2) AS r0, OBJECT_INSERT(x0, 'a[0]', x2) AS r1, OBJECT_INSERT(x0, '*', x2) AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -190,7 +192,7 @@ id = "fn_object_insert_1_text_quotes_backslashes"
 description = "fn:OBJECT_INSERT with Single and double quotes and backslashes, which quoting and escaping must keep in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, 'it''s', x2) AS r0, OBJECT_INSERT(x0, 'say \"hi\"', x2) AS r1, OBJECT_INSERT(x0, 'a\\\\b', x2) AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -202,7 +204,7 @@ id = "fn_object_insert_1_text_non_ascii"
 description = "fn:OBJECT_INSERT with Non-ASCII letters, combining marks and characters outside the basic plane in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, 'Größe', x2) AS r0, OBJECT_INSERT(x0, 'é', x2) AS r1, OBJECT_INSERT(x0, 'é', x2) AS r2, OBJECT_INSERT(x0, '😀', x2) AS r3 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -214,7 +216,7 @@ id = "fn_object_insert_1_text_title_case_digraph"
 description = "fn:OBJECT_INSERT with Letters whose title case differs from their upper case (INITCAP) in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, 'ǆungla', x2) AS r0, OBJECT_INSERT(x0, 'ǅ', x2) AS r1, OBJECT_INSERT(x0, 'ǉubav', x2) AS r2, OBJECT_INSERT(x0, 'ǲ', x2) AS r3 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -226,7 +228,7 @@ id = "fn_object_insert_1_text_case_only"
 description = "fn:OBJECT_INSERT with Text differing from other rows only by ASCII or Unicode case in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, 'Order', x2) AS r0, OBJECT_INSERT(x0, 'ORDER', x2) AS r1, OBJECT_INSERT(x0, 'order', x2) AS r2, OBJECT_INSERT(x0, 'Straße', x2) AS r3, OBJECT_INSERT(x0, 'STRASSE', x2) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -238,7 +240,7 @@ id = "fn_object_insert_1_text_whitespace"
 description = "fn:OBJECT_INSERT with Leading and trailing spaces, tabs and newlines, and text of spaces only in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, ' a', x2) AS r0, OBJECT_INSERT(x0, 'a ', x2) AS r1, OBJECT_INSERT(x0, ' ', x2) AS r2, OBJECT_INSERT(x0, '	', x2) AS r3, OBJECT_INSERT(x0, 'a\nb', x2) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -250,7 +252,7 @@ id = "fn_object_insert_1_text_number_text"
 description = "fn:OBJECT_INSERT with Text that reads as a number in several spellings: leading zeros, signs, exponents in argument 1, text."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x0, '007', x2) AS r0, OBJECT_INSERT(x0, '1.0', x2) AS r1, OBJECT_INSERT(x0, '1e0', x2) AS r2, OBJECT_INSERT(x0, '+7', x2) AS r3, OBJECT_INSERT(x0, '-0', x2) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -470,8 +472,10 @@ id = "fn_object_insert_1_combination_0_boolean_literal_variant_text_literal_vari
 description = "fn:OBJECT_INSERT over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "OBJECT_INSERT(x1, 'a', x3, TRUE)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -590,7 +594,7 @@ id = "fn_object_insert_1_2_text_null"
 description = "fn:OBJECT_INSERT with SQL NULL in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, NULL, x3, TRUE) AS r0 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -602,7 +606,7 @@ id = "fn_object_insert_1_2_text_empty"
 description = "fn:OBJECT_INSERT with The empty string; a JSON path reads the empty key as the whole document in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, '', x3, TRUE) AS r0 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -614,7 +618,7 @@ id = "fn_object_insert_1_2_text_dollar_prefix"
 description = "fn:OBJECT_INSERT with Text starting with $, which DuckDB's JSON functions read as a path (GET with a computed key) in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, '$.a', x3, TRUE) AS r0, OBJECT_INSERT(x1, '$', x3, TRUE) AS r1 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -626,7 +630,7 @@ id = "fn_object_insert_1_2_text_slash_prefix"
 description = "fn:OBJECT_INSERT with Text starting with /, which DuckDB's JSON functions read as a JSON pointer in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, '/a', x3, TRUE) AS r0, OBJECT_INSERT(x1, '/', x3, TRUE) AS r1 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -638,7 +642,7 @@ id = "fn_object_insert_1_2_text_dots_brackets"
 description = "fn:OBJECT_INSERT with Dots, brackets and the wildcard, which paths and patterns read specially in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, 'a.b', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'a[0]', x3, TRUE) AS r1, OBJECT_INSERT(x1, '*', x3, TRUE) AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -650,7 +654,7 @@ id = "fn_object_insert_1_2_text_quotes_backslashes"
 description = "fn:OBJECT_INSERT with Single and double quotes and backslashes, which quoting and escaping must keep in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, 'it''s', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'say \"hi\"', x3, TRUE) AS r1, OBJECT_INSERT(x1, 'a\\\\b', x3, TRUE) AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -662,7 +666,7 @@ id = "fn_object_insert_1_2_text_non_ascii"
 description = "fn:OBJECT_INSERT with Non-ASCII letters, combining marks and characters outside the basic plane in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, 'Größe', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'é', x3, TRUE) AS r1, OBJECT_INSERT(x1, 'é', x3, TRUE) AS r2, OBJECT_INSERT(x1, '😀', x3, TRUE) AS r3 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -674,7 +678,7 @@ id = "fn_object_insert_1_2_text_title_case_digraph"
 description = "fn:OBJECT_INSERT with Letters whose title case differs from their upper case (INITCAP) in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, 'ǆungla', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'ǅ', x3, TRUE) AS r1, OBJECT_INSERT(x1, 'ǉubav', x3, TRUE) AS r2, OBJECT_INSERT(x1, 'ǲ', x3, TRUE) AS r3 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -686,7 +690,7 @@ id = "fn_object_insert_1_2_text_case_only"
 description = "fn:OBJECT_INSERT with Text differing from other rows only by ASCII or Unicode case in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, 'Order', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'ORDER', x3, TRUE) AS r1, OBJECT_INSERT(x1, 'order', x3, TRUE) AS r2, OBJECT_INSERT(x1, 'Straße', x3, TRUE) AS r3, OBJECT_INSERT(x1, 'STRASSE', x3, TRUE) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -698,7 +702,7 @@ id = "fn_object_insert_1_2_text_whitespace"
 description = "fn:OBJECT_INSERT with Leading and trailing spaces, tabs and newlines, and text of spaces only in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, ' a', x3, TRUE) AS r0, OBJECT_INSERT(x1, 'a ', x3, TRUE) AS r1, OBJECT_INSERT(x1, ' ', x3, TRUE) AS r2, OBJECT_INSERT(x1, '	', x3, TRUE) AS r3, OBJECT_INSERT(x1, 'a\nb', x3, TRUE) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"
@@ -710,7 +714,7 @@ id = "fn_object_insert_1_2_text_number_text"
 description = "fn:OBJECT_INSERT with Text that reads as a number in several spellings: leading zeros, signs, exponents in argument 2, text."
 columns = [{ name = "x1", type = "VARIANT" }, { name = "x3", type = "VARIANT" }]
 rows = [
-  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 query = "SELECT OBJECT_INSERT(x1, '007', x3, TRUE) AS r0, OBJECT_INSERT(x1, '1.0', x3, TRUE) AS r1, OBJECT_INSERT(x1, '1e0', x3, TRUE) AS r2, OBJECT_INSERT(x1, '+7', x3, TRUE) AS r3, OBJECT_INSERT(x1, '-0', x3, TRUE) AS r4 FROM input ORDER BY ordinal"
 order = "ordered"

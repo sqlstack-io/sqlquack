@@ -17,8 +17,8 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     INTERVAL_ARITHMETIC, INTERVAL_DATE_UNITS, INTERVAL_FIELDS, INTERVAL_KIND, INTERVAL_MAX_DIGITS,
     INTERVAL_REFUSAL, INTERVAL_SIMPLE_UNIT, INTERVAL_TIMESTAMP_PRECISION, INTERVAL_UNITS,
-    TIMESTAMP_RANGE,
 };
+use sqlquack_policy::policy::constants::TIMESTAMP_RANGE;
 
 /// Whether `payload`, a `+` or `-`, adds an interval to its left operand.
 pub(crate) fn adds_interval(payload: &Value) -> bool {

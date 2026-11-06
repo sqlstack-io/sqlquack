@@ -1,0 +1,193 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.k2e7bb95f9c9b",
+   "kind": "held",
+   "raw_record_sha256": "0360f997320606687ba6a0b597c6a326ada80174b2260685e7ecd39f615cb575",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.k446a2e5c880b",
+   "kind": "held",
+   "raw_record_sha256": "ccd5dcce74ea54ed2806ba86ecbd187fa0e8da64b391726ef904044eecbd8462",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.k5bb1c4be674b",
+   "kind": "held",
+   "raw_record_sha256": "0926409eea83ab194c564a5b625aa00410552db8efd536decc7a508fdeb4efab",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.k6b5d4a0043dd",
+   "kind": "held",
+   "raw_record_sha256": "e1101429074b4dd171020520169f98600abdf370e9244397d8b195470b94849e",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.kbe7045be39a1",
+   "kind": "held",
+   "raw_record_sha256": "53be41af5b7cb0c5bdc8dfde1f54860eda74c04d61b95408330b34cdb9af9259",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.kc008a70c4934",
+   "kind": "held",
+   "raw_record_sha256": "ed279fb704a2d2f136828ba7d1bb53b896b63245e8e1ce359d4017637a6cfbef",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-stream.define-stream.ke5a3d15f8a0c",
+   "kind": "held",
+   "raw_record_sha256": "4025dd0b96bfb26dfa441f5e15c980d000573e5f145cc0cc700407697e7fbd41",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-08"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.k37d4063d87b6",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "37d4063d87b6d23a5b7953974a5c4c028e005a9cd83052341228b5e222c9f16d"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.k73cbba671da4",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "73cbba671da4ecebfebdc96802676a533782fc0e6f3fdedf47a693e32029b645"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.k91126944f6c9",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "91126944f6c90324b9666287974848886d407fce7ee55f315927a8fe7639f910"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.ka243336aec82",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "a243336aec824d86e3cf21211150af1d77b8a9e8ba723035000894ca07fd885e"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1"
+  },
+  {
+   "case_id": "sf.ddl.create-streamlit.define-streamlit.kdf2e75630247",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute pool or service",
+   "run_id": "define-def-08",
+   "sql_sha256": "df2e756302473d403db7d7da0b33dabc462e76c185122f6a369146f5f42b7b55"
+  }
+ ],
+ "receipts": 287,
+ "repositioned_by_import": [
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kc6410d01841a",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kcd4c7582ac80",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kd95758a1ad31",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kddbe687b9730",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kddee89ec8e14",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.ke050d08786b5",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.ke590bc77d882",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-semantic-view.define-semantic-view.kf6f0d8a75b71",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    39
+   ]
+  }
+ ],
+ "runs": [
+  "define-def-08"
+ ]
+}

@@ -1,0 +1,1156 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 0 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "007ed753d966c2f63de341102dad02586c41943f015f667fa0c6479afab3f953"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '23 HOURS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "041cb40ca10d53cf0807114558e485c417db184d82b97fcf15bc762ea4ef580c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' AUTOINCREMENT START 1 INCREMENT 1 ORDER COMMENT 'm' , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "06846df8587f6ceaf129798d45c046395e75f17cc7150dd9d1678e02e3b19d84"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TASK v1 AFTER 'm' AS SELECT 1 ;",
+   "sql_sha256": "08cabe5b453c12aa02d880c7fe404f683efc290936253ca0e9ec1b8541c47bdc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 FOREIGN KEY REFERENCES v1 ( v1 ) RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "0be63463b01a7f6669f70bbd520184aeb99f1874119679d7ef8b13e14c4e4b21"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "0e202ba9e9d596ce4bf755acc2a69abdb57d9a3eff263f67ba7a6176035981d6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 604799999 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "11401fa2c5f2d16c475e362e7e834c327010da19dc3ffc9edbcdc280d7c254a7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '10 SECONDS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "13a3a57299a140be463d9f90d89f7b1d406161e535e993fb0487416c0e64a021"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "1aecb510a395dbdc3521cc5f96c704bbed13f55d5cfe5441ff8b1ac3bdb4cb37"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 FOREIGN KEY REFERENCES v1 ( v1 ) RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "1c6e1a33159a95d57d5de7abc08bb565a97288045defee07f38206b670e6a668"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = -1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "1ca511cd466f69b6aac70c351e39b5296aa78649975162d2e352a98279d1f494"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TASK v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' , 'p100' AS SELECT 1 ;",
+   "sql_sha256": "1df2f3e08bfdc8126676ca58561ddcc7abd9cf9d881f19f05755502f06273c5b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TASK v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' , 'p100' , 'p101' AS SELECT 1 ;",
+   "sql_sha256": "1f1c82085f4c4decbea1b37c62162208f8e9b1bff03ff8d6c046385ed437bb22"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "1fa4cec26473058f041d0275ccf07668bfc094d12f14de912eaf8e383254b9b2"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER ALERT v1 FROM TEMPLATE v1 ;",
+   "sql_sha256": "21334f976279732c2bca8dcb55063822b1137b95aa364f2c8a71906c5430ae87"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 AFTER 'm' AS SELECT 1 ;",
+   "sql_sha256": "21a11d98912498631013b7be02f5869a8ee6b192fd7415ccf9c1da46f9b20eeb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER MATERIALIZED SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;",
+   "sql_sha256": "234ce4f16908375f5c632002040c8e42b45ee49b37b88d5cdac4403a72de0ed6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 0 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "23c5e2177016dfe67f8b7013842adb7a8294d846edc2d26c175e52a8db71789c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , CONSTRAINT v1 FOREIGN KEY ( v1 , v1 ) REFERENCES v1 ( v1 , v1 ) MATCH FULL ON UPDATE CASCADE DELETE CASCADE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , 'm' ) ;",
+   "sql_sha256": "2432119386cc0e34cabaf75059af0dd98f8ae772e6d5058b32f715956c68757f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 FOREIGN KEY ( v1 , v1 ) REFERENCES v1 ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "2787e5cedda7b3aeeea2589be0e68aa372653a53bdb1c72720ada86a2ee7152f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' , v1 INT , CONSTRAINT v1 FOREIGN KEY ( v1 , v1 ) REFERENCES v1 ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "280ed21f31cdde62bc30abee4b9d8c83c031a38f7c389c9555826bd515b008bb"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER TABLE v1 ADD CONSTRAINT v1 CHECK ( 1 ) ENABLE VALIDATE ;",
+   "sql_sha256": "28db052cba16cc201a18269447a5ebcb8c91867aadb23b8e9507ac9344b75e8c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 CHECK ( 1 ) RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "2a2dfc60f6b011eade96a81b0d37875901bd75f2af20cc3fdd36b27eb60ab5a0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 604799 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "2b2dc628f68f2e4c473521fdcecb72ceec083401790c37f870884c80e7a7dc2e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "DROP FUNCTION IF EXISTS v1 ( INT ) ;",
+   "sql_sha256": "2e4136d0afe244e3677c7395d7ea57830bdd8b0501c2679a098f4b118b02ede8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = -1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "2ff138c7e94788192cdc37ed1a32c4fb0ccd024fc1016017cb69ef988246470f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 31 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "30d5249e520aa9567188a2605ccbf4e275568ef9a9262445c101cff20af7cf29"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TABLE v1 ( v1 INT , v1 INT ) CLUSTER BY ( 1 , 1 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) AS SELECT 1 ;",
+   "sql_sha256": "34539d6ccfc0728680c70229ec2dea1bddce3446d1303cb6abf090c459d3e44a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT NOT NULL CONSTRAINT v1 UNIQUE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , v1 INT NOT NULL CONSTRAINT v1 CHECK ( 1 ) ENABLE VALIDATE , VALIDATE ) ;",
+   "sql_sha256": "37fd3551d87778e5fc0018dcade9c167afd2b1b9cab4e7da9232f65f4dc7488b"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' , 'p100' AS SELECT 1 ;",
+   "sql_sha256": "387fc98b82ec722dd13ca18eac0b6c519d0e821a20aa2506aa4367e9109667f0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '0 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "3b63500410601500aa47047a832842878a9a1eeb8ac67f106dc3e221a7570274"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT WITH MASKING POLICY v1 , v1 ) WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) AS SELECT 1 ;",
+   "sql_sha256": "3c33feebc6573e03bee252cbc108950df271a5de4f66430774c051d3ad266c08"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' AS SELECT 1 ;",
+   "sql_sha256": "3cd7b9e281768b419fac49deac4b958e843d6c73d80012c774c8a49bf0e8c3b0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE \"SELECT\" USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "3e65ff182d6a28694be9b3309d996a1c0032c652c1bcd69a23ed37bbb186158a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 604800001 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "417a0644a1c7e7d8b6b2724e068df90d06b1edaa273ce7fcc1d68034b0bfb6dd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = -1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "424a1ecb0df621dea1a2668f7d6747d8103932f9b78910325ff5119e9b5f2663"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT , v1 INT , CONSTRAINT v1 CHECK ( 1 ) ENABLE VALIDATE , CONSTRAINT v1 UNIQUE ( v1 , v1 ) NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , 'm' ) ;",
+   "sql_sha256": "45aa080f16776096a8720435d66e105ed17e92b0c81d9a66da6dabb5f6bdada3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE \"v1 Q\" USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "4c28a93cce54101a1ace5d4c2f7720f6c1bc35ac1c85cfcfee99c07518634632"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "4e3756f3cceae416d83c65e427f99b68c25d2aced3b76d643cacdbb5e3b5b1fe"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '11 SECONDS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "4fa13089cdd65ef7d6b36b0c6375c5c2750d85216ec5db8689a1a08fae521b30"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , CONSTRAINT v1 CHECK ( 1 ) ENABLE VALIDATE , VALIDATE ) ;",
+   "sql_sha256": "549f505291ce9aba4bea45f7633bc450a08a2a2ed1ca6d277ea863625a7fb587"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 AFTER 'p1' , 'p2' , 'p3' , 'p4' , 'p5' , 'p6' , 'p7' , 'p8' , 'p9' , 'p10' , 'p11' , 'p12' , 'p13' , 'p14' , 'p15' , 'p16' , 'p17' , 'p18' , 'p19' , 'p20' , 'p21' , 'p22' , 'p23' , 'p24' , 'p25' , 'p26' , 'p27' , 'p28' , 'p29' , 'p30' , 'p31' , 'p32' , 'p33' , 'p34' , 'p35' , 'p36' , 'p37' , 'p38' , 'p39' , 'p40' , 'p41' , 'p42' , 'p43' , 'p44' , 'p45' , 'p46' , 'p47' , 'p48' , 'p49' , 'p50' , 'p51' , 'p52' , 'p53' , 'p54' , 'p55' , 'p56' , 'p57' , 'p58' , 'p59' , 'p60' , 'p61' , 'p62' , 'p63' , 'p64' , 'p65' , 'p66' , 'p67' , 'p68' , 'p69' , 'p70' , 'p71' , 'p72' , 'p73' , 'p74' , 'p75' , 'p76' , 'p77' , 'p78' , 'p79' , 'p80' , 'p81' , 'p82' , 'p83' , 'p84' , 'p85' , 'p86' , 'p87' , 'p88' , 'p89' , 'p90' , 'p91' , 'p92' , 'p93' , 'p94' , 'p95' , 'p96' , 'p97' , 'p98' , 'p99' , 'p100' , 'p101' AS SELECT 1 ;",
+   "sql_sha256": "549fba7019d235ed82ca964707dbee5268c75e768f74fd1a1a8f99dc6e69de75"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT NOT NULL CONSTRAINT v1 FOREIGN KEY REFERENCES v1 ( v1 ) MATCH FULL ON UPDATE CASCADE DELETE CASCADE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , v1 INT NOT NULL CONSTRAINT v1 UNIQUE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , RELY ) ;",
+   "sql_sha256": "56f225793ce8f84bbdb0b90b94356a2c45a5ace57c28aeaa4b916983824ab8fd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = -1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "584a3ae897c1b23ab9b7dce503382f2440443f11afaaed0d45ef9d599b3048e0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 0 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "5da96ca698e37a27b5d79e6c3bb42e075c19da54ab9495c1755c1fc8368d284a"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '86400 SECONDS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "62272862f1878d3cde2699e3ead79cc4e97ea45cb51877dbc79a8cc102e609d1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 604800001 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "6519dfae00653a78280d6316fa2dc70aaca08367d8f53a015f1dc6cec5e6f4a6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 PRIMARY KEY ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "6833a0fa8524e0db9230d18a633c5bf2a189ba58457e529bf156b12379cfb1f4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 31 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "69a4db1df18a13df88577abeb85fad7a209f0975fac3a7e6ba021e901e8be127"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 30 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "6a6fe2b033f24e06c5930121d77079bed5abe7d038a3f90326a36d79e9e7748f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '9 SECONDS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "6cc5f58b0f1ae1684bd1779132aa9a0e6ae999a77838310fa702a91fef72fb90"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' , v1 INT , CONSTRAINT v1 CHECK ( 1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "6ed68be737ee98661e34331049832ad0b9946199fee29e2152873e4cac3aa91e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 11 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "6fcab80d0b50c0f9688dcb0d10036c8069e872d46677ac4b2fff3a057e16cc90"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 604801 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "704324114d8fa7d3d376c294118c1e7cdd1eecf50ef82825d28b41466e8dad5d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 604799999 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "7485694b78a4b441e2d594cfb8ddfb12622c86b69cd948f9a9b4ca4f3e1b75a0"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 USING TEMPLATE SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT 1 ) ) ) ) ) ) ) ;",
+   "sql_sha256": "7671d415f5f34bf2373ea0b70c9693ca71adc2d4e1b04a9c347a111eb8f7c691"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '0 HOURS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "79f7511c41b160d97a674ee5cc0357202811d69ba4f040e91a9552bfaa5533db"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER AGENT v1 ;",
+   "sql_sha256": "7b772a72f4b9bc9778613598b55d806a27bf189e3cbbe5a3a83c7c1540550fbc"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' , v1 INT , CONSTRAINT v1 PRIMARY KEY ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "7e35e4572f80746909d711cb2a5b8da6369e658f36e65bc87479a03e9e4d5b26"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 29 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "84997be71b29a9c08e8f238c29951a843f6102e62bd1209c909f18dec48a6669"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 0 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "855608e2782d2482b3655c93ed19e9aae269e6a1935614d8bb3215d214bc4701"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' AUTOINCREMENT START 1 INCREMENT 1 ORDER WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "859e6c31b7bcc62e448f66a7606aff2cb8c0fb759a97f33f74cc56aa994343d6"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "DROP PROCEDURE IF EXISTS v1 ( INT ) ;",
+   "sql_sha256": "8c768e362bce9016a63b7fa2e569783d691b87d7b929c62da907178ac46453cd"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = -1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "8c7bed223545cb52c4b5b82a9a377437209317e439aed12bd95282470ee8d4d5"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT , v1 INT , CONSTRAINT v1 FOREIGN KEY ( v1 , v1 ) REFERENCES v1 ( v1 , v1 ) MATCH FULL ON UPDATE CASCADE DELETE CASCADE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , CONSTRAINT v1 UNIQUE ( v1 , v1 ) NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' , 'm' ) ;",
+   "sql_sha256": "8fdae2133bc3dcfdd4e9dce0e3d88006402fd23f463a52fb59127c372358b0fe"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 0 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "90d68de467627fadc6418384428804928e83edd1ea38ddbd3e09f95502e16479"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT NOT NULL CONSTRAINT v1 UNIQUE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , v1 INT NOT NULL CONSTRAINT v1 FOREIGN KEY REFERENCES v1 ( v1 ) MATCH FULL ON UPDATE CASCADE DELETE CASCADE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , RELY ) ;",
+   "sql_sha256": "913ae473f0adc2bb2655d9da3f32fc06222e4e8b01ed47a4a78f82707c097c3c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 604800000 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "976c4eba8544f3c404356d9d62371005e00c382a5a8c3728e5c28ab2d45969f7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 9 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "997ddee461f44602b24dd7d2a869ed576ed5a25e66347e812fcaa58e52557087"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "99bfadce215085db00876c43ca8a750145df0b1e2f5f40caacd7647bdde4a522"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "9c152602f212410e556c41c41566a497e9b74319b14d20f3b8ab495e896bd0df"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = -1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "9c49ec937b2aee19ba7a3665b4f943266ddc797fea1667dd5645eac3e4de4a55"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TABLE v1 COPY GRANTS USING TEMPLATE SELECT 1 ;",
+   "sql_sha256": "a284131bdf14d9ceb2eb1bb3c4702b49796ebad31ff1bef324c623f76b342ff3"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER TABLE v1 ADD CONSTRAINT v1 FOREIGN KEY ( v1 , v1 ) REFERENCES v1 ( v1 , v1 ) MATCH FULL ON UPDATE CASCADE DELETE CASCADE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'm' ;",
+   "sql_sha256": "a2e30438a8f7886fe9c757e81a010dc44684925a75fae7c65e613c20fad9d873"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' AUTOINCREMENT ( 1 , 1 ) ORDER WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "a32d9edc34a49b748d7fb96af247f081b6276f9d492fd2a7171a7d1481c4c58d"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER MATERIALIZED VIEW SET DATA_METRIC_SCHEDULE = ;",
+   "sql_sha256": "a42867041f41ce05716f96a3fe5845d0b50c8d211a0752d0ab0e8d5bdf5c5068"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TABLE v1 LIKE v1 CLUSTER BY ( 1 , 1 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , COMMENTS ) ;",
+   "sql_sha256": "a4dd9ca95d9e994d28813a1ff281733170db2fe0eee79be9b68a9da8ddefcb1c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER MATERIALIZED VIEW DATA_METRIC_SCHEDULE = '1 MINUTE' ;",
+   "sql_sha256": "a5ac3d55097ce9f7a6121bbf6efac2d582840ca4abc2cf0065a2ffec76b2a026"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '2 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "a5e23123313b6a0fa85691fb9701b8f6e47a878e4ee04f42ea252de2c4278b05"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 USING TEMPLATE SELECT * FROM ( SELECT 1 ) ;",
+   "sql_sha256": "a7cc698e9d26c3ce3611f3f6cac80aadc0808acc16eaa62fb1c1cfaba3e0257e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER NOTEBOOK v1 ;",
+   "sql_sha256": "af612a3dd0c668e86618d9de0977f155b80f32fefdfd4a52114a52b1535cf27c"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '86399 SECONDS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "b381a99f05c40416f11e86af1d31c5a78ecd974c8ad449bd292f6f19330bc5f1"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '2 HOURS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "b7b1c485d655596e3a65e9143dc23fef7de0888aab654afa50b8300dddee9c31"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 CHECK ( 1 ) RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "b9302c6f23ea6115318d80dec5e0d234f8a44dffac86ffbd088837acb5f84de4"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE LOCAL TEMP TABLE IF NOT EXISTS v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT 'm' , v1 INT GENERATED ALWAYS AS ( 1 ) VIRTUAL , CONSTRAINT v1 CHECK ( 1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' COPY GRANTS ERROR_LOGGING = TRUE COPY TAGS COPY = ( COMMENTS , COMMENTS ) COMMENT = 'm' WITH ROW ACCESS POLICY v1 ON ( v1 , v1 ) WITH AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) WITH JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 , v1 ) WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "c4ca4721c9c6cb38c6331c359fb0b9a3f3bfad150c736300b20e345360789fc8"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER TASK v1 WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 29 AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "cc8576a5b102ae7ceebb904e321bbb7f546c7b95f4e9145e88a84c658d77da70"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR REPLACE TASK IF NOT EXISTS v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP LOCK_TIMEOUT = 1 , LOCK_TIMEOUT = 1 USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' FINALIZE = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '25 HOURS' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' AFTER 'm' , 'm' EXECUTE AS USER v1 WHEN TRUE AS SELECT 1 ;",
+   "sql_sha256": "d426381839f39e44030b580aa516f62c723e638f4e5321553ee79e6d1c5b4678"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER MATERIALIZED UNSET DATA_METRIC_SCHEDULE ;",
+   "sql_sha256": "e79f959548051d9fabad8200bdd66fcdfc41f8050e41c1b6a49fd4fc7356fe97"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE TABLE v1 ( v1 INT NOT NULL CONSTRAINT v1 CHECK ( 1 ) ENABLE VALIDATE , v1 INT NOT NULL CONSTRAINT v1 UNIQUE NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY , RELY ) ;",
+   "sql_sha256": "e8670087e3319f26937853a6a4eb27bc3872eab93c0bf9bf78779ae8a9016f81"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "CREATE OR ALTER LOCAL TEMP TABLE v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' AUTOINCREMENT ( 1 , 1 ) ORDER COMMENT 'm' , v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ENABLE_SCHEMA_EVOLUTION = TRUE DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE DEFAULT_DDL_COLLATION = 'm' ICEBERG_DEFAULT_DDL_COLLATION = 'm' ERROR_LOGGING = TRUE COMMENT = 'm' ROW_TIMESTAMP = TRUE ;",
+   "sql_sha256": "f097a48bfef3b6f26ab07242bdf08ca6424cc32f41ad73cc3f188ea96dd1a345"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER MODEL v1 ;",
+   "sql_sha256": "f0f7259b6cd4e1db9b423097fc954425155a0f3f3876be328ac7fac94f7ba7e7"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "d836f13abb97413a03ba01da1c54ad95147550c80c25092b61ac22bfb32bd85a",
+   "sql": "ALTER VIEW UNSET DATA_METRIC_SCHEDULE ;",
+   "sql_sha256": "f6ddaf8131ca23e78848f1340bba78838387cdd1c24d2beeb8118b4ba0047323"
+  }
+ ],
+ "receipts": 1542,
+ "receipts_file_sha256": "3a5a1a62a3cb3de5ab7301d854535367ad5b67e23743e55f3f5019eeadf5e92b",
+ "reconciled_receipts": 1542,
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 926)",
+   "row_id": "sf.ddl.alter-online-feature-table.table-set-comment.ke7fec7c4938e",
+   "run_id": "ddl-510fb2fd-p2-03b"
+  }
+ ],
+ "refused": 1,
+ "runs": [
+  {
+   "audit_sha256": "c6680cda000647d74af84e962b339f50eda6063e2b15c038b4987a8350107a48",
+   "receipts": 599,
+   "reconciliation_sha256": "3b5c82a057a3244b0f6f2d5e16c825cfa932fa7538c07aec21f6adec48ff7297",
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-12",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "cc5a5d360555b15c70561c681f3e5607df962ebeab955aa46a088124e09a08ab",
+   "receipts": 555,
+   "reconciliation_sha256": "e8abcdef140cf524505cf026a2492965d045a71b62175e5f99c1e03f89f329e2",
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-13",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "1c84ef5171cf6f0eb9468b55924fd912b4322a88ee96d7de7cfb6ee32e1ee37c",
+   "receipts": 129,
+   "reconciliation_sha256": "895749e809f7aaf5d3287e403fab0ce5b9d8ffb14def9fd890bfa52fdf038286",
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00a",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "a8385966e256baf4f8edb6007a9c9d4c88554325c01943a5bbf47a79a8547bad",
+   "receipts": 259,
+   "reconciliation_sha256": "7631c98835673c90840453559f549ce80c8cb130a3353d2b621cbc306d89a13c",
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p2-03b",
+   "status": "reconciled"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

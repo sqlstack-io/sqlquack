@@ -18,11 +18,11 @@ use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    PROJECT_FUNCTION_CALL, PROJECT_UDF, PYTHON_VALUE_CROSSING, SEMI_STRUCTURED_HOLDING,
-    USER_OVERRIDE, USER_OVERRIDE_RULE,
+    PROJECT_FUNCTION_CALL, SEMI_STRUCTURED_HOLDING, USER_OVERRIDE_RULE,
 };
 use crate::conversion::main::override_macro_name::override_macro_name;
 use crate::conversion::models::UserOverride;
+use sqlquack_policy::policy::constants::{PROJECT_UDF, PYTHON_VALUE_CROSSING, USER_OVERRIDE};
 use sqlquack_semantics::types::models::{
     FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits,
 };

@@ -10,8 +10,10 @@ id = "fn_contains_combination_0_text_text"
 description = "fn:CONTAINS over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "CONTAINS(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]

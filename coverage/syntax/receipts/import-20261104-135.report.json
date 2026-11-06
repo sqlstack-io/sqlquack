@@ -1,0 +1,65 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-function.define-function.k4d5916d96ce8",
+   "kind": "held",
+   "raw_record_sha256": "9b698631c4e8b4f162d83bea2d09ae486ddcdd47232fa3119523a05d2fec4c75",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-04"
+  }
+ ],
+ "receipts": 299,
+ "repositioned_by_import": [
+  {
+   "case_id": "sf.ddl.create-function.define-function.k1e10c0fa9922",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-function.define-function.k26acb409ec67",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-function.define-function.k7024b8d59092",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-function.define-function.k9b903233ba3a",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  }
+ ],
+ "runs": [
+  "define-def-04"
+ ]
+}

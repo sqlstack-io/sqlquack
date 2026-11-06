@@ -1023,7 +1023,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: LISTAGG_RULE,
         constructs: &["node:within_group", "fn:LISTAGG"],
-        conditions: "LISTAGG of VARCHAR WITHIN GROUP (ORDER BY ...), with a literal delimiter or none; NULL values are skipped and no non-NULL value gives the empty string; DISTINCT only ordered by the value itself. Alone or OVER (PARTITION BY ...).",
+        conditions: "LISTAGG of VARCHAR WITHIN GROUP (ORDER BY ...), with a literal delimiter or none; NULL values are skipped and no non-NULL value gives the empty string; DISTINCT only ordered by the value itself; rows tied on every key holding different values raise, relying on listagg_order. Alone or OVER (PARTITION BY ...).",
         failures: &[],
     },
     RuleSpec {
