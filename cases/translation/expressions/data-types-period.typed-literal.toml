@@ -4,13 +4,13 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_date"
-description = "The page's half-open example: the begin bound is contained and the end bound is not. Catches: a closed interval (end contained)"
-columns = [{ name = "d", type = "DATE" }]
+description = "The page's half-open example: the begin bound is contained and the end bound is not. The typed literal is an input cell, because PERIOD_CONTAINS over a constant period made Snowflake abort with internal error 300010. Catches: a closed interval (end contained)"
+columns = [{ name = "p", type = "PERIOD(DATE)" }, { name = "d", type = "DATE" }]
 rows = [
-  ["'2024-01-01'"],
-  ["'2024-04-01'"],
+  ["PERIOD(DATE) '[2024-01-01, 2024-04-01)'", "'2024-01-01'"],
+  ["PERIOD(DATE) '[2024-01-01, 2024-04-01)'", "'2024-04-01'"],
 ]
-query = "SELECT ordinal, PERIOD_CONTAINS(PERIOD(DATE) '[2024-01-01, 2024-04-01)', d) AS contained FROM input ORDER BY ordinal"
+query = "SELECT ordinal, PERIOD_CONTAINS(p, d) AS contained FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
@@ -39,11 +39,11 @@ tags = ["error"]
 [[case]]
 id = "t004_null_instant"
 description = "A NULL date tested against a period literal; the page gives no special rule, so standard NULL handling gives NULL. Catches: FALSE instead of NULL"
-columns = [{ name = "d", type = "DATE" }]
+columns = [{ name = "p", type = "PERIOD(DATE)" }, { name = "d", type = "DATE" }]
 rows = [
-  ["NULL"],
-  ["'2024-02-01'"],
+  ["PERIOD(DATE) '[2024-01-01, 2024-04-01)'", "NULL"],
+  ["PERIOD(DATE) '[2024-01-01, 2024-04-01)'", "'2024-02-01'"],
 ]
-query = "SELECT ordinal, PERIOD_CONTAINS(PERIOD(DATE) '[2024-01-01, 2024-04-01)', d) AS contained FROM input ORDER BY ordinal"
+query = "SELECT ordinal, PERIOD_CONTAINS(p, d) AS contained FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]

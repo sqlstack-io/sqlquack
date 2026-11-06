@@ -305,7 +305,7 @@ id = "sf.expressions.data-types-period.typed-literal.t001"
 form = "sf.expressions.data-types-period.typed-literal"
 kind = "type_combination"
 target = "PERIOD(DATE) '[...)'"
-note = "The page's half-open example: the begin bound is contained and the end bound is not."
+note = "The page's half-open example: the begin bound is contained and the end bound is not. The typed literal is an input cell, because PERIOD_CONTAINS over a constant period made Snowflake abort with internal error 300010."
 catches = "a closed interval (end contained)"
 reading = "the PERIOD page: PERIOD(<element_type>) with DATE, TIME or a TIMESTAMP type; values are half-open [begin, end) and need begin < end; text in canonical [begin, end) form casts to PERIOD and a PERIOD casts to that text; ordering is begin first, then end; TRY_CAST returns NULL for malformed text or begin >= end; PERIOD(type) '<period_string>' is the typed literal, parsed with the element type's input format"
 cases = ["cases/translation/expressions/data-types-period.typed-literal.toml#t001_date"]
