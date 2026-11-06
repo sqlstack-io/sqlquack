@@ -128,7 +128,7 @@ echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=
 
 The construct at the span converts only by relying on the known divergence the label names, where DuckDB may raise or differ from Snowflake as the policy file describes. The policy refuses that divergence in the current mode, so the statement is refused. Allow it in the policy file, use a mode that allows it, or confirm the assumption it rests on; otherwise rewrite the statement without the construct.
 
-**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; --builtin-policy refuses every one
+**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; the built-in policy refuses every one
 
 **Example:**
 

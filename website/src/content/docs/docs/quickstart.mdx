@@ -93,8 +93,9 @@ sqlquack convert: done, converted under the built-in default
 The DuckDB SQL goes to standard output and the progress lines to standard error, so
 `sqlquack convert revenue.sql … > revenue.duckdb.sql` keeps only the SQL.
 
-`--builtin-policy` refuses every known divergence. Without it, `convert` reads `sqlquack.toml`
-from the current directory, or the file `--policy` names. See [Policy and sessions](/docs/policy/).
+`convert` reads `sqlquack.toml` from the current directory, or the file `--policy` names. Without
+one, or with `--builtin-policy`, it uses the built-in policy, which refuses every known divergence.
+See [Policy and sessions](/docs/policy/).
 
 ## Next steps
 

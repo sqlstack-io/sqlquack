@@ -31,7 +31,7 @@ pub(crate) fn index_command(
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
     let policy = match chosen_policy(
-        &arguments.conversion.policy,
+        arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     ) {
         Ok(policy) => policy,
