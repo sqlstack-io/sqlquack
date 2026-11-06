@@ -1860,14 +1860,6 @@ impl Parser {
                 "DATE_TRUNC" | "DATETRUNC" if !args.is_empty() => Some(0),
                 "DATEDIFF" | "TIMEDIFF" | "TIMESTAMPDIFF" if args.len() == TERNARY_ARITY => Some(0),
                 "EXTRACT" if args.len() == BINARY_ARITY => Some(0),
-                "TRUNC" | "TRUNCATE"
-                    if args.len() == BINARY_ARITY
-                        && matches!(&args[1], Expression::Column(c)
-                            if c.table.is_none() && !c.name.quoted)
-                        && self.try_parse_date_part_unit_expr(&args[1]).is_some() =>
-                {
-                    Some(1)
-                }
                 _ => None,
             },
             _ => None,
