@@ -13,7 +13,7 @@ use crate::parse::_helpers::commands::tables::unsupported;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_col_id, is_non_reserved_word, is_type_function_name,
 };
-use crate::parse::_helpers::tree::nodes::{literal, name_text, table, tuple};
+use crate::parse::_helpers::tree::nodes::{boolean, literal, name_text, table, tuple};
 use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::main::format_type::format_type;
 
@@ -37,6 +37,23 @@ const SPECIAL_SETTINGS: [&str; 8] = [
     "session",
     "xml",
     "transaction",
+];
+
+/// The words that begin a `transaction_mode_item`.
+const TRANSACTION_MODE_WORDS: [&str; 4] = ["isolation", "read", "deferrable", "not"];
+
+/// The option `SET TRANSACTION transaction_mode_list` sets, a `VAR_SET_MULTI`.
+const TRANSACTION_OPTION: &str = "SET TRANSACTION";
+
+/// The option `SET SESSION CHARACTERISTICS AS TRANSACTION transaction_mode_list` sets.
+const SESSION_CHARACTERISTICS_OPTION: &str = "SET SESSION CHARACTERISTICS";
+
+/// `iso_level` spellings, with the value PostgreSQL gives each.
+const ISOLATION_LEVELS: [(&[&str], &str); 4] = [
+    (&["read", "uncommitted"], "read uncommitted"),
+    (&["read", "committed"], "read committed"),
+    (&["repeatable", "read"], "repeatable read"),
+    (&["serializable"], "serializable"),
 ];
 
 /// `reset_rest` special forms: their words and the setting PostgreSQL names.
@@ -308,7 +325,7 @@ impl Parser<'_> {
     }
 
     /// `NonReservedWord_or_Sconst` as a string.
-    fn word_or_string(&mut self) -> Parsing<Expression> {
+    pub(crate) fn word_or_string(&mut self) -> Parsing<Expression> {
         if self.sconst_at(0) {
             return self.sconst();
         }
@@ -584,6 +601,89 @@ impl Parser<'_> {
             }
             false => Ok(Some(self.numeric_only()?)),
         }
+    }
+
+    /// `SET set_rest` or `RESET reset_rest` as one option tuple; `set_rest` adds the transaction forms.
+    pub(crate) fn set_reset_clause(&mut self) -> Parsing<Expression> {
+        let modes: bool = self.kw("set")
+            && self.kw_at(1, "transaction")
+            && TRANSACTION_MODE_WORDS
+                .iter()
+                .any(|word| self.kw_at(2, word));
+        if modes {
+            self.at += 2;
+            let values: Vec<Expression> = self.transaction_modes()?;
+            return Ok(option_tuple(&option(TRANSACTION_OPTION, values)));
+        }
+        if self.kw("set") && self.kw_at(1, "session") && self.kw_at(2, "characteristics") {
+            self.at += 3;
+            self.expect_kw("as")?;
+            self.expect_kw("transaction")?;
+            let values: Vec<Expression> = self.transaction_modes()?;
+            return Ok(option_tuple(&option(
+                SESSION_CHARACTERISTICS_OPTION,
+                values,
+            )));
+        }
+        if !(self.kw("set") || self.kw("reset")) {
+            return Err(self.error());
+        }
+        match self.routine_option()? {
+            Some(item) => Ok(option_tuple(&item)),
+            None => Err(self.error()),
+        }
+    }
+
+    /// `transaction_mode_list`: modes, with or without commas, each as its setting and value.
+    pub(crate) fn transaction_modes(&mut self) -> Parsing<Vec<Expression>> {
+        let mut modes: Vec<Expression> = vec![self.transaction_mode()?];
+        loop {
+            let comma: bool = self.eat_char(',');
+            let next: bool = TRANSACTION_MODE_WORDS.iter().any(|word| self.kw(word));
+            match (comma, next) {
+                (true, _) | (false, true) => modes.push(self.transaction_mode()?),
+                (false, false) => return Ok(modes),
+            }
+        }
+    }
+
+    /// One `transaction_mode_item`, as `(setting, value)`.
+    fn transaction_mode(&mut self) -> Parsing<Expression> {
+        let (name, value): (&str, Expression) = match self.keyword_at(0) {
+            Some("isolation") => {
+                self.at += 1;
+                self.expect_kw("level")?;
+                let level: Option<&(&[&str], &str)> = ISOLATION_LEVELS
+                    .iter()
+                    .find(|(words, _)| self.words_at(words));
+                let Some((words, level)) = level else {
+                    return Err(self.error());
+                };
+                self.at += words.len();
+                ("transaction_isolation", string((*level).to_owned()))
+            }
+            Some("read") => {
+                self.at += 1;
+                let only: bool = self.eat_kw("only");
+                if !only {
+                    self.expect_kw("write")?;
+                }
+                ("transaction_read_only", boolean(only))
+            }
+            Some("not") => {
+                self.at += 1;
+                self.expect_kw("deferrable")?;
+                ("transaction_deferrable", boolean(false))
+            }
+            _ => {
+                self.expect_kw("deferrable")?;
+                ("transaction_deferrable", boolean(true))
+            }
+        };
+        Ok(tuple(vec![
+            Expression::Identifier(Identifier::new(name)),
+            value,
+        ]))
     }
 
     /// `alterfunc_opt_list`: one or more `common_func_opt_item`, as option tuples.

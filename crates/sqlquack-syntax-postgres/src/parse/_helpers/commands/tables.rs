@@ -638,7 +638,7 @@ impl Parser<'_> {
     }
 
     /// `'(' columnList ')'`, with `optionalPeriodName` when `period`, as a tuple of names.
-    fn column_list(&mut self, period: bool) -> Parsing<Expression> {
+    pub(crate) fn column_list(&mut self, period: bool) -> Parsing<Expression> {
         self.expect_char('(')?;
         let mut names: Vec<Expression> = Vec::new();
         loop {
@@ -836,7 +836,7 @@ impl Parser<'_> {
     }
 
     /// `any_operator`: `[ColId .]... all_Op`, a dotted schema quoted as for calls.
-    fn any_operator(&mut self) -> Parsing<Expression> {
+    pub(crate) fn any_operator(&mut self) -> Parsing<Expression> {
         let mut parts: Vec<Identifier> = Vec::new();
         while self.is(is_col_id) && self.char_at(1, '.') {
             parts.push(self.name(is_col_id)?);

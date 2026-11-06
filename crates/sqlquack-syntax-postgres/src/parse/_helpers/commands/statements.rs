@@ -33,6 +33,10 @@ impl Parser<'_> {
                 self.at += self.unknown_alter_kind().unwrap_or_default();
                 Err(self.error())
             }
+            Some("alter") if self.altered_object().is_some() => {
+                let (kind, words) = self.altered_object().unwrap_or_default();
+                self.alter_object(kind, words)
+            }
             Some("alter") if self.altered_routine().is_some() => {
                 let kind: &'static str = self.altered_routine().unwrap_or_default();
                 self.alter_routine(kind)

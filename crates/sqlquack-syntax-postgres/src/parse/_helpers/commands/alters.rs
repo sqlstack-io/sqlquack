@@ -32,6 +32,16 @@ const INDEX_KIND: &str = "INDEX";
 const SEQUENCE_KIND: &str = "SEQUENCE";
 const MATERIALIZED_VIEW_KIND: &str = "MATERIALIZED VIEW";
 
+/// Two-word `ALTER` kind prefixes and the words that must follow them.
+const ALTER_THIRD_WORDS: [(&str, &str, &[&str]); 2] = [
+    (
+        "text",
+        "search",
+        &["parser", "dictionary", "template", "configuration"],
+    ),
+    ("foreign", "data", &["wrapper"]),
+];
+
 /// Kinds `ALTER ... ALL IN TABLESPACE` moves.
 const MOVE_ALL_KINDS: [&str; 3] = [TABLE_KIND, INDEX_KIND, MATERIALIZED_VIEW_KIND];
 
@@ -190,7 +200,7 @@ impl Parser<'_> {
     }
 
     /// Whether `words` follow `ALTER` here.
-    fn kws_after_alter(&self, words: &[&str]) -> bool {
+    pub(crate) fn kws_after_alter(&self, words: &[&str]) -> bool {
         for (index, word) in words.iter().enumerate() {
             if !self.kw_at(index + 1, word) {
                 return false;
@@ -207,9 +217,15 @@ impl Parser<'_> {
         let Some((_, follows)) = ALTER_KINDS.iter().find(|(word, _)| self.kw_at(1, word)) else {
             return Some(1);
         };
-        match follows.is_empty() || follows.iter().any(|word| self.kw_at(2, word)) {
-            true => None,
-            false => Some(2),
+        if !(follows.is_empty() || follows.iter().any(|word| self.kw_at(2, word))) {
+            return Some(2);
+        }
+        let third = ALTER_THIRD_WORDS
+            .iter()
+            .find(|(first, second, _)| self.kw_at(1, first) && self.kw_at(2, second));
+        match third {
+            Some((_, _, words)) if !words.iter().any(|word| self.kw_at(3, word)) => Some(3),
+            _ => None,
         }
     }
 
@@ -835,7 +851,7 @@ impl Parser<'_> {
     }
 
     /// `set_statistics_value`: `SignedIconst` or `DEFAULT`.
-    fn statistics_value(&mut self) -> Parsing<Expression> {
+    pub(crate) fn statistics_value(&mut self) -> Parsing<Expression> {
         if self.eat_kw("default") {
             return Ok(var("DEFAULT"));
         }
