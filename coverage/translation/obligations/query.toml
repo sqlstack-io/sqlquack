@@ -1,0 +1,751 @@
+# Translation obligations of family query (D151): per form, the documented type
+# combinations, NULL in each argument, boundaries and error parity, each met by its
+# cases under cases/translation. Hand-written; see coverage/translation/README.md.
+
+[[obligation]]
+id = "sf.query.group-by.t001"
+form = "sf.query.group-by"
+kind = "type_combination"
+target = "column"
+note = "COUNT and SUM by g: a, b and the NULL group."
+catches = "the NULL keys split into separate groups, or dropped"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.toml#t001_column"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.t002"
+form = "sf.query.group-by"
+kind = "type_combination"
+target = "GROUP BY ALL"
+note = "GROUP BY ALL with g and an expression of g as the non-aggregate items."
+catches = "only the first item grouped, or the aggregate grouped"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.toml#t002_all"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.t003"
+form = "sf.query.group-by"
+kind = "null_argument"
+target = "NULL key"
+note = "Grouping by x, which holds two NULLs: one NULL group of 2."
+catches = "two NULL groups"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-cube.t001"
+form = "sf.query.group-by-cube"
+kind = "type_combination"
+target = "CUBE (g, x)"
+note = "CUBE over two items: (g, x), (g), (x) and ()."
+catches = "a ROLLUP (missing (x)) instead"
+reading = "group-by-cube: grouping sets for every combination of the CUBE items"
+cases = ["cases/translation/query/group-by-cube.toml#t001_cube"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-cube.t002"
+form = "sf.query.group-by-cube"
+kind = "type_combination"
+target = "g, CUBE (x)"
+note = "A plain item before CUBE, which the page allows: (g, x) and (g)."
+catches = "the plain item rolled into the cube"
+reading = "group-by-cube: grouping sets for every combination of the CUBE items"
+cases = ["cases/translation/query/group-by-cube.toml#t002_with_plain"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-cube.t003"
+form = "sf.query.group-by-cube"
+kind = "null_argument"
+target = "NULL key"
+note = "Rows where x is NULL in the data next to the x subtotal, told apart by GROUPING(x)."
+catches = "the two merged"
+reading = "group-by-cube: grouping sets for every combination of the CUBE items"
+cases = ["cases/translation/query/group-by-cube.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t001"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "GROUPING SETS ((g), (x), ())"
+note = "Three sets: by g, by x and the grand total."
+catches = "the sets combined as a cross product"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = ["cases/translation/query/group-by-grouping-sets.toml#t001_sets"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t002"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "a repeated set"
+note = "GROUPING SETS ((g), (g)); the page does not say; the recording decides whether the repeated set returns its rows twice."
+catches = "duplicates removed where Snowflake keeps them (or the reverse)"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = ["cases/translation/query/group-by-grouping-sets.toml#t002_duplicate_set"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t003"
+form = "sf.query.group-by-grouping-sets"
+kind = "null_argument"
+target = "NULL key"
+note = "The NULL group of g against the rows of the (x) set, where g is NULL because the set leaves it out."
+catches = "the two merged"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = ["cases/translation/query/group-by-grouping-sets.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-rollup.t001"
+form = "sf.query.group-by-rollup"
+kind = "type_combination"
+target = "ROLLUP (g)"
+note = "Per-group sums and the grand total. GROUPING(g) tells a subtotal row from the NULL group."
+catches = "the grand total missing, or the subtotal confused with the NULL group"
+reading = "group-by-rollup: grouping sets for each prefix of the ROLLUP items plus the grand total"
+cases = ["cases/translation/query/group-by-rollup.toml#t001_rollup"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-rollup.t002"
+form = "sf.query.group-by-rollup"
+kind = "type_combination"
+target = "ROLLUP (g, x)"
+note = "ROLLUP over two items: (g, x), (g) and ()."
+catches = "a CUBE (adding (x)) instead"
+reading = "group-by-rollup: grouping sets for each prefix of the ROLLUP items plus the grand total"
+cases = ["cases/translation/query/group-by-rollup.toml#t002_two_items"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by-rollup.t003"
+form = "sf.query.group-by-rollup"
+kind = "null_argument"
+target = "NULL key"
+note = "The NULL group beside the grand total, both with g NULL, told apart by GROUPING."
+catches = "the two rows merged"
+reading = "group-by-rollup: grouping sets for each prefix of the ROLLUP items plus the grand total"
+cases = ["cases/translation/query/group-by-rollup.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.all.t001"
+form = "sf.query.group-by.all"
+kind = "type_combination"
+target = "GROUP BY ALL"
+note = "GROUP BY ALL with g and an expression of g as the non-aggregate items."
+catches = "only the first item grouped, or the aggregate grouped"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.all.toml#t001_all"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.all.t002"
+form = "sf.query.group-by.all"
+kind = "null_argument"
+target = "NULL key"
+note = "GROUP BY ALL over x, with two NULLs."
+catches = "two NULL groups"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.all.toml#t002_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.t001"
+form = "sf.query.group-by.groupitem"
+kind = "type_combination"
+target = "column"
+note = "COUNT and SUM by g: a, b and the NULL group."
+catches = "the NULL keys split into separate groups, or dropped"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.groupitem.toml#t001_column"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.t002"
+form = "sf.query.group-by.groupitem"
+kind = "type_combination"
+target = "position and expression"
+note = "GROUP BY 1 on an expression, x modulo 2."
+catches = "the position read as a constant"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.groupitem.toml#t002_position_expression"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.t003"
+form = "sf.query.group-by.groupitem"
+kind = "null_argument"
+target = "NULL key"
+note = "Grouping by x, which holds two NULLs: one NULL group of 2."
+catches = "two NULL groups"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.groupitem.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.having.t001"
+form = "sf.query.having"
+kind = "type_combination"
+target = "aggregate predicate"
+note = "Groups with more than one row and a set maximum: a and b; the NULL group has two rows and max 4."
+catches = "HAVING applied to rows before grouping"
+reading = "having: filters the groups of a GROUP BY by a predicate over aggregates"
+cases = ["cases/translation/query/having.toml#t001_aggregate"]
+required = true
+
+[[obligation]]
+id = "sf.query.having.t002"
+form = "sf.query.having"
+kind = "type_combination"
+target = "select-list alias"
+note = "HAVING on a select-list alias; the page does not say; the recording decides whether the alias resolves."
+catches = "the alias refused where Snowflake resolves it (or the reverse)"
+reading = "having: filters the groups of a GROUP BY by a predicate over aggregates"
+cases = ["cases/translation/query/having.toml#t002_alias"]
+required = true
+
+[[obligation]]
+id = "sf.query.having.t003"
+form = "sf.query.having"
+kind = "null_argument"
+target = "NULL values in groups"
+note = "Groups holding a NULL x, found by COUNT(x) < COUNT(*): b and the NULL group."
+catches = "COUNT(x) counting NULLs, so no group qualifies"
+reading = "having: filters the groups of a GROUP BY by a predicate over aggregates"
+cases = ["cases/translation/query/having.toml#t003_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.fetch.t001"
+form = "sf.query.limit.fetch"
+kind = "type_combination"
+target = "OFFSET 1 ROWS FETCH NEXT 2 ROWS ONLY"
+note = "The ANSI form for rows 2 and 3."
+catches = "OFFSET or FETCH ignored"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.fetch.toml#t001_offset_fetch"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.fetch.t002"
+form = "sf.query.limit.fetch"
+kind = "type_combination"
+target = "FETCH FIRST 1 ROW"
+note = "FETCH FIRST 1 ROW without OFFSET or ONLY."
+catches = "the singular ROW refused"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.fetch.toml#t002_first_row"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.fetch.t003"
+form = "sf.query.limit.fetch"
+kind = "type_combination"
+target = "FETCH 0"
+note = "FETCH FIRST 0 ROWS ONLY, which returns no rows."
+catches = "FETCH 0 read as no limit"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.fetch.toml#t003_fetch_zero"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.fetch.t004"
+form = "sf.query.limit.fetch"
+kind = "null_argument"
+target = "NULL sort key"
+note = "FETCH FIRST 3 ROWS ONLY over x ascending with NULLS FIRST: the two NULL rows come first."
+catches = "NULLS FIRST ignored before the fetch"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.fetch.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.limit.t001"
+form = "sf.query.limit.limit"
+kind = "type_combination"
+target = "LIMIT 2 OFFSET 1"
+note = "Rows 2 and 3 of the ordered input."
+catches = "OFFSET counted from 1, or ignored"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.limit.toml#t001_offset"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.limit.t002"
+form = "sf.query.limit.limit"
+kind = "type_combination"
+target = "LIMIT 0"
+note = "LIMIT 0, which returns no rows."
+catches = "LIMIT 0 read as no limit"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.limit.toml#t002_zero"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.limit.t003"
+form = "sf.query.limit.limit"
+kind = "null_argument"
+target = "LIMIT NULL"
+note = "LIMIT NULL; the page does not say; the recording decides."
+catches = "an error, or no rows, where Snowflake returns every row (or the reverse)"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/limit.limit.toml#t003_null_count"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.except.t001"
+form = "sf.query.operators-query.except"
+kind = "type_combination"
+target = "EXCEPT"
+note = "x of groups a and NULL EXCEPT b and NULL: the values only the first returns, once each."
+catches = "the operands swapped, or duplicates kept"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.except.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.except.t002"
+form = "sf.query.operators-query.except"
+kind = "null_argument"
+target = "NULL rows"
+note = "A NULL in both queries, which EXCEPT removes like any value."
+catches = "the NULL kept as never equal"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.except.toml#t002_null_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect.t001"
+form = "sf.query.operators-query.intersect"
+kind = "type_combination"
+target = "INTERSECT"
+note = "x of groups a and NULL against b and NULL: only the values both return, once each."
+catches = "UNION or EXCEPT semantics, or duplicates kept"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.intersect.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect.t002"
+form = "sf.query.operators-query.intersect"
+kind = "null_argument"
+target = "NULL rows"
+note = "A NULL on both sides, which INTERSECT matches as one row like any value."
+catches = "NULL treated as never equal (no row)"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.intersect.toml#t002_null_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect-minus-except-union.t001"
+form = "sf.query.operators-query.intersect-minus-except-union"
+kind = "type_combination"
+target = "UNION ALL then EXCEPT"
+note = "A UNION ALL followed by EXCEPT, left to right as written; the page does not say; the recording decides on precedence beyond that."
+catches = "EXCEPT applied to the second query only"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL; a trailing ORDER BY or LIMIT applies to the whole result"
+cases = ["cases/translation/query/operators-query.intersect-minus-except-union.toml#t001_chain"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect-minus-except-union.t002"
+form = "sf.query.operators-query.intersect-minus-except-union"
+kind = "type_combination"
+target = "parenthesised operands"
+note = "The same with the EXCEPT bracketed onto the second query."
+catches = "the parentheses ignored"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL; a trailing ORDER BY or LIMIT applies to the whole result"
+cases = ["cases/translation/query/operators-query.intersect-minus-except-union.toml#t002_parenthesised"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect-minus-except-union.t003"
+form = "sf.query.operators-query.intersect-minus-except-union"
+kind = "type_combination"
+target = "ORDER BY and LIMIT on the result"
+note = "A trailing ORDER BY x DESC and LIMIT 2, which apply to the combined rows."
+catches = "the LIMIT applied to the second query only"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL; a trailing ORDER BY or LIMIT applies to the whole result"
+cases = ["cases/translation/query/operators-query.intersect-minus-except-union.toml#t003_order_limit"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.intersect-minus-except-union.t004"
+form = "sf.query.operators-query.intersect-minus-except-union"
+kind = "null_argument"
+target = "NULL rows"
+note = "UNION DISTINCT over two NULL-only queries."
+catches = "two NULL rows kept"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL; a trailing ORDER BY or LIMIT applies to the whole result"
+cases = ["cases/translation/query/operators-query.intersect-minus-except-union.toml#t004_null_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.minus.t001"
+form = "sf.query.operators-query.minus"
+kind = "type_combination"
+target = "MINUS"
+note = "x of groups a and NULL MINUS b and NULL: the values only the first returns, once each."
+catches = "the operands swapped, or duplicates kept"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.minus.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.minus.t002"
+form = "sf.query.operators-query.minus"
+kind = "null_argument"
+target = "NULL rows"
+note = "A NULL in both queries, which MINUS removes like any value."
+catches = "the NULL kept as never equal"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.minus.toml#t002_null_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.union.t001"
+form = "sf.query.operators-query.union"
+kind = "type_combination"
+target = "UNION"
+note = "x of groups a and NULL against b and NULL: duplicates (2, 2 and 4) and the two NULLs collapse."
+catches = "UNION ALL semantics, or NULLs kept apart"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.union.toml#t001_distinct"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.union.t002"
+form = "sf.query.operators-query.union"
+kind = "type_combination"
+target = "UNION ALL"
+note = "The same two queries with UNION ALL: every row kept, 9 rows."
+catches = "duplicates removed"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.union.toml#t002_all"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.union.t003"
+form = "sf.query.operators-query.union"
+kind = "type_combination"
+target = "UNION ALL BY NAME"
+note = "Two queries with their columns in different orders and a column only the second has, which the page says is filled with NULL."
+catches = "columns matched by position, or the missing column refused"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.union.toml#t003_by_name"]
+required = true
+
+[[obligation]]
+id = "sf.query.operators-query.union.t004"
+form = "sf.query.operators-query.union"
+kind = "null_argument"
+target = "NULL rows"
+note = "Rows holding only NULL from both sides: UNION keeps one of them."
+catches = "two NULL rows kept, or none"
+reading = "operators-query: UNION [DISTINCT] removes duplicate rows and UNION ALL keeps them; INTERSECT returns the rows both queries return; MINUS and EXCEPT return the rows of the first query the second does not; BY NAME matches columns by name, filling a missing column with NULL"
+cases = ["cases/translation/query/operators-query.union.toml#t004_null_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.t001"
+form = "sf.query.order-by"
+kind = "type_combination"
+target = "expression key"
+note = "An expression key, n modulo 3, with ordinal breaking ties."
+catches = "the expression ignored"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.toml#t001_expression"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.t002"
+form = "sf.query.order-by"
+kind = "type_combination"
+target = "ORDER BY ALL"
+note = "ORDER BY ALL over (n, s)."
+catches = "only n ordered"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.toml#t002_all"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.t003"
+form = "sf.query.order-by"
+kind = "null_argument"
+target = "NULL key"
+note = "DESC without a NULLS clause, which puts NULL first by default."
+catches = "NULL placed last"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.toml#t003_null_default"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.all.t001"
+form = "sf.query.order-by.all"
+kind = "type_combination"
+target = "ORDER BY ALL DESC"
+note = "ORDER BY ALL DESC over (s, n): s first, then n, both descending, NULL first by default."
+catches = "only the first column ordered, or ASC applied"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.all.toml#t001_all_desc"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.all.t002"
+form = "sf.query.order-by.all"
+kind = "null_argument"
+target = "NULLS LAST"
+note = "ORDER BY ALL ASC NULLS LAST."
+catches = "the NULLS clause ignored"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.all.toml#t002_nulls_last"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.t001"
+form = "sf.query.order-by.orderitem"
+kind = "type_combination"
+target = "ASC default"
+note = "n ascending with no NULLS clause: NULL last."
+catches = "NULLs first ascending"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t001_asc_default"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.t002"
+form = "sf.query.order-by.orderitem"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text by byte value: 'B' before 'a', 'a' before 'ab' before 'b', NULL last."
+catches = "a case-insensitive or locale collation"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t002_text_bytes"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.t003"
+form = "sf.query.order-by.orderitem"
+kind = "type_combination"
+target = "position and NULLS FIRST"
+note = "ORDER BY 2 DESC NULLS LAST, 1: a column position with an explicit NULL placement."
+catches = "the position read as a constant, or the NULLS clause ignored"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t003_position_nulls"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.t004"
+form = "sf.query.order-by.orderitem"
+kind = "null_argument"
+target = "NULL key"
+note = "NULLS FIRST on an ascending key."
+catches = "NULLS FIRST ignored"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.t001"
+form = "sf.query.qualify"
+kind = "type_combination"
+target = "ROW_NUMBER() = 1"
+note = "The largest x of each group, with NULL x last and ordinal breaking ties."
+catches = "QUALIFY applied before the window is computed, or all rows kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.toml#t001_row_number"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.t002"
+form = "sf.query.qualify"
+kind = "type_combination"
+target = "GROUP BY, HAVING and QUALIFY"
+note = "Groups with two or more rows, then the group with the largest count by RANK."
+catches = "QUALIFY applied before HAVING"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.toml#t002_after_having"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.t003"
+form = "sf.query.qualify"
+kind = "null_argument"
+target = "NULL window value"
+note = "A window value that is NULL for one row (LAG over the first row): QUALIFY drops it."
+catches = "the NULL row kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.toml#t003_null_window"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.qualify.t001"
+form = "sf.query.qualify.qualify"
+kind = "type_combination"
+target = "ROW_NUMBER() = 1"
+note = "The largest x of each group, with NULL x last and ordinal breaking ties."
+catches = "QUALIFY applied before the window is computed, or all rows kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.qualify.toml#t001_row_number"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.qualify.t002"
+form = "sf.query.qualify.qualify"
+kind = "type_combination"
+target = "GROUP BY, HAVING and QUALIFY"
+note = "Groups with two or more rows, then the group with the largest count by RANK."
+catches = "QUALIFY applied before HAVING"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.qualify.toml#t002_after_having"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.qualify.t003"
+form = "sf.query.qualify.qualify"
+kind = "null_argument"
+target = "NULL window value"
+note = "A window value that is NULL for one row (LAG over the first row): QUALIFY drops it."
+catches = "the NULL row kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.qualify.toml#t003_null_window"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.select-from-qualify.t001"
+form = "sf.query.qualify.select-from-qualify"
+kind = "type_combination"
+target = "ROW_NUMBER() = 1"
+note = "The largest x of each group, with NULL x last and ordinal breaking ties."
+catches = "QUALIFY applied before the window is computed, or all rows kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.select-from-qualify.toml#t001_row_number"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.select-from-qualify.t002"
+form = "sf.query.qualify.select-from-qualify"
+kind = "type_combination"
+target = "GROUP BY, HAVING and QUALIFY"
+note = "Groups with two or more rows, then the group with the largest count by RANK."
+catches = "QUALIFY applied before HAVING"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.select-from-qualify.toml#t002_after_having"]
+required = true
+
+[[obligation]]
+id = "sf.query.qualify.select-from-qualify.t003"
+form = "sf.query.qualify.select-from-qualify"
+kind = "null_argument"
+target = "NULL window value"
+note = "A window value that is NULL for one row (LAG over the first row): QUALIFY drops it."
+catches = "the NULL row kept"
+reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
+cases = ["cases/translation/query/qualify.select-from-qualify.toml#t003_null_window"]
+required = true
+
+[[obligation]]
+id = "sf.query.top-n.t001"
+form = "sf.query.top-n"
+kind = "type_combination"
+target = "TOP 3"
+note = "TOP 3 with ORDER BY x DESC NULLS LAST."
+catches = "TOP applied before the ORDER BY"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/top-n.toml#t001_top"]
+required = true
+
+[[obligation]]
+id = "sf.query.top-n.t002"
+form = "sf.query.top-n"
+kind = "type_combination"
+target = "TOP 0"
+note = "TOP 0, which returns no rows."
+catches = "TOP 0 read as no limit"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/top-n.toml#t002_top_zero"]
+required = true
+
+[[obligation]]
+id = "sf.query.top-n.t003"
+form = "sf.query.top-n"
+kind = "type_combination"
+target = "DISTINCT with TOP"
+note = "SELECT DISTINCT TOP 2 g: duplicates removed before the limit."
+catches = "the limit applied before DISTINCT"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/top-n.toml#t003_top_distinct"]
+required = true
+
+[[obligation]]
+id = "sf.query.top-n.t004"
+form = "sf.query.top-n"
+kind = "null_argument"
+target = "NULL sort key"
+note = "TOP 2 over x descending with no NULLS clause, which puts NULL first by default."
+catches = "NULL placed last, so 4 and 3 returned"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+cases = ["cases/translation/query/top-n.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.values.t001"
+form = "sf.query.values"
+kind = "type_combination"
+target = "VALUES with column aliases"
+note = "Three rows with the column aliases n and s, joined to nothing."
+catches = "the aliases dropped (COLUMN1, COLUMN2)"
+reading = "values: an inline table of rows, with an optional table alias and column aliases; the columns take a common type"
+cases = ["cases/translation/query/values.toml#t001_aliases"]
+required = true
+
+[[obligation]]
+id = "sf.query.values.t002"
+form = "sf.query.values"
+kind = "type_combination"
+target = "INTEGER and NUMBER(3,1)"
+note = "Rows of 1 and 2.5 in one column, which take a common numeric type."
+catches = "the first row's type used, so 2.5 truncated"
+reading = "values: an inline table of rows, with an optional table alias and column aliases; the columns take a common type"
+cases = ["cases/translation/query/values.toml#t002_common_type"]
+required = true
+
+[[obligation]]
+id = "sf.query.values.t003"
+form = "sf.query.values"
+kind = "null_argument"
+target = "NULL"
+note = "A NULL beside a string in one column."
+catches = "NULL typed apart from the column, or refused"
+reading = "values: an inline table of rows, with an optional table alias and column aliases; the columns take a common type"
+cases = ["cases/translation/query/values.toml#t003_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.query.where.t001"
+form = "sf.query.where"
+kind = "type_combination"
+target = "compound predicate"
+note = "x > 1 AND g <> 'b' over rows with NULLs in both columns."
+catches = "NULL predicates kept as TRUE"
+reading = "where: rows for which the predicate is TRUE; a NULL predicate drops the row"
+cases = ["cases/translation/query/where.toml#t001_compound"]
+required = true
+
+[[obligation]]
+id = "sf.query.where.t002"
+form = "sf.query.where"
+kind = "null_argument"
+target = "NULL predicate"
+note = "x = NULL, which is never TRUE, and x IS NULL, which is."
+catches = "x = NULL treated as IS NULL"
+reading = "where: rows for which the predicate is TRUE; a NULL predicate drops the row"
+cases = ["cases/translation/query/where.toml#t002_null_predicate"]
+required = true
