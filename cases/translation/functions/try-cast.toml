@@ -58,3 +58,17 @@ rows = [
 query = "SELECT TRY_CAST(v AS NUMBER) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t006_text_to_binary"
+description = "TRY_CAST of valid hex, odd-length hex, a non-hex character and NULL to BINARY. Catches: an error instead of NULL, or a partial value"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'4a4B'"],
+  ["'ABC'"],
+  ["'0G'"],
+  ["NULL"],
+]
+query = "SELECT TRY_CAST(v AS BINARY) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

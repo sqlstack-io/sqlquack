@@ -60,3 +60,62 @@ rows = [
 query = "SELECT CAST(x AS NUMBER) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t006_text_to_binary"
+description = "Hex text in upper, lower and mixed case cast to BINARY under BINARY_INPUT_FORMAT HEX. Catches: the text's UTF-8 bytes taken instead of its hex digits, or case-sensitive hex"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'ABCD'"],
+  ["'00ff10'"],
+  ["'4a4B'"],
+]
+query = "SELECT CAST(v AS BINARY) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t007_binary_empty_and_null"
+description = "Empty text and NULL cast to BINARY. Catches: empty text read as NULL, or NULL as empty"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["NULL"],
+]
+query = "SELECT CAST(v AS BINARY) AS r, CAST(v AS BINARY) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_binary_odd_length"
+description = "Hex text of odd length cast to BINARY, which the page says is an error. Catches: a padded or truncated byte"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'ABC'"],
+]
+query = "SELECT CAST(v AS BINARY) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t009_binary_invalid_digit"
+description = "Text with a non-hex character cast to BINARY. Catches: the character skipped or read as 0"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'0G'"],
+]
+query = "SELECT CAST(v AS BINARY) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t010_binary_length"
+description = "Hex text of two and three bytes cast to BINARY(2), with its length. Catches: the excess bytes silently truncated, or the declared length ignored"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'ABCD'"],
+  ["'ABCDEF'"],
+]
+query = "SELECT CAST(v AS BINARY(2)) AS r, LENGTH(CAST(v AS BINARY(2))) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

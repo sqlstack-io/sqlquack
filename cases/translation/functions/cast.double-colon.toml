@@ -60,3 +60,15 @@ rows = [
 query = "SELECT x::NUMBER AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t006_text_to_binary"
+description = "Hex text cast to BINARY with ::, beside NULL. Catches: :: read differently from CAST"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'00ff10'"],
+  ["NULL"],
+]
+query = "SELECT v::BINARY AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
