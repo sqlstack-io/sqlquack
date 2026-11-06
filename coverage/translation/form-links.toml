@@ -251,6 +251,53 @@ constructs = ["node:unpivot"]
 forms = ["sf.query.unpivot"]
 
 [[link]]
+constructs = ["node:match_recognize"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+# MATCH_RECOGNIZE's own functions, which exist only inside its MEASURES and DEFINE.
+[[link]]
+constructs = ["node:match_recognize", "fn:CLASSIFIER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_SEQUENCE_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:FIRST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:LAST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:resample"]
+forms = ["sf.query.resample"]
+
+# RESAMPLE's metadata functions, which exist only over a RESAMPLE clause.
+[[link]]
+constructs = ["node:resample", "fn:BUCKET_START"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["node:resample", "fn:IS_GENERATED"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["fn:IDENTIFIER"]
+forms = ["sf.expressions.identifier-literal"]
+
+# The ** spread of an array into a list of arguments.
+[[link]]
+constructs = ["node:variadic"]
+forms = ["sf.expressions.operators-expansion"]
+
+[[link]]
 constructs = ["node:values"]
 forms = ["sf.query.values"]
 
@@ -451,6 +498,35 @@ forms = ["sf.expressions.data-types-text.string"]
 [[link]]
 constructs = ["cast:BINARY"]
 forms = ["sf.expressions.data-types-text.binary"]
+
+[[link]]
+constructs = ["cast:VARBINARY"]
+forms = ["sf.expressions.data-types-text.varbinary"]
+
+[[link]]
+constructs = ["cast:CHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+# NCHAR is a synonym the CHAR page documents.
+[[link]]
+constructs = ["cast:NCHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+[[link]]
+constructs = ["cast:DATETIME"]
+forms = ["sf.expressions.data-types-datetime.datetime"]
+
+[[link]]
+constructs = ["cast:INTERVAL"]
+forms = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+
+[[link]]
+constructs = ["cast:MAP"]
+forms = ["sf.expressions.data-types-structured.map"]
+
+[[link]]
+constructs = ["cast:UUID"]
+forms = ["sf.expressions.data-types-uuid"]
 
 [[link]]
 constructs = ["cast:BOOLEAN"]
