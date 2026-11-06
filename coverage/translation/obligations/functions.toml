@@ -10058,8 +10058,8 @@ id = "sf.functions.format-string-template.t001"
 form = "sf.functions.format-string-template"
 kind = "type_combination"
 target = "VARCHAR with VARCHAR and NUMBER"
-note = "The page's examples: one value, two values in order, and {:.2f} on 3.14159."
-catches = "the values substituted in reverse, or the precision ignored"
+note = "The page's examples with plain placeholders: one value, and two values in order. Its {:.2f} example is the t006 case, since Snowflake raises an error for it."
+catches = "the values substituted in reverse"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t001_examples"]
 required = true
@@ -10069,8 +10069,8 @@ id = "sf.functions.format-string-template.t002"
 form = "sf.functions.format-string-template"
 kind = "type_combination"
 target = "VARCHAR, NUMBER(10,2), NUMBER"
-note = "The page's table example, with values from columns."
-catches = "the decimal printed without two places"
+note = "The page's table example with values from columns and plain placeholders, since Snowflake raises an error for its {:.2f}."
+catches = "the NUMBER(10,2) value printed without its scale, or the values out of order"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t002_columns"]
 required = true
@@ -10106,6 +10106,17 @@ note = "A NULL value; the page does not say; the recording decides."
 catches = "an error, or an empty substitution where Snowflake prints something else"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t005_null_value1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t006"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "The page's {:.2f} example on 3.14159; Snowflake raises 100572 (invalid format specifier) where the page shows 3.14."
+catches = "the value formatted to two places where Snowflake raises an error"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t006_precision_spec"]
 required = true
 
 [[obligation]]
