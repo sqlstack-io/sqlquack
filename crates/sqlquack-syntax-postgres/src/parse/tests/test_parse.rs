@@ -15,6 +15,16 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "ALTER TYPE's attribute commands take at most three name parts",
+            sql: "ALTER TYPE a.b.c.d ADD ATTRIBUTE x int",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER TYPE ADD VALUE keeps any_name, so four parts are accepted",
+            sql: "ALTER TYPE a.b.c.d ADD VALUE 'x'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ALTER TEXT SEARCH needs its object kind",
             sql: "ALTER TEXT SEARCH t1 RENAME TO v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },

@@ -119,6 +119,14 @@ const TRIGGER_MODES: [(&[&str], &str); 4] = [
     (&["disable"], "DISABLE"),
 ];
 
+/// The `ALTER TYPE` commands on attributes, which name the type as a relation of at most three parts.
+const ATTRIBUTE_COMMANDS: [&[&str]; 4] = [
+    &["add", "attribute"],
+    &["drop", "attribute"],
+    &["alter", "attribute"],
+    &["rename", "attribute"],
+];
+
 /// `DROP VALUE`'s error (0A000), which gram.y raises for every enum.
 const DROP_VALUE: &str = "dropping an enum value is not implemented";
 
@@ -144,7 +152,14 @@ impl Parser<'_> {
         if if_exists {
             self.at += 2;
         }
+        let name_at: usize = self.at;
         let (name, mut operands) = self.altered_object_name(kind)?;
+        if kind == TYPE && self.starts_attribute_command() {
+            let end: usize = self.at;
+            self.at = name_at;
+            self.table_name()?;
+            self.at = end;
+        }
         let common = match if_exists {
             true => None,
             false => self.common_object_action(kind)?,
@@ -155,6 +170,11 @@ impl Parser<'_> {
         };
         operands.extend(values);
         Ok(alter((kind, name, if_exists), action, operands))
+    }
+
+    /// Whether an attribute command follows, whose type name gram.y reads with `makeRangeVarFromAnyName`.
+    fn starts_attribute_command(&self) -> bool {
+        ATTRIBUTE_COMMANDS.iter().any(|words| self.words_at(words))
     }
 
     /// The altered object's name, and the operands that identify it beyond its name.
