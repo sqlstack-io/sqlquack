@@ -1044,9 +1044,14 @@ fn given_pivot_in_from_when_converting_then_each_listed_key_aggregates_its_group
             expected_outcome: Ok("null"),
         },
         BuiltFirstValueTestCase {
-            description: "without an alias column list it stays refused",
-            sql: format!("SELECT * FROM {}", pivoted("SUM", "'big'", "")),
+            description: "an alias column list that misses a column stays refused",
+            sql: format!("SELECT * FROM {}", pivoted("SUM", "'big'", "(customer_id)")),
             expected_outcome: Err("alias column list"),
+        },
+        BuiltFirstValueTestCase {
+            description: "without an alias column list a key holding a quote stays refused",
+            sql: format!("SELECT * FROM {}", pivoted("SUM", "'it''s'", "")),
+            expected_outcome: Err("quote or backslash"),
         },
         BuiltFirstValueTestCase {
             description: "another aggregate stays refused",
