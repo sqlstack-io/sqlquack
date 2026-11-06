@@ -82,7 +82,7 @@ fn position_of(
     ))
 }
 
-/// The first position of `needle` in `haystack` at or after `start` (below 1 reads as 1).
+/// The first position of `needle` in `haystack` at or after `start` (below 1 reads as 1), as recorded.
 fn position_from(
     (needle, haystack, start): (&Value, &Value, &Value),
     construct: &Construct,
@@ -92,12 +92,14 @@ fn position_from(
     let needle = text_operand(needle, construct, site)?;
     let haystack = text_operand(haystack, construct, site)?;
     let start = integer_operand(start, construct, site)?;
-    let from = format!("greatest({start}, 1)");
-    let found = format!("strpos(substr({haystack}, {from}), {needle})");
     Ok(Emitted::new(
         format!(
-            "CAST(CASE WHEN {start} IS NULL THEN NULL WHEN {found} = 0 THEN 0 \
-             ELSE {found} + {from} - 1 END AS DECIMAL(9,0))"
+            "CAST(list_transform([struct_pack(n := {needle}, h := {haystack}, p := {start})], \
+             lambda s: CASE WHEN s['p'] IS NOT NULL AND s['h'] IS NOT NULL AND s['n'] IS NOT NULL \
+             THEN list_transform([greatest(s['p'], 1)], \
+             lambda f: list_transform([strpos(substr(s['h'], f), s['n'])], \
+             lambda i: CASE WHEN i = 0 OR f > greatest(length(s['h']), 1) THEN 0 ELSE i + f - 1 END)[1])[1] \
+             END)[1] AS DECIMAL(9,0))"
         ),
         TEXT_SEARCH_POSITION_TYPE,
     ))
