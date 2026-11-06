@@ -15,6 +15,36 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "ALTER FUNCTION takes common_func_opt_item, not LANGUAGE",
+            sql: "ALTER FUNCTION f LANGUAGE sql",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER FUNCTION needs at least one option",
+            sql: "ALTER FUNCTION f RESTRICT",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET CATALOG is refused, as gram.y refuses it",
+            sql: "ALTER FUNCTION f SET CATALOG 'x'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a time zone interval may name only HOUR and MINUTE",
+            sql: "ALTER FUNCTION f SET TIME ZONE INTERVAL '1' DAY",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER AGGREGATE takes no function options",
+            sql: "ALTER AGGREGATE a(*) IMMUTABLE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET TIME ZONE in a routine is structured, not opaque",
+            sql: "CREATE FUNCTION f() RETURNS int SET TIME ZONE 'UTC' RETURN 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ALTER with a word no statement kind allows is refused",
             sql: "ALTER FOO t RENAME TO u",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -894,6 +924,42 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "a four-part ALTER FUNCTION name keeps its first part",
+            sql: "ALTER FUNCTION a.b.c.d (int) IMMUTABLE",
+            pointer: "/0/alter_object/name/catalog/name",
+            expected_json: "\"a.b\"",
+        },
+        ValueTestCase {
+            description: "ALTER FUNCTION f with no argument list keeps no call",
+            sql: "ALTER FUNCTION f IMMUTABLE",
+            pointer: "/0/alter_object/operands/0/identifier/name",
+            expected_json: "\"f\"",
+        },
+        ValueTestCase {
+            description: "SET TIME ZONE is the timezone setting, as PostgreSQL's raw tree names it",
+            sql: "ALTER FUNCTION f SET TIME ZONE 'UTC'",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/1/identifier/name",
+            expected_json: "\"timezone\"",
+        },
+        ValueTestCase {
+            description: "SET TIME ZONE LOCAL sets the default",
+            sql: "ALTER FUNCTION f SET TIME ZONE LOCAL",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/0/var/this",
+            expected_json: "\"SET DEFAULT\"",
+        },
+        ValueTestCase {
+            description: "RESET TRANSACTION ISOLATION LEVEL resets transaction_isolation",
+            sql: "ALTER FUNCTION f RESET TRANSACTION ISOLATION LEVEL",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/1/identifier/name",
+            expected_json: "\"transaction_isolation\"",
+        },
+        ValueTestCase {
+            description: "ALTER ... NO DEPENDS ON EXTENSION names its action",
+            sql: "ALTER PROCEDURE p NO DEPENDS ON EXTENSION e",
+            pointer: "/0/alter_object/action",
+            expected_json: "\"NO DEPENDS ON EXTENSION\"",
+        },
         ValueTestCase {
             description: "SET STATISTICS reads a hexadecimal ICONST as its value",
             sql: "ALTER TABLE ONLY t ALTER c SET STATISTICS 0x10",
