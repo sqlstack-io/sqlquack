@@ -27,6 +27,13 @@ const NAIVE_TO_ZONED: &str =
 fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_printed() {
     let test_cases = [
         ConvertTestCase {
+            description: "a repeated result name refuses with help to alias each column",
+            sql: "SELECT 1, 1",
+            flags: &[],
+            mention: "give each result column its own alias",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "EQUAL_NULL of a VARIANT and text refuses: no recording shows a JSON null",
             sql: "SELECT EQUAL_NULL(PARSE_JSON('null'), '1') AS e",
             flags: &[],
@@ -1488,11 +1495,11 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         },
         ConvertDiagnosticTestCase {
             description: "an unaliased item has its own code, its own span and an alias as help",
-            sql: "SELECT 'a' AS a, UPPER('b')",
+            sql: "SELECT 'a' AS a, UPPER('é')",
             flags: &[],
             expected_text: concat!(
                 "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
-                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('b')\n",
+                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
                 "  |\n  = help: add an alias, e.g. `AS one`\n",
                 "sqlquack convert: refused, 1 refusal under the built-in default\n",
