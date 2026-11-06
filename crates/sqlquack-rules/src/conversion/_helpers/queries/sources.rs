@@ -33,10 +33,19 @@ use crate::conversion::constants::{
     LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PIVOT_RULE, PROJECT_TABLE_FUNCTION,
     TABLE_WRAPPER, UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
-use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
+use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD, NEGATE_KIND, NULL_KIND};
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns};
+
+/// GENERATOR's named arguments.
+const ROWCOUNT_ARGUMENT: &str = "ROWCOUNT";
+const TIMELIMIT_ARGUMENT: &str = "TIMELIMIT";
+/// The node kinds a constant ROWCOUNT is written with.
+const PAREN_KIND: &str = "paren";
+const ADD_KIND: &str = "add";
+const SUB_KIND: &str = "sub";
+const MUL_KIND: &str = "mul";
 
 /// The FROM clause with its joins, and the relations it brings into scope.
 pub(crate) fn convert_from(
@@ -660,28 +669,7 @@ fn generator_source(
     let log = context.log;
     let _rule = log.rule(GENERATOR_RULE);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-    let [argument] = list(call, "args") else {
-        return Err(refuse("GENERATOR with other than one argument".to_owned()));
-    };
-    let named = argument
-        .get("named_argument")
-        .and_then(Value::as_object)
-        .filter(|named| {
-            named
-                .get("name")
-                .and_then(identifier_name)
-                .is_some_and(|name| name.eq_ignore_ascii_case("ROWCOUNT"))
-        })
-        .ok_or_else(|| refuse("GENERATOR with other than ROWCOUNT".to_owned()))?;
-    let rows = named
-        .get("value")
-        .and_then(integer_literal)
-        .filter(|rows| *rows <= GENERATOR_MAX_ROWS)
-        .ok_or_else(|| {
-            refuse(format!(
-                "a ROWCOUNT other than a whole literal up to {GENERATOR_MAX_ROWS}"
-            ))
-        })?;
+    let rows = generator_rows(list(call, "args")).map_err(refuse)?;
     let alias = alias.unwrap_or_else(|| GENERATOR_NAME.to_owned());
     let column = quoted_identifier(GENERATOR_SEQUENCE_COLUMN, log);
     Ok((
@@ -701,6 +689,76 @@ fn generator_source(
             merged: Vec::new(),
         },
     ))
+}
+
+/// GENERATOR's row count: ROWCOUNT (beside a TIMELIMIT of 1s or more), or 0 when both are absent.
+fn generator_rows(arguments: &[Value]) -> Result<u64, String> {
+    let mut rowcount: Option<&Value> = None;
+    let mut timelimit: Option<&Value> = None;
+    for argument in arguments {
+        let named = argument
+            .get("named_argument")
+            .and_then(Value::as_object)
+            .ok_or_else(|| "GENERATOR with a positional argument".to_owned())?;
+        let value = named
+            .get("value")
+            .filter(|value| node_kind(value).is_some_and(|(kind, _)| kind != NULL_KIND));
+        match named.get("name").and_then(identifier_name) {
+            Some(name) if name.eq_ignore_ascii_case(ROWCOUNT_ARGUMENT) => rowcount = value,
+            Some(name) if name.eq_ignore_ascii_case(TIMELIMIT_ARGUMENT) => timelimit = value,
+            _ => {
+                return Err(
+                    "GENERATOR with an argument other than ROWCOUNT or TIMELIMIT".to_owned(),
+                );
+            }
+        }
+    }
+    let rows = match rowcount {
+        None => None,
+        Some(value) => match constant_integer(value) {
+            Some(rows) if rows < 0 => {
+                return Err(
+                    "a negative ROWCOUNT, which Snowflake refuses when compiling".to_owned(),
+                );
+            }
+            Some(rows) if rows > i128::from(GENERATOR_MAX_ROWS) => {
+                return Err(format!("a ROWCOUNT above {GENERATOR_MAX_ROWS}"));
+            }
+            Some(rows) => Some(u64::try_from(rows).map_err(|error| error.to_string())?),
+            None => {
+                return Err("a ROWCOUNT other than a whole number written with literals".to_owned());
+            }
+        },
+    };
+    match (rows, timelimit) {
+        (rows, None) => Ok(rows.unwrap_or(0)),
+        (Some(rows), Some(limit)) if integer_literal(limit).is_some_and(|seconds| seconds >= 1) => {
+            Ok(rows)
+        }
+        (Some(_), Some(_)) => Err("ROWCOUNT beside a TIMELIMIT under one whole second".to_owned()),
+        (None, Some(_)) => Err(
+            "GENERATOR with only a TIMELIMIT, whose row count depends on how fast rows are made"
+                .to_owned(),
+        ),
+    }
+}
+
+/// A whole number written with integer literals, signs, parentheses, `+`, `-` and `*`.
+fn constant_integer(node: &Value) -> Option<i128> {
+    let operands = |payload: &Value| {
+        Some((
+            constant_integer(payload.get("left")?)?,
+            constant_integer(payload.get("right")?)?,
+        ))
+    };
+    match node_kind(node)? {
+        (NEGATE_KIND, payload) => constant_integer(payload.get("this")?)?.checked_neg(),
+        (PAREN_KIND, payload) => constant_integer(payload.get("this")?),
+        (ADD_KIND, payload) => operands(payload).and_then(|(left, right)| left.checked_add(right)),
+        (SUB_KIND, payload) => operands(payload).and_then(|(left, right)| left.checked_sub(right)),
+        (MUL_KIND, payload) => operands(payload).and_then(|(left, right)| left.checked_mul(right)),
+        _ => integer_literal(node).map(i128::from),
+    }
 }
 
 /// The call inside `TABLE(call)`, a function node.
