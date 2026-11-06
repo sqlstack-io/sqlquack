@@ -28,7 +28,10 @@ fn function_construct(name: &str) -> Construct {
     {
         return Construct::new(ConstructFamily::Function, PROJECT_FUNCTION_CONSTRUCT);
     }
-    Construct::new(ConstructFamily::Function, name.to_ascii_uppercase())
+    Construct::new(
+        ConstructFamily::Function,
+        name.to_ascii_uppercase().replace(' ', "_"),
+    )
 }
 
 fn cast_constructs(variant: &str, cast: &Cast, dialect: SourceDialect) -> Vec<Construct> {

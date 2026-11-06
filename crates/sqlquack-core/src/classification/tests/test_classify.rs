@@ -14,6 +14,11 @@ fn given_snowflake_query_when_classifying_then_reports_each_construct_family() {
             expected_keys: &["fn:ZEROIFNULL", "node:alias", "node:column", "node:select"],
         },
         ConstructTestCase {
+            description: "a multi-word call such as GROUPING SETS keys with underscores, never a space",
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY GROUPING SETS ((a), (b))",
+            expected_keys: &["fn:GROUPING_SETS"],
+        },
+        ConstructTestCase {
             description: "casts record the node, the base type and the `::` spelling",
             sql: "SELECT o.amount::NUMBER(10, 2) AS amount FROM orders o",
             expected_keys: &["node:cast", "cast:DECIMAL", "syntax:double_colon_cast"],
