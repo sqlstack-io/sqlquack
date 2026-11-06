@@ -132,3 +132,168 @@ rows = [
 query = "SELECT VARIANCE(x) AS r, SYSTEM$TYPEOF(VARIANCE(x)) AS t FROM input"
 order = "ordered"
 tags = ["type-combination"]
+
+[[case]]
+id = "t009_rounding_tie"
+description = "One 1 and 127 zeros: the sample variance is exactly 1/128 = 0.0078125, a tie at six decimals, with STDDEV beside it. Catches: half-to-even (0.007812) instead of half-up (0.007813), and STDDEV taken from the unrounded variance"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+  ["0"],
+]
+query = "SELECT VARIANCE(x) AS v, VAR_POP(x) AS p, STDDEV(x) AS s FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t010_scales"
+description = "VARIANCE and VAR_POP of NUMBER columns of scales 1, 3, 5 and 12, with their types. Catches: the result scale rule (6 for scale 0 and 10 for scale 2 are recorded) misread"
+columns = [{ name = "a", type = "NUMBER(38,1)" }, { name = "b", type = "NUMBER(38,3)" }, { name = "c", type = "NUMBER(38,5)" }, { name = "d", type = "NUMBER(38,12)" }]
+rows = [
+  ["1.5", "1.125", "1.00001", "1.000000000001"],
+  ["2.0", "2.500", "2.00003", "2.000000000005"],
+  ["4.5", "4.875", "4.00007", "4.000000000007"],
+]
+query = "SELECT VARIANCE(a) AS va, SYSTEM$TYPEOF(VARIANCE(a)) AS ta, VARIANCE(b) AS vb, SYSTEM$TYPEOF(VARIANCE(b)) AS tb, VARIANCE(c) AS vc, SYSTEM$TYPEOF(VARIANCE(c)) AS tc, VARIANCE(d) AS vd, SYSTEM$TYPEOF(VARIANCE(d)) AS td, VAR_POP(b) AS pb, SYSTEM$TYPEOF(VAR_POP(b)) AS tpb FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t011_float_large_mean"
+description = "A FLOAT column near 1e9 with a spread of 1, and a negative one. Catches: a stable algorithm where Snowflake cancels, or the reverse"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1000000001"],
+  ["1000000002"],
+  ["1000000003"],
+  ["1000000004"],
+]
+query = "SELECT VARIANCE(x) AS v, VAR_POP(x) AS p, STDDEV(x) AS s, VARIANCE(-x) AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
