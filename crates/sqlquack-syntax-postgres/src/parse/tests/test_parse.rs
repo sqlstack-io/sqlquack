@@ -170,6 +170,11 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "DROP OWNED has no IF EXISTS, so IF is a role and EXISTS is an error",
+            sql: "DROP OWNED BY IF EXISTS a",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "DROP DATABASE takes no drop behavior",
             sql: "DROP DATABASE d CASCADE",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
