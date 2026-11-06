@@ -146,6 +146,28 @@ fn given_setup_tables_when_converting_a_case_then_duckdb_replays_them_or_it_refu
             expected_outcome: Ok("7"),
         },
         SetupCaseTestCase {
+            description: "a write after a SET from a subquery, which Snowflake computed before it",
+            setup: &[
+                "CREATE TABLE t (k NUMBER(38,0))",
+                "INSERT INTO t VALUES (1)",
+                "SET n = (SELECT COUNT(*) FROM t)",
+                "INSERT INTO t VALUES (2)",
+            ],
+            query: "SELECT $n AS n",
+            expected_outcome: Err("writes a table after SET N from a subquery"),
+        },
+        SetupCaseTestCase {
+            description: "a write after the variable set from a subquery is unset",
+            setup: &[
+                "CREATE TABLE t (k NUMBER(38,0))",
+                "SET n = (SELECT COUNT(*) FROM t)",
+                "UNSET n",
+                "INSERT INTO t VALUES (2)",
+            ],
+            query: "SELECT k FROM t",
+            expected_outcome: Ok("2"),
+        },
+        SetupCaseTestCase {
             description: "a variable the setup did not set",
             setup: &["SET n = 10"],
             query: "SELECT $m AS n",
@@ -229,6 +251,12 @@ fn given_setup_tables_when_converting_a_case_then_duckdb_replays_them_or_it_refu
             setup: &["CREATE OR REPLACE TYPE age AS NUMBER(3,0)"],
             query: "SELECT 1 AS k",
             expected_outcome: Err("has a clause other than an unqualified name AS a data type"),
+        },
+        SetupCaseTestCase {
+            description: "a user-defined type named for a built-in type SQLQuack does not convert",
+            setup: &["CREATE TYPE geography AS NUMBER(3,0)"],
+            query: "SELECT 1 AS k",
+            expected_outcome: Err("which names a built-in type"),
         },
         SetupCaseTestCase {
             description: "a user-defined type named for a built-in type",

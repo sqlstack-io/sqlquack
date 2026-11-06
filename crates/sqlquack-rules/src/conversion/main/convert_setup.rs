@@ -19,6 +19,16 @@ pub fn convert_setup(statements: &[String]) -> Result<ConvertedSetup, String> {
         let refused = |reason: &str| format!("setup statement `{statement}` {reason}");
         let parsed = parse_source(statement, SourceDialect::Snowflake)
             .map_err(|_| refused("does not parse"))?;
+        let writes = matches!(
+            parsed.as_slice(),
+            [Expression::CreateTable(_) | Expression::Insert(_)]
+        );
+        if let Some(name) = writes.then(|| computed_variable(&converted)).flatten() {
+            return Err(refused(&format!(
+                "writes a table after SET {name} from a subquery, which Snowflake computed once \
+                 before the write but $name would compute after it"
+            )));
+        }
         let duckdb = match parsed.as_slice() {
             [Expression::CreateTable(table)] => {
                 let (sql, name, columns) =
@@ -57,4 +67,13 @@ pub fn convert_setup(statements: &[String]) -> Result<ConvertedSetup, String> {
         converted.statements.push(duckdb);
     }
     Ok(converted)
+}
+
+/// A variable still SET from a subquery, which DuckDB reads by computing the subquery again.
+fn computed_variable(converted: &ConvertedSetup) -> Option<&str> {
+    converted
+        .variables
+        .iter()
+        .find(|(_, value)| value.get("subquery").is_some())
+        .map(|(name, _)| name.as_str())
 }

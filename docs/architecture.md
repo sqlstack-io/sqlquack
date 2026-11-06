@@ -536,6 +536,8 @@ schema; any other `{{...}}`, or a placeholder in a case without setup, is reject
     that the column holds without rounding.
   - `SET` of session variables to a literal, NULL or a deterministic scalar subquery, and `UNSET`
     of a variable setup set. `$name` then reads the value; a variable setup did not set refuses.
+    DuckDB computes a subquery's value at each read, so a `CREATE TABLE` or `INSERT` while a
+    variable set from a subquery is still set refuses, since Snowflake computed it before the write.
   - `CREATE TYPE name AS data_type`. A type spelled as that plain name, in either case, resolves
     to its base type in casts, typing and later setup columns, as Snowflake reports it. A quoted
     name, a redefinition, `OR REPLACE`, `IF NOT EXISTS`, a qualified name, a built-in type's name
