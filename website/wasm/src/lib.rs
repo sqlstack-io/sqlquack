@@ -350,12 +350,20 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
                     "type": column.data_type.to_string(),
                 })).collect::<Vec<_>>(),
                 // Each known divergence the policy allows and the conversion relies on, as
-                // `sqlquack convert` names it on standard error, with the policy's reason.
-                "divergences": done.provenance.divergences.iter().map(|(id, constructs)| json!({
-                    "id": id,
-                    "constructs": constructs,
-                    "reason": options.divergences.get(id).map(|allowed| allowed.reason.as_str()),
-                })).collect::<Vec<_>>(),
+                // `sqlquack convert` names it on standard error, with its reason. An id such as
+                // `declared_offset:REL.COL` is allowed under the part before the colon, as the
+                // command line's `assumption_id` reads it.
+                "divergences": done.provenance.divergences.iter().map(|(id, constructs)| {
+                    let allowed = options
+                        .divergences
+                        .get(id.split_once(':').map_or(id.as_str(), |(base, _)| base));
+                    json!({
+                        "id": id,
+                        "constructs": constructs,
+                        "reason": allowed.map(|allowed| allowed.reason.as_str()),
+                        "assumption": allowed.is_some_and(|allowed| allowed.assumption),
+                    })
+                }).collect::<Vec<_>>(),
                 // Where each raise ID in the SQL comes from, so a run's error points at the source.
                 "raises": done.raises,
             })),

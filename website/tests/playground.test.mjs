@@ -147,6 +147,12 @@ test('each known divergence a translation relies on is reported with its constru
 		[['hash', ['fn:HASH']]],
 	);
 	assert.match(statement.divergences[0].reason, /never Snowflake's value/);
+	assert.equal(statement.divergences[0].assumption, false);
+	// An assumption gives a wrong value silently where it does not hold, so it is reported as one.
+	const today = JSON.parse(analyze('SELECT CURRENT_DATE AS d', SCHEMA, JSON.stringify({ policy: repository, utc_session: true })));
+	const assumed = today.translate.statements[0].divergences.find((d) => d.id === 'session_timezone_utc');
+	assert.equal(assumed?.assumption, true);
+	assert.ok(assumed.reason);
 	// Without a divergence, none is reported.
 	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA)).translate.statements[0].divergences, []);
 });

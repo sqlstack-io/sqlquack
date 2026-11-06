@@ -220,14 +220,16 @@ async function run() {
 	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
 }
 
-// What the translation relies on that a reader should know: each known divergence the policy
-// allows (as `sqlquack convert` prints "relies on known divergence …"), and any other notes.
+// What the translation relies on that a reader should know, as `sqlquack convert` prints it:
+// each known divergence the policy allows, and each assumption, which gives a wrong value
+// silently where it does not hold.
 function conversionNotes(translate) {
-	const notes = [...(translate.notes ?? [])].map((note) => escape(note));
+	const notes = [];
 	for (const statement of translate.statements ?? [])
 		for (const d of statement.divergences ?? []) {
 			const at = d.constructs.map((construct) => `<code>${escape(construct)}</code>`).join(', ');
-			notes.push(`Relies on known divergence <code>${escape(d.id)}</code> at ${at}${d.reason ? `: ${escape(d.reason)}` : ''}`);
+			const kind = d.assumption ? 'assumption' : 'known divergence';
+			notes.push(`Relies on ${kind} <code>${escape(d.id)}</code> at ${at}${d.reason ? `: ${escape(d.reason)}` : ''}`);
 		}
 	return [...new Set(notes)].map((note) => `<p class="pg-conversion-note"><strong>Note.</strong> ${note}</p>`).join('');
 }
