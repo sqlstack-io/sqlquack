@@ -84,6 +84,9 @@ DEFAULT_ANCHOR: str = "Synopsis"
 SYNOPSIS_HEADING: str = "Synopsis"
 SYNOPSIS_DIV: str = "refsynopsisdiv"
 ACTION_PLACEHOLDER: str = "action"
+OPENERS: str = "[{("
+CLOSERS: str = "]})"
+BAR: str = "|"
 
 DECISION_STATEMENTS: str = "synopsis split into one form per statement at unindented lines"
 DECISION_ACTIONS: str = "statement taking `action [, ...]` split into one form per action"
@@ -329,3 +332,8 @@ PLACEHOLDER: re.Pattern[str] = re.compile(r"<([^<>]+)>")
 DEFINITION_HEAD: re.Pattern[str] = re.compile(r"^\\s*<[^<>]+>\\s*::=\\s*")
 MAX_EXPANSION: int = 64
 MAX_KEYWORD_ALTERNATIVE: int = 4
+
+EXTRA_LEADS: dict[str, frozenset[str]] = {
+    "SELECT": frozenset({"TABLE", "WITH"}),
+    "SET": frozenset({"RESET"}),
+}

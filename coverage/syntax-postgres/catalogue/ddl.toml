@@ -866,9 +866,9 @@ source = "doc.sql-alterfunction"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT [ ... ] [ RESTRICT ]",
+  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "ac968ba0cf55956f66c83ad1df6a4717940e4e2de2203ffd0dde5c459e6f0368"
+grammar_sha256 = "c944da1d36dc559a08f2d3145fc488ecef0b1f907a34cf801cc95043f8f56bbe"
 uses = []
 status = "catalogued"
 
@@ -905,9 +905,9 @@ source = "doc.sql-alterfunction"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] IMMUTABLE | STABLE | VOLATILE [ ... ] [ RESTRICT ]",
+  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { IMMUTABLE | STABLE | VOLATILE } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "67e30ca32dfeaf537aeed2b82af06397f0cada8baffd294acd420cf225c15f75"
+grammar_sha256 = "a9beb61610ba0405febe8c477c2df9ffbd950fdded65ce72104dd352f0c1f228"
 uses = []
 status = "catalogued"
 
@@ -1009,9 +1009,9 @@ source = "doc.sql-alterfunction"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER [ ... ] [ RESTRICT ]",
+  "ALTER FUNCTION <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "c5626c6de49069e7aa8429cbc82d0e6239c1dfb49a99552ece9530312c624599"
+grammar_sha256 = "fb85853cb8b2aa688afea3ade437f41d437966fab0a1f591407afaa88b1d9acb"
 uses = []
 status = "catalogued"
 
@@ -1646,9 +1646,9 @@ source = "doc.sql-alterprocedure"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER PROCEDURE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER [ ... ] [ RESTRICT ]",
+  "ALTER PROCEDURE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "532c4cef0c9de7631aa55c3fa24fb67472355a6316b7988d00459c19ada922de"
+grammar_sha256 = "43117181b800acc9d13359ce50f4b4ee3bd0ff78af9e7f066881f2c0c19818bd"
 uses = []
 status = "catalogued"
 
@@ -1808,9 +1808,9 @@ source = "doc.sql-alterroutine"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER ROUTINE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] IMMUTABLE | STABLE | VOLATILE [ ... ] [ RESTRICT ]",
+  "ALTER ROUTINE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { IMMUTABLE | STABLE | VOLATILE } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "b77aa423e7694fdf278c4efb46b00564009e66f71b5fb947d08f5b1559841abd"
+grammar_sha256 = "0b4d721e7984d5af3c81098848c553640b16600ca9cc191945b0e2f3b3a3dcf8"
 uses = []
 status = "catalogued"
 
@@ -1912,9 +1912,9 @@ source = "doc.sql-alterroutine"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "ALTER ROUTINE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER [ ... ] [ RESTRICT ]",
+  "ALTER ROUTINE <name> [ ( [ [ <argmode> ] [ <argname> ] <argtype> [, ...] ] ) ] { [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER } [ ... ] [ RESTRICT ]",
 ]
-grammar_sha256 = "60e9d415d5b100555555037f8198a8a061139b627469dd8946626261520b998b"
+grammar_sha256 = "6c60e9268b08c44190eba424d76e3e6c42490945b9e13e77a0ffb4d4f4f234af"
 uses = []
 status = "catalogued"
 

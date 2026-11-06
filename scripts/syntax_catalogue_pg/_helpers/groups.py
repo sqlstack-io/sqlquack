@@ -8,12 +8,14 @@ from scripts.syntax_catalogue._helpers.grammar import bare_words, required_skele
 from scripts.syntax_catalogue.models import FormGroup
 from scripts.syntax_catalogue_pg.constants import (
     ACTION_PLACEHOLDER,
+    BAR,
     CALL_NAME,
     CAST_OPERATOR,
     CHOICE,
     CLASH_SIZE,
     CLOSE_BRACE,
     CLOSE_BRACKET,
+    CLOSERS,
     DECISION_ACTIONS,
     DECISION_OPERATORS,
     DECISION_SIGNATURES,
@@ -25,6 +27,7 @@ from scripts.syntax_catalogue_pg.constants import (
     NAMED_ARGUMENT,
     OPEN_BRACE,
     OPEN_BRACKET,
+    OPENERS,
     OPERATOR_CHARS,
     PLACEHOLDER,
     PLAIN_CALL_WORDS,
@@ -119,28 +122,41 @@ def statement_labels(grammars: list[str]) -> list[str]:
     return labels
 
 
+def braced(alternative: str) -> str:
+    """An action as one unit: braced when it has a choice bar outside its own brackets."""
+    depth: int = 0
+    for character in alternative:
+        depth += character in OPENERS
+        depth -= character in CLOSERS
+        if character == BAR and depth == 0:
+            return f"{{ {alternative} }}"
+    return alternative
+
+
 def statement_groups(
     *, statements: list[str], definitions: list[Definition], heading: tuple[str, ...]
 ) -> tuple[list[FormGroup], set[str]]:
-    """One form per statement, and per action for a statement taking `<action> [, ...]`."""
+    """One form per statement and per action, labelled from the action as the page writes it."""
     actions: dict[str, Definition] = {
         d.name: d for d in definitions if d.name == ACTION_PLACEHOLDER and d.listed
     }
-    expanded: list[str] = []
+    expanded: dict[str, str] = {}
     decisions: set[str] = set()
     for grammar in statements:
         action: Definition | None = actions.get(ACTION_PLACEHOLDER)
         marker: str = f"<{ACTION_PLACEHOLDER}>"
         if action is not None and marker in grammar:
             decisions.add(DECISION_ACTIONS)
-            expanded += [grammar.replace(marker, alt, 1) for alt in action.alternatives]
+            for alt in action.alternatives:
+                expanded.setdefault(
+                    grammar.replace(marker, braced(alt), 1), grammar.replace(marker, alt, 1)
+                )
             continue
-        expanded.append(grammar)
-    unique: list[str] = list(dict.fromkeys(expanded))
-    labels: list[str] = statement_labels(unique)
+        expanded.setdefault(grammar, grammar)
+    labels: list[str] = statement_labels(list(expanded.values()))
     return [
         FormGroup(KIND_STATEMENT, label, (grammar,), heading)
-        for label, grammar in zip(labels, unique, strict=True)
+        for label, grammar in zip(labels, expanded, strict=True)
     ], decisions
 
 

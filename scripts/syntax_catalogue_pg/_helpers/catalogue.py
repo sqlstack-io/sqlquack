@@ -38,6 +38,7 @@ from scripts.syntax_catalogue_pg.constants import (
     DISPOSITION_FORM,
     DISPOSITION_RESTATED,
     DOCS_URL,
+    EXTRA_LEADS,
     FAMILIES,
     FUNCTIONS_FAMILY,
     FUNCTIONS_ID_PREFIX,
@@ -181,8 +182,8 @@ def add_definitions(*, build: PageBuild, definitions: list[Definition]) -> PageB
 def command_build(*, page: PgPage, hand: HandInputs) -> PageBuild:
     """A command page: its synopsis statements and actions, then its other blocks."""
     build: PageBuild = PageBuild()
-    leads: frozenset[str] = frozenset({page.title.split()[0]}) | (
-        frozenset({"TABLE", "WITH"}) if page.title.startswith("SELECT") else frozenset()
+    leads: frozenset[str] = frozenset({page.title.split()[0]}) | EXTRA_LEADS.get(
+        page.title.split()[0], frozenset()
     )
     statements: list[str] = []
     definitions: list[Definition] = []

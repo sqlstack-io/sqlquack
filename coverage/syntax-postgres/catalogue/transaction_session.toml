@@ -236,6 +236,19 @@ grammar = [
 ]
 grammar_sha256 = "415f9d9b3a33f57480c7f23da4f5a56230222d1d4c4e65062c98b0ad06409ed8"
 uses = []
+status = "absent_from_source"
+
+[[form]]
+id = "pg.transaction_session.set-role.reset-role"
+family = "transaction_session"
+source = "doc.sql-set-role"
+anchor = "Synopsis"
+kind = "statement"
+grammar = [
+  "RESET ROLE",
+]
+grammar_sha256 = "60d79c6a1a7556c2e04b80d919517df27b66b3f972537c31bd95481427ec6c91"
+uses = []
 status = "catalogued"
 
 [[form]]
@@ -252,6 +265,19 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "pg.transaction_session.set-role.set-role-none"
+family = "transaction_session"
+source = "doc.sql-set-role"
+anchor = "Synopsis"
+kind = "statement"
+grammar = [
+  "SET [ SESSION | LOCAL ] ROLE NONE",
+]
+grammar_sha256 = "d26322785ad83d8f35daba2580c4618a69631823e9f628ed3ad2807e4596d98d"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization"
 family = "transaction_session"
 source = "doc.sql-set-session-authorization"
@@ -261,6 +287,32 @@ grammar = [
   "SET [ SESSION | LOCAL ] SESSION AUTHORIZATION DEFAULT RESET SESSION AUTHORIZATION",
 ]
 grammar_sha256 = "ad5b880533abfc3cc857e22dd728592d4fb817b052b428c1ff5a2dbf5a416d4c"
+uses = []
+status = "absent_from_source"
+
+[[form]]
+id = "pg.transaction_session.set-session-authorization.reset-session-authorization"
+family = "transaction_session"
+source = "doc.sql-set-session-authorization"
+anchor = "Synopsis"
+kind = "statement"
+grammar = [
+  "RESET SESSION AUTHORIZATION",
+]
+grammar_sha256 = "d1000f802e9c3c49afc0de9840b1a93398830e769791845606a2a244b317b3d6"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default"
+family = "transaction_session"
+source = "doc.sql-set-session-authorization"
+anchor = "Synopsis"
+kind = "statement"
+grammar = [
+  "SET [ SESSION | LOCAL ] SESSION AUTHORIZATION DEFAULT",
+]
+grammar_sha256 = "6c75a10cc86aa1fe39bab00ce0e927ddf723887be85a56adb211aa3aff394d73"
 uses = []
 status = "catalogued"
 
