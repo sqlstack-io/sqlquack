@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `DROP`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -124,6 +124,15 @@ grants parse. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXIS
 are `rolemembers`. An unknown option (42601), `UNENCRYPTED PASSWORD` (0A000) and a reserved role name
 (42939) are refused. `CREATE POLICY` writes gram.y's defaults out: `(AS, PERMISSIVE)`, `(FOR, ALL)`
 and `(TO, (PUBLIC))`. `CREATE USER MAPPING FOR USER` is `FOR CURRENT_USER`.
+
+## DROP
+
+Every `DROP` statement becomes `DropObject`. One plain name is its `name`; anything else, such as a
+list, signatures, `name ON table`, `name USING method`, `(source AS target)` or `FOR type LANGUAGE l`,
+goes in `objects`, in order. `CASCADE`, `IF EXISTS`, `CONCURRENTLY` and `DROP DATABASE`'s `FORCE` are
+flags; `RESTRICT` is the default and adds nothing. As in gram.y, `DROP ROLE`, `USER` and `GROUP` all
+have kind `ROLE`, `PROCEDURAL` adds nothing, `DROP USER MAPPING FOR USER` is `FOR CURRENT_USER`, and
+`FORCE` given twice equals `FORCE`.
 
 ## ALTER
 

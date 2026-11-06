@@ -165,6 +165,16 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "only DROP INDEX may be CONCURRENTLY",
+            sql: "DROP TABLE CONCURRENTLY t",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DROP DATABASE takes no drop behavior",
+            sql: "DROP DATABASE d CASCADE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a role option gram.y does not know is refused (42601)",
             sql: "CREATE ROLE r foo",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1054,6 +1064,18 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "DROP USER is the DropRoleStmt DROP ROLE makes",
+            sql: "DROP USER r",
+            pointer: "/0/drop_object/kind",
+            expected_json: "\"ROLE\"",
+        },
+        ValueTestCase {
+            description: "a dropped list keeps every object in order",
+            sql: "DROP TABLE a, s.b",
+            pointer: "/0/drop_object/objects/1/identifier/name",
+            expected_json: "\"s.b\"",
+        },
         ValueTestCase {
             description: "a role option is the DefElem gram.y names it",
             sql: "CREATE ROLE r NOLOGIN",
