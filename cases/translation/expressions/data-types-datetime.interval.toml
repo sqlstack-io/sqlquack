@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.expressions.data-types-datetime.interval"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_year_month"
+description = "The page's examples: 2024-01-01 plus INTERVAL '1-1' YEAR TO MONTH is 2025-02-01, and plus '-1-1' is 2022-12-01; a month-end date shows how the month step clamps, which the page doesn't state, so the recording decides. Catches: the year and month parts swapped, the sign applied to one part only, or the interval read as days"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+  ["'2024-01-31'"],
+]
+query = "SELECT ordinal, d + INTERVAL '1-1' YEAR TO MONTH AS plus, d + INTERVAL '-1-1' YEAR TO MONTH AS less FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_day_second"
+description = "A day-time literal with fractional seconds added to a timestamp, as in the page's example. Catches: the fraction dropped, the day part read as hours, or the timestamp converted to a zone"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-01 08:08:08.99'"],
+  ["'2024-02-28 23:30:00'"],
+]
+query = "SELECT ordinal, t + INTERVAL '1 01:01:01.7878' DAY TO SECOND AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_plural"
+description = "The page: INTERVAL '3' DAY and INTERVAL '3' DAYS are equivalent; 2026-04-01 plus three days is 2026-04-04. Catches: the plural part rejected or read as another unit"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2026-04-01'"],
+]
+query = "SELECT ordinal, d + INTERVAL '3' DAYS AS plural, d + INTERVAL '3' DAY AS singular FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date"
+description = "NULL plus an interval literal; the page gives no special rule. Catches: a value returned for a NULL operand"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT ordinal, d + INTERVAL '2' MONTH AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

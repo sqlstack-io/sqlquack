@@ -66,6 +66,30 @@ pub(crate) fn tokens(sql: &str) -> Vec<Token<'_>> {
     tokens
 }
 
+/// Text whose literals or comments the tokens may misread: `$`, `E''`, unclosed or nested ones.
+pub(crate) fn unmodelled(tokens: &[Token<'_>]) -> Option<&'static str> {
+    tokens
+        .iter()
+        .enumerate()
+        .find_map(|(index, token)| match token.kind {
+            TokenKind::Symbol if token.is_symbol("$") => Some("a `$`"),
+            TokenKind::Quoted
+                if index > 0 && !token.spaced && tokens[index - 1].kind == TokenKind::Word =>
+            {
+                Some("a prefixed string")
+            }
+            TokenKind::Quoted if !token.text[1..].ends_with(&token.text[..1]) => {
+                Some("an unclosed quote")
+            }
+            TokenKind::BlockComment
+                if !token.text.ends_with("*/") || token.text[2..].contains("/*") =>
+            {
+                Some("an unclosed or nested comment")
+            }
+            _ => None,
+        })
+}
+
 /// Whether `byte` continues a bare word; bytes of non-ASCII characters count as word bytes.
 fn is_word_byte(byte: u8) -> bool {
     byte.is_ascii_alphanumeric() || byte == b'_' || !byte.is_ascii()
