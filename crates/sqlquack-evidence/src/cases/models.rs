@@ -190,6 +190,8 @@ pub struct LoadedCase {
     pub values: bool,
     /// Whether Snowflake is expected to refuse to compile the SQL.
     pub compile_error: bool,
+    /// Whether Snowflake is expected to raise an error: the case is tagged `error`.
+    pub expected_error: bool,
     /// The project functions the query calls.
     pub functions: Vec<CaseFunction>,
     /// The user overrides conversion uses.
