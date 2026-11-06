@@ -59,6 +59,39 @@ cases = ["cases/translation/functions/abs.toml#t005_extremes"]
 required = true
 
 [[obligation]]
+id = "sf.functions.accumulate.t001"
+form = "sf.functions.accumulate"
+kind = "type_combination"
+target = "INT with INT state"
+note = "The page's sum example over 3, 4 and 10, with a NULL row the page says is skipped (17)."
+catches = "the NULL row breaking the sum, or only the last row kept"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t001_sum"]
+required = true
+
+[[obligation]]
+id = "sf.functions.accumulate.t002"
+form = "sf.functions.accumulate"
+kind = "type_combination"
+target = "INT with ARRAY state"
+note = "The page's mean example over 3, 4 and 11, tracking the sum and the count in an ARRAY (6)."
+catches = "the count taken from all rows including NULL, or integer division"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t002_mean"]
+required = true
+
+[[obligation]]
+id = "sf.functions.accumulate.t003"
+form = "sf.functions.accumulate"
+kind = "null_argument"
+target = "input-expr"
+note = "Only NULL rows, which the page says give NULL."
+catches = "0 returned"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t003_null_input_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.acos.t001"
 form = "sf.functions.acos"
 kind = "type_combination"
@@ -9229,6 +9262,237 @@ cases = ["cases/translation/functions/div0null.toml#t006_neg_zero"]
 required = true
 
 [[obligation]]
+id = "sf.functions.dmf-avg.t001"
+form = "sf.functions.dmf-avg"
+kind = "type_combination"
+target = "NUMBER"
+note = "The values 1, 2 and 6 and a NULL: average 3."
+catches = "the NULL counted as 0 (2.25)"
+reading = "the page: the average of a FLOAT or NUMBER column"
+cases = ["cases/translation/functions/dmf-avg.toml#t001_average"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-avg.t002"
+form = "sf.functions.dmf-avg"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the average of a FLOAT or NUMBER column"
+cases = ["cases/translation/functions/dmf-avg.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-blank-count.t001"
+form = "sf.functions.dmf-blank-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "An empty string, three spaces, ' a ' and a NULL: 2 blank."
+catches = "spaces not counted, or NULL counted"
+reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
+cases = ["cases/translation/functions/dmf-blank-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-blank-count.t002"
+form = "sf.functions.dmf-blank-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are not blank."
+catches = "NULL counted as blank"
+reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
+cases = ["cases/translation/functions/dmf-blank-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-duplicate-count.t001"
+form = "sf.functions.dmf-duplicate-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "a three times, b once and NULL twice; the page does not say; the recording decides whether repeated values count once, every copy, or every extra copy."
+catches = "the NULL pair left out"
+reading = "the page: the count of column values that have duplicates, including NULL values"
+cases = ["cases/translation/functions/dmf-duplicate-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-duplicate-count.t002"
+form = "sf.functions.dmf-duplicate-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are counted as duplicates."
+catches = "0 returned"
+reading = "the page: the count of column values that have duplicates, including NULL values"
+cases = ["cases/translation/functions/dmf-duplicate-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-invalid-email-count.t001"
+form = "sf.functions.dmf-invalid-email-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid a.b@example.com and x+y@sub.example.org; invalid no-at, a..b@example.com (empty segment) and a@example.c (one-letter final label); and a NULL: 3 invalid."
+catches = "NULL counted, empty local segments accepted, or a one-letter final label accepted"
+reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
+cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-invalid-email-count.t002"
+form = "sf.functions.dmf-invalid-email-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are not counted."
+catches = "NULL counted as invalid"
+reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
+cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t001"
+form = "sf.functions.dmf-null-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Two NULLs among four values, one of them an empty string."
+catches = "the empty string counted as NULL, or non-NULL values counted"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t002"
+form = "sf.functions.dmf-null-count"
+kind = "type_combination"
+target = "NUMBER"
+note = "One NULL among three numbers."
+catches = "NUMBER columns rejected"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t002_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t003"
+form = "sf.functions.dmf-null-count"
+kind = "null_argument"
+target = "query"
+note = "A column of only NULLs, all counted."
+catches = "0 returned"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t003_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-percent.t001"
+form = "sf.functions.dmf-null-percent"
+kind = "type_combination"
+target = "VARCHAR"
+note = "One NULL among four values; the page does not say; the recording decides whether this reads 25 or 0.25."
+catches = "the NULL left out (0), or NULLs over non-NULLs (one third)"
+reading = "the page: the percentage of the column values that are NULL"
+cases = ["cases/translation/functions/dmf-null-percent.toml#t001_percent"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-percent.t002"
+form = "sf.functions.dmf-null-percent"
+kind = "null_argument"
+target = "query"
+note = "A column of only NULLs."
+catches = "0 returned"
+reading = "the page: the percentage of the column values that are NULL"
+cases = ["cases/translation/functions/dmf-null-percent.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-string-length-max.t001"
+form = "sf.functions.dmf-string-length-max"
+kind = "type_combination"
+target = "VARCHAR"
+note = "'abc', 'hello' and the multi-byte '\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9' (7 characters, 14 bytes), and a NULL."
+catches = "bytes counted instead of characters (14)"
+reading = "the page: the maximum string length of the non-NULL values"
+cases = ["cases/translation/functions/dmf-string-length-max.toml#t001_max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-string-length-max.t002"
+form = "sf.functions.dmf-string-length-max"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the maximum string length of the non-NULL values"
+cases = ["cases/translation/functions/dmf-string-length-max.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-true-count.t001"
+form = "sf.functions.dmf-true-count"
+kind = "type_combination"
+target = "BOOLEAN"
+note = "TRUE twice, FALSE once and a NULL: 2."
+catches = "FALSE or NULL counted"
+reading = "the page: the count of non-NULL values that are TRUE"
+cases = ["cases/translation/functions/dmf-true-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-true-count.t002"
+form = "sf.functions.dmf-true-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which are not TRUE."
+catches = "NULL counted as TRUE"
+reading = "the page: the count of non-NULL values that are TRUE"
+cases = ["cases/translation/functions/dmf-true-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-unique-count.t001"
+form = "sf.functions.dmf-unique-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "a twice, b, c and two NULLs: 3 unique non-NULL values."
+catches = "NULL counted as a value (4), or only values occurring once counted (2)"
+reading = "the page: the number of unique non-NULL values"
+cases = ["cases/translation/functions/dmf-unique-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-unique-count.t002"
+form = "sf.functions.dmf-unique-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which leave no unique non-NULL value."
+catches = "NULL counted as one value"
+reading = "the page: the number of unique non-NULL values"
+cases = ["cases/translation/functions/dmf-unique-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-zero-count.t001"
+form = "sf.functions.dmf-zero-count"
+kind = "type_combination"
+target = "NUMBER(38,3)"
+note = "Zero, 0.000 written with a scale, a small non-zero 0.001 and a NULL: 2."
+catches = "the NULL counted as zero, or 0.001 rounded to zero"
+reading = "the page: the count of column values equal to zero"
+cases = ["cases/translation/functions/dmf-zero-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-zero-count.t002"
+form = "sf.functions.dmf-zero-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which are not zero."
+catches = "NULL counted as zero"
+reading = "the page: the count of column values equal to zero"
+cases = ["cases/translation/functions/dmf-zero-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
 id = "sf.functions.editdistance.t001"
 form = "sf.functions.editdistance"
 kind = "type_combination"
@@ -10018,6 +10282,127 @@ note = "Negative values at the rounding step."
 catches = "CEIL or truncation used (FLOOR(-2.1) is -3)"
 reading = "the page: input_expr \"must be one of the numeric data types, such as DECFLOAT, FLOAT, or NUMBER\"; scale_expr an integer, default 0, negative allowed; the result keeps the input type"
 cases = ["cases/translation/functions/floor.toml#t008_negatives"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t001"
+form = "sf.functions.format-string-template"
+kind = "type_combination"
+target = "VARCHAR with VARCHAR and NUMBER"
+note = "The page's examples: one value, two values in order, and {:.2f} on 3.14159."
+catches = "the values substituted in reverse, or the precision ignored"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t001_examples"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t002"
+form = "sf.functions.format-string-template"
+kind = "type_combination"
+target = "VARCHAR, NUMBER(10,2), NUMBER"
+note = "The page's table example, with values from columns."
+catches = "the decimal printed without two places"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t002_columns"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t003"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "Two placeholders and one value, which the page says is an error."
+catches = "the missing value left empty, or the placeholder kept"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t003_count_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t004"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "The {:L} flag, which the page says is an error."
+catches = "the flag ignored"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t004_locale_flag"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t005"
+form = "sf.functions.format-string-template"
+kind = "null_argument"
+target = "value1"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an error, or an empty substitution where Snowflake prints something else"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t005_null_value1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t001"
+form = "sf.functions.generator.generator"
+kind = "type_combination"
+target = "none"
+note = "GENERATOR() with no arguments, which the page says gives 0 rows."
+catches = "an error, or one row"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t001_no_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t002"
+form = "sf.functions.generator.generator"
+kind = "type_combination"
+target = "TIMELIMIT"
+note = "TIMELIMIT 1, which generates some rows; only their existence is measured."
+catches = "TIMELIMIT ignored (0 rows)"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t002_timelimit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t003"
+form = "sf.functions.generator.generator"
+kind = "null_argument"
+target = "sec"
+note = "A NULL TIMELIMIT, which the page says is ignored, leaving no argument and 0 rows."
+catches = "an error"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t003_null_sec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t001"
+form = "sf.functions.generator.generator-rowcount"
+kind = "type_combination"
+target = "ROWCOUNT"
+note = "ROWCOUNT 5 and 0, and 5 with a generous TIMELIMIT."
+catches = "an off-by-one count, or TIMELIMIT taking precedence"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t001_rowcount"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t002"
+form = "sf.functions.generator.generator-rowcount"
+kind = "error_parity"
+target = "error"
+note = "ROWCOUNT -1, which the page says must be non-negative."
+catches = "0 rows returned"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t002_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t003"
+form = "sf.functions.generator.generator-rowcount"
+kind = "null_argument"
+target = "count"
+note = "A NULL ROWCOUNT, which the page says is ignored and gives 0 rows."
+catches = "an error"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t003_null_count"]
 required = true
 
 [[obligation]]
@@ -13529,6 +13914,50 @@ cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-
 required = true
 
 [[obligation]]
+id = "sf.functions.ipaddress-trunc.t001"
+form = "sf.functions.ipaddress-trunc"
+kind = "type_combination"
+target = "IPADDRESS, INTEGER"
+note = "The page example: 192.168.129.255 to 17 bits and 2001:db8:abcd:1234::1 to 49 bits, with the prefix from a column."
+catches = "the prefix read as host bits, or rounded to a byte"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t001_example"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t002"
+form = "sf.functions.ipaddress-trunc"
+kind = "type_combination"
+target = "IPADDRESS, INTEGER"
+note = "Prefixes 0 and 32 on an IPv4 address: all bits cleared, and the address unchanged."
+catches = "prefix 0 rejected, or 32 clearing the last bit"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t002_ends"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t003"
+form = "sf.functions.ipaddress-trunc"
+kind = "error_parity"
+target = "error"
+note = "Prefix 48 on an IPv4 address from a column, which the page says raises an error when it runs."
+catches = "the prefix clamped to 32, or NULL returned"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t003_family_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t004"
+form = "sf.functions.ipaddress-trunc"
+kind = "null_argument"
+target = "prefix-length"
+note = "A NULL prefix, which the page says gives NULL."
+catches = "the address returned unchanged, or an error"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t004_null_prefix_length"]
+required = true
+
+[[obligation]]
 id = "sf.functions.is-array.t001"
 form = "sf.functions.is-array"
 kind = "type_combination"
@@ -16293,6 +16722,39 @@ note = "The empty string, which has a defined digest."
 catches = "NULL for the empty string"
 reading = "the page: <msg> is a string; returns a 16-byte BINARY"
 cases = ["cases/translation/functions/md5-binary.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t001"
+form = "sf.functions.md5-number"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The page example (negative) and two strings whose digests read as positive and negative 128-bit integers within 38 digits."
+catches = "the digest read as unsigned, or as the first 64 bits"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t001_signed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t002"
+form = "sf.functions.md5-number"
+kind = "type_combination"
+target = "VARCHAR"
+note = "abc, whose digest as a signed integer has 39 digits, outside NUMBER(38,0) as the page warns; the page does not say; the recording decides whether this errors."
+catches = "the value truncated to 38 digits"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t002_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t003"
+form = "sf.functions.md5-number"
+kind = "null_argument"
+target = "msg"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "the digest of an empty string returned"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t003_null_msg"]
 required = true
 
 [[obligation]]
@@ -22391,6 +22853,28 @@ cases = ["cases/translation/functions/rtrimmed-length.toml#t003_blanks_only"]
 required = true
 
 [[obligation]]
+id = "sf.functions.sanitize-webhook-content.t001"
+form = "sf.functions.sanitize-webhook-content"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text without placeholders, which should come back unchanged, and text naming the webhook secret placeholder (the page does not say; the recording decides on the exact placeholder spelling)."
+catches = "plain text altered"
+reading = "the page: the message with its secret placeholders replaced by REDACTED"
+cases = ["cases/translation/functions/sanitize-webhook-content.toml#t001_plain"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sanitize-webhook-content.t002"
+form = "sf.functions.sanitize-webhook-content"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or an empty string"
+reading = "the page: the message with its secret placeholders replaced by REDACTED"
+cases = ["cases/translation/functions/sanitize-webhook-content.toml#t002_null_message"]
+required = true
+
+[[obligation]]
 id = "sf.functions.search.t001"
 form = "sf.functions.search"
 kind = "type_combination"
@@ -27909,6 +28393,39 @@ cases = ["cases/translation/functions/sysdate.toml#t003_null_none"]
 required = true
 
 [[obligation]]
+id = "sf.functions.system-typeof.t001"
+form = "sf.functions.system-typeof"
+kind = "type_combination"
+target = "literals"
+note = "The page's examples: 1, 1e10, 10000 and 'something'."
+catches = "the TYPEOF names returned (INTEGER, VARCHAR), or the storage suffix left out"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t001_examples"]
+required = true
+
+[[obligation]]
+id = "sf.functions.system-typeof.t002"
+form = "sf.functions.system-typeof"
+kind = "type_combination"
+target = "expression"
+note = "The page's CONCAT example, typed by its result length."
+catches = "the type of the first argument returned"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t002_concat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.system-typeof.t003"
+form = "sf.functions.system-typeof"
+kind = "null_argument"
+target = "expr"
+note = "A NULL literal, which the page example types as NULL[LOB]."
+catches = "NULL returned instead of a type name"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.systimestamp.t001"
 form = "sf.functions.systimestamp"
 kind = "type_combination"
@@ -28029,6 +28546,72 @@ note = "Large arguments saturate to 1 and -1."
 catches = "NaN from exp overflow"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/tanh.toml#t004_saturate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t001"
+form = "sf.functions.text-html"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "The page's example message, measured by its key and value once parsed."
+catches = "another key used, or the message returned bare"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t001_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t002"
+form = "sf.functions.text-html"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "A message with a double quote, which the JSON must escape so that it parses back."
+catches = "the quote left unescaped"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t002_quotes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t003"
+form = "sf.functions.text-html"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or the text null"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t003_null_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t001"
+form = "sf.functions.text-plain"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "The page's example message, measured by its key and value once parsed."
+catches = "another key used, or the message returned bare"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t001_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t002"
+form = "sf.functions.text-plain"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "A message with a double quote, which the JSON must escape so that it parses back."
+catches = "the quote left unescaped"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t002_quotes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t003"
+form = "sf.functions.text-plain"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or the text null"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t003_null_message"]
 required = true
 
 [[obligation]]
@@ -30198,6 +30781,39 @@ note = "A VARIANT holding the text {}. The page says any input other than an OBJ
 catches = "the error the page describes raised, or the string returned unchanged"
 reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t004_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t001"
+form = "sf.functions.to-query"
+kind = "type_combination"
+target = "SQL string"
+note = "A query text with two columns, read back from the FROM clause."
+catches = "the text returned as a string"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t001_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t002"
+form = "sf.functions.to-query"
+kind = "type_combination"
+target = "SQL string with a bind variable"
+note = "A bind variable converted with TO_NUMBER, as in the page example."
+catches = "the bind variable left unsubstituted"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t002_bind"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t003"
+form = "sf.functions.to-query"
+kind = "null_argument"
+target = "sql"
+note = "A NULL bind value, which the page says makes the function return NULL without an error; the page does not say; the recording decides on how a NULL result set reads."
+catches = "an error raised"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t003_null_sql"]
 required = true
 
 [[obligation]]

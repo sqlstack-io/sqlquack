@@ -1,0 +1,29 @@
+category = "translation"
+construct = "sf.functions.dmf-true-count"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_count"
+description = "TRUE twice, FALSE once and a NULL: 2. Catches: FALSE or NULL counted"
+columns = [{ name = "b", type = "BOOLEAN" }]
+rows = [
+  ["TRUE"],
+  ["TRUE"],
+  ["FALSE"],
+  ["NULL"],
+]
+query = "SELECT SNOWFLAKE.CORE.TRUE_COUNT(SELECT b FROM input) AS r"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_query"
+description = "Only NULLs, which are not TRUE. Catches: NULL counted as TRUE"
+columns = [{ name = "b", type = "BOOLEAN" }]
+rows = [
+  ["NULL"],
+  ["NULL"],
+]
+query = "SELECT SNOWFLAKE.CORE.TRUE_COUNT(SELECT b FROM input) AS r"
+order = "ordered"
+tags = ["null"]
