@@ -28,6 +28,7 @@ def convert(
         "loud_divergences_only": chosen.loud_divergences_only,
         "overrides": path_argument(chosen.overrides),
         "verified_overrides": dict(chosen.verified_overrides),
+        "compact": chosen.compact,
     }
     result: dict[str, Any] = loaded(lambda: convert_json(sql, json.dumps(request), path))
     report: dict[str, Any] = result["report"]

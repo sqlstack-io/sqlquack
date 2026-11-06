@@ -191,7 +191,8 @@ async function run() {
 		spans.push({ kind: refused ? 'warn' : 'error', span: diagnostic.span, text: tone(rendered(diagnostic, chars)) });
 	let body = '';
 	if (translate.status !== 'skipped') {
-		body = (translate.statements ?? []).map((s) => terminal(escape(s.sql))).join('');
+		// Translated SQL keeps its line layout and scrolls sideways; diagnostics still wrap.
+		body = (translate.statements ?? []).map((s) => `<pre class="terminal sql">${escape(s.sql)}</pre>`).join('');
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
 	const policy = translate.profile ? `policy: ${translate.profile}` : '';

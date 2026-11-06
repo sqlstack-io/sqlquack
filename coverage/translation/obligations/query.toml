@@ -91,39 +91,6 @@ cases = ["cases/translation/query/from.toml#t002_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.group-by.t001"
-form = "sf.query.group-by"
-kind = "type_combination"
-target = "column"
-note = "COUNT and SUM by g: a, b and the NULL group."
-catches = "the NULL keys split into separate groups, or dropped"
-reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
-cases = ["cases/translation/query/group-by.toml#t001_column"]
-required = true
-
-[[obligation]]
-id = "sf.query.group-by.t002"
-form = "sf.query.group-by"
-kind = "type_combination"
-target = "GROUP BY ALL"
-note = "GROUP BY ALL with g and an expression of g as the non-aggregate items."
-catches = "only the first item grouped, or the aggregate grouped"
-reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
-cases = ["cases/translation/query/group-by.toml#t002_all"]
-required = true
-
-[[obligation]]
-id = "sf.query.group-by.t003"
-form = "sf.query.group-by"
-kind = "null_argument"
-target = "NULL key"
-note = "Grouping by x, which holds two NULLs: one NULL group of 2."
-catches = "two NULL groups"
-reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
-cases = ["cases/translation/query/group-by.toml#t003_null_key"]
-required = true
-
-[[obligation]]
 id = "sf.query.group-by-cube.t001"
 form = "sf.query.group-by-cube"
 kind = "type_combination"
@@ -155,6 +122,42 @@ catches = "the two merged"
 reading = "group-by-cube: grouping sets for every combination of the CUBE items"
 cases = ["cases/translation/query/group-by-cube.toml#t003_null_key"]
 required = true
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t001"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "GROUPING SETS ((g), (x), ())"
+note = "Three sets: by g, by x and the grand total."
+catches = "the sets combined as a cross product"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t002"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "a repeated set"
+note = "GROUPING SETS ((g), (g)); the page does not say; the recording decides whether the repeated set returns its rows twice."
+catches = "duplicates removed where Snowflake keeps them (or the reverse)"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t003"
+form = "sf.query.group-by-grouping-sets"
+kind = "null_argument"
+target = "NULL key"
+note = "The NULL group of g against the row of the () set, where g is NULL because the set leaves it out."
+catches = "the two merged"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.t001"
@@ -278,28 +281,6 @@ cases = ["cases/translation/query/having.toml#t003_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.join.t001"
-form = "sf.query.join"
-kind = "type_combination"
-target = "self-join"
-note = "Pairs of employees in the same department, each pair once."
-catches = "the NULL department paired with itself"
-reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
-cases = ["cases/translation/query/join.toml#t001_self_join"]
-required = true
-
-[[obligation]]
-id = "sf.query.join.t002"
-form = "sf.query.join"
-kind = "null_argument"
-target = "NULL key"
-note = "A LEFT JOIN on a condition that compares to NULL."
-catches = "NULL = NULL treated as a match"
-reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
-cases = ["cases/translation/query/join.toml#t002_null_key"]
-required = true
-
-[[obligation]]
 id = "sf.query.join-lateral.t001"
 form = "sf.query.join-lateral"
 kind = "type_combination"
@@ -363,6 +344,28 @@ note = "RIGHT JOIN: every department; the NULL employee key matches nothing."
 catches = "the NULL key matched to a department"
 reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
 cases = ["cases/translation/query/join.join.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t005"
+form = "sf.query.join.join"
+kind = "type_combination"
+target = "self-join"
+note = "Pairs of employees in the same department, each pair once."
+catches = "the NULL department paired with itself"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t005_self_join"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t006"
+form = "sf.query.join.join"
+kind = "null_argument"
+target = "NULL key"
+note = "A LEFT JOIN on a condition that compares to NULL."
+catches = "NULL = NULL treated as a match"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t006_null_key"]
 required = true
 
 [[obligation]]
@@ -507,6 +510,480 @@ catches = "an error, or the offset applied as something other than 0"
 reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.limit.toml#t004_null_offset"]
 required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t001"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH, PATTERN (ANY_ROW UP+)"
+note = "The page's rising-price example on its ABCD prices: matches d 2 to 4 and d 5 to 8, with MATCH_NUMBER, MATCH_SEQUENCE_NUMBER and CLASSIFIER for each row."
+catches = "a non-greedy UP+, a match allowed to start at d 1, or CLASSIFIER returning the next symbol"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t001_all_rows_up"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t002"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ONE ROW PER MATCH, AFTER MATCH SKIP TO LAST up"
+note = "The page's V-shape example: one summary row per match with FIRST and LAST of d and the counts of each symbol; skipping to the last rising row lets the next V start there."
+catches = "all rows returned instead of one, or matching resumed after the match so a shared row is not reused"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t002_one_row_v_shape"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t003"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH WITH UNMATCHED ROWS"
+note = "The page: WITH UNMATCHED ROWS adds the rows outside any match, whose MEASURES are NULL."
+catches = "unmatched rows dropped, or given a match number"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t003_with_unmatched_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t004"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN (up*) with OMIT EMPTY MATCHES"
+note = "The page: OMIT EMPTY MATCHES drops empty matches from the output, but an empty match still increments MATCH_NUMBER."
+catches = "empty matches shown, or MATCH_NUMBER counting only non-empty matches"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t004_omit_empty_matches"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t005"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "AFTER MATCH SKIP TO NEXT ROW"
+note = "The page: TO NEXT ROW continues after the first row of the match, so matches overlap and a row can appear in several matches."
+catches = "matching resumed past the last row, so the overlapping matches are missing"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse AFTER MATCH SKIP TO NEXT ROW"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t006"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "null_argument"
+target = "NULL price"
+note = "A NULL price makes price > LAG(price) NULL, which is not TRUE, so the NULL row and the row after it are not rising rows; the page gives no other rule."
+catches = "NULL compared as zero or as a match, so a run continues through the NULL"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t006_null_price"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t007"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "error_parity"
+target = "ONE ROW PER MATCH without PARTITION BY or MEASURES"
+note = "The page: omitting PARTITION BY and MEASURES with ONE ROW PER MATCH raises \"SELECT with no columns\"."
+catches = "an empty result or every input row returned instead of the error"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t007_no_columns"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t008"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "no ROWS PER MATCH clause"
+note = "The page: ONE ROW PER MATCH is the default, so each match gives one summary row."
+catches = "all rows of each match returned"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t009"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH with no empty-match option"
+note = "The page: SHOW EMPTY MATCHES is the default of ALL ROWS PER MATCH, so the empty matches of up* appear."
+catches = "empty matches omitted by default"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t010"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH SHOW EMPTY MATCHES"
+note = "The page: SHOW EMPTY MATCHES returns each empty match as a row whose CLASSIFIER is NULL."
+catches = "empty matches omitted, or given a symbol"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse ALL ROWS PER MATCH SHOW EMPTY MATCHES"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t011"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "no AFTER MATCH SKIP clause"
+note = "The page: AFTER MATCH SKIP PAST LAST ROW is the default, so matches of up{2} do not overlap."
+catches = "overlapping matches returned by default"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t012"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "AFTER MATCH SKIP PAST LAST ROW"
+note = "The page: PAST LAST ROW continues after the last row of the match, so matches of up{2} do not overlap."
+catches = "matching resumed inside the previous match"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t013"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "AFTER MATCH SKIP TO FIRST up"
+note = "The page: TO FIRST <symbol> continues at the first row mapped to the symbol. With any_row up+ on ABCD this gives d 2-4, 3-4, 5-8, 6-8 and 7-8; the resumed row is never the first row of the match."
+catches = "matching resumed past the last row (2-4 and 5-8 only), or at the last rising row"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t014"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "AFTER MATCH SKIP TO up, without FIRST or LAST"
+note = "The page: TO <symbol> without FIRST or LAST means TO LAST <symbol>, so with any_row up+ on ABCD the matches are d 2-4 and 5-8."
+catches = "the bare symbol read as its first row (2-4, 3-4, 5-8, 6-8, 7-8)"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse AFTER MATCH SKIP TO <symbol> without FIRST or LAST"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t015"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN quantifier ?"
+note = "The page: ? matches zero or one row, greedily."
+catches = "the optional row never taken, or taken more than once"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t016"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN quantifier {n,m}"
+note = "The page: {2,3} matches two to three rows, greedily."
+catches = "fewer rows taken than available, or more than three"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t017"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN quantifier {n,}"
+note = "The page: {2,} matches two or more rows, greedily."
+catches = "a single rising row matched (XYZ d 8 and d 10), or the run of three cut short"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t018"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN quantifier {,m}"
+note = "The page: {,2} matches zero to two rows, greedily."
+catches = "more than two rows taken"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t019"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "reluctant quantifier +?"
+note = "The page: a quantifier followed by ? is reluctant and matches as few rows as possible."
+catches = "the reluctant quantifier read as greedy"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t020"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN alternation |"
+note = "The page: | matches either alternative; d 6 to 8 match both up and high, and the recording settles which symbol they are classified as."
+catches = "only one alternative matched, or a row matching neither taken into the run"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t021"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN anchors ^ and $"
+note = "The page: ^ matches at the start of the partition and $ at its end."
+catches = "the anchors ignored, so matches inside the partition returned"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t022"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN PERMUTE"
+note = "The page: PERMUTE(down, up) matches the symbols in any order, preferring the order written."
+catches = "only the written order matched"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t023"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN exclusion {- -}"
+note = "The page: rows matched inside {- -} are excluded from the output of ALL ROWS PER MATCH but still match."
+catches = "the excluded rows returned, or the match rejected"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t024"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "MEASURES with RUNNING and FINAL"
+note = "The page: with ALL ROWS PER MATCH, RUNNING aggregates up to the current row and FINAL over the whole match."
+catches = "RUNNING and FINAL giving the same value on every row"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t025"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "MEASURES alias without AS"
+note = "The page writes MEASURES <expr> [AS] <alias>, so the alias may follow the expression directly."
+catches = "the alias refused or read as part of the expression"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse a MEASURES alias without AS"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t026"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "DEFINE with LAG and NEXT"
+note = "The page: PREV is not available in DEFINE, where LAG reads the previous row of the window frame; NEXT reads the next row and equals LEAD. The peaks are d 4 and 8 of ABCD and d 5 and 8 of XYZ."
+catches = "LAG or NEXT reading the wrong row, or NULL at the partition edge treated as a match"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t027"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "a PATTERN symbol without DEFINE"
+note = "The page: a symbol used in PATTERN but not defined in DEFINE matches every row."
+catches = "the undefined symbol refused or matching nothing"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t028"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PARTITION BY two expressions"
+note = "The page: PARTITION BY takes a list of expressions; rows match only within one combination of them."
+catches = "only the first key used, so matches cross partitions"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t029"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "MEASURES without PARTITION BY"
+note = "The page: without PARTITION BY the whole input is one partition."
+catches = "rows partitioned anyway, or matches starting over at each c"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t030"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "MEASURES with PREV under ALL ROWS PER MATCH"
+note = "The page: in MEASURES, PREV navigates to the previous row within the current match, so it is NULL on each match's first row (d 3 and d 6 of ABCD)."
+catches = "PREV read as LAG over the partition, giving the row before the match"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t031"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "error_parity"
+target = "PREV in DEFINE"
+note = "The page: PREV is currently not available in the DEFINE subclause, so Snowflake refuses the query."
+catches = "PREV in DEFINE translated and run as LAG"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t032"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ORDER BY <expr> DESC"
+note = "The page: orderItem takes ASC or DESC; with ORDER BY d DESC the rows are read from d 10 down, so up+ matches d 9-8, d 4 and d 1."
+catches = "the direction ignored, giving the ascending matches 3-4 and 6-8"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t033"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ORDER BY <expr> NULLS FIRST"
+note = "The page: orderItem takes NULLS FIRST or LAST; with the NULL d (price 10) first, d 1 rises from it, so up+ matches d 1, 3-4 and 6-8."
+catches = "NULLS FIRST ignored, so the NULL row sorts last and d 1 does not match"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t034"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ORDER BY <expr> DESC NULLS LAST"
+note = "The page: orderItem takes DESC with NULLS LAST; the NULL d (price 10) comes after d 1 and does not rise, so up+ matches d 9-8, d 4 and d 1."
+catches = "NULLS LAST ignored, so DESC's default NULLS FIRST puts the NULL row first and d 10 rises from it"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t035"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "<symbol>.<column> inside a window function"
+note = "The page's FINAL FIRST(LT45.price) shape: inside a window function a predicated column reference looks only at rows mapped to the symbol, so FIRST(down.price) is the first down row, not the start row."
+catches = "the symbol ignored, giving FIRST and LAST over every row of the match"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t036"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "<symbol>.<column> outside a window function"
+note = "The page: outside a window function <symbol>.<column> is LAST(<symbol>.<column>), allowed in MEASURES with FINAL semantics; under ONE ROW PER MATCH it is the match's last down price (ABCD 1-4: 36, XYZ 1-5: 24, XYZ 6-8: 50)."
+catches = "read as the last row's price (42, 65, 54)"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t037"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PREV and NEXT with offset and default in MEASURES"
+note = "The page: PREV(expr, offset, default) and NEXT(expr, offset, default); PREV stays within the match and NEXT runs to the end of the window, with the default where the row is outside the frame (XYZ d 10 has no row two ahead)."
+catches = "the offset read as 1, or NULL instead of the default"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t038"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "MATCH_RECOGNIZE without ORDER BY"
+note = "The page makes ORDER BY optional."
+catches = "none: no case can tell a right translation from a wrong one"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = false
+reason = "Without ORDER BY the order of rows within a partition is unspecified, so the matches, MATCH_NUMBER and every navigation have no documented result to compare."
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t039"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "error_parity"
+target = "<symbol>.<column> in MEASURES under RUNNING semantics"
+note = "The page's limitations table: <symbol>.<column>, plain or in LAST, is not available in MEASURES (Running), which ALL ROWS PER MATCH makes the default, so Snowflake refuses the query."
+catches = "the RUNNING form translated and run"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t040"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN alternation and concatenation without parentheses"
+note = "The page: the alternative operator has precedence over the concatenation operator, so start_row down | up up reads as start_row (down | up) up."
+catches = "read as (start_row down) | (up up)"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = []
+required = true
+held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.operators-query.except.t001"
@@ -663,26 +1140,40 @@ cases = ["cases/translation/query/operators-query.union.toml#t004_null_rows"]
 required = true
 
 [[obligation]]
-id = "sf.query.order-by.t001"
-form = "sf.query.order-by"
+id = "sf.query.order-by.all.t001"
+form = "sf.query.order-by.all"
 kind = "type_combination"
-target = "expression key"
-note = "An expression key, n modulo 3, with ordinal breaking ties."
-catches = "the expression ignored"
+target = "ORDER BY ALL DESC"
+note = "ORDER BY ALL DESC over (s, n): s first, then n, both descending, NULL first by default."
+catches = "only the first column ordered, or ASC applied"
 reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
-cases = ["cases/translation/query/order-by.toml#t001_expression"]
+cases = []
 required = true
+held = "waits on #119: the polyglot check compares ORDER BY ALL"
 
 [[obligation]]
-id = "sf.query.order-by.t003"
-form = "sf.query.order-by"
+id = "sf.query.order-by.all.t002"
+form = "sf.query.order-by.all"
 kind = "null_argument"
-target = "NULL key"
-note = "DESC without a NULLS clause, which puts NULL first by default."
-catches = "NULL placed last"
+target = "NULLS LAST"
+note = "ORDER BY ALL ASC NULLS LAST."
+catches = "the NULLS clause ignored"
 reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
-cases = ["cases/translation/query/order-by.toml#t003_null_default"]
+cases = []
 required = true
+held = "waits on #119: the polyglot check compares ORDER BY ALL"
+
+[[obligation]]
+id = "sf.query.order-by.all.t003"
+form = "sf.query.order-by.all"
+kind = "type_combination"
+target = "ORDER BY ALL"
+note = "ORDER BY ALL over (n, s)."
+catches = "only n ordered"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = []
+required = true
+held = "waits on #119: the polyglot check compares ORDER BY ALL"
 
 [[obligation]]
 id = "sf.query.order-by.orderitem.t001"
@@ -729,6 +1220,28 @@ cases = ["cases/translation/query/order-by.orderitem.toml#t004_null_key"]
 required = true
 
 [[obligation]]
+id = "sf.query.order-by.orderitem.t005"
+form = "sf.query.order-by.orderitem"
+kind = "type_combination"
+target = "expression key"
+note = "An expression key, n modulo 3, with ordinal breaking ties."
+catches = "the expression ignored"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t005_expression"]
+required = true
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.t006"
+form = "sf.query.order-by.orderitem"
+kind = "null_argument"
+target = "NULL key"
+note = "DESC without a NULLS clause, which puts NULL first by default."
+catches = "NULL placed last"
+reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
+cases = ["cases/translation/query/order-by.orderitem.toml#t006_null_default"]
+required = true
+
+[[obligation]]
 id = "sf.query.pivot.t001"
 form = "sf.query.pivot"
 kind = "type_combination"
@@ -759,39 +1272,6 @@ note = "Group b's jan holds only NULL, so its sum is NULL; a missing month is NU
 catches = "NULL read as 0"
 reading = "pivot: rotates the values of a column into columns, aggregating a second column for each listed value; unlisted values are dropped"
 cases = ["cases/translation/query/pivot.toml#t003_null_values"]
-required = true
-
-[[obligation]]
-id = "sf.query.qualify.t001"
-form = "sf.query.qualify"
-kind = "type_combination"
-target = "ROW_NUMBER() = 1"
-note = "The largest x of each group, with NULL x last and ordinal breaking ties."
-catches = "QUALIFY applied before the window is computed, or all rows kept"
-reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
-cases = ["cases/translation/query/qualify.toml#t001_row_number"]
-required = true
-
-[[obligation]]
-id = "sf.query.qualify.t002"
-form = "sf.query.qualify"
-kind = "type_combination"
-target = "GROUP BY, HAVING and QUALIFY"
-note = "Groups with two or more rows, then the group with the largest count by RANK."
-catches = "QUALIFY applied before HAVING"
-reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
-cases = ["cases/translation/query/qualify.toml#t002_after_having"]
-required = true
-
-[[obligation]]
-id = "sf.query.qualify.t003"
-form = "sf.query.qualify"
-kind = "null_argument"
-target = "NULL window value"
-note = "A window value that is NULL for one row (LAG over the first row): QUALIFY drops it."
-catches = "the NULL row kept"
-reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
-cases = ["cases/translation/query/qualify.toml#t003_null_window"]
 required = true
 
 [[obligation]]
@@ -858,6 +1338,83 @@ note = "A window value that is NULL for one row (LAG over the first row): QUALIF
 catches = "the NULL row kept"
 reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
 cases = ["cases/translation/query/qualify.select-from-qualify.toml#t003_null_window"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t001"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "numeric USING, INCREMENT BY 1"
+note = "The page's UNIX-time example: the missing values between 2 and 5 are generated with NULL in the other columns."
+catches = "no rows generated, or the generated rows given a copied value instead of NULL"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t001_numeric"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t002"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "DATE USING, INCREMENT BY INTERVAL '1 day'"
+note = "A DATE column resampled by one day: 2024-01-03 is generated between 2024-01-02 and 2024-01-04."
+catches = "the interval read in another unit, or the DATE column turned into a timestamp"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t002_date_interval"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t003"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "PARTITION BY with IS_GENERATED() AS g and BUCKET_START()"
+note = "Gaps are filled within each partition, the partition column is kept in generated rows, IS_GENERATED() marks them and BUCKET_START() gives each row's interval start."
+catches = "gaps filled across partitions, the partition column NULL in generated rows, or the metadata columns missing"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t003_partition_metadata"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t004"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "INCREMENT BY 5 with values off the grid"
+note = "The page: slices align to 1970-01-01 00:00:00, as TIME_SLICE does; for a numeric column that is read as zero, an inference, so 7 and 18 fall in the buckets starting 5 and 15 and the bucket starting 10 is missing. The page does not say what k holds in the generated row; the recording decides."
+catches = "slices aligned to the smallest value (7, 12, 17) instead of to zero"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t004_aligned_buckets"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t005"
+form = "sf.query.resample"
+kind = "error_parity"
+target = "numeric USING with INCREMENT BY INTERVAL '1 second'"
+note = "The page's example: 009954, RESAMPLE INCREMENT BY has to be numeric type when USING parameter is numeric."
+catches = "the interval accepted as a number of seconds"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t005_interval_on_numeric"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t006"
+form = "sf.query.resample"
+kind = "error_parity"
+target = "INCREMENT BY 0"
+note = "The page: a numeric INCREMENT BY constant must be positive (greater than 0)."
+catches = "a zero step accepted, looping or returning the input unchanged"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t006_zero_increment"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t007"
+form = "sf.query.resample"
+kind = "null_argument"
+target = "NULL value and NULL time"
+note = "A NULL in a value column is kept as input; the page does not say how a NULL in the USING column is treated; the recording decides."
+catches = "the NULL value replaced, or a NULL time placed in a bucket"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t007_null"]
 required = true
 
 [[obligation]]
@@ -949,157 +1506,157 @@ cases = ["cases/translation/query/select.select.toml#t005_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-rename.t001"
-form = "sf.query.select.select-exclude-rename"
+id = "sf.query.select.select.t006"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* EXCLUDE \u2026 RENAME \u2026"
 note = "department_id excluded and first_name renamed fn."
 catches = "RENAME applied before EXCLUDE, or the renamed column moved"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-rename.toml#t001_exclude_rename"]
+cases = ["cases/translation/query/select.select.toml#t006_exclude_rename"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-rename.t002"
-form = "sf.query.select.select-exclude-rename"
+id = "sf.query.select.select.t007"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
 catches = "the NULL first name dropped with the rename"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-rename.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t007_exclude_rename_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-replace.t001"
-form = "sf.query.select.select-exclude-replace"
+id = "sf.query.select.select.t008"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* EXCLUDE \u2026 REPLACE \u2026"
 note = "department_id excluded and last_name replaced by its upper case, in place."
 catches = "the replaced column moved to the end, or added twice"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-replace.toml#t001_exclude_replace"]
+cases = ["cases/translation/query/select.select.toml#t008_exclude_replace"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-replace.t002"
-form = "sf.query.select.select-exclude-replace"
+id = "sf.query.select.select.t009"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "REPLACE over the NULL first name: the expression gets NULL."
 catches = "NULL replaced by an empty string"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-replace.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t009_exclude_replace_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-replace-rename.t001"
-form = "sf.query.select.select-exclude-replace-rename"
+id = "sf.query.select.select.t010"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* EXCLUDE \u2026 REPLACE \u2026 RENAME \u2026"
 note = "All three modifiers: department_id excluded, employee_id plus 1000 replaced, then last_name renamed."
 catches = "the modifiers applied in another order"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-replace-rename.toml#t001_all_three"]
+cases = ["cases/translation/query/select.select.toml#t010_all_three"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-exclude-replace-rename.t002"
-form = "sf.query.select.select-exclude-replace-rename"
+id = "sf.query.select.select.t011"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
 catches = "the NULL row dropped"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-exclude-replace-rename.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t011_all_three_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-rename.t001"
-form = "sf.query.select.select-ilike-rename"
+id = "sf.query.select.select.t012"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* ILIKE \u2026 RENAME \u2026"
 note = "Columns matching '%name', with last_name renamed ln."
 catches = "RENAME applied to a column the pattern dropped, or before the pattern"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-rename.toml#t001_ilike_rename"]
+cases = ["cases/translation/query/select.select.toml#t012_ilike_rename"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-rename.t002"
-form = "sf.query.select.select-ilike-rename"
+id = "sf.query.select.select.t013"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
 catches = "the NULL first name dropped"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-rename.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t013_ilike_rename_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-replace.t001"
-form = "sf.query.select.select-ilike-replace"
+id = "sf.query.select.select.t014"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* ILIKE \u2026 REPLACE \u2026"
 note = "Columns matching '%name', with first_name replaced by its length."
 catches = "the replaced column moved"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-replace.toml#t001_ilike_replace"]
+cases = ["cases/translation/query/select.select.toml#t014_ilike_replace"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-replace.t002"
-form = "sf.query.select.select-ilike-replace"
+id = "sf.query.select.select.t015"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "LENGTH of the NULL first name is NULL."
 catches = "NULL read as length 0"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-replace.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t015_ilike_replace_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-replace-rename.t001"
-form = "sf.query.select.select-ilike-replace-rename"
+id = "sf.query.select.select.t016"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* ILIKE \u2026 REPLACE \u2026 RENAME \u2026"
 note = "ILIKE '%name', last_name upper-cased, then renamed."
 catches = "RENAME applied before REPLACE (the replacement lost)"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-replace-rename.toml#t001_ilike_replace_rename"]
+cases = ["cases/translation/query/select.select.toml#t016_ilike_replace_rename"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-ilike-replace-rename.t002"
-form = "sf.query.select.select-ilike-replace-rename"
+id = "sf.query.select.select.t017"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
 catches = "the NULL row dropped"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-ilike-replace-rename.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t017_ilike_replace_rename_null_values"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-replace-rename.t001"
-form = "sf.query.select.select-replace-rename"
+id = "sf.query.select.select.t018"
+form = "sf.query.select.select"
 kind = "type_combination"
 target = "* REPLACE \u2026 RENAME \u2026"
 note = "department_id doubled, then employee_id renamed id."
 catches = "the modifiers swapped"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-replace-rename.toml#t001_replace_rename"]
+cases = ["cases/translation/query/select.select.toml#t018_replace_rename"]
 required = true
 
 [[obligation]]
-id = "sf.query.select.select-replace-rename.t002"
-form = "sf.query.select.select-replace-rename"
+id = "sf.query.select.select.t019"
+form = "sf.query.select.select"
 kind = "null_argument"
 target = "NULL values"
 note = "The NULL department plus 1 stays NULL; first_name renamed."
 catches = "NULL read as 0"
 reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
-cases = ["cases/translation/query/select.select-replace-rename.toml#t002_null_values"]
+cases = ["cases/translation/query/select.select.toml#t019_replace_rename_null_values"]
 required = true
 
 [[obligation]]
