@@ -154,7 +154,7 @@ coverage/syntax-postgres`), bound to catalogue commit b71461e6 and to the Postgr
 on `wip/pg-local-parser` f0fcd1e0 (tree 7627aaef), where `local_parser = "postgres"` runs that
 parser's strict entry point in the checker's isolated worker: any parser error rejects the case.
 It claims 8,704 of 22,228 obligations and the 1,031 forms the reviewers' first five batches
-approved; a statement the parser keeps as an opaque command is never verified. It holds the 5,372
+approved; a statement the parser keeps as an opaque command is never verified. It holds the 5,121
 cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
 coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
 from here.
