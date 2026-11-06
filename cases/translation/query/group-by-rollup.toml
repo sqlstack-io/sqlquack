@@ -1,0 +1,54 @@
+category = "translation"
+construct = "sf.query.group-by-rollup"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_rollup"
+description = "Per-group sums and the grand total. GROUPING(g) tells a subtotal row from the NULL group. Catches: the grand total missing, or the subtotal confused with the NULL group"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT g, GROUPING(g) AS gg, SUM(x) AS s FROM input GROUP BY ROLLUP (g) ORDER BY gg, g NULLS LAST"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_two_items"
+description = "ROLLUP over two items: (g, x), (g) and (). Catches: a CUBE (adding (x)) instead"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT g, x, GROUPING(g) AS gg, GROUPING(x) AS gx, COUNT(*) AS n FROM input GROUP BY ROLLUP (g, x) ORDER BY gg, gx, g NULLS LAST, x NULLS LAST"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_key"
+description = "The NULL group beside the grand total, both with g NULL, told apart by GROUPING. Catches: the two rows merged"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT g, GROUPING(g) AS gg, COUNT(*) AS n FROM input GROUP BY ROLLUP (g) HAVING g IS NULL ORDER BY gg"
+order = "ordered"
+tags = ["null"]

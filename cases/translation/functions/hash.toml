@@ -1,0 +1,68 @@
+category = "translation"
+construct = "sf.functions.hash"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "HASH of integers, compared with Snowflake's own values. Catches: another hash function or seed"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["10"],
+  ["-1"],
+  ["123456789012345"],
+]
+query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "hash"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_varchar"
+description = "HASH of strings, including multi-byte. Catches: another hash or a Latin-1 encoding"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'"],
+  ["'\u00e9'"],
+  ["'10'"],
+]
+query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "hash"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_scale_stable"
+description = "HASH of 10 as NUMBER(38,0), NUMBER(10,2) and FLOAT, which the page says agree. Catches: the scale or the FLOAT bits hashed (FALSE)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(10,2)" }, { name = "c", type = "FLOAT" }]
+rows = [
+  ["10", "10.00", "10e0"],
+]
+query = "SELECT HASH(a) = HASH(b) AS r1, HASH(a) = HASH(c) AS r2, HASH(a) AS h FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "hash"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_multi"
+description = "HASH of two arguments in both orders. Catches: arguments combined order-independently"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["'x'", "1"],
+]
+query = "SELECT HASH(a, b) AS r1, HASH(b, a) AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "hash"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_expr"
+description = "NULL input, which the page says still hashes. Catches: NULL propagated instead of a hash value"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["0"],
+]
+query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "hash"
+tags = ["null"]
