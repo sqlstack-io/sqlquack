@@ -9,6 +9,11 @@ from scripts.syntax_catalogue.models import FormGroup
 from scripts.syntax_catalogue_pg.constants import (
     ACTION_PLACEHOLDER,
     CALL_NAME,
+    CAST_OPERATOR,
+    CHOICE,
+    CLASH_SIZE,
+    CLOSE_BRACE,
+    CLOSE_BRACKET,
     DECISION_ACTIONS,
     DECISION_OPERATORS,
     DECISION_SIGNATURES,
@@ -16,23 +21,25 @@ from scripts.syntax_catalogue_pg.constants import (
     KIND_CALL,
     KIND_SPECIAL,
     KIND_STATEMENT,
+    LABEL_WORDS,
+    NAMED_ARGUMENT,
+    OPEN_BRACE,
+    OPEN_BRACKET,
     OPERATOR_CHARS,
+    PLACEHOLDER,
+    PLAIN_CALL_WORDS,
 )
 from scripts.syntax_catalogue_pg.models import Definition, Signature
 
-LABEL_WORDS: int = 4
-PLACEHOLDER: re.Pattern[str] = re.compile(r"<([^<>]+)>")
-
 
 def without_choices(text: str) -> str:
-    """The text without `{ a | b }` choices, or with each choice's first branch when that
-    leaves no keyword."""
+    """The text without `{ a | b }` choices, or their first branches when that leaves no keyword."""
     out: list[str] = []
     depth: int = 0
     for ch in text:
-        if ch == "{":
+        if ch == OPEN_BRACE:
             depth += 1
-        elif ch == "}":
+        elif ch == CLOSE_BRACE:
             depth = max(0, depth - 1)
         elif depth == 0:
             out.append(ch)
@@ -42,10 +49,7 @@ def without_choices(text: str) -> str:
     return CHOICE.sub(lambda m: m.group(1).split("|")[0], text)
 
 
-CHOICE: re.Pattern[str] = re.compile(r"\{([^{}]*)\}")
-
-
-def skeleton_tokens(grammar: str, *, placeholders: bool) -> list[str]:
+def skeleton_tokens(*, grammar: str, placeholders: bool) -> list[str]:
     """Required keywords of a grammar, and its required placeholders' names when asked."""
     text: str = without_choices(required_without_options(grammar))
     if not placeholders:
@@ -61,9 +65,9 @@ def required_without_options(grammar: str) -> str:
     out: list[str] = []
     depth: int = 0
     for ch in grammar:
-        if ch == "[":
+        if ch == OPEN_BRACKET:
             depth += 1
-        elif ch == "]":
+        elif ch == CLOSE_BRACKET:
             depth = max(0, depth - 1)
         elif depth == 0:
             out.append(ch)
@@ -84,28 +88,29 @@ def keywords(grammar: str) -> list[str]:
 
 
 def statement_labels(grammars: list[str]) -> list[str]:
-    """A distinguishing label per statement: its required keywords after the shared ones,
-    then, for labels that still clash, the keywords only that statement has."""
+    """A distinguishing label per statement: required keywords after the shared ones, then own."""
     if len(grammars) == 1:
         return [""]
-    keyword_lists: list[list[str]] = [skeleton_tokens(g, placeholders=False) for g in grammars]
+    keyword_lists: list[list[str]] = [
+        skeleton_tokens(grammar=g, placeholders=False) for g in grammars
+    ]
     common: int = common_prefix(keyword_lists)
     labels: list[str] = [slug("-".join(w[common:][:LABEL_WORDS])) for w in keyword_lists]
     for label in sorted(set(labels)):
         clashing: list[int] = [i for i, other in enumerate(labels) if other == label]
-        if len(clashing) < 2 and label:
+        if len(clashing) < CLASH_SIZE and label:
             continue
         shared: set[str] = set.intersection(*(set(keywords(grammars[i])) for i in clashing))
         for index in clashing:
             own: list[str] = [w for w in keywords(grammars[index]) if w not in shared]
             extra: str = slug("-".join(dict.fromkeys(own)))
             if not label and not extra:
-                full: list[str] = skeleton_tokens(grammars[index], placeholders=True)
+                full: list[str] = skeleton_tokens(grammar=grammars[index], placeholders=True)
                 extra = slug("-".join(full[common:][:LABEL_WORDS]))
             labels[index] = "-".join(p for p in (label, extra) if p)
     for label in sorted(set(labels)):
         clashing = [i for i, other in enumerate(labels) if other == label]
-        if len(clashing) < 2:
+        if len(clashing) < CLASH_SIZE:
             continue
         for index in clashing:
             names: list[str] = PLACEHOLDER.findall(required_without_options(grammars[index]))
@@ -162,21 +167,16 @@ def operator_groups(signatures: list[Signature]) -> list[FormGroup]:
 
 
 def is_special(grammar: str) -> bool:
-    """True for a signature with its own grammar: no call parentheses, a keyword inside them
-    other than VARIADIC, or named-argument or cast syntax."""
+    """True for a signature with its own grammar: no call parentheses, keywords or casts."""
     match: re.Match[str] | None = CALL_NAME.match(grammar)
-    if match is None or "=>" in grammar or "::" in grammar:
+    if match is None or NAMED_ARGUMENT in grammar or CAST_OPERATOR in grammar:
         return True
     words: list[str] = [w for w in bare_words(grammar[match.end() :]) if w.isupper()]
     return any(w not in PLAIN_CALL_WORDS for w in words)
 
 
-PLAIN_CALL_WORDS: frozenset[str] = frozenset({"VARIADIC", "DEFAULT"})
-
-
 def call_groups(signatures: list[Signature]) -> tuple[list[FormGroup], set[str]]:
-    """Call forms per function name, and special forms per function name and keyword skeleton
-    (rule 7), merging type overloads of one special syntax into one form."""
+    """Call forms per function name, and special forms per function name and keyword skeleton."""
     plain: dict[str, FormGroup] = {}
     merged: dict[tuple[str, tuple[str, ...]], FormGroup] = {}
     for signature in signatures:
@@ -185,7 +185,7 @@ def call_groups(signatures: list[Signature]) -> tuple[list[FormGroup], set[str]]
         if is_special(grammar):
             key: tuple[str, tuple[str, ...]] = (
                 name,
-                tuple(skeleton_tokens(grammar, placeholders=False)),
+                tuple(skeleton_tokens(grammar=grammar, placeholders=False)),
             )
             found: FormGroup | None = merged.get(key)
             grammars: tuple[str, ...] = (found.grammars if found else ()) + (grammar,)
@@ -198,7 +198,7 @@ def call_groups(signatures: list[Signature]) -> tuple[list[FormGroup], set[str]]
         plain[name] = FormGroup(KIND_CALL, name, tuple(dict.fromkeys(grammars)), heading)
     calls: list[FormGroup] = list(plain.values())
     specials: list[FormGroup] = list(merged.values())
-    labels: list[str] = special_labels(specials, taken={slug(g.label) for g in calls})
+    labels: list[str] = special_labels(specials=specials, taken={slug(g.label) for g in calls})
     specials = [
         FormGroup(g.kind, label, g.grammars, g.heading)
         for g, label in zip(specials, labels, strict=True)
@@ -217,15 +217,14 @@ def function_name(grammar: str) -> str:
     return match.group(1).lower() if match else ""
 
 
-def special_labels(specials: list[FormGroup], *, taken: set[str]) -> list[str]:
-    """Labels for special forms: the name and its required keywords, then the keywords only
-    that form has where two would share a label or one would take a call form's label."""
+def special_labels(*, specials: list[FormGroup], taken: set[str]) -> list[str]:
+    """Labels for special forms: the name and its required keywords, then its own keywords."""
     bases: list[str] = []
     for group in specials:
         grammar: str = group.grammars[0]
         name: str = function_name(grammar)
         tail: list[str] = [
-            w for w in skeleton_tokens(grammar, placeholders=False) if w.lower() != name
+            w for w in skeleton_tokens(grammar=grammar, placeholders=False) if w.lower() != name
         ][:LABEL_WORDS]
         noparens: bool = CALL_NAME.match(grammar) is None and not tail
         base: str = slug("-".join([name, *tail])) or "form"
@@ -233,7 +232,7 @@ def special_labels(specials: list[FormGroup], *, taken: set[str]) -> list[str]:
     labels: list[str] = list(bases)
     for label in sorted(set(bases)):
         clashing: list[int] = [i for i, b in enumerate(bases) if b == label]
-        if len(clashing) < 2 and label not in taken:
+        if len(clashing) < CLASH_SIZE and label not in taken:
             continue
         sets: list[set[str]] = [set(keywords_of(specials[i])) for i in clashing]
         shared: set[str] = set.intersection(*sets) if len(sets) > 1 else set()

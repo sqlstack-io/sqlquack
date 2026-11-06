@@ -3,82 +3,20 @@
 from __future__ import annotations
 
 import tomllib
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from scripts.syntax_catalogue.exceptions import CatalogueError
-from scripts.syntax_catalogue_pg.constants import HAND_BASES, HAND_KINDS
-
-BLOCK_KINDS: frozenset[str] = frozenset(
-    {"form", "calls", "definition", "restated", "fragment", "hand"}
+from scripts.syntax_catalogue_pg.constants import (
+    BLOCK_KEYS,
+    BLOCK_KINDS,
+    FOLD_KEYS,
+    FORM_KEYS,
+    HAND_BASES,
+    HAND_KINDS,
+    PAGE_KEYS,
+    SECTION_KEYS,
 )
-BLOCK_KEYS: frozenset[str] = frozenset(
-    {
-        "source",
-        "block_sha256",
-        "first_line",
-        "disposition",
-        "kind",
-        "family",
-        "label",
-        "labels",
-        "whole",
-        "names",
-        "listed",
-        "forms",
-        "reason",
-    }
-)
-FORM_KEYS: frozenset[str] = frozenset(
-    {"source", "anchor", "kind", "label", "family", "grammar", "basis", "page_sha256"}
-)
-SECTION_KEYS: frozenset[str] = frozenset({"source", "anchor", "reason"})
-PAGE_KEYS: frozenset[str] = frozenset({"source", "reason"})
-FOLD_KEYS: frozenset[str] = frozenset({"source", "forms", "reason"})
-
-
-@dataclass(frozen=True)
-class HandForm:
-    """A form read by hand from prose, a table, examples or a synopsis that needs reading."""
-
-    source: str
-    anchor: str
-    kind: str
-    label: str
-    family: str
-    grammars: tuple[str, ...]
-    basis: str
-    page_sha256: str
-
-
-@dataclass(frozen=True)
-class Disposition:
-    """How one synopsis block outside a command synopsis is catalogued."""
-
-    source: str
-    block_sha256: str
-    disposition: str
-    kind: str
-    family: str
-    label: str
-    labels: tuple[str, ...]
-    whole: bool
-    names: tuple[str, ...]
-    listed: bool
-    forms: tuple[str, ...]
-    reason: str
-
-
-@dataclass
-class HandInputs:
-    """Everything hand.toml holds."""
-
-    forms: dict[str, list[HandForm]] = field(default_factory=dict)
-    blocks: dict[tuple[str, str], Disposition] = field(default_factory=dict)
-    sections: dict[tuple[str, str], str] = field(default_factory=dict)
-    pages: dict[str, str] = field(default_factory=dict)
-    folds: dict[str, tuple[tuple[str, ...], str]] = field(default_factory=dict)
-    used: set[tuple[str, str]] = field(default_factory=set)
+from scripts.syntax_catalogue_pg.models import Disposition, HandForm, HandInputs
 
 
 def check_keys(*, table: str, row: dict[str, object], allowed: frozenset[str]) -> None:

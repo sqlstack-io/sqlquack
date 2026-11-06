@@ -1,16 +1,11 @@
-"""Point the shared obligation builder at the PostgreSQL root.
-
-The shared builder in scripts/syntax_obligations keys its submission styles and hand-written
-limits by the Snowflake form prefix. `install` adds a style for every Postgres family and form
-context, and reads [[limit]] rows of `pg.` forms, so the shared derivation, numbering and
-rendering run unchanged on the Postgres catalogue.
-"""
+"""Point the shared obligation builder at the PostgreSQL root (see the root README)."""
 
 from __future__ import annotations
 
 import json
 import re
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
@@ -28,11 +23,11 @@ from scripts.syntax_obligations_pg.constants import (
     FORM_FILLS,
     FORM_PREFIX,
     PG_CLASS_RULES,
+    PROTECTED_TEXT,
 )
 
-SHARED_GRAMMAR_READ = obligations._grammar_read  # noqa: SLF001
-SHARED_CLASS_RULES = derive.CLASS_RULES
-PROTECTED: re.Pattern[str] = re.compile(r"(<[^<>]*>|'[^']*'|\"[^\"]*\")")
+_shared_grammar_read: Callable[..., list[str]] = obligations._grammar_read  # noqa: SLF001
+_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
 
 
 def style(*, form: str, family: str) -> FormStyle:
@@ -48,8 +43,7 @@ def style(*, form: str, family: str) -> FormStyle:
 
 
 def pg_limit_drafts(*, path: Path, family: str, forms: set[str]) -> list[Draft]:
-    """The hand-written limits of one family's `pg.` forms, in file order, as the shared
-    reader builds them for `sf.` forms."""
+    """The hand-written limits of one family's `pg.` forms, as the shared reader builds them."""
     if not path.exists():
         return []
     drafts: list[Draft] = []
@@ -83,24 +77,22 @@ def pg_limit_drafts(*, path: Path, family: str, forms: set[str]) -> list[Draft]:
 
 
 def pg_grammar_read(*, form: Row, readings: dict[str, Row]) -> list[str]:
-    """The shared grammar read, with the bare words of a `pg.` form without a reading in upper
-    case: Postgres synopses write keywords and type names in lower case and every placeholder
-    in angle brackets, while the shared deriver reads a lower-case word as a placeholder."""
-    lines: list[str] = SHARED_GRAMMAR_READ(form=form, readings=readings)
+    """The shared grammar read, a form's bare words upper-cased unless it has a reading."""
+    lines: list[str] = _shared_grammar_read(form=form, readings=readings)
     if str(form["id"]) in readings:
         return lines
-    return [
-        "".join(
-            part if PROTECTED.fullmatch(part) else part.upper() for part in PROTECTED.split(line)
-        )
-        for line in lines
-    ]
+    return [_upper_bare_words(line) for line in lines]
+
+
+def _upper_bare_words(line: str) -> str:
+    """The line with everything outside placeholders and quoted text in upper case."""
+    parts: list[str] = PROTECTED_TEXT.split(line)
+    return "".join(part if PROTECTED_TEXT.fullmatch(part) else part.upper() for part in parts)
 
 
 def install() -> None:
-    """Register the Postgres styles, class rules, grammar read and limit reader with the
-    shared builder."""
-    derive.CLASS_RULES = (*PG_CLASS_RULES, *SHARED_CLASS_RULES)
+    """Register the Postgres styles, class rules, grammar read and limit reader."""
+    derive.CLASS_RULES = (*PG_CLASS_RULES, *_shared_class_rules)
     setattr(obligations, "_grammar_read", pg_grammar_read)  # noqa: B010
     for family in FAMILIES:
         styles: dict[str, FormStyle] = shared.FAMILY_STYLES.setdefault(family, {})

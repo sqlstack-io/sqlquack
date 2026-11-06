@@ -36,7 +36,9 @@ from scripts.syntax_catalogue_pg.constants import (
     SYNOPSIS_DIV,
     UTILITY_TITLES,
 )
+from scripts.syntax_catalogue_pg.exceptions import PgCatalogueError
 from scripts.syntax_catalogue_pg.models import PgPage, Section, Signature, SynopsisBlock
+from scripts.syntax_catalogue_pg.types import Spans
 
 
 def command_family(title: str) -> str:
@@ -59,25 +61,25 @@ def command_files(tree: Path) -> list[Path]:
     files: dict[str, str] = dict(ENTITY_FILE.findall((sgml / "ref" / "allfiles.sgml").read_text()))
     part: re.Match[str] | None = COMMANDS_PART.search((sgml / "reference.sgml").read_text())
     if part is None:
-        raise ValueError("reference.sgml has no sql-commands part")
+        raise PgCatalogueError("reference.sgml has no sql-commands part")
     return [tree / REF_DIR / files[name] for name in ENTITY_REF.findall(part.group(1))]
 
 
-def heading_of(title: str, stack: tuple[Section, ...], skip: str) -> tuple[str, ...]:
+def heading_of(*, title: str, stack: tuple[Section, ...], skip: str) -> tuple[str, ...]:
     """The page title followed by the titles of the sections below the page's own."""
     return (title, *(s.title for s in stack if s.tag != skip and s.title))
 
 
 def blocks_in(*, text: str, title: str, page_tag: str) -> list[SynopsisBlock]:
     """Every synopsis block of a page with its heading path."""
-    spans = section_at(text)
+    spans: Spans = section_at(text)
     blocks: list[SynopsisBlock] = []
     for match in SYNOPSIS.finditer(text):
-        stack: tuple[Section, ...] = sections_of(spans, match.start())
+        stack: tuple[Section, ...] = sections_of(spans=spans, offset=match.start())
         grammar: str = synopsis_text(match.group(1))
         blocks.append(
             SynopsisBlock(
-                heading=heading_of(title, stack, page_tag),
+                heading=heading_of(title=title, stack=stack, skip=page_tag),
                 text=grammar,
                 sha256=sha256(grammar),
                 in_synopsis_div=any(s.tag == SYNOPSIS_DIV for s in stack),
@@ -88,7 +90,7 @@ def blocks_in(*, text: str, title: str, page_tag: str) -> list[SynopsisBlock]:
 
 def signatures_in(*, text: str, title: str) -> list[Signature]:
     """Every function or operator signature of a page, without the table header rows."""
-    spans = section_at(text)
+    spans: Spans = section_at(text)
     found: list[Signature] = []
     for match in FUNC_SIGNATURE.finditer(text):
         raw: str = match.group(1)
@@ -97,7 +99,11 @@ def signatures_in(*, text: str, title: str) -> list[Signature]:
             continue
         found.append(
             Signature(
-                heading=heading_of(title, sections_of(spans, match.start()), "sect1"),
+                heading=heading_of(
+                    title=title,
+                    stack=sections_of(spans=spans, offset=match.start()),
+                    skip="sect1",
+                ),
                 grammar=grammar,
                 literals=tuple(literals(raw)),
                 is_function=bool(FUNCTION_TAG.search(raw)),
@@ -113,7 +119,7 @@ def command_page(path: Path) -> PgPage:
     page_id: re.Match[str] | None = REFENTRY_ID.search(text)
     title_match: re.Match[str] | None = REFENTRY_TITLE.search(text)
     if page_id is None or title_match is None:
-        raise ValueError(f"{path}: no refentry id or title")
+        raise PgCatalogueError(f"{path}: no refentry id or title")
     title: str = plain(title_match.group(1))
     return PgPage(
         id=page_id.group(1),
@@ -126,18 +132,18 @@ def command_page(path: Path) -> PgPage:
     )
 
 
-def chapter_pages(path: Path, family: str, texts: dict[str, str] | None) -> list[PgPage]:
-    """Each sect1 of a chapter file as a page, and the chapter's own text when it has one."""
+def chapter_pages(*, path: Path, family: str) -> tuple[list[PgPage], dict[str, str]]:
+    """Each sect1 of a chapter file as a page, and the chapter's own text, with page texts."""
     text: str = path.read_text()
     pages: list[PgPage] = []
+    texts: dict[str, str] = {}
     intro_end: int = len(text)
     for match in SECT1.finditer(text):
         intro_end = min(intro_end, match.start())
         body: str = match.group(0)
         title: re.Match[str] | None = re.search(r"<title>(.*?)</title>", body, re.S)
         name: str = plain(title.group(1)) if title else match.group(1)
-        if texts is not None:
-            texts[match.group(1)] = body
+        texts[match.group(1)] = body
         pages.append(
             PgPage(
                 id=match.group(1),
@@ -152,8 +158,7 @@ def chapter_pages(path: Path, family: str, texts: dict[str, str] | None) -> list
     chapter: re.Match[str] | None = re.search(r'<chapter\s+id="([^"]+)"', text)
     if chapter is not None:
         intro: str = text[:intro_end]
-        if texts is not None:
-            texts[chapter.group(1)] = intro
+        texts[chapter.group(1)] = intro
         title = re.search(r"<title>(.*?)</title>", intro, re.S)
         name = plain(title.group(1)) if title else chapter.group(1)
         pages.insert(
@@ -168,16 +173,21 @@ def chapter_pages(path: Path, family: str, texts: dict[str, str] | None) -> list
                 signatures=signatures_in(text=intro, title=name),
             ),
         )
-    return pages
+    return pages, texts
 
 
-def load_pages(tree: Path, texts: dict[str, str] | None = None) -> list[PgPage]:
-    """Every pinned page: the SQL command pages, then the SQL-language chapter pages."""
+def load_pages(tree: Path) -> tuple[list[PgPage], dict[str, str]]:
+    """Every pinned page, command pages then chapter pages, and each chapter page's text."""
     pages: list[PgPage] = [command_page(path) for path in command_files(tree)]
+    texts: dict[str, str] = {}
     for chapter in CHAPTERS:
-        pages += chapter_pages(tree / SGML_DIR / chapter, CHAPTER_FAMILIES[chapter], texts)
+        found, chapter_texts = chapter_pages(
+            path=tree / SGML_DIR / chapter, family=CHAPTER_FAMILIES[chapter]
+        )
+        pages += found
+        texts |= chapter_texts
     ids: list[str] = [page.id for page in pages]
     duplicated: set[str] = {page_id for page_id in ids if ids.count(page_id) > 1}
     if duplicated:
-        raise ValueError(f"page ids declared twice: {sorted(duplicated)}")
-    return pages
+        raise PgCatalogueError(f"page ids declared twice: {sorted(duplicated)}")
+    return pages, texts

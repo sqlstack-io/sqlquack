@@ -11,6 +11,7 @@ from pathlib import Path
 
 from scripts.syntax_catalogue.exceptions import CatalogueError
 from scripts.syntax_catalogue_pg.constants import (
+    FETCH_RECORD,
     TARBALL_NAME,
     TARBALL_SHA256,
     TARBALL_URL,
@@ -19,16 +20,11 @@ from scripts.syntax_catalogue_pg.constants import (
     UTC_FORMAT,
 )
 
-FETCH_RECORD: str = "fetch.json"
-
 
 def file_sha256(path: Path) -> str:
     """The hex SHA-256 of a file's bytes."""
-    digest = hashlib.sha256()
     with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+        return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
 def fetch(cache: Path) -> Path:
@@ -36,7 +32,9 @@ def fetch(cache: Path) -> Path:
     cache.mkdir(parents=True, exist_ok=True)
     tarball: Path = cache / TARBALL_NAME
     if not tarball.exists():
-        request = urllib.request.Request(TARBALL_URL, headers={"User-Agent": USER_AGENT})
+        request: urllib.request.Request = urllib.request.Request(
+            TARBALL_URL, headers={"User-Agent": USER_AGENT}
+        )
         with urllib.request.urlopen(request, timeout=120) as response:
             tarball.write_bytes(response.read())
         (cache / FETCH_RECORD).write_text(

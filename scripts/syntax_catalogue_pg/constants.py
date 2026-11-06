@@ -33,8 +33,6 @@ INDEX_FILES: tuple[str, ...] = (
     GRAM_Y,
     KWLIST_H,
 )
-# The chapters of "The SQL Language" part whose sections document syntax outside the command
-# reference; every synopsis block and function signature in them is catalogued or reviewed.
 CHAPTERS: tuple[str, ...] = (
     "syntax.sgml",
     "ddl.sgml",
@@ -107,7 +105,6 @@ HAND_KINDS: frozenset[str] = frozenset({KIND_STATEMENT, KIND_CALL, KIND_SPECIAL}
 BLOCK_DISPOSITIONS: frozenset[str] = frozenset({"form", "restated", "fragment"})
 SIGNATURE_DISPOSITIONS: frozenset[str] = frozenset({"out_of_scope"})
 
-# Statement families of command pages, by refentry title.
 QUERY_TITLES: re.Pattern[str] = re.compile(r"^(SELECT|SELECT INTO|VALUES)$")
 DML_TITLES: re.Pattern[str] = re.compile(r"^(INSERT|UPDATE|DELETE|MERGE|COPY|TRUNCATE)$")
 SESSION_TITLES: re.Pattern[str] = re.compile(
@@ -204,7 +201,6 @@ OPERATOR_CHARS: dict[str, str] = {
     "]": "rbracket",
     ".": "dot",
 }
-# Data type tables catalogued one form per row: (table id, anchor, whether column 2 is aliases).
 TYPE_TABLES: dict[str, tuple[tuple[str, str, bool], ...]] = {
     "datatype": (("datatype-table", "Data Types table", True),),
     "datatype-oid": (("datatype-oid-table", "Object Identifier Types table", False),),
@@ -215,3 +211,116 @@ TYPE_TABLES: dict[str, tuple[tuple[str, str, bool], ...]] = {
 }
 USER_AGENT: str = "sqlquack-syntax-catalogue-pg/1"
 UTC_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
+
+FUNCTIONS_FAMILY: str = "functions"
+FUNCTIONS_ID_PREFIX: str = "functions-"
+DISPOSITION_FORM: str = "form"
+DISPOSITION_CALLS: str = "calls"
+DISPOSITION_DEFINITION: str = "definition"
+DISPOSITION_RESTATED: str = "restated"
+ANCHOR_FIELD: str = "anchor"
+CLASH_SIZE: int = 2
+RETURN_TAIL: re.Pattern[str] = re.compile(r"\)\s*(?:returns\s+)?[A-Za-z_][\w \[\]]*$")
+TYPE_ROW: re.Pattern[str] = re.compile(r"<row>\s*<entry>(.*?)</entry>\s*<entry>(.*?)</entry>", re.S)
+TABLE: str = r'<table id="{id}">(.*?)</table>'
+TBODY: re.Pattern[str] = re.compile(r"<tbody>(.*?)</tbody>", re.S)
+
+FETCH_RECORD: str = "fetch.json"
+AUDIT_FILE: str = "audit.toml"
+
+RULES_START: str = "\n%%\n"
+KEYWORD_LINE: re.Pattern[str] = re.compile(r'^PG_KEYWORD\("([^"]+)", (\w+), (\w+), (\w+)\)', re.M)
+RULE_HEAD: re.Pattern[str] = re.compile(r"^([a-zA-Z_]\w*):", re.M)
+TOKEN: re.Pattern[str] = re.compile(r"'(?:\\.|[^'])'|[A-Za-z_]\w*|%prec\s+\w+")
+PUNCTUATION_TOKENS: dict[str, str] = {
+    "TYPECAST": "::",
+    "DOT_DOT": "..",
+    "COLON_EQUALS": ":=",
+    "EQUALS_GREATER": "=>",
+    "LESS_EQUALS": "<=",
+    "GREATER_EQUALS": ">=",
+    "NOT_EQUALS": "<>",
+}
+SINGLE_QUOTE: str = "'"
+QUOTE_CHARS: str = "\"'"
+BACKSLASH: str = "\\"
+OPEN_BRACE: str = "{"
+CLOSE_BRACE: str = "}"
+OPEN_BRACKET: str = "["
+CLOSE_BRACKET: str = "]"
+NAMED_ARGUMENT: str = "=>"
+CAST_OPERATOR: str = "::"
+WORD_JOINER: str = "_"
+
+LABEL_WORDS: int = 4
+CHOICE: re.Pattern[str] = re.compile(r"\{([^{}]*)\}")
+PLAIN_CALL_WORDS: frozenset[str] = frozenset({"VARIADIC", "DEFAULT"})
+ALTERNATIVE_VERBS: frozenset[str] = frozenset({"is one of", "can be one of", "can be"})
+
+BLOCK_KINDS: frozenset[str] = frozenset(
+    {"form", "calls", "definition", "restated", "fragment", "hand"}
+)
+BLOCK_KEYS: frozenset[str] = frozenset(
+    {
+        "source",
+        "block_sha256",
+        "first_line",
+        "disposition",
+        "kind",
+        "family",
+        "label",
+        "labels",
+        "whole",
+        "names",
+        "listed",
+        "forms",
+        "reason",
+    }
+)
+FORM_KEYS: frozenset[str] = frozenset(
+    {"source", "anchor", "kind", "label", "family", "grammar", "basis", "page_sha256"}
+)
+SECTION_KEYS: frozenset[str] = frozenset({"source", "anchor", "reason"})
+PAGE_KEYS: frozenset[str] = frozenset({"source", "reason"})
+FOLD_KEYS: frozenset[str] = frozenset({"source", "forms", "reason"})
+
+STATEMENT_RULE: str = "stmt"
+TOPLEVEL_RULE: str = "toplevel_stmt"
+EXPRESSION_RULES: tuple[str, ...] = (
+    "a_expr",
+    "b_expr",
+    "c_expr",
+    "func_expr_common_subexpr",
+    "func_expr_windowless",
+    "AexprConst",
+    "SimpleTypename",
+    "GenericType",
+    "Numeric",
+    "Bit",
+    "Character",
+    "ConstDatetime",
+    "ConstInterval",
+    "json_aggregate_func",
+    "xmltable",
+    "json_table",
+    "table_ref",
+    "joined_table",
+    "select_clause",
+    "simple_select",
+)
+MAX_SET: int = 60
+LEAD_TOKEN: re.Pattern[str] = re.compile(r"<[^<>]*>|\{|[A-Za-z_][A-Za-z0-9_]*")
+MIN_CLAUSE_KEYWORDS: int = 2
+KEYWORD_LISTS: frozenset[str] = frozenset(
+    {
+        "unreserved_keyword",
+        "col_name_keyword",
+        "type_func_name_keyword",
+        "reserved_keyword",
+        "bare_label_keyword",
+    }
+)
+PLACEHOLDER: re.Pattern[str] = re.compile(r"<([^<>]+)>")
+DEFINITION_HEAD: re.Pattern[str] = re.compile(r"^\\s*<[^<>]+>\\s*::=\\s*")
+MAX_EXPANSION: int = 64
+MAX_KEYWORD_ALTERNATIVE: int = 4

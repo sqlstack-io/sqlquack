@@ -7,6 +7,8 @@ from pathlib import Path
 
 DEFAULT_ROOT: Path = Path("coverage/syntax-postgres")
 RECEIPTS_DIR: str = "receipts"
+OBLIGATIONS_DIR: str = "obligations"
+CASES_DIR: str = "cases"
 DEFAULT_FOCUS: Path = Path("focus/postgres.toml")
 FORM_PREFIX: str = "pg"
 FAMILIES: tuple[str, ...] = (
@@ -25,13 +27,9 @@ OBLIGATIONS_HEADER: str = (
     "the catalogue grammar and limits.toml.\n# See coverage/syntax-postgres/README.md."
 )
 
-# The session every case runs under: canonical SHOW names, string values (engine.toml
-# default_session of the Postgres referee).
 SESSION: dict[str, str] = {"TimeZone": "UTC", "statement_timeout": "30s"}
 CAPTURE_ROLLED_BACK: str = "execute_in_rolled_back_transaction"
 CAPTURE_AUTOCOMMIT: str = "execute_autocommit_in_throwaway_database"
-# Leading words that need an autocommit capture; the same list as the referee's
-# engines/postgres/engine.toml `autocommit`, which the referee checks every case against.
 AUTOCOMMIT_LEADS: tuple[tuple[str, ...], ...] = tuple(
     tuple(words.split())
     for words in (
@@ -63,7 +61,6 @@ AUTOCOMMIT_LEADS: tuple[tuple[str, ...], ...] = tuple(
 DIGEST_WIDTH: int = 12
 STAGE_KEY: str = "stage"
 
-# Placeholder fills shared by every family: names as the 18.6 synopses spell them.
 FILLS: dict[str, str] = {
     "with_query": "w1 AS ( SELECT 1 )",
     "from_item": "t1",
@@ -118,7 +115,6 @@ FILLS: dict[str, str] = {
     "v numeric": "1.5",
     "s integer": "1",
 }
-# Fills one form needs instead of the shared ones.
 FORM_FILLS: dict[str, dict[str, str]] = {
     "pg.expressions.datatype-datetime.typed-datetime-literal": {
         "type": "TIMESTAMP",
@@ -127,11 +123,9 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "pg.expressions.sql-syntax-lexical.type-string": {"string": "'1'"},
     "pg.functions.string.upper": {"text": "'m'"},
 }
-# What a `...` renders as, by the keyword before it (the shared builder's elision keys).
 FORM_ELISIONS: dict[str, dict[str, str]] = {
     "pg.expressions.conditional.case-searched": {"WHEN": "FALSE THEN 2"},
 }
-# Forms that are not statements or expressions on their own: (prefix, suffix) around them.
 TYPE_CONTEXT: tuple[str, str] = ("SELECT CAST ( NULL AS ", " )")
 FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "pg.query.queries-table-expressions.join-on": ("SELECT * FROM ", ""),
@@ -153,8 +147,6 @@ FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {
     "expressions": ("SELECT ( ", " )"),
 }
 
-# Placeholders of the operator and function tables that name a value of a type, not a type:
-# operands of class expression, so no string-in-place-of-a-type negative is derived for them.
 PG_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     (
         re.compile(
@@ -165,3 +157,5 @@ PG_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
         "expression",
     ),
 )
+PROTECTED_TEXT: re.Pattern[str] = re.compile(r"(<[^<>]*>|'[^']*'|\"[^\"]*\")")
+LEADING_WORD: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|\S")

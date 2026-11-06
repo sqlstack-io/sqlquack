@@ -11,10 +11,8 @@ from scripts.syntax_catalogue._helpers.grammar import (
     normalize,
     required_skeleton,
 )
-from scripts.syntax_catalogue_pg.constants import PHRASE_LINE, WHERE_PHRASE
+from scripts.syntax_catalogue_pg.constants import ALTERNATIVE_VERBS, PHRASE_LINE, WHERE_PHRASE
 from scripts.syntax_catalogue_pg.models import Definition, Segment
-
-ALTERNATIVE_VERBS: frozenset[str] = frozenset({"is one of", "can be one of", "can be"})
 
 
 def indent(line: str) -> int:
@@ -44,7 +42,7 @@ def segments(text: str) -> list[Segment]:
     return found
 
 
-def split_at(lines: list[str], *, starts: Callable[[str, str], bool]) -> list[str]:
+def split_at(*, lines: list[str], starts: Callable[[str, str], bool]) -> list[str]:
     """Join lines into productions, starting a new one where `starts(line, current)` says so."""
     out: list[list[str]] = []
     depth: int = 0
@@ -61,19 +59,23 @@ def split_at(lines: list[str], *, starts: Callable[[str, str], bool]) -> list[st
     return [normalize(" ".join(chunk)) for chunk in out]
 
 
-def statements(lines: list[str], leads: frozenset[str]) -> list[str]:
+def statement_start(*, line: str, current: str, leads: frozenset[str]) -> bool:
+    """True when an unindented line with a lead word follows a statement with keywords."""
+    words: list[str] = bare_words(line)
+    return (
+        indent(line) == 0
+        and bool(words)
+        and words[0] in leads
+        and bool(bare_words(required_skeleton(current)))
+    )
+
+
+def statements(*, lines: list[str], leads: frozenset[str]) -> list[str]:
     """Statements of a synopsis segment: each starts at an unindented line with a lead word."""
-
-    def starts(line: str, current: str) -> bool:
-        words: list[str] = bare_words(line)
-        return (
-            indent(line) == 0
-            and bool(words)
-            and words[0] in leads
-            and bool(bare_words(required_skeleton(current)))
-        )
-
-    return split_at(lines, starts=starts)
+    return split_at(
+        lines=lines,
+        starts=lambda line, current: statement_start(line=line, current=current, leads=leads),
+    )
 
 
 def alternatives(lines: list[str]) -> list[str]:
@@ -82,7 +84,7 @@ def alternatives(lines: list[str]) -> list[str]:
     if not body:
         return []
     base: int = min(indent(line) for line in body)
-    parts: list[str] = split_at(body, starts=lambda line, _current: indent(line) == base)
+    parts: list[str] = split_at(lines=body, starts=lambda line, _current: indent(line) == base)
     return [part.removeprefix("| ").removesuffix(" |").strip() for part in parts]
 
 
@@ -96,10 +98,10 @@ def read_synopsis(
     for segment in segments(text):
         if not segment.names:
             restarted = restarted or bool(segment.verb)
-            found += statements(segment.lines, statement_leads)
+            found += statements(lines=segment.lines, leads=statement_leads)
             continue
         body, tail = definition_body(lines=segment.lines, statement_leads=statement_leads)
-        found += statements(tail, statement_leads)
+        found += statements(lines=tail, leads=statement_leads)
         listed: bool = segment.verb in ALTERNATIVE_VERBS
         parts: list[str] = alternatives(body) if listed else [normalize(" ".join(body))]
         for name in segment.names:

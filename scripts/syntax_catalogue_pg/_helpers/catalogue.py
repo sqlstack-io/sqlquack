@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.catalogue import absent_forms, load_existing
@@ -18,7 +17,7 @@ from scripts.syntax_catalogue_pg._helpers.groups import (
     statement_groups,
     statement_labels,
 )
-from scripts.syntax_catalogue_pg._helpers.hand import Disposition, HandForm, HandInputs, load_hand
+from scripts.syntax_catalogue_pg._helpers.hand import load_hand
 from scripts.syntax_catalogue_pg._helpers.pages import load_pages
 from scripts.syntax_catalogue_pg._helpers.sgml import plain, synopsis_text
 from scripts.syntax_catalogue_pg._helpers.synopsis import (
@@ -27,59 +26,68 @@ from scripts.syntax_catalogue_pg._helpers.synopsis import (
     split_at,
 )
 from scripts.syntax_catalogue_pg.constants import (
+    ANCHOR_FIELD,
+    CLASH_SIZE,
     DECISION_BLOCKS,
     DECISION_DEFINITIONS,
     DECISION_HAND,
     DECISION_RESTATED,
     DECISION_STATEMENTS,
+    DISPOSITION_CALLS,
+    DISPOSITION_DEFINITION,
+    DISPOSITION_FORM,
+    DISPOSITION_RESTATED,
     DOCS_URL,
     FAMILIES,
+    FUNCTIONS_FAMILY,
+    FUNCTIONS_ID_PREFIX,
     ID_PREFIX,
     KIND_SPECIAL,
+    RETURN_TAIL,
     STATUS_FORMS,
     STATUS_NO_SYNTAX,
     STATUS_RESTATED,
     SYNOPSIS_HEADING,
+    TABLE,
+    TBODY,
+    TYPE_ROW,
     TYPE_TABLES,
 )
-from scripts.syntax_catalogue_pg.models import Definition, PgPage, Signature, SynopsisBlock
+from scripts.syntax_catalogue_pg.models import (
+    Definition,
+    Disposition,
+    HandForm,
+    HandInputs,
+    PageBuild,
+    PgCatalogue,
+    PgPage,
+    Signature,
+    SynopsisBlock,
+)
 from scripts.syntax_catalogue_pg.types import Row
 
-RETURN_TAIL: re.Pattern[str] = re.compile(r"\)\s*(?:returns\s+)?[A-Za-z_][\w \[\]]*$")
-TYPE_ROW: re.Pattern[str] = re.compile(r"<row>\s*<entry>(.*?)</entry>\s*<entry>(.*?)</entry>", re.S)
-TABLE: str = r'<table id="{id}">(.*?)</table>'
-TBODY: re.Pattern[str] = re.compile(r"<tbody>(.*?)</tbody>", re.S)
 
-
-@dataclass
-class PageBuild:
-    """What one page contributes: groups by family, definitions, decisions and restatements."""
-
-    groups: dict[str, list[FormGroup]] = field(default_factory=dict)
-    definitions: list[tuple[str, str]] = field(default_factory=list)
-    decisions: set[str] = field(default_factory=set)
-    restates: list[str] = field(default_factory=list)
-    problems: list[str] = field(default_factory=list)
-    extra: list[tuple[str, FormGroup]] = field(default_factory=list)
-
-    def add(self, family: str, groups: list[FormGroup]) -> None:
-        """Add form groups under a family."""
-        if groups:
-            self.groups.setdefault(family, []).extend(groups)
+def add_groups(*, build: PageBuild, family: str, groups: list[FormGroup]) -> PageBuild:
+    """Add form groups under a family."""
+    if groups:
+        build.groups.setdefault(family, []).extend(groups)
+    return build
 
 
 def page_slug(page: PgPage) -> str:
     """The id segment of a page: a command's title, or a chapter section id."""
     if page.is_command:
         return slug(page.title)
-    return page.id.removeprefix("functions-") if page.family == "functions" else page.id
+    return page.id.removeprefix(FUNCTIONS_ID_PREFIX) if page.family == FUNCTIONS_FAMILY else page.id
 
 
 def productions_of(text: str) -> list[str]:
     """A narrative block's productions: each unindented line at bracket depth zero starts one."""
     lines: list[str] = [line.rstrip() for line in text.expandtabs().splitlines()]
     base: int = min((len(ln) - len(ln.lstrip()) for ln in lines if ln.strip()), default=0)
-    return split_at(lines, starts=lambda line, _current: len(line) - len(line.lstrip()) == base)
+    return split_at(
+        lines=lines, starts=lambda line, _current: len(line) - len(line.lstrip()) == base
+    )
 
 
 def strip_return(grammar: str) -> str:
@@ -93,38 +101,37 @@ def strip_return(grammar: str) -> str:
 
 def apply_block(
     *, build: PageBuild, page: PgPage, block: SynopsisBlock, disposition: Disposition
-) -> None:
+) -> PageBuild:
     """Catalogue one narrative block as its reviewed disposition says."""
     family: str = disposition.family or page.family
     kind: str = disposition.disposition
     build.decisions.add(DECISION_BLOCKS)
-    if kind == "form":
+    if kind == DISPOSITION_FORM:
         grammars: list[str] = (
             [normalize(block.text)] if disposition.whole else productions_of(block.text)
         )
         labels: tuple[str, ...] = disposition.labels or ("",) * len(grammars)
         if len(labels) != len(grammars):
             build.problems.append(f"{page.id} {block.sha256}: {len(grammars)} forms, labels differ")
-            return
+            return build
         groups: list[FormGroup] = [
             FormGroup(disposition.kind or KIND_SPECIAL, label, (g,), block.heading)
             for g, label in zip(grammars, labels, strict=True)
         ]
         if page.is_command:
-            add_extra(build=build, family=family, groups=groups, label=disposition.label)
-        else:
-            build.add(family, groups)
-    elif kind == "calls":
+            return add_extra(build=build, family=family, groups=groups, label=disposition.label)
+        return add_groups(build=build, family=family, groups=groups)
+    if kind == DISPOSITION_CALLS:
         _, definitions, _ = read_synopsis(text=block.text, statement_leads=frozenset())
         calls: list[str] = [strip_return(g) for g in productions_of(statements_text(block))]
         signatures: list[Signature] = [
             Signature(block.heading, g, (), True, sha256(g)) for g in calls
         ]
         groups, decisions = call_groups(signatures)
-        build.add(family, groups)
-        build.decisions |= decisions
-        add_definitions(build, definitions)
-    elif kind == "definition":
+        build = add_groups(build=build, family=family, groups=groups)
+        build.decisions.update(decisions)
+        return add_definitions(build=build, definitions=definitions)
+    if kind == DISPOSITION_DEFINITION:
         parts: list[str] = productions_of(block.text)
         for name in disposition.names:
             definition: Definition = Definition(
@@ -132,21 +139,22 @@ def apply_block(
                 alternatives=tuple(parts) if disposition.listed else (normalize(" ".join(parts)),),
                 listed=disposition.listed,
             )
-            add_definitions(build, [definition])
-    elif kind == "restated":
+            build = add_definitions(build=build, definitions=[definition])
+    elif kind == DISPOSITION_RESTATED:
         build.restates.extend(disposition.forms)
+    return build
 
 
-def add_extra(*, build: PageBuild, family: str, groups: list[FormGroup], label: str) -> None:
-    """Forms a command page documents beside its synopsis (older syntax still accepted), each
-    named `<page id>.<label>` so the synopsis forms keep their ids."""
+def add_extra(*, build: PageBuild, family: str, groups: list[FormGroup], label: str) -> PageBuild:
+    """Forms a command page documents beside its synopsis, each named `<page id>.<label>`."""
     if not label:
         build.problems.append(f"{groups[0].heading[0]}: a form beside the synopsis needs a label")
-        return
+        return build
     suffixes: list[str] = statement_labels([g.grammars[0] for g in groups])
     for group, suffix in zip(groups, suffixes, strict=True):
         name: str = "-".join(p for p in (label, suffix) if p)
         build.extra.append((family, FormGroup(group.kind, name, group.grammars, group.heading)))
+    return build
 
 
 def statements_text(block: SynopsisBlock) -> str:
@@ -154,7 +162,7 @@ def statements_text(block: SynopsisBlock) -> str:
     return block.text.split("<phrase>", 1)[0]
 
 
-def add_definitions(build: PageBuild, definitions: list[Definition]) -> None:
+def add_definitions(*, build: PageBuild, definitions: list[Definition]) -> PageBuild:
     """Add sub-grammar definitions, numbering a name the page defines twice."""
     taken: set[str] = {name for name, _ in build.definitions}
     for definition in definitions:
@@ -167,6 +175,7 @@ def add_definitions(build: PageBuild, definitions: list[Definition]) -> None:
         build.definitions.append((key, definition_grammar(definition)))
     if definitions:
         build.decisions.add(DECISION_DEFINITIONS)
+    return build
 
 
 def command_build(*, page: PgPage, hand: HandInputs) -> PageBuild:
@@ -186,33 +195,36 @@ def command_build(*, page: PgPage, hand: HandInputs) -> PageBuild:
     groups, decisions = statement_groups(
         statements=statements, definitions=definitions, heading=(page.title, SYNOPSIS_HEADING)
     )
-    build.add(page.family, groups)
-    build.decisions |= decisions
+    build = add_groups(build=build, family=page.family, groups=groups)
+    build.decisions.update(decisions)
     if len(statements) > 1:
         build.decisions.add(DECISION_STATEMENTS)
-    add_definitions(build, definitions)
-    narrative_blocks(build=build, page=page, hand=hand)
-    return build
+    build = add_definitions(build=build, definitions=definitions)
+    return narrative_blocks(build=build, page=page, hand=hand)
 
 
-def narrative_blocks(*, build: PageBuild, page: PgPage, hand: HandInputs) -> None:
+def narrative_keys(page: PgPage) -> set[tuple[str, str]]:
+    """The (page id, block hash) keys of a page's blocks outside a command synopsis."""
+    return {(page.id, block.sha256) for block in page.blocks if not block.in_synopsis_div}
+
+
+def narrative_blocks(*, build: PageBuild, page: PgPage, hand: HandInputs) -> PageBuild:
     """Apply the reviewed disposition of every block outside a command synopsis."""
     for block in page.blocks:
         if block.in_synopsis_div:
             continue
         disposition: Disposition | None = hand.blocks.get((page.id, block.sha256))
-        hand.used.add((page.id, block.sha256))
         if disposition is None:
             first: str = normalize(block.text.splitlines()[0] if block.text.strip() else "")
             build.problems.append(f"{page.id} {block.sha256} undispositioned: {first[:80]}")
             continue
-        apply_block(build=build, page=page, block=block, disposition=disposition)
+        build = apply_block(build=build, page=page, block=block, disposition=disposition)
+    return build
 
 
 def chapter_build(*, page: PgPage, hand: HandInputs, text: str) -> PageBuild:
     """A chapter page: its blocks, its signatures and, for type tables, its data types."""
-    build: PageBuild = PageBuild()
-    narrative_blocks(build=build, page=page, hand=hand)
+    build: PageBuild = narrative_blocks(build=PageBuild(), page=page, hand=hand)
     kept: list[Signature] = []
     for signature in page.signatures:
         anchor: str = " / ".join(signature.heading[1:])
@@ -221,11 +233,10 @@ def chapter_build(*, page: PgPage, hand: HandInputs, text: str) -> PageBuild:
         ):
             kept.append(signature)
     functions, operators, decisions = signature_groups(kept)
-    build.add(page.family, functions)
-    build.add("expressions", operators)
-    build.decisions |= decisions
-    build.add("expressions", type_groups(page=page, text=text))
-    return build
+    build = add_groups(build=build, family=page.family, groups=functions)
+    build = add_groups(build=build, family="expressions", groups=operators)
+    build.decisions.update(decisions)
+    return add_groups(build=build, family="expressions", groups=type_groups(page=page, text=text))
 
 
 def type_groups(*, page: PgPage, text: str) -> list[FormGroup]:
@@ -250,7 +261,7 @@ def type_groups(*, page: PgPage, text: str) -> list[FormGroup]:
     return groups
 
 
-def hand_build(*, build: PageBuild, page: PgPage, forms: list[HandForm]) -> None:
+def hand_build(*, build: PageBuild, page: PgPage, forms: list[HandForm]) -> PageBuild:
     """Add a page's hand forms, refusing any read from another version of the page."""
     for form in forms:
         if form.page_sha256 != page.sha256:
@@ -258,18 +269,19 @@ def hand_build(*, build: PageBuild, page: PgPage, forms: list[HandForm]) -> None
         heading: tuple[str, ...] = (page.title, *form.anchor.split(" / "))
         group: FormGroup = FormGroup(form.kind, form.label, form.grammars, heading)
         if page.is_command:
-            add_extra(
+            build = add_extra(
                 build=build, family=form.family or page.family, groups=[group], label=form.label
             )
         else:
-            build.add(form.family or page.family, [group])
+            build = add_groups(build=build, family=form.family or page.family, groups=[group])
         build.decisions.add(DECISION_HAND.format(basis=form.basis))
+    return build
 
 
 def label_groups(groups: list[FormGroup]) -> list[FormGroup]:
     """Give unlabelled groups a distinguishing label among the page's unlabelled groups."""
     unlabelled: list[int] = [i for i, g in enumerate(groups) if not g.label]
-    if len(groups) < 2 or not unlabelled:
+    if len(groups) < CLASH_SIZE or not unlabelled:
         return groups
     labels: list[str] = statement_labels([groups[i].grammars[0] for i in unlabelled])
     out: list[FormGroup] = list(groups)
@@ -296,12 +308,60 @@ def source_row(*, page: PgPage, status: str, decisions: set[str], family: str) -
     }
 
 
-@dataclass
-class PgCatalogue:
-    """The built catalogue and the problems that make it incomplete."""
+def page_status(build: PageBuild) -> str:
+    """A page's sources.toml status: forms, restated, or no syntax block."""
+    if build.groups or build.extra:
+        return STATUS_FORMS
+    return STATUS_RESTATED if build.restates else STATUS_NO_SYNTAX
 
-    catalogue: Catalogue
-    problems: list[str]
+
+def page_forms(
+    *, build: PageBuild, page: PgPage, existing: Existing, used_ids: frozenset[str]
+) -> tuple[list[tuple[str, list[Row]]], frozenset[str]]:
+    """A page's emitted forms as (family, rows) in order, and the ids now used."""
+    sid: str = f"doc.{page.id}"
+    names: tuple[str, ...] = tuple(name for name, _ in build.definitions)
+    emitted: list[tuple[str, list[Row]]] = []
+    for family, groups in build.groups.items():
+        base: str = f"{ID_PREFIX}.{family}.{page_slug(page)}"
+        if not page.is_command and len(groups) == 1 and groups[0].label:
+            base = f"{base}.{slug(groups[0].label)}"
+        context: PageContext = PageContext(base, family, sid, names)
+        forms, used_ids = emit_forms(
+            context=context, groups=label_groups(groups), existing=existing, used_ids=used_ids
+        )
+        emitted.append((family, forms))
+    for family, group in build.extra:
+        context = PageContext(
+            f"{ID_PREFIX}.{family}.{page_slug(page)}.{group.label}", family, sid, names
+        )
+        forms, used_ids = emit_forms(
+            context=context, groups=[group], existing=existing, used_ids=used_ids
+        )
+        emitted.append((family, forms))
+    return emitted, used_ids
+
+
+def definition_rows(*, build: PageBuild, sid: str) -> list[Row]:
+    """A page's definitions as catalogue rows."""
+    return [
+        {"id": f"{sid}::{key}", "source": sid, "name": key, "grammar": grammar}
+        for key, grammar in build.definitions
+    ]
+
+
+def with_also_sources(*, form: Row, sources: set[str]) -> Row:
+    """A form row with the pages restating it listed after its anchor."""
+    earlier: object = form.get("also_sources", [])
+    also: set[str] = {str(s) for s in earlier} if isinstance(earlier, list) else set()
+    also |= sources
+    also.discard(str(form["source"]))
+    out: Row = {}
+    for key, value in form.items():
+        out[key] = value
+        if key == ANCHOR_FIELD:
+            out["also_sources"] = sorted(also)
+    return out
 
 
 def build_catalogue(*, tree: Path, out: Path, retrieved_utc: str) -> PgCatalogue:
@@ -312,76 +372,48 @@ def build_catalogue(*, tree: Path, out: Path, retrieved_utc: str) -> PgCatalogue
     catalogue: Catalogue = Catalogue([], {f: [] for f in FAMILIES}, {f: [] for f in FAMILIES})
     problems: list[str] = []
     restated: dict[str, set[str]] = {}
-    texts: dict[str, str] = {}
-    pages: list[PgPage] = load_pages(tree, texts=texts)
+    used: set[tuple[str, str]] = set()
+    pages, texts = load_pages(tree)
     for page in pages:
         build: PageBuild = (
             command_build(page=page, hand=hand)
             if page.is_command
             else chapter_build(page=page, hand=hand, text=texts[page.id])
         )
-        hand_build(build=build, page=page, forms=hand.forms.pop(f"doc.{page.id}", []))
+        used |= narrative_keys(page)
+        build = hand_build(build=build, page=page, forms=hand.forms.pop(f"doc.{page.id}", []))
         problems += build.problems
         sid: str = f"doc.{page.id}"
         for form_id in build.restates:
             restated.setdefault(form_id, set()).add(sid)
         if build.restates:
             build.decisions.add(DECISION_RESTATED)
-        status: str = (
-            STATUS_FORMS
-            if build.groups or build.extra
-            else STATUS_RESTATED
-            if build.restates
-            else STATUS_NO_SYNTAX
-        )
         catalogue.sources.append(
-            source_row(page=page, status=status, decisions=build.decisions, family=page.family)
+            source_row(
+                page=page, status=page_status(build), decisions=build.decisions, family=page.family
+            )
         )
-        names: tuple[str, ...] = tuple(name for name, _ in build.definitions)
-        for family, groups in build.groups.items():
-            base: str = f"{ID_PREFIX}.{family}.{page_slug(page)}"
-            if not page.is_command and len(groups) == 1 and groups[0].label:
-                base = f"{base}.{slug(groups[0].label)}"
-            context: PageContext = PageContext(base, family, sid, names)
-            forms, used_ids = emit_forms(
-                context=context, groups=label_groups(groups), existing=existing, used_ids=used_ids
-            )
-            catalogue.forms[family].extend(forms)
-        for family, group in build.extra:
-            context = PageContext(
-                f"{ID_PREFIX}.{family}.{page_slug(page)}.{group.label}", family, sid, names
-            )
-            forms, used_ids = emit_forms(
-                context=context, groups=[group], existing=existing, used_ids=used_ids
-            )
+        emitted, used_ids = page_forms(build=build, page=page, existing=existing, used_ids=used_ids)
+        for family, forms in emitted:
             catalogue.forms[family].extend(forms)
         if build.groups or build.extra:
-            family = next(iter(build.groups)) if build.groups else build.extra[0][0]
-            catalogue.definitions[family].extend(
-                {"id": f"{sid}::{key}", "source": sid, "name": key, "grammar": grammar}
-                for key, grammar in build.definitions
-            )
+            owner: str = next(iter(build.groups)) if build.groups else build.extra[0][0]
+            catalogue.definitions[owner].extend(definition_rows(build=build, sid=sid))
     for row in catalogue.sources:
         row["retrieved_utc"] = retrieved_utc
     problems += [f"hand forms for unknown page {source}" for source in hand.forms]
-    problems += [f"disposition for no block: {key}" for key in hand.blocks if key not in hand.used]
-    by_id: dict[str, Row] = {str(f["id"]): f for rows in catalogue.forms.values() for f in rows}
+    problems += [f"disposition for no block: {key}" for key in hand.blocks if key not in used]
+    by_id: dict[str, Row] = {}
+    for rows in catalogue.forms.values():
+        by_id |= {str(f["id"]): f for f in rows}
     for form_id, sources in sorted(restated.items()):
         form: Row | None = by_id.get(form_id)
         if form is None:
             problems.append(f"restated form {form_id} is not catalogued")
             continue
-        earlier: object = form.get("also_sources", [])
-        also: set[str] = {str(s) for s in earlier} if isinstance(earlier, list) else set()
-        also |= sources
-        also.discard(str(form["source"]))
-        rows_order: list[tuple[str, object]] = list(form.items())
+        rebuilt: Row = with_also_sources(form=form, sources=sources)
         form.clear()
-        for key, value in rows_order:
-            form[key] = value
-            if key == "anchor":
-                form["also_sources"] = sorted(also)
-    emitted: set[str] = set(by_id)
-    for form in absent_forms(existing=existing, emitted=emitted):
-        catalogue.forms[str(form["family"])].append(form)
+        form.update(rebuilt)
+    for absent in absent_forms(existing=existing, emitted=set(by_id)):
+        catalogue.forms[str(absent["family"])].append(absent)
     return PgCatalogue(catalogue=catalogue, problems=problems)

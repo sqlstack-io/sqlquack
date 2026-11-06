@@ -2,11 +2,19 @@
 
 from __future__ import annotations
 
-import re
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_obligations._helpers.cases import canonical, digest, observed_stage
+from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.syntax_obligations._helpers.cases import (
+    canonical,
+    digest,
+    jsonl_text,
+    observed_stage,
+    receipt_phases,
+    receipt_settlements,
+)
+from scripts.syntax_obligations._helpers.obligations import family_obligations, obligation_rows
 from scripts.syntax_obligations._helpers.render import style_of, submissions
 from scripts.syntax_obligations.constants import KIND_EXTREME
 from scripts.syntax_obligations.exceptions import ObligationError
@@ -16,12 +24,14 @@ from scripts.syntax_obligations_pg.constants import (
     AUTOCOMMIT_LEADS,
     CAPTURE_AUTOCOMMIT,
     CAPTURE_ROLLED_BACK,
+    CASES_DIR,
     DIGEST_WIDTH,
+    LEADING_WORD,
+    OBLIGATIONS_DIR,
+    OBLIGATIONS_HEADER,
     SESSION,
     STAGE_KEY,
 )
-
-WORD: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|\S")
 
 
 def focus_forms(path: Path) -> list[str]:
@@ -31,7 +41,7 @@ def focus_forms(path: Path) -> list[str]:
 
 def capture_for(sql: str) -> str:
     """The capture the statement's leading words call for, as the referee decides it."""
-    words: tuple[str, ...] = tuple(word.upper() for word in WORD.findall(sql))
+    words: tuple[str, ...] = tuple(word.upper() for word in LEADING_WORD.findall(sql))
     autocommit: bool = any(words[: len(lead)] == lead for lead in AUTOCOMMIT_LEADS)
     return CAPTURE_AUTOCOMMIT if autocommit else CAPTURE_ROLLED_BACK
 
@@ -44,9 +54,7 @@ def family_cases(
     forms: set[str],
     receipts: ReceiptView,
 ) -> list[Row]:
-    """The cases of one family's forms in `forms`, each citing every obligation it serves; an
-    accepted case takes its receipt's later stage and an observed one its receipt's outcome,
-    as the shared builder settles them (decisions D92, D133)."""
+    """The cases of the family's focus forms, settled by their receipts (D92, D133)."""
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     extremes: set[str] = set()
     conflicts: list[str] = []
@@ -103,3 +111,28 @@ def family_cases(
             )
         )
     return sorted(cases, key=lambda case: str(case["case_id"]))
+
+
+def receipt_view(directory: Path) -> ReceiptView:
+    """The phases and settlements of the receipts in a directory."""
+    return ReceiptView(phases=receipt_phases(directory), settlements=receipt_settlements(directory))
+
+
+def write_family(
+    *, root: Path, family: str, focus: set[str], receipts: ReceiptView
+) -> tuple[int, int]:
+    """Write one family's obligations and focus cases; return their counts."""
+    numbered, trees, _, _, _ = family_obligations(root=root, family=family)
+    rows: list[Row] = obligation_rows(numbered)
+    path: Path = root / OBLIGATIONS_DIR / f"{family}.toml"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_tables(
+        path=path, header=OBLIGATIONS_HEADER.format(family=family), tables=[("obligation", rows)]
+    )
+    cases: list[Row] = family_cases(
+        family=family, numbered=numbered, trees=trees, forms=focus, receipts=receipts
+    )
+    cases_path: Path = root / CASES_DIR / f"{family}.jsonl"
+    cases_path.parent.mkdir(parents=True, exist_ok=True)
+    cases_path.write_text(jsonl_text(cases))
+    return len(rows), len(cases)

@@ -4,60 +4,40 @@ from __future__ import annotations
 
 import itertools
 import math
-import re
 import tomllib
+from collections.abc import Iterator
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import bare_words
 from scripts.syntax_catalogue_pg._helpers.gram import keywords, rules, token_text
 from scripts.syntax_catalogue_pg._helpers.groups import required_without_options
-from scripts.syntax_catalogue_pg.constants import GRAM_Y, KWLIST_H
-from scripts.syntax_catalogue_pg.models import AuditGap, AuditResult, Keyword, Rule
-
-STATEMENT_RULE: str = "stmt"
-TOPLEVEL_RULE: str = "toplevel_stmt"
-EXPRESSION_RULES: tuple[str, ...] = (
-    "a_expr",
-    "b_expr",
-    "c_expr",
-    "func_expr_common_subexpr",
-    "func_expr_windowless",
-    "AexprConst",
-    "SimpleTypename",
-    "GenericType",
-    "Numeric",
-    "Bit",
-    "Character",
-    "ConstDatetime",
-    "ConstInterval",
-    "json_aggregate_func",
-    "xmltable",
-    "json_table",
-    "table_ref",
-    "joined_table",
-    "select_clause",
-    "simple_select",
+from scripts.syntax_catalogue_pg.constants import (
+    DEFINITION_HEAD,
+    EXPRESSION_RULES,
+    GRAM_Y,
+    KEYWORD_LISTS,
+    KWLIST_H,
+    LEAD_TOKEN,
+    MAX_EXPANSION,
+    MAX_KEYWORD_ALTERNATIVE,
+    MAX_SET,
+    MIN_CLAUSE_KEYWORDS,
+    PLACEHOLDER,
+    STATEMENT_RULE,
+    TOPLEVEL_RULE,
+    WORD_JOINER,
 )
-MAX_SET: int = 60
-LEAD_TOKEN: re.Pattern[str] = re.compile(r"<[^<>]*>|\{|[A-Za-z_][A-Za-z0-9_]*")
-leads: dict[str, tuple[str, ...]] = {}
-MIN_CLAUSE_KEYWORDS: int = 2
-KEYWORD_LISTS: frozenset[str] = frozenset(
-    {
-        "unreserved_keyword",
-        "col_name_keyword",
-        "type_func_name_keyword",
-        "reserved_keyword",
-        "bare_label_keyword",
-    }
+from scripts.syntax_catalogue_pg.exceptions import PgCatalogueError
+from scripts.syntax_catalogue_pg.models import (
+    AuditGap,
+    AuditResult,
+    CatalogueWords,
+    Keyword,
+    Rule,
 )
-PLACEHOLDER: re.Pattern[str] = re.compile(r"<([^<>]+)>")
-DEFINITION_HEAD: re.Pattern[str] = re.compile(r"^\\s*<[^<>]+>\\s*::=\\s*")
-MAX_EXPANSION: int = 64
-MAX_KEYWORD_ALTERNATIVE: int = 4
 
 
-def inline(grammar: str, definitions: dict[str, str], depth: int = 3) -> str:
+def inline(*, grammar: str, definitions: dict[str, str], depth: int = 3) -> str:
     """The grammar with each `<name>` its page defines replaced by the definition's body."""
     for _ in range(depth):
         replaced: str = PLACEHOLDER.sub(lambda m: definitions.get(m.group(1), m.group(0)), grammar)
@@ -78,9 +58,24 @@ def lead_words(grammar: str) -> tuple[str, ...]:
     return tuple(out)
 
 
-def catalogue_words(root: Path) -> tuple[list[tuple[str, list[str]]], set[str]]:
-    """(form id, upper-case words) for every catalogued form, its page's definitions inlined,
-    and every word of every grammar."""
+def upper_bare_words(lines: list[str]) -> list[str]:
+    """The upper-cased bare words of every line, in order."""
+    words: list[str] = []
+    for line in lines:
+        words += [w.upper() for w in bare_words(line)]
+    return words
+
+
+def upper_plain_words(lines: list[str]) -> set[str]:
+    """The upper-cased plain words of every line."""
+    words: set[str] = set()
+    for line in lines:
+        words |= {w.upper() for w in plain_words(line)}
+    return words
+
+
+def catalogue_words(root: Path) -> CatalogueWords:
+    """Every catalogued form's words with its page's definitions inlined, and every grammar word."""
     tables: list[dict[str, list[dict[str, object]]]] = [
         tomllib.loads(path.read_text()) for path in sorted((root / "catalogue").glob("*.toml"))
     ]
@@ -93,18 +88,18 @@ def catalogue_words(root: Path) -> tuple[list[tuple[str, list[str]]], set[str]]:
             definitions.setdefault(str(definition["source"]), {}).setdefault(name, body)
             every |= {w.upper() for w in plain_words(body)}
     forms: list[tuple[str, list[str]]] = []
-    leads.clear()
+    leads: dict[str, tuple[str, ...]] = {}
     for data in tables:
         for form in data.get("form", []):
             grammar: object = form["grammar"]
             lines: list[str] = [str(g) for g in grammar] if isinstance(grammar, list) else []
             page: dict[str, str] = definitions.get(str(form["source"]), {})
-            expanded: list[str] = [inline(line, page) for line in lines]
-            words: list[str] = [w.upper() for line in expanded for w in bare_words(line)]
+            expanded: list[str] = [inline(grammar=line, definitions=page) for line in lines]
+            words: list[str] = upper_bare_words(expanded)
             forms.append((str(form["id"]), words))
             leads[str(form["id"])] = lead_words(lines[0]) if lines else ()
-            every |= set(words) | {w.upper() for line in lines for w in plain_words(line)}
-    return forms, every
+            every |= set(words) | upper_plain_words(lines)
+    return CatalogueWords(forms=forms, every=every, leads=leads)
 
 
 def plain_words(line: str) -> list[str]:
@@ -112,7 +107,7 @@ def plain_words(line: str) -> list[str]:
     word: str = ""
     out: list[str] = []
     for ch in line + " ":
-        if ch.isalnum() or ch == "_":
+        if ch.isalnum() or ch == WORD_JOINER:
             word += ch
         elif word:
             out.append(word)
@@ -120,11 +115,21 @@ def plain_words(line: str) -> list[str]:
     return out
 
 
+def concatenations(parts: list[list[tuple[str, ...]]]) -> list[tuple[str, ...]]:
+    """Every way to pick one sequence from each part, joined in order."""
+    out: list[tuple[str, ...]] = []
+    for combination in itertools.product(*parts):
+        words: list[str] = []
+        for piece in combination:
+            words.extend(piece)
+        out.append(tuple(words))
+    return out
+
+
 def keyword_set(
-    rule: Rule | None, grammar: dict[str, Rule], keyword_tokens: dict[str, str], depth: int = 2
+    *, rule: Rule | None, grammar: dict[str, Rule], keyword_tokens: dict[str, str], depth: int = 2
 ) -> list[tuple[str, ...]] | None:
-    """A rule's alternatives as keyword sequences when every alternative is a short run of
-    keywords and keyword-set rules (or empty), else None."""
+    """A rule's alternatives as keyword sequences when all are short keyword runs, else None."""
     if rule is None or depth == 0 or len(rule.alternatives) > MAX_SET:
         return None
     out: list[tuple[str, ...]] = []
@@ -137,61 +142,60 @@ def keyword_set(
                 parts.append([(keyword_tokens[token],)])
                 continue
             inner: list[tuple[str, ...]] | None = keyword_set(
-                grammar.get(token), grammar, keyword_tokens, depth - 1
+                rule=grammar.get(token),
+                grammar=grammar,
+                keyword_tokens=keyword_tokens,
+                depth=depth - 1,
             )
             if inner is None:
                 return None
             parts.append(inner)
-        out += [tuple(w for piece in combo for w in piece) for combo in itertools.product(*parts)]
+        out += concatenations(parts)
     return out
 
 
 def expansions(
-    alternative: tuple[str, ...], grammar: dict[str, Rule], keyword_tokens: dict[str, str]
+    *, alternative: tuple[str, ...], grammar: dict[str, Rule], keyword_tokens: dict[str, str]
 ) -> list[tuple[str, ...]]:
-    """The keyword sequences an alternative spells: its keywords in order, each keyword-set
-    nonterminal expanded into its alternatives."""
+    """The keyword sequences an alternative spells, keyword-set nonterminals expanded."""
     parts: list[list[tuple[str, ...]]] = []
     for token in alternative:
-        text: str = token_text(token, keyword_tokens)
+        text: str = token_text(token=token, keyword_tokens=keyword_tokens)
         if token in keyword_tokens:
             parts.append([(text,)])
             continue
         options: list[tuple[str, ...]] | None = keyword_set(
-            grammar.get(token), grammar, keyword_tokens
+            rule=grammar.get(token), grammar=grammar, keyword_tokens=keyword_tokens
         )
         if options and any(options):
             parts.append(options)
     if math.prod(len(part) for part in parts) > MAX_EXPANSION:
         message: str = f"{' '.join(alternative)} spells more than {MAX_EXPANSION} sequences"
-        raise ValueError(message)
-    out: list[tuple[str, ...]] = [
-        tuple(word for piece in combination for word in piece)
-        for combination in itertools.product(*parts)
-    ]
+        raise PgCatalogueError(message)
+    out: list[tuple[str, ...]] = concatenations(parts)
     return list(dict.fromkeys(out))
 
 
-def is_subsequence(needle: tuple[str, ...], haystack: list[str]) -> bool:
+def is_subsequence(*, needle: tuple[str, ...], haystack: list[str]) -> bool:
     """True when the words appear in order in the haystack."""
-    iterator = iter(haystack)
+    iterator: Iterator[str] = iter(haystack)
     return all(word in iterator for word in needle)
 
 
 def statement_rules(grammar: dict[str, Rule]) -> list[str]:
     """The statement rules `toplevel_stmt` and `stmt` list."""
-    names: list[str] = [
-        alternative[0]
-        for rule in (TOPLEVEL_RULE, STATEMENT_RULE)
-        for alternative in grammar[rule].alternatives
-        if alternative and alternative[0] != STATEMENT_RULE
-    ]
+    names: list[str] = []
+    for rule in (TOPLEVEL_RULE, STATEMENT_RULE):
+        names += [
+            alternative[0]
+            for alternative in grammar[rule].alternatives
+            if alternative and alternative[0] != STATEMENT_RULE
+        ]
     return list(dict.fromkeys(names))
 
 
-def clause_rules(grammar: dict[str, Rule], statements: list[str]) -> list[str]:
-    """Every rule reachable from a statement or expression rule, other than those and the
-    keyword category lists."""
+def clause_rules(*, grammar: dict[str, Rule], statements: list[str]) -> list[str]:
+    """Every rule reachable from a statement or expression rule, other than those and keywords."""
     seen: set[str] = set(statements) | set(EXPRESSION_RULES) | KEYWORD_LISTS
     frontier: list[str] = [*statements, *EXPRESSION_RULES]
     found: list[str] = []
@@ -210,53 +214,60 @@ def unaudited_rules(grammar: dict[str, Rule]) -> list[str]:
     """Rules the audit does not walk: those no statement or expression rule reaches."""
     statements: list[str] = statement_rules(grammar)
     walked: set[str] = (
-        set(statements) | set(EXPRESSION_RULES) | set(clause_rules(grammar, statements))
+        set(statements)
+        | set(EXPRESSION_RULES)
+        | set(clause_rules(grammar=grammar, statements=statements))
     )
     return sorted(set(grammar) - walked)
 
 
 def keyword_uses(grammar: dict[str, Rule]) -> set[str]:
     """Grammar tokens used by any rule other than the keyword category lists."""
-    return {
-        token
-        for name, rule in grammar.items()
-        if name not in KEYWORD_LISTS
-        for alternative in rule.alternatives
-        for token in alternative
-    }
+    used: set[str] = set()
+    for name, rule in grammar.items():
+        if name in KEYWORD_LISTS:
+            continue
+        for alternative in rule.alternatives:
+            used |= set(alternative)
+    return used
+
+
+def spelled(*, sequence: tuple[str, ...], leading: bool, words: CatalogueWords) -> bool:
+    """True when a catalogued form spells the sequence, led by its first keyword for statements."""
+    return any(
+        is_subsequence(needle=sequence, haystack=form_words)
+        and (
+            not leading
+            or (
+                bool(words.leads[form_id])
+                and words.leads[form_id][0] == sequence[0]
+                and is_subsequence(needle=words.leads[form_id], haystack=list(sequence))
+            )
+        )
+        for form_id, form_words in words.forms
+    )
 
 
 def audit(*, tree: Path, root: Path) -> AuditResult:
-    """Grammar alternatives no catalogued form spells and keywords no grammar names, with
-    what was checked."""
+    """Grammar alternatives no catalogued form spells and keywords no grammar names."""
     grammar: dict[str, Rule] = rules(tree / GRAM_Y)
-    words: list[Keyword] = keywords(tree / KWLIST_H)
-    keyword_tokens: dict[str, str] = {k.token: k.text for k in words}
-    forms, every = catalogue_words(root)
+    found_keywords: list[Keyword] = keywords(tree / KWLIST_H)
+    keyword_tokens: dict[str, str] = {k.token: k.text for k in found_keywords}
+    words: CatalogueWords = catalogue_words(root)
     statements: list[str] = statement_rules(grammar)
-    clauses: list[str] = clause_rules(grammar, statements)
+    clauses: list[str] = clause_rules(grammar=grammar, statements=statements)
     gaps: list[AuditGap] = []
     checked: int = 0
     for name in [*statements, *EXPRESSION_RULES, *clauses]:
         leading: bool = name in statements
         for index, alternative in enumerate(grammar[name].alternatives, 1):
-            for sequence in expansions(alternative, grammar, keyword_tokens):
+            for sequence in expansions(
+                alternative=alternative, grammar=grammar, keyword_tokens=keyword_tokens
+            ):
                 if not sequence or (not leading and len(sequence) < MIN_CLAUSE_KEYWORDS):
                     continue
                 checked += 1
-                found: bool = any(
-                    is_subsequence(sequence, form_words)
-                    and (
-                        not leading
-                        or (
-                            bool(leads[form_id])
-                            and leads[form_id][0] == sequence[0]
-                            and is_subsequence(leads[form_id], list(sequence))
-                        )
-                    )
-                    for form_id, form_words in forms
-                )
-                if not found:
+                if not spelled(sequence=sequence, leading=leading, words=words):
                     gaps.append(
                         AuditGap(
                             rule=name,
@@ -266,7 +277,7 @@ def audit(*, tree: Path, root: Path) -> AuditResult:
                         )
                     )
     used: set[str] = keyword_uses(grammar)
-    missing: list[Keyword] = [k for k in words if k.text not in every]
+    missing: list[Keyword] = [k for k in found_keywords if k.text not in words.every]
     return AuditResult(
         gaps=gaps,
         unused=[k for k in missing if k.token not in used],
@@ -274,5 +285,5 @@ def audit(*, tree: Path, root: Path) -> AuditResult:
         alternatives_checked=checked,
         rules_checked=len(statements) + len(EXPRESSION_RULES) + len(clauses),
         unwalked=unaudited_rules(grammar),
-        keywords_checked=len(words),
+        keywords_checked=len(found_keywords),
     )

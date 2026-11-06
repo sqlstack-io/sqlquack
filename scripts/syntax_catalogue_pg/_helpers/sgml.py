@@ -24,6 +24,7 @@ from scripts.syntax_catalogue_pg.constants import (
     TYPE_TAG,
 )
 from scripts.syntax_catalogue_pg.models import Section
+from scripts.syntax_catalogue_pg.types import Spans
 
 
 def entities(text: str) -> str:
@@ -74,9 +75,9 @@ def literals(raw: str) -> list[str]:
     return [plain(m.group(1)) for m in LITERAL_TAG.finditer(raw)]
 
 
-def section_at(text: str) -> list[tuple[int, int, tuple[Section, ...]]]:
+def section_at(text: str) -> Spans:
     """(start, end, enclosing sections) spans covering the file, outermost section first."""
-    spans: list[tuple[int, int, tuple[Section, ...]]] = []
+    spans: Spans = []
     stack: list[Section] = []
     last: int = 0
     for match in SECTION_TAG.finditer(text):
@@ -95,9 +96,7 @@ def section_at(text: str) -> list[tuple[int, int, tuple[Section, ...]]]:
     return spans
 
 
-def sections_of(
-    spans: list[tuple[int, int, tuple[Section, ...]]], offset: int
-) -> tuple[Section, ...]:
+def sections_of(*, spans: Spans, offset: int) -> tuple[Section, ...]:
     """The sections enclosing an offset."""
     index: int = bisect.bisect_right([start for start, _, _ in spans], offset) - 1
     return spans[index][2] if index >= 0 else ()
