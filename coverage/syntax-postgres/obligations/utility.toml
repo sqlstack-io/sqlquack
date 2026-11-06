@@ -761,6 +761,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.utility.deallocate.o011"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+anchor = "doc.sql-deallocate / Synopsis"
+note = "the unreserved keyword PREPARE as the name, with the optional PREPARE left out (gram.y DeallocateStmt: DEALLOCATE name)"
+
+[[obligation]]
 id = "pg.utility.declare.o001"
 kind = "positive"
 required = true

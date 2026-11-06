@@ -3566,3 +3566,11 @@ ids = [
   "pg.ddl.create-type.input-output.o052",
   "pg.ddl.create-type.input-output.o077",
 ]
+
+[[retired]]
+retired_in = "28317bc04241ea313374beed0295141098b40def"
+reason = "the note cited preprocess_pubobj_list for a column list and a WHERE on TABLES IN SCHEMA, but those are plain grammar errors (gram.y PublicationObjSpec takes neither after a schema name; batch-26 correction); the same cases now cite the grammar under new ids"
+ids = [
+  "pg.ddl.create-publication.o046",
+  "pg.ddl.create-publication.o047",
+]

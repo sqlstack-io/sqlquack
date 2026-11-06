@@ -622,6 +622,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.transaction_session.release-savepoint.o009"
+kind = "operand_type_class"
+required = true
+target = "<savepoint_name>"
+anchor = "doc.sql-release-savepoint / Synopsis"
+note = "the unreserved keyword SAVEPOINT as the name, with the optional SAVEPOINT left out (gram.y TransactionStmt: RELEASE ColId)"
+
+[[obligation]]
 id = "pg.transaction_session.reset.all.o001"
 kind = "positive"
 required = true
@@ -835,6 +843,22 @@ required = true
 target = "<savepoint_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.transaction_session.rollback-to-savepoint.o015"
+kind = "operand_type_class"
+required = true
+target = "<savepoint_name>"
+anchor = "doc.sql-rollback-to / Synopsis"
+note = "the unreserved keyword SAVEPOINT as the name, with the optional SAVEPOINT left out (gram.y TransactionStmt: ROLLBACK opt_transaction TO ColId)"
+
+[[obligation]]
+id = "pg.transaction_session.rollback-to-savepoint.o016"
+kind = "operand_type_class"
+required = true
+target = "<savepoint_name>"
+anchor = "doc.sql-rollback-to / Synopsis"
+note = "the unreserved keyword SAVEPOINT as the name after TRANSACTION, with the optional SAVEPOINT left out"
 
 [[obligation]]
 id = "pg.transaction_session.savepoint.o001"

@@ -1,0 +1,12 @@
+# Renamed, split and merged form ids. An old id stays in the catalogue with status
+# absent_from_source and is never reused; `to` lists the forms that now carry its grammar.
+
+[[alias]]
+from = "pg.transaction_session.set-role.none-reset-role"
+to = ["pg.transaction_session.set-role.set-role-none", "pg.transaction_session.set-role.reset-role"]
+reason = "the synopsis reader joined the documented line RESET ROLE onto SET [ SESSION | LOCAL ] ROLE NONE, giving one form for two statements that is not valid SQL; the sql-set-role synopsis lists them as separate lines, now one form each (19aa1f28)"
+
+[[alias]]
+from = "pg.transaction_session.set-session-authorization.default-reset-session-authorization"
+to = ["pg.transaction_session.set-session-authorization.set-session-authorization-default", "pg.transaction_session.set-session-authorization.reset-session-authorization"]
+reason = "the synopsis reader joined the documented line RESET SESSION AUTHORIZATION onto SET [ SESSION | LOCAL ] SESSION AUTHORIZATION DEFAULT, giving one form for two statements that is not valid SQL; the sql-set-session-authorization synopsis lists them as separate lines, now one form each (19aa1f28)"
