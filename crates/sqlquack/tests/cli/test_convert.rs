@@ -7,9 +7,9 @@ use crate::helpers::{
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
-    DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, OutputFormatTestCase,
-    OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase,
-    PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
+    DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, LayoutFlagsTestCase,
+    OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase,
+    PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -1671,6 +1671,39 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 Some(test_case.expected_json.2),
                 Some(test_case.expected_json.3),
             ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_layout_flags_when_converting_then_clauses_break_unless_compact_in_text_and_json() {
+    let test_cases = [
+        LayoutFlagsTestCase {
+            description: "each clause and select item on its own line, in text and in --json",
+            flags: &[],
+            expected_sql: "SELECT\n    CAST(1 AS DECIMAL(1,0)) AS \"A\",\n    CAST(2 AS DECIMAL(1,0)) AS \"B\",\n    \
+                           'some longer text here' AS \"C\"\nWHERE (CAST(1 AS DECIMAL(1,0)) = CAST(1 AS DECIMAL(1,0)))",
+        },
+        LayoutFlagsTestCase {
+            description: "--compact prints the statement on one line, in text and in --json",
+            flags: &["--compact"],
+            expected_sql: "SELECT CAST(1 AS DECIMAL(1,0)) AS \"A\", CAST(2 AS DECIMAL(1,0)) AS \"B\", \
+                           'some longer text here' AS \"C\" WHERE (CAST(1 AS DECIMAL(1,0)) = CAST(1 AS DECIMAL(1,0)))",
+        },
+    ];
+    let sql = "SELECT 1 AS a, 2 AS b, 'some longer text here' AS c WHERE 1 = 1";
+    for test_case in test_cases {
+        let (text, _) = convert_streams(sql, &[&["--builtin-policy"], test_case.flags].concat());
+        let (json, _) = convert_streams(
+            sql,
+            &[&["--builtin-policy", "--json"], test_case.flags].concat(),
+        );
+        let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
+        assert_eq!(
+            (text.trim_end(), report["sql"].as_str()),
+            (test_case.expected_sql, Some(test_case.expected_sql)),
             "{}",
             test_case.description
         );

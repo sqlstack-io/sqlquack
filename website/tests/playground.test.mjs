@@ -103,3 +103,17 @@ test('every example stops at the stage it is meant to, and the default translate
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
 });
+
+test('translated SQL is laid out one clause per line unless the compact setting asks for one line', () => {
+	const sql = "SELECT order_id, note, 'a longer literal' AS label FROM orders WHERE order_id > 1";
+	const translated = (settings) => JSON.parse(analyze(sql, SCHEMA, JSON.stringify(settings))).translate.statements[0].sql;
+	const laidOut = translated({});
+	assert.equal(
+		laidOut,
+		'SELECT\n    "ORDERS"."ORDER_ID" AS "ORDER_ID",\n    "ORDERS"."NOTE" AS "NOTE",\n    ' +
+			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS" AS "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1,0)))',
+	);
+	const compact = translated({ compact: true });
+	assert.equal(compact, laidOut.replace(/\n */g, ' '));
+	assert.ok(!compact.includes('\n'));
+});

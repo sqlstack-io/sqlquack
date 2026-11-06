@@ -12,6 +12,7 @@ use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
 use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
@@ -253,10 +254,10 @@ pub(crate) fn chosen_options(
     )
 }
 
-/// The report of a finished analysis of `sql`.
+/// The report of a finished analysis of `sql`, its SQL one clause per line unless `compact`.
 pub(crate) fn analysis_report(
     analysis: &Analysis,
-    sql: &str,
+    (sql, compact): (&str, bool),
     (schema, options, policy): (&Schema, &ConversionOptions, Option<&Policy>),
     (arguments, parameters, profile): (&PolicyArguments, &BTreeMap<String, String>, String),
 ) -> Result<ConvertReport, String> {
@@ -292,7 +293,10 @@ pub(crate) fn analysis_report(
             true => analysis
                 .conversions
                 .iter()
-                .map(|done| done.sql.clone())
+                .map(|done| match compact {
+                    true => done.sql.clone(),
+                    false => layout_sql(&done.sql),
+                })
                 .collect::<Vec<String>>()
                 .join(";\n"),
             false => String::new(),
