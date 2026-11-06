@@ -117,6 +117,28 @@ fn given_case_file_when_loading_then_format_and_policy_rules_are_enforced() {
             ),
         },
         LoadTestCase {
+            description: "ALTER SESSION of a parameter the profile sets is rejected",
+            replace: "order = \"ordered\"",
+            with: "order = \"ordered\"\nsetup = [\"alter session set timezone = 'America/New_York'\"]",
+            expected_problem: Some(
+                "setup statement `alter session set timezone = 'America/New_York'` changes `TIMEZONE`, which the session profile sets or pins",
+            ),
+        },
+        LoadTestCase {
+            description: "ALTER SESSION UNSET of a parameter the profile sets is rejected",
+            replace: "order = \"ordered\"",
+            with: "order = \"ordered\"\nsetup = [\"ALTER SESSION UNSET TIMEZONE\"]",
+            expected_problem: Some(
+                "setup statement `ALTER SESSION UNSET TIMEZONE` changes `TIMEZONE`, which the session profile sets or pins",
+            ),
+        },
+        LoadTestCase {
+            description: "setup beside a case function is rejected",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\nsetup = [\"SET x = 1\"]\n\n[[case.function]]\nname = \"wrapped\"\narguments = [{ name = \"t\", type = \"VARCHAR\" }]\nreturns = \"VARCHAR\"\nbody = \"t\"",
+            expected_problem: Some("a case with `setup` cannot also define functions"),
+        },
+        LoadTestCase {
             description: "a setup entry holding two statements is rejected",
             replace: "order = \"ordered\"",
             with: "order = \"ordered\"\nsetup = [\"SET x = 1; DROP TABLE t\"]",

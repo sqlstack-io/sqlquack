@@ -1,5 +1,7 @@
 //! The setup a case runs before its SQL: the statements it may hold and the placeholders it names.
 
+use std::collections::BTreeSet;
+
 use crate::cases::models::CaseDefinition;
 use crate::constants::{SETUP_PLACEHOLDERS, SETUP_STATEMENT_STARTS};
 
@@ -44,6 +46,33 @@ pub(crate) fn setup_problems(label: &str, case: &CaseDefinition) -> Vec<String> 
             } else if case.setup.is_empty() {
                 problems.push(format!(
                     "{label}: placeholder `{placeholder}` needs a case with `setup`"
+                ));
+            }
+        }
+    }
+    problems
+}
+
+/// Setup ALTER SESSION statements naming a parameter the profile sets or pins, which receipts report.
+pub(crate) fn profile_session_problems(
+    label: &str,
+    case: &CaseDefinition,
+    profiled: &BTreeSet<&str>,
+) -> Vec<String> {
+    let mut problems: Vec<String> = Vec::new();
+    for statement in &case.setup {
+        let words: Vec<String> = statement
+            .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+            .filter(|word| !word.is_empty())
+            .map(str::to_ascii_uppercase)
+            .collect();
+        if words.get(..2) != Some(&["ALTER".to_owned(), "SESSION".to_owned()][..]) {
+            continue;
+        }
+        for name in words.iter().skip(3) {
+            if profiled.contains(name.as_str()) {
+                problems.push(format!(
+                    "{label}: setup statement `{statement}` changes `{name}`, which the session profile sets or pins"
                 ));
             }
         }

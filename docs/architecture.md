@@ -519,7 +519,8 @@ expression or a table function's query. Later functions may call earlier ones.
 A case may run Snowflake statements before its SQL, as `setup`, an array of single statements
 (no `;`). Each starts with one of `CREATE [OR REPLACE] TABLE`, `VIEW`, `TYPE` or `SEMANTIC VIEW`,
 `INSERT INTO`, `SET`, `UNSET`, `ALTER SESSION SET` or `ALTER SESSION UNSET`; loading rejects
-anything else. A case with `setup` defines no functions. Setup and the case SQL may name
+anything else, and an `ALTER SESSION` naming a parameter the case's session profile sets or
+pins, since receipts report the profile's values. A case with `setup` defines no functions. Setup and the case SQL may name
 `{{run_database}}` and `{{run_schema}}`, the recording run's own database and the case's fresh
 schema; any other `{{...}}`, or a placeholder in a case without setup, is rejected.
 

@@ -7,7 +7,7 @@ use sqlquack_policy::policy::models::{Policy, SessionValue};
 
 use crate::cases::_helpers::functions::{create_function, function_problems};
 use crate::cases::_helpers::hashing::case_hash;
-use crate::cases::_helpers::setup::setup_problems;
+use crate::cases::_helpers::setup::{profile_session_problems, setup_problems};
 use crate::cases::_helpers::source_sql::{row_sources, source_sql};
 use crate::cases::models::{
     CaseDefinition, CaseFile, CaseInput, CaseRole, EvidenceKind, HashedContent, LoadedCase,
@@ -58,6 +58,15 @@ pub(crate) fn load_file(
     let Some(profile) = policy.session_profiles.get(&file.session_profile) else {
         return Err(problems);
     };
+    let profiled: BTreeSet<&str> = profile
+        .snowflake
+        .keys()
+        .chain(profile.pinned.keys())
+        .map(String::as_str)
+        .collect();
+    problems.extend(file.cases.iter().flat_map(|case| {
+        profile_session_problems(&format!("{relative}#{}", case.id), case, &profiled)
+    }));
     if !problems.is_empty() {
         return Err(problems);
     }
