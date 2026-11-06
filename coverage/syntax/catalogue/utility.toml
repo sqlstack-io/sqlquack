@@ -150,9 +150,22 @@ source = "doc.sql.execute-dbt-project"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "EXECUTE DBT PROJECT [ IF EXISTS ] <name> [ ARGS = '[ <dbt_command> ] [ [ DBT_VERSION = 'version_number' ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ ENVIRONMENT = '<environment_name>' ] [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ] [ IMPORTS = ( { '<source_location>' | <system_function> } [ AS '<alias>' ] [ , ... ] ) ] [ WRITEBACK = { TRUE | FALSE } ]",
+  "EXECUTE DBT PROJECT [ IF EXISTS ] <name> [ ARGS = '[ <dbt_command> ] [ --<dbt_cli_option> <option_value_1> [ ... ] ] [ ... ]' ] [ DBT_VERSION = 'version_number' ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ ENVIRONMENT = '<environment_name>' ] [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ] [ IMPORTS = ( { '<source_location>' | <system_function> } [ AS '<alias>' ] [ , ... ] ) ] [ WRITEBACK = { TRUE | FALSE } ]",
 ]
-grammar_sha256 = "ae2d0b160b7fc33cd687740df492c4573ce6aa3d4788ab0af60878f668b3a885"
+grammar_sha256 = "c1faf53571896be260361723fcfad4e5d281d871841cb75dc6bda7c883e3a86e"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "sf.utility.execute-dbt-project.project-2"
+family = "utility"
+source = "doc.sql.execute-dbt-project"
+anchor = "Variant syntax"
+kind = "statement"
+grammar = [
+  "EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ] [ ARGS = '[ <dbt_command> ] [ --<dbt_cli_option> <option_value_1> [ ... ] [ ... ] ]' ] [ DBT_VERSION = 'version_number' ] [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ] [ ENVIRONMENT = '<environment_name>' ] [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ] [ PROJECT_ROOT = '<subdirectory_path>' ]",
+]
+grammar_sha256 = "655efce0d10602fddc2b5ef03b134ddc2999bfd3843cdd3ee7a13dad04b6269d"
 uses = []
 status = "catalogued"
 
@@ -167,7 +180,7 @@ grammar = [
 ]
 grammar_sha256 = "e196a700b6e45a88443be6b28b53ea80d68ab71362702e893c462ecd1a1dc207"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"

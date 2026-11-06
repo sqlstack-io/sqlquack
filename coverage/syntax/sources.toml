@@ -4837,7 +4837,9 @@ page_sha256 = "6ce082403d5dfbaeb63cac536e08cfcaf92e393e2d7d31c31bb29b69faa909b7"
 syntax_sha256 = "d359f23ef1ff45d0a047891c094549762997f15d0cb82d9e32f0cd4723848f4d"
 syntax_blocks = 2
 status = "forms"
-decisions = []
+decisions = [
+  "catalogued by hand from code_block",
+]
 
 [[source]]
 id = "doc.constructs.changes"
@@ -28704,7 +28706,7 @@ syntax_sha256 = "077f8df37e8027e594e9fc59f7b549b7f9aa1e6927206d5f46c0280454cf146
 syntax_blocks = 3
 status = "forms"
 decisions = [
-  "syntax heading 'CREATE OR ALTER WAREHOUSE' has no syntax block; catalogued from prose",
+  "catalogued by hand from code_block",
   "syntax heading 'DEFINE WAREHOUSE' has no syntax block; catalogued from prose",
 ]
 

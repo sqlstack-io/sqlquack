@@ -1,0 +1,1300 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( SELECT 1 ) ;",
+   "sql_sha256": "03d05a62a3f47dcc2de6d9ce9d5beb7188c8ae65e134dd24c594ff34312629ea"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , SELECT ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "0470dd5653a28ea0b95d2f6c1c8d2286235c0d1ecbb982ef467d0102f92f2987"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM SELECT ;",
+   "sql_sha256": "07cd41fe2dd42e7548d5a4f7e5f207fb0b67d1df9aae8c5c59fa4935618fb730"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS INTERVAL DAY ( 9 ) TO SECOND ( 3 ) ) ;",
+   "sql_sha256": "0848515d36ca5a15d1be4a9370239f4c0c2614294d620512e756944c52f73cb6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( 'v1' ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "09c46b3a59e4cad8529a7f0fb976c4f3afdfa9ebbf539f4cf02a853803a620fd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT [ 0 ] ;",
+   "sql_sha256": "0a980548a52a46d64e5528cd6fbf463d8fc977e0e5331f6679db812dd0a4a183"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "0d76b98d9b25424442621d7d924f8bfa650d3c6f0c3d1ff6e80cc28b4f459cd0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM SELECT ;",
+   "sql_sha256": "0daed6415f7ed9f6c57e2383fa5f2c63c8f0dd04efe87f4020bf77e21bc6743f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! ( 1 ) FROM t1 ;",
+   "sql_sha256": "119352066e473c9ce1d68acd9d36663028e1f806018189b1818439386324dc6c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( \"SELECT\" , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "11afe9453a7999ea879d689ff1ddd05bcecb7a3b8f4598b44be2c02c73a8ac16"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! 'v1' ( 1 ) FROM t1 ;",
+   "sql_sha256": "12cd186afbd304c306ba37b1711c9fa86e9faea3110d6d5f823ff2b9c4fd3335"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( SELECT ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "14d6438098b174461dd5d2cbd7a8a41bc4a3c56b4ec804b8cef3f3d575ad5c51"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! SELECT ( 1 ) FROM t1 ;",
+   "sql_sha256": "16fa7104138d3fafa84138733dcb5a256dec5faa5be5ee295e6555454419b947"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM TABLE ( \"i1!m1 Q\" ( 1 ) ) ;",
+   "sql_sha256": "1b9d8a8dac2d120b3b97af302484247b5fcc1ac4dd5bc6e15d74526a21888872"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "1d4086d280ecdc141095c939d3ae377bef27ddf58c925b4b222861cfe66b938a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL m1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "2a464dc1643f77b888bd5dfe717411f6ee685356b9bf3c4ab83fea1e58967981"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( \"m1 Q\" , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "2be593e4f2b791749cade07694c661d43c89620d72678151e115632ecb2887a4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM TABLE ( 'v1' ( 1 ) ) ;",
+   "sql_sha256": "2f4e368d9fa0581dfef16a0128ee34c18b814a0a773c1fe5b524b89882a2064e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 1 ;",
+   "sql_sha256": "301a593637b215357347c619cd45d4ee950fb4ddb270b156e8aa0d656ec17b1d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( SELECT , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "320c65ade0cb0e6a8b52642102444d808f81bd8eb0cc73ee7c476cbed0aba606"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM TABLE ( SELECT ( 1 ) ) ;",
+   "sql_sha256": "372796a90cf8ab33a1785406092d20e6a730c3ef0517d65cae129449ad8206a0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM \"SELECT\" ;",
+   "sql_sha256": "43bd78750303d06205f566edbd8188363f4d8ca1fa408c9665360ed1e19763f3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL m1 , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "44239e541b581121c74639207f06c12000f47ad72783854374f0cb65bc509a67"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! \"predict Q\" ( 1 ) FROM t1 ;",
+   "sql_sha256": "47185a0a6bf2bc746e5d8bf5bf2f1479b4e09d7c050cb76a883404bae6dc11e0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! SELECT ( 1 ) FROM t1 ;",
+   "sql_sha256": "4e23da129c6327a476b6be45639fe46ac067af6f4a0d782468022a0b2d79541e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 AS v1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' PARTITION BY v1 , v1 METADATA_COLUMNS IS_GENERATED ( ) AS v1 , v1 ) ;",
+   "sql_sha256": "4e58beb6571891450a49f0981ded00e5bac987bebccd658a71d7c1f3ecb3f471"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS INTERVAL HOUR ( 9 ) TO MINUTE ) ;",
+   "sql_sha256": "5392b5bb64e51b26447d70c82d6ea241a5d0caae55ca6cb5e3a2b57e646af580"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! \"SELECT\" ( 1 ) FROM t1 ;",
+   "sql_sha256": "543c27c9582cf837701451f511d46af424189cf14a52610c56b20e8cef3c9a41"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( 1 + 1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ;",
+   "sql_sha256": "56029f0f9413733d6a4a785df93573da07a8b36ddd59b92378d9e318876d2737"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS INTERVAL DAY ( 9 ) TO HOUR ) ;",
+   "sql_sha256": "571b8563626e8ba9ff72fa2357b22ec392ddb1f2bd83dc4e537951d587c49dc5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( \"SELECT\" ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "6f5720e7056d44604c9fc16fbb338ed60520d7ca54068533c6aae285407c5401"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ 1 ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ;",
+   "sql_sha256": "714e4f0f25b36f1975f39fe655faefc3f8e3b0768c601e4ecbed70a999d56d36"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) t1 ;",
+   "sql_sha256": "71771634cd45d49e4c23b7741d54cf9fe3c4b24acdba61802f1d88433dcc9364"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ [ 1 ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ] ;",
+   "sql_sha256": "72f7560bed4b0ad9ed554f944d16483c455e9c19f4fc811b4f111c2f202055d0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT NOT TRUE ;",
+   "sql_sha256": "73c3ed6a4fc03debd93241a9d15bedb634c28d82277db8f6d007f96059600cd9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM 'v1' ;",
+   "sql_sha256": "74d0b00659170810c36fab527c647a0f85244523b5738574f5c1813025fcc6db"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , \"SELECT\" ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "76cdd68a3b35b1f52b5bad221a336cd25d5eeaf635856512e5d880719727a870"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT [ 'm' ] ;",
+   "sql_sha256": "797b7158a235340963c82509b15276957c243cbd055fbba4af03f37484dc564b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 = ( SELECT 1 ) ;",
+   "sql_sha256": "7bc758aeee52ac0c178f7cde7dac75d752d13d456d58c7ce51ff5d918d295faa"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! ( 1 ) FROM t1 ;",
+   "sql_sha256": "7c1ca355cfaec8f095f8a407bb7f0abec2c178480b28dbe3b949f173e1dcc84a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS INTERVAL HOUR ( 9 ) TO SECOND ( 3 ) ) ;",
+   "sql_sha256": "8a053fef900b9f9c7c0f630c6342acd7fac948d56dd8802c478b17c1768dd4d4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM ;",
+   "sql_sha256": "8aca66caf6c8fc19cea08dfc01bba50c10582c930d7595d3cfb3c98d9c454b56"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( m1 ) ! predict ( * ) FROM t1 ;",
+   "sql_sha256": "970cc2211f5456103074cce30eda71787a5a84b626a2fcc2f69f5e910e7e7f06"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM \"t1 Q\" ;",
+   "sql_sha256": "9d013741acda935be8142df8cd7ab971d76d840b6d0b6aaea802a47b21ce5f20"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM TABLE ( ( 1 ) ) ;",
+   "sql_sha256": "9eccc2186fa2aa5e38fa60cfb36d41acb17817d4578f594cecfaa32b5f54f639"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM ;",
+   "sql_sha256": "a5e9f5bb08ffc6dcd41cb028b5983ceb87db286d10fb7c25d5ccd8ab1974cd51"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) t1 ;",
+   "sql_sha256": "a79a640be07493f0ed65c05f66843b81a38327fcd5da63c7641b8a874bc63d80"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM 'v1' ;",
+   "sql_sha256": "b0ae6288832aa982cdceffd1706cdac7a8c1292c40efce737141273085a3e045"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS INTERVAL MINUTE ( 9 ) TO SECOND ( 3 ) ) ;",
+   "sql_sha256": "b2b4d651f6990c864c01c4eb7e396c5a7d31879ddcddebae3cc168284202c0f0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! \"predict Q\" ( 1 ) FROM t1 ;",
+   "sql_sha256": "b8a1827dcdb71376e7b1087fa47c3083ac2527156c252613450521176ce05ea8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "be2a06d2e194cad23208a6dba7ad6af55ed459d9043292f6c3a2032cdee3f18d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "c29ee53b2e53c0ee48e8b81261a2f430fef4fdc7d459426ddbbcf8c0b8e4b574"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : { 'k' : 1 } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } } ;",
+   "sql_sha256": "c48960f1649dbf12c7cd99d2a447ba983d1a2af916c92f9bc571631fa3abbb3e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( \"m1 Q\" ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "c5fbc3a506d1c94108edf720b45a9d1355db6b064ee4edf474bda2cdcf6ae27f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( m1 , v1 ) ! predict ( * ) FROM t1 ;",
+   "sql_sha256": "ca8f040311e720bc6f729cd79d12c76f85a09bf6b920ae557c8ec036d8b5bbdf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "cc55a64b3586d318bdd75b6b41e194f78e5946b25a8fee6e5034917d38e4e2a6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM \"SELECT\" ;",
+   "sql_sha256": "cf9a3cf39017be3db03758146d1a49d4339867cb980faef7f49877b09608aef6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , 'v1' ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "d10199bb42253aeacb8a4e222ecbf59148bcf94b438bea7b30f3fb2ba7fcf0f0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( 'v1' , v1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "d2535cdd10936f0ac30fa9cdaf1e655741bb127f841f93312c51d4e1a5816de2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "dc34c6d77731c6e0addb3913902a36ba14937eada2563aaba3f6dfd5735fffd8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM TABLE ( \"SELECT\" ( 1 ) ) ;",
+   "sql_sha256": "ddfc32d90be0b116fbd6d2e5ef13ed0a869e7dd0ff49415153e0eec68ba13eb2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , \"v1 Q\" ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "e58455b3dfb1cc758d448b8db5030db7c4e544d6be569c4fda8555f1af708c39"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS MAP ( VARCHAR , ) ) ;",
+   "sql_sha256": "e6cc2bc183fb8c324ae18d9ca5c6ea4a3941fa38d380b537c2f86d7b6ccd16e6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! \"SELECT\" ( 1 ) FROM t1 ;",
+   "sql_sha256": "edbea086d27f3dd16f7316163608fd28b29584d21a758971f7cc20314108f122"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , ) ! predict ( 1 ) FROM t1 ;",
+   "sql_sha256": "ee8d6437dd511d04a6f647588ff1d3ca5deb5baec91ed95e8dfc043081fb7ca5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 ) ! predict ( 1 ) FROM \"t1 Q\" ;",
+   "sql_sha256": "f05c2091075b8ede2198c3d49d563a15aa2e39556f43c9d035b414db81d95597"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( ( 1 + 1 ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ;",
+   "sql_sha256": "f0f043e88af6ed30a827d384eb3a848425af2eb1f7138fc42ca36e4134c6aa49"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT MODEL ( m1 , v1 ) ! 'v1' ( 1 ) FROM t1 ;",
+   "sql_sha256": "f0fadfe1fba08b77c44987a15943bc16ad510081fe04f347835f41c4687d3183"
+  }
+ ],
+ "receipts": 624,
+ "receipts_file_sha256": "2b8495df54a92d33384dbbf55b7094c2b393f89b30ca7451a147bebe8d57b87b",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-31fbf1fc5b6f",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 392032)",
+   "row_id": "a-ddl-2bf4338fec7e",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-0bef2b0291e9",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-s17-quoted_unicode_nested_declare",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_date",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_time",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_timestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_user",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtime",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtimestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-while",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-repeat",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-let",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-0ed73f855675",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1c0666c0ea3c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1f57ef757b7c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-209728947280",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-2a877fbbcf32",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-302455fa3bba",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-3aec89374149",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-40b513dae4ee",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4daf4294be43",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-58f0f58f5957",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-5c06310da441",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91124)",
+   "row_id": "d73-a-ddl-5ce1b8c9d30b",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-6338819436d7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "d73-a-ddl-737e503e04e5",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-7a81ccf0c62e",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-807945a81f26",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-827d8c2cfc45",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-85036fbaf3a7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8c9591dea309",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-9bde7d855b34",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a7766f997d44",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d36-stream-at-stream-control",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-bc9a744ae8f2",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-bed862237231",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-d501e4c221ad",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-d790ef2bcd15",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d35-stream-before-stream",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-e4b602b7a478",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-ef3bc787e401",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 91413)",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.kf449d4369b4c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.break.k21f7c040141a",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.continue.ka6cb0f18b216",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k1c3b8382c3b0",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k713b3acc554b",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.ka0c2e721f5de",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf46147564dd3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf997f83cb6bb",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.k041899e81470",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.k1c2392f90eee",
+   "run_id": "d82-scripting-3-20261104T011650Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.kd8c284f355aa",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.ke9b4a198690b",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kcc18e3343634",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.case.end.syntax.k93f2857ca62c",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.if.k685d9d2a067e",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 92107)",
+   "row_id": "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.k2d3bcf6abdad",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 92107)",
+   "row_id": "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.k8cfc52258f82",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 92107)",
+   "row_id": "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.kc7ae19b55dde",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.k388fdac65474",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.kee6da8eed1da",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 391707)",
+   "row_id": "sf.query.from.k3549ca168b06",
+   "run_id": "d91-query-2-20261104T022942Z"
+  },
+  {
+   "reason": "error phase not established (errno 91306)",
+   "row_id": "sf.query.match-recognize.match-recognize-pattern-define-as.k354d32fabe0e",
+   "run_id": "d91-query-2-20261104T022942Z"
+  },
+  {
+   "reason": "error phase not established (errno 91306)",
+   "row_id": "sf.query.match-recognize.match-recognize-pattern-define-as.kd6ca55da6e59",
+   "run_id": "d91-query-2-20261104T022942Z"
+  },
+  {
+   "reason": "error phase not established (errno 91306)",
+   "row_id": "sf.query.match-recognize.match-recognize-pattern-define-as.kfb0d382f52cf",
+   "run_id": "d91-query-2-20261104T022942Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-1-20261104T022520Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-2-20261104T023428Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d06-task-other-session-param",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d07-task-session-no-comma",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d09-task-after-before-execute-control",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d10-task-trace-level",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d12-task-comma-between-props",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90216)",
+   "row_id": "a-ddl-6b2ce283b60a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-5166f9f77eb7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "a-ddl-fcca75747c99",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-facb192ba2f7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "a-ddl-7ae2bc8dcb0f",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90080)",
+   "row_id": "a-ddl-d0e717489e81",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "a-ddl-e3a7b0ab273a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90207)",
+   "row_id": "a-ddl-909d03e593dd",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "a-ddl-fe118cb688c3",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-d841cfb9b6c2",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91471)",
+   "row_id": "a-ddl-aee0a7879f11",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_0",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_1",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "row_id": "*",
+   "run_id": "history-audit-20261103"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "4db838951496-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "5ce226a4219f-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "b7bf01d2a39b-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  }
+ ],
+ "refused": 118,
+ "runs": [
+  {
+   "audit_sha256": "1acfcf6f1a79d2440be15f964f0bfbdcc2ab865ed88c73f4977488f70f24bae4",
+   "receipts": 94,
+   "refused_rows": 3,
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6650db4655a2b7a3b2709b670f49ed8cb59008ae3db92a7696501f729db9ac51",
+   "receipts": 32,
+   "refused_rows": 1,
+   "run_id": "b5-packet1-20261103T191328Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6e3d606d5205bcadb4c2ff1462ab5cb8389f6078ee2d21303ceabf86d51b5f7",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet2-20261103T201614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de897c46ab04353e2ce87e7ebc9cb11dff827f44fcb6a34b6ac5beecc2e154f2",
+   "receipts": 5,
+   "refused_rows": 2,
+   "run_id": "b5-packet3-20261103T214211Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "65224a8faa8839aa7d6922f336712ce64f1452d680d83f1663cd6c87cbc22f18",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "b5-packet4-20261103T224644Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a4d5f5807afe9406047e03d658836b016f4db94aa3e9930c60696cc5177fd6b",
+   "receipts": 42,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-2-20261103T204317Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "79e22c19c053689aeee5d498abd229571bc0029aee80785eca7f2f1931fc37ff",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-4-20261103T224526Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "14be5aa6758d6077334c8918ea545564106aa045bc7239010ace92b276477384",
+   "receipts": 90,
+   "refused_rows": 9,
+   "run_id": "c-audit-b5-5-20261103T232716Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5fe7f51716cc214b1a8993a65d68450354aef1b24cc03db356858e934d4fc399",
+   "receipts": 15,
+   "refused_rows": 0,
+   "run_id": "c-audit-query-6-20261103T232752Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ee188fc38fa9acdbc015a304c0eb86c7e77a0e1d2a69802cc50f35d46d65016b",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "current10-20261103T173608Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4bf1537b90134be4087efe224b3e5ecef9941cd8d2389691b3e64c8f01360c4a",
+   "receipts": 37,
+   "refused_rows": 34,
+   "run_id": "d73-missing-object-1-20261104T005826Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8e16ec44239248f4edccf3f58bdfb6e0c8189bb6d7425ec5e2d974ffaa67084c",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d73-missing-object-2-20261104T010308Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ce9ba60262beb94a711bf9af01bbc8573d24855931074ca54591a9357083d169",
+   "receipts": 15,
+   "refused_rows": 5,
+   "run_id": "d73-missing-object-3-20261104T010709Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d3b8f28a8d8e47a02b06496f9b571afe67c115abacd38d806beb4d884dc88cb0",
+   "receipts": 458,
+   "refused_rows": 9,
+   "run_id": "d82-scripting-1-20261104T005141Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b3f0d912ca7896611a8c149d68af29f026d714da41a8e65eefedebe8b808acc9",
+   "receipts": 85,
+   "refused_rows": 16,
+   "run_id": "d82-scripting-2-20261104T010552Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a7493dcca61f43dc75d8cf23e74df8e1bd5ebaf7f387197ca87481a85ed11d2",
+   "receipts": 22,
+   "refused_rows": 1,
+   "run_id": "d82-scripting-3-20261104T011650Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "73f23978534dce1831ca9226770de11132d25d491a4df5ac89e8161eb2123072",
+   "receipts": 8,
+   "refused_rows": 3,
+   "run_id": "d82-scripting-4-20261104T013200Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b252b8dc35bff6a27197060a5def1f7354a44c1cb65535dad89285124c4628b9",
+   "receipts": 9,
+   "refused_rows": 0,
+   "run_id": "d82-scripting-5-20261104T013906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fcd59014968d78e8f801d54342fcc20f598a90df849dd289d2cfc544a6204b4d",
+   "receipts": 22,
+   "refused_rows": 2,
+   "run_id": "d90-extreme-1-20261104T015457Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "83dafface5722be516d9ea99b87966ec6599613c170bf7aa1a19f0f0f2629093",
+   "receipts": 18,
+   "refused_rows": 0,
+   "run_id": "d90-extreme-2-20261104T020037Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "faa42d154db408faa1f0c90df76b0f05582ec199f6853db10e9b6a541e55402d",
+   "receipts": 607,
+   "refused_rows": 5,
+   "run_id": "d91-expr-1-20261104T023704Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f331100ea919f0d961b5fa91a3b4451b8502c48c65c20b67fb89016629357d5a",
+   "receipts": 13,
+   "refused_rows": 0,
+   "run_id": "d91-expr-ddl-1-20261104T024044Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b5682d95e39f4d507d07342cf2b2519c392b47bada8de5329004be0e0b3cd077",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d91-expr-flow-1-20261104T024041Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "062abd28664b4a59208cd4990283a3fa9db836ff92cc34954bc8d421498c9c48",
+   "receipts": 734,
+   "refused_rows": 0,
+   "run_id": "d91-query-1-20261104T021702Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "54b978e1616c72e9266542a3e07a7baaf8ec5fb565510979f46e63d02db8863a",
+   "receipts": 455,
+   "refused_rows": 4,
+   "run_id": "d91-query-2-20261104T022942Z",
+   "status": "imported"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-1-20261104T022520Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-2-20261104T023428Z",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "9317ee78146cb1c4162ea8e49397c8fa17903d41bc8933dfca6f8a95e0ace5f7",
+   "receipts": 566,
+   "refused_rows": 12,
+   "run_id": "ddl-sweep-1-20261103T233411Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "648a090114a56ee046928a33b00149febd0103a61958314d9488825286b144a3",
+   "receipts": 135,
+   "refused_rows": 4,
+   "run_id": "ddl-sweep-2-20261103T234049Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "27252ee02a868f9e0d355323ef880fd623549235ef14fe1ee8601988b8d2ef8b",
+   "receipts": 12,
+   "refused_rows": 2,
+   "run_id": "diagnostic-20261103T173725Z",
+   "status": "imported"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "history-audit-20261103",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "c77d3f564bca6bfb69676bce3aab16c902c4bc093b81e8f3795a84f8f2a3c4ea",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "power5-20261103T211556Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "86fdde0a1d42fef66d65138ca5ccbe0c29e623b1fe4038cfd21b6c382eeecfc6",
+   "receipts": 46,
+   "refused_rows": 0,
+   "run_id": "query-packet1-20261103T2115Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a2ebb4837e2d1fbbf3f09fbe973fe7b5b1db4d76b740b62facae298ff3f5c7fd",
+   "receipts": 19,
+   "refused_rows": 0,
+   "run_id": "query-packet2-20261103T211816Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "68221365e59ed623a6b24bdff4ed7046051de104ddbc01b4eb6bf880ab959fe1",
+   "receipts": 6,
+   "refused_rows": 0,
+   "run_id": "setop-corpus-7-20261103T232953Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "75bfeb3f8d738049474042cebf6e8307e9430a7524ff4003400dc2f60a0c6b6d",
+   "receipts": 164,
+   "refused_rows": 3,
+   "run_id": "setup-query-1-20261104T004203Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": [
+  {
+   "case_id": "a-ddl-2bf4338fec7e",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392032)",
+   "receipt_sha256": "cad0a7c63abb0c516b517b36434c00143c6e626cbcd1e26fc5145fbdf7e655cb",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "case_id": "b5-s17-quoted_unicode_nested_declare",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "111bb37d84c609af6296dc5889f412518de109038ce6eee507ee5047e95b59e8",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "case_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "5ebae0d5f11b43342ec7ce37bffa41d64ee4dd5972300c51e377c8fa7c718f2d",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "46657833a05832d8047240bc649a918c52605c1165e90a770a4154c39ac661c7",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "a-ddl-fcca75747c99",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392030)",
+   "receipt_sha256": "1cced31cba08886f447662fe699bac59f7e1ad8e0b483bde9f1dd46c7245d54e",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  }
+ ]
+}

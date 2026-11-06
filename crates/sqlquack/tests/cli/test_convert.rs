@@ -6,8 +6,9 @@ use crate::helpers::{
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
-    FailureKindTestCase, OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase,
-    PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, ValueTestCase,
+    DeepChainTestCase, FailureKindTestCase, OutputFormatTestCase, OverrideFailureTestCase,
+    OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase,
+    RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -1303,6 +1304,19 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_json: ("SQ0203", "qualify_without_window", 1, 10),
         },
         ConvertDiagnosticTestCase {
+            description: "an unaliased item has its own code, its own span and an alias as help",
+            sql: "SELECT 'a' AS a, UPPER('b')",
+            flags: &[],
+            expected_text: concat!(
+                "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
+                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('b')\n",
+                "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
+                "  |\n  = help: add an alias, e.g. `AS one`\n",
+                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+            ),
+            expected_json: ("SQ0009", "unaliased_output_name", 1, 18),
+        },
+        ConvertDiagnosticTestCase {
             description: "a divergence the policy refuses has its own code and help naming the policy",
             sql: "SELECT HASH(1) AS h",
             flags: &[],
@@ -1521,6 +1535,74 @@ fn given_numbers_beyond_38_digits_when_running_then_duckdb_raises_a_numeric_rang
                 .is_some_and(|error| error.contains(test_case.expected_mention)),
             "{}",
             test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_long_flat_chain_when_converting_then_it_converts_or_is_refused_within_budget() {
+    let test_cases = [
+        DeepChainTestCase {
+            description: "a long chain of additions is refused for its depth, not a stack overflow",
+            operator: " + ",
+            operand: "x",
+            terms: 3_000,
+            expected_exit: Some(1),
+            expected_mention: "SQ0006",
+        },
+        DeepChainTestCase {
+            description: "a chain far past the depth limit is refused before conversion recurses",
+            operator: " - ",
+            operand: "x",
+            terms: 50_000,
+            expected_exit: Some(1),
+            expected_mention: "SQ0006",
+        },
+        DeepChainTestCase {
+            description: "a long chain of || is refused for its depth, without quadratic memory",
+            operator: " || ",
+            operand: "s",
+            terms: 3_000,
+            expected_exit: Some(1),
+            expected_mention: "SQ0006",
+        },
+        DeepChainTestCase {
+            description: "a || chain within the depth limit still converts",
+            operator: " || ",
+            operand: "s",
+            terms: 400,
+            expected_exit: Some(0),
+            expected_mention: "done, converted",
+        },
+        DeepChainTestCase {
+            description: "a long AND chain, which the parser balances, still converts",
+            operator: " AND ",
+            operand: "b",
+            terms: 3_000,
+            expected_exit: Some(0),
+            expected_mention: "done, converted",
+        },
+    ];
+    for test_case in test_cases {
+        let sql = format!(
+            "SELECT {} AS y FROM (SELECT 1 AS x, 'a' AS s, TRUE AS b)",
+            vec![test_case.operand; test_case.terms].join(test_case.operator)
+        );
+        let started = std::time::Instant::now();
+
+        let outcome = run_convert(&sql, &["--builtin-policy"], test_case.expected_mention);
+
+        assert_eq!(
+            (outcome.exit_code, outcome.stderr_mentions),
+            (test_case.expected_exit, true),
+            "{}",
+            test_case.description
+        );
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(20),
+            "{}: took {:?}",
+            test_case.description,
+            started.elapsed()
         );
     }
 }

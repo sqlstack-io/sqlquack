@@ -1,0 +1,5 @@
+{"case_id":"sf.functions.complete-snowflake-cortex-multimodal.from.k84be3059ba23","relations":[{"name":"v1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.functions.complete-snowflake-cortex-multimodal.from.syntax.k875111839b53","relations":[{"name":"v1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.functions.prompt.k0d0e3f25802a","relations":[{"name":"v1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.functions.prompt.k75c6fe9164c3","relations":[{"name":"v1","columns":[{"name":"Z1","type":"INT"}]}]}
+{"case_id":"sf.functions.prompt.k980a4fa56721","relations":[{"name":"v1","columns":[{"name":"Z1","type":"INT"}]}]}

@@ -762,6 +762,24 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!("v1"),
         },
         ProjectionTestCase {
+            description: "a schema-qualified window call keeps its schema",
+            sql: "SELECT s1.f1 ( 1 ) OVER ( PARTITION BY 1 )",
+            pointer: "/0/select/expressions/0/window_function/this/method_call/this/column/name/name",
+            expected_value: json!("s1"),
+        },
+        ProjectionTestCase {
+            description: "a path after parentheses keeps the parenthesized base",
+            sql: "SELECT ( PARSE_JSON ( '{}' ) ) : a . b",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/literal/value",
+            expected_value: json!("a.b"),
+        },
+        ProjectionTestCase {
+            description: ":: PERIOD keeps its element type like CAST",
+            sql: "SELECT NULL :: PERIOD ( DATE )",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_value: json!("PERIOD(DATE)"),
+        },
+        ProjectionTestCase {
             description: "USE SCHEMA with a quoted dotted name has one part",
             sql: "USE SCHEMA \"v1 Q.v1\"",
             pointer: "/0/use/parts",
@@ -941,6 +959,81 @@ fn given_receipts_contradicted_by_pr_68_when_parsing_then_acceptance_matches_sno
         AcceptanceTestCase {
             description: "RESUME SEARCH OPTIMIZATION refuses a string target (recorded errno 1003)",
             sql: "ALTER DYNAMIC TABLE v1 RESUME SEARCH OPTIMIZATION ON 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_expression_gap_receipts_when_parsing_then_acceptance_matches_snowflake() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a schema-qualified call takes OVER (recorded errno 2060, import 159)",
+            sql: "SELECT s1.f1 ( 1 ) OVER ( PARTITION BY 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a database-qualified call takes OVER (recorded errno 2060, import 159)",
+            sql: "SELECT d1.s1.f1 ( 1 ) OVER ( ORDER BY 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "OVER needs its window (recorded errno 1003, import 159)",
+            sql: "SELECT s1.f1 ( 1 ) OVER ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a path follows a parenthesized window call (recorded success, import 159)",
+            sql: "SELECT ( FIRST_VALUE ( PARSE_JSON ( '{\"a\":{\"b\":1}}' ) ) OVER ( ORDER BY 1 ) ) : a . b ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a colon after parentheses needs a path (recorded errno 1003, import 159)",
+            sql: "SELECT ( PARSE_JSON ( '{\"a\":1}' ) ) : ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: ":: takes PERIOD with its element type (recorded success, import 159)",
+            sql: "SELECT '[2026-01-01, 2026-01-02)' :: PERIOD ( DATE ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: ":: PERIOD needs an element type (recorded errno 1003, import 159)",
+            sql: "SELECT NULL :: PERIOD ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "RECURSIVE cannot follow another CTE (recorded errno 1003, import 159)",
+            sql: "WITH v1 AS ( SELECT 1 AS n ) , RECURSIVE r ( n ) AS ( SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 3 ) SELECT n FROM r ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a later CTE may recurse without RECURSIVE (recorded success, import 159)",
+            sql: "WITH v1 AS ( SELECT 1 AS n ) , r ( n ) AS ( SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 3 ) SELECT n FROM r ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a lambda takes at least one parameter (recorded errno 1003)",
+            sql: "SELECT ACCUMULATE ( 1 , ( ) -> 0 , ( s , x ) -> s + x , ( s1 , s2 ) -> s1 + s2 , s -> s ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },

@@ -243,8 +243,8 @@ pub(crate) fn concat_operator(payload: &Value, site: Site<'_>) -> Result<Emitted
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["left", "right"], &construct)?;
     let parts = [
-        field(payload, "left", &construct)?.clone(),
-        field(payload, "right", &construct)?.clone(),
+        field(payload, "left", &construct)?,
+        field(payload, "right", &construct)?,
     ];
     concatenate(&parts, &construct, site)
 }
@@ -287,7 +287,7 @@ pub(crate) fn concatenate_with_separator(
 
 /// Text from VARCHAR, NUMBER, FLOAT, BOOLEAN or DATE operands, formatted as Snowflake formats them.
 pub(crate) fn concatenate(
-    parts: &[Value],
+    parts: &[&Value],
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {

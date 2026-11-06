@@ -840,7 +840,7 @@ forms = [
   "sf.utility.execute-alert",
   "sf.utility.execute-code-bundle",
   "sf.utility.execute-dbt-project.project",
-  "sf.utility.execute-dbt-project.project.variant-syntax",
+  "sf.utility.execute-dbt-project.project-2",
   "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment",
   "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment",
   "sf.utility.execute-dcm-project.preview-using-configuration-from",

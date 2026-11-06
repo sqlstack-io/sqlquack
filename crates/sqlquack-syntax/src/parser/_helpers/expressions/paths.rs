@@ -51,6 +51,7 @@ impl Parser {
                 | Expression::Function(_)
                 | Expression::ParseJson(_)
                 | Expression::Parameter(_)
+                | Expression::Paren(_)
         );
 
         if !is_valid_json_path_base {
@@ -1157,6 +1158,7 @@ impl Parser {
                     inferred_type: None,
                 });
                 let method_call = self.parse_method_call_expression(this, col_ident, args);
+                let method_call = self.parse_qualified_window(method_call)?;
                 return self.maybe_parse_subscript(method_call);
             }
 

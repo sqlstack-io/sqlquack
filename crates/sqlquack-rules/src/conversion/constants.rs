@@ -108,6 +108,12 @@ pub(crate) const HIERARCHY_WALK: &str = "SQLQUACK$WALK";
 pub(crate) const HIERARCHY_PRIOR: &str = "SQLQUACK$PRIOR";
 /// The depth past which a CONNECT BY walk raises rather than grow without end; never truncates.
 pub(crate) const HIERARCHY_MAX_DEPTH: u32 = 10_000;
+/// How deep a tree may nest for conversion, which recurses once per level, flat chains included.
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) const MAX_TREE_DEPTH: usize = 512;
+/// The same on WebAssembly, whose stack is far smaller.
+#[cfg(target_arch = "wasm32")]
+pub(crate) const MAX_TREE_DEPTH: usize = 128;
 /// The tag of the raise past `HIERARCHY_MAX_DEPTH`.
 pub(crate) const HIERARCHY_DEPTH_TAG: &str = "connect_by_depth";
 /// Tree nodes holding a query, refused in a hierarchical query's projection and ordering.

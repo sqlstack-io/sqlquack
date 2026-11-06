@@ -108,7 +108,14 @@ impl Parser {
             _ => {
                 let base = self.convert_name_to_type(&name)?;
                 {
-                    if matches!(base, DataType::Custom { .. }) && self.check(TokenType::Dot) {
+                    if matches!(base, DataType::Custom { .. })
+                        && self.applies_snowflake_context_rules()
+                        && self.check(TokenType::LParen)
+                    {
+                        self.current -= 1;
+                        self.parse_data_type()?
+                    } else if matches!(base, DataType::Custom { .. }) && self.check(TokenType::Dot)
+                    {
                         let mut type_name = raw_name.to_string();
                         while self.match_token(TokenType::Dot) {
                             let tok = self.advance()?;

@@ -38,7 +38,9 @@ grammar = [
 grammar_sha256 = "7257ab1eb586ec61c4dc5aec2fb00990ffd2b23a2854602bba1b1517c88a2ed3"
 uses = [
   "copyOptions",
-  "externalLocation",
+  "externalLocation (for Amazon S3)",
+  "externalLocation (for Google Cloud Storage)",
+  "externalLocation (for Microsoft Azure)",
   "externalStage",
   "formatTypeOptions",
   "internalStage",
@@ -57,7 +59,9 @@ grammar = [
 grammar_sha256 = "140ad7e910d61741cf56f9bdd0690b090ecedfb6e5d03d064049f1093206ad11"
 uses = [
   "copyOptions",
-  "externalLocation",
+  "externalLocation (for Amazon S3)",
+  "externalLocation (for Google Cloud Storage)",
+  "externalLocation (for Microsoft Azure)",
   "externalStage",
   "formatTypeOptions",
   "internalStage",
@@ -293,9 +297,21 @@ name = "copyOptions"
 grammar = "copyOptions ::= OVERWRITE = TRUE | FALSE SINGLE = TRUE | FALSE MAX_FILE_SIZE = <num> INCLUDE_QUERY_ID = TRUE | FALSE DETAILED_OUTPUT = TRUE | FALSE"
 
 [[definition]]
-id = "doc.sql.copy-into-location::externalLocation"
+id = "doc.sql.copy-into-location::externalLocation (for Amazon S3)"
 source = "doc.sql.copy-into-location"
-name = "externalLocation"
+name = "externalLocation (for Amazon S3)"
+grammar = "externalLocation (for Amazon S3) ::= '<protocol>://<bucket>[/<path>]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } } ) } ] [ ENCRYPTION = ( [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.copy-into-location::externalLocation (for Google Cloud Storage)"
+source = "doc.sql.copy-into-location"
+name = "externalLocation (for Google Cloud Storage)"
+grammar = "externalLocation (for Google Cloud Storage) ::= 'gcs://<bucket>[/<path>]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.copy-into-location::externalLocation (for Microsoft Azure)"
+source = "doc.sql.copy-into-location"
+name = "externalLocation (for Microsoft Azure)"
 grammar = "externalLocation (for Microsoft Azure) ::= 'azure://<account>.blob.core.windows.net/<container>[/<path>]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
 
 [[definition]]
@@ -323,9 +339,21 @@ name = "copyOptions"
 grammar = "copyOptions ::= CLUSTER_AT_INGEST_TIME = TRUE | FALSE ENFORCE_LENGTH = TRUE | FALSE FORCE = TRUE | FALSE INCLUDE_METADATA = ( <column_name> = METADATA$<field> [ , <column_name> = METADATA${field} ... ] ) LOAD_MODE = { FULL_INGEST | ADD_FILES_COPY } LOAD_UNCERTAIN_FILES = TRUE | FALSE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE | CASE_INSENSITIVE | NONE ON_ERROR = { CONTINUE | SKIP_FILE | SKIP_FILE_<num> | 'SKIP_FILE_<num>%' | ABORT_STATEMENT } PURGE = TRUE | FALSE RETURN_FAILED_ONLY = TRUE | FALSE SIZE_LIMIT = <num> TRUNCATECOLUMNS = TRUE | FALSE"
 
 [[definition]]
-id = "doc.sql.copy-into-table::externalLocation"
+id = "doc.sql.copy-into-table::externalLocation (for Amazon S3)"
 source = "doc.sql.copy-into-table"
-name = "externalLocation"
+name = "externalLocation (for Amazon S3)"
+grammar = "externalLocation (for Amazon S3) ::= '<protocol>://<bucket>[/<path>]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } } ) } ] [ ENCRYPTION = ( [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.copy-into-table::externalLocation (for Google Cloud Storage)"
+source = "doc.sql.copy-into-table"
+name = "externalLocation (for Google Cloud Storage)"
+grammar = "externalLocation (for Google Cloud Storage) ::= 'gcs://<bucket>[/<path>]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] ) ]"
+
+[[definition]]
+id = "doc.sql.copy-into-table::externalLocation (for Microsoft Azure)"
+source = "doc.sql.copy-into-table"
+name = "externalLocation (for Microsoft Azure)"
 grammar = "externalLocation (for Microsoft Azure) ::= 'azure://<account>.blob.core.windows.net/<container>[/<path>]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( [ TYPE = { 'AZURE_CSE' | 'NONE' } ] [ MASTER_KEY = '<string>' ] ) ]"
 
 [[definition]]

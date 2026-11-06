@@ -27,6 +27,19 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "sf.query.at-before.iceberg-version"
+family = "query"
+source = "doc.constructs.at-before"
+anchor = "Parameters / Iceberg table parameters"
+kind = "statement"
+grammar = [
+  "SELECT ... FROM ... AT ( { VERSION_TAG => '<tag_name>' | VERSION_REF => '<reference_name>' | VERSION => <snapshot_id> } ) [ ... ]",
+]
+grammar_sha256 = "7055460ea04e0ed5e3cb7899dc8a6bab00706cebcdd066bb1d0788ded3997067"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "sf.query.changes"
 family = "query"
 source = "doc.constructs.changes"

@@ -1,0 +1,223 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [
+  {
+   "case_id": "sf.ddl.create-task.define-task.kd6230d6e0758",
+   "kind": "held",
+   "raw_record_sha256": "061308e8f32ad1521cc6991dd927401b657880fafe9ce6e632ce3b9a15d37696",
+   "reason": "execution-wrapper failure, errno 1622 has no statement ruling (hold for C)",
+   "run_id": "define-def-09"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.kfa4a5efdcced",
+   "kind": "held",
+   "raw_record_sha256": "47195d60a5c2cb9b95a2e3bac1252d60c438447678e4b5f8ce2f9a6f0bdcd258",
+   "reason": "failure without a DCM compilation or execution wrapper (unestablished)",
+   "run_id": "define-def-09"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k661bbc61453f",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "661bbc61453f536af08255df6b7f1337af7fa309dcd0267550b03da6a9bbd353"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.k70f2150e1ad4",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "70f2150e1ad4debf105ebc7cd867c7974050f7a159010b1c0a861d461c93f61f"
+  },
+  {
+   "case_id": "sf.ddl.create-task.define-task.kf8876d8ce07e",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "f8876d8ce07e4d22e07bfe9a7070e0a1255e03dc5e0a93a364d6b0967ed76aed"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k01a98e74ca96",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "01a98e74ca96c8234732c694f5abb9e50eb5dc3531847523118b6555b94d1207"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k06dad35aaa55",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "06dad35aaa554969fe5b14ceea47023d315550cf7ba8cfad30564dbd5c4db82e"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k101c1564bbfc",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "101c1564bbfc72f86277ede29483cc7f423711a9564cc69d304717b51dea757f"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k16ec65dda4e6",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "16ec65dda4e64f21b7746221cb63a28f90c1d279df0a8f3ebc6c12c43dee0a2a"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k1deffeb69c20",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "1deffeb69c20c43ba0a42547baf7805d7df4b7bcb73577a6666735df0ba783a4"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k216bccb92158",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: paid feature",
+   "run_id": "define-def-09",
+   "sql_sha256": "216bccb921589f7dd5d8352c121f3a824cf836321d332b5849260f61d8b54563"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k28fcffadb7fb",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "28fcffadb7fbc9d7cbdce1532b36b80f6a429c89e054c13e426ba428c1bbaa99"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k35d23d394569",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "35d23d3945699867954344f69c39980b0020be6029e6bca0d86876b396569134"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k3e57bbc67a48",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "3e57bbc67a487ebbb74030912e4a9d46b65b48abd8f2b898a3bf9762751a251b"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k3f7db6f9ffe8",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "3f7db6f9ffe87dc38c720dbb63053bf87fb61814f921b9db6b89aa4488c55558"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k4c0cb1519881",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "4c0cb1519881e2e52febf0fdfd4b963a9164e9e1fc21b9dd281be8127aba843f"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k53e1ed7c96be",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "53e1ed7c96bec74a68db06dfb26348c351afabc53ba06f8fe4e1dee683660511"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k5bd9693d5a7d",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "5bd9693d5a7d8b59877ad880266a38440c0855040726728fdc413b663b58bf49"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k5e5cf536a3aa",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "5e5cf536a3aa3e3f2d9e34a40a24b7c18c6194872084e56ec51ea0372be62de8"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k7c92254f4171",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: paid feature",
+   "run_id": "define-def-09",
+   "sql_sha256": "7c92254f4171a310e8ccfbf6ed1b5c1d0fc185c87f82a919675bb994f811a6db"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k7e48c591152f",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "7e48c591152fc45d6a98f92e3b1c67ac1b0237672cd2f25de09b2dd605709842"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k883bfed6dda5",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: paid feature",
+   "run_id": "define-def-09",
+   "sql_sha256": "883bfed6dda59f7ecc744ab3b3418b8584204b41704f9abaf5ef78674af26a23"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.k94bc8f822abe",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "94bc8f822abeb5b9b5799ef20eadd797ba824b36047101f79a786b3401eae86a"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.kc36ff0e17ae7",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: paid feature",
+   "run_id": "define-def-09",
+   "sql_sha256": "c36ff0e17ae7e2bfd75576ef83eec46e43b8d70102283e8279c6ff2d40de287b"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.kc75bca8bcefa",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: paid feature",
+   "run_id": "define-def-09",
+   "sql_sha256": "c75bca8bcefa0d80ca3c8b864498adea759e423732c9171436ac9ede2bff97bf"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.kcab6cf070dfb",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "cab6cf070dfb1f891d9841bb9982b2fd60ce3b066bbb62327495815e8d3919d3"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.kd5001c31c95b",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "d5001c31c95bd5f6e1c6feb935e11bd1c2a64538024070f8436e60ecd5103015"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.ke0485ba6af96",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute other than standard single-cluster",
+   "run_id": "define-def-09",
+   "sql_sha256": "e0485ba6af96b2b7abf7a532ea26ec871280090cd43f917a7917876355d54dc6"
+  },
+  {
+   "case_id": "sf.ddl.create-warehouse.define-warehouse.ke46f1b9c18e6",
+   "kind": "not_submitted",
+   "reason": "billable or out-of-account: compute larger than X-Small",
+   "run_id": "define-def-09",
+   "sql_sha256": "e46f1b9c18e61d75ae6cd3dc8b77661ed95617c5d9f513addc0f48d8a06c7b16"
+  }
+ ],
+ "receipts": 200,
+ "repositioned_by_import": [],
+ "runs": [
+  "define-def-09"
+ ]
+}

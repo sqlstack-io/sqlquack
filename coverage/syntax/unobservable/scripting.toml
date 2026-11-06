@@ -167,3 +167,25 @@ runs = ["d82-scripting-2-20261104T010552Z", "d87-603-rerun-1", "d82-scripting-4-
 probes = [
   { probe = "original", sql_sha256 = "767a5fbd099cfe544882bb8e9a9a22b7bacbeb472d20705052fe4035d2ad56ba", result = "603 300010:2141090603" },
 ]
+
+[[diagnostic]]
+obligation = "sf.scripting.if.o043"
+form = "sf.scripting.if"
+construct = "5,000 ELSEIF branches in one IF (145 KB), an extreme-value probe (decision D90)"
+reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
+captured = [
+  { case_id = "sf.scripting.if.k685d9d2a067e", sql_sha256 = "685d9d2a067ee23f80925091867c597eae975e4c8d4d6436b906b9bd14248576" },
+]
+runs = ["d90-extreme-1"]
+probes = []
+
+[[diagnostic]]
+obligation = "sf.scripting.case.end.syntax.o030"
+form = "sf.scripting.case.end.syntax"
+construct = "5,000 WHEN branches in one searched CASE (115 KB), an extreme-value probe (decision D90)"
+reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
+captured = [
+  { case_id = "sf.scripting.case.end.syntax.k93f2857ca62c", sql_sha256 = "93f2857ca62cd9f2093aaac340647dc07ae0c281d08ceb1e1237f47c990983d5" },
+]
+runs = ["d90-extreme-1"]
+probes = []

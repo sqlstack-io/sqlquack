@@ -27,6 +27,7 @@ from scripts.syntax_catalogue.constants import (
     SPECIAL_KIND_OVER,
     SPECIAL_KIND_WITHIN,
     SPECIAL_WORDS,
+    SQL_LINE_COMMENT,
     SYMBOLS,
     WORD,
 )
@@ -50,7 +51,7 @@ def normalize(text: str) -> str:
 def strip_comments(text: str) -> str:
     """The block without SQL comments."""
     text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
-    return "\n".join(re.sub(r"(^|\s)--.*$", "", line) for line in text.splitlines())
+    return "\n".join(SQL_LINE_COMMENT.sub("", line) for line in text.splitlines())
 
 
 def bracket_depth_change(line: str) -> int:
