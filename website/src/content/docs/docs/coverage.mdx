@@ -34,6 +34,9 @@ Reproduce it from a checkout:
 cargo run --release -p sqlquack-syntax-coverage -- summary
 ```
 
+Its `checked 3479 forms` line counts the whole catalogue. 128 of those forms no longer appear on any
+pinned documentation page, so the figure counts the remaining {figures.SYNTAX_FORMS}.
+
 ## Rules
 
 Every rule converts only the shapes that cases recorded on Snowflake and replayed on DuckDB cover.
