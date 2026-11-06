@@ -234,11 +234,6 @@ pub const STAR_KIND: &str = "star";
 /// Why an interval is refused.
 pub const INTERVAL_REFUSAL: &str =
     "an INTERVAL other than a literal of one whole number of days, hours, minutes or seconds";
-/// The keyword an interval literal is written after.
-pub(crate) const INTERVAL_KEYWORD: &str = "INTERVAL";
-/// Why an interval whose value is not a quoted string is refused.
-pub(crate) const INTERVAL_UNQUOTED_REFUSAL: &str =
-    "an INTERVAL whose value is not a quoted string, which no recording shows";
 /// The fields an interval literal the conversion reads may set.
 pub const INTERVAL_FIELDS: &[&str] = &["this", "unit"];
 /// The parser's kind of an interval unit written as one word, such as `DAY`.
