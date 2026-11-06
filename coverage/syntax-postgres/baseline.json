@@ -12,7 +12,7 @@
     "catalogue/utility.toml": "76f11080429b2658f4bfea2a16085d15b0b78fb3001d8fae358d0e7fd577809d",
     "sources.toml": "766addff3715a351aca0d4984ee27feb67d355cd128007a2aae9fdcecff61898"
   },
-  "parser_tree": "4825006a53c549f52e884ec1eb8cb506b330b9bc",
+  "parser_tree": "9138a8de54f576027fdbda3e004ddbb426bfebac",
   "forms": {
     "pg.ddl.alter-aggregate.owner-to": "unverified",
     "pg.ddl.alter-aggregate.rename-to": "unverified",
