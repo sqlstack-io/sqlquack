@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.expressions.data-types-text.varbinary"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_synonym"
+description = "The page: VARBINARY is synonymous with BINARY. Catches: VARBINARY padded, or unequal to BINARY"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'0a0b'"],
+  ["''"],
+]
+query = "SELECT ordinal, HEX_ENCODE(CAST(TO_BINARY(a, 'HEX') AS VARBINARY(3))) AS r, CAST(TO_BINARY(a, 'HEX') AS VARBINARY(3)) = CAST(TO_BINARY(a, 'HEX') AS BINARY(3)) AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'ff'"],
+]
+query = "SELECT ordinal, HEX_ENCODE(CAST(TO_BINARY(a, 'HEX') AS VARBINARY)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

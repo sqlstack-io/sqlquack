@@ -9984,6 +9984,17 @@ cases = ["cases/translation/functions/get-path.colon.toml#t003_null_column_ident
 required = true
 
 [[obligation]]
+id = "sf.functions.get-path.colon.syntax.t001"
+form = "sf.functions.get-path.colon.syntax"
+kind = "error_parity"
+target = ":(v, 'a.b[1]') as documented"
+note = "Snowflake refuses the documented spelling at parse time with 1003 (42000), unexpected '(' right after the colon, with or without spaces; only a quoted function name, \":\"(v, 'path'), compiles, and the page does not document that. The obligation is to refuse it as Snowflake does."
+catches = "the spelling accepted and translated as GET_PATH"
+reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are listed as three spellings of one extraction; the page gives no example of the third"
+cases = ["cases/translation/functions/get-path.colon.syntax.toml#t001_syntax_error"]
+required = true
+
+[[obligation]]
 id = "sf.functions.get-path.get-path.t001"
 form = "sf.functions.get-path.get-path"
 kind = "type_combination"
@@ -11444,6 +11455,61 @@ note = "A NULL array, which the page says gives NULL without an error."
 catches = "an empty array returned"
 reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
 cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t001"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "NUMBER"
+note = "HASH of integers against an equal and an unequal partner; no hash value is returned."
+catches = "equal integers hashing differently, unequal ones alike, or a result outside the signed 64-bit range"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t002"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "HASH of strings, including multi-byte and trailing blanks, against equal and unequal partners; no hash value is returned."
+catches = "multi-byte or blank-padded text hashed alike, equal text hashed differently, or a result outside the signed 64-bit range"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t003"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "NUMBER(10,2), FLOAT"
+note = "HASH of 10 as NUMBER(38,0), NUMBER(10,2) and FLOAT, which the page says agree; no hash value is returned."
+catches = "the scale or the FLOAT bits hashed (FALSE)"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t003_scale_stable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t004"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "HASH of two arguments in both orders, and of the same arguments again; no hash value is returned. The page does not say whether order matters, so the recording decides."
+catches = "two calls with the same arguments hashing differently, or a swapped-order result other than the recorded one"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t004_multi"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t005"
+form = "sf.functions.hash"
+kind = "null_argument"
+target = "expr"
+note = "NULL input, which the page says still hashes; no hash value is returned."
+catches = "NULL propagated instead of a hash value"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t005_null_expr"]
 required = true
 
 [[obligation]]

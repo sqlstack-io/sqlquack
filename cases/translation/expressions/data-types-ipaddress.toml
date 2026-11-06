@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.expressions.data-types-ipaddress"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_canonical"
+description = "The page: 2001:0db8:0000:0000:0000:0000:0000:0001 is stored and displayed as 2001:db8::1; upper-case hex prints lower case; IPv4 stays dotted decimal. Catches: the text kept as written (no canonical form)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'2001:0db8:0000:0000:0000:0000:0000:0001'"],
+  ["'2001:DB8::1'"],
+  ["'192.0.2.1'"],
+]
+query = "SELECT ordinal, a::IPADDRESS::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_numeric_order"
+description = "The page: comparison follows the numeric address, not the text: 10.0.0.9 is below 10.0.0.10, and the IPv4 address is below the IPv6 one (its MIN/MAX example). Catches: text order (10.0.0.10 below 10.0.0.9)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'10.0.0.9'", "'10.0.0.10'"],
+  ["'192.0.2.1'", "'2001:db8::1'"],
+]
+query = "SELECT ordinal, a::IPADDRESS < b::IPADDRESS AS lt FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_cidr"
+description = "The page: a CIDR prefix such as 192.0.2.0/24 is not a valid IPADDRESS, and CAST raises for invalid text. Catches: the prefix stripped and the address accepted, or NULL instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'192.0.2.0/24'"],
+]
+query = "SELECT ordinal, a::IPADDRESS::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'192.0.2.1'"],
+]
+query = "SELECT ordinal, a::IPADDRESS::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.expressions.data-types-ipaddress.typed-literal"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_v6"
+description = "The page's example returns 2001:db8::1; an uncompressed spelling gives the same value. Catches: the literal kept as text, or two spellings unequal"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, IPADDRESS '2001:db8::1'::VARCHAR AS r, IPADDRESS '2001:db8:0:0:0:0:0:1' = IPADDRESS '2001:db8::1' AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_v4_compare"
+description = "A literal compared with addresses from text, in numeric order. Catches: text comparison"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'10.0.0.10'"],
+  ["'10.0.0.9'"],
+]
+query = "SELECT ordinal, a::IPADDRESS > IPADDRESS '10.0.0.9' AS gt FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_hostname"
+compile_error = true
+description = "The page: DNS hostnames are not valid IPADDRESS values. Catches: the hostname resolved or accepted"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, IPADDRESS 'localhost'::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "A NULL address compared with a literal; standard NULL handling gives NULL. Catches: NULL compared as a value (FALSE)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'10.0.0.9'"],
+]
+query = "SELECT ordinal, a::IPADDRESS = IPADDRESS '10.0.0.9' AS eq FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

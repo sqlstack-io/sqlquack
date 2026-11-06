@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.expressions.data-types-structured.array"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_to_varchar"
+description = "The page: casting [1,2,3] to ARRAY(VARCHAR) converts each element to VARCHAR; shown through its text after a cast back to ARRAY, where the elements are quoted strings, and the size. Catches: elements left as numbers, or the array flattened"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,3]'"],
+  ["'[10,-5]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY(VARCHAR)::ARRAY::VARCHAR AS r, ARRAY_SIZE(PARSE_JSON(a)::ARRAY(VARCHAR)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_json_null"
+description = "The page: a JSON null element becomes SQL NULL in ARRAY(NUMBER); counted with IS NULL on that element. Catches: the JSON null kept as a value"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,null,3]'"],
+]
+query = "SELECT ordinal, (PARSE_JSON(a)::ARRAY(NUMBER))[1] IS NULL AS elem_null, ARRAY_SIZE(PARSE_JSON(a)::ARRAY(NUMBER)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_not_null"
+description = "The page: casting [1, NULL, 3] to ARRAY(NUMBER NOT NULL) fails. Catches: NULL accepted or dropped"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,null,3]'"],
+]
+query = "SELECT ordinal, ARRAY_SIZE(CAST(PARSE_JSON(a) AS ARRAY(NUMBER NOT NULL))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_bad_element"
+description = "The page: casting ['a','b','c'] to ARRAY(NUMBER) fails. Catches: NULL elements instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[\"a\",\"b\",\"c\"]'"],
+]
+query = "SELECT ordinal, ARRAY_SIZE(PARSE_JSON(a)::ARRAY(NUMBER)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
