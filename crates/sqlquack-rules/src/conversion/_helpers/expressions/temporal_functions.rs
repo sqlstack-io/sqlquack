@@ -745,7 +745,16 @@ pub(crate) fn to_timestamp(
             let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
             Ok(operand)
         }
-        (SnowflakeType::Date | SnowflakeType::TimestampNtz { .. }, None, false) if !trying => {
+        (
+            SnowflakeType::Date
+            | SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. },
+            None,
+            false,
+        ) if !trying
+            && (!matches!(operand.data_type, SnowflakeType::TimestampTz { .. })
+                || (operand.utc_offset && name == "TO_TIMESTAMP_NTZ")) =>
+        {
             let _temporal = log.rule(TO_TIMESTAMP_TEMPORAL);
             let sql = cast_to(
                 &operand,
