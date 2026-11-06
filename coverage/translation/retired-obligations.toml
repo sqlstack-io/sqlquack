@@ -1,0 +1,146 @@
+# Translation obligation ids that no longer exist, each with its reason and the obligations that
+# replace it. An id listed here is never reused.
+
+[[retired]]
+id = "sf.query.group-by.t001"
+form = "sf.query.group-by"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.group-by.groupitem.t001"]
+
+[[retired]]
+id = "sf.query.group-by.t002"
+form = "sf.query.group-by"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.group-by.all.t001"]
+
+[[retired]]
+id = "sf.query.group-by.t003"
+form = "sf.query.group-by"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.group-by.groupitem.t003"]
+
+[[retired]]
+id = "sf.query.join.t001"
+form = "sf.query.join"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.join.join"
+replaced_by = ["sf.query.join.join.t005"]
+
+[[retired]]
+id = "sf.query.join.t002"
+form = "sf.query.join"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.join.join"
+replaced_by = ["sf.query.join.join.t006"]
+
+[[retired]]
+id = "sf.query.order-by.t001"
+form = "sf.query.order-by"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.order-by.orderitem"
+replaced_by = ["sf.query.order-by.orderitem.t005"]
+
+[[retired]]
+id = "sf.query.order-by.t003"
+form = "sf.query.order-by"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.order-by.orderitem"
+replaced_by = ["sf.query.order-by.orderitem.t006"]
+
+[[retired]]
+id = "sf.query.qualify.t001"
+form = "sf.query.qualify"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.qualify.qualify.t001", "sf.query.qualify.select-from-qualify.t001"]
+
+[[retired]]
+id = "sf.query.qualify.t002"
+form = "sf.query.qualify"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.qualify.qualify.t002", "sf.query.qualify.select-from-qualify.t002"]
+
+[[retired]]
+id = "sf.query.qualify.t003"
+form = "sf.query.qualify"
+reason = "the form is absent_from_source, and the counted forms already carry this case unchanged"
+replaced_by = ["sf.query.qualify.qualify.t003", "sf.query.qualify.select-from-qualify.t003"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-rename.t001"
+form = "sf.query.select.select-exclude-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t006"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-rename.t002"
+form = "sf.query.select.select-exclude-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t007"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-replace-rename.t001"
+form = "sf.query.select.select-exclude-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t010"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-replace-rename.t002"
+form = "sf.query.select.select-exclude-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t011"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-replace.t001"
+form = "sf.query.select.select-exclude-replace"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t008"]
+
+[[retired]]
+id = "sf.query.select.select-exclude-replace.t002"
+form = "sf.query.select.select-exclude-replace"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t009"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-rename.t001"
+form = "sf.query.select.select-ilike-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t012"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-rename.t002"
+form = "sf.query.select.select-ilike-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t013"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-replace-rename.t001"
+form = "sf.query.select.select-ilike-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t016"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-replace-rename.t002"
+form = "sf.query.select.select-ilike-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t017"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-replace.t001"
+form = "sf.query.select.select-ilike-replace"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t014"]
+
+[[retired]]
+id = "sf.query.select.select-ilike-replace.t002"
+form = "sf.query.select.select-ilike-replace"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t015"]
+
+[[retired]]
+id = "sf.query.select.select-replace-rename.t001"
+form = "sf.query.select.select-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t018"]
+
+[[retired]]
+id = "sf.query.select.select-replace-rename.t002"
+form = "sf.query.select.select-replace-rename"
+reason = "the form is absent_from_source; its grammar is carried by sf.query.select.select"
+replaced_by = ["sf.query.select.select.t019"]
