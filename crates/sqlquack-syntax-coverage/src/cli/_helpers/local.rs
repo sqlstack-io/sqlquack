@@ -2,7 +2,10 @@
 
 use std::process::Command;
 
-use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions};
+use sqlquack_core::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
+use sqlquack_syntax::{
+    CallMode, ComplexityGuardOptions, Dialect, Expression, ExpressionWalk, ParseOptions,
+};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::main::content_sha256::content_sha256;
@@ -12,12 +15,17 @@ const PARSER_PATH: &str = "crates/sqlquack-syntax";
 /// The code prefix of every complexity-guard error, which is never a syntax verdict.
 const GUARD_PREFIX: &str = "E_GUARD_";
 
-/// SQLQuack's Snowflake verdict; a Command or Raw node anywhere makes the parse opaque.
+/// SQLQuack's Snowflake verdict under the product's call-depth guard; a Command or Raw node makes it opaque.
 pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
     match sqlquack_syntax::parse_statements_with(
         sql,
         Dialect::Snowflake,
-        &ParseOptions::default(),
+        &ParseOptions {
+            complexity_guard: Some(ComplexityGuardOptions {
+                max_function_call_depth: Some(MAX_FUNCTION_CALL_DEPTH),
+                ..ComplexityGuardOptions::default()
+            }),
+        },
         CallMode::Faithful,
     ) {
         Ok(statements) => LocalVerdict::Accepted {
