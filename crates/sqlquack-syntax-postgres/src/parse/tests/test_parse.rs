@@ -15,6 +15,41 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "an aggregate argument cannot be OUT (0A000)",
+            sql: "CREATE AGGREGATE a (OUT int) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a VARIADIC direct argument needs one VARIADIC aggregated argument of the same raw type (0A000)",
+            sql: "CREATE AGGREGATE a (VARIADIC int ORDER BY VARIADIC int4) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "INT and INTEGER are one raw type name, as equal() reads them",
+            sql: "CREATE AGGREGATE a (VARIADIC int ORDER BY VARIADIC integer) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "INT and pg_catalog.int4 are one raw type name",
+            sql: "CREATE AGGREGATE a (VARIADIC int ORDER BY VARIADIC pg_catalog.int4) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "the old-style definition needs = after each name",
+            sql: "CREATE AGGREGATE a (sfunc = f, stype)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "OptTemp is one word or pair, so UNLOGGED TEMP is refused",
+            sql: "CREATE UNLOGGED TEMP TABLE t (a int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a TEMP sequence stays a statement gap",
+            sql: "CREATE TEMP SEQUENCE s",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
             description: "COLLATE twice on one column is refused (42601)",
             sql: "CREATE TABLE t (a int COLLATE \"C\" COLLATE \"C\")",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1256,6 +1291,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "COMMENT ON FUNCTION f(a int) IS 'x'",
             pointer: "/0/comment/this/function/args/0/column_def/name/name",
             expected_json: "\"a\"",
+        },
+        ValueTestCase {
+            description: "the pre-8.2 CREATE AGGREGATE form is kept apart by its source",
+            sql: "CREATE AGGREGATE a (sfunc = f, stype = int)",
+            pointer: "/0/create_object/source",
+            expected_json: "\"OLD STYLE\"",
+        },
+        ValueTestCase {
+            description: "a bare definition element keeps no value, apart from = true",
+            sql: "CREATE AGGREGATE a (int) (sfunc = f, finalfunc_extra)",
+            pointer: "/0/create_object/properties/1/value",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "CREATE AGGREGATE keeps its argument list as a call",
+            sql: "CREATE AGGREGATE a (int) (sfunc = f, finalfunc_extra)",
+            pointer: "/0/create_object/operands/0/function/args/0/data_type/data_type",
+            expected_json: "\"int\"",
         },
         ValueTestCase {
             description: "a table constraint keeps how many columns precede it",

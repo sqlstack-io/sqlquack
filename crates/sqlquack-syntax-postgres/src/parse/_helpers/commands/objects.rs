@@ -17,7 +17,9 @@ use crate::parse::_helpers::tree::nodes::{
 };
 use crate::parse::_helpers::tree::typenames::setof as setof_type;
 use crate::parse::_helpers::values::expressions::is_operator_token;
-use crate::parse::constants::TYPE_REFERENCE_SUFFIX;
+use crate::parse::constants::{CATALOGUE_SCHEMA, TYPE_KEYWORDS, TYPE_REFERENCE_SUFFIX};
+use crate::parse::errors::ParseError;
+use crate::parse::main::format_type::format_type;
 use crate::scan::models::{Token, TokenKind};
 
 /// `object_type_any_name`: kinds named by `any_name`, longest spelling first.
@@ -83,6 +85,12 @@ const IN_MODE: &str = "in";
 const OUT_MODE: &str = "out";
 
 const INOUT_MODE: &str = "inout";
+
+/// `makeOrderedSetArgs`'s error (0A000) for a `VARIADIC` direct argument without its aggregated twin.
+const ORDERED_SET_VARIADIC: &str = "an ordered-set aggregate with a VARIADIC direct argument must have one VARIADIC aggregated argument of the same data type";
+
+/// `aggr_arg`'s error (0A000) for an `OUT` or `INOUT` argument.
+const AGGREGATE_OUTPUT: &str = "aggregates cannot have output arguments";
 
 /// `VARIADIC` as `argument_class` gives it, which becomes a Variadic node.
 const VARIADIC_MODE: &str = "VARIADIC";
@@ -298,6 +306,77 @@ impl Parser<'_> {
     /// `aggregate_with_argtypes`: `func_name aggr_args`.
     fn aggregate_with_argtypes(&mut self) -> Parsing<Expression> {
         let name: Vec<Identifier> = self.func_name()?;
+        self.aggregate_arguments(name)
+    }
+
+    /// `aggr_arg`: a `func_arg` without an `OUT` or `INOUT` mode (0A000).
+    fn aggregate_argument(&mut self) -> Parsing<(Expression, Option<String>)> {
+        let start: usize = self.offset();
+        let from: usize = self.at;
+        let argument: Expression = self.func_arg()?;
+        let output: bool = match &argument {
+            Expression::Tuple(pair) => matches!(
+                pair.expressions.first(),
+                Some(Expression::Var(mode)) if mode.this != IN_MODE.to_uppercase()
+            ),
+            _ => false,
+        };
+        match output {
+            true => Err(ParseError {
+                message: AGGREGATE_OUTPUT.to_owned(),
+                position: start,
+                syntax: false,
+            }),
+            false => {
+                let key: Option<String> = match matches!(argument, Expression::Variadic(_)) {
+                    true => Some(self.variadic_type_key(from)?),
+                    false => None,
+                };
+                Ok((argument, key))
+            }
+        }
+    }
+
+    /// The `VARIADIC` argument's type from token `from` to here, keyed as `equal()` compares raw type names.
+    fn variadic_type_key(&mut self, from: usize) -> Parsing<String> {
+        let (to, gaps, opaque) = (self.at, self.gaps.len(), self.opaque);
+        self.at = from + 1;
+        let named = self.attempt(|parser| {
+            parser.name(is_type_function_name)?;
+            let start: usize = parser.at;
+            let data_type: DataType = parser.func_type()?;
+            match parser.at == to {
+                true => Ok((start, data_type)),
+                false => Err(parser.error()),
+            }
+        });
+        let (start, data_type) = match named {
+            Ok(typed) => typed,
+            Err(_) => (self.at, self.func_type()?),
+        };
+        self.at = to;
+        self.gaps.truncate(gaps);
+        self.opaque = opaque;
+        let text: String = format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
+        let system: bool = self.tokens.get(start).is_some_and(|token| {
+            matches!(token.kind, TokenKind::Keyword(keyword) if TYPE_KEYWORDS.contains(&keyword.name))
+        });
+        let names: Vec<&str> = self.tokens[start..to]
+            .iter()
+            .take_while(|token| {
+                !matches!(token.kind, TokenKind::Char('(' | '[' | '%'))
+                    && !matches!(token.kind, TokenKind::Keyword(keyword) if keyword.name == "array")
+            })
+            .map(|token| token.value.as_str())
+            .collect();
+        Ok(match (system, names.as_slice()) {
+            (true, _) | (_, [CATALOGUE_SCHEMA, ".", _]) => format!("system {text}"),
+            _ => format!("{} {text}", names.join(" ")),
+        })
+    }
+
+    /// `aggr_args` as a call of `name`, with `makeOrderedSetArgs`'s check of a `VARIADIC` direct argument.
+    pub(crate) fn aggregate_arguments(&mut self, name: Vec<Identifier>) -> Parsing<Expression> {
         self.expect_char('(')?;
         if self.eat_char('*') {
             self.expect_char(')')?;
@@ -306,23 +385,40 @@ impl Parser<'_> {
                 vec![star(None)],
             ))));
         }
-        let direct: Vec<Expression> = match self.kw("order") {
+        let direct: Vec<(Expression, Option<String>)> = match self.kw("order") {
             true => Vec::new(),
-            false => self.comma_list(|parser| parser.func_arg())?,
+            false => self.comma_list(|parser| parser.aggregate_argument())?,
         };
+        let direct_key: Option<String> = direct.last().and_then(|(_, key)| key.clone());
+        let direct: Vec<Expression> = direct.into_iter().map(|(argument, _)| argument).collect();
         let call: Expression = Expression::Function(Box::new(function(name, direct)));
         if !self.eat_kw("order") {
             self.expect_char(')')?;
             return Ok(call);
         }
         self.expect_kw("by")?;
-        let sorted: Vec<Expression> = self.comma_list(|parser| parser.func_arg())?;
+        let sorted_start: usize = self.offset();
+        let sorted: Vec<(Expression, Option<String>)> =
+            self.comma_list(|parser| parser.aggregate_argument())?;
         self.expect_char(')')?;
+        if let Some(direct_key) = direct_key {
+            let matching: bool = match sorted.as_slice() {
+                [(_, Some(key))] => *key == direct_key,
+                _ => false,
+            };
+            if !matching {
+                return Err(ParseError {
+                    message: ORDERED_SET_VARIADIC.to_owned(),
+                    position: sorted_start,
+                    syntax: false,
+                });
+            }
+        }
         Ok(Expression::WithinGroup(Box::new(WithinGroup {
             this: call,
             order_by: sorted
                 .into_iter()
-                .map(|argument| ordered(argument, false, false, None))
+                .map(|(argument, _)| ordered(argument, false, false, None))
                 .collect(),
         })))
     }
