@@ -34,4 +34,4 @@ rows = [
 ]
 query = "SELECT COUNT(*) AS n FROM TABLE(TO_QUERY('SELECT TO_NUMBER(:n) AS a', n => NULL::VARCHAR))"
 order = "ordered"
-tags = ["error"]
+tags = ["null", "error"]
