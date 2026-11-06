@@ -97,6 +97,12 @@ scope = "full"
 reviewed_utc = "2026-11-05T15:59:28Z"
 
 [[signoff]]
+subject = "not-translatable:obsoleted-functions"
+sha256 = "b81f8213c521f5d034ef39a1f3899be016b12f1509c9b241b30ef1c46f283104"
+scope = "full"
+reviewed_utc = "2026-11-06T01:52:45Z"
+
+[[signoff]]
 subject = "form-links"
 sha256 = "9cd40d659205bd52ec8e63bd6dc44c426ab0fe4f51862e915d0498c0d0e80c15"
 scope = "full"
