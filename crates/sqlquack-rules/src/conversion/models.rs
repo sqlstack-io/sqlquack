@@ -48,6 +48,8 @@ pub struct ConversionOptions {
     pub verified_overrides: BTreeMap<String, String>,
     /// Session variables a case's setup SET, by upper-case name, with the expression each was set to.
     pub session_variables: BTreeMap<String, serde_json::Value>,
+    /// Types a case's setup CREATE TYPE'd, by upper-case name, with the base type each stands for.
+    pub user_types: BTreeMap<String, serde_json::Value>,
 }
 
 /// A user's DuckDB SQL standing in for a Snowflake function, written in SQLBuild's FUNCTION() format.
@@ -222,4 +224,6 @@ pub struct ConvertedSetup {
     pub statements: Vec<String>,
     /// Each session variable SET, by its resolved name, with the expression it was set to.
     pub variables: BTreeMap<String, serde_json::Value>,
+    /// Each user-defined type CREATE TYPE'd, by its resolved name, with its serialised base type.
+    pub types: BTreeMap<String, serde_json::Value>,
 }

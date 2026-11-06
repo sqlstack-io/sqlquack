@@ -1,6 +1,8 @@
 //! Reading the serialised source tree: node kinds, payload fields and refusals.
 
 use crate::conversion::_helpers::support::collecting::{collecting, events, record, skipped};
+use std::collections::BTreeMap;
+
 use serde_json::{Map, Value};
 use sqlquack_core::classification::constants::{
     PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER,
@@ -10,6 +12,8 @@ use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::dialects::main::identifier_name::identifier_name as resolved_identifier;
+
+use crate::conversion::models::ConversionOptions;
 
 /// Fields that only record how the source was spelled or where it was.
 const COSMETIC_FIELDS: &[&str] = &[
@@ -193,12 +197,53 @@ pub(crate) fn integer_literal(node: &Value) -> Option<u64> {
 }
 
 /// The tree conversion reads, positions stripped and quoted identifiers folded if case is ignored.
-pub(crate) fn session_tree(positioned: &Value, ignore_quoted_case: bool) -> Result<Value, String> {
+pub(crate) fn session_tree(
+    positioned: &Value,
+    options: &ConversionOptions,
+) -> Result<Value, String> {
     let mut tree = strip_positions(positioned);
-    if ignore_quoted_case {
+    if options.quoted_identifiers_ignore_case {
         fold_quoted(&mut tree)?;
     }
+    if !options.user_types.is_empty() {
+        tree = with_user_types(&tree, &options.user_types);
+    }
     Ok(tree)
+}
+
+/// `value` with each type named for a user-defined type replaced by the base type it stands for.
+pub(crate) fn with_user_types(value: &Value, types: &BTreeMap<String, Value>) -> Value {
+    if let Some(base) = user_type(value, types) {
+        return base.clone();
+    }
+    match value {
+        Value::Object(fields) => Value::Object(
+            fields
+                .iter()
+                .map(|(key, field)| (key.clone(), with_user_types(field, types)))
+                .collect(),
+        ),
+        Value::Array(items) => Value::Array(
+            items
+                .iter()
+                .map(|item| with_user_types(item, types))
+                .collect(),
+        ),
+        other => other.clone(),
+    }
+}
+
+/// The base type of a custom type spelled as a plain name that setup CREATE TYPE'd.
+fn user_type<'a>(value: &Value, types: &'a BTreeMap<String, Value>) -> Option<&'a Value> {
+    let fields = value.as_object()?;
+    if fields.get("data_type").and_then(Value::as_str) != Some("custom") {
+        return None;
+    }
+    let name = fields.get("name")?.as_str()?;
+    let plain = name
+        .chars()
+        .all(|character| character.is_ascii_alphanumeric() || character == '_');
+    plain.then(|| types.get(&name.to_ascii_uppercase()))?
 }
 
 /// Upper-cases the name of each quoted identifier under `value`.

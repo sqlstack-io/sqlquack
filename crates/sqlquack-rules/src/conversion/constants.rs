@@ -1399,7 +1399,8 @@ pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"
 pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];
 /// The setup statements a case's DuckDB replay runs.
 pub(crate) const SETUP_REPLAYED: &str = "CREATE TABLE of NUMBER and VARCHAR columns, INSERT INTO it \
-     VALUES of literals, and SET of variables to literals or a deterministic scalar subquery";
+     VALUES of literals, CREATE TYPE of an alias of a data type, and SET of variables to literals \
+     or a deterministic scalar subquery";
 /// Name prefixes of functions whose result depends on when they run, so a SET differs from its reads.
 pub(crate) const TIME_DEPENDENT_PREFIXES: &[&str] = &[
     "CURRENT_",

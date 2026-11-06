@@ -33,7 +33,7 @@ pub fn convert_statement(
     log: ProvenanceLog,
 ) -> Result<Converted, Refusal> {
     let positioned = positioned(statement)?;
-    let tree = session_tree(&positioned, options.quoted_identifiers_ignore_case)
+    let tree = session_tree(&positioned, options)
         .map_err(|reason| outside_conditions(node_construct("statement"), reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();

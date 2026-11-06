@@ -28,8 +28,7 @@ pub fn convert_function_body(
         return Err(refused("only SQL function bodies convert"));
     }
     let positioned = positioned(query)?;
-    let tree = session_tree(&positioned, options.quoted_identifiers_ignore_case)
-        .map_err(|reason| refused(&reason))?;
+    let tree = session_tree(&positioned, options).map_err(|reason| refused(&reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();
     let tracks = StatementTracks::default();

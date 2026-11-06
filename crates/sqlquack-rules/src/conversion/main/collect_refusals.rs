@@ -71,8 +71,7 @@ fn collected_conversion(
     positioned: &Value,
     (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
 ) -> (ConvertedQuery, Collector, Option<Refusal>) {
-    let tree = session_tree(positioned, options.quoted_identifiers_ignore_case)
-        .unwrap_or_else(|_| strip_positions(positioned));
+    let tree = session_tree(positioned, options).unwrap_or_else(|_| strip_positions(positioned));
     let locator = Locator::new(&tree, positioned, lines);
     let log = ProvenanceLog::default();
     let typed = TypedLeaves::default();

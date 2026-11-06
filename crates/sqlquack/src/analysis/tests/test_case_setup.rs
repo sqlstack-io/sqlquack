@@ -182,10 +182,59 @@ fn given_setup_tables_when_converting_a_case_then_duckdb_replays_them_or_it_refu
             expected_outcome: Err("whose result can change"),
         },
         SetupCaseTestCase {
-            description: "a user-defined type",
+            description: "a cast to a user-defined type named in another case casts to its base type",
+            setup: &["CREATE TYPE Age AS NUMBER(3,0)"],
+            query: "SELECT (a + 9)::AGE AS r FROM input",
+            expected_outcome: Ok("10"),
+        },
+        SetupCaseTestCase {
+            description: "a cast to a user-defined type keeps its base type's scale",
+            setup: &["CREATE TYPE price AS NUMBER(5,2)"],
+            query: "SELECT CAST(a AS price)::VARCHAR AS r FROM input",
+            expected_outcome: Ok("1.00"),
+        },
+        SetupCaseTestCase {
+            description: "setup table columns of a user-defined type add as its base type",
+            setup: &[
+                "CREATE TYPE age AS NUMBER(3,0)",
+                "CREATE TABLE t (a age, b age)",
+                "INSERT INTO t VALUES (10, 20)",
+            ],
+            query: "SELECT a + b AS n FROM t",
+            expected_outcome: Ok("30"),
+        },
+        SetupCaseTestCase {
+            description: "a user-defined type defined as another resolves to the first's base type",
+            setup: &["CREATE TYPE a1 AS NUMBER(3,0)", "CREATE TYPE a2 AS a1"],
+            query: "SELECT a::a2 AS r FROM input",
+            expected_outcome: Ok("1"),
+        },
+        SetupCaseTestCase {
+            description: "a quoted lower-case type name names no type setup created",
             setup: &["CREATE TYPE age AS NUMBER(3,0)"],
+            query: "SELECT a::\"age\" AS r FROM input",
+            expected_outcome: Err("unknown Snowflake type `\"age\"`"),
+        },
+        SetupCaseTestCase {
+            description: "a user-defined type created twice",
+            setup: &[
+                "CREATE TYPE age AS NUMBER(3,0)",
+                "CREATE TYPE age AS VARCHAR",
+            ],
             query: "SELECT 1 AS k",
-            expected_outcome: Err("is not replayed on DuckDB"),
+            expected_outcome: Err("creates the type AGE again"),
+        },
+        SetupCaseTestCase {
+            description: "a user-defined type replacing another",
+            setup: &["CREATE OR REPLACE TYPE age AS NUMBER(3,0)"],
+            query: "SELECT 1 AS k",
+            expected_outcome: Err("has a clause other than an unqualified name AS a data type"),
+        },
+        SetupCaseTestCase {
+            description: "a user-defined type named for a built-in type",
+            setup: &["CREATE TYPE number AS VARCHAR"],
+            query: "SELECT 1 AS k",
+            expected_outcome: Err("which names a built-in type"),
         },
     ];
     for test_case in test_cases {

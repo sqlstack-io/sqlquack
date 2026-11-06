@@ -88,6 +88,7 @@ impl CaseConverter for PipelineConverter {
                 .get(QUOTED_IDENTIFIERS_IGNORE_CASE)
                 == Some(&SessionValue::Boolean(true)),
             session_variables: setup.variables.clone(),
+            user_types: setup.types.clone(),
             ..self.options.clone()
         };
         for definition in &case.overrides {

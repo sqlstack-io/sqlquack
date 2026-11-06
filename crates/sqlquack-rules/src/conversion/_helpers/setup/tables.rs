@@ -14,6 +14,7 @@ use sqlquack_syntax::expressions::tables::models::CreateTable;
 use sqlquack_syntax::expressions::tree::models::Expression;
 
 use crate::conversion::_helpers::expressions::casts::data_type_name;
+use crate::conversion::_helpers::support::tree::with_user_types;
 use crate::conversion::models::ConvertedSetup;
 
 /// `CREATE TABLE name (column type, …)` and nothing else: its DuckDB statement, name and columns.
@@ -54,6 +55,7 @@ pub(crate) fn created(
         let spelled = serde_json::to_value(&column.data_type).map_err(|error| {
             format!("types {column_name} with a type that does not serialise: {error}")
         })?;
+        let spelled = with_user_types(&spelled, &converted.types);
         let type_name = data_type_name(&spelled)
             .ok_or_else(|| format!("types {column_name} with a type that has no name"))?;
         let data_type = cast_target(&type_name, log)?.data_type;
