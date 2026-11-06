@@ -200,6 +200,21 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a role option needs OPTION, TRUE or FALSE",
+            sql: "GRANT r TO u WITH ADMIN",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a GRANT inside CREATE SCHEMA grants on objects only",
+            sql: "CREATE SCHEMA s GRANT r TO u",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER DEFAULT PRIVILEGES takes no GRANTED BY",
+            sql: "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO r GRANTED BY s",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a policy is PERMISSIVE or RESTRICTIVE, compared after folding (42601)",
             sql: "CREATE POLICY p ON t AS \"RESTRICTIVE\"",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1103,6 +1118,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "ALTER USER MAPPING FOR USER SERVER s OPTIONS (DROP a)",
             pointer: "/0/alter_object/operands/0/tuple/expressions/1/var/this",
             expected_json: "\"CURRENT_USER\"",
+        },
+        ValueTestCase {
+            description: "a GRANT without a kind word grants on tables",
+            sql: "GRANT SELECT ON t, u TO r",
+            pointer: "/0/grant/kind",
+            expected_json: "\"TABLE\"",
+        },
+        ValueTestCase {
+            description: "ALL PRIVILEGES is no privileges, as gram.y keeps it",
+            sql: "GRANT ALL PRIVILEGES ON SCHEMA s TO r",
+            pointer: "/0/grant/privileges",
+            expected_json: "[]",
+        },
+        ValueTestCase {
+            description: "a role option is kept by name, not folded into grant_option",
+            sql: "GRANT r TO u WITH ADMIN OPTION GRANTED BY v",
+            pointer: "/0/grant/options/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"admin\"",
+        },
+        ValueTestCase {
+            description: "REVOKE ADMIN OPTION FOR revokes the option, as a false DefElem",
+            sql: "REVOKE ADMIN OPTION FOR r FROM u",
+            pointer: "/0/revoke/options/0/tuple/expressions/1/boolean/value",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "default privileges on ROUTINES are on functions",
+            sql: "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON ROUTINES TO r",
+            pointer: "/0/alter_default_privileges/action/grant/kind",
+            expected_json: "\"FUNCTIONS\"",
         },
         ValueTestCase {
             description: "a policy without TO is for PUBLIC",

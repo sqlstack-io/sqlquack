@@ -30,6 +30,11 @@ impl Parser<'_> {
             Some("copy") => self.copy_statement(),
             Some("comment") => self.comment_statement(),
             Some("security") => self.security_label_statement(),
+            Some("grant") => self.grant_statement(false),
+            Some("revoke") => self.revoke_statement(),
+            Some("alter") if self.kw_at(1, "default") && self.kw_at(2, "privileges") => {
+                self.alter_default_privileges()
+            }
             Some("alter") if self.unknown_alter_kind().is_some() => {
                 self.at += self.unknown_alter_kind().unwrap_or_default();
                 Err(self.error())

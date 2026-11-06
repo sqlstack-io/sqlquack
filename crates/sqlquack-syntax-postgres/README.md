@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, and every `ALTER` other than `ALTER DEFAULT PRIVILEGES` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `ALTER`, `GRANT` and `REVOKE` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -112,8 +112,7 @@ order, and a definition list in `properties`. `DEFAULT` (conversions, operator c
 comes before its constraints; a transform lists `FROM SQL` before `TO SQL`; and `COLLATION ... FROM`
 is its `from` element. Publication objects take their kind as in `ALTER PUBLICATION`. A rule action is
 a query, `INSERT`, `UPDATE`, `DELETE` or `(NOTIFY, channel [, payload])`. A schema element is
-`CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`; a `GRANT` element is a `grant` gap until
-grants parse. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXISTS` are refused
+`CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`, or a `GRANT` on objects. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXISTS` are refused
 (0A000), as are `OR REPLACE` and a persistence where gram.y has none (42601).
 
 ## CREATE ROLE, USER, GROUP, POLICY and USER MAPPING
@@ -167,3 +166,18 @@ refused there (42939). `ALTER POLICY` keeps `(ON, table)`, then `TO`, `USING` an
 written, with no defaults; only a rename takes `IF EXISTS`. `ALTER SYSTEM` takes `generic_set` and
 `generic_reset` only, so `FROM CURRENT` and the special forms are refused (42601). `ALTER USER
 MAPPING FOR USER` is `FOR CURRENT_USER`, and its `OPTIONS` are a `(OPTIONS, ...)` tuple.
+
+## GRANT, REVOKE and ALTER DEFAULT PRIVILEGES
+
+`GRANT` and `REVOKE` become `Grant` and `Revoke`, for objects and for roles alike. The objects go in
+order in `objects`, as their kind names them: a relation, a name, an `any_name`, a signature, a large
+object number or a parameter name, with `securable` empty. A target without a kind word is `TABLE`,
+as gram.y gives it. `ALL [PRIVILEGES]` is no privileges, `ALL (a)` one privilege with an empty name, and
+`ALTER SYSTEM` the privilege `alter system`. `GROUP` before a grantee changes nothing. `PUBLIC` and the
+`CURRENT_*` words are grantees named by the upper-case keyword, unquoted, which no folded role name
+can be. `GRANTED BY` is `granted_by`. A role grant keeps each `grant_role_opt` as `(name, bool)` in
+`options`, `OPTION` and `TRUE` being true; `REVOKE name OPTION FOR` is `(name, false)`. `WITH GRANT
+OPTION` and `GRANT OPTION FOR` set `grant_option`, and `RESTRICT` changes nothing. `ALTER DEFAULT
+PRIVILEGES` becomes `AlterDefaultPrivileges`: its `FOR ROLE` (or `FOR USER`) and `IN SCHEMA` options in
+order, then the `Grant` or `Revoke`, whose kind is the plural object kind; `ROUTINES` is `FUNCTIONS`.
+A `GRANT` inside `CREATE SCHEMA` grants on objects only.

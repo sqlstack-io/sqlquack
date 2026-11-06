@@ -7,6 +7,7 @@ pub(crate) mod creates;
 pub(crate) mod definitions;
 pub(crate) mod dml;
 pub(crate) mod from;
+pub(crate) mod grants;
 pub(crate) mod object_alters;
 pub(crate) mod objects;
 pub(crate) mod queries;
