@@ -506,3 +506,39 @@ cases = [
 ]
 runs = []
 probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-disable-preview-access.o001"
+form = "sf.functions.system-disable-preview-access"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$DISABLE_PREVIEW_ACCESS ( ) ;"
+reason = "not submitted: held by the capture guard in packet brq-execute-00 under its account-state rule (it changes account-wide preview feature access)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-disable-preview-access.k1fad69043462", sql_sha256 = "1fad690434621ade8731ed5e4bca6d9cc7ab2265928df74af46c5bc01039afdb" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-enable-preview-access.o001"
+form = "sf.functions.system-enable-preview-access"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$ENABLE_PREVIEW_ACCESS ( ) ;"
+reason = "not submitted: held by the capture guard in packet brq-execute-00 under its account-state rule (it changes account-wide preview feature access)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-enable-preview-access.k24490f3e8782", sql_sha256 = "24490f3e8782143d077daf9758752bc75a6937b642fa3e041f72ed2e26d4dda9" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-enforce-privatelink-access-only.o001"
+form = "sf.functions.system-enforce-privatelink-access-only"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$ENFORCE_PRIVATELINK_ACCESS_ONLY ( ) ;"
+reason = "not submitted: held by the capture guard in packet brq-execute-00 under its account-state rule (it blocks public access to the account)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-enforce-privatelink-access-only.kfff6ddce6695", sql_sha256 = "fff6ddce6695aaa8e8b7c143f7eea607173ee1e9d1d3420c9ea061dcba17179e" },
+]
+runs = []
+probes = []
