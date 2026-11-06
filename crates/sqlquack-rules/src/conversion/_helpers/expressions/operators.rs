@@ -29,7 +29,9 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::temporal::{literal_date, timestamp_literal};
+use crate::conversion::_helpers::expressions::temporal::{
+    literal_date, temporal_cast, timestamp_literal,
+};
 use crate::conversion::_helpers::support::divergence::{diverge, require_widening_range};
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
@@ -39,11 +41,12 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::DATE_NAME;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
+use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
-    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
+    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MICROSECOND_DIGITS,
+    MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
     VARIANT_EQUALITY,
 };
 use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC};
@@ -592,6 +595,24 @@ pub(crate) fn comparable(
             let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
+        (ntz @ SnowflakeType::TimestampNtz { .. }, other)
+            if matches!(
+                other,
+                SnowflakeType::Date | SnowflakeType::TimestampLtz { .. }
+            ) =>
+        {
+            let right = beside_naive(right, ntz, construct, context)?;
+            return Ok((left, right));
+        }
+        (other, ntz @ SnowflakeType::TimestampNtz { .. })
+            if matches!(
+                other,
+                SnowflakeType::Date | SnowflakeType::TimestampLtz { .. }
+            ) =>
+        {
+            let left = beside_naive(left, ntz, construct, context)?;
+            return Ok((left, right));
+        }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
             let text = number_text(left, (number, &right.sql), construct, context)?;
             return Ok((text, number_range(right, context)));
@@ -615,6 +636,32 @@ pub(crate) fn comparable(
         )),
         _ => Ok((left, right)),
     }
+}
+
+/// A DATE, or a TIMESTAMP_LTZ at its UTC wall time, read as the TIMESTAMP_NTZ it is compared with.
+fn beside_naive(
+    emitted: Emitted,
+    ntz: SnowflakeType,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let _rule = context.log.rule(COMPARISON);
+    let (sql, from) = match emitted.data_type {
+        SnowflakeType::TimestampLtz { precision } => {
+            diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+            let wall = SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            };
+            (utc_wall_time(&emitted.sql, context.log), wall)
+        }
+        other => (emitted.sql.clone(), other),
+    };
+    let sql = temporal_cast(&sql, (from, ntz), (context, construct)).map_err(refuse)?;
+    Ok(Emitted {
+        declared: emitted.declared,
+        ..Emitted::new(sql, ntz)
+    })
 }
 
 /// A NUMBER compared with text, raising where Snowflake's comparison overflows.

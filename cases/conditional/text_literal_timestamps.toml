@@ -13,10 +13,11 @@ rows = [
   ["1", "'2026-01-02 00:00:00'"],
   ["2", "NULL"],
   ["3", "NULL"],
+  ["NULL", "NULL"],
 ]
 query = "SELECT g, COALESCE(MAX(t), '1900-01-01') AS c, IFNULL(MAX(t), '1900-01-01 00:00:00') AS i, NVL(MAX(t), '1970-01-01T12:00:00.5') AS n FROM input GROUP BY g ORDER BY g"
 order = "ordered"
-tags = ["null", "mixed-types"]
+tags = ["null", "all-null", "mixed-types"]
 
 [[case]]
 id = "literal_branches_beside_timestamps"

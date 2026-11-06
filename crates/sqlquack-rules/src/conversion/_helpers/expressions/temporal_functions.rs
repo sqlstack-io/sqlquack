@@ -382,6 +382,9 @@ pub(crate) fn date_add(
         }
         _ => operand,
     };
+    let local = matches!(operand.data_type, SnowflakeType::TimestampLtz { .. })
+        .then_some(operand.data_type);
+    let operand = local_wall(operand, construct, site.context)?;
     let (operand, zoned) = match operand.data_type {
         SnowflakeType::Time { .. } => (operand, None),
         _ => temporal_or_refused(operand, construct, site.context)?,
@@ -409,7 +412,9 @@ pub(crate) fn date_add(
     )
     .map_err(refuse)?;
     let (sql, data_type) = match operand.data_type {
-        SnowflakeType::TimestampNtz { precision } if precision < MAX_FRACTION_DIGITS_U8 => {
+        SnowflakeType::TimestampNtz { precision }
+            if precision < MAX_FRACTION_DIGITS_U8 && local.is_none() =>
+        {
             let nanoseconds = SnowflakeType::TimestampNtz {
                 precision: MAX_FRACTION_DIGITS_U8,
             };
@@ -423,6 +428,12 @@ pub(crate) fn date_add(
         }
         other => (sql, other),
     };
+    if let Some(local) = local {
+        return Ok(Emitted {
+            declared: operand.declared,
+            ..Emitted::new(utc_zoned(&sql, site.context.log), local)
+        });
+    }
     Ok(rezoned(
         Emitted {
             declared: operand.declared,
@@ -431,6 +442,28 @@ pub(crate) fn date_add(
         zoned,
         site.context.log,
     ))
+}
+
+/// A TIMESTAMP_LTZ as its wall time in the UTC session it relies on; other values as given.
+fn local_wall(
+    emitted: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let SnowflakeType::TimestampLtz { precision } = emitted.data_type else {
+        return Ok(emitted);
+    };
+    diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+    let _zoned = context.log.rule(UTC_OFFSET_ARITHMETIC);
+    Ok(Emitted {
+        declared: emitted.declared.clone(),
+        ..Emitted::new(
+            utc_wall_time(&emitted.sql, context.log),
+            SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            },
+        )
+    })
 }
 
 /// DATEDIFF(unit, start, end) with a keyword unit.
@@ -557,6 +590,7 @@ fn date_diff_operand(
             _,
         ) => Ok(emitted),
         (SnowflakeType::TimestampTz { .. }, _) => Ok(emitted),
+        (SnowflakeType::TimestampLtz { .. }, _) => local_wall(emitted, construct, site.context),
         (SnowflakeType::Varchar, Some(Literal::Text(text))) if is_iso_date(text) => {
             Ok(Emitted::new(
                 cast(&emitted.sql, SnowflakeType::Date, site.context.log)

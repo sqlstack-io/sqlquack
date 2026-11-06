@@ -1,0 +1,46 @@
+# Staging-model lookbacks: DATEADD and DATEDIFF of a TIMESTAMP_LTZ, and a TIMESTAMP_NTZ compared with a
+# DATE or a TIMESTAMP_LTZ, in the UTC session.
+category = "temporal"
+construct = "fn:DATEADD"
+session_profile = "utc-v1"
+
+[[case]]
+id = "dateadd_of_local"
+description = "DATEADD of a TIMESTAMP_LTZ by hours, days and months, from values written at other offsets, across a day and a month end."
+columns = [{ name = "s", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2026-01-31 02:00:00 +05:00'"],
+  ["'2024-02-29 23:30:00.123456 -05:00'"],
+  ["'1970-01-01 00:00:00 +00:00'"],
+  ["NULL"],
+]
+query = "SELECT DATEADD(HOUR, 5, s) AS h, DATEADD(DAY, -3, s) AS d, DATEADD(MONTH, 1, s) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "timezone"]
+
+[[case]]
+id = "datediff_with_local"
+description = "DATEDIFF between a TIMESTAMP_NTZ or a DATE and a TIMESTAMP_LTZ, in days and hours, both ways round."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }, { name = "s", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2026-01-30 23:59:59.999999999'", "'2026-01-30'", "'2026-01-31 02:00:00 +05:00'"],
+  ["'2026-01-01 00:00:00'", "'2025-12-31'", "'2026-01-01 00:30:00 +01:00'"],
+  ["NULL", "'2026-01-01'", "'2026-01-01 00:00:00 +00:00'"],
+]
+query = "SELECT DATEDIFF(DAY, t, s) AS td, DATEDIFF(HOUR, s, t) AS st, DATEDIFF(DAY, d, s) AS dd, DATEDIFF('day', s, d) AS sd FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "timezone"]
+
+[[case]]
+id = "naive_compared_with_date_and_local"
+description = "A TIMESTAMP_NTZ compared with a DATE as its midnight, and with a TIMESTAMP_LTZ by its UTC wall time, down to a nanosecond."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }, { name = "d", type = "DATE" }, { name = "s", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2026-01-30 00:00:00'", "'2026-01-30'", "'2026-01-30 05:00:00 +05:00'"],
+  ["'2026-01-30 00:00:00.000000001'", "'2026-01-30'", "'2026-01-30 00:00:00 +00:00'"],
+  ["'2026-01-29 23:59:59.999999999'", "'2026-01-30'", "'2026-01-29 19:00:00 -05:00'"],
+  ["NULL", "'2026-01-30'", "NULL"],
+]
+query = "SELECT t >= d AS on_or_after, t < d AS before_, t = s AS same, t > s AS after_, s <= t AS local_first, t BETWEEN d AND DATEADD(DAY, 1, d) AS in_day FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary", "timezone"]

@@ -310,7 +310,7 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
         ],
-        conditions: "Both NUMBER or FLOAT (compared as doubles when one is FLOAT), both VARCHAR (bytewise), both BOOLEAN, both DATE, both TIMESTAMP_NTZ (any precisions) or both zoned (TIMESTAMP_TZ or TIMESTAMP_LTZ, compared as instants). NUMBERs whose common type needs more than 38 digits rely on numeric_range; Snowflake also raises 100046 for values beyond it, as recorded.",
+        conditions: "Both NUMBER or FLOAT (compared as doubles when one is FLOAT), both VARCHAR (bytewise), both BOOLEAN, both DATE, both TIMESTAMP_NTZ (any precisions) or both zoned (TIMESTAMP_TZ or TIMESTAMP_LTZ, compared as instants). A TIMESTAMP_NTZ beside a DATE reads the DATE as its midnight, and beside a TIMESTAMP_LTZ reads the LTZ as its UTC wall time, relying on session_timezone_utc; both rely on timestamp_range at nanosecond precision. NUMBERs whose common type needs more than 38 digits rely on numeric_range; Snowflake also raises 100046 for values beyond it, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1564,7 +1564,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
+        conditions: "DATEADD of a TIMESTAMP_LTZ, and DATEDIFF between one and a DATE, naive or LTZ value, computed on its UTC wall time and relying on session_timezone_utc, DATEADD read back as TIMESTAMP_LTZ. DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
         failures: &[],
     },
     RuleSpec {
