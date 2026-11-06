@@ -1,0 +1,33 @@
+# FLATTEN written as TABLE(FLATTEN(...)) after a comma, with a positional input, as dbt models
+# write it: the same rows as LATERAL FLATTEN(input => ...).
+category = "semi-structured"
+construct = "fn:FLATTEN"
+session_profile = "utc-v1"
+
+[[case]]
+id = "table_flatten_positional_array"
+description = "TABLE(FLATTEN(t.tags)) over an ARRAY column with a positional input: one row per element. Catches: the input not correlated to its row, empty arrays or NULL giving rows, or elements out of order."
+columns = [{ name = "ticket_id", type = "NUMBER(38,0)" }, { name = "tags", type = "ARRAY" }]
+rows = [
+  ["1", "ARRAY_CONSTRUCT('billing', 'urgent')"],
+  ["2", "ARRAY_CONSTRUCT()"],
+  ["3", "NULL"],
+  ["4", "ARRAY_CONSTRUCT('refund')"],
+]
+query = "SELECT t.ticket_id, f.index, f.value::STRING AS tag FROM input t, TABLE(FLATTEN(t.tags)) f ORDER BY t.ticket_id, f.index"
+order = "ordered"
+tags = ["null", "array-index"]
+
+[[case]]
+id = "table_flatten_named_variant_path"
+description = "TABLE(FLATTEN(input => v:items)) over a VARIANT path, with KEY, PATH and VALUE read back. Catches: the named input ignored, objects read as arrays, or JSON null and missing paths giving rows."
+columns = [{ name = "k", type = "NUMBER(2,0)" }, { name = "v", type = "VARIANT" }]
+rows = [
+  ["1", "PARSE_JSON('{\"items\":[{\"sku\":\"A-10\"},{\"sku\":\"B-20\"}]}')"],
+  ["2", "PARSE_JSON('{\"items\":{\"b\":1,\"a\":2}}')"],
+  ["3", "PARSE_JSON('{\"items\":null}')"],
+  ["4", "PARSE_JSON('{}')"],
+]
+query = "SELECT i.k, f.index, f.key, f.path, f.value::VARCHAR AS value FROM input i, TABLE(FLATTEN(input => i.v:items)) f ORDER BY i.k, f.index, f.key"
+order = "ordered"
+tags = ["null", "json-null", "missing-key", "nested", "array-index", "case-sensitive-key"]

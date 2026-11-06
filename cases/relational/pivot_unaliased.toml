@@ -1,0 +1,60 @@
+# PIVOT without an alias column list: the names Snowflake gives the key columns, as dbt pivot
+# models leave them.
+category = "relational"
+construct = "node:pivot"
+session_profile = "utc-v1"
+
+[[case]]
+id = "pivot_star_without_alias_list"
+description = "SELECT * over SUM(total) FOR channel IN ('web', 'store') with no alias list. Catches: key columns named web or WEB instead of the quoted text, a missing or NULL key, keys outside the list dropped, and the grouping column kept."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "channel", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }]
+rows = [
+  ["1", "'web'", "10.50"],
+  ["1", "'web'", "2.25"],
+  ["1", "'store'", "4.00"],
+  ["2", "'store'", "NULL"],
+  ["2", "'phone'", "9.99"],
+  ["3", "NULL", "1.00"],
+  ["3", "'WEB'", "3.00"],
+]
+query = "SELECT * FROM (SELECT order_id, channel, total FROM input) PIVOT(SUM(total) FOR channel IN ('web', 'store')) ORDER BY order_id"
+order = "ordered"
+tags = ["null", "duplicates", "missing-key", "case-sensitive-key"]
+
+[[case]]
+id = "pivot_quoted_key_reference"
+description = "The pivoted key columns read back by their quoted names, \"'web'\" and \"'store'\", through a table alias without a column list. Catches: the names not matching the quoted key text."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "channel", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }]
+rows = [
+  ["1", "'web'", "10.50"],
+  ["1", "'store'", "4.00"],
+  ["2", "'web'", "1.00"],
+]
+query = "SELECT p.order_id, p.\"'web'\" AS web_total, p.\"'store'\" AS store_total FROM (SELECT order_id, channel, total FROM input) PIVOT(SUM(total) FOR channel IN ('web', 'store')) AS p ORDER BY p.order_id"
+order = "ordered"
+tags = ["null", "missing-key"]
+
+[[case]]
+id = "pivot_mixed_case_keys_without_alias_list"
+description = "Keys with upper case, a space and an underscore, under MAX over BOOLEAN and no alias list. Catches: key names upper-cased, spaces changed, or the quotes dropped."
+columns = [{ name = "customer_id", type = "VARCHAR" }, { name = "consent", type = "VARCHAR" }, { name = "granted", type = "BOOLEAN" }]
+rows = [
+  ["'c-1'", "'Email Opt'", "TRUE"],
+  ["'c-1'", "'SMS_OPT'", "FALSE"],
+  ["'c-2'", "'Email Opt'", "NULL"],
+  ["'c-2'", "'other'", "TRUE"],
+]
+query = "SELECT * FROM (SELECT customer_id, consent, granted FROM input) PIVOT(MAX(granted) FOR consent IN ('Email Opt', 'SMS_OPT')) ORDER BY customer_id"
+order = "ordered"
+tags = ["null", "missing-key", "case-sensitive-key"]
+
+[[case]]
+id = "pivot_without_alias_list_over_no_rows"
+description = "A PIVOT without an alias list over no rows. Catches: a row of NULLs instead of no rows, and the column names and types still described."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "channel", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }]
+rows = [
+  ["1", "'web'", "10.50"],
+]
+query = "SELECT * FROM (SELECT order_id, channel, total FROM input WHERE total < 0) PIVOT(SUM(total) FOR channel IN ('web', 'store'))"
+order = "bag"
+tags = ["empty-input"]
