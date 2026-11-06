@@ -82,6 +82,7 @@ pub(crate) fn identifier(token: &Token) -> Identifier {
         TokenKind::QuotedIdent => Identifier::quoted(token.value.clone()),
         _ => Identifier::new(token.value.clone()),
     }
+    .with_span(token.span)
 }
 
 impl<'sql> Parser<'sql> {

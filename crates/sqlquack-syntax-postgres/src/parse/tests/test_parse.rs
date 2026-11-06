@@ -3,7 +3,9 @@
 use serde_json::Value;
 
 use crate::parse::main::parse::parse;
-use crate::parse::tests::test_types::{ExpectedVerdict, ShapeTestCase, VerdictTestCase};
+use crate::parse::tests::test_types::{
+    ExpectedVerdict, ShapeTestCase, SpanTestCase, VerdictTestCase,
+};
 
 #[test]
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
@@ -410,6 +412,54 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             node.and_then(Value::as_object)
                 .is_some_and(|object| object.contains_key(test_case.expected_node)),
             "{}: {node:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sql_when_parsing_then_nodes_record_their_source_range_in_characters() {
+    let test_cases = [
+        SpanTestCase {
+            description: "a column after a multi-byte character counts characters, not bytes",
+            sql: "SELECT 'é', bb FROM t",
+            pointer: "/0/select/expressions/1/column/span",
+            expected_span: [12, 14, 1, 15],
+        },
+        SpanTestCase {
+            description: "a cast covers its qualified operand and type, on the second line",
+            sql: "SELECT\n  t.\"Ab\"::int",
+            pointer: "/0/select/expressions/0/cast/span",
+            expected_span: [9, 20, 2, 14],
+        },
+        SpanTestCase {
+            description: "a quoted name includes its quotes",
+            sql: "SELECT\n  t.\"Ab\"::int",
+            pointer: "/0/select/expressions/0/cast/this/column/name/span",
+            expected_span: [11, 15, 2, 9],
+        },
+        SpanTestCase {
+            description: "a query covers its WITH clause and ORDER BY",
+            sql: "WITH c AS (SELECT 1) SELECT 2 ORDER BY 1",
+            pointer: "/0/select/span",
+            expected_span: [0, 40, 1, 41],
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        let span: Option<[usize; 4]> = tree.pointer(test_case.pointer).map(|span| {
+            ["start", "end", "line", "column"].map(|key| {
+                span[key]
+                    .as_u64()
+                    .and_then(|value| usize::try_from(value).ok())
+                    .unwrap_or(usize::MAX)
+            })
+        });
+        assert_eq!(
+            span,
+            Some(test_case.expected_span),
+            "{}",
             test_case.description
         );
     }

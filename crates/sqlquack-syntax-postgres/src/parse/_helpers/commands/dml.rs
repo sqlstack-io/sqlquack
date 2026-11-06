@@ -29,6 +29,7 @@ impl Parser<'_> {
     /// `[WITH ...] SELECT | INSERT | UPDATE | DELETE | MERGE`.
     pub(crate) fn preparable_statement(&mut self) -> Parsing<Expression> {
         self.deeper(|parser| {
+            let first: usize = parser.at;
             let with: Option<With> = match parser.kw("with") {
                 true => Some(parser.with_clause()?),
                 false => None,
@@ -40,7 +41,8 @@ impl Parser<'_> {
                 Some("merge") => parser.merge_statement(with),
                 _ => {
                     let body: Expression = parser.set_expression(0)?;
-                    parser.select_options(body, with)
+                    let query: Expression = parser.select_options(body, with)?;
+                    Ok(parser.respanned(first, query))
                 }
             }
         })
@@ -199,12 +201,7 @@ impl Parser<'_> {
 
     /// The `SelectStmt` of an `INSERT`.
     fn preparable_query(&mut self) -> Parsing<Expression> {
-        let with: Option<With> = match self.kw("with") {
-            true => Some(self.with_clause()?),
-            false => None,
-        };
-        let body: Expression = self.set_expression(0)?;
-        self.select_options(body, with)
+        self.query()
     }
 
     /// `ON CONFLICT [target] DO NOTHING | DO UPDATE SET ... [WHERE ...]`, after `ON CONFLICT`.

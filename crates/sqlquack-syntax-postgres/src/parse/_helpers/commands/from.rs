@@ -40,7 +40,10 @@ impl Parser<'_> {
     pub(crate) fn joins(&mut self) -> Parsing<Vec<Join>> {
         let mut joins: Vec<Join> = Vec::new();
         while self.at_join() {
-            joins.push(self.deeper(|parser| parser.one_join())?);
+            let first: usize = self.at;
+            let mut node: Join = self.deeper(|parser| parser.one_join())?;
+            node.span = self.source_range(first);
+            joins.push(node);
         }
         Ok(joins)
     }
@@ -140,8 +143,15 @@ impl Parser<'_> {
         }
     }
 
-    /// `table_ref` without its joins.
+    /// `table_ref` without its joins, with its source range.
     pub(crate) fn table_ref(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
+        let node: Expression = self.table_item()?;
+        Ok(self.spanned(first, node))
+    }
+
+    /// `table_ref` without its joins.
+    fn table_item(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         if self.eat_kw("lateral") {
             if self.is_char('(') {

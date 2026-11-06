@@ -1,5 +1,7 @@
 //! Tokens as PostgreSQL's scanner and its lookahead filter hand them to the grammar.
 
+use sqlquack_syntax::tokens::models::Span;
+
 use crate::keywords::models::Keyword;
 
 /// What a token is, as gram.y's terminals distinguish them.
@@ -57,4 +59,6 @@ pub struct Token {
     pub value: String,
     pub start: usize,
     pub end: usize,
+    /// The range in characters, with the line and column after the token, as the shared tree records it.
+    pub span: Span,
 }
