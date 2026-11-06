@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -81,6 +81,23 @@ PostgreSQL's `equal()` compares them, so `int` matches `integer` and `pg_catalog
 `CREATE DATABASE` becomes `CreateDatabase`, each option a `(name, value)` tuple in `properties`, in
 order. `CONNECTION LIMIT` is named `connection_limit`, as PostgreSQL names it; a value is a number,
 a string or word, a boolean, or `DEFAULT`.
+
+## CREATE VIEW, INDEX, SEQUENCE, TRIGGER, TYPE and FOREIGN TABLE
+
+`CREATE VIEW` and `MATERIALIZED VIEW` become `CreateView`. `UNLOGGED`, `RECURSIVE`, `WITH (…)`,
+`USING`, `TABLESPACE`, `WITH NO DATA` and `(CHECK OPTION, LOCAL | CASCADED)` go in `options`;
+`WITH DATA` and a bare `WITH CHECK OPTION` are the defaults PostgreSQL gives them. A recursive view
+with a check option is refused (0A000), as gram.y refuses it. `CREATE INDEX`, `SEQUENCE`, `TRIGGER`
+and `TYPE` become `CreateObject`, with the persistence or the `UNIQUE`, `CONSTRAINT` or `RECURSIVE`
+word in `modifier` and each clause a keyword tuple in `operands`, in grammar order. An index without
+`USING` records `btree`, and `NULLS DISTINCT` is the default. Trigger events are listed in
+PostgreSQL's bit order (`INSERT`, `DELETE`, `UPDATE`, `TRUNCATE`), `FOR EACH STATEMENT` is the
+default, `EXECUTE PROCEDURE` equals `EXECUTE FUNCTION`, and each function argument is the string
+gram.y makes of it. A sequence's options are those of `ALTER SEQUENCE`. `CREATE TYPE` records `AS`,
+`AS ENUM` or `AS RANGE` in `source`, with the attributes or labels in `operands` and a definition
+list in `properties`. `CREATE FOREIGN TABLE` becomes `CreateTable` with the `table_modifier`
+`FOREIGN` and `(SERVER, s)` and `OPTIONS` in `properties`. `CREATE ASSERTION` is parsed and refused
+(0A000). `CREATE` followed by a word no statement allows is refused (42601).
 
 ## ALTER
 
