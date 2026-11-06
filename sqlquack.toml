@@ -302,7 +302,7 @@ minimum_bytes = 4194304
 # can return another value.
 
 [divergences.numeric_range]
-constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL", "fn:EXP"]
+constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "fn:GREATEST_IGNORE_NULLS", "fn:LEAST_IGNORE_NULLS", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL", "fn:EXP"]
 default = "warn"
 strict = "refuse"
 failure = "loud"
