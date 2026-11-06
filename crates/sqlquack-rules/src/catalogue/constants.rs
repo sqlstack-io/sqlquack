@@ -6,9 +6,9 @@ use sqlquack_core::failures::constants::{
     DIVISION_BY_ZERO, DIVISION_FAILURES, FLATTEN_FAILURES, HEX_DECODE_FAILURES,
     INVALID_UTF8_FAILURES, JSON_NOT_PARSED, KEY_EXISTS_FAILURES, LOGARITHM_FAILURES,
     NOT_AN_ARRAY_ARGUMENT, NOT_AN_ARRAY_FAILURES, NUMBER_NOT_RECOGNIZED, NUMBER_OUT_OF_RANGE,
-    NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, RANGE_STEP_FAILURES, STRING_TOO_LONG,
-    TIME_TEXT_FAILURES, TIMESTAMP_FORMAT_MISMATCH, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST,
-    ZONE_FAILURES,
+    NUMBER_TEXT_OUT_OF_RANGE, OBJECT_KEY_EXISTS, RANGE_STEP_FAILURES, REGEXP_PARAMETER_FAILURES,
+    STRING_TOO_LONG, TIME_TEXT_FAILURES, TIMESTAMP_FORMAT_MISMATCH, TIMESTAMP_NOT_RECOGNIZED,
+    VARIANT_NOT_CAST, ZONE_FAILURES,
 };
 use sqlquack_core::failures::models::{ErrorKind, FailureMode};
 use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
@@ -1062,8 +1062,8 @@ pub const RULES: &[RuleSpec] = &[
             "fn:REGEXP_SUBSTR",
             "node:regexp_like",
         ],
-        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t, \\r and, outside a bracket expression, the ASCII word boundary \\b, as recorded beside digits, underscores, punctuation and non-ASCII letters. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match; REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
-        failures: &[],
+        conditions: "A literal pattern without lookarounds, group modifiers, lazy quantifiers (except +?, *? and ?? in REGEXP_SUBSTR, recorded reading as optional greedy repetitions, so as *, * and ?), POSIX classes or escapes other than \\d \\s \\w (ASCII, as recorded), their negations, escaped punctuation and, in REGEXP_SUBSTR and REGEXP_SUBSTR_ALL, \\n, \\t, \\r and, outside a bracket expression, the ASCII word boundary \\b, as recorded beside digits, underscores, punctuation and non-ASCII letters. REGEXP_LIKE matches the whole text; REGEXP_REPLACE replaces every match, or only the first, from position 1, case-sensitively or with 'i', with group references only; REGEXP_SUBSTR from position 1, any occurrence, with parameters of c, i, m, s and e and a group, which implies e (1 with e and without one, 0 without either), NULL when there is no match or the group is past the pattern's last; a position, occurrence or group from a NUMBER column is read as recorded: NULL gives NULL, a position or occurrence below 1 or a negative group raises 100050, a start position past the end gives NULL and ^ anchors at the start position (a pattern with \\b and such a position is not converted); REGEXP_SUBSTR_ALL the same, every match as an ARRAY of strings, empty without one. A ':' opening a bracket expression is literal, and ']' first in one is literal. REGEXP_LIKE also takes a VARCHAR pattern from a column, with or without literal parameters, relying on regexp_pattern_syntax: it runs only where the pattern is literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' or '?' and anchors at its ends, and raises otherwise.",
+        failures: REGEXP_PARAMETER_FAILURES,
     },
     RuleSpec {
         id: NULL_ARITHMETIC,
