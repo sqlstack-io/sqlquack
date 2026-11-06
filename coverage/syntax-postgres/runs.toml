@@ -255,3 +255,14 @@ start_state = { roles = 0, databases = 3, tablespaces = 2 }
 end_state = { roles = 0, databases = 4, tablespaces = 2 }
 auto_conf_settings = []
 repeat_run = "pg-18.6-20261106T153941951519Z"
+
+[[run]]
+run_id = "pg-18.6-20261106T160927505389Z"
+referee = "8d4f7f9b"
+isolation = "fresh_container"
+container = "sqlquack-pg-n7a"
+container_id = "731a66375eab"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T160927528091Z"

@@ -53915,6 +53915,78 @@ anchor = "doc.sql-createforeigntable / Synopsis"
 note = "NOT NULL on a column"
 
 [[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o081"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o082"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) VIRTUAL"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o083"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) with no kind"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o084"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o085"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK NOT ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o086"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o087"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK NOT ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o088"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL on a column with NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o089"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named NOT NULL with NO INHERIT"
+
+[[obligation]]
 id = "pg.ddl.create-foreign-table.server.o001"
 kind = "positive"
 required = true
@@ -59896,6 +59968,62 @@ required = true
 target = "<publication_object>"
 anchor = "doc.sql-createpublication / Synopsis"
 note = "a table and a schema in one list"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o042"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "TABLE with no table name"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o043"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "TABLES IN without SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o044"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a row filter without its parentheses"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o045"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a first object with no kind (gram.y preprocess_pubobj_list: invalid publication object list, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o046"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a column list on a schema (gram.y preprocess_pubobj_list: column specification not allowed for schema, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o047"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a row filter on a schema (gram.y preprocess_pubobj_list: WHERE clause not allowed for schema, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o048"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "an empty column list"
 
 [[obligation]]
 id = "pg.ddl.create-rule.o001"
