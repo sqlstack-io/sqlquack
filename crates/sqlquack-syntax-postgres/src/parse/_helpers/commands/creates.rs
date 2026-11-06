@@ -2,9 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
-use sqlquack_syntax::expressions::schema_objects::models::{
-    CreateObject, CreateView, ObjectProperty, ViewColumn,
-};
+use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, CreateView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::CreateTable;
 
 use crate::parse::_helpers::commands::alters::{iconst, name_from};
@@ -627,8 +625,9 @@ impl Parser<'_> {
         Ok(literal(Literal::String(text)))
     }
 
-    /// `CREATE TYPE any_name` then a definition, a composite, an enum, a range, or nothing (a shell type).
+    /// `CREATE TYPE any_name` then a definition, a composite (named by at most three parts), an enum, a range, or nothing.
     fn create_type(&mut self) -> Parsing<Expression> {
+        let name_at: usize = self.at;
         let mut node: CreateObject = created(
             TYPE,
             table(self.qualified_name()?),
@@ -660,11 +659,13 @@ impl Parser<'_> {
                 self.at += 1;
                 ("AS RANGE", Vec::new(), self.definition_list()?)
             }
-            _ => (
-                "AS",
-                self.composite_attributes()?,
-                Vec::<ObjectProperty>::new(),
-            ),
+            _ => {
+                let end: usize = self.at;
+                self.at = name_at;
+                self.table_name()?;
+                self.at = end;
+                ("AS", self.composite_attributes()?, Vec::new())
+            }
         };
         node.source = source.to_owned();
         node.operands = operands;

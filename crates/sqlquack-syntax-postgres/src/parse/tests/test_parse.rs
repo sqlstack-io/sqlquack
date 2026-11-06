@@ -165,6 +165,16 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a composite type's name has at most three parts, as makeRangeVarFromAnyName reads it",
+            sql: "CREATE TYPE a.b.c.d AS (x int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an enum type keeps any_name, so four parts are accepted",
+            sql: "CREATE TYPE a.b.c.d AS ENUM ('x')",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a recursive view refuses WITH CHECK OPTION in gram.y (0A000)",
             sql: "CREATE RECURSIVE VIEW v (a) AS SELECT 1 WITH CHECK OPTION",
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
