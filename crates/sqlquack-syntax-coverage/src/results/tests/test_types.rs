@@ -84,7 +84,8 @@ pub(crate) struct ObligationStateTestCase {
 /// The results command over an obligation file, and its exit and JSON buckets.
 pub(crate) struct ObligationsCliTestCase {
     pub(crate) description: &'static str,
-    pub(crate) obligations: String,
+    /// The functions obligation file, or no obligations directory at all.
+    pub(crate) obligations: Option<String>,
     pub(crate) expected_exit: ExitCode,
     /// Met, held and unmeasured obligations in the report, and obligations in the baseline.
     pub(crate) expected_buckets: Option<(u64, u64, u64, u64)>,
@@ -94,6 +95,9 @@ pub(crate) struct ObligationsCliTestCase {
 pub(crate) struct ObligationDiffTestCase {
     pub(crate) description: &'static str,
     pub(crate) before: ObligationState,
-    pub(crate) after: ObligationState,
+    /// None when the head drops the obligation.
+    pub(crate) after: Option<ObligationState>,
+    /// Whether the head's retired-obligations.toml lists it.
+    pub(crate) retired: bool,
     pub(crate) expected_regressions: usize,
 }

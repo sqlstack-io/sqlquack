@@ -1,6 +1,6 @@
 //! Recorded statements, their links to catalogue forms, and the result-matching measure (D139).
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -165,6 +165,12 @@ pub struct TranslationObligation {
     pub reason: Option<String>,
 }
 
+/// The header of a case file a translation obligation cites: the form its cases exercise.
+#[derive(Clone, Debug, Deserialize)]
+pub struct CaseFileHeader {
+    pub construct: String,
+}
+
 /// `retired-obligations.toml`: obligation ids withdrawn, never to be reused.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -228,6 +234,8 @@ pub struct ResultsFiles {
     pub links_sha256: String,
     /// Every family's obligations, in file then declaration order.
     pub obligations: Vec<TranslationObligation>,
+    /// The ids `retired-obligations.toml` withdraws.
+    pub retired: BTreeSet<String>,
 }
 
 /// A form's state over the recorded statements linked to it.
@@ -244,6 +252,8 @@ pub enum ResultState {
     Refused,
     /// Its statements would match, but a required obligation is unmet or held.
     UnmetObligations,
+    /// Its statements would match, but it declares no required obligation, so nothing shows it.
+    NoObligations,
     /// At least one linked statement's replay differs from Snowflake's result: a bug.
     Differs,
     /// No recorded statement links to it.
@@ -277,6 +287,7 @@ pub struct FormTally {
     pub syntax_only: usize,
     pub refused: usize,
     pub unmet_obligations: usize,
+    pub no_obligations: usize,
     pub differs: usize,
     pub unmeasured: usize,
 }
@@ -338,8 +349,10 @@ pub struct ResultsReport {
     /// Each held obligation's reason, and each unmeasured one's.
     pub held: BTreeMap<String, String>,
     pub unmeasured: BTreeMap<String, String>,
-    /// Recorded translation cases no obligation cites; they can make no form match.
+    /// Recorded translation cases no obligation cites; they meet no obligation.
     pub uncited_cases: Vec<String>,
+    /// The obligation ids withdrawn in `retired-obligations.toml`.
+    pub retired_obligations: BTreeSet<String>,
 }
 
 /// `results-baseline.json`: every statement's outcome and every form's state.
@@ -352,6 +365,9 @@ pub struct ResultsBaseline {
     /// Absent from baselines written before obligations were read.
     #[serde(default)]
     pub obligations: BTreeMap<String, ObligationState>,
+    /// The withdrawn obligation ids; dropping any other obligation regresses.
+    #[serde(default)]
+    pub retired: BTreeSet<String>,
 }
 
 /// How a report differs from the baseline.

@@ -85,11 +85,13 @@ pub(crate) fn form_results(
     states: &BTreeMap<String, ObligationState>,
 ) -> Result<Vec<FormResult>, Vec<String>> {
     let mut unmet: BTreeMap<&str, Vec<String>> = BTreeMap::new();
+    let mut declared: BTreeSet<&str> = BTreeSet::new();
     for obligation in files
         .obligations
         .iter()
         .filter(|obligation| obligation.required)
     {
+        declared.insert(obligation.form.as_str());
         if states.get(&obligation.id) != Some(&ObligationState::Met) {
             unmet
                 .entry(obligation.form.as_str())
@@ -120,7 +122,12 @@ pub(crate) fn form_results(
             ));
         }
         let unmet_here = unmet.get(id).cloned().unwrap_or_default();
-        results.push(form_result((id, family), is_listed, statements, unmet_here));
+        results.push(form_result(
+            (id, family),
+            is_listed,
+            statements,
+            (unmet_here, declared.contains(id)),
+        ));
     }
     match problems.is_empty() {
         true => Ok(results),
@@ -220,6 +227,7 @@ pub(crate) fn assemble(
             obligation.reason.as_ref().filter(|_| !obligation.required)
         }),
         uncited_cases: uncited_cases(&files.obligations, statements),
+        retired_obligations: files.retired.clone(),
         obligation_states,
     }
 }

@@ -1,7 +1,7 @@
-//! `diff_results`: a baseline against a later one; drops out of matching and into differs regress.
+//! `diff_results`: a baseline against a later one; drops out of matching or into differs regress.
 
 use crate::results::_helpers::diff::{
-    compare, form_regresses, obligation_regresses, statement_regresses,
+    compare, compare_obligations, form_regresses, statement_regresses,
 };
 use crate::results::models::{ResultsBaseline, ResultsDiff};
 
@@ -13,11 +13,7 @@ pub fn diff_results(base: &ResultsBaseline, head: &ResultsBaseline) -> ResultsDi
         statement_regresses,
     );
     let forms = compare("form", (&base.forms, &head.forms), form_regresses);
-    let obligations = compare(
-        "obligation",
-        (&base.obligations, &head.obligations),
-        obligation_regresses,
-    );
+    let obligations = compare_obligations((&base.obligations, &head.obligations), &head.retired);
     ResultsDiff {
         regressions: [
             statements.regressions,

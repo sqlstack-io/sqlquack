@@ -8,21 +8,18 @@ use crate::results::constants::{
     RETIRED_OBLIGATIONS_FILE, TRANSLATION_CASES,
 };
 use crate::results::models::{
-    ObligationKind, ObligationState, ObligationsFile, RecordedStatement, RetiredFile,
-    TranslationObligation,
+    CaseFileHeader, ObligationKind, ObligationState, ObligationsFile, RecordedStatement,
+    RetiredFile, TranslationObligation,
 };
 
-/// Every obligation under `directory/obligations`, or every problem; none when the directory is absent.
+/// Every obligation under `directory/obligations` and every retired id, or every problem.
 pub(crate) fn load_obligations(
-    directory: &Path,
+    (directory, repository): (&Path, &Path),
     catalogued: &BTreeMap<&str, &str>,
-) -> Result<Vec<TranslationObligation>, Vec<String>> {
+) -> Result<(Vec<TranslationObligation>, BTreeSet<String>), Vec<String>> {
     let folder = directory.join(OBLIGATIONS_DIR);
-    let entries = match std::fs::read_dir(&folder) {
-        Ok(entries) => entries,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(Vec::new()),
-        Err(error) => return Err(vec![format!("{}: {error}", folder.display())]),
-    };
+    let entries = std::fs::read_dir(&folder)
+        .map_err(|error| vec![format!("{}: {error}", folder.display())])?;
     let mut paths: Vec<std::path::PathBuf> = Vec::new();
     for entry in entries {
         paths.push(
@@ -75,24 +72,70 @@ pub(crate) fn load_obligations(
             problems.push(format!("obligation {}: declared twice", obligation.id));
         }
     }
-    problems.extend(retired_problems(directory, &ids));
+    let (retired, retired_problems) = load_retired(directory, &ids);
+    problems.extend(retired_problems);
+    problems.extend(construct_problems(repository, &obligations));
     match problems.is_empty() {
-        true => Ok(obligations),
+        true => Ok((obligations, retired)),
         false => Err(problems),
     }
 }
 
-/// Every problem with the retired ids: a reused id, a blank reason, or an unresolved replacement.
-fn retired_problems(directory: &Path, live: &BTreeSet<&str>) -> Vec<String> {
+/// Every cited case whose file is missing or whose `construct` is not the obligation's form.
+fn construct_problems(repository: &Path, obligations: &[TranslationObligation]) -> Vec<String> {
+    let mut constructs: BTreeMap<&str, Result<String, String>> = BTreeMap::new();
+    let mut problems: Vec<String> = Vec::new();
+    for obligation in obligations {
+        for case in &obligation.cases {
+            let file = case.split_once('#').map_or(case.as_str(), |(file, _)| file);
+            let construct = constructs
+                .entry(file)
+                .or_insert_with(|| case_construct(&repository.join(file)));
+            match construct {
+                Ok(construct) if *construct == obligation.form => {}
+                Ok(construct) => problems.push(format!(
+                    "obligation {}: cites {case}, a case of {construct}",
+                    obligation.id
+                )),
+                Err(problem) => problems.push(format!("obligation {}: {problem}", obligation.id)),
+            }
+        }
+    }
+    problems
+}
+
+/// The `construct` a case file names, or why it cannot be read.
+fn case_construct(path: &Path) -> Result<String, String> {
+    let text =
+        std::fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    toml::from_str::<CaseFileHeader>(&text)
+        .map(|header| header.construct)
+        .map_err(|error| format!("{}: {error}", path.display()))
+}
+
+/// The retired ids, and every problem with them: reuse, a blank reason, an unresolved replacement.
+fn load_retired(directory: &Path, live: &BTreeSet<&str>) -> (BTreeSet<String>, Vec<String>) {
     let path = directory.join(RETIRED_OBLIGATIONS_FILE);
     let text = match std::fs::read_to_string(&path) {
         Ok(text) => text,
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Vec::new(),
-        Err(error) => return vec![format!("{}: {error}", path.display())],
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return (BTreeSet::new(), Vec::new());
+        }
+        Err(error) => {
+            return (
+                BTreeSet::new(),
+                vec![format!("{}: {error}", path.display())],
+            );
+        }
     };
     let file: RetiredFile = match toml::from_str(&text) {
         Ok(file) => file,
-        Err(error) => return vec![format!("{}: {error}", path.display())],
+        Err(error) => {
+            return (
+                BTreeSet::new(),
+                vec![format!("{}: {error}", path.display())],
+            );
+        }
     };
     let mut problems: Vec<String> = Vec::new();
     let mut seen: BTreeSet<&str> = BTreeSet::new();
@@ -119,7 +162,8 @@ fn retired_problems(directory: &Path, live: &BTreeSet<&str>) -> Vec<String> {
             }
         }
     }
-    problems
+    let ids: BTreeSet<String> = file.retired.into_iter().map(|retired| retired.id).collect();
+    (ids, problems)
 }
 
 /// Whether `text` holds something other than whitespace.

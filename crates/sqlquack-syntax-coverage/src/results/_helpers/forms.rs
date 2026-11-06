@@ -10,7 +10,7 @@ use crate::results::models::{
 pub(crate) fn form_state(
     listed: bool,
     outcomes: &[StatementOutcome],
-    obligations_met: bool,
+    obligations_met: Option<bool>,
 ) -> ResultState {
     if listed {
         return ResultState::NotTranslatable;
@@ -28,8 +28,9 @@ pub(crate) fn form_state(
         outcomes.contains(&StatementOutcome::Matching),
         obligations_met,
     ) {
-        (true, true) => ResultState::Matching,
-        (true, false) => ResultState::UnmetObligations,
+        (true, Some(true)) => ResultState::Matching,
+        (true, Some(false)) => ResultState::UnmetObligations,
+        (true, None) => ResultState::NoObligations,
         (false, _) => ResultState::SyntaxOnly,
     }
 }
@@ -39,7 +40,7 @@ pub(crate) fn form_result(
     (id, family): (&str, &str),
     listed: bool,
     linked: &[&RecordedStatement],
-    unmet_obligations: Vec<String>,
+    (unmet_obligations, declared): (Vec<String>, bool),
 ) -> FormResult {
     let outcomes: Vec<StatementOutcome> =
         linked.iter().map(|statement| statement.outcome).collect();
@@ -51,7 +52,11 @@ pub(crate) fn form_result(
     FormResult {
         id: id.to_owned(),
         family: family.to_owned(),
-        state: form_state(listed, &outcomes, unmet_obligations.is_empty()),
+        state: form_state(
+            listed,
+            &outcomes,
+            declared.then_some(unmet_obligations.is_empty()),
+        ),
         statements: linked.len(),
         matching_statements: outcomes.iter().filter(|outcome| outcome.matches()).count(),
         unmet_obligations,
@@ -70,6 +75,7 @@ pub(crate) fn tally<'a>(forms: impl Iterator<Item = &'a FormResult>) -> FormTall
             ResultState::SyntaxOnly => &mut tally.syntax_only,
             ResultState::Refused => &mut tally.refused,
             ResultState::UnmetObligations => &mut tally.unmet_obligations,
+            ResultState::NoObligations => &mut tally.no_obligations,
             ResultState::Differs => &mut tally.differs,
             ResultState::Unmeasured => &mut tally.unmeasured,
         };

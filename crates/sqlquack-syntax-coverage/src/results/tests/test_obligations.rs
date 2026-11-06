@@ -7,7 +7,7 @@ use crate::results::constants::STATEMENTS_FORMAT;
 use crate::results::main::diff_results::diff_results;
 use crate::results::models::{ObligationState, ResultState, ResultsBaseline, StatementOutcome};
 use crate::results::tests::helpers::{
-    COUNT_IF_CASE, LINKS, citing, measure_obligations, obligation, statement, tree,
+    COUNT_IF_CASE, LINKS, citing, count_if_cases, measure_obligations, obligation, statement, tree,
 };
 use crate::results::tests::test_types::{
     ObligationDiffTestCase, ObligationLoadTestCase, ObligationStateTestCase, ObligationsCliTestCase,
@@ -129,6 +129,18 @@ fn given_malformed_obligations_when_loading_then_each_is_a_load_error() {
             expected_problem: "needs its form and a reason",
         },
         ObligationLoadTestCase {
+            description: "a cited case of another form",
+            obligations: obligation(1, &citing("translation/functions/iff.toml#t001")),
+            retired: "",
+            expected_problem: "a case of sf.functions.iff",
+        },
+        ObligationLoadTestCase {
+            description: "a cited case file that does not exist",
+            obligations: obligation(1, &citing("translation/functions/count-if-gone.toml#t001")),
+            retired: "",
+            expected_problem: "count-if-gone.toml",
+        },
+        ObligationLoadTestCase {
             description: "a cited case no statement records",
             obligations: obligation(1, &citing("translation/functions/count-if.toml#t404")),
             retired: "",
@@ -194,6 +206,23 @@ fn given_obligations_when_measuring_then_a_form_matches_only_when_every_required
             expected_states: vec![ObligationState::Unmet],
         },
         ObligationStateTestCase {
+            description: "no obligation declared: matching rows alone do not match the form",
+            cited_outcome: StatementOutcome::Matching,
+            obligations: String::new(),
+            expected_form: ResultState::NoObligations,
+            expected_states: vec![],
+        },
+        ObligationStateTestCase {
+            description: "only an unmeasured obligation: no required one, so the form cannot match",
+            cited_outcome: StatementOutcome::Matching,
+            obligations: obligation(
+                3,
+                "cases = []\nrequired = false\nreason = \"row order unspecified\"",
+            ),
+            expected_form: ResultState::NoObligations,
+            expected_states: vec![ObligationState::Unmeasured],
+        },
+        ObligationStateTestCase {
             description: "a held obligation is never met, though every statement matches",
             cited_outcome: StatementOutcome::Matching,
             obligations: met.clone()
@@ -250,29 +279,37 @@ fn given_obligations_when_running_the_results_command_then_the_json_reports_each
     let test_cases = [
         ObligationsCliTestCase {
             description: "a held and an unmeasured obligation land in their own buckets",
-            obligations: obligation(1, &citing(COUNT_IF_CASE))
-                + &obligation(2, "cases = []\nrequired = true\nheld = \"parse gap\"")
-                + &obligation(3, "cases = []\nrequired = false\nreason = \"unspecified\""),
+            obligations: Some(
+                obligation(1, &citing(COUNT_IF_CASE))
+                    + &obligation(2, "cases = []\nrequired = true\nheld = \"parse gap\"")
+                    + &obligation(3, "cases = []\nrequired = false\nreason = \"unspecified\""),
+            ),
             expected_exit: ExitCode::SUCCESS,
             expected_buckets: Some((1, 1, 1, 3)),
         },
         ObligationsCliTestCase {
+            description: "no obligations directory fails the command, not zero obligations",
+            obligations: None,
+            expected_exit: ExitCode::FAILURE,
+            expected_buckets: None,
+        },
+        ObligationsCliTestCase {
             description: "a required obligation without cases or held fails the command",
-            obligations: obligation(1, "cases = []\nrequired = true"),
+            obligations: Some(obligation(1, "cases = []\nrequired = true")),
             expected_exit: ExitCode::FAILURE,
             expected_buckets: None,
         },
     ];
     for test_case in test_cases {
         let directory = tempfile::tempdir().expect("directory");
-        let root = tree(directory.path());
-        let translation = directory.path().join("translation");
+        let root = tree(&directory.path().join("coverage"));
+        let translation = directory.path().join("coverage/translation");
         write(&translation, "form-links.toml", LINKS);
-        write(
-            &translation,
-            "obligations/functions.toml",
-            &test_case.obligations,
-        );
+        test_case
+            .obligations
+            .iter()
+            .for_each(|obligations| write(&translation, "obligations/functions.toml", obligations));
+        count_if_cases(directory.path());
         let statements = serde_json::json!({
             "format": STATEMENTS_FORMAT,
             "statements": [
@@ -314,41 +351,67 @@ fn given_obligations_when_running_the_results_command_then_the_json_reports_each
 
 #[test]
 fn given_a_met_obligation_when_it_stops_being_met_then_the_diff_regresses() {
-    let baseline = |state: ObligationState| ResultsBaseline {
-        obligations: [("sf.functions.count-if.t001".to_owned(), state)].into(),
+    let id = "sf.functions.count-if.t001";
+    let baseline = |state: Option<ObligationState>, retired: bool| ResultsBaseline {
+        obligations: state
+            .map(|state| (id.to_owned(), state))
+            .into_iter()
+            .collect(),
+        retired: retired.then(|| id.to_owned()).into_iter().collect(),
         ..ResultsBaseline::default()
     };
     let test_cases = [
         ObligationDiffTestCase {
             description: "met to unmet regresses",
             before: ObligationState::Met,
-            after: ObligationState::Unmet,
+            after: Some(ObligationState::Unmet),
+            retired: false,
             expected_regressions: 1,
         },
         ObligationDiffTestCase {
             description: "met to held regresses",
             before: ObligationState::Met,
-            after: ObligationState::Held,
+            after: Some(ObligationState::Held),
+            retired: false,
             expected_regressions: 1,
         },
         ObligationDiffTestCase {
             description: "unmet to met is an improvement",
             before: ObligationState::Unmet,
-            after: ObligationState::Met,
+            after: Some(ObligationState::Met),
+            retired: false,
             expected_regressions: 0,
         },
         ObligationDiffTestCase {
             description: "held to unmet is a change, not a regression",
             before: ObligationState::Held,
-            after: ObligationState::Unmet,
+            after: Some(ObligationState::Unmet),
+            retired: false,
+            expected_regressions: 0,
+        },
+        ObligationDiffTestCase {
+            description: "an unmet obligation deleted without a tombstone regresses",
+            before: ObligationState::Unmet,
+            after: None,
+            retired: false,
+            expected_regressions: 1,
+        },
+        ObligationDiffTestCase {
+            description: "a met obligation retired in retired-obligations.toml is a change",
+            before: ObligationState::Met,
+            after: None,
+            retired: true,
             expected_regressions: 0,
         },
     ];
     for test_case in test_cases {
         assert_eq!(
-            diff_results(&baseline(test_case.before), &baseline(test_case.after))
-                .regressions
-                .len(),
+            diff_results(
+                &baseline(Some(test_case.before), false),
+                &baseline(test_case.after, test_case.retired),
+            )
+            .regressions
+            .len(),
             test_case.expected_regressions,
             "{}",
             test_case.description

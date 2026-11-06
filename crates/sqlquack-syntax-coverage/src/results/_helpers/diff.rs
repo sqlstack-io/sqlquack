@@ -25,12 +25,32 @@ pub(crate) fn form_regresses(base: Option<ResultState>, head: Option<ResultState
     (was_matching && head != Some(ResultState::Matching)) || differs
 }
 
-/// An obligation stops being met, or a met one is dropped.
-pub(crate) fn obligation_regresses(
-    base: Option<ObligationState>,
-    head: Option<ObligationState>,
-) -> bool {
-    base == Some(ObligationState::Met) && head != Some(ObligationState::Met)
+/// Obligation changes: a met one stops being met, or any is dropped that `retired` does not list.
+pub(crate) fn compare_obligations(
+    (base, head): (
+        &BTreeMap<String, ObligationState>,
+        &BTreeMap<String, ObligationState>,
+    ),
+    retired: &BTreeSet<String>,
+) -> ResultsDiff {
+    let mut diff = ResultsDiff::default();
+    let keys: BTreeSet<&String> = base.keys().chain(head.keys()).collect();
+    for key in keys {
+        let (before, after) = (base.get(key).copied(), head.get(key).copied());
+        if before == after {
+            continue;
+        }
+        let line = format!("obligation {key}: {before:?} -> {after:?}");
+        let regresses = match after {
+            None => !retired.contains(key.as_str()),
+            Some(after) => before == Some(ObligationState::Met) && after != ObligationState::Met,
+        };
+        match regresses {
+            true => diff.regressions.push(line),
+            false => diff.changes.push(line),
+        }
+    }
+    diff
 }
 
 /// Each changed key of one kind, as a regression or another change.

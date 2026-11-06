@@ -7,10 +7,10 @@ use crate::results::_helpers::files::load_files;
 use crate::results::models::ResultsFiles;
 use crate::translation::main::catalogued_forms::catalogued_forms;
 
-/// The files under the translation `directory`, or every problem with them.
+/// The files under the translation `directory`, with the cited cases under `repository`, or every problem.
 pub fn load_results_files(
-    directory: &Path,
+    (directory, repository): (&Path, &Path),
     coverage: &SyntaxCoverage,
 ) -> Result<ResultsFiles, Vec<String>> {
-    load_files(directory, &catalogued_forms(coverage, None))
+    load_files((directory, repository), &catalogued_forms(coverage, None))
 }

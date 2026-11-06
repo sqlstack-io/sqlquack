@@ -134,8 +134,9 @@ pub(crate) fn measure(
     write(&translation, "form-links.toml", links);
     write(&translation, "not-translatable.toml", not_translatable);
     write(&translation, "reviews/auditor-results.toml", review);
+    write(&translation, "obligations/functions.toml", "");
     let coverage = load_coverage(&root).expect("coverage loads");
-    let files = load_results_files(&translation, &coverage)?;
+    let files = load_results_files((&translation, directory.path()), &coverage)?;
     measure_results(
         &coverage,
         &files,
@@ -187,6 +188,20 @@ pub(crate) fn obligation(number: u32, fields: &str) -> String {
     )
 }
 
+/// The COUNT_IF case file under `repository`, and an IFF one the obligations may wrongly cite.
+pub(crate) fn count_if_cases(repository: &Path) {
+    write(
+        repository,
+        "cases/translation/functions/count-if.toml",
+        "construct = \"sf.functions.count-if\"\n",
+    );
+    write(
+        repository,
+        "cases/translation/functions/iff.toml",
+        "construct = \"sf.functions.iff\"\n",
+    );
+}
+
 /// The fields of a required obligation citing `reference` under `cases/`.
 pub(crate) fn citing(reference: &str) -> String {
     format!("cases = [\"cases/{reference}\"]\nrequired = true")
@@ -203,8 +218,9 @@ pub(crate) fn measure_obligations(
     write(&translation, "form-links.toml", LINKS);
     write(&translation, "obligations/functions.toml", obligations);
     write(&translation, "retired-obligations.toml", retired);
+    count_if_cases(directory.path());
     let coverage = load_coverage(&root).expect("coverage loads");
-    let files = load_results_files(&translation, &coverage)?;
+    let files = load_results_files((&translation, directory.path()), &coverage)?;
     measure_results(
         &coverage,
         &files,

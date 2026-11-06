@@ -15,11 +15,11 @@ const COUNT_IF_CONSTRUCTS: &[&str] = &["fn:COUNT_IF", "node:column", "node:selec
 fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state() {
     let test_cases = [
         FormStateTestCase {
-            description: "rows and a matching error both match",
+            description: "rows and a matching error both match, but no obligation is declared",
             outcomes: &[StatementOutcome::Matching, StatementOutcome::MatchingError],
             list: nothing,
             review: nothing,
-            expected_state: ResultState::Matching,
+            expected_state: ResultState::NoObligations,
             expected_translatable: 12,
         },
         FormStateTestCase {
@@ -46,11 +46,11 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             expected_translatable: 12,
         },
         FormStateTestCase {
-            description: "types only beside a match: the match decides",
+            description: "types only beside a match: the match decides, then the obligations",
             outcomes: &[StatementOutcome::Matching, StatementOutcome::ShapeOnly],
             list: nothing,
             review: nothing,
-            expected_state: ResultState::Matching,
+            expected_state: ResultState::NoObligations,
             expected_translatable: 12,
         },
         FormStateTestCase {
@@ -334,9 +334,9 @@ fn given_a_two_construct_link_when_measuring_then_it_links_only_when_both_are_us
 fn given_a_refusal_naming_one_construct_when_measuring_then_only_its_forms_are_refused() {
     let test_cases = [
         RefusedConstructTestCase {
-            description: "names COUNT_IF: IFF keeps its own evidence",
+            description: "names COUNT_IF: IFF keeps its own evidence, short only of obligations",
             refused: &["fn:COUNT_IF"],
-            expected_iff: ResultState::Matching,
+            expected_iff: ResultState::NoObligations,
         },
         RefusedConstructTestCase {
             description: "the whole statement",
