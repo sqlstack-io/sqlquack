@@ -14,6 +14,7 @@ from snowflake.connector.errors import NotSupportedError, ProgrammingError
 from sqlquack_record.recording.constants import (
     DATA_EXCEPTION_SQLSTATE_CLASSES,
     ERROR_PREFIX_PATTERN,
+    EXPECTED_FUNCTION_ERRORS,
     INTERNAL_SQLSTATE_CLASS,
     MICROSECOND_SCALE,
     MULTI_STATEMENT_FAILURE,
@@ -110,12 +111,18 @@ def _whole_count(value: object) -> int | None:
     return None
 
 
-def require_recordable(error: ProgrammingError) -> None:
-    """Raise unless `error` is a SQL error that belongs to the case rather than the session."""
+def require_recordable(error: ProgrammingError, *, expected_error: bool = False) -> None:
+    """Raise unless `error` is a SQL error that belongs to the case rather than the session.
+
+    A listed built-in function error (SQLSTATE P0000) belongs to the case only when the case
+    expects an error.
+    """
     sqlstate: str = str(error.sqlstate or "")
     if sqlstate[:2] in RECORDABLE_SQLSTATE_CLASSES and sqlstate not in SESSION_DEPENDENT_SQLSTATES:
         return
     if (error.errno, sqlstate) in RECORDABLE_FUNCTION_ERRORS:
+        return
+    if expected_error and (error.errno, sqlstate) in EXPECTED_FUNCTION_ERRORS:
         return
     message: str = (
         f"Snowflake error {error.errno} (SQLSTATE {sqlstate or 'unknown'}) is not a case "
@@ -127,8 +134,12 @@ def require_recordable(error: ProgrammingError) -> None:
 
 
 def error_message(error: ProgrammingError) -> str | None:
-    """A data exception's message without its errno and SQLSTATE prefix or any query ID."""
-    if str(error.sqlstate or "")[:2] not in DATA_EXCEPTION_SQLSTATE_CLASSES:
+    """A data exception's or listed built-in function error's message, without its errno and
+    SQLSTATE prefix or any query ID."""
+    sqlstate: str = str(error.sqlstate or "")
+    if sqlstate[:2] not in DATA_EXCEPTION_SQLSTATE_CLASSES and (
+        (error.errno, sqlstate) not in EXPECTED_FUNCTION_ERRORS
+    ):
         return None
     message: str = QUERY_ID_PATTERN.sub("", str(error.msg or ""))
     if error.sfqid:

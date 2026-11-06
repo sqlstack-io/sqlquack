@@ -49,6 +49,52 @@ _STATEMENTS: tuple[str, ...] = ("SELECT 1", "SELECT 1 / 0")
             expected_message="",
         ),
         BatchRecordingTestCase(
+            description="a listed built-in function error (SQLSTATE P0000) is the recorded outcome "
+            "of a case expecting an error",
+            statements=_STATEMENTS,
+            batch_error=(100132, "P0000"),
+            statement_errors=(("SELECT 1 / 0", 100344, "P0000"),),
+            json_results=frozenset(),
+            overflow_results=frozenset(),
+            truncated_results=frozenset(),
+            null_results=frozenset(),
+            expected_outcomes=("rows", "error"),
+            expected_single_runs=_STATEMENTS,
+            expected_files_written=3,
+            expected_message="",
+            expected_errors=frozenset({"SELECT 1 / 0"}),
+        ),
+        BatchRecordingTestCase(
+            description="the same P0000 error on a case expecting success stops the run without "
+            "writing anything",
+            statements=_STATEMENTS,
+            batch_error=(100132, "P0000"),
+            statement_errors=(("SELECT 1 / 0", 100344, "P0000"),),
+            json_results=frozenset(),
+            overflow_results=frozenset(),
+            truncated_results=frozenset(),
+            null_results=frozenset(),
+            expected_outcomes=None,
+            expected_single_runs=_STATEMENTS,
+            expected_files_written=0,
+            expected_message="Snowflake error 100344 (SQLSTATE P0000) is not a case outcome",
+        ),
+        BatchRecordingTestCase(
+            description="an unlisted P0000 error stops the run even on a case expecting an error",
+            statements=_STATEMENTS,
+            batch_error=(100132, "P0000"),
+            statement_errors=(("SELECT 1 / 0", 100999, "P0000"),),
+            json_results=frozenset(),
+            overflow_results=frozenset(),
+            truncated_results=frozenset(),
+            null_results=frozenset(),
+            expected_outcomes=None,
+            expected_single_runs=_STATEMENTS,
+            expected_files_written=0,
+            expected_message="Snowflake error 100999 (SQLSTATE P0000) is not a case outcome",
+            expected_errors=frozenset({"SELECT 1 / 0"}),
+        ),
+        BatchRecordingTestCase(
             description="a wrapped error whose real error is not a case outcome stops the run "
             "without writing anything",
             statements=_STATEMENTS,
@@ -223,6 +269,7 @@ def test_given_batch_errors_or_json_results_when_recording_then_cases_rerun_indi
         overflow_results=test_case.overflow_results,
         truncated_results=test_case.truncated_results,
         null_results=test_case.null_results,
+        expected_errors=test_case.expected_errors,
     )
 
     assert outcomes == test_case.expected_outcomes

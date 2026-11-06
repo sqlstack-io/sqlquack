@@ -27,6 +27,8 @@ RESULT_FORMAT_PARAMETER: str = "PYTHON_CONNECTOR_QUERY_RESULT_FORMAT"
 ARROW_RESULT_FORMAT: str = "ARROW"
 RECORDABLE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "21", "22", "42"})
 RECORDABLE_FUNCTION_ERRORS: frozenset[tuple[int, str]] = frozenset({(100357, "P0000")})
+# Built-in function errors (SQLSTATE P0000): a case outcome only for a case expecting an error.
+EXPECTED_FUNCTION_ERRORS: frozenset[tuple[int, str]] = frozenset({(100344, "P0000")})
 DATA_EXCEPTION_SQLSTATE_CLASSES: frozenset[str] = frozenset({"22"})
 SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 SESSION_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"08", "28", "53", "57", "XX"})
@@ -55,8 +57,9 @@ VALUES_KEY: str = "values"
 SETUP_KEY: str = "setup_sql"
 PINNED_KEY: str = "pinned_parameters"
 COMPILE_ERROR_KEY: str = "compile_error"
+EXPECTED_ERROR_KEY: str = "expected_error"
 OPTIONAL_PENDING_KEYS: frozenset[str] = frozenset(
-    {VALUES_KEY, SETUP_KEY, PINNED_KEY, COMPILE_ERROR_KEY}
+    {VALUES_KEY, SETUP_KEY, PINNED_KEY, COMPILE_ERROR_KEY, EXPECTED_ERROR_KEY}
 )
 EXPLAIN_PREFIX: str = "EXPLAIN USING TEXT "
 COMPILE_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "42"})

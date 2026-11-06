@@ -78,7 +78,7 @@ def _run_with_functions(*, session: WarehouseSession, case: PendingCase) -> Stat
 
 def _run_one(*, session: WarehouseSession, case: PendingCase) -> StatementResult:
     try:
-        return session.run_one(case.source_sql)
+        return session.run_one(case.source_sql, expected_error=case.expected_error)
     except RecorderError as error:
         raise RecorderError(
             f"case {case.case_reference} (pending file {case.case_hash}.json) failed: {error}"
