@@ -180,6 +180,26 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
         },
         VerdictTestCase {
+            description: "RENAME takes a RoleId, so not CURRENT_USER (42939)",
+            sql: "ALTER ROLE current_user RENAME TO x",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "ALTER SYSTEM takes generic_set, which has no FROM CURRENT",
+            sql: "ALTER SYSTEM SET x FROM CURRENT",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER GROUP names one role, not ALL",
+            sql: "ALTER GROUP ALL ADD USER a",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER POLICY IF EXISTS only renames",
+            sql: "ALTER POLICY IF EXISTS p ON t TO a",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a policy is PERMISSIVE or RESTRICTIVE, compared after folding (42601)",
             sql: "CREATE POLICY p ON t AS \"RESTRICTIVE\"",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1059,6 +1079,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "CREATE ROLE r NOLOGIN",
             pointer: "/0/create_object/operands/0/tuple/expressions/0/identifier/name",
             expected_json: "\"canlogin\"",
+        },
+        ValueTestCase {
+            description: "ALTER GROUP ADD USER is the AlterRoleStmt that ALTER ROLE ... USER makes",
+            sql: "ALTER GROUP g ADD USER a",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"rolemembers\"",
+        },
+        ValueTestCase {
+            description: "ALTER GROUP DROP USER removes the members",
+            sql: "ALTER GROUP g DROP USER a",
+            pointer: "/0/alter_object/action",
+            expected_json: "\"DROP\"",
+        },
+        ValueTestCase {
+            description: "a role that is not a name is the first operand",
+            sql: "ALTER ROLE ALL IN DATABASE d RESET ALL",
+            pointer: "/0/alter_object/operands/0/var/this",
+            expected_json: "\"ALL\"",
+        },
+        ValueTestCase {
+            description: "a user mapping FOR USER is for CURRENT_USER",
+            sql: "ALTER USER MAPPING FOR USER SERVER s OPTIONS (DROP a)",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/1/var/this",
+            expected_json: "\"CURRENT_USER\"",
         },
         ValueTestCase {
             description: "a policy without TO is for PUBLIC",

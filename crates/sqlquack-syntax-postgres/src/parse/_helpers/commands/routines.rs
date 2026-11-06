@@ -634,6 +634,28 @@ impl Parser<'_> {
         }
     }
 
+    /// `SET generic_set` or `RESET generic_reset` as one option tuple, shaped as `set_reset_clause` shapes them.
+    pub(crate) fn generic_set_reset(&mut self) -> Parsing<Expression> {
+        if self.eat_kw("reset") {
+            let item: RoutineOption = match self.eat_kw("all") {
+                true => option("RESET ALL", Vec::new()),
+                false => option("RESET", vec![self.setting_name()?]),
+            };
+            return Ok(option_tuple(&item));
+        }
+        self.expect_kw("set")?;
+        let name: Expression = self.setting_name()?;
+        if !(self.eat_kw("to") || self.eat_char('=')) {
+            return Err(self.error());
+        }
+        if self.eat_kw("default") {
+            return Ok(option_tuple(&option("SET DEFAULT", vec![name])));
+        }
+        let mut values: Vec<Expression> = vec![name];
+        values.extend(self.comma_list(|parser| parser.setting_value())?);
+        Ok(option_tuple(&option("SET", values)))
+    }
+
     /// `transaction_mode_list`: modes, with or without commas, each as its setting and value.
     pub(crate) fn transaction_modes(&mut self) -> Parsing<Vec<Expression>> {
         let mut modes: Vec<Expression> = vec![self.transaction_mode()?];

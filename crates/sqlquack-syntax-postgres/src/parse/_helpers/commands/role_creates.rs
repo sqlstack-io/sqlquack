@@ -42,7 +42,7 @@ const UNKNOWN_OPTION: &str = "unrecognized role option";
 const UNKNOWN_POLICY: &str = "unrecognized row security option";
 
 /// One role option, as the `DefElem` gram.y makes: its name and value.
-fn role_option(name: &str, value: Expression) -> Expression {
+pub(crate) fn role_option(name: &str, value: Expression) -> Expression {
     tuple(vec![Expression::Identifier(Identifier::new(name)), value])
 }
 
