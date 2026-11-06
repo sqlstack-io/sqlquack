@@ -10,7 +10,7 @@ columns = [{ name = "k", type = "NUMBER(38,0)" }]
 rows = [["1"]]
 query = "SELECT CUME_DIST() AS r FROM (SELECT 1 AS x) t"
 order = "ordered"
-tags = ["error"]
+tags = ["type-combination", "error"]
 
 [[case]]
 id = "t002_percent_rank_without_over"
@@ -20,7 +20,7 @@ columns = [{ name = "k", type = "NUMBER(38,0)" }]
 rows = [["1"]]
 query = "SELECT PERCENT_RANK() AS r FROM (SELECT 1 AS x) t"
 order = "ordered"
-tags = ["error"]
+tags = ["type-combination", "error"]
 
 [[case]]
 id = "t003_nth_value_without_over"
@@ -30,4 +30,4 @@ columns = [{ name = "k", type = "NUMBER(38,0)" }]
 rows = [["1"]]
 query = "SELECT NTH_VALUE(x, 1) AS r FROM (SELECT 1 AS x) t"
 order = "ordered"
-tags = ["error"]
+tags = ["type-combination", "error"]
