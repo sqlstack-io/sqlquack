@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.expressions.data-types-vector"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "The page's example [1, 2, 3]::VECTOR(FLOAT, 3), returned as an ARRAY; 2.2 shows 32-bit float rounding, which the recording decides. Catches: 64-bit floats kept, or elements reordered"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2.2,3]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY::VECTOR(FLOAT, 3)::ARRAY AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_int"
+description = "Integer elements as a 32-bit INT vector. Catches: the vector typed as FLOAT"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[7,-8]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY::VECTOR(INT, 2)::ARRAY AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_dimension"
+description = "The page: the element count must match the dimension. Catches: the vector padded or cut"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY::VECTOR(FLOAT, 3)::ARRAY AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'[1,2]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a)::ARRAY::VECTOR(INT, 2)::ARRAY AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

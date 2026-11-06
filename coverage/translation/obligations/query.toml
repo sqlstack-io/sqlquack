@@ -542,6 +542,83 @@ cases = ["cases/translation/query/limit.limit.toml#t004_null_offset"]
 required = true
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t001"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH, PATTERN (ANY_ROW UP+)"
+note = "The page's rising-price example on its ABCD prices: matches d 2 to 4 and d 5 to 8, with MATCH_NUMBER, MATCH_SEQUENCE_NUMBER and CLASSIFIER for each row."
+catches = "a non-greedy UP+, a match allowed to start at d 1, or CLASSIFIER returning the next symbol"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t001_all_rows_up"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t002"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ONE ROW PER MATCH, AFTER MATCH SKIP TO LAST up"
+note = "The page's V-shape example: one summary row per match with FIRST and LAST of d and the counts of each symbol; skipping to the last rising row lets the next V start there."
+catches = "all rows returned instead of one, or matching resumed after the match so a shared row is not reused"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t002_one_row_v_shape"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t003"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "ALL ROWS PER MATCH WITH UNMATCHED ROWS"
+note = "The page: WITH UNMATCHED ROWS adds the rows outside any match, whose MEASURES are NULL."
+catches = "unmatched rows dropped, or given a match number"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t003_with_unmatched_rows"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t004"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "PATTERN (up*) with OMIT EMPTY MATCHES"
+note = "The page: OMIT EMPTY MATCHES drops empty matches from the output, but an empty match still increments MATCH_NUMBER."
+catches = "empty matches shown, or MATCH_NUMBER counting only non-empty matches"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t004_omit_empty_matches"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t005"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "type_combination"
+target = "AFTER MATCH SKIP TO NEXT ROW"
+note = "The page: TO NEXT ROW continues after the first row of the match, so matches overlap and a row can appear in several matches."
+catches = "matching resumed past the last row, so the overlapping matches are missing"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t005_to_next_row"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t006"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "null_argument"
+target = "NULL price"
+note = "A NULL price makes price > LAG(price) NULL, which is not TRUE, so the NULL row and the row after it are not rising rows; the page gives no other rule."
+catches = "NULL compared as zero or as a match, so a run continues through the NULL"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t006_null_price"]
+required = true
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.t007"
+form = "sf.query.match-recognize.match-recognize-pattern-define-as"
+kind = "error_parity"
+target = "ONE ROW PER MATCH without PARTITION BY or MEASURES"
+note = "The page: omitting PARTITION BY and MEASURES with ONE ROW PER MATCH raises \"SELECT with no columns\"."
+catches = "an empty result or every input row returned instead of the error"
+reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t007_no_columns"]
+required = true
+
+[[obligation]]
 id = "sf.query.operators-query.except.t001"
 form = "sf.query.operators-query.except"
 kind = "type_combination"
@@ -924,6 +1001,83 @@ note = "A window value that is NULL for one row (LAG over the first row): QUALIF
 catches = "the NULL row kept"
 reading = "qualify: filters the rows of a query by a predicate over window functions, after HAVING; the window function need not be in the select list"
 cases = ["cases/translation/query/qualify.select-from-qualify.toml#t003_null_window"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t001"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "numeric USING, INCREMENT BY 1"
+note = "The page's UNIX-time example: the missing values between 2 and 5 are generated with NULL in the other columns."
+catches = "no rows generated, or the generated rows given a copied value instead of NULL"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t001_numeric"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t002"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "DATE USING, INCREMENT BY INTERVAL '1 day'"
+note = "A DATE column resampled by one day: 2024-01-03 is generated between 2024-01-02 and 2024-01-04."
+catches = "the interval read in another unit, or the DATE column turned into a timestamp"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t002_date_interval"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t003"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "PARTITION BY with IS_GENERATED() AS g and BUCKET_START()"
+note = "Gaps are filled within each partition, the partition column is kept in generated rows, IS_GENERATED() marks them and BUCKET_START() gives each row's interval start."
+catches = "gaps filled across partitions, the partition column NULL in generated rows, or the metadata columns missing"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t003_partition_metadata"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t004"
+form = "sf.query.resample"
+kind = "type_combination"
+target = "INCREMENT BY 5 with values off the grid"
+note = "The page: slices align to 1970-01-01 00:00:00, as TIME_SLICE does; for a numeric column that is read as zero, an inference, so 7 and 18 fall in the buckets starting 5 and 15 and the bucket starting 10 is missing. The page does not say what k holds in the generated row; the recording decides."
+catches = "slices aligned to the smallest value (7, 12, 17) instead of to zero"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t004_aligned_buckets"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t005"
+form = "sf.query.resample"
+kind = "error_parity"
+target = "numeric USING with INCREMENT BY INTERVAL '1 second'"
+note = "The page's example: 009954, RESAMPLE INCREMENT BY has to be numeric type when USING parameter is numeric."
+catches = "the interval accepted as a number of seconds"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t005_interval_on_numeric"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t006"
+form = "sf.query.resample"
+kind = "error_parity"
+target = "INCREMENT BY 0"
+note = "The page: a numeric INCREMENT BY constant must be positive (greater than 0)."
+catches = "a zero step accepted, looping or returning the input unchanged"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t006_zero_increment"]
+required = true
+
+[[obligation]]
+id = "sf.query.resample.t007"
+form = "sf.query.resample"
+kind = "null_argument"
+target = "NULL value and NULL time"
+note = "A NULL in a value column is kept as input; the page does not say how a NULL in the USING column is treated; the recording decides."
+catches = "the NULL value replaced, or a NULL time placed in a bucket"
+reading = "the RESAMPLE page: FROM <object> RESAMPLE(USING <column> INCREMENT BY <constant> [PARTITION BY ...] [METADATA_COLUMNS IS_GENERATED() | BUCKET_START() [AS alias]]) adds a row for each missing interval; generated rows hold NULL in columns that are not partitioned; slices align to 1970-01-01 00:00:00; a numeric USING column needs a positive numeric increment, a date or time column an INTERVAL of at least one second, and no unit finer than a day for DATE"
+cases = ["cases/translation/query/resample.toml#t007_null"]
 required = true
 
 [[obligation]]

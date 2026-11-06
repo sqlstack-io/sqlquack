@@ -26,9 +26,9 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:warehouses-sessions-and-query-history"
-sha256 = "ead94d8bac2a2be129879c934cc0738d5a8651b89cbcd98979fd1f94115878c8"
+sha256 = "1a816cea78160bf5f6d89d023abce593d09ffca94bb914f61238a9e81bec5d53"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-06T06:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:system-functions"
@@ -38,9 +38,9 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:ai-and-ml-functions"
-sha256 = "9bb46908426611b1cfbf42bdbf253274f70c61583f00e857ce675d1876f5188d"
+sha256 = "333dad6473ec9aecc7673abe5156a77778d4eff22bb8bb5d247da64539a9ffd6"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-06T06:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:stages-and-files"
@@ -56,9 +56,9 @@ reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-object-kinds"
-sha256 = "dc834bd5598c7568ea89318b10bbc534f3a8b522e1eefdbb9e2f1d073ba8b7ff"
+sha256 = "de95c45bb32327aa019e94a94f4402e680b3d642f2b358d8322a862066708aeb"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T06:12:29Z"
 
 [[signoff]]
 subject = "not-translatable:metadata-listings"
