@@ -147,6 +147,7 @@ macro_rules! set_operation_clauses {
                 corresponding,
                 strict,
                 on_columns,
+                locks,
                 span: _,
             } = operation;
             present(&[
@@ -165,6 +166,7 @@ macro_rules! set_operation_clauses {
                 (distribute_by.is_some(), "distribute_by"),
                 (sort_by.is_some(), "sort_by"),
                 (cluster_by.is_some(), "cluster_by"),
+                (!locks.is_empty(), "lock"),
             ])
         }
     };

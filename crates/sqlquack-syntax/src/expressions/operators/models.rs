@@ -328,8 +328,7 @@ pub struct IsJson {
     pub negated: bool,
 }
 
-/// A PostgreSQL call written with keywords rather than a plain argument list, e.g.
-/// `JSON_VALUE(j, '$.a' RETURNING int NULL ON ERROR)`, `XMLELEMENT(NAME e, x)` or `x IS DOCUMENT`.
+/// PostgreSQL: a call written with keywords, e.g. `JSON_VALUE(j, '$' RETURNING int)` or `x IS DOCUMENT`.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct KeywordCall {
     /// The call's keywords, e.g. "JSON_VALUE", "XMLELEMENT", "IS DOCUMENT", "FORMAT JSON"

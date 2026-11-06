@@ -165,8 +165,7 @@ pub struct Update {
     /// Whether FROM clause appears before SET (Snowflake syntax)
     #[serde(default)]
     pub from_before_set: bool,
-    /// PostgreSQL: the whole SET list in order, each `(targets, source)`, when it holds
-    /// `(a, b) = source` from anything but a row of as many items; `set` is then empty
+    /// PostgreSQL: the SET list as `(targets, source)` items when `(a, b) = source` is no row; `set` is empty
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub assignments: Vec<Expression>,
     /// PostgreSQL `WHERE CURRENT OF cursor`, which stands in place of a WHERE condition
