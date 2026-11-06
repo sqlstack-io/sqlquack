@@ -1124,3 +1124,63 @@ note = "Read against the PostgreSQL 18.6 documentation (release SGML), every obl
 "pg.ddl.alter-type.rename-value-to" = "ddd7a2e6525c60a32f42693aef6b3aec982c9a028312d9fb9db9db9b7d2e2055"
 "pg.ddl.alter-type.set" = "f9def7828dabf10f80acea7f8ea5751b9abd5b0171334b4c04b4446c66dc738c"
 "pg.ddl.alter-type.set-schema" = "0e7e48c145df00e8917acc29afd9525061ef6cc60db64edbe03f4b8acc3c6276"
+
+[[review]]
+id = "pg-auditor-ddl-010"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "312341300c07ab2aa09c00ac4c70c58e349a1480"
+reviewed_utc = "2026-11-06T12:28:48Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-database.name",
+  "pg.ddl.alter-domain.add",
+  "pg.ddl.alter-extension.add",
+  "pg.ddl.alter-extension.drop",
+  "pg.ddl.alter-operator-family.add",
+  "pg.ddl.alter-publication.add",
+  "pg.ddl.alter-publication.drop",
+  "pg.ddl.alter-publication.set-name-publication-object",
+  "pg.ddl.alter-text-search-configuration.add-mapping-for-with",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-for-with",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-replace-with",
+  "pg.ddl.alter-text-search-configuration.drop-mapping-for",
+  "pg.ddl.alter-text-search-dictionary.name-option",
+  "pg.ddl.alter-type.set",
+]
+note = "Re-read after the batch-16 coverage-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 31234130; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-database.name" = "0406a5729af23881f19e1c2014f80412f3364808538662ee26918a436f6f06ee"
+"pg.ddl.alter-domain.add" = "2e1ab5d1f07769028ebf03fded361c45fbec2bf269a6120de90f1d3f52728156"
+"pg.ddl.alter-extension.add" = "ece27e5e52fd2c5268c4c7a3fa26f612782be3b02a9305caa981565e57bd6b25"
+"pg.ddl.alter-extension.drop" = "2524a258a541c5dfdc5ce45f815fe68b8f1f6dfe18d81a4388cb918f78350022"
+"pg.ddl.alter-operator-family.add" = "39f9de48216164c18901f2af80018008706695dc30aba1ca660de59e6629510b"
+"pg.ddl.alter-publication.add" = "83b82e48b623276c5263c02ea4bf0bb81d78e990f928bc0edcda16689416739e"
+"pg.ddl.alter-publication.drop" = "badd67b44200a76b14fffccc0567b461c217aba47d968e802407550198fe71d2"
+"pg.ddl.alter-publication.set-name-publication-object" = "21ee281b12b190ccbdad33397e962336ab4217e82cba80fe9a5a8509f01a5a69"
+"pg.ddl.alter-text-search-configuration.add-mapping-for-with" = "2893fff1b80b956acbd00d0240925f9eabec43197c6c1d51032f027560d97cdb"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-replace" = "19531b62083104c617c3cb2df50f5adcbd22d5959532c5c49af34539ff6a8572"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-with" = "41ee7a649fb943e2e67f1738fc54ca79f37cff9a8d2ae93c536a315b80934158"
+"pg.ddl.alter-text-search-configuration.alter-mapping-replace-with" = "7767361c81da09ac18c3b79a39a23b3a25929ac4800d19ec49b812da5940e81c"
+"pg.ddl.alter-text-search-configuration.drop-mapping-for" = "fba74b2ac21ee7d44225cfce03a6aff806d27055df0d65d904a9969904025aa7"
+"pg.ddl.alter-text-search-dictionary.name-option" = "7ff3d462d3cc47983ac1821afe55edc6f6c24134b9f8ba9879999288f834b6e0"
+"pg.ddl.alter-type.set" = "ba66645c78c880dc207005be00ca263b20145b9dff0da0eed60a9adee700acb8"
+
+[review.definitions]
+"pg.ddl.alter-database.name" = "a9f70394a3b843e44e95fa2457651cf5d2f7ab6acef667fbccb7a49edb04a451"
+"pg.ddl.alter-domain.add" = "c540a36425e9cb3c20c508071fdd05dc3fc0387fe65208f94efd5495e3c060db"
+"pg.ddl.alter-extension.add" = "202f8fde7655005994449310e7896d199b4e6a532ad495dafc53275e6916d71d"
+"pg.ddl.alter-extension.drop" = "e97e664df2691f9dbe865205cbae05d83ae931d2936dcaf64bd4c7418527986c"
+"pg.ddl.alter-operator-family.add" = "cf5f7401edfa2aea3157aa29d0a887c98946db4a7428fba595bfa43033138dff"
+"pg.ddl.alter-publication.add" = "f5e4db265e00af1da0e4da13b4c1e24a4e934788f8dbb5f8b2f78998a9d92f95"
+"pg.ddl.alter-publication.drop" = "2d3b7c4565096e3b6a35a2133109abd079b909dc5dd29074e312792a66d75fa8"
+"pg.ddl.alter-publication.set-name-publication-object" = "8a80db18fb1e8ab6dc7003bfba19cba2997181f4d44c3064302daa5ee9962f2e"
+"pg.ddl.alter-text-search-configuration.add-mapping-for-with" = "056a4b56c8e6cc2014e15fa9944f61cd33ab6f204e4d825e67639b5806d2a224"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-replace" = "274274697e965d993c96b39f4e2671b49190a5ee0728d3f09e9866c58f0a78b3"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-with" = "1cf662caef87334685a7f896f15049266f72628d659c9e12e4ad6c31d011a5fd"
+"pg.ddl.alter-text-search-configuration.alter-mapping-replace-with" = "50594f5c8fbf384a1c0121f2d3aafe300d59837d2a24f46fea804e585e5ab2d8"
+"pg.ddl.alter-text-search-configuration.drop-mapping-for" = "c024e1119dc58fe71f07a3bd060937f473a7dc8e5aaf97dd542dce0847e473bc"
+"pg.ddl.alter-text-search-dictionary.name-option" = "800a63f78116fb71fcb5c59c6079f3cc40ca4f17b3be14ab48f4f45ff41651fa"
+"pg.ddl.alter-type.set" = "c58d3ab8f324dd20711366d1196ef4adf80d54e748e551763f5b296a81f87b43"
