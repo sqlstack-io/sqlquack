@@ -84,9 +84,8 @@ pub(crate) fn parse_json(
 }
 
 /// A VARIANT column of a base table, guarded as PARSE_JSON's result is.
-pub(crate) fn guarded_column(sql: &str, context: &Context<'_>) -> Result<String, Refusal> {
-    diverge(context, JSON_FIDELITY, &node_construct("column"))?;
-    Ok(json_guarded(sql, false, context.log))
+pub(crate) fn guarded_column(sql: &str, log: &ProvenanceLog) -> String {
+    json_guarded(sql, false, log)
 }
 
 /// `v:a.b[0]`: a literal path into a VARIANT.

@@ -9,6 +9,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
@@ -21,6 +22,7 @@ use crate::conversion::_helpers::queries::query::{convert_query, require_distinc
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
 };
+use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
@@ -559,14 +561,15 @@ fn table_source(
         .unwrap_or_else(|| name.clone());
     let is_cte = context.ctes.iter().any(|(cte, _)| cte == &name);
     let mut guarded: Vec<String> = Vec::new();
-    let statement = context.locator.tree();
-    for column in columns.iter().filter(|column| {
-        !is_cte
-            && column.data_type == SnowflakeType::SemiStructured
-            && may_read_column(statement, &column.name)
-    }) {
+    for column in columns
+        .iter()
+        .filter(|column| !is_cte && column.data_type == SnowflakeType::SemiStructured)
+    {
+        if may_read_column(context.locator.tree(), &column.name) {
+            diverge(context, JSON_FIDELITY, &node_construct("column"))?;
+        }
         let quoted = quoted_identifier(&column.name, log);
-        guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, context)?));
+        guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, log)));
     }
     let relation = match guarded.is_empty() {
         true => quoted_identifier(&name, log),
