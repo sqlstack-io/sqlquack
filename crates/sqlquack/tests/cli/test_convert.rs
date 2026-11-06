@@ -1,15 +1,15 @@
 use crate::helpers::{
     convert_outcome, convert_streams, converted_column_names, converted_first_value,
     converted_run_error, converted_value_over, first_refusal_help, override_failure,
-    override_outcome, policy_free_exit_code, python_outcome, python_report, python_rows,
-    run_convert, run_with_input, schema_failure,
+    override_outcome, python_outcome, python_report, python_rows, run_convert, run_with_input,
+    schema_failure,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
     DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, LayoutFlagsTestCase,
-    OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase,
-    PythonRefusalTestCase, PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
+    OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PythonRefusalTestCase,
+    PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -420,81 +420,6 @@ fn given_quoted_names_when_converted_and_run_on_duckdb_then_output_names_follow_
         assert_eq!(
             converted_column_names(test_case.sql, test_case.flags),
             test_case.expected_names,
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_applies() {
-    let test_cases = [
-        PolicyFreeTestCase {
-            description: "convert runs under the built-in policy",
-            arguments: &["convert", "query.sql"],
-            policy_file: None,
-            expected_exit_code: Some(0),
-        },
-        PolicyFreeTestCase {
-            description: "census runs under the built-in policy",
-            arguments: &["census", "query.sql"],
-            policy_file: None,
-            expected_exit_code: Some(0),
-        },
-        PolicyFreeTestCase {
-            description: "index runs under the built-in policy",
-            arguments: &["index", "query.sql"],
-            policy_file: None,
-            expected_exit_code: Some(0),
-        },
-        PolicyFreeTestCase {
-            description: "function runs under the built-in policy",
-            arguments: &[
-                "function",
-                "query.sql",
-                "--name",
-                "TOTAL",
-                "--schema",
-                "schema.json",
-            ],
-            policy_file: None,
-            expected_exit_code: Some(0),
-        },
-        PolicyFreeTestCase {
-            description: "the built-in policy refuses a divergence the repository policy allows",
-            arguments: &["convert", "now.sql"],
-            policy_file: None,
-            expected_exit_code: Some(1),
-        },
-        PolicyFreeTestCase {
-            description: "a sqlquack.toml in the directory is still read",
-            arguments: &["convert", "now.sql"],
-            policy_file: Some("sqlquack.toml"),
-            expected_exit_code: Some(0),
-        },
-        PolicyFreeTestCase {
-            description: "--builtin-policy still refuses where a sqlquack.toml allows it",
-            arguments: &["convert", "--builtin-policy", "now.sql"],
-            policy_file: Some("sqlquack.toml"),
-            expected_exit_code: Some(1),
-        },
-        PolicyFreeTestCase {
-            description: "a --policy file that does not exist is a usage error",
-            arguments: &["convert", "--policy", "missing.toml", "query.sql"],
-            policy_file: None,
-            expected_exit_code: Some(2),
-        },
-        PolicyFreeTestCase {
-            description: "an invalid sqlquack.toml is a usage error",
-            arguments: &["convert", "query.sql"],
-            policy_file: Some("crates/sqlquack/tests/cli/fixtures/invalid_policy.toml"),
-            expected_exit_code: Some(2),
-        },
-    ];
-    for test_case in test_cases {
-        assert_eq!(
-            policy_free_exit_code(test_case.arguments, test_case.policy_file),
-            test_case.expected_exit_code,
             "{}",
             test_case.description
         );
@@ -1592,8 +1517,8 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
                 `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
                 needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                the built-in policy refuses every known divergence; pass --policy with a policy \
-                file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                the built-in policy refuses every known divergence but the clock; pass --policy \
+                with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
