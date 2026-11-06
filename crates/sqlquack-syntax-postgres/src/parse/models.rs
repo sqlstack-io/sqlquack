@@ -1,17 +1,6 @@
-//! What a parse yields: the statements, the gaps that made a statement opaque, or the error.
+//! What a parse yields: the statements and the gaps that made a statement opaque.
 
 use sqlquack_syntax::Expression;
-
-/// Why the input does not parse, as PostgreSQL would report it.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct ParseError {
-    pub message: String,
-    /// Byte offset of the token it is at or near; the input's length at its end.
-    pub position: usize,
-    /// Whether PostgreSQL reports it as a syntax error (SQLSTATE 42601); scanner errors such as an
-    /// invalid Unicode escape (22025) and the stack depth limit (54001) are not.
-    pub syntax: bool,
-}
 
 /// A construct the shared tree cannot hold: its statement became a `Command` holding its text.
 #[derive(Clone, Debug, PartialEq, Eq)]

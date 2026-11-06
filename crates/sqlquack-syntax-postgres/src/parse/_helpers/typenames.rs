@@ -4,34 +4,8 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
+use crate::parse::constants::INTERVAL_FIELDS;
 use crate::scan::models::TokenKind;
-
-/// Keywords that begin a `ConstTypename` or `ConstInterval`, and so a typed literal.
-pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
-    "bigint",
-    "bit",
-    "boolean",
-    "char",
-    "character",
-    "dec",
-    "decimal",
-    "double",
-    "float",
-    "int",
-    "integer",
-    "interval",
-    "json",
-    "national",
-    "nchar",
-    "numeric",
-    "real",
-    "smallint",
-    "time",
-    "timestamp",
-];
-
-/// Fields an `INTERVAL` may name, and those that may follow `TO`.
-const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];
 
 /// Generic type names the shared tree has a type for, unquoted and unqualified.
 fn generic(name: &str) -> Option<DataType> {

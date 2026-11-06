@@ -8,4 +8,5 @@ pub(crate) mod functions;
 pub(crate) mod nodes;
 pub(crate) mod primary;
 pub(crate) mod queries;
-pub(crate) mod types;
+pub(crate) mod statements;
+pub(crate) mod typenames;

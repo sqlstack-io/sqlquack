@@ -5,8 +5,8 @@ use crate::keywords::models::Keyword;
 
 /// The keyword `folded` (already lower-cased) spells, if any.
 pub fn keyword(folded: &str) -> Option<Keyword> {
-    KEYWORDS
-        .binary_search_by(|keyword| keyword.name.cmp(folded))
-        .ok()
-        .and_then(|index| KEYWORDS.get(index).copied())
+    match KEYWORDS.binary_search_by(|keyword| keyword.name.cmp(folded)) {
+        Ok(index) => KEYWORDS.get(index).copied(),
+        Err(_not_a_keyword) => None,
+    }
 }

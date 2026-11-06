@@ -284,7 +284,7 @@ impl Parser<'_> {
                 }
                 false => {
                     let token: Token =
-                        self.expect(crate::parse::_helpers::expressions::is_operator_token)?;
+                        self.expect_token(crate::parse::_helpers::expressions::is_operator_token)?;
                     token.value
                 }
             };

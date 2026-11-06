@@ -16,7 +16,7 @@ use crate::parse::_helpers::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
     tuple,
 };
-use crate::parse::_helpers::types::TYPE_KEYWORDS;
+use crate::parse::constants::TYPE_KEYWORDS;
 use crate::parse::constants::{GAP_CALL_XMLSERIALIZE, GAP_CALLS, VALUE_FUNCTIONS};
 use crate::scan::models::{Token, TokenKind};
 

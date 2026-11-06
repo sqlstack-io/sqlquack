@@ -152,3 +152,30 @@ pub(crate) const STATEMENT_STARTS: [&str; 46] = [
 
 /// The rest of gram.y's statement starts.
 pub(crate) const STATEMENT_STARTS_MORE: [&str; 3] = ["unlisten", "vacuum", "update"];
+
+/// Keywords that begin a `ConstTypename` or `ConstInterval`, and so a typed literal.
+pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
+    "bigint",
+    "bit",
+    "boolean",
+    "char",
+    "character",
+    "dec",
+    "decimal",
+    "double",
+    "float",
+    "int",
+    "integer",
+    "interval",
+    "json",
+    "national",
+    "nchar",
+    "numeric",
+    "real",
+    "smallint",
+    "time",
+    "timestamp",
+];
+
+/// Fields an `INTERVAL` may name, and those that may follow `TO`.
+pub(crate) const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];

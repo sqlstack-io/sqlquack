@@ -202,7 +202,7 @@ impl Parser<'_> {
             self.expect_kw("distinct")?;
         }
         self.select_with_parens()?;
-        Err(crate::parse::models::ParseError {
+        Err(crate::parse::errors::ParseError {
             message: "UNIQUE predicate is not yet implemented".to_owned(),
             position: start,
             syntax: false,
@@ -218,7 +218,7 @@ impl Parser<'_> {
             name.push('.');
             self.at += 1;
         }
-        let operator: Token = self.expect(is_operator_token)?;
+        let operator: Token = self.expect_token(is_operator_token)?;
         name.push_str(&operator_text(&operator));
         self.expect_char(')')?;
         Ok(name)
@@ -595,9 +595,9 @@ impl Parser<'_> {
     }
 
     /// A syntax error at a byte position some failed alternative reached.
-    pub(crate) fn error_at_position(&self, position: usize) -> crate::parse::models::ParseError {
+    pub(crate) fn error_at_position(&self, position: usize) -> crate::parse::errors::ParseError {
         match self.tokens.iter().find(|token| token.start == position) {
-            Some(token) => crate::parse::models::ParseError {
+            Some(token) => crate::parse::errors::ParseError {
                 message: format!(
                     "syntax error at or near \"{}\"",
                     &self.sql[token.start..token.end]
@@ -605,7 +605,7 @@ impl Parser<'_> {
                 position,
                 syntax: true,
             },
-            None => crate::parse::models::ParseError {
+            None => crate::parse::errors::ParseError {
                 message: "syntax error at end of input".to_owned(),
                 position,
                 syntax: true,

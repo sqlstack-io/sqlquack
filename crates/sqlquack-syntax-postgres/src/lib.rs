@@ -5,3 +5,7 @@
 pub mod keywords;
 pub mod parse;
 pub mod scan;
+
+pub use crate::parse::errors::ParseError;
+pub use crate::parse::main::parse::parse;
+pub use crate::parse::models::{Gap, Parsed};

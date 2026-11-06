@@ -58,11 +58,3 @@ pub struct Token {
     pub start: usize,
     pub end: usize,
 }
-
-/// A syntax error, which PostgreSQL reports with SQLSTATE 42601.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct SyntaxError {
-    pub message: String,
-    /// Byte offset of the token it is at or near; the input's length at its end.
-    pub position: usize,
-}

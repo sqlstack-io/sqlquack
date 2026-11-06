@@ -4,7 +4,8 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::models::KeywordCategory;
 use crate::parse::constants::{EXPRESSION_KEYWORDS, QUERY_STARTS};
-use crate::parse::models::{Gap, ParseError};
+use crate::parse::errors::ParseError;
+use crate::parse::models::Gap;
 use crate::scan::models::{Token, TokenKind};
 
 pub(crate) type Parsing<T> = Result<T, ParseError>;
@@ -244,7 +245,7 @@ impl<'sql> Parser<'sql> {
     }
 
     /// The current token if it satisfies `test`, consumed; a syntax error otherwise.
-    pub(crate) fn expect(&mut self, test: fn(&Token) -> bool) -> Parsing<Token> {
+    pub(crate) fn expect_token(&mut self, test: fn(&Token) -> bool) -> Parsing<Token> {
         match self.is(test) {
             true => self.advance(),
             false => Err(self.error()),
@@ -361,7 +362,7 @@ impl<'sql> Parser<'sql> {
 
     /// A name `test` accepts, as an identifier.
     pub(crate) fn name(&mut self, test: fn(&Token) -> bool) -> Parsing<Identifier> {
-        self.expect(test).map(|token| identifier(&token))
+        self.expect_token(test).map(|token| identifier(&token))
     }
 
     /// `name_list`: `ColId, ...` in parentheses.

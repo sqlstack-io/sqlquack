@@ -22,3 +22,18 @@ pub struct Keyword {
     /// Whether it may label a select-list item without `AS` (`BARE_LABEL`).
     pub bare_label: bool,
 }
+
+impl Keyword {
+    /// A kwlist.h row.
+    pub(crate) const fn new(
+        name: &'static str,
+        category: KeywordCategory,
+        bare_label: bool,
+    ) -> Self {
+        Self {
+            name,
+            category,
+            bare_label,
+        }
+    }
+}
