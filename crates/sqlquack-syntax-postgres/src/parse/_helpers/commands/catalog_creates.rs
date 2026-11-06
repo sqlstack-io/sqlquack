@@ -12,7 +12,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id, is_col_la
 use crate::parse::_helpers::tree::nodes::{function, paren, table, tuple};
 
 /// The catalog kinds created here, longest spelling first, with their kind text and the modifier the spelling gives.
-const CATALOG_KINDS: [(&[&str], &str, Option<&str>); 28] = [
+const CATALOG_KINDS: [(&[&str], &str, Option<&str>); 33] = [
     (&["access", "method"], ACCESS_METHOD, None),
     (&["cast"], CAST, None),
     (&["collation"], COLLATION, None),
@@ -57,6 +57,11 @@ const CATALOG_KINDS: [(&[&str], &str, Option<&str>); 28] = [
         None,
     ),
     (&["transform"], TRANSFORM, None),
+    (&["user", "mapping"], USER_MAPPING, None),
+    (&["user"], USER, None),
+    (&["role"], ROLE, None),
+    (&["group"], GROUP, None),
+    (&["policy"], POLICY, None),
 ];
 
 const ACCESS_METHOD: &str = "ACCESS METHOD";
@@ -79,6 +84,11 @@ const STATISTICS: &str = "STATISTICS";
 const SUBSCRIPTION: &str = "SUBSCRIPTION";
 const TABLESPACE: &str = "TABLESPACE";
 const TRANSFORM: &str = "TRANSFORM";
+const USER_MAPPING: &str = "USER MAPPING";
+const USER: &str = "USER";
+const ROLE: &str = "ROLE";
+const GROUP: &str = "GROUP";
+const POLICY: &str = "POLICY";
 
 const DEFAULT: &str = "DEFAULT";
 const TRUSTED: &str = "TRUSTED";
@@ -132,7 +142,12 @@ impl Parser<'_> {
         }
         CATALOG_KINDS
             .iter()
-            .find(|(words, _, _)| self.words_from(offset, words))
+            .find(|(words, kind, _)| {
+                self.words_from(offset, words)
+                    && (*kind != USER_MAPPING
+                        || self.kw_at(offset + 2, "for")
+                        || self.kw_at(offset + 2, "if"))
+            })
             .map(|(words, kind, modifier)| (offset + words.len(), *kind, *modifier))
     }
 
@@ -190,6 +205,9 @@ impl Parser<'_> {
             SUBSCRIPTION => self.create_subscription(node),
             TABLESPACE => self.create_tablespace(node),
             TRANSFORM => self.create_transform(node),
+            USER | ROLE | GROUP => self.create_role(node),
+            POLICY => self.create_policy(node),
+            USER_MAPPING => self.create_user_mapping(node),
             _ => self.create_text_search(node),
         }
     }
