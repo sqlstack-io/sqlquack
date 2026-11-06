@@ -153,7 +153,7 @@ receipt's later stage, and an observed case its receipt's outcome.
 coverage/syntax-postgres`), bound to catalogue commit b71461e6 and to the Postgres parser's tree
 on `wip/pg-integration` 6e35c479 (tree bb29fc0e), where `local_parser = "postgres"` runs that
 parser's strict entry point in the checker's isolated worker: any parser error rejects the case.
-It claims 15,020 of 22,244 obligations and the 1,164 forms the reviewers' batches through 14
+It claims 15,020 of 22,244 obligations and the 1,206 forms the reviewers' batches through 14
 approved; a statement the parser keeps as an opaque command is never verified. It holds the 2,573
 cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
 coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
