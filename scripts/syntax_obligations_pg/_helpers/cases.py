@@ -21,7 +21,7 @@ from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, Node, ReceiptView, Rendered
 from scripts.syntax_obligations.types import Row
 from scripts.syntax_obligations_pg.constants import (
-    AUTOCOMMIT_LEADS,
+    AUTOCOMMIT_PATTERNS,
     CAPTURE_AUTOCOMMIT,
     CAPTURE_ROLLED_BACK,
     CASED_FAMILIES,
@@ -40,10 +40,32 @@ def focus_forms(path: Path) -> list[str]:
     return [str(row["form"]) for row in tomllib.loads(path.read_text()).get("focus", [])]
 
 
+def follows(*, words: tuple[str, ...], pattern: str) -> bool:
+    """Whether `words` start with the pattern's first group and hold each later one in order."""
+    groups: list[tuple[str, ...]] = [tuple(group.split()) for group in pattern.split("...")]
+    first, *rest = groups
+    if words[: len(first)] != first:
+        return False
+    at: int = len(first)
+    for group in rest:
+        found: int | None = next(
+            (
+                i
+                for i in range(at, len(words) - len(group) + 1)
+                if words[i : i + len(group)] == group
+            ),
+            None,
+        )
+        if found is None:
+            return False
+        at = found + len(group)
+    return True
+
+
 def capture_for(sql: str) -> str:
-    """The capture the statement's leading words call for, as the referee decides it."""
+    """The capture the statement's words call for, as the referee decides it."""
     words: tuple[str, ...] = tuple(word.upper() for word in LEADING_WORD.findall(sql))
-    autocommit: bool = any(words[: len(lead)] == lead for lead in AUTOCOMMIT_LEADS)
+    autocommit: bool = any(follows(words=words, pattern=pattern) for pattern in AUTOCOMMIT_PATTERNS)
     return CAPTURE_AUTOCOMMIT if autocommit else CAPTURE_ROLLED_BACK
 
 

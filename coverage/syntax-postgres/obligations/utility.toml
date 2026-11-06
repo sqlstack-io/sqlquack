@@ -961,25 +961,11 @@ required = true
 target = "[ LANGUAGE <lang_name> ]"
 
 [[obligation]]
-id = "pg.utility.do.o004"
-kind = "required_operand_missing"
-required = true
-target = "<lang_name> in [ LANGUAGE <lang_name> ]"
-note = "omit <lang_name>"
-
-[[obligation]]
 id = "pg.utility.do.o005"
 kind = "operand_type_class"
 required = true
 target = "<lang_name> in [ LANGUAGE <lang_name> ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "pg.utility.do.o006"
-kind = "negative_neighbour"
-required = true
-target = "<lang_name> in [ LANGUAGE <lang_name> ]"
-note = "a string literal in place of <lang_name>"
 
 [[obligation]]
 id = "pg.utility.do.o007"
@@ -1172,16 +1158,6 @@ required = true
 note = "the form without its required ) in [ ( <option> [ , ... ] ) ]"
 
 [[obligation]]
-id = "pg.utility.explain.o012"
-kind = "nesting_depth"
-required = true
-depths = [
-  2,
-  8,
-]
-note = "statement operands nested; no documented bound"
-
-[[obligation]]
 id = "pg.utility.explain.pre-9-0.o001"
 kind = "positive"
 required = true
@@ -1237,16 +1213,6 @@ id = "pg.utility.explain.pre-9-0.o009"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
-
-[[obligation]]
-id = "pg.utility.explain.pre-9-0.o010"
-kind = "nesting_depth"
-required = true
-depths = [
-  2,
-  8,
-]
-note = "statement operands nested; no documented bound"
 
 [[obligation]]
 id = "pg.utility.fetch.o001"
@@ -1646,16 +1612,6 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "pg.utility.prepare.o019"
-kind = "nesting_depth"
-required = true
-depths = [
-  2,
-  8,
-]
-note = "statement operands nested; no documented bound"
 
 [[obligation]]
 id = "pg.utility.refresh-materialized-view.o001"

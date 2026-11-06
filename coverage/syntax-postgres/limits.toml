@@ -2382,3 +2382,913 @@ form = "pg.functions.xml.xmltable-passing-columns"
 kind = "identifier_class"
 target = "<namespace_name>"
 reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+# DDL: readings of synopses gram.y narrows or that the renderer cannot copy.
+
+[[reading]]
+form = "pg.ddl.create-trigger"
+grammar_sha256 = "c7afa5f05398129973a0b3b420caf6ed0f290a76e31523dce0fda84524bdeaa8"
+grammar = ["CREATE [ OR REPLACE ] TRIGGER <name> { BEFORE | AFTER | INSTEAD OF } { <event> [ OR DELETE ] } ON <table_name> [ REFERENCING { { OLD | NEW } TABLE [ AS ] <transition_relation_name> } [ ... ] ] [ FOR [ EACH ] { ROW | STATEMENT } ] [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )", "CREATE CONSTRAINT TRIGGER <name> AFTER { <event> [ OR DELETE ] } ON <table_name> [ FROM <referenced_table_name> ] [ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ] ] FOR EACH ROW [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )"]
+reason = "the synopsis puts FROM and the deferral options on every trigger, but gram.y CreateTrigStmt takes them only after CONSTRAINT TRIGGER, which is AFTER ... FOR EACH ROW without REFERENCING (as the page's description of constraint triggers says); one production for each, with the event list's second item written out as a different event, since gram.y TriggerEvents rejects a repeated event with 42601; the constraint production without OR REPLACE, which gram.y refuses there with 0A000"
+
+[[reading]]
+form = "pg.ddl.create-collation.name"
+grammar_sha256 = "e842c361d04bb96b25a1da00089bc9ad9df0c263b68acdfac02459fe8c47144f"
+grammar = ["CREATE COLLATION [ IF NOT EXISTS ] <name> ( { LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype> } [ , PROVIDER = <provider> ] [ , DETERMINISTIC = <boolean> ] [ , RULES = <rules> ] [ , VERSION = <version> ] )"]
+reason = "the synopsis brackets every item, each with a trailing comma, but gram.y definition needs a non-empty list without a trailing comma, and the page requires LOCALE or both LC_COLLATE and LC_CTYPE; written as that requirement with leading commas"
+
+[[reading]]
+form = "pg.ddl.alter-sequence.name"
+grammar_sha256 = "9b46eb24ef1d0108e4cb5cbb84022e295dab1c62b9c9661a349250acb2b1d5e8"
+grammar = ["ALTER SEQUENCE [ IF EXISTS ] <name> { AS <data_type> | INCREMENT [ BY ] <increment> } [ MINVALUE <minvalue> | NO MINVALUE ] [ MAXVALUE <maxvalue> | NO MAXVALUE ] [ [ NO ] CYCLE ] [ START [ WITH ] <start> ] [ RESTART [ [ WITH ] <restart> ] ] [ CACHE <cache> ] [ OWNED BY { <table_name>.<column_name> | NONE } ]"]
+reason = "the synopsis brackets every option, but gram.y AlterSeqStmt takes a non-empty SeqOptList; the first two options are written as a required choice so the shortest form is valid"
+
+[[reading]]
+form = "pg.ddl.alter-server.name"
+grammar_sha256 = "9b8160c0f8d732eb20da767d3f21b6d8cecc1dd6be669f77fc5fcceb57197116"
+grammar = ["ALTER SERVER <name> VERSION '<new_version>' [ OPTIONS ( { [ ADD | SET ] <option> '<value>' | DROP <option> } [ , <option> '<value>' ] ) ]"]
+reason = "the synopsis brackets both clauses, but gram.y AlterForeignServerStmt needs VERSION, OPTIONS or both: written with VERSION required, and OPTIONS alone as a hand-written limit; OPTIONS items as the other OPTIONS lists (DROP takes no value)"
+
+[[reading]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+grammar_sha256 = "0d37468c851c6b2b22e12021d0675e470527f92d3091e2aa1aede7230fd1f5ac"
+grammar = ["ALTER FOREIGN DATA WRAPPER <name> { HANDLER <handler_function> | NO HANDLER } [ VALIDATOR <validator_function> | NO VALIDATOR ] [ OPTIONS ( { [ ADD | SET ] <option> '<value>' | DROP <option> } [ , <option> '<value>' ] ) ]"]
+reason = "the synopsis brackets every clause, but gram.y AlterFdwStmt needs fdw_options, OPTIONS or both: written with the handler clause required, and VALIDATOR alone and OPTIONS alone as hand-written limits; OPTIONS items as the other OPTIONS lists (DROP takes no value)"
+
+[[reading]]
+form = "pg.ddl.create-aggregate.basetype-sfunc-stype"
+grammar_sha256 = "1470daf81cb2473bf66abb76da090c2332a08acd39c56e4f951b0c555b94df60"
+grammar = ["CREATE [ OR REPLACE ] AGGREGATE <name> ( BASETYPE = <base_type>, SFUNC = <sfunc>, STYPE = <state_data_type> [ , SSPACE = <state_data_size> ] [ , FINALFUNC = <ffunc> ] [ , FINALFUNC_EXTRA = <boolean> ] [ , FINALFUNC_MODIFY = { READ_ONLY | SHAREABLE | READ_WRITE } ] [ , COMBINEFUNC = <combinefunc> ] [ , SERIALFUNC = <serialfunc> ] [ , DESERIALFUNC = <deserialfunc> ] [ , INITCOND = <initial_condition> ] [ , MSFUNC = <msfunc> ] [ , MINVFUNC = <minvfunc> ] [ , MSTYPE = <mstate_data_type> ] [ , MSSPACE = <mstate_data_size> ] [ , MFINALFUNC = <mffunc> ] [ , MFINALFUNC_EXTRA = <boolean> ] [ , MFINALFUNC_MODIFY = { READ_ONLY | SHAREABLE | READ_WRITE } ] [ , MINITCOND = <minitial_condition> ] [ , SORTOP = <sort_operator> ] )"]
+reason = "the old syntax's FINALFUNC_EXTRA and MFINALFUNC_EXTRA take a value: gram.y old_aggr_elem is IDENT '=' def_arg, so the page's bare spelling is rejected (a hand-written limit records that); written as FINALFUNC_EXTRA = boolean"
+
+[[limit]]
+form = "pg.ddl.create-aggregate.basetype-sfunc-stype"
+kind = "negative_neighbour"
+note = "the old syntax with a bare FINALFUNC_EXTRA, as the page writes it; gram.y old_aggr_elem needs IDENT = def_arg (a documentation and grammar disagreement)"
+anchor = "doc.sql-createaggregate / Synopsis"
+sql = "CREATE AGGREGATE a1 ( BASETYPE = INT , SFUNC = f1 , STYPE = INT , FINALFUNC_EXTRA )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-server.name"
+kind = "alternative"
+target = "OPTIONS"
+note = "OPTIONS alone, without VERSION"
+anchor = "doc.sql-alterserver / Synopsis"
+sql = "ALTER SERVER s1 OPTIONS ( SET host 'h1' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+kind = "alternative"
+target = "VALIDATOR"
+note = "VALIDATOR alone, without a handler clause"
+anchor = "doc.sql-alterforeigndatawrapper / Synopsis"
+sql = "ALTER FOREIGN DATA WRAPPER w1 NO VALIDATOR"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+kind = "alternative"
+target = "OPTIONS"
+note = "OPTIONS alone, without a handler clause"
+anchor = "doc.sql-alterforeigndatawrapper / Synopsis"
+sql = "ALTER FOREIGN DATA WRAPPER w1 OPTIONS ( ADD o1 'v' )"
+context = "raw"
+
+# DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
+
+[[suppress]]
+form = "pg.ddl.alter-database.owner-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TO"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-database.set-tablespace"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-database.set-tablespace"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SET"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.alter-options"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOREIGN"
+reason = "ALTER TABLE takes the same OPTIONS actions (gram.y alter_table_cmd: alter_generic_options and ALTER opt_column ColId alter_generic_options), so the text without FOREIGN is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.drop-constraint"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.options"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOREIGN"
+reason = "ALTER TABLE takes the same OPTIONS actions (gram.y alter_table_cmd: alter_generic_options and ALTER opt_column ColId alter_generic_options), so the text without FOREIGN is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-reset"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-compression"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-statistics"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-storage"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.cluster-on"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-access-method"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-tablespace"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-without-cluster"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-operator-family.add"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-operator-family.add"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.owner-to"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.set-schema"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.set"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.name"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.set"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "gram.y SeqOptElem takes LOGGED and UNLOGGED, so ALTER SEQUENCE name LOGGED is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SET"
+reason = "gram.y SeqOptElem takes LOGGED and UNLOGGED, so ALTER SEQUENCE name LOGGED is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.drop-constraint"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.rename-constraint-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-view.reset"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.alter-view.set"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "without DOMAIN, COMMENT ON CONSTRAINT name ON table is the table-constraint form (gram.y CommentStmt), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "without DOMAIN, COMMENT ON CONSTRAINT name ON table is the table-constraint form (gram.y CommentStmt), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-aggregate.order-by-sfunc-stype"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ORDER"
+reason = "without ORDER, BY is read as an argument name (an unreserved keyword in gram.y aggr_arg), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-cast.with-function"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-collation.name"
+kind = "identifier_class"
+target = "<lc_collate>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<user_name> in [ OWNER [ = ] <user_name> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<lc_collate> in [ LC_COLLATE [ = ] <lc_collate> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<tablespace_name> in [ TABLESPACE [ = ] <tablespace_name> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = "<lang_name>"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LEAKPROOF"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { LANGUAGE <lang_name> | TRANSFORM { FOR TYPE <type_name> } [ , ... ] | WINDOW | { IMMUTABLE | STABLE | VOLATILE } | [ NOT ] LEAKPROOF | { CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT } | { [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER } | PARALLEL { UNSAFE | RESTRICTED | SAFE } | COST <execution_cost> | ROWS <result_rows> | SUPPORT <support_function> | SET <configuration_parameter> { TO <value> | = <value> | FROM CURRENT } | AS '<definition>' | AS '<obj_file>' , '<link_symbol>' | <sql_body> }"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-function.sql-body-atomic"
+kind = "required_operand_missing"
+target = "<statement>"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function.sql-body-atomic"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "a BEGIN ATOMIC body holds plain SQL statements (gram.y routine_body_stmt), not another BEGIN ATOMIC block, so nesting the statement operand is not a documented operand"
+
+[[suppress]]
+form = "pg.ddl.create-index"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+reason = "without FIRST or LAST, NULLS is read as an operator class name (an unreserved keyword in gram.y index_elem's opt_qualified_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-operator-class"
+kind = "required_operand_missing"
+target = "<argument_type>"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-operator-class"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "identifier_class"
+target = "<function_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-procedure"
+kind = "negative_neighbour"
+target = "<lang_name>"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { LANGUAGE <lang_name> | TRANSFORM { FOR TYPE <type_name> } [ , ... ] | [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER | SET <configuration_parameter> { TO <value> | = <value> | FROM CURRENT } | AS '<definition>' | AS '<obj_file>' , '<link_symbol>' | <sql_body> }"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-procedure.sql-body-atomic"
+kind = "required_operand_missing"
+target = "<statement>"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-procedure.sql-body-atomic"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "a BEGIN ATOMIC body holds plain SQL statements (gram.y routine_body_stmt), not another BEGIN ATOMIC block, so nesting the statement operand is not a documented operand"
+
+[[suppress]]
+form = "pg.ddl.create-rule"
+kind = "required_operand_missing"
+target = "<command> #2"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-rule"
+kind = "required_operand_missing"
+target = "<command> #3"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-sequence"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-text-search-configuration"
+kind = "identifier_class"
+target = "<parser_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-transform"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-transform"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ] #2"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "required_operand_missing"
+target = "<arguments>"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "required_operand_missing"
+target = "<arguments> #2"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT the text is the plain trigger production, which takes AFTER ... FOR EACH ROW, so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-type.as-range-subtype"
+kind = "identifier_class"
+target = "<collation>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-type.as-range-subtype"
+kind = "identifier_class"
+target = "<multirange_type_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-type.input-output"
+kind = "identifier_class"
+target = "<collatable>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-view"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.drop-operator"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.transaction_session.set-role.role-name"
+kind = "negative_neighbour"
+target = "<role_name>"
+reason = "SET ROLE takes NonReservedWord_or_Sconst (gram.y set_rest_more: ROLE NonReservedWord_or_Sconst), so a string literal role name is valid syntax"
+
+[[suppress]]
+form = "pg.transaction_session.set-session-authorization.user-name"
+kind = "negative_neighbour"
+target = "<user_name>"
+reason = "SET SESSION AUTHORIZATION takes NonReservedWord_or_Sconst (gram.y set_rest: SESSION AUTHORIZATION NonReservedWord_or_Sconst), so a string literal user name is valid syntax"
+
+[[suppress]]
+form = "pg.transaction_session.set-session-authorization.reset-session-authorization"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AUTHORIZATION"
+reason = "RESET SESSION is RESET of a parameter named session (gram.y generic_reset: var_name, and SESSION is an unreserved keyword in kwlist.h, so a ColId), valid syntax that fails only at execution for an unknown parameter"
+
+[[suppress]]
+form = "pg.utility.explain"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.explain.pre-9-0"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.prepare"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.do"
+kind = "required_operand_missing"
+target = "<lang_name> in [ LANGUAGE <lang_name> ]"
+reason = "DO LANGUAGE takes NonReservedWord_or_Sconst (gram.y dostmt_opt_item), so with the name left out the code string is read as the language name: valid syntax that fails at execution for want of inline code"
+
+[[suppress]]
+form = "pg.utility.do"
+kind = "negative_neighbour"
+target = "<lang_name> in [ LANGUAGE <lang_name> ]"
+reason = "DO LANGUAGE takes NonReservedWord_or_Sconst (gram.y dostmt_opt_item), so a string literal language name is valid syntax"
+
+# security_admin: derived negatives that are valid PostgreSQL, and obligations that do not apply.
+
+[[suppress]]
+form = "pg.security_admin.alter-policy.rename-to"
+kind = "required_operand_missing"
+target = "<table_name>"
+reason = "with the table name left out, RENAME is read as the table name (unreserved in kwlist.h) and TO v1 as the optional role list (gram.y AlterPolicyStmt: RowSecurityOptionalToRole), valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-role.role-specification-option"
+kind = "required_operand_missing"
+target = "<role_specification>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-role.role-specification-option"
+kind = "required_operand_missing"
+target = "<option>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-user.role-specification-option"
+kind = "required_operand_missing"
+target = "<role_specification>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-user.role-specification-option"
+kind = "required_operand_missing"
+target = "<option>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-database-to"
+kind = "required_operand_missing"
+target = "<database_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-database-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-domain-to"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-domain-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-language-to"
+kind = "required_operand_missing"
+target = "<lang_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-language-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LANGUAGE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "required_operand_missing"
+target = "<configuration_parameter>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALTER after GRANT"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SYSTEM"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PARAMETER"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-schema-to"
+kind = "required_operand_missing"
+target = "<schema_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-schema-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-tablespace-to"
+kind = "required_operand_missing"
+target = "<tablespace_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-tablespace-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLESPACE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema"
+kind = "required_operand_missing"
+target = "<routine_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema"
+kind = "required_operand_missing"
+target = "<sequence_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEQUENCE after ON"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-type-to"
+kind = "required_operand_missing"
+target = "<type_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-type-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TYPE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.to"
+kind = "identifier_class"
+target = "<role_name>"
+reason = "SELECT is a privilege keyword, and gram.y GrantRoleStmt and RevokeRoleStmt take privilege_list, so the text is valid syntax that fails only in analysis"
+
+[[suppress]]
+form = "pg.security_admin.revoke.from"
+kind = "identifier_class"
+target = "<role_name>"
+reason = "SELECT is a privilege keyword, and gram.y GrantRoleStmt and RevokeRoleStmt take privilege_list, so the text is valid syntax that fails only in analysis"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-database-from"
+kind = "required_operand_missing"
+target = "<database_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-database-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-domain-from"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-domain-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema"
+kind = "required_operand_missing"
+target = "<function_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema"
+kind = "required_operand_missing"
+target = "<sequence_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEQUENCE after ON"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-language-from"
+kind = "required_operand_missing"
+target = "<lang_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-language-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LANGUAGE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "required_operand_missing"
+target = "<configuration_parameter>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALTER after REVOKE"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SYSTEM"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PARAMETER"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-schema-from"
+kind = "required_operand_missing"
+target = "<schema_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-schema-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-tablespace-from"
+kind = "required_operand_missing"
+target = "<tablespace_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-tablespace-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLESPACE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-type-from"
+kind = "required_operand_missing"
+target = "<type_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-type-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TYPE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.security-label"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "a column after a dot is an attr_name, which is a ColLabel in gram.y and takes reserved keywords, so the reserved-word spelling is no negative"

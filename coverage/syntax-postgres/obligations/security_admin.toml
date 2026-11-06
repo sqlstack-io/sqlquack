@@ -737,13 +737,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "pg.security_admin.alter-policy.rename-to.o005"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
-
-[[obligation]]
 id = "pg.security_admin.alter-policy.rename-to.o006"
 kind = "operand_type_class"
 required = true
@@ -1033,6 +1026,12 @@ required = true
 note = "the form without its required DATABASE in [ IN DATABASE <database_name> ]"
 
 [[obligation]]
+id = "pg.security_admin.alter-role.reset.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RESET"
+
+[[obligation]]
 id = "pg.security_admin.alter-role.reset.o015"
 kind = "identifier_class"
 required = true
@@ -1159,13 +1158,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.security_admin.alter-role.role-specification-option.o002"
-kind = "required_operand_missing"
-required = true
-target = "<role_specification>"
-note = "omit <role_specification>"
-
-[[obligation]]
 id = "pg.security_admin.alter-role.role-specification-option.o003"
 kind = "operand_type_class"
 required = true
@@ -1183,13 +1175,6 @@ id = "pg.security_admin.alter-role.role-specification-option.o005"
 kind = "option_absent"
 required = true
 target = "[ WITH ]"
-
-[[obligation]]
-id = "pg.security_admin.alter-role.role-specification-option.o006"
-kind = "required_operand_missing"
-required = true
-target = "<option>"
-note = "omit <option>"
 
 [[obligation]]
 id = "pg.security_admin.alter-role.role-specification-option.o007"
@@ -1712,34 +1697,40 @@ target = "<server_name>"
 note = "a string literal in place of <server_name>"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o013"
+id = "pg.security_admin.alter-user-mapping.o039"
+kind = "alternative"
+required = true
+target = "{ [ ADD | SET ] <option> '<value>' | DROP <option> } → [ ADD | SET ] <option> '<value>'"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o040"
+kind = "alternative"
+required = true
+target = "{ [ ADD | SET ] <option> '<value>' | DROP <option> } → DROP <option>"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o041"
 kind = "option_present"
 required = true
-target = "[ ADD | SET | DROP ]"
+target = "[ ADD | SET ]"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o014"
+id = "pg.security_admin.alter-user-mapping.o042"
 kind = "option_absent"
 required = true
-target = "[ ADD | SET | DROP ]"
+target = "[ ADD | SET ]"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o015"
+id = "pg.security_admin.alter-user-mapping.o043"
 kind = "alternative"
 required = true
-target = "[ ADD | SET | DROP ] → ADD"
+target = "[ ADD | SET ] → ADD"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o016"
+id = "pg.security_admin.alter-user-mapping.o044"
 kind = "alternative"
 required = true
-target = "[ ADD | SET | DROP ] → SET"
-
-[[obligation]]
-id = "pg.security_admin.alter-user-mapping.o017"
-kind = "alternative"
-required = true
-target = "[ ADD | SET | DROP ] → DROP"
+target = "[ ADD | SET ] → SET"
 
 [[obligation]]
 id = "pg.security_admin.alter-user-mapping.o018"
@@ -1756,43 +1747,86 @@ target = "<option>"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o020"
-kind = "option_present"
+id = "pg.security_admin.alter-user-mapping.o045"
+kind = "required_operand_missing"
 required = true
-target = "[ '<value>' ]"
+target = "'<value>'"
+note = "omit '<value>'"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o021"
-kind = "option_absent"
-required = true
-target = "[ '<value>' ]"
-
-[[obligation]]
-id = "pg.security_admin.alter-user-mapping.o022"
+id = "pg.security_admin.alter-user-mapping.o046"
 kind = "operand_type_class"
 required = true
-target = "'<value>' in [ '<value>' ]"
+target = "'<value>'"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o023"
+id = "pg.security_admin.alter-user-mapping.o047"
 kind = "negative_neighbour"
 required = true
-target = "'<value>' in [ '<value>' ]"
+target = "'<value>'"
 note = "an unquoted identifier in place of '<value>'"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o024"
-kind = "option_present"
+id = "pg.security_admin.alter-user-mapping.o048"
+kind = "required_operand_missing"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "<option> #2"
+note = "omit <option>"
 
 [[obligation]]
-id = "pg.security_admin.alter-user-mapping.o025"
+id = "pg.security_admin.alter-user-mapping.o049"
+kind = "operand_type_class"
+required = true
+target = "<option> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o050"
+kind = "option_present"
+required = true
+target = "[ , <option> '<value>' ]"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o051"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <option> '<value>' ]"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o052"
+kind = "required_operand_missing"
+required = true
+target = "<option> in [ , <option> '<value>' ]"
+note = "omit <option>"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o053"
+kind = "operand_type_class"
+required = true
+target = "<option> in [ , <option> '<value>' ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o054"
+kind = "required_operand_missing"
+required = true
+target = "'<value>' in [ , <option> '<value>' ]"
+note = "omit '<value>'"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o055"
+kind = "operand_type_class"
+required = true
+target = "'<value>' in [ , <option> '<value>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o056"
+kind = "negative_neighbour"
+required = true
+target = "'<value>' in [ , <option> '<value>' ]"
+note = "an unquoted identifier in place of '<value>'"
 
 [[obligation]]
 id = "pg.security_admin.alter-user-mapping.o026"
@@ -1837,16 +1871,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "pg.security_admin.alter-user-mapping.o057"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DROP after ("
+
+[[obligation]]
+id = "pg.security_admin.alter-user-mapping.o058"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ ADD | SET ] <option> '<value>' | DROP <option> }"
+
+[[obligation]]
 id = "pg.security_admin.alter-user-mapping.o033"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "pg.security_admin.alter-user-mapping.o034"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "pg.security_admin.alter-user-mapping.o035"
@@ -2069,6 +2109,12 @@ required = true
 note = "the form without its required DATABASE in [ IN DATABASE <database_name> ]"
 
 [[obligation]]
+id = "pg.security_admin.alter-user.reset.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RESET"
+
+[[obligation]]
 id = "pg.security_admin.alter-user.reset.o015"
 kind = "identifier_class"
 required = true
@@ -2195,13 +2241,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.security_admin.alter-user.role-specification-option.o002"
-kind = "required_operand_missing"
-required = true
-target = "<role_specification>"
-note = "omit <role_specification>"
-
-[[obligation]]
 id = "pg.security_admin.alter-user.role-specification-option.o003"
 kind = "operand_type_class"
 required = true
@@ -2219,13 +2258,6 @@ id = "pg.security_admin.alter-user.role-specification-option.o005"
 kind = "option_absent"
 required = true
 target = "[ WITH ]"
-
-[[obligation]]
-id = "pg.security_admin.alter-user.role-specification-option.o006"
-kind = "required_operand_missing"
-required = true
-target = "<option>"
-note = "omit <option>"
 
 [[obligation]]
 id = "pg.security_admin.alter-user.role-specification-option.o007"
@@ -3235,6 +3267,12 @@ id = "pg.security_admin.create-role.with-user.o012"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-role.with-user.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required USER"
 
 [[obligation]]
 id = "pg.security_admin.create-role.with-user.o013"
@@ -4327,13 +4365,6 @@ required = true
 target = "[ PRIVILEGES ]"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-database-to.o012"
-kind = "required_operand_missing"
-required = true
-target = "<database_name>"
-note = "omit <database_name>"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-database-to.o013"
 kind = "operand_type_class"
 required = true
@@ -4444,12 +4475,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-database-to.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-database-to.o031"
 kind = "negative_neighbour"
 required = true
@@ -4524,13 +4549,6 @@ id = "pg.security_admin.grant.on-domain-to.o005"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-domain-to.o006"
-kind = "required_operand_missing"
-required = true
-target = "<domain_name>"
-note = "omit <domain_name>"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-domain-to.o007"
@@ -4641,12 +4659,6 @@ id = "pg.security_admin.grant.on-domain-to.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-domain-to.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DOMAIN"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-domain-to.o025"
@@ -5141,13 +5153,6 @@ required = true
 target = "[ PRIVILEGES ]"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-language-to.o006"
-kind = "required_operand_missing"
-required = true
-target = "<lang_name>"
-note = "omit <lang_name>"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-language-to.o007"
 kind = "operand_type_class"
 required = true
@@ -5256,12 +5261,6 @@ id = "pg.security_admin.grant.on-language-to.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-language-to.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LANGUAGE"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-language-to.o025"
@@ -5572,13 +5571,6 @@ required = true
 target = "[ PRIVILEGES ]"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-parameter-to.o010"
-kind = "required_operand_missing"
-required = true
-target = "<configuration_parameter>"
-note = "omit <configuration_parameter>"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-parameter-to.o011"
 kind = "operand_type_class"
 required = true
@@ -5664,18 +5656,6 @@ target = "<role_specification> in [ GRANTED BY <role_specification> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-parameter-to.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALTER after GRANT"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-parameter-to.o025"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SYSTEM"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-parameter-to.o026"
 kind = "negative_neighbour"
 required = true
@@ -5692,12 +5672,6 @@ id = "pg.security_admin.grant.on-parameter-to.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-parameter-to.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PARAMETER"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-parameter-to.o030"
@@ -5783,13 +5757,6 @@ id = "pg.security_admin.grant.on-schema-to.o009"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-schema-to.o010"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-schema-to.o011"
@@ -5902,12 +5869,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-schema-to.o028"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-schema-to.o029"
 kind = "negative_neighbour"
 required = true
@@ -5982,13 +5943,6 @@ id = "pg.security_admin.grant.on-tablespace-to.o005"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-tablespace-to.o006"
-kind = "required_operand_missing"
-required = true
-target = "<tablespace_name>"
-note = "omit <tablespace_name>"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-tablespace-to.o007"
@@ -6101,12 +6055,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-tablespace-to.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLESPACE"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-tablespace-to.o025"
 kind = "negative_neighbour"
 required = true
@@ -6211,13 +6159,6 @@ id = "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions
 kind = "alternative"
 required = true
 target = "{ FUNCTION | PROCEDURE | ROUTINE } → ROUTINE"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema.o011"
-kind = "required_operand_missing"
-required = true
-target = "<routine_name>"
-note = "omit <routine_name>"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema.o012"
@@ -7361,13 +7302,6 @@ required = true
 target = "{ SEQUENCE <sequence_name> [ , ... ] | ALL SEQUENCES IN SCHEMA… → ALL SEQUENCES IN SCHEMA <schema_name> [ , ... ]"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema.o013"
-kind = "required_operand_missing"
-required = true
-target = "<sequence_name>"
-note = "omit <sequence_name>"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema.o014"
 kind = "operand_type_class"
 required = true
@@ -7512,12 +7446,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SEQUENCE after ON"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema.o037"
 kind = "negative_neighbour"
 required = true
@@ -7640,13 +7568,6 @@ required = true
 target = "[ PRIVILEGES ]"
 
 [[obligation]]
-id = "pg.security_admin.grant.on-type-to.o006"
-kind = "required_operand_missing"
-required = true
-target = "<type_name>"
-note = "omit <type_name>"
-
-[[obligation]]
 id = "pg.security_admin.grant.on-type-to.o007"
 kind = "operand_type_class"
 required = true
@@ -7755,12 +7676,6 @@ id = "pg.security_admin.grant.on-type-to.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.grant.on-type-to.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TYPE"
 
 [[obligation]]
 id = "pg.security_admin.grant.on-type-to.o025"
@@ -7978,22 +7893,6 @@ id = "pg.security_admin.grant.to.o027"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
-
-[[obligation]]
-id = "pg.security_admin.grant.to.o028"
-kind = "identifier_class"
-required = true
-target = "<role_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.security_admin.grant.to.o029"
-kind = "identifier_class"
-required = true
-target = "<role_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "pg.security_admin.reassign-owned.o001"
@@ -8284,22 +8183,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "pg.security_admin.revoke.from.o029"
-kind = "identifier_class"
-required = true
-target = "<role_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.security_admin.revoke.from.o030"
-kind = "identifier_class"
-required = true
-target = "<role_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-database-from.o001"
 kind = "positive"
 required = true
@@ -8377,13 +8260,6 @@ id = "pg.security_admin.revoke.on-database-from.o013"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-database-from.o014"
-kind = "required_operand_missing"
-required = true
-target = "<database_name>"
-note = "omit <database_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-database-from.o015"
@@ -8520,12 +8396,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-database-from.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-database-from.o037"
 kind = "negative_neighbour"
 required = true
@@ -8600,13 +8470,6 @@ id = "pg.security_admin.revoke.on-domain-from.o007"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-domain-from.o008"
-kind = "required_operand_missing"
-required = true
-target = "<domain_name>"
-note = "omit <domain_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-domain-from.o009"
@@ -8741,12 +8604,6 @@ id = "pg.security_admin.revoke.on-domain-from.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-domain-from.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DOMAIN"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-domain-from.o031"
@@ -9317,13 +9174,6 @@ id = "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functi
 kind = "alternative"
 required = true
 target = "{ FUNCTION | PROCEDURE | ROUTINE } → ROUTINE"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema.o013"
-kind = "required_operand_missing"
-required = true
-target = "<function_name>"
-note = "omit <function_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema.o014"
@@ -10539,13 +10389,6 @@ required = true
 target = "{ SEQUENCE <sequence_name> [ , ... ] | ALL SEQUENCES IN SCHEMA… → ALL SEQUENCES IN SCHEMA <schema_name> [ , ... ]"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema.o015"
-kind = "required_operand_missing"
-required = true
-target = "<sequence_name>"
-note = "omit <sequence_name>"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema.o016"
 kind = "operand_type_class"
 required = true
@@ -10714,12 +10557,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema.o042"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SEQUENCE after ON"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema.o043"
 kind = "negative_neighbour"
 required = true
@@ -10840,13 +10677,6 @@ id = "pg.security_admin.revoke.on-language-from.o007"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-language-from.o008"
-kind = "required_operand_missing"
-required = true
-target = "<lang_name>"
-note = "omit <lang_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-language-from.o009"
@@ -10981,12 +10811,6 @@ id = "pg.security_admin.revoke.on-language-from.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-language-from.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LANGUAGE"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-language-from.o031"
@@ -11321,13 +11145,6 @@ required = true
 target = "[ PRIVILEGES ]"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-parameter-from.o012"
-kind = "required_operand_missing"
-required = true
-target = "<configuration_parameter>"
-note = "omit <configuration_parameter>"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-parameter-from.o013"
 kind = "operand_type_class"
 required = true
@@ -11437,18 +11254,6 @@ required = true
 note = "the form without its required FOR in [ GRANT OPTION FOR ]"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-parameter-from.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALTER after REVOKE"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-parameter-from.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SYSTEM"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-parameter-from.o032"
 kind = "negative_neighbour"
 required = true
@@ -11465,12 +11270,6 @@ id = "pg.security_admin.revoke.on-parameter-from.o034"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-parameter-from.o035"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PARAMETER"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-parameter-from.o036"
@@ -11556,13 +11355,6 @@ id = "pg.security_admin.revoke.on-schema-from.o011"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-schema-from.o012"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-schema-from.o013"
@@ -11699,12 +11491,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-schema-from.o034"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-schema-from.o035"
 kind = "negative_neighbour"
 required = true
@@ -11779,13 +11565,6 @@ id = "pg.security_admin.revoke.on-tablespace-from.o007"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-tablespace-from.o008"
-kind = "required_operand_missing"
-required = true
-target = "<tablespace_name>"
-note = "omit <tablespace_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-tablespace-from.o009"
@@ -11922,12 +11701,6 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "pg.security_admin.revoke.on-tablespace-from.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLESPACE"
-
-[[obligation]]
 id = "pg.security_admin.revoke.on-tablespace-from.o031"
 kind = "negative_neighbour"
 required = true
@@ -12002,13 +11775,6 @@ id = "pg.security_admin.revoke.on-type-from.o007"
 kind = "option_absent"
 required = true
 target = "[ PRIVILEGES ]"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-type-from.o008"
-kind = "required_operand_missing"
-required = true
-target = "<type_name>"
-note = "omit <type_name>"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-type-from.o009"
@@ -12143,12 +11909,6 @@ id = "pg.security_admin.revoke.on-type-from.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "pg.security_admin.revoke.on-type-from.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TYPE"
 
 [[obligation]]
 id = "pg.security_admin.revoke.on-type-from.o031"
@@ -13349,22 +13109,6 @@ id = "pg.security_admin.security-label.o179"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "pg.security_admin.security-label.o180"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.security_admin.security-label.o181"
-kind = "identifier_class"
-required = true
-target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 

@@ -131,10 +131,10 @@ Function parameters written `<name type>` are expressions (gram.y func_arg_expr)
 their name suggests; the catalogue cuts a signature at its return value, so a set-returning
 function's output columns are not read as call syntax.
 
-Cases are written for the forms in `focus/postgres.toml` and for every form of the families in
-`CASED_FAMILIES`; the other families' case files hold only their focus forms until taken up.
-`pending.toml` lists cases recorded but held out of the receipts because the referee's method
-misjudges them, each with the referee change it waits on. Each case has the referee's shape: the session
+Cases are written for every catalogued form of the families in `CASED_FAMILIES`, which now
+lists all eight; `focus/postgres.toml` set only the order in which they were taken up.
+`pending.toml` lists cases held out of the receipts because the referee cannot yet run or judge
+them as written, each with the referee change it waits on; a pending case is not verified. Each case has the referee's shape: the session
 `{"TimeZone": "UTC", "statement_timeout": "30s"}`, capture `execute_in_rolled_back_transaction`,
 or `execute_autocommit_in_throwaway_database` for statements Postgres refuses inside a
 transaction block (the referee's `engine.toml` `autocommit` list), no setup, and one statement
@@ -143,5 +143,8 @@ apply, and the few Postgres `...` fills are style entries.
 
 Receipts (`receipts/*.jsonl`, format `sqlquack-syntax-receipt/2`) are recorded by the Postgres
 referee (`engines/postgres`) against the pinned 18.6 image; the raw records and run audits stay
-private. The case build reads them as the shared builder does: an accepted case takes its
+private. `runs.toml` records how each run was isolated: the earlier runs shared one long-lived
+container, and the ddl, transaction_session, utility and security_admin runs each had a fresh
+container of the pinned image, removed afterwards, with its start and end state and a repeat
+run that matched. The case build reads them as the shared builder does: an accepted case takes its
 receipt's later stage, and an observed case its receipt's outcome.

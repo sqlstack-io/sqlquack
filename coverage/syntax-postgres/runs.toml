@@ -1,0 +1,92 @@
+# How each receipt run in receipts/ was isolated, which referee recorded it, and what state the
+# server held before and after. Written by hand when a run's receipts are committed; not read by
+# the checker. Every run used the pinned image in engines/postgres/engine.toml, reached on the
+# local loopback only.
+#
+# isolation:
+#   shared_container: the long-lived local container sqlquack-pg; each case still ran in its own
+#     throwaway database, rolled back or cleaned up by the referee.
+#   fresh_container: a container started from the pinned digest for this run alone and removed
+#     after it; each case also ran in its own throwaway database. start_state and end_state are
+#     the counts of non-system roles, databases and tablespaces, and auto_conf_settings the
+#     settings left in postgresql.auto.conf, read from the container before it was removed.
+#     The one database more at the end is the referee's own sqlquack_parse_only database, which
+#     it creates at the start of a run for its parse passes; no case leaves a role, database,
+#     tablespace or setting behind.
+#     container_id is the first 12 hex of the container's id. repeat_run names a second run of
+#     the same cases in another fresh container whose receipts matched these on every compared
+#     field (pg_referee compare); its receipts are not committed.
+
+[[run]]
+run_id = "pg-18.6-20261106T010354249769Z"
+referee = "07bdcab7"
+isolation = "shared_container"
+container = "sqlquack-pg"
+
+[[run]]
+run_id = "pg-18.6-20261106T011602128783Z"
+referee = "c22b0855"
+isolation = "shared_container"
+container = "sqlquack-pg"
+
+[[run]]
+run_id = "pg-18.6-20261106T013025158231Z"
+referee = "c22b0855"
+isolation = "shared_container"
+container = "sqlquack-pg"
+
+[[run]]
+run_id = "pg-18.6-20261106T014128439859Z"
+referee = "c22b0855"
+isolation = "shared_container"
+container = "sqlquack-pg"
+
+[[run]]
+run_id = "pg-18.6-20261106T015007294810Z"
+referee = "c22b0855"
+isolation = "shared_container"
+container = "sqlquack-pg"
+
+[[run]]
+run_id = "pg-18.6-20261106T021229729733Z"
+referee = "60ce4e8d"
+isolation = "fresh_container"
+container = "sqlquack-pg-ts1"
+container_id = "94ab28562542"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T021304557488Z"
+
+[[run]]
+run_id = "pg-18.6-20261106T021446562366Z"
+referee = "60ce4e8d"
+isolation = "fresh_container"
+container = "sqlquack-pg-sa1"
+container_id = "373ee9b9ec1f"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T021626378757Z"
+
+[[run]]
+run_id = "pg-18.6-20261106T022401284825Z"
+referee = "c73be214"
+isolation = "fresh_container"
+container = "sqlquack-pg-ut1"
+container_id = "f10506d398ce"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T022430009387Z"
+
+[[run]]
+run_id = "pg-18.6-20261106T022400288402Z"
+referee = "c73be214"
+isolation = "fresh_container"
+container = "sqlquack-pg-ddl2"
+container_id = "cda09433e833"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T022400248290Z"

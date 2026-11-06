@@ -978,58 +978,16 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o001"
+id = "pg.transaction_session.set-role.reset-role.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o002"
-kind = "option_present"
-required = true
-target = "[ SESSION | LOCAL ]"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o003"
-kind = "option_absent"
-required = true
-target = "[ SESSION | LOCAL ]"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o004"
-kind = "alternative"
-required = true
-target = "[ SESSION | LOCAL ] → SESSION"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o005"
-kind = "alternative"
-required = true
-target = "[ SESSION | LOCAL ] → LOCAL"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o006"
+id = "pg.transaction_session.set-role.reset-role.o002"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ROLE"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NONE"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESET"
-
-[[obligation]]
-id = "pg.transaction_session.set-role.none-reset-role.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE #2"
 
 [[obligation]]
 id = "pg.transaction_session.set-role.role-name.o001"
@@ -1076,13 +1034,6 @@ target = "<role_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.transaction_session.set-role.role-name.o008"
-kind = "negative_neighbour"
-required = true
-target = "<role_name>"
-note = "a string literal in place of <role_name>"
-
-[[obligation]]
 id = "pg.transaction_session.set-role.role-name.o009"
 kind = "negative_neighbour"
 required = true
@@ -1105,70 +1056,106 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o001"
+id = "pg.transaction_session.set-role.set-role-none.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o002"
+id = "pg.transaction_session.set-role.set-role-none.o002"
 kind = "option_present"
 required = true
 target = "[ SESSION | LOCAL ]"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o003"
+id = "pg.transaction_session.set-role.set-role-none.o003"
 kind = "option_absent"
 required = true
 target = "[ SESSION | LOCAL ]"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o004"
+id = "pg.transaction_session.set-role.set-role-none.o004"
 kind = "alternative"
 required = true
 target = "[ SESSION | LOCAL ] → SESSION"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o005"
+id = "pg.transaction_session.set-role.set-role-none.o005"
 kind = "alternative"
 required = true
 target = "[ SESSION | LOCAL ] → LOCAL"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o006"
+id = "pg.transaction_session.set-role.set-role-none.o006"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ROLE"
+
+[[obligation]]
+id = "pg.transaction_session.set-role.set-role-none.o007"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required NONE"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.reset-session-authorization.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.reset-session-authorization.o002"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SESSION"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o007"
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o002"
+kind = "option_present"
+required = true
+target = "[ SESSION | LOCAL ]"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o003"
+kind = "option_absent"
+required = true
+target = "[ SESSION | LOCAL ]"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o004"
+kind = "alternative"
+required = true
+target = "[ SESSION | LOCAL ] → SESSION"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o005"
+kind = "alternative"
+required = true
+target = "[ SESSION | LOCAL ] → LOCAL"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o006"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SESSION"
+
+[[obligation]]
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AUTHORIZATION"
 
 [[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o008"
+id = "pg.transaction_session.set-session-authorization.set-session-authorization-default.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required DEFAULT"
-
-[[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RESET"
-
-[[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SESSION #2"
-
-[[obligation]]
-id = "pg.transaction_session.set-session-authorization.default-reset-session-authorization.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AUTHORIZATION #2"
 
 [[obligation]]
 id = "pg.transaction_session.set-session-authorization.user-name.o001"
@@ -1213,13 +1200,6 @@ kind = "operand_type_class"
 required = true
 target = "<user_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "pg.transaction_session.set-session-authorization.user-name.o008"
-kind = "negative_neighbour"
-required = true
-target = "<user_name>"
-note = "a string literal in place of <user_name>"
 
 [[obligation]]
 id = "pg.transaction_session.set-session-authorization.user-name.o009"
@@ -1370,6 +1350,12 @@ id = "pg.transaction_session.set-transaction.transaction-snapshot.o004"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TRANSACTION"
+
+[[obligation]]
+id = "pg.transaction_session.set-transaction.transaction-snapshot.o005"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SNAPSHOT"
 
 [[obligation]]
 id = "pg.transaction_session.set.configuration-parameter.o001"

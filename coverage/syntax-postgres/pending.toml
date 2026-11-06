@@ -1,5 +1,21 @@
-# Cases recorded but not committed as receipts because the referee's method or the checker
-# misjudges them; each waits on the named change and is recorded again then. Not read by the
-# checker. None are pending: the TABLE and SELECT ... INTO cases once held here were recorded
-# with the referee's SQL-function parse pass, and the @-@ operator case once the checker's
-# address rule let /2 receipts name @ operators.
+# Cases held out of the receipts because the referee cannot yet run them as written; each waits
+# on the named referee decision and is recorded again then. Not read by the checker, and a
+# pending case does not count as verified. Earlier pending cases (TABLE, SELECT ... INTO, the
+# @-@ operator, BEGIN ATOMIC bodies, rule action lists, and the ALTER DATABASE ... SET
+# TABLESPACE, DETACH PARTITION ... CONCURRENTLY and bare CLUSTER captures) were recorded once
+# the referee and checker changes they waited on landed.
+
+[[pending]]
+case_id = "pg.ddl.create-function.sql-body-atomic.k165878311ab3"
+sql_sha256 = "165878311ab345d00477b4c412b0f56f56d3a32b058e27f9c2ff893ed6a5724b"
+reason = "a negative with FUNCTION left out; the referee's splitter keeps a BEGIN ... END body whole only after CREATE FUNCTION or CREATE PROCEDURE, as psql does, so it refuses this text as two statements; waits on the referee deciding how to run such texts"
+
+[[pending]]
+case_id = "pg.ddl.create-function.sql-body-atomic.k56c9096c2c11"
+sql_sha256 = "56c9096c2c11824a88df6949f5e3db806ac2a527d9d42aa7029da2ad6fcd01b5"
+reason = "a negative with BEGIN left out; the referee's splitter keeps a body whole only from BEGIN to END, as psql does, so it refuses this text as two statements; waits on the referee deciding how to run such texts"
+
+[[pending]]
+case_id = "pg.ddl.create-procedure.sql-body-atomic.kb1e63914a044"
+sql_sha256 = "b1e63914a044d0006eabec8d11471d361790f799b0f0e568d738e66a2a5c3ae4"
+reason = "a negative with BEGIN left out; the referee's splitter keeps a body whole only from BEGIN to END, as psql does, so it refuses this text as two statements; waits on the referee deciding how to run such texts"
