@@ -1184,3 +1184,24 @@ note = "Re-read after the batch-16 coverage-notes delta against the PostgreSQL 1
 "pg.ddl.alter-text-search-configuration.drop-mapping-for" = "c024e1119dc58fe71f07a3bd060937f473a7dc8e5aaf97dd542dce0847e473bc"
 "pg.ddl.alter-text-search-dictionary.name-option" = "800a63f78116fb71fcb5c59c6079f3cc40ca4f17b3be14ab48f4f45ff41651fa"
 "pg.ddl.alter-type.set" = "c58d3ab8f324dd20711366d1196ef4adf80d54e748e551763f5b296a81f87b43"
+
+[[review]]
+id = "pg-auditor-ddl-011"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "312341300c07ab2aa09c00ac4c70c58e349a1480"
+reviewed_utc = "2026-11-06T12:56:51Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-extension.add",
+  "pg.ddl.alter-extension.drop",
+]
+note = "Re-read after the batch-17 obligation-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 31234130; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-extension.add" = "bd8e0c081d85ec5ac5bdb309a9ac6f88e62d71733c2a6432a7f2bdfc326d918d"
+"pg.ddl.alter-extension.drop" = "b9ea82a1a9a558187a1c47d5feae94e56ecb23ec963a6bda0f44602de874fb30"
+
+[review.definitions]
+"pg.ddl.alter-extension.add" = "2508db773b45b2776823a073687b4ca5018982727d751a224927fdfa736fc20e"
+"pg.ddl.alter-extension.drop" = "3dbafebaafdabd275de2b93f42e219a936546d81a1aa83cd3689505e223b0634"
