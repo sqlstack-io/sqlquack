@@ -11098,7 +11098,7 @@
     "sf.query.group-by-cube": "unmeasured",
     "sf.query.group-by-grouping-sets": "unmeasured",
     "sf.query.group-by-rollup": "unmeasured",
-    "sf.query.group-by.all": "unmeasured",
+    "sf.query.group-by.all": "matching",
     "sf.query.group-by.groupitem": "refused",
     "sf.query.having": "refused",
     "sf.query.into": "not_translatable",
