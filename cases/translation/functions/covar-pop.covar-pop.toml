@@ -70,3 +70,30 @@ rows = [
 query = "SELECT COVAR_POP(y, x) AS r FROM input WHERE ordinal < 0"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "t006_large_mean"
+description = "Pairs near 1e9 with small spreads. Catches: a sum-of-products formula losing the digits of the spread"
+columns = [{ name = "y", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1000000002", "1000000001"],
+  ["1000000004", "1000000002"],
+  ["1000000005", "1000000003"],
+  ["1000000009", "1000000004"],
+]
+query = "SELECT COVAR_POP(y, x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t007_decimal"
+description = "NUMBER(10,2) columns. Catches: the result type or scale of decimal inputs"
+columns = [{ name = "y", type = "NUMBER(10,2)" }, { name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25", "2.50"],
+  ["2.50", "2.75"],
+  ["4.10", "3.00"],
+]
+query = "SELECT COVAR_POP(y, x) AS r, SYSTEM$TYPEOF(COVAR_POP(y, x)) AS t FROM input"
+order = "ordered"
+tags = ["type-combination"]
