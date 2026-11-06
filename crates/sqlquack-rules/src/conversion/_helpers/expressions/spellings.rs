@@ -100,7 +100,7 @@ fn shaped(spelling: &SpellingRule, arguments: &[Value], payload: &Payload) -> Op
             json!({ "this": end, "expression": start, "unit": unit_var(unit)? })
         }
         (CallShape::Count, [argument]) => {
-            let star = argument.get("star").is_some();
+            let star = argument.get("star").is_some_and(bare_star);
             json!({
                 "this": if star { Value::Null } else { argument.clone() },
                 "star": star,
@@ -163,5 +163,17 @@ pub(crate) fn rlike_as_call(payload: &Value) -> Option<Value> {
             "args": [text, pattern],
             "distinct": false,
         }})
+    })
+}
+
+/// Whether a star's payload names no relation and filters no column: `*` as written alone.
+fn bare_star(star: &Value) -> bool {
+    star.as_object().is_none_or(|fields| {
+        fields.values().all(|value| match value {
+            Value::Null | Value::Bool(false) => true,
+            Value::Array(items) => items.is_empty(),
+            Value::Object(entries) => entries.is_empty(),
+            _ => false,
+        })
     })
 }

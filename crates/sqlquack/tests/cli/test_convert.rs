@@ -520,6 +520,34 @@ fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_clas
 }
 
 #[test]
+fn given_count_of_a_qualified_or_filtered_star_when_running_then_rows_with_a_null_are_skipped() {
+    let test_cases = [
+        ValueTestCase {
+            description: "input.* skips a row with a NULL in any column, unlike *",
+            sql: "SELECT COUNT(input.*)::VARCHAR || ',' || COUNT(*)::VARCHAR AS r FROM (SELECT * \
+                  FROM (VALUES (1::NUMBER(38,0), 'x'::VARCHAR), (1, 'x'), (1, NULL), (NULL, 'y'), \
+                  (2, 'x')) AS v(a, b)) AS input",
+            expected_value: "3,5",
+        },
+        ValueTestCase {
+            description: "* EXCLUDE b checks only the remaining column",
+            sql: "SELECT COUNT(* EXCLUDE b)::VARCHAR AS r FROM (SELECT * FROM (VALUES \
+                  (1::NUMBER(38,0), 'x'::VARCHAR), (1, 'x'), (1, NULL), (NULL, 'y'), (2, 'x')) \
+                  AS v(a, b)) AS input",
+            expected_value: "4",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_time_with_nanoseconds_when_formatting_then_digits_beyond_the_format_are_truncated() {
     let test_cases = [
         ValueTestCase {

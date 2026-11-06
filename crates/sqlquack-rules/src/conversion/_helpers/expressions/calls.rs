@@ -59,11 +59,12 @@ use crate::conversion::_helpers::expressions::text_functions::{
 };
 use crate::conversion::_helpers::expressions::text_search::charindex_call;
 use crate::conversion::_helpers::expressions::variants::variant_function;
+use crate::conversion::_helpers::queries::query::star as query_star;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, list, node_construct, payload_object,
+    Payload, field, flag, function_construct, list, node_construct, node_kind, payload_object,
     require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
@@ -432,9 +433,17 @@ impl AggregateCall<'_> {
     fn count(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(COUNT);
-        let inner = match flag(self.payload, "star") {
-            true => "*".to_owned(),
-            false => {
+        let star = self
+            .payload
+            .get("this")
+            .and_then(|node| match node_kind(node) {
+                Some(("star", star)) => Some(star),
+                _ => None,
+            });
+        let inner = match (flag(self.payload, "star"), star) {
+            (true, _) => "*".to_owned(),
+            (false, Some(star)) => self.counted_star(star)?,
+            (false, None) => {
                 let argument = self.argument("count")?;
                 match argument.data_type {
                     SnowflakeType::SemiStructured if flag(self.payload, "distinct") => {
@@ -454,6 +463,31 @@ impl AggregateCall<'_> {
         let sql = cast(&format!("count({inner}){}", self.over), data_type, log)
             .map_err(|reason| outside_conditions(node_construct("count"), reason))?;
         Ok(Emitted::new(sql, data_type))
+    }
+
+    /// `t.*` or a filtered star: Snowflake counts the rows whose selected columns are all non-NULL.
+    fn counted_star(&self, star: &Value) -> Result<String, Refusal> {
+        let refuse = |reason: &str| outside_conditions(node_construct("count"), reason.to_owned());
+        if flag(self.payload, "distinct") {
+            return Err(refuse("COUNT(DISTINCT) of a star"));
+        }
+        let columns = query_star(star, self.site)?;
+        if columns
+            .iter()
+            .any(|(_, column)| column.data_type == SnowflakeType::SemiStructured)
+        {
+            return Err(refuse(
+                "COUNT of a star over a VARIANT column, whose JSON null no recording shows",
+            ));
+        }
+        let present: Vec<String> = columns
+            .iter()
+            .map(|(_, column)| format!("{} IS NOT NULL", column.sql))
+            .collect();
+        match present.is_empty() {
+            true => Err(refuse("COUNT of a star that selects no column")),
+            false => Ok(format!("CASE WHEN {} THEN 1 END", present.join(" AND "))),
+        }
     }
 
     fn sum(&self) -> Result<Emitted, Refusal> {
