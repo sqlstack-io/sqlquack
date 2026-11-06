@@ -289,6 +289,11 @@ polyglot = ["explode"]
 note = "polyglot lowers it to node:explode"
 
 [[spelling]]
+name = "EXTRACT"
+polyglot = ["extract"]
+note = "the call form EXTRACT(part, expr) with a comma; polyglot lowers it to node:extract, the node of the keyword form"
+
+[[spelling]]
 name = "FIRST"
 polyglot = ["first"]
 note = "polyglot lowers it to node:first"
@@ -774,6 +779,24 @@ id = "parenthesized_typed_lambda_parameters"
 marker = "variant)->"
 polyglot_errors = ["Expected RParen, got Var ('NUMBER')"]
 note = "(acc NUMBER(18, 2), i VARIANT) -> ... is a lambda with several typed parameters, one parameterised; polyglot reads a parenthesized lambda's parameters as names only"
+
+[[fix]]
+id = "parenthesized_typed_lambda_int"
+marker = "int)->"
+polyglot_errors = ["Expected RParen, got Var ('INT')"]
+note = "(v INT) -> ... is a lambda with an INT parameter, as ACCUMULATE's documented examples write it; polyglot reads a parenthesized lambda's parameters as names only"
+
+[[fix]]
+id = "hash_agg_distinct"
+marker = "HASH_AGG(DISTINCT"
+polyglot_errors = ["Expected RParen, got Var"]
+note = "HASH_AGG(DISTINCT a) is documented and recorded; polyglot reads no DISTINCT in HASH_AGG"
+
+[[fix]]
+id = "object_agg_distinct"
+marker = "OBJECT_AGG(DISTINCT"
+polyglot_errors = ["Expected RParen, got Var"]
+note = "OBJECT_AGG(DISTINCT k, v) is documented and recorded; polyglot reads no DISTINCT in OBJECT_AGG"
 
 [[fix]]
 id = "snowflake_bare_trailing_limit"
