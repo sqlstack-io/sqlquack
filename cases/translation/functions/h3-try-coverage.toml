@@ -16,7 +16,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_invalid"
-description = "A self-intersecting polygon kept with allow_invalid, for which the page says the coverage is NULL. Catches: an error raised, or the shape repaired first"
+description = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one. Catches: NULL where Snowflake computes a coverage, or the reverse"
 columns = [{ name = "g", type = "VARCHAR" }]
 rows = [
   ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
