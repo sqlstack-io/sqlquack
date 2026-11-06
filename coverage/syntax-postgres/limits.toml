@@ -1,0 +1,3294 @@
+# Hand-written readings, suppressions and limits of the PostgreSQL catalogue's obligations; read
+# by scripts/build_syntax_obligations_pg.py through the shared obligation builder.
+#
+# [[reading]] replaces a form's grammar for derivation only, bound to the catalogue grammar's
+# sha256; an empty grammar means the form's obligations are all hand-written [[limit]] rows.
+# [[suppress]] withdraws one derived obligation (form, kind, target) with the reason it is not
+# the negative or positive it looks like. [[limit]] is a hand-written obligation with its SQL.
+
+# Lexical forms: the renderer joins tokens with blanks, so their obligations are hand-written.
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+grammar_sha256 = "d8b37eb88517838eee942590009aa8de168fc73af2fde0aaefce933782a8adca"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+grammar_sha256 = "77b3f8fccbea9ae6f3d55cac4b62e0ab012429624ed86cf313fddddb58bde328"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+grammar_sha256 = "784f1846da0a5f234e5b933f629ac9765c2cc22ca8071f81f0cac63d106c1078"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+grammar_sha256 = "1a23e0e1ec848947a8f7edb791420f2e0dd21d619515126178b1a592b27769b9"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.string"
+grammar_sha256 = "be2d0f951c51970d077f00d886852bdfb4fe045f122f0d93eedb84dc233e9818"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+grammar_sha256 = "2adeca9fcf22b75ea2294c9593dfc56876b5ba72de833790670e4eaf3cd60772"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+grammar_sha256 = "ea88611f3bcabceb913fcdbeeb609fd496c0d364d2f4b23d920bdd397a165113"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+grammar_sha256 = "c447fa34de95fba9138ff5669f534318971aa89462ff2dacd07b098561fb5d50"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+# Statements whose lists the renderer cannot copy as written.
+
+[[reading]]
+form = "pg.query.select.select"
+grammar_sha256 = "65fd72b7bb10ec989ba814d760a72c6e7c53195bd799770479d848a11a7e9a7d"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] SELECT { [ ALL ] [ { * | <expression> [ [ AS ] <output_name> ] } [, ...] ] | DISTINCT [ ON ( <expression> [, ...] ) ] { * | <expression> [ [ AS ] <output_name> ] } [ , <expression> ] } [ FROM <from_item> [, ...] ] [ WHERE <condition> ] [ GROUP BY [ ALL | DISTINCT ] <grouping_element> [, ...] ] [ HAVING <condition> ] [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ] [ { UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] <select> ] [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ] ] [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ] [ OFFSET <start> [ ROW | ROWS ] ] [ FOR { UPDATE | NO KEY UPDATE | SHARE | KEY SHARE } [ OF <from_reference> [, ...] ] [ NOWAIT | SKIP LOCKED ] [...] ]"]
+reason = "with_query spelled as its definition's name AS ( query ), so nesting goes inside the parentheses; DISTINCT [ ON ( ... ) ] with a required select list (gram.y simple_select: distinct_clause target_list; ALL and no keyword take an optional list); every part of a window definition optional, as its definition on the page makes it; the WITH, DISTINCT select, WINDOW and ORDER BY lists' second items written out, which the renderer otherwise copies wrongly; LIMIT and FETCH as the two spellings of one clause (gram.y limit_clause: a query has at most one, the synopsis lists both as optional); FETCH ... WITH TIES, which needs ORDER BY, moved to hand-written limits"
+
+[[reading]]
+form = "pg.dml.update"
+grammar_sha256 = "c6d9af0264d04a611781bdccc6cdb1112e682c5c28d83003d8908ea0c410643c"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] UPDATE { ONLY <table_name> | <table_name> [ * ] } [ [ AS ] <alias> ] SET { <column_name> = { <expression> | DEFAULT } | ( <column_name> [, ...] ) = [ ROW ] ( { <expression> | DEFAULT } [, ...] ) | ( <column_name> [, ...] ) = ( <sub-SELECT> ) } [ , <column_name> = <expression> ] [ FROM <from_item> [, ...] ] [ WHERE <condition> | WHERE CURRENT OF <cursor_name> ] [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] } [ , <output_expression> ] ]"]
+reason = "with_query spelled as its definition's name AS ( query ), so nesting goes inside the parentheses; ONLY and * as alternatives (gram.y relation_expr takes one or the other, the synopsis shows both as optional); the SET, WITH ( ... ) and RETURNING lists' second items written out, which the renderer otherwise copies wrongly"
+
+# Derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative; [[limit]] rows test a keyword that is not a bare label"
+
+[[suppress]]
+form = "pg.dml.update"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after a RETURNING expression is a bare column label (gram.y bare_label_keyword), so it is no negative"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "FETCH's count is any c_expr (gram.y select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "LIMIT takes any a_expr (gram.y select_limit_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SELECT"
+reason = "without SELECT the minimal form is the empty string, which PostgreSQL accepts as an empty query"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.aggregate"
+kind = "required_operand_missing"
+target = "<aggregate_name>"
+reason = "without the name the call is a parenthesised expression, ( expression ), which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.aggregate"
+kind = "identifier_class"
+target = "<aggregate_name>"
+reason = "with SELECT as the name, SELECT ( 1 ) inside parentheses is a scalar subquery, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype.character-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARYING"
+reason = "CHARACTER without VARYING is the documented fixed-length type character, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype.character-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CHARACTER after "
+reason = "VARYING is an unreserved keyword, so on its own it parses as a type name; an unknown type fails after parsing"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.typed-datetime-literal"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "without the type the constant is a plain string literal, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.typed-datetime-literal"
+kind = "required_operand_missing"
+target = "'<value>'"
+reason = "without the string the type name (TIMESTAMP, a column-name keyword) parses as a column reference, which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.type-string"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "without the type the constant is a plain string literal, which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.column-reference"
+kind = "identifier_class"
+target = "<columnname>"
+reason = "after a dot any keyword is a column label (gram.y attr_name: ColLabel), so a reserved word there is valid"
+
+# Hand-written obligations of the lexical forms and of syntax a reading could not express.
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "positive"
+note = "an unquoted identifier: a letter, then letters, digits and underscores"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT abc_1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "an identifier that starts with an underscore"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT _abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "a dollar sign after the first character"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT a$1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "a non-Latin letter"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT é1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "negative_neighbour"
+note = "an identifier that starts with a digit (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "negative_neighbour"
+note = "a reserved key word used as an unquoted table name"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 FROM select"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "positive"
+note = "a double-quoted identifier with a blank"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"a b\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "alternative"
+target = "\"<identifier>\""
+note = "a quoted reserved key word"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 FROM \"select\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "alternative"
+target = "\"<identifier>\""
+note = "a doubled double quote stands for one"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"a\"\"b\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "negative_neighbour"
+note = "a zero-length quoted identifier"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "negative_neighbour"
+note = "an unterminated quoted identifier"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"ab"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "positive"
+note = "a decimal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 42"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "extreme"
+note = "an integer constant beyond bigint, which becomes numeric; no documented bound"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 123456789012345678901234567890"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "negative_neighbour"
+note = "letters straight after the digits (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 42abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "positive"
+note = "digits, a point and digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 3.5"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "[ <digits> ]"
+note = "no digits after the point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 4."
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "an exponent with a sign"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.925e-3"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "an upper-case exponent without a sign, after a bare point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5.E3"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "negative_neighbour"
+note = "an exponent marker without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.5e"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "negative_neighbour"
+note = "an exponent sign without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.5e+"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "positive"
+note = "a string constant"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'abc'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "alternative"
+target = "'<characters>'"
+note = "a doubled single quote stands for one"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'it''s'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "alternative"
+target = "'<characters>'"
+note = "an empty string"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT ''"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "negative_neighbour"
+note = "an unterminated string"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "positive"
+note = "a dollar-quoted string with a single quote taken literally"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$it's$$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "alternative"
+target = "<tag>"
+note = "a tagged dollar quote containing $$"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $tag$a $$ b$tag$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "alternative"
+target = "<characters>"
+note = "an empty dollar-quoted string"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$$$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "negative_neighbour"
+note = "an unterminated dollar-quoted string"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "negative_neighbour"
+note = "a closing tag that differs from the opening tag"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $a$x$b$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "positive"
+note = "a block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* note */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "option_present"
+target = "[ /* <comment_text> */ ]"
+note = "a nested block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* a /* b */ c */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "negative_neighbour"
+note = "an unterminated block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 /* note"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "negative_neighbour"
+note = "a nested comment left open: the outer comment does not end at the first */"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* a /* b */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "positive"
+note = "an escape string constant with a backslash escape"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'a\\nb'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "alternative"
+target = "E'<characters>'"
+note = "a lower-case e and a hexadecimal escape"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT e'\\x41'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "alternative"
+target = "E'<characters>'"
+note = "an escaped single quote"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'it\\'s'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "negative_neighbour"
+note = "an escape string whose last quote is escaped, so it never ends"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'abc\\'"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "alternative"
+target = "{ ONLY | WITH TIES }"
+note = "FETCH ... WITH TIES after an ORDER BY"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT 1 ORDER BY 1 FETCH FIRST 1 ROW WITH TIES"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "{ ONLY | WITH TIES }"
+note = "FETCH ... WITH TIES without ORDER BY; the page: WITH TIES requires an ORDER BY clause (gram.y raises 42601)"
+anchor = "doc.sql-select / LIMIT Clause"
+sql = "SELECT 1 FETCH FIRST 1 ROW WITH TIES"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "DISTINCT [ ON ( <expression> [, ...] ) ]"
+note = "DISTINCT without a select list; the synopsis shows the list as optional, gram.y requires it after DISTINCT"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT DISTINCT"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<output_name>"
+note = "a reserved key word that is not a bare label (gram.y bare_label_keyword omits it) as an output name without AS"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT 1 ON"
+context = "raw"
+
+[[reading]]
+form = "pg.dml.insert"
+grammar_sha256 = "ac79f1af095557311dd1a001d3435dc52241911fc13259281fdc4e65ca9334d7"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] INSERT INTO <table_name> [ AS <alias> ] { DEFAULT VALUES | [ ( <column_name> [, ...] ) ] [ OVERRIDING { SYSTEM | USER } VALUE ] { VALUES ( { <expression> | DEFAULT } [, ...] ) [ , ( <expression> ) ] | <query> } } [ ON CONFLICT [ <conflict_target> ] <conflict_action> ] [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] } [ , <output_expression> ] ]"]
+reason = "DEFAULT VALUES takes no column list and no OVERRIDING clause (gram.y insert_rest: DEFAULT VALUES is its own alternative); with_query and the VALUES, WITH ( ... ) and RETURNING lists written out as the generic rewrites write them"
+
+[[reading]]
+form = "pg.dml.copy.pre-9-0-from"
+grammar_sha256 = "c8baca9f8e5e0bbf5d8a01095746e1cf206be5cbab9fb0d5256c1464eabf7c5d"
+grammar = ["COPY <table_name> [ ( <column_name> [, ...] ) ] FROM { '<filename>' | STDIN } [ [ WITH ] [ BINARY ] [ DELIMITER [ AS ] '<delimiter_character>' ] [ NULL [ AS ] '<null_string>' ] [ CSV [ HEADER ] [ QUOTE [ AS ] '<quote_character>' ] [ ESCAPE [ AS ] '<escape_character>' ] [ FORCE NOT NULL <column_name> [ , <column_name> ] ] ] ]"]
+reason = "the FORCE NOT NULL column list's second item written out, which the renderer otherwise copies with its keywords"
+
+# Derived negatives that are valid PostgreSQL, across the query and dml families.
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.values"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.values"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "a LIMIT or FETCH count is any a_expr or c_expr in gram.y (select_limit_value, select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.delete"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.insert"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.dml.merge"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative"
+
+[[suppress]]
+form = "pg.query.select-into"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required INTO"
+reason = "without INTO the statement is a plain SELECT, which is valid"
+
+[[suppress]]
+form = "pg.dml.copy.pre-7-3-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
+reason = "AS after NULL is optional in COPY's option list (gram.y copy_opt_item: NULL_P opt_as Sconst), which the legacy syntax shares"
+
+[[suppress]]
+form = "pg.dml.copy.pre-7-3-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS in [ WITH NULL AS '<null_string>' ]"
+reason = "AS after NULL is optional in COPY's option list (gram.y copy_opt_item: NULL_P opt_as Sconst), which the legacy syntax shares"
+
+[[suppress]]
+form = "pg.dml.copy.pre-9-0-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NOT in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
+reason = "without NOT, FORCE NULL column_list is the current COPY option of that name, which the legacy option list also parses (gram.y copy_opt_item)"
+
+
+# Expressions: readings of forms with literal brackets, quoted names or gram.y-narrower synopses,
+# and of the remaining lexical forms.
+
+[[reading]]
+form = "pg.expressions.sql-expressions.array-constructor"
+grammar_sha256 = "a81dece4cd4405ebede140f5b24b32daab60029aca47b58e42743fdfb02b50dc"
+grammar = ["ARRAY \\[ [ <expression> [, ...] ] \\]", "ARRAY \\[ \\[ <expression> [ , <expression> ] \\] [ , \\[ <expression> [ , <expression> ] \\] ] \\]"]
+reason = "the constructor's own brackets are literal (written \\[ \\]), not optional parts; the second line, the page's multidimensional ARRAY[[...], ...], with its sub-arrays' and their elements' second items written out, since the renderer copies a list item that holds a literal bracket wrongly"
+
+[[reading]]
+form = "pg.expressions.arrays.array-type"
+grammar_sha256 = "f6b8177b0410d84af5b5c81620aa07b0d526eece3ebf50e7d946d40f58826400"
+grammar = ["<type_name> \\[ [ <size> ] \\] [ \\[ [ <size> ] \\] ]", "<type_name> ARRAY [ \\[ <size> \\] ]"]
+reason = "the dimension brackets are literal (written \\[ \\]) around an optional size; the page's [ ... ] repetition of dimensions written out as a second dimension"
+
+[[reading]]
+form = "pg.expressions.sql-expressions.subscript"
+grammar_sha256 = "6ab70d1e01a25f12a357806762b8c9a35e206c95b599af8f509276d1ddbac952"
+grammar = ["<expression> \\[ <subscript> \\]"]
+reason = "the subscript brackets are literal (written \\[ \\]), not an optional part"
+
+[[reading]]
+form = "pg.expressions.sql-expressions.slice"
+grammar_sha256 = "2ecd1d228bb5c4f25b6972b37999c9d06f31fcdb86a3534a98991f00bf9f4cae"
+grammar = ["<expression> \\[ <lower_subscript> : <upper_subscript> \\]"]
+reason = "the slice brackets are literal (written \\[ \\]), not an optional part"
+
+[[reading]]
+form = "pg.expressions.datatype.numeric"
+grammar_sha256 = "048ba4656ff54dcf9447190982950760ecd5521cb5ac80e38b7211dd002dda0b"
+grammar = ["{ NUMERIC [ ( <p> [ , <s> ] ) ] | DECIMAL [ ( <p> [ , <s> ] ) ] }"]
+reason = "the type's precision and optional scale, as datatype-numeric writes NUMERIC(precision, scale), NUMERIC(precision) and NUMERIC and gives DECIMAL as the same type (gram.y Numeric: NUMERIC and DECIMAL_P take opt_type_modifiers); the table row's ( p | s ) is not a choice between the two"
+
+[[reading]]
+form = "pg.expressions.datatype-datetime.interval-fields"
+grammar_sha256 = "1dab0baa90920ce3cc08c1948130327233c8253547543290112452dec5c67771"
+grammar = ["INTERVAL { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] }"]
+reason = "the precision only after a field phrase ending in SECOND: datatype-datetime says that when both fields and p are given the fields must include SECOND, and gram.y opt_interval takes '(' Iconst ')' only in interval_second"
+
+[[reading]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+grammar_sha256 = "7098fa278eb6758f91fa82144510a07c1331fbcb38a867a503bae388b4c1d083"
+grammar = ["INTERVAL { '<value>' [ { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] } ] | ( <p> ) '<value>' }"]
+reason = "gram.y AexprConst takes ConstInterval Sconst opt_interval or ConstInterval '(' Iconst ')' Sconst: a leading precision excludes the field phrase, and a precision in the phrase follows SECOND only (interval_second)"
+
+[[reading]]
+form = "pg.expressions.datatype-pseudo.any"
+grammar_sha256 = "d6a7cd2a7371b1a15d543196979ff74fdb027023ebf187d5d329be11055c77fd"
+grammar = ["\"any\""]
+reason = "ANY is a reserved keyword (kwlist.h), so the pseudo-type is written as the quoted identifier \"any\", as the function signatures on the functions pages write it"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+grammar_sha256 = "9281fc0470e6bd42b5d656d7ea1101921840dbb4eb626953ce15c53dbdfa5d04"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+grammar_sha256 = "128a37d6b47a6f316a84670ca1df48519d6f0daa849610f46573b6ee0e101f14"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+grammar_sha256 = "2f58ca9c43a1cb2ca4694a17589805d3606e3a105044bce145b2b95cd5c52856"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+grammar_sha256 = "b85259d47f81f6c74b99b5b0ac5c2347cf8f109ded057d9f1f3c3aac306b9c25"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+grammar_sha256 = "5917992636d8a3e35b8b1f368109e001425e1a3acc24447bb8e62554a495504f"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+grammar_sha256 = "f3717d6a59245da19149c7864029d597267ecdd7892b801b634529de9f747f69"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+grammar_sha256 = "780f2b9ddeb097803eea4aa537dd00f61d969d25c8f89784e99dc332cf999978"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+grammar_sha256 = "29b8a1959bf7af702eeb7792aec5d9f8370c9bbe8b7865a1729b31e5360122ea"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+grammar_sha256 = "1344595477a31705971e823333a5b691ac0d79212cd70fa4e3874d3deb4f4cc1"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+grammar_sha256 = "6c94135a5ce6eea82d92f577575c5f9d67eb7ffc8154d786f2d8d0def930935b"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+grammar_sha256 = "c3ce3f61957f1a893a40dcc85b86bac49816d4855b61830491e8cbfbd357bc73"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+grammar_sha256 = "0478650ad37111fe23e0527785a8080f52dfd18c22a47e5bfb06c3f998114b94"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+# Expressions: hand-written obligations of the lexical forms read as empty above.
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "positive"
+note = "a binary integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b101"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "alternative"
+target = "0b<bindigits>"
+note = "the prefix in upper case"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0B101"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "negative_neighbour"
+note = "a digit that is not binary (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b102"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "negative_neighbour"
+note = "the prefix with no digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "positive"
+note = "an octal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0o17"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "alternative"
+target = "0o<octdigits>"
+note = "the prefix in upper case"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0O17"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "negative_neighbour"
+note = "a digit that is not octal (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0o18"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "positive"
+note = "a hexadecimal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x1F"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "alternative"
+target = "0x<hexdigits>"
+note = "the prefix in upper case and lower-case digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0Xff"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "negative_neighbour"
+note = "a letter that is not a hexadecimal digit (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x1G"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "positive"
+note = "underscores between digit groups"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1_000_000"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "alternative"
+target = "<digits>_<digits>"
+note = "an underscore in a non-decimal constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x_FF"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "negative_neighbour"
+note = "two underscores in a row"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1__000"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "negative_neighbour"
+note = "a trailing underscore"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1000_"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "positive"
+note = "digits and an exponent without a point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "a signed exponent"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5E-2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "negative_neighbour"
+note = "an exponent sign without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5e+"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "positive"
+note = "a point and digits with no digits before it"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .001"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "alternative"
+target = "[ e[ +- ]<digits> ]"
+note = "a leading point and an exponent"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .5e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "negative_neighbour"
+note = "a point followed by an exponent and no digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "positive"
+note = "a binary bit-string constant"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT B'1001'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "alternative"
+target = "B'<binary_digits>'"
+note = "the prefix in lower case"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT b'1001'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "negative_neighbour"
+note = "a bit-string constant left open"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT B'1001"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "positive"
+note = "a hexadecimal bit-string constant"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT X'1FF'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "alternative"
+target = "X'<hex_digits>'"
+note = "the prefix in lower case"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT x'1ff'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "negative_neighbour"
+note = "a hexadecimal bit-string constant left open"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT X'1FF"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+kind = "positive"
+note = "two string constants separated by a newline, read as one"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'foo'\n'bar'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+kind = "negative_neighbour"
+note = "two string constants on one line, which the page says is not valid syntax"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'foo' 'bar'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "positive"
+note = "a string with Unicode escapes"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d\\0061t\\+000061'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "option_present"
+target = "[ UESCAPE '<escape_character>' ]"
+note = "a chosen escape character"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d!0061t!+000061' UESCAPE '!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "negative_neighbour"
+note = "an escape character of two characters"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d!0061t' UESCAPE '!!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "positive"
+note = "an identifier with Unicode escapes"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d\\0061t\\+000061\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "option_present"
+target = "[ UESCAPE '<escape_character>' ]"
+note = "a chosen escape character"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d!0061t!+000061\" UESCAPE '!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "negative_neighbour"
+note = "an escape character that is a hexadecimal digit"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d!0061t\" UESCAPE 'a'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "positive"
+note = "a comment to the end of the line"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 -- note"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "alternative"
+target = "-- <comment_text>"
+note = "a comment ending at a newline, with the statement going on"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 -- note\n+ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "negative_neighbour"
+note = "a comment that swallows the operand after it on the same line"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 + -- 2"
+context = "raw"
+
+# Expressions: derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.expressions.array.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatiblearray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatible>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatiblearray> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.binarystring.op-bar-bar"
+kind = "required_operand_missing"
+target = "<bytea>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-amp"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-bar-bar"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-gt-gt"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-hash"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-lt-lt"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.comparisons.all-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.comparisons.any-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ANY"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.comparisons.some-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SOME"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.conditional.case-simple"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "without its operand the expression is the searched CASE (gram.y case_expr: CASE case_arg when_clause_list, with case_arg optional), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+kind = "required_operand_missing"
+target = "'<value>'"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { '<value>' [ { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] } ] | ( <p> ) '<value>' }"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ]"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ] #2"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required BIT after "
+reason = "the first word of the type name alone is an unreserved keyword (kwlist.h), which gram.y GenericType accepts as a type name: valid syntax that fails at type lookup (42704)"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ]"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.double-precision"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PRECISION"
+reason = "the first word of the type name alone is an unreserved keyword (kwlist.h), which gram.y GenericType accepts as a type name: valid syntax that fails at type lookup (42704)"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<timestamp> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<date>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<time>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<date> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<date> #3"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<interval> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<timestamp>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<time> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-amp"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-lt-bar"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-lt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-at-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-bar-amp-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-bar-gt-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-gt-caret"
+kind = "required_operand_missing"
+target = "<box>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-gt-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-hash-hash"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-at"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-caret"
+kind = "required_operand_missing"
+target = "<box>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-lt-bar"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-lt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-minus-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-minus"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-plus"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-plus"
+kind = "required_operand_missing"
+target = "<path>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar-bar"
+kind = "required_operand_missing"
+target = "<line>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar-bar"
+kind = "required_operand_missing"
+target = "<lseg>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar"
+kind = "required_operand_missing"
+target = "<point>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-hash"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus-bar"
+kind = "required_operand_missing"
+target = "<line>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus-bar"
+kind = "required_operand_missing"
+target = "<lseg>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus"
+kind = "required_operand_missing"
+target = "<point>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-tilde-eq"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.info.op-at-gt"
+kind = "required_operand_missing"
+target = "<aclitem[]>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-at"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-qmark"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-bar-bar"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-minus"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-lt-at"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<json> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<json> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark-amp"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark-bar"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.ilike"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.like"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.not-ilike"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.not-like"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.op-bang-tilde-star"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-bang-tilde"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-tilde-star"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-tilde"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-amp"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-gt-gt"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-hash"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-lt-lt"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-amp-amp"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-amp"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-gt-gt-eq"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-gt-gt"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-lt-lt-eq"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-lt-lt"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-minus"
+kind = "required_operand_missing"
+target = "<inet> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.net.op-plus"
+kind = "required_operand_missing"
+target = "<bigint> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #5"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyelement>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyrange> #5"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyelement> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-plus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-plus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.rangetypes.range-constructor"
+kind = "required_operand_missing"
+target = "<range_type>"
+reason = "without the type name the parenthesised list is a row constructor (gram.y implicit_row), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.rangetypes.range-constructor"
+kind = "required_operand_missing"
+target = "<upper>"
+reason = "a call with fewer arguments is valid syntax; the argument count is checked at function lookup (42883)"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression> in [ , [ <expression> [ , <expression> ] ] ]"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.field-selection"
+kind = "identifier_class"
+target = "<fieldname>"
+reason = "a field name after a dot is attr_name, a ColLabel, which takes reserved keywords (gram.y indirection_el), so the reserved-word spelling is no negative and a quoted name no different positive"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "required_operand_missing"
+target = "<typename>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "with its argument left out the expression is a call with no arguments (gram.y func_application: func_name '(' ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "identifier_class"
+target = "<typename>"
+reason = "a reserved keyword in place of the type name renders SELECT ( ... ), a parenthesised scalar subquery inside the outer parentheses, which is valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.operator-call"
+kind = "identifier_class"
+target = "<operatorname>"
+reason = "the operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so the identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.row-constructor"
+kind = "required_operand_missing"
+target = "<expression> #2"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.scalar-subquery"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.slice"
+kind = "required_operand_missing"
+target = "<lower_subscript>"
+reason = "either bound of a slice may be left out (gram.y indirection_el: '[' opt_slice_bound ':' opt_slice_bound ']')"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.slice"
+kind = "required_operand_missing"
+target = "<upper_subscript>"
+reason = "either bound of a slice may be left out (gram.y indirection_el: '[' opt_slice_bound ':' opt_slice_bound ']')"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "required_operand_missing"
+target = "<typename>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "required_operand_missing"
+target = "'<string>'"
+reason = "with its argument left out the expression is a call with no arguments (gram.y func_application: func_name '(' ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "identifier_class"
+target = "<typename>"
+reason = "a reserved keyword in place of the type name renders SELECT ( ... ), a parenthesised scalar subquery inside the outer parentheses, which is valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.type-string"
+kind = "required_operand_missing"
+target = "'<string>'"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<text> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anynonarray> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-caret-at"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.subquery.all-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.all"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.any-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.any"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ANY"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.in-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression list in place of the subquery is IN's value-list form (gram.y in_expr: '(' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.not-in-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression list in place of the subquery is IN's value-list form (gram.y in_expr: '(' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.row-comparison"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression in place of the subquery is a plain comparison (gram.y a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.some-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.some"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SOME"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-amp-amp"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<tsvector>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<tsquery> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-gt"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-bar-bar"
+kind = "required_operand_missing"
+target = "<tsvector>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-bar-bar"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-lt-at"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-lt-minus-gt"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+# Functions: readings of signatures that write parameter defaults.
+
+[[reading]]
+form = "pg.functions.admin.pg-logical-emit-message"
+grammar_sha256 = "b124e18838a0fa65ed5fdce32203c95e3a34c905dca918685c84ccdc533b686f"
+grammar = ["PG_LOGICAL_EMIT_MESSAGE ( <transactional boolean>, <prefix text>, <content text> [ , <flush boolean> ] )", "PG_LOGICAL_EMIT_MESSAGE ( <transactional boolean>, <prefix text>, <content bytea> [ , <flush boolean> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.admin.pg-promote"
+grammar_sha256 = "814b3b5fa4e8bac1e3b823ab3d65d890993fc5251a0d2120258787740d4c0815"
+grammar = ["PG_PROMOTE ( [ <wait boolean> [ , <wait_seconds integer> ] ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.admin.pg-terminate-backend"
+grammar_sha256 = "5d9e5233cf0883b0dfe7436e98ffdc721a4ac7ae96ff92162735fe7037b333f4"
+grammar = ["PG_TERMINATE_BACKEND ( <pid integer> [ , <timeout bigint> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.string.parse-ident"
+grammar_sha256 = "36f341ed540c16eaa982fe732884dc45abf28bf71a28aadbe2996d43a8933c7f"
+grammar = ["PARSE_IDENT ( <qualified_identifier text> [ , <strict_mode boolean> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+# Functions: readings of SQL/JSON constructors whose synopses bracket parts gram.y requires.
+
+[[reading]]
+form = "pg.functions.aggregate.json-objectagg"
+grammar_sha256 = "bc59981f1aae5082e93344f63c9b89981c05537d7aa9debe8382d4755624b050"
+grammar = ["JSON_OBJECTAGG ( <key_expression> { VALUE | : } <value_expression> [ { NULL | ABSENT } ON NULL ] [ { WITH | WITHOUT } UNIQUE [ KEYS ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "the key and value are required (gram.y json_aggregate_func: JSON_OBJECTAGG '(' json_name_and_value ...), though the synopsis brackets them; the ':' separator is the bare token, not a string"
+
+[[reading]]
+form = "pg.functions.aggregate.json-arrayagg"
+grammar_sha256 = "b8246bd604458bdc30ecde99c58fba926d068cab68aea1687f3878eb6ecada7f"
+grammar = ["JSON_ARRAYAGG ( <value_expression> [ ORDER BY <sort_expression> ] [ { NULL | ABSENT } ON NULL ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "the value is required (gram.y json_aggregate_func: JSON_ARRAYAGG '(' json_value_expr ...), though the synopsis brackets it"
+
+[[reading]]
+form = "pg.functions.json.json-array"
+grammar_sha256 = "28f285245bee6c800d4b3bede6711c278830981f8789d0f84ff857b5a6a1673f"
+grammar = ["JSON_ARRAY ( [ { <value_expression> [ FORMAT JSON ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )", "JSON_ARRAY ( [ <query_expression> ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "ON NULL follows a value list only (gram.y json_array: JSON_ARRAY '(' json_value_expr_list json_array_constructor_null_clause_opt ...; with no values only RETURNING may follow)"
+
+[[reading]]
+form = "pg.functions.json.json-object-value-format-json-encoding"
+grammar_sha256 = "1c2310309b42039d6481debaa250343db468e68c906c471670cce1494f28cd59"
+grammar = ["JSON_OBJECT ( [ { <key_expression> { VALUE | : } <value_expression> [ FORMAT JSON [ ENCODING UTF8 ] ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] [ { WITH | WITHOUT } UNIQUE [ KEYS ] ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "ON NULL and UNIQUE follow a key-value list only (gram.y json_object: JSON_OBJECT '(' json_name_and_value_list json_object_constructor_null_clause_opt json_key_uniqueness_constraint_opt ...; with no pairs only RETURNING may follow); the ':' separator is the bare token, not a string"
+
+[[reading]]
+form = "pg.functions.xml.xmltable-passing-columns"
+grammar_sha256 = "34e6ea0ac93a7f91c3b20a670ab46eaaab27c5fd0464f007cfb2aa2c56c0bd12"
+grammar = ["XMLTABLE ( [ XMLNAMESPACES ( <namespace_uri> AS <namespace_name> [ , ... ] ), ] <row_expression> PASSING [ BY { REF | VALUE } ] <document_expression> [ BY { REF | VALUE } ] COLUMNS <name> { <type> [ PATH <column_expression> ] [ DEFAULT <default_expression> ] [ NOT NULL | NULL ] | FOR ORDINALITY } [ , <name> <type> ] )"]
+reason = "the column list's second item written out with its name, since the renderer copies only the braced part of the first item (gram.y xmltable_column_el: ColId Typename ... | ColId FOR ORDINALITY)"
+
+# Functions: derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-get-binary-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-get-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-peek-binary-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-peek-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-restore-attribute-stats"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-restore-relation-stats"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.comparison.num-nonnulls"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.comparison.num-nulls"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.info.collation-for"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOR"
+reason = "without FOR, COLLATION ( 1 ) is a call of a function named collation: COLLATION is a type_func_name_keyword (kwlist.h), which gram.y func_name accepts, so it is valid syntax"
+
+[[suppress]]
+form = "pg.functions.json.json-build-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-build-object"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-exists"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-extract-path-text"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-extract-path"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-query"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-table-columns"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-table-columns"
+kind = "identifier_class"
+target = "<json_table_column>"
+reason = "a JSON_TABLE column is a definition (gram.y json_table_column_definition: ColId Typename ...), not an identifier, so identifier spellings of the whole definition do not apply"
+
+[[suppress]]
+form = "pg.functions.json.json-value"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-build-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-build-object"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-extract-path-text"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-extract-path"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required XMLATTRIBUTES in [ , XMLATTRIBUTES ( <attvalue> [ AS <attname> ] [ , ... ] ) ]"
+reason = "without XMLATTRIBUTES the parenthesised expression is element content (gram.y xmlelement: XMLELEMENT '(' NAME_P ColLabel ',' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "identifier_class"
+target = "<attname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlforest"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlpi-name"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlroot-version"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NO after VERSION"
+reason = "VERSION takes any expression (gram.y xml_root_version: VERSION_P a_expr | VERSION_P NO VALUE_P), and NO and VALUE are unreserved keywords, so either word alone is a column reference, valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmlroot-version"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VALUE"
+reason = "VERSION takes any expression (gram.y xml_root_version: VERSION_P a_expr | VERSION_P NO VALUE_P), and NO and VALUE are unreserved keywords, so either word alone is a column reference, valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmltable-passing-columns"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOR after <name>"
+reason = "ORDINALITY without FOR is a type name: it is an unreserved keyword (kwlist.h), which gram.y xmltable_column_el (ColId Typename) accepts, so this is valid syntax that fails at type lookup"
+
+[[suppress]]
+form = "pg.functions.xml.xmltable-passing-columns"
+kind = "identifier_class"
+target = "<namespace_name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+# DDL: readings of synopses gram.y narrows or that the renderer cannot copy.
+
+[[reading]]
+form = "pg.ddl.create-trigger"
+grammar_sha256 = "c7afa5f05398129973a0b3b420caf6ed0f290a76e31523dce0fda84524bdeaa8"
+grammar = ["CREATE [ OR REPLACE ] TRIGGER <name> { BEFORE | AFTER | INSTEAD OF } { <event> [ OR DELETE ] } ON <table_name> [ REFERENCING { { OLD | NEW } TABLE [ AS ] <transition_relation_name> } [ ... ] ] [ FOR [ EACH ] { ROW | STATEMENT } ] [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )", "CREATE CONSTRAINT TRIGGER <name> AFTER { <event> [ OR DELETE ] } ON <table_name> [ FROM <referenced_table_name> ] [ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ] ] FOR EACH ROW [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )"]
+reason = "the synopsis puts FROM and the deferral options on every trigger, but gram.y CreateTrigStmt takes them only after CONSTRAINT TRIGGER, which is AFTER ... FOR EACH ROW without REFERENCING (as the page's description of constraint triggers says); one production for each, with the event list's second item written out as a different event, since gram.y TriggerEvents rejects a repeated event with 42601; the constraint production without OR REPLACE, which gram.y refuses there with 0A000"
+
+[[reading]]
+form = "pg.ddl.create-collation.name"
+grammar_sha256 = "e842c361d04bb96b25a1da00089bc9ad9df0c263b68acdfac02459fe8c47144f"
+grammar = ["CREATE COLLATION [ IF NOT EXISTS ] <name> ( { LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype> } [ , PROVIDER = <provider> ] [ , DETERMINISTIC = <boolean> ] [ , RULES = <rules> ] [ , VERSION = <version> ] )"]
+reason = "the synopsis brackets every item, each with a trailing comma, but gram.y definition needs a non-empty list without a trailing comma, and the page requires LOCALE or both LC_COLLATE and LC_CTYPE; written as that requirement with leading commas"
+
+[[reading]]
+form = "pg.ddl.alter-sequence.name"
+grammar_sha256 = "9b46eb24ef1d0108e4cb5cbb84022e295dab1c62b9c9661a349250acb2b1d5e8"
+grammar = ["ALTER SEQUENCE [ IF EXISTS ] <name> { AS <data_type> | INCREMENT [ BY ] <increment> } [ MINVALUE <minvalue> | NO MINVALUE ] [ MAXVALUE <maxvalue> | NO MAXVALUE ] [ [ NO ] CYCLE ] [ START [ WITH ] <start> ] [ RESTART [ [ WITH ] <restart> ] ] [ CACHE <cache> ] [ OWNED BY { <table_name>.<column_name> | NONE } ]"]
+reason = "the synopsis brackets every option, but gram.y AlterSeqStmt takes a non-empty SeqOptList; the first two options are written as a required choice so the shortest form is valid"
+
+[[reading]]
+form = "pg.ddl.alter-server.name"
+grammar_sha256 = "9b8160c0f8d732eb20da767d3f21b6d8cecc1dd6be669f77fc5fcceb57197116"
+grammar = ["ALTER SERVER <name> VERSION '<new_version>' [ OPTIONS ( { [ ADD | SET ] <option> '<value>' | DROP <option> } [ , <option> '<value>' ] ) ]"]
+reason = "the synopsis brackets both clauses, but gram.y AlterForeignServerStmt needs VERSION, OPTIONS or both: written with VERSION required, and OPTIONS alone as a hand-written limit; OPTIONS items as the other OPTIONS lists (DROP takes no value)"
+
+[[reading]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+grammar_sha256 = "0d37468c851c6b2b22e12021d0675e470527f92d3091e2aa1aede7230fd1f5ac"
+grammar = ["ALTER FOREIGN DATA WRAPPER <name> { HANDLER <handler_function> | NO HANDLER } [ VALIDATOR <validator_function> | NO VALIDATOR ] [ OPTIONS ( { [ ADD | SET ] <option> '<value>' | DROP <option> } [ , <option> '<value>' ] ) ]"]
+reason = "the synopsis brackets every clause, but gram.y AlterFdwStmt needs fdw_options, OPTIONS or both: written with the handler clause required, and VALIDATOR alone and OPTIONS alone as hand-written limits; OPTIONS items as the other OPTIONS lists (DROP takes no value)"
+
+[[reading]]
+form = "pg.ddl.create-aggregate.basetype-sfunc-stype"
+grammar_sha256 = "1470daf81cb2473bf66abb76da090c2332a08acd39c56e4f951b0c555b94df60"
+grammar = ["CREATE [ OR REPLACE ] AGGREGATE <name> ( BASETYPE = <base_type>, SFUNC = <sfunc>, STYPE = <state_data_type> [ , SSPACE = <state_data_size> ] [ , FINALFUNC = <ffunc> ] [ , FINALFUNC_EXTRA = <boolean> ] [ , FINALFUNC_MODIFY = { READ_ONLY | SHAREABLE | READ_WRITE } ] [ , COMBINEFUNC = <combinefunc> ] [ , SERIALFUNC = <serialfunc> ] [ , DESERIALFUNC = <deserialfunc> ] [ , INITCOND = <initial_condition> ] [ , MSFUNC = <msfunc> ] [ , MINVFUNC = <minvfunc> ] [ , MSTYPE = <mstate_data_type> ] [ , MSSPACE = <mstate_data_size> ] [ , MFINALFUNC = <mffunc> ] [ , MFINALFUNC_EXTRA = <boolean> ] [ , MFINALFUNC_MODIFY = { READ_ONLY | SHAREABLE | READ_WRITE } ] [ , MINITCOND = <minitial_condition> ] [ , SORTOP = <sort_operator> ] )"]
+reason = "the old syntax's FINALFUNC_EXTRA and MFINALFUNC_EXTRA take a value: gram.y old_aggr_elem is IDENT '=' def_arg, so the page's bare spelling is rejected (a hand-written limit records that); written as FINALFUNC_EXTRA = boolean"
+
+[[limit]]
+form = "pg.ddl.create-aggregate.basetype-sfunc-stype"
+kind = "negative_neighbour"
+note = "the old syntax with a bare FINALFUNC_EXTRA, as the page writes it; gram.y old_aggr_elem needs IDENT = def_arg (a documentation and grammar disagreement)"
+anchor = "doc.sql-createaggregate / Synopsis"
+sql = "CREATE AGGREGATE a1 ( BASETYPE = INT , SFUNC = f1 , STYPE = INT , FINALFUNC_EXTRA )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-server.name"
+kind = "alternative"
+target = "OPTIONS"
+note = "OPTIONS alone, without VERSION"
+anchor = "doc.sql-alterserver / Synopsis"
+sql = "ALTER SERVER s1 OPTIONS ( SET host 'h1' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+kind = "alternative"
+target = "VALIDATOR"
+note = "VALIDATOR alone, without a handler clause"
+anchor = "doc.sql-alterforeigndatawrapper / Synopsis"
+sql = "ALTER FOREIGN DATA WRAPPER w1 NO VALIDATOR"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-data-wrapper.name"
+kind = "alternative"
+target = "OPTIONS"
+note = "OPTIONS alone, without a handler clause"
+anchor = "doc.sql-alterforeigndatawrapper / Synopsis"
+sql = "ALTER FOREIGN DATA WRAPPER w1 OPTIONS ( ADD o1 'v' )"
+context = "raw"
+
+# DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
+
+[[suppress]]
+form = "pg.ddl.alter-database.owner-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TO"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-database.set-tablespace"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-database.set-tablespace"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SET"
+reason = "ALTER DATABASE also takes generic options (gram.y AlterDatabaseStmt: ALTER DATABASE name opt_with createdb_opt_list, with OWNER and TABLESPACE among createdb_opt_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.alter-options"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOREIGN"
+reason = "ALTER TABLE takes the same OPTIONS actions (gram.y alter_table_cmd: alter_generic_options and ALTER opt_column ColId alter_generic_options), so the text without FOREIGN is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.drop-constraint"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.no-inherit"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.options"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOREIGN"
+reason = "ALTER TABLE takes the same OPTIONS actions (gram.y alter_table_cmd: alter_generic_options and ALTER opt_column ColId alter_generic_options), so the text without FOREIGN is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-reset"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-compression"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-statistics"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set-storage"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.alter-set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.cluster-on"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-access-method"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-tablespace"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-materialized-view.set-without-cluster"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "ALTER VIEW shares ALTER TABLE's action grammar (gram.y AlterTableStmt: ALTER VIEW qualified_name alter_table_cmds), so the action without MATERIALIZED is valid syntax that fails only at execution"
+
+[[suppress]]
+form = "pg.ddl.alter-operator-family.add"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-operator-family.add"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.owner-to"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.set-schema"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-operator.set"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.name"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.set"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "gram.y SeqOptElem takes LOGGED and UNLOGGED, so ALTER SEQUENCE name LOGGED is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-sequence.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SET"
+reason = "gram.y SeqOptElem takes LOGGED and UNLOGGED, so ALTER SEQUENCE name LOGGED is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.drop-constraint"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-force-row-level"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "required_operand_missing"
+target = "<name> #2"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.no-inherit"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ONLY <name> | <name> [ * ] }"
+reason = "with the name left out, the next unreserved keyword (NO, SET, DOMAIN, kwlist.h) is read as the name, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.rename-constraint-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+reason = "without CONSTRAINT or COLUMN the text is another valid action (gram.y alter_table_cmd: DROP opt_column ColId, and RENAME opt_column name TO name or RENAME TO name), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.alter-view.reset"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.alter-view.set"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "without DOMAIN, COMMENT ON CONSTRAINT name ON table is the table-constraint form (gram.y CommentStmt), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "without DOMAIN, COMMENT ON CONSTRAINT name ON table is the table-constraint form (gram.y CommentStmt), valid syntax"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.comment"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-aggregate.order-by-sfunc-stype"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ORDER"
+reason = "without ORDER, BY is read as an argument name (an unreserved keyword in gram.y aggr_arg), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-cast.with-function"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-collation.name"
+kind = "identifier_class"
+target = "<lc_collate>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<user_name> in [ OWNER [ = ] <user_name> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<lc_collate> in [ LC_COLLATE [ = ] <lc_collate> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<tablespace_name> in [ TABLESPACE [ = ] <tablespace_name> ]"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = "<lang_name>"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LEAKPROOF"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { LANGUAGE <lang_name> | TRANSFORM { FOR TYPE <type_name> } [ , ... ] | WINDOW | { IMMUTABLE | STABLE | VOLATILE } | [ NOT ] LEAKPROOF | { CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT } | { [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER } | PARALLEL { UNSAFE | RESTRICTED | SAFE } | COST <execution_cost> | ROWS <result_rows> | SUPPORT <support_function> | SET <configuration_parameter> { TO <value> | = <value> | FROM CURRENT } | AS '<definition>' | AS '<obj_file>' , '<link_symbol>' | <sql_body> }"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-function.sql-body-atomic"
+kind = "required_operand_missing"
+target = "<statement>"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-function.sql-body-atomic"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "a BEGIN ATOMIC body holds plain SQL statements (gram.y routine_body_stmt), not another BEGIN ATOMIC block, so nesting the statement operand is not a documented operand"
+
+[[suppress]]
+form = "pg.ddl.create-index"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+reason = "without FIRST or LAST, NULLS is read as an operator class name (an unreserved keyword in gram.y index_elem's opt_qualified_name), so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-operator-class"
+kind = "required_operand_missing"
+target = "<argument_type>"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-operator-class"
+kind = "identifier_class"
+target = "<operator_name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "identifier_class"
+target = "<function_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-procedure"
+kind = "negative_neighbour"
+target = "<lang_name>"
+reason = "the option value is NonReservedWord_or_Sconst or opt_boolean_or_string in gram.y (LANGUAGE, createdb_opt_item), so a string literal is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { LANGUAGE <lang_name> | TRANSFORM { FOR TYPE <type_name> } [ , ... ] | [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER | SET <configuration_parameter> { TO <value> | = <value> | FROM CURRENT } | AS '<definition>' | AS '<obj_file>' , '<link_symbol>' | <sql_body> }"
+reason = "gram.y CreateFunctionStmt takes an empty option list (opt_createfunc_opt_list), so CREATE FUNCTION name ( ) alone is valid syntax that fails at execution for want of a body"
+
+[[suppress]]
+form = "pg.ddl.create-procedure.sql-body-atomic"
+kind = "required_operand_missing"
+target = "<statement>"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-procedure.sql-body-atomic"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "a BEGIN ATOMIC body holds plain SQL statements (gram.y routine_body_stmt), not another BEGIN ATOMIC block, so nesting the statement operand is not a documented operand"
+
+[[suppress]]
+form = "pg.ddl.create-rule"
+kind = "required_operand_missing"
+target = "<command> #2"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-rule"
+kind = "required_operand_missing"
+target = "<command> #3"
+reason = "gram.y routine_body_stmt_list and RuleActionStmtOrEmpty take empty statements between semicolons, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-sequence"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-text-search-configuration"
+kind = "identifier_class"
+target = "<parser_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-transform"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ]"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-transform"
+kind = "required_operand_missing"
+target = "<argument_type> in [ ( <argument_type> [ , ... ] ) ] #2"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "required_operand_missing"
+target = "<arguments>"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "required_operand_missing"
+target = "<arguments> #2"
+reason = "an empty argument list ( ) is valid where the argument types are optional or the list may be empty (gram.y func_args '(' ')', TriggerFuncArgs), so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONSTRAINT"
+reason = "without CONSTRAINT the text is the plain trigger production, which takes AFTER ... FOR EACH ROW, so it is valid syntax"
+
+[[suppress]]
+form = "pg.ddl.create-type.as-range-subtype"
+kind = "identifier_class"
+target = "<collation>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-type.as-range-subtype"
+kind = "identifier_class"
+target = "<multirange_type_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-type.input-output"
+kind = "identifier_class"
+target = "<collatable>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.create-view"
+kind = "identifier_class"
+target = "<view_option_name>"
+reason = "the name in this position is a ColLabel or definition value in gram.y (attr_name after a dot, reloption_elem names, def_arg values), which take reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.ddl.drop-operator"
+kind = "identifier_class"
+target = "<name>"
+reason = "an operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.transaction_session.set-role.role-name"
+kind = "negative_neighbour"
+target = "<role_name>"
+reason = "SET ROLE takes NonReservedWord_or_Sconst (gram.y set_rest_more: ROLE NonReservedWord_or_Sconst), so a string literal role name is valid syntax"
+
+[[suppress]]
+form = "pg.transaction_session.set-session-authorization.user-name"
+kind = "negative_neighbour"
+target = "<user_name>"
+reason = "SET SESSION AUTHORIZATION takes NonReservedWord_or_Sconst (gram.y set_rest: SESSION AUTHORIZATION NonReservedWord_or_Sconst), so a string literal user name is valid syntax"
+
+[[suppress]]
+form = "pg.transaction_session.set-session-authorization.reset-session-authorization"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AUTHORIZATION"
+reason = "RESET SESSION is RESET of a parameter named session (gram.y generic_reset: var_name, and SESSION is an unreserved keyword in kwlist.h, so a ColId), valid syntax that fails only at execution for an unknown parameter"
+
+[[suppress]]
+form = "pg.utility.explain"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.explain.pre-9-0"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.prepare"
+kind = "nesting_depth"
+target = ""
+note = "statement operands nested; no documented bound"
+reason = "an EXPLAIN or PREPARE operand is one plain statement (gram.y ExplainableStmt and PreparableStmt: SELECT, INSERT, UPDATE, DELETE, MERGE and similar), and none of those holds a statement operand, so there is no nesting to test"
+
+[[suppress]]
+form = "pg.utility.do"
+kind = "required_operand_missing"
+target = "<lang_name> in [ LANGUAGE <lang_name> ]"
+reason = "DO LANGUAGE takes NonReservedWord_or_Sconst (gram.y dostmt_opt_item), so with the name left out the code string is read as the language name: valid syntax that fails at execution for want of inline code"
+
+[[suppress]]
+form = "pg.utility.do"
+kind = "negative_neighbour"
+target = "<lang_name> in [ LANGUAGE <lang_name> ]"
+reason = "DO LANGUAGE takes NonReservedWord_or_Sconst (gram.y dostmt_opt_item), so a string literal language name is valid syntax"
+
+# security_admin: derived negatives that are valid PostgreSQL, and obligations that do not apply.
+
+[[suppress]]
+form = "pg.security_admin.alter-policy.rename-to"
+kind = "required_operand_missing"
+target = "<table_name>"
+reason = "with the table name left out, RENAME is read as the table name (unreserved in kwlist.h) and TO v1 as the optional role list (gram.y AlterPolicyStmt: RowSecurityOptionalToRole), valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-role.role-specification-option"
+kind = "required_operand_missing"
+target = "<role_specification>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-role.role-specification-option"
+kind = "required_operand_missing"
+target = "<option>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-user.role-specification-option"
+kind = "required_operand_missing"
+target = "<role_specification>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.alter-user.role-specification-option"
+kind = "required_operand_missing"
+target = "<option>"
+reason = "with the role name left out, the next unreserved keyword (LOGIN, kwlist.h) or the filled name is read as the role, and gram.y AlterRoleStmt's AlterOptRoleList may be empty, so the text is valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-database-to"
+kind = "required_operand_missing"
+target = "<database_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-database-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-domain-to"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-domain-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-language-to"
+kind = "required_operand_missing"
+target = "<lang_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-language-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LANGUAGE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "required_operand_missing"
+target = "<configuration_parameter>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALTER after GRANT"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SYSTEM"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-parameter-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PARAMETER"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-schema-to"
+kind = "required_operand_missing"
+target = "<schema_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-schema-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-tablespace-to"
+kind = "required_operand_missing"
+target = "<tablespace_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-tablespace-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLESPACE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema"
+kind = "required_operand_missing"
+target = "<routine_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema"
+kind = "required_operand_missing"
+target = "<sequence_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEQUENCE after ON"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-type-to"
+kind = "required_operand_missing"
+target = "<type_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.on-type-to"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TYPE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.grant.to"
+kind = "identifier_class"
+target = "<role_name>"
+reason = "SELECT is a privilege keyword, and gram.y GrantRoleStmt and RevokeRoleStmt take privilege_list, so the text is valid syntax that fails only in analysis"
+
+[[suppress]]
+form = "pg.security_admin.revoke.from"
+kind = "identifier_class"
+target = "<role_name>"
+reason = "SELECT is a privilege keyword, and gram.y GrantRoleStmt and RevokeRoleStmt take privilege_list, so the text is valid syntax that fails only in analysis"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-database-from"
+kind = "required_operand_missing"
+target = "<database_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-database-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-domain-from"
+kind = "required_operand_missing"
+target = "<domain_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-domain-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DOMAIN"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema"
+kind = "required_operand_missing"
+target = "<function_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema"
+kind = "required_operand_missing"
+target = "<sequence_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SEQUENCE after ON"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-language-from"
+kind = "required_operand_missing"
+target = "<lang_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-language-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LANGUAGE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "required_operand_missing"
+target = "<configuration_parameter>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALTER after REVOKE"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SYSTEM"
+reason = "a privilege name is any ColId (gram.y privilege: ColId opt_column_list, and ALTER and SYSTEM are unreserved in kwlist.h), so a lone ALTER or SYSTEM is valid syntax that fails only in analysis for an unknown privilege"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-parameter-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PARAMETER"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-schema-from"
+kind = "required_operand_missing"
+target = "<schema_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-schema-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-tablespace-from"
+kind = "required_operand_missing"
+target = "<tablespace_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-tablespace-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLESPACE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-type-from"
+kind = "required_operand_missing"
+target = "<type_name>"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.revoke.on-type-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TYPE"
+reason = "with the object kind or name left out, the next word is read as a table name (gram.y privilege_target: qualified_name_list, and DATABASE, DOMAIN, LANGUAGE, SCHEMA, SEQUENCE, TABLESPACE, TYPE, PARAMETER and plpgsql are not reserved in kwlist.h), so the text is the table form of GRANT or REVOKE, valid syntax"
+
+[[suppress]]
+form = "pg.security_admin.security-label"
+kind = "identifier_class"
+target = "<column_name>"
+reason = "a column after a dot is an attr_name, which is a ColLabel in gram.y and takes reserved keywords, so the reserved-word spelling is no negative"
