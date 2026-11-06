@@ -3,22 +3,22 @@ title: "Coverage"
 description: "What SQLQuack's measured figures cover, and how they are measured."
 ---
 
-import { figures } from '../../../figures.mjs';
+import { figures, shown } from '../../../figures.mjs';
 
 Syntax and translation are separate claims, measured separately. Each figure says what it counts.
 None of them means every input is proven: a figure says what was checked, under which conditions.
 
-| Measure | Figure | Basis |
-|---------|--------|-------|
-| Snowflake statements that translate | {figures.TRANSLATION_PCT} | {figures.TRANSLATION_BASIS} |
-| Documented Snowflake syntax forms verified | {figures.SYNTAX_PCT} of {figures.SYNTAX_FORMS} | {figures.SYNTAX_BASIS} |
-
-## Translation
-
-The translation figure is the share of actual Snowflake statements that SQLQuack converts into
-DuckDB SQL. A statement counts only when it converts in full; a statement with any refusal does
-not. Converting is not the same as comparing results: a converted statement's rules are checked
-against results recorded on Snowflake, not every possible input.
+<table>
+	<thead>
+		<tr><th>Measure</th><th>Figure</th><th>Basis</th></tr>
+	</thead>
+	<tbody>
+		{shown('TRANSLATION_PCT') && (
+			<tr><td>Snowflake statements that translate</td><td>{figures.TRANSLATION_PCT}</td><td>{figures.TRANSLATION_BASIS}</td></tr>
+		)}
+		<tr><td>Documented Snowflake syntax forms verified</td><td>{figures.SYNTAX_PCT} of {figures.SYNTAX_FORMS}</td><td>{figures.SYNTAX_BASIS}</td></tr>
+	</tbody>
+</table>
 
 ## Syntax
 
@@ -33,6 +33,9 @@ Reproduce it from a checkout:
 ```bash
 cargo run --release -p sqlquack-syntax-coverage -- summary
 ```
+
+Its `checked 3479 forms` line counts the whole catalogue. 128 of those forms no longer appear on any
+pinned documentation page, so the figure counts the remaining {figures.SYNTAX_FORMS}.
 
 ## Rules
 

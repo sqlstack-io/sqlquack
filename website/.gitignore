@@ -3,6 +3,8 @@ dist/
 .astro/
 public/playground/engine/
 wasm/target/
+wasm/pkg/
+public/playground/engine-version.js
 public/playground/duckdb/
 public/playground/duckdb-version.js
 public/playground/sqlquack.toml

@@ -333,7 +333,7 @@ def microsecond_arrow_type(type_name: str) -> pa.DataType:
 
 
 def _sub_microsecond_count(values: tuple[int | None, ...]) -> int:
-    present: list[int] = list(filter(lambda value: value is not None, values))
+    present: list[int] = list(filter(None, values))
     return sum(value % 1000 != 0 for value in present)
 
 

@@ -1,20 +1,73 @@
 // The SQLQuack playground: each edit runs the engine (SQLQuack compiled to WebAssembly, in a
-// worker) and shows its stages; translated SQL runs in DuckDB-WASM.
+// worker) and shows its stages; translated SQL runs in DuckDB-WASM, which downloads in the
+// background once the page is idle.
 
+import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
+import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
 import { CAPTIONS, EXAMPLES, ROWS, SCHEMA } from './examples.js';
 import { escape, rendered, underlined } from './spans.js';
 
-// The engine's worker; `engine(op, fields)` resolves with its reply.
-const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
+const here = (path) => new URL(path, import.meta.url).href;
+const ENGINE_WASM = here(`${ENGINE_DIR}sqlquack_wasm_bg.wasm`);
+const DUCKDB_FILES = ['duckdb-browser.mjs', 'duckdb-browser-base.worker.js', 'duckdb-base.wasm'].map((file) => here(DUCKDB_DIR + file));
+
+// The engine and DuckDB live in directories named for their content or version, so a URL never
+// changes meaning: the page keeps them in Cache Storage, and a second visit loads them without the
+// network whatever the host's cache headers (GitHub Pages sends ten minutes). Earlier versions'
+// files are dropped.
+const cache = (self.caches ? caches.open('sqlquack-playground') : Promise.reject()).catch(() => null);
+cache.then(async (store) => {
+	for (const request of (await store?.keys()) ?? []) if (![ENGINE_WASM, ...DUCKDB_FILES].includes(request.url)) store.delete(request);
+});
+
+// `url`'s response, from the cache or the network, reporting its decoded bytes as they arrive.
+async function cached(url, onProgress) {
+	const store = await cache;
+	let response = await store?.match(url).catch(() => undefined);
+	if (!response) {
+		response = await fetch(url);
+		if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+		store?.put(url, response.clone()).catch(() => {});
+	}
+	if (!onProgress) return response;
+	let received = 0;
+	const counted = response.body.pipeThrough(
+		new TransformStream({
+			transform(chunk, controller) {
+				received += chunk.byteLength;
+				onProgress(received);
+				controller.enqueue(chunk);
+			},
+		}),
+	);
+	return new Response(counted, { headers: response.headers });
+}
+
+// The engine's worker; `engine(op, fields)` resolves with its reply. The page compiles the wasm
+// and hands the worker the module, so the download starts with this script, not after the worker
+// and its imports load.
+const worker = new Worker(here('./worker.js'), { type: 'module' });
 const pending = new Map();
 let nextId = 0;
 const engineReady = new Promise((resolve) => {
 	worker.addEventListener('message', ({ data }) => {
-		if (data.ready) return resolve();
+		if (data.ready) {
+			performance.mark('engine-ready');
+			return resolve();
+		}
 		pending.get(data.id)?.(data);
 		pending.delete(data.id);
 	});
 });
+const percent = (received, total) => Math.min(99, Math.floor((received / total) * 100));
+cached(ENGINE_WASM, (received) => progress('parse', `loading the engine… ${percent(received, ENGINE_WASM_BYTES)}%`))
+	.then((response) => {
+		const copy = response.clone();
+		// A host that serves .wasm with another type rules out streaming compilation.
+		return WebAssembly.compileStreaming(response).catch(async () => WebAssembly.compile(await copy.arrayBuffer()));
+	})
+	.then((module) => worker.postMessage({ module }))
+	.catch((error) => setStage('parse', 'fail', terminal(`<span class="bad">The engine did not load:</span> ${escape(String(error.message ?? error))}`), ''));
 function engine(op, fields) {
 	const id = ++nextId;
 	return new Promise((resolve) => {
@@ -23,6 +76,19 @@ function engine(op, fields) {
 	});
 }
 
+// Updates a loading stage's subtitle, at most once a frame.
+const progressText = {};
+function progress(id, text) {
+	if (progressText[id] === undefined) {
+		requestAnimationFrame(() => {
+			const stage = $(`#stage-${id}`);
+			if (stage.querySelector('.pg-status').classList.contains('loading')) stage.querySelector('.pg-sub').textContent = progressText[id];
+			if (id === 'run') renderDuckDBProgress();
+			delete progressText[id];
+		});
+	}
+	progressText[id] = text;
+}
 
 const $ = (selector) => document.querySelector(selector);
 const sqlBox = $('#pg-sql');
@@ -141,26 +207,84 @@ async function run() {
 	if (translate.status === 'pass' && statements.length === 1) {
 		latest = statements[0].sql;
 		if (duckdb) execute();
-		else setStage('run', 'ready', '<button class="button primary" type="button" id="pg-run">Run in DuckDB-WASM</button>', 'loads DuckDB-WASM (about 8 MB compressed)');
+		else showDuckDBLoading();
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
 	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
 }
 
-// DuckDB-WASM, loaded on first use.
+// DuckDB-WASM, downloaded in the background once the page is idle (or on the first run).
 let duckdb = null;
+let duckdbLoad = null;
+let duckdbReceived = 0;
+let duckdbError = null;
 let running = 0;
 
+function startDuckDB() {
+	duckdbLoad ??= loadDuckDB().then(
+		(loaded) => {
+			duckdb = loaded;
+			performance.mark('duckdb-ready');
+			if (latest) execute();
+			return loaded;
+		},
+		(error) => {
+			duckdbError = error;
+			duckdbLoad = null;
+			if (latest) showDuckDBLoading();
+			throw error;
+		},
+	);
+	return duckdbLoad;
+}
+
 async function loadDuckDB() {
-	// Served from this site, in a directory named for its version (scripts/prepare_playground.mjs).
-	const { DUCKDB_DIR } = await import('./duckdb-version.js');
-	const DUCKDB_WASM = new URL(DUCKDB_DIR, import.meta.url);
-	const module = await import(new URL('duckdb-browser.mjs', DUCKDB_WASM).href);
-	const worker = new Worker(new URL('duckdb-browser-base.worker.js', DUCKDB_WASM));
-	const db = new module.AsyncDuckDB(new module.VoidLogger(), worker);
-	await db.instantiate(new URL('duckdb-base.wasm', DUCKDB_WASM).href);
+	duckdbError = null;
+	// Each file as a same-origin blob URL, so DuckDB's module, worker and wasm all come from the cache.
+	const blob = async (url, type, onProgress) => {
+		const contents = await (await cached(url, onProgress)).blob();
+		return URL.createObjectURL(contents.slice(0, contents.size, type));
+	};
+	const [moduleUrl, workerUrl, wasmUrl] = await Promise.all([
+		blob(DUCKDB_FILES[0], 'text/javascript'),
+		blob(DUCKDB_FILES[1], 'text/javascript'),
+		blob(DUCKDB_FILES[2], 'application/wasm', (received) => {
+			duckdbReceived = received;
+			progress('run', '');
+		}),
+	]);
+	duckdbReceived = DUCKDB_WASM_BYTES;
+	progress('run', '');
+	const module = await import(moduleUrl);
+	const db = new module.AsyncDuckDB(new module.VoidLogger(), new Worker(workerUrl));
+	await db.instantiate(wasmUrl);
 	const version = await (await db.connect()).query('SELECT version() AS v');
 	return { db, version: String(version.toArray()[0].v) };
+}
+
+// The run stage while DuckDB downloads: a progress bar, or the error with a retry.
+function showDuckDBLoading() {
+	if (duckdbError) {
+		setStage(
+			'run',
+			'fail',
+			terminal(`<span class="bad">DuckDB did not load:</span> ${escape(String(duckdbError.message ?? duckdbError))}`) +
+				'<button class="button" type="button" id="pg-run">Try again</button>',
+			'',
+		);
+		return;
+	}
+	setStage('run', 'loading', '<div class="pg-progress"><span></span></div>', '', 'loading');
+	renderDuckDBProgress();
+}
+
+function renderDuckDBProgress() {
+	const bar = $('#stage-run .pg-progress span');
+	if (!bar) return;
+	const done = percent(duckdbReceived, DUCKDB_WASM_BYTES);
+	bar.style.width = `${done}%`;
+	$('#stage-run .pg-sub').textContent =
+		duckdbReceived >= DUCKDB_WASM_BYTES ? 'Starting DuckDB…' : `Loading DuckDB… ${done}%`;
 }
 
 async function execute() {
@@ -169,7 +293,7 @@ async function execute() {
 	const ticket = ++running;
 	setStage('run', 'running', '');
 	try {
-		if (!duckdb) duckdb = await loadDuckDB();
+		if (!duckdb) await startDuckDB();
 		const conn = await duckdb.db.connect();
 		try {
 			const tables = JSON.parse((await engine('fixture', { schema: schemaBox.value })).result);
@@ -247,7 +371,8 @@ sqlBox.value = params.get('sql') ?? EXAMPLES[params.get('example')] ?? EXAMPLES.
 if (!params.get('sql')) showCaption(params.get('example'));
 schemaBox.value = SCHEMA;
 rowsBox.value = ROWS;
-setStage('parse', 'loading', '', 'loading the engine');
+setStage('parse', 'loading', '', 'loading the engine…', 'loading');
 await engineReady;
 await run();
-if (params.has('run')) execute();
+// DuckDB starts once the page has settled; `run` above already shows its progress.
+(self.requestIdleCallback ?? ((callback) => setTimeout(callback, 200)))(() => startDuckDB().catch(() => {}), { timeout: 2000 });
