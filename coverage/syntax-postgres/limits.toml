@@ -2115,3 +2115,270 @@ form = "pg.expressions.textsearch.op-lt-minus-gt"
 kind = "required_operand_missing"
 target = "<tsquery>"
 reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+# Functions: readings of signatures that write parameter defaults.
+
+[[reading]]
+form = "pg.functions.admin.pg-logical-emit-message"
+grammar_sha256 = "b124e18838a0fa65ed5fdce32203c95e3a34c905dca918685c84ccdc533b686f"
+grammar = ["PG_LOGICAL_EMIT_MESSAGE ( <transactional boolean>, <prefix text>, <content text> [ , <flush boolean> ] )", "PG_LOGICAL_EMIT_MESSAGE ( <transactional boolean>, <prefix text>, <content bytea> [ , <flush boolean> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.admin.pg-promote"
+grammar_sha256 = "814b3b5fa4e8bac1e3b823ab3d65d890993fc5251a0d2120258787740d4c0815"
+grammar = ["PG_PROMOTE ( [ <wait boolean> [ , <wait_seconds integer> ] ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.admin.pg-terminate-backend"
+grammar_sha256 = "5d9e5233cf0883b0dfe7436e98ffdc721a4ac7ae96ff92162735fe7037b333f4"
+grammar = ["PG_TERMINATE_BACKEND ( <pid integer> [ , <timeout bigint> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+[[reading]]
+form = "pg.functions.string.parse-ident"
+grammar_sha256 = "36f341ed540c16eaa982fe732884dc45abf28bf71a28aadbe2996d43a8933c7f"
+grammar = ["PARSE_IDENT ( <qualified_identifier text> [ , <strict_mode boolean> ] )"]
+reason = "the signature writes a parameter's default as DEFAULT value, which is not call syntax: a call may leave out a trailing run of defaulted parameters, so each is optional from the first defaulted one on (gram.y func_arg_list takes the arguments given)"
+
+# Functions: readings of SQL/JSON constructors whose synopses bracket parts gram.y requires.
+
+[[reading]]
+form = "pg.functions.aggregate.json-objectagg"
+grammar_sha256 = "bc59981f1aae5082e93344f63c9b89981c05537d7aa9debe8382d4755624b050"
+grammar = ["JSON_OBJECTAGG ( <key_expression> { VALUE | : } <value_expression> [ { NULL | ABSENT } ON NULL ] [ { WITH | WITHOUT } UNIQUE [ KEYS ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "the key and value are required (gram.y json_aggregate_func: JSON_OBJECTAGG '(' json_name_and_value ...), though the synopsis brackets them; the ':' separator is the bare token, not a string"
+
+[[reading]]
+form = "pg.functions.aggregate.json-arrayagg"
+grammar_sha256 = "b8246bd604458bdc30ecde99c58fba926d068cab68aea1687f3878eb6ecada7f"
+grammar = ["JSON_ARRAYAGG ( <value_expression> [ ORDER BY <sort_expression> ] [ { NULL | ABSENT } ON NULL ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "the value is required (gram.y json_aggregate_func: JSON_ARRAYAGG '(' json_value_expr ...), though the synopsis brackets it"
+
+[[reading]]
+form = "pg.functions.json.json-array"
+grammar_sha256 = "28f285245bee6c800d4b3bede6711c278830981f8789d0f84ff857b5a6a1673f"
+grammar = ["JSON_ARRAY ( [ { <value_expression> [ FORMAT JSON ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )", "JSON_ARRAY ( [ <query_expression> ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "ON NULL follows a value list only (gram.y json_array: JSON_ARRAY '(' json_value_expr_list json_array_constructor_null_clause_opt ...; with no values only RETURNING may follow)"
+
+[[reading]]
+form = "pg.functions.json.json-object-value-format-json-encoding"
+grammar_sha256 = "1c2310309b42039d6481debaa250343db468e68c906c471670cce1494f28cd59"
+grammar = ["JSON_OBJECT ( [ { <key_expression> { VALUE | : } <value_expression> [ FORMAT JSON [ ENCODING UTF8 ] ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] [ { WITH | WITHOUT } UNIQUE [ KEYS ] ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "ON NULL and UNIQUE follow a key-value list only (gram.y json_object: JSON_OBJECT '(' json_name_and_value_list json_object_constructor_null_clause_opt json_key_uniqueness_constraint_opt ...; with no pairs only RETURNING may follow); the ':' separator is the bare token, not a string"
+
+[[reading]]
+form = "pg.functions.xml.xmltable-passing-columns"
+grammar_sha256 = "34e6ea0ac93a7f91c3b20a670ab46eaaab27c5fd0464f007cfb2aa2c56c0bd12"
+grammar = ["XMLTABLE ( [ XMLNAMESPACES ( <namespace_uri> AS <namespace_name> [ , ... ] ), ] <row_expression> PASSING [ BY { REF | VALUE } ] <document_expression> [ BY { REF | VALUE } ] COLUMNS <name> { <type> [ PATH <column_expression> ] [ DEFAULT <default_expression> ] [ NOT NULL | NULL ] | FOR ORDINALITY } [ , <name> <type> ] )"]
+reason = "the column list's second item written out with its name, since the renderer copies only the braced part of the first item (gram.y xmltable_column_el: ColId Typename ... | ColId FOR ORDINALITY)"
+
+# Functions: derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-get-binary-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-get-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-peek-binary-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-logical-slot-peek-changes"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-restore-attribute-stats"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.admin.pg-restore-relation-stats"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.comparison.num-nonnulls"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.comparison.num-nulls"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.info.collation-for"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOR"
+reason = "without FOR, COLLATION ( 1 ) is a call of a function named collation: COLLATION is a type_func_name_keyword (kwlist.h), which gram.y func_name accepts, so it is valid syntax"
+
+[[suppress]]
+form = "pg.functions.json.json-build-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-build-object"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-exists"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-extract-path-text"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-extract-path"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.json-query"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-table-columns"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.json-table-columns"
+kind = "identifier_class"
+target = "<json_table_column>"
+reason = "a JSON_TABLE column is a definition (gram.y json_table_column_definition: ColId Typename ...), not an identifier, so identifier spellings of the whole definition do not apply"
+
+[[suppress]]
+form = "pg.functions.json.json-value"
+kind = "identifier_class"
+target = "<varname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-build-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-build-object"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-extract-path-text"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.json.jsonb-extract-path"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARIADIC"
+reason = "without VARIADIC the array is passed as one ordinary argument, a call that is valid syntax (gram.y func_arg_list); VARIADIC only changes how the arguments are matched at function lookup"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required XMLATTRIBUTES in [ , XMLATTRIBUTES ( <attvalue> [ AS <attname> ] [ , ... ] ) ]"
+reason = "without XMLATTRIBUTES the parenthesised expression is element content (gram.y xmlelement: XMLELEMENT '(' NAME_P ColLabel ',' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlelement-name"
+kind = "identifier_class"
+target = "<attname>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlforest"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlpi-name"
+kind = "identifier_class"
+target = "<name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"
+
+[[suppress]]
+form = "pg.functions.xml.xmlroot-version"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NO after VERSION"
+reason = "VERSION takes any expression (gram.y xml_root_version: VERSION_P a_expr | VERSION_P NO VALUE_P), and NO and VALUE are unreserved keywords, so either word alone is a column reference, valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmlroot-version"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VALUE"
+reason = "VERSION takes any expression (gram.y xml_root_version: VERSION_P a_expr | VERSION_P NO VALUE_P), and NO and VALUE are unreserved keywords, so either word alone is a column reference, valid syntax"
+
+[[suppress]]
+form = "pg.functions.xml.xmltable-passing-columns"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FOR after <name>"
+reason = "ORDINALITY without FOR is a type name: it is an unreserved keyword (kwlist.h), which gram.y xmltable_column_el (ColId Typename) accepts, so this is valid syntax that fails at type lookup"
+
+[[suppress]]
+form = "pg.functions.xml.xmltable-passing-columns"
+kind = "identifier_class"
+target = "<namespace_name>"
+reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, xmlelement and xmlpi NAME_P ColLabel, xml_namespace_el, json_passing AS ColLabel), which takes reserved keywords, so the reserved-word spelling is no negative"

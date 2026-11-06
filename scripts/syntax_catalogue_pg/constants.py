@@ -145,9 +145,12 @@ WHERE_PHRASE: re.Pattern[str] = re.compile(
 FUNC_SIGNATURE: re.Pattern[str] = re.compile(r'<para role="func_signature">(.*?)</para>', re.S)
 INDEXTERM: re.Pattern[str] = re.compile(r"<indexterm\b.*?</indexterm>", re.S)
 RETURNVALUE: re.Pattern[str] = re.compile(r"<returnvalue>.*?</returnvalue>", re.S)
+RETURN_ONWARD: re.Pattern[str] = re.compile(r"<returnvalue>.*", re.S)
 COMMENT: re.Pattern[str] = re.compile(r"<!--.*?-->", re.S)
 REPLACEABLE: re.Pattern[str] = re.compile(r"<replaceable\b[^>]*>(.*?)</replaceable>", re.S)
-PARAM_TYPE: re.Pattern[str] = re.compile(r"<parameter>(.*?)</parameter>\s*<type>(.*?)</type>", re.S)
+PARAM_TYPE: re.Pattern[str] = re.compile(
+    r"<parameter>(.*?)</parameter>\s*<(type|replaceable)>(.*?)</\2>", re.S
+)
 PARAMETER: re.Pattern[str] = re.compile(r"<parameter>(.*?)</parameter>", re.S)
 TYPE_TAG: re.Pattern[str] = re.compile(r"<type>(.*?)</type>", re.S)
 FUNCTION_TAG: re.Pattern[str] = re.compile(r"<function>(.*?)</function>", re.S)

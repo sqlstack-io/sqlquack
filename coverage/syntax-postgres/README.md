@@ -127,6 +127,9 @@ readings, suppressions and hand-written limits, each with its reason, in the for
 `coverage/syntax/limits.toml`. Most expressions suppressions are one gram.y fact: every
 operator token is also a prefix operator (`qual_Op a_expr`), so an operator form with its left
 operand left out is valid syntax; with its right operand left out it stays a negative.
+Function parameters written `<name type>` are expressions (gram.y func_arg_expr), whatever
+their name suggests; the catalogue cuts a signature at its return value, so a set-returning
+function's output columns are not read as call syntax.
 
 Cases are written for the forms in `focus/postgres.toml` and for every form of the families in
 `CASED_FAMILIES`; the other families' case files hold only their focus forms until taken up.

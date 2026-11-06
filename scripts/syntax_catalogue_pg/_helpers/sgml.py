@@ -17,6 +17,7 @@ from scripts.syntax_catalogue_pg.constants import (
     PARAMETER,
     PHRASE_KEEP,
     REPLACEABLE,
+    RETURN_ONWARD,
     RETURNVALUE,
     SECTION_TAG,
     SYNOPSIS_DIV,
@@ -44,7 +45,7 @@ def plain(fragment: str) -> str:
 def synopsis_text(raw: str) -> str:
     """A synopsis block as grammar text: `<replaceable>x</replaceable>` becomes `<x>`."""
     text: str = RETURNVALUE.sub("", INDEXTERM.sub("", COMMENT.sub("", raw)))
-    text = PARAM_TYPE.sub(lambda m: f"\x00{plain(m.group(1))} {plain(m.group(2))}\x01", text)
+    text = PARAM_TYPE.sub(lambda m: f"\x00{plain(m.group(1))} {plain(m.group(3))}\x01", text)
     text = TYPE_TAG.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = PARAMETER.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = REPLACEABLE.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
@@ -60,9 +61,9 @@ def synopsis_text(raw: str) -> str:
 
 
 def signature_text(raw: str) -> str:
-    """A signature as grammar text without its return type; a literal `<->` survives tag removal."""
-    text: str = RETURNVALUE.sub("", INDEXTERM.sub("", COMMENT.sub("", raw)))
-    text = PARAM_TYPE.sub(lambda m: f"\x00{plain(m.group(1))} {plain(m.group(2))}\x01", text)
+    """A signature as grammar text, cut at its return type; a literal `<->` survives tag removal."""
+    text: str = RETURN_ONWARD.sub("", INDEXTERM.sub("", COMMENT.sub("", raw)))
+    text = PARAM_TYPE.sub(lambda m: f"\x00{plain(m.group(1))} {plain(m.group(3))}\x01", text)
     text = TYPE_TAG.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = PARAMETER.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = REPLACEABLE.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)

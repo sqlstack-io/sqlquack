@@ -182,9 +182,9 @@ source = "doc.functions-admin"
 anchor = "Backup Control Functions"
 kind = "call"
 grammar = [
-  "pg_backup_stop ( [ <wait_for_archive boolean> ] ) ( <lsn pg_lsn>, <labelfile text>, <spcmapfile text> )",
+  "pg_backup_stop ( [ <wait_for_archive boolean> ] )",
 ]
-grammar_sha256 = "8389ce8e641f39f192a244ef1fb4d15e7251cdb45792e63bf01d10a454f00c36"
+grammar_sha256 = "248b5933fcff4cfde858d82fb456b76a362cb819a53ee315d363043970e5407a"
 uses = []
 status = "catalogued"
 
@@ -286,9 +286,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_copy_logical_replication_slot ( <src_slot_name name>, <dst_slot_name name> [ , <temporary boolean> [ , <plugin name> ] ] ) ( <slot_name name>, <lsn pg_lsn> )",
+  "pg_copy_logical_replication_slot ( <src_slot_name name>, <dst_slot_name name> [ , <temporary boolean> [ , <plugin name> ] ] )",
 ]
-grammar_sha256 = "427b155f5e9507d88c3aeb6aab4672277c65ce202fb0938a68ebaf700b5d3dfb"
+grammar_sha256 = "71cf629b785ca85eeadb6ac6ca29df5bcea75e2fa4674ae362d41c9be0cbad74"
 uses = []
 status = "catalogued"
 
@@ -299,9 +299,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_copy_physical_replication_slot ( <src_slot_name name>, <dst_slot_name name> [ , <temporary boolean> ] ) ( <slot_name name>, <lsn pg_lsn> )",
+  "pg_copy_physical_replication_slot ( <src_slot_name name>, <dst_slot_name name> [ , <temporary boolean> ] )",
 ]
-grammar_sha256 = "8f9754ac307fbe0ef44329b3222adde799de0d1b5530d911445d36e5c6ed0815"
+grammar_sha256 = "c1dabd9592ec147795e09aa52c7a51f6b362bb98199713b018015cb738be51fe"
 uses = []
 status = "catalogued"
 
@@ -312,9 +312,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_create_logical_replication_slot ( <slot_name name>, <plugin name> [ , <temporary boolean>, <twophase boolean>, <failover boolean> ] ) ( <slot_name name>, <lsn pg_lsn> )",
+  "pg_create_logical_replication_slot ( <slot_name name>, <plugin name> [ , <temporary boolean>, <twophase boolean>, <failover boolean> ] )",
 ]
-grammar_sha256 = "c379a09be942efb37e89d037824b3398339bc5b6331d2e3973f6e4103b5e5543"
+grammar_sha256 = "7c0554765c56679a6ef47ef55f62cbb351281c6ece7b69d735f26375f2c179e6"
 uses = []
 status = "catalogued"
 
@@ -325,9 +325,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_create_physical_replication_slot ( <slot_name name> [ , <immediately_reserve boolean>, <temporary boolean> ] ) ( <slot_name name>, <lsn pg_lsn> )",
+  "pg_create_physical_replication_slot ( <slot_name name> [ , <immediately_reserve boolean>, <temporary boolean> ] )",
 ]
-grammar_sha256 = "a397fd6cb3954fc8649b5431a8c708cfb819a9a6d130ab88ba630615060615d5"
+grammar_sha256 = "bc826e000bc5f3bdab8edfec515ffbe0d8a53df219acadadc6f078a0b0082cdd"
 uses = []
 status = "catalogued"
 
@@ -469,9 +469,9 @@ source = "doc.functions-admin"
 anchor = "Recovery Control Functions"
 kind = "call"
 grammar = [
-  "pg_get_wal_resource_managers () ( <rm_id integer>, <rm_name text>, <rm_builtin boolean> )",
+  "pg_get_wal_resource_managers ()",
 ]
-grammar_sha256 = "508eb13618a85ed6bb1d76e2f9496f42bd98e58cbee472f2340682a20d011df5"
+grammar_sha256 = "e54d85559d1d9ac1529ead05b279db0e2e668a363bb5bf3749f2ee59f9fe192b"
 uses = []
 status = "catalogued"
 
@@ -613,9 +613,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_logical_slot_get_binary_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> ) ( <lsn pg_lsn>, <xid xid>, <data bytea> )",
+  "pg_logical_slot_get_binary_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> )",
 ]
-grammar_sha256 = "50f2136d97be29fb8ff17b677aac3287153e157c9d2bac1bc4f35e5f07d14402"
+grammar_sha256 = "a0d698c6a1692782bedd8b813ee24d8233347c465fd6ba6f226c40801b334490"
 uses = []
 status = "catalogued"
 
@@ -626,9 +626,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_logical_slot_get_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> ) ( <lsn pg_lsn>, <xid xid>, <data text> )",
+  "pg_logical_slot_get_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> )",
 ]
-grammar_sha256 = "2f12929ea1a97949c11c9176039b8bc1727a552d021ef74832117df346de3b13"
+grammar_sha256 = "cfc9332e141afc55c98825e714d4dba59b767e037a6167e6889a173923ae7bfc"
 uses = []
 status = "catalogued"
 
@@ -639,9 +639,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_logical_slot_peek_binary_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> ) ( <lsn pg_lsn>, <xid xid>, <data bytea> )",
+  "pg_logical_slot_peek_binary_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> )",
 ]
-grammar_sha256 = "2550cddfedc9ab8cce856aa399cdc90a4937ce345e87fe1aba788206d7b5013c"
+grammar_sha256 = "6d87e2e30c3ef9349f30d28cd7acb48ba2a370e6ec7d137821266237208ecec3"
 uses = []
 status = "catalogued"
 
@@ -652,9 +652,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_logical_slot_peek_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> ) ( <lsn pg_lsn>, <xid xid>, <data text> )",
+  "pg_logical_slot_peek_changes ( <slot_name name>, <upto_lsn pg_lsn>, <upto_nchanges integer>, VARIADIC <options text[]> )",
 ]
-grammar_sha256 = "f84b799fb615ab9d53829765d6a791606d64fc299c3e48823e1891714e32603c"
+grammar_sha256 = "6f65dda6c9e5f159bead067ff7fcd4f0ca99c221f2f19149a46e5bed363ac864"
 uses = []
 status = "catalogued"
 
@@ -665,9 +665,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_archive_statusdir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_archive_statusdir ()",
 ]
-grammar_sha256 = "26bc6edf2b804ff5c28049f8d728d222c0114fe47a1d5efa05262411b1b13865"
+grammar_sha256 = "c9a81b8d7bd1344f2d8c79a84e6261032d31db59b60dd372ca46bb513a529684"
 uses = []
 status = "catalogued"
 
@@ -691,9 +691,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_logdir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_logdir ()",
 ]
-grammar_sha256 = "f857136524b849e5d98572fd66c6d2f68eb18461e94f3f928067d1179b28960d"
+grammar_sha256 = "d496cc8a76ad079242d6d7e19c1b4336d373d8fa6254f95e74fb52349b4a608e"
 uses = []
 status = "catalogued"
 
@@ -704,9 +704,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_logicalmapdir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_logicalmapdir ()",
 ]
-grammar_sha256 = "0622351d8a59812aaf25db4d6c7062d72d5a46aa47e38f8204a7b40812f633d7"
+grammar_sha256 = "f008df211c0948a8857f2b96ad639036e5e8dc4fd518dfa528da5e9dd5397f30"
 uses = []
 status = "catalogued"
 
@@ -717,9 +717,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_logicalsnapdir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_logicalsnapdir ()",
 ]
-grammar_sha256 = "5ab335de86e1b8ee7fbaf87d6a8f683fd8a6b48c1c8dee753bacdb726a3ee3f6"
+grammar_sha256 = "73abbee0d10b1f885cb60433a0e354f94cb206979187471662299161825a5e48"
 uses = []
 status = "catalogued"
 
@@ -730,9 +730,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_replslotdir ( <slot_name text> ) ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_replslotdir ( <slot_name text> )",
 ]
-grammar_sha256 = "351d21ef191c6a003a9e8b5c02d36657eed17dbfb280aa024268dfb2d4380102"
+grammar_sha256 = "eab6d35cb8f9b5653de6e1fba7be974eea189f5fec45984dff4baf78b52df68a"
 uses = []
 status = "catalogued"
 
@@ -743,9 +743,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_summariesdir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_summariesdir ()",
 ]
-grammar_sha256 = "11a53a6a0bc5db3ac6bb891cef7aae27904b4f005460b49d036c4d937d5ea2fd"
+grammar_sha256 = "30ac2496f4c75c7dbec43d6ba894f530e616164f5ba2b571067ebb0956a26a52"
 uses = []
 status = "catalogued"
 
@@ -756,9 +756,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_tmpdir ( [ <tablespace oid> ] ) ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_tmpdir ( [ <tablespace oid> ] )",
 ]
-grammar_sha256 = "abcde09bd4dc23cf1254770dd15c6ae889600ad1727008d51c4f4fadad66e864"
+grammar_sha256 = "86cbba36794dbe38913ba0e19675413a3db8d2b9753b657d4d22ef3fbd00447f"
 uses = []
 status = "catalogued"
 
@@ -769,9 +769,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_ls_waldir () ( <name text>, <size bigint>, <modification timestamp with time zone> )",
+  "pg_ls_waldir ()",
 ]
-grammar_sha256 = "935d997c0154440f173d3e3eda328facf7cf482c0ef9cff0c771af3bce6f753f"
+grammar_sha256 = "d6041c748bd1df5cf7e24bc27bfe7252b71deda5e9834eb95d106a3e4de93bc5"
 uses = []
 status = "catalogued"
 
@@ -808,9 +808,9 @@ source = "doc.functions-admin"
 anchor = "Database Object Management Functions"
 kind = "call"
 grammar = [
-  "pg_partition_tree ( <regclass> ) ( <relid regclass>, <parentrelid regclass>, <isleaf boolean>, <level integer> )",
+  "pg_partition_tree ( <regclass> )",
 ]
-grammar_sha256 = "0fd1e5e6b7fe2d7d45b993baee59695eaa7cc8105ccb693060d677ec26994de4"
+grammar_sha256 = "43ed3173bcd28ba0a44976aed42fc299274e14472efb47107064c19d2f0459a0"
 uses = []
 status = "catalogued"
 
@@ -1055,9 +1055,9 @@ source = "doc.functions-admin"
 anchor = "Replication Management Functions"
 kind = "call"
 grammar = [
-  "pg_replication_slot_advance ( <slot_name name>, <upto_lsn pg_lsn> ) ( <slot_name name>, <end_lsn pg_lsn> )",
+  "pg_replication_slot_advance ( <slot_name name>, <upto_lsn pg_lsn> )",
 ]
-grammar_sha256 = "31f974ba75b8ecca65a6b38b80a8a69bf54496b947111eafadf8bab00ac59acb"
+grammar_sha256 = "803ecb97a1aa35785ac25c9d50afc8c8ce92f9569cc0140af42d32924fba5fbd"
 uses = []
 status = "catalogued"
 
@@ -1134,9 +1134,9 @@ source = "doc.functions-admin"
 anchor = "Backup Control Functions"
 kind = "call"
 grammar = [
-  "pg_split_walfile_name ( <file_name text> ) ( <segment_number numeric>, <timeline_id bigint> )",
+  "pg_split_walfile_name ( <file_name text> )",
 ]
-grammar_sha256 = "09844ce0a9ef76cfb28130f4db0d4c8a6b4ad42b4866e40e96173a0981fc7e6e"
+grammar_sha256 = "23321cf9d2e27024f90563b0c5b09fedf9428b2c386285df8d726be5a1dcbcb3"
 uses = []
 status = "catalogued"
 
@@ -1147,9 +1147,9 @@ source = "doc.functions-admin"
 anchor = "Generic File Access Functions"
 kind = "call"
 grammar = [
-  "pg_stat_file ( <filename text> [ , <missing_ok boolean> ] ) ( <size bigint>, <access timestamp with time zone>, <modification timestamp with time zone>, <change timestamp with time zone>, <creation timestamp with time zone>, <isdir boolean> )",
+  "pg_stat_file ( <filename text> [ , <missing_ok boolean> ] )",
 ]
-grammar_sha256 = "91fdb2e4544bd793f294dbddb4ef3e400e6c885efa40646c762d513282c40825"
+grammar_sha256 = "5c8336a4ac2cc114d743c40a8b5d437c9de1ebc58fb870c1738c8b1f282c6459"
 uses = []
 status = "catalogued"
 
@@ -1347,9 +1347,9 @@ source = "doc.functions-admin"
 anchor = "Backup Control Functions"
 kind = "call"
 grammar = [
-  "pg_walfile_name_offset ( <lsn pg_lsn> ) ( <file_name text>, <file_offset integer> )",
+  "pg_walfile_name_offset ( <lsn pg_lsn> )",
 ]
-grammar_sha256 = "2a262c6ab690d48a27336fc28f7d0a9a4820ae84abc5004c8d65f036ebb1201b"
+grammar_sha256 = "08dc297a0daaf376c874e36662c52f4fab4ce1c009532f1411e801ef13b37982"
 uses = []
 status = "catalogued"
 
@@ -2020,9 +2020,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "stddev ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "stddev ( <numeric_type> )",
 ]
-grammar_sha256 = "30fce0b112c81f54c9da16efc163b8f640b5e2f7351d13a61e0b7d80bb1a0185"
+grammar_sha256 = "5e57185ca978c18a28c467867dc1869f62776b426d69cd05c85b11a7b91fa9bd"
 uses = []
 status = "catalogued"
 
@@ -2033,9 +2033,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "stddev_pop ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "stddev_pop ( <numeric_type> )",
 ]
-grammar_sha256 = "86639161b118f06ee90cb7f9846edc250878069691b1860f2f199650625800be"
+grammar_sha256 = "0ff4543bbf4cccab776bf5981c5e415def276c9a334f04c290167bade0ad0764"
 uses = []
 status = "catalogued"
 
@@ -2046,9 +2046,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "stddev_samp ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "stddev_samp ( <numeric_type> )",
 ]
-grammar_sha256 = "00470f494601035e9d077be0c82ae6023d850dd17d79a3d4dee4826b17ceed4b"
+grammar_sha256 = "fd35cfdf654ff09f64e8ceec06192313cfb2aa2927c7939b8e689edcb6d8e3f2"
 uses = []
 status = "catalogued"
 
@@ -2105,9 +2105,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "var_pop ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "var_pop ( <numeric_type> )",
 ]
-grammar_sha256 = "2dd6f46c2f94715cb2a83d818944d8d7457fc7d6d01528daa779747ff42070e4"
+grammar_sha256 = "574105cf9f9ca9a0613db66e3bd231f9bbf0dfd6c6adaf50264047bd1ef10f79"
 uses = []
 status = "catalogued"
 
@@ -2118,9 +2118,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "var_samp ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "var_samp ( <numeric_type> )",
 ]
-grammar_sha256 = "a0b65f71248e5b744aeec38ace75e800695af30fb0404b022aaf73accbc32e1b"
+grammar_sha256 = "03952c9afd463b0529f1c2e118b44d1b663a2a7aa26d6ed528f4246573617197"
 uses = []
 status = "catalogued"
 
@@ -2131,9 +2131,9 @@ source = "doc.functions-aggregate"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "variance ( <numeric_type> ) <double precision> for <real> or <double precision>, otherwise <numeric>",
+  "variance ( <numeric_type> )",
 ]
-grammar_sha256 = "dd72fe0d7fb4ad23257e5c8eab3baa1be80fee3df103cd889317e0fa45243d6f"
+grammar_sha256 = "aba7be38126228acb08701d678bca3398d715d9a2325a262a782b7166485c1c8"
 uses = []
 status = "catalogued"
 
@@ -3969,9 +3969,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "aclexplode ( <aclitem[]> ) ( <grantor oid>, <grantee oid>, <privilege_type text>, <is_grantable boolean> )",
+  "aclexplode ( <aclitem[]> )",
 ]
-grammar_sha256 = "55c3e6a0ea4415abccbae53baec02edcc9702be3b54990d5cf04982b988a78de"
+grammar_sha256 = "1761579acd6ca2a52115b1f54328cb2ea003774986a6dba38d1d290da32e429f"
 uses = []
 status = "catalogued"
 
@@ -4425,9 +4425,9 @@ source = "doc.functions-info"
 anchor = "WAL Summarization Information Functions"
 kind = "call"
 grammar = [
-  "pg_available_wal_summaries () ( <tli bigint>, <start_lsn pg_lsn>, <end_lsn pg_lsn> )",
+  "pg_available_wal_summaries ()",
 ]
-grammar_sha256 = "8ffe1183fde193bd8e18ac9d0e3b6bc7d78587341965a5d39b498d4e8b83b125"
+grammar_sha256 = "37e2a7454bc88403a734b7c19d2348e2477da0f5c1fbb0aa28e35776c1eb4536"
 uses = []
 status = "catalogued"
 
@@ -4685,9 +4685,9 @@ source = "doc.functions-info"
 anchor = "System Catalog Information Functions"
 kind = "call"
 grammar = [
-  "pg_get_catalog_foreign_keys () ( <fktable regclass>, <fkcols text[]>, <pktable regclass>, <pkcols text[]>, <is_array boolean>, <is_opt boolean> )",
+  "pg_get_catalog_foreign_keys ()",
 ]
-grammar_sha256 = "5fa5d71aec0f16d1921b049cc8ba2003e07e23682aee77524f101451af7cda7d"
+grammar_sha256 = "293b716c4f5bf9a2117b9f4d78a4a75538355982a242fa99399b311c47b79f02"
 uses = []
 status = "catalogued"
 
@@ -4789,9 +4789,9 @@ source = "doc.functions-info"
 anchor = "System Catalog Information Functions"
 kind = "call"
 grammar = [
-  "pg_get_keywords () ( <word text>, <catcode \"char\">, <barelabel boolean>, <catdesc text>, <baredesc text> )",
+  "pg_get_keywords ()",
 ]
-grammar_sha256 = "13c0dd69703f2ad4f28f5978c919e33591d22ebcc2557721a5a78182c435ea83"
+grammar_sha256 = "fef53537bfba6f5c6e0e0b1fc1833b48b72076f9f4ae7bf118d5173faaebedaf"
 uses = []
 status = "catalogued"
 
@@ -4802,9 +4802,9 @@ source = "doc.functions-info"
 anchor = "Session Information Functions"
 kind = "call"
 grammar = [
-  "pg_get_loaded_modules () ( <module_name text>, <version text>, <file_name text> )",
+  "pg_get_loaded_modules ()",
 ]
-grammar_sha256 = "baeca3a2ab8643b9011963e023372dd68bb58c6cd8aa48bee4f469c3482ce635"
+grammar_sha256 = "534ed741b95d7caf2584e73d7529869c9515b267dd96445a50674b65af277378"
 uses = []
 status = "catalogued"
 
@@ -4815,9 +4815,9 @@ source = "doc.functions-info"
 anchor = "Transaction ID and Snapshot Information Functions"
 kind = "call"
 grammar = [
-  "pg_get_multixact_members ( <multixid xid> ) ( <xid xid>, <mode text> )",
+  "pg_get_multixact_members ( <multixid xid> )",
 ]
-grammar_sha256 = "51a283c7bd7f2871beecd524465b62396292468664e07d08c8a6bef40d616ea1"
+grammar_sha256 = "b05bf3bd0313e22cc5c0fc3177164ffa396df7ddd208e1ac4006646638516cb1"
 uses = []
 status = "catalogued"
 
@@ -4828,9 +4828,9 @@ source = "doc.functions-info"
 anchor = "Object Information and Addressing Functions"
 kind = "call"
 grammar = [
-  "pg_get_object_address ( <type text>, <object_names text[]>, <object_args text[]> ) ( <classid oid>, <objid oid>, <objsubid integer> )",
+  "pg_get_object_address ( <type text>, <object_names text[]>, <object_args text[]> )",
 ]
-grammar_sha256 = "a467560820f20f6993f3553319d656ead7f10cb6b9461eafb3cd78c01795a5a6"
+grammar_sha256 = "9122fbc75a70c5b1a2c486161d06fde2cab221cc4dbdd1e4dfcf784a3b4bc1e6"
 uses = []
 status = "catalogued"
 
@@ -4947,9 +4947,9 @@ source = "doc.functions-info"
 anchor = "WAL Summarization Information Functions"
 kind = "call"
 grammar = [
-  "pg_get_wal_summarizer_state () ( <summarized_tli bigint>, <summarized_lsn pg_lsn>, <pending_lsn pg_lsn>, <summarizer_pid int> )",
+  "pg_get_wal_summarizer_state ()",
 ]
-grammar_sha256 = "fa8f6b17fa2781bbc0d0ed58f1ae7b01976c6941f9c37395cd3540d30f5833a8"
+grammar_sha256 = "99cfb91ac5458276791d7fe77b156b76ac9f23585b25f4f84a1352beed1d06eb"
 uses = []
 status = "catalogued"
 
@@ -4973,9 +4973,9 @@ source = "doc.functions-info"
 anchor = "Object Information and Addressing Functions"
 kind = "call"
 grammar = [
-  "pg_identify_object ( <classid oid>, <objid oid>, <objsubid integer> ) ( <type text>, <schema text>, <name text>, <identity text> )",
+  "pg_identify_object ( <classid oid>, <objid oid>, <objsubid integer> )",
 ]
-grammar_sha256 = "a4312844d760d210aa90202a24b8f79399492444e443985717e46446029fe9b0"
+grammar_sha256 = "02e68b23d6aeba7634e0b8885c04644d878e15e9bd877f0ded8f9fcaea03c85b"
 uses = []
 status = "catalogued"
 
@@ -4986,9 +4986,9 @@ source = "doc.functions-info"
 anchor = "Object Information and Addressing Functions"
 kind = "call"
 grammar = [
-  "pg_identify_object_as_address ( <classid oid>, <objid oid>, <objsubid integer> ) ( <type text>, <object_names text[]>, <object_args text[]> )",
+  "pg_identify_object_as_address ( <classid oid>, <objid oid>, <objsubid integer> )",
 ]
-grammar_sha256 = "23f8ecbdfe7c2eaa5ab9c544537795cee57628ec8fc47bc1275e4bb87580b5c9"
+grammar_sha256 = "6a437a0608c24ec428d5c411ef61e91af4665e7a56e2c33da90c330aa84d115c"
 uses = []
 status = "catalogued"
 
@@ -5038,9 +5038,9 @@ source = "doc.functions-info"
 anchor = "Data Validity Checking Functions"
 kind = "call"
 grammar = [
-  "pg_input_error_info ( <string text>, <type text> ) ( <message text>, <detail text>, <hint text>, <sql_error_code text> )",
+  "pg_input_error_info ( <string text>, <type text> )",
 ]
-grammar_sha256 = "eb37bcdfe4e3d137c0cbe81b2f18828d98bbb6badd081ad528b1ab7ac9c89e24"
+grammar_sha256 = "498b52f9f7d1a19523b3526dfba8cfb5627dacdce3b79e14b4f967a2c9100bb7"
 uses = []
 status = "catalogued"
 
@@ -5090,9 +5090,9 @@ source = "doc.functions-info"
 anchor = "Committed Transaction Information Functions"
 kind = "call"
 grammar = [
-  "pg_last_committed_xact () ( <xid xid>, <timestamp timestamp with time zone>, <roident oid> )",
+  "pg_last_committed_xact ()",
 ]
-grammar_sha256 = "a369b28506350ced3df88bb801295360c4f2a53b1aac992475309b3cc41d8151"
+grammar_sha256 = "45a177d4cb26d508bdc20525b0952bd97edb5d82858fd59a5c3dad3fef382bd0"
 uses = []
 status = "catalogued"
 
@@ -5194,9 +5194,9 @@ source = "doc.functions-info"
 anchor = "System Catalog Information Functions"
 kind = "call"
 grammar = [
-  "pg_options_to_table ( <options_array text[]> ) ( <option_name text>, <option_value text> )",
+  "pg_options_to_table ( <options_array text[]> )",
 ]
-grammar_sha256 = "2c24a0aebd8475e3784de12bbd390bc35440306959154c79563813d9678c1e54"
+grammar_sha256 = "56d76f1a7bd9b79064c9fd4aa053006340310a4be7be58ca6eca8970f614a911"
 uses = []
 status = "catalogued"
 
@@ -5441,9 +5441,9 @@ source = "doc.functions-info"
 anchor = "WAL Summarization Information Functions"
 kind = "call"
 grammar = [
-  "pg_wal_summary_contents ( <tli bigint>, <start_lsn pg_lsn>, <end_lsn pg_lsn> ) ( <relfilenode oid>, <reltablespace oid>, <reldatabase oid>, <relforknumber smallint>, <relblocknumber bigint>, <is_limit_block boolean> )",
+  "pg_wal_summary_contents ( <tli bigint>, <start_lsn pg_lsn>, <end_lsn pg_lsn> )",
 ]
-grammar_sha256 = "fe2a010e0c54a1155d7ace07a7c9e40cdd49752b28598e0215e96720896b3dfe"
+grammar_sha256 = "6e13842f2d331320aa122947af9e89c4d9dbe8c50e99532408e8f2afecf4698a"
 uses = []
 status = "catalogued"
 
@@ -5467,9 +5467,9 @@ source = "doc.functions-info"
 anchor = "Committed Transaction Information Functions"
 kind = "call"
 grammar = [
-  "pg_xact_commit_timestamp_origin ( <xid> ) ( <timestamp timestamp with time zone>, <roident oid>)",
+  "pg_xact_commit_timestamp_origin ( <xid> )",
 ]
-grammar_sha256 = "e9e56c08ff5025e574cad3d1d7af1d9762a5cff649c0e272417863c1a6f9d23d"
+grammar_sha256 = "fa4a3477dfdb38c07f0374c92d9d7459bce5f3f68a5e82c08d702ba92a3c1f82"
 uses = []
 status = "catalogued"
 
@@ -5923,9 +5923,9 @@ source = "doc.functions-json"
 anchor = "Processing and Creating JSON Data"
 kind = "call"
 grammar = [
-  "json_each ( <json> ) ( <key text>, <value json> )",
+  "json_each ( <json> )",
 ]
-grammar_sha256 = "fff4d9839b82c8a802cafa3c9cac4495e56b77e4009d35ddd123045c9a15727c"
+grammar_sha256 = "79d854ece2e15332d47cb0004a1b3c3a204c274513b3ca7f414fe3ad81802067"
 uses = []
 status = "catalogued"
 
@@ -5936,9 +5936,9 @@ source = "doc.functions-json"
 anchor = "Processing and Creating JSON Data"
 kind = "call"
 grammar = [
-  "json_each_text ( <json> ) ( <key text>, <value text> )",
+  "json_each_text ( <json> )",
 ]
-grammar_sha256 = "0b49bb2130a106ced1aefe837b795db92883bcce14990d3fa96112bd8764c2c3"
+grammar_sha256 = "1a885ba4c79df692ff7371366f76244562be29db6b82be1a2398ae23d46aaddb"
 uses = []
 status = "catalogued"
 
@@ -6241,9 +6241,9 @@ source = "doc.functions-json"
 anchor = "Processing and Creating JSON Data"
 kind = "call"
 grammar = [
-  "jsonb_each ( <jsonb> ) ( <key text>, <value jsonb> )",
+  "jsonb_each ( <jsonb> )",
 ]
-grammar_sha256 = "a62661cb0d7a5a5dc7857fc17d0aaaed89c240f0a0f0056d536c731e40771fb5"
+grammar_sha256 = "c610b5782c296bbcc4284295e3c318cc8f91489f44940925e775f65b415c2609"
 uses = []
 status = "catalogued"
 
@@ -6254,9 +6254,9 @@ source = "doc.functions-json"
 anchor = "Processing and Creating JSON Data"
 kind = "call"
 grammar = [
-  "jsonb_each_text ( <jsonb> ) ( <key text>, <value text> )",
+  "jsonb_each_text ( <jsonb> )",
 ]
-grammar_sha256 = "0cc32a3240c7a63700b1bf225f0504f863ffc0e1fd6c1f1ee3e9fcdd34107921"
+grammar_sha256 = "f4f2d1f7ed5d37b64a60707a1c8c583d9afb86b373ae33ae973c7eb835aa0982"
 uses = []
 status = "catalogued"
 
@@ -7108,9 +7108,9 @@ source = "doc.functions-math"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "mod ( <y> <numeric_type>, <x> <numeric_type> )",
+  "mod ( <y numeric_type>, <x numeric_type> )",
 ]
-grammar_sha256 = "8d9c7311ba42818f7a02bc4e26944bb8fd8c945436d402652d834df43c3691ce"
+grammar_sha256 = "b5663e639acd3571c92196e3e67350c6e56a88287697734e35f5818d634e6e5a"
 uses = []
 status = "catalogued"
 
@@ -8808,9 +8808,9 @@ also_sources = [
 ]
 kind = "call"
 grammar = [
-  "ts_debug ( [ <config regconfig>, ] <document text> ) ( <alias text>, <description text>, <token text>, <dictionaries regdictionary[]>, <dictionary regdictionary>, <lexemes text[]> )",
+  "ts_debug ( [ <config regconfig>, ] <document text> )",
 ]
-grammar_sha256 = "47bc76925d78b5056673175f3601cae4bda17e5292e73632ca75d17f111ecaa6"
+grammar_sha256 = "426df9601d4734dc4f512e37ce7d43743d7f97594d105a9a26d475f7916893cc"
 uses = []
 status = "catalogued"
 
@@ -8885,10 +8885,10 @@ also_sources = [
 ]
 kind = "call"
 grammar = [
-  "ts_parse ( <parser_name text>, <document text> ) ( <tokid integer>, <token text> )",
-  "ts_parse ( <parser_oid oid>, <document text> ) ( <tokid integer>, <token text> )",
+  "ts_parse ( <parser_name text>, <document text> )",
+  "ts_parse ( <parser_oid oid>, <document text> )",
 ]
-grammar_sha256 = "82085d5a3cd1890ea3d61a22dc48cd90c22e96e9a18f832bfc3a7962cc5109a7"
+grammar_sha256 = "30c54cdbf252ae9dd818672dffc6f842375f015413ca8345870d2cfa0baecf49"
 uses = []
 status = "catalogued"
 
@@ -8942,9 +8942,9 @@ also_sources = [
 ]
 kind = "call"
 grammar = [
-  "ts_stat ( <sqlquery text> [ , <weights text> ] ) ( <word text>, <ndoc integer>, <nentry integer> )",
+  "ts_stat ( <sqlquery text> [ , <weights text> ] )",
 ]
-grammar_sha256 = "b274f1e7ffe2e5672da86fffddbcbd0d7adff776acc4904547463322de2d19eb"
+grammar_sha256 = "fa9b84713489f63c5e4d021db73ad14774eb4bc14bac91e7217e79164f27ddb1"
 uses = []
 status = "catalogued"
 
@@ -8958,10 +8958,10 @@ also_sources = [
 ]
 kind = "call"
 grammar = [
-  "ts_token_type ( <parser_name text> ) ( <tokid integer>, <alias text>, <description text> )",
-  "ts_token_type ( <parser_oid oid> ) ( <tokid integer>, <alias text>, <description text> )",
+  "ts_token_type ( <parser_name text> )",
+  "ts_token_type ( <parser_oid oid> )",
 ]
-grammar_sha256 = "e7443e331194a6ea42d261dbfa466d4bb5fbcba410bfca82a3d78caa1d2f9564"
+grammar_sha256 = "736f40b7a0e2bc85f3661f191139edba918adb162b6fef0c6618442dab264939"
 uses = []
 status = "catalogued"
 
@@ -8999,9 +8999,9 @@ source = "doc.functions-textsearch"
 anchor = "Syntax"
 kind = "call"
 grammar = [
-  "unnest ( <tsvector> ) ( <lexeme text>, <positions smallint[]>, <weights text> )",
+  "unnest ( <tsvector> )",
 ]
-grammar_sha256 = "81a5431f537d6754d52f1478055e0f09e58f611949a107973d269dd3cb19d941"
+grammar_sha256 = "6cf4dc44985f57a6463e88ec32caafb85a01b5e4a3483d944c3b27037797eec1"
 uses = []
 status = "catalogued"
 
