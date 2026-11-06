@@ -12918,6 +12918,7 @@
     "pg.ddl.create-procedure.k10e59a9bb6ee",
     "pg.ddl.create-procedure.k2427a28173ea",
     "pg.ddl.create-procedure.k3ed78959a8da",
+    "pg.ddl.create-procedure.k49eb6874c090",
     "pg.ddl.create-procedure.k588616530890",
     "pg.ddl.create-procedure.k5a85cd788040",
     "pg.ddl.create-procedure.k600c11b4f979",
@@ -12928,7 +12929,6 @@
     "pg.ddl.create-procedure.k7f7f03a54598",
     "pg.ddl.create-procedure.k8fa1646071d1",
     "pg.ddl.create-procedure.k993377bc7da3",
-    "pg.ddl.create-procedure.k9fd6ef85e9d7",
     "pg.ddl.create-procedure.kaf37a2ce2c41",
     "pg.ddl.create-procedure.kb3637e71bafe",
     "pg.ddl.create-procedure.kc43363ae517e",
@@ -12944,7 +12944,6 @@
     "pg.ddl.create-procedure.sql-body-atomic.k2f85c3e1fd21",
     "pg.ddl.create-procedure.sql-body-atomic.k3b4d2434dfae",
     "pg.ddl.create-procedure.sql-body-atomic.k48bf12527fa2",
-    "pg.ddl.create-procedure.sql-body-atomic.k49eb6874c090",
     "pg.ddl.create-procedure.sql-body-atomic.k501e83d331d3",
     "pg.ddl.create-procedure.sql-body-atomic.k87fc37811146",
     "pg.ddl.create-procedure.sql-body-atomic.ke9dfb83d74fd",
@@ -30245,6 +30244,7 @@
     "pg.utility.vacuum.k977646f4fd88"
   ],
   "unjudged_receipts": [
+    "pg.ddl.create-procedure.k9fd6ef85e9d7",
     "pg.expressions.bitstring.op-bar.kca77cfc4db36",
     "pg.expressions.comparisons.row-comparison.k211117dd48c1",
     "pg.expressions.comparisons.row-comparison.k7c2e2570649a",
