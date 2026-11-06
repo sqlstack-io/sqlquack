@@ -200,10 +200,10 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 							<div class="step-text">
 								<span class="num">05 · Measure a project</span>
 								<h3>See what a whole project needs</h3>
-								<p>Point it at a folder of SQL or compiled models. It counts the constructs, how many convert, and which refusals block the rest.</p>
+								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It counts the constructs, how many convert, and which refusals block the rest.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census models --schema schema.json</span>
+<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --schema schema.json</span>
 Census of 3 snowflake SQL files
   parsed 3 (3 statements), unparsed 0, empty 0
   distinct constructs 15 (2 clause, 4 fn, 9 node)
