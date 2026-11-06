@@ -1,7 +1,8 @@
 //! `a_expr` and `b_expr` (gram.y): operators by precedence climbing over gram.y's levels.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::functions::models::Operator;
+use sqlquack_syntax::expressions::columns::models::WithOperator;
+use sqlquack_syntax::expressions::functions::models::{Function, Operator};
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::{
     BinaryOp, CollationExpr, IsTrueFalse, LikeOp, QuantifiedExpr, QuantifiedOp, SimilarToExpr,
@@ -13,11 +14,12 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
 use crate::parse::_helpers::tree::nodes::{
-    between, binary, cast, function, in_list, null_test, subquery,
+    between, binary, cast, function, in_list, name_text, null_test, subquery,
 };
 use crate::parse::constants::{
-    ADD, AND, AT, BITWISE_NOT, COLLATE, COMPARE, EXPONENT, ILIKE, IS, LIKE, MULTIPLY, NOT,
-    OPERATOR, OR, TYPECAST, UNARY,
+    ADD, AND, AT, BITWISE_NOT, CATALOGUE_SCHEMA, COLLATE, COMPARE, EXPONENT, ILIKE, IS, LIKE,
+    MULTIPLY, NOT, NOT_UNKNOWN_TEST, OPERATOR, OR, TIMEZONE_FUNCTION, TYPECAST, UNARY,
+    UNKNOWN_TEST,
 };
 use crate::scan::models::{Token, TokenKind};
 
@@ -149,7 +151,6 @@ impl Parser<'_> {
 
     /// A prefix operator and its operand, `DEFAULT`, or a primary expression.
     fn prefix(&mut self, flavor: Flavor) -> Parsing<Expression> {
-        let start: usize = self.offset();
         match self.peek().map(|token| token.kind) {
             Some(TokenKind::Char('-')) => {
                 self.at += 1;
@@ -161,7 +162,7 @@ impl Parser<'_> {
             }
             Some(TokenKind::Op) => {
                 let operator: String = self.advance()?.value;
-                self.prefix_operator(operator, start, flavor)
+                self.prefix_operator(operator, flavor)
             }
             Some(TokenKind::Keyword(keyword)) => match keyword.name {
                 "not" if flavor == Flavor::A => {
@@ -171,7 +172,7 @@ impl Parser<'_> {
                 "operator" if self.char_at(1, '(') => {
                     self.at += 1;
                     let operator: String = self.operator_name()?;
-                    self.prefix_operator(operator, start, flavor)
+                    self.prefix_operator(operator, flavor)
                 }
                 "default" if flavor == Flavor::A => {
                     self.at += 1;
@@ -186,18 +187,12 @@ impl Parser<'_> {
         }
     }
 
-    /// `qual_Op a_expr`: `~` is bitwise not; any other prefix operator is a gap.
-    fn prefix_operator(
-        &mut self,
-        operator: String,
-        start: usize,
-        flavor: Flavor,
-    ) -> Parsing<Expression> {
+    /// `qual_Op a_expr`: `~` is bitwise not; any other prefix operator is an unquoted call of it.
+    fn prefix_operator(&mut self, operator: String, flavor: Flavor) -> Parsing<Expression> {
         let operand: Expression = self.climb(OPERATOR + 1, flavor)?;
         if operator == BITWISE_NOT {
             return Ok(unary(Expression::BitwiseNot, operand));
         }
-        self.gap("prefix_operator", start);
         Ok(Expression::Function(Box::new(function(
             vec![Identifier::new(operator)],
             vec![operand],
@@ -220,19 +215,18 @@ impl Parser<'_> {
         })
     }
 
-    /// `OPERATOR ( [ColId .]... op )`, after the keyword: `schema.op`.
+    /// `OPERATOR ( [ColId .]... op )`, after the keyword: `schema.op`, a dotted schema quoted.
     pub(crate) fn operator_name(&mut self) -> Parsing<String> {
         self.expect_char('(')?;
-        let mut name: String = String::new();
+        let mut parts: Vec<Identifier> = Vec::new();
         while self.is(is_col_id) && self.char_at(1, '.') {
-            name.push_str(&self.advance()?.value);
-            name.push('.');
+            parts.push(self.name(is_col_id)?);
             self.at += 1;
         }
         let operator: Token = self.expect_token(is_operator_token)?;
-        name.push_str(&operator_text(&operator));
+        parts.push(Identifier::new(operator_text(&operator)));
         self.expect_char(')')?;
-        Ok(name)
+        Ok(name_text(&parts))
     }
 
     /// The level of the operator at the cursor, if one continues the expression here.
@@ -331,7 +325,7 @@ impl Parser<'_> {
                 let to = self.typename()?;
                 return Ok((cast(left, to, true), false));
             }
-            return self.binary_or_quantified(left, operator_text(&token), (level, flavor), start);
+            return self.binary_or_quantified(left, operator_text(&token), (level, flavor));
         };
         match keyword.name {
             "or" => Ok((
@@ -352,8 +346,12 @@ impl Parser<'_> {
             }
             "at" => {
                 if self.eat_kw("local") {
-                    self.gap("at_local", start);
-                    return Ok((left, false));
+                    let name: Vec<Identifier> = vec![
+                        Identifier::new(CATALOGUE_SCHEMA),
+                        Identifier::new(TIMEZONE_FUNCTION),
+                    ];
+                    let call: Function = function(name, vec![left]);
+                    return Ok((Expression::Function(Box::new(call)), false));
                 }
                 self.expect_kw("time")?;
                 self.expect_kw("zone")?;
@@ -366,11 +364,7 @@ impl Parser<'_> {
             "collate" => {
                 let name: Vec<Identifier> = self.qualified_name()?;
                 let quoted: bool = name.iter().any(|part| part.quoted);
-                let collation: String = name
-                    .into_iter()
-                    .map(|part| part.name)
-                    .collect::<Vec<String>>()
-                    .join(".");
+                let collation: String = name_text(&name);
                 Ok((
                     Expression::Collation(Box::new(CollationExpr {
                         this: left,
@@ -383,7 +377,7 @@ impl Parser<'_> {
             }
             _ => {
                 let operator: String = self.operator_name()?;
-                self.binary_or_quantified(left, operator, (level, flavor), start)
+                self.binary_or_quantified(left, operator, (level, flavor))
             }
         }
     }
@@ -394,7 +388,6 @@ impl Parser<'_> {
         left: Expression,
         operator: String,
         precedence: (u8, Flavor),
-        start: usize,
     ) -> Parsing<(Expression, bool)> {
         let (level, flavor) = precedence;
         if flavor == Flavor::A
@@ -412,11 +405,15 @@ impl Parser<'_> {
                 ">=" => Some(QuantifiedOp::Gte),
                 _ => None,
             };
-            if op.is_none() {
-                self.gap("quantified_operator", start);
-            }
+            let this: Expression = match op {
+                Some(_) => left,
+                None => Expression::WithOperator(Box::new(WithOperator {
+                    this: Box::new(left),
+                    op: operator,
+                })),
+            };
             let node = Box::new(QuantifiedExpr {
-                this: left,
+                this,
                 subquery: operand,
                 op,
             });
@@ -571,7 +568,17 @@ impl Parser<'_> {
             }
         };
         match word {
-            "null" | "unknown" => Ok((null_test(left, not, false), false)),
+            "null" => Ok((null_test(left, not, false), false)),
+            "unknown" => {
+                let test: &str = match not {
+                    true => NOT_UNKNOWN_TEST,
+                    false => UNKNOWN_TEST,
+                };
+                let right: Expression = Expression::Var(Box::new(Var {
+                    this: test.to_owned(),
+                }));
+                Ok((binary(Expression::Is, left, right), false))
+            }
             "true" => Ok((truth(true, left), false)),
             "false" => Ok((truth(false, left), false)),
             "distinct" => {

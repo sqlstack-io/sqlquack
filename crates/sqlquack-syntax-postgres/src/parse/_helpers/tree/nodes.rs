@@ -166,6 +166,18 @@ pub(crate) fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
 }
 
+/// A name's parts joined by `.`, quoting a part that holds `.` or `"`, so one text names one list.
+pub(crate) fn name_text(parts: &[Identifier]) -> String {
+    parts
+        .iter()
+        .map(|part| match part.name.contains(['.', '"']) {
+            true => format!("\"{}\"", part.name.replace('"', "\"\"")),
+            false => part.name.clone(),
+        })
+        .collect::<Vec<String>>()
+        .join(".")
+}
+
 /// A function call; a qualified name keeps its parts and joins them into `name`.
 pub(crate) fn function(name: Vec<Identifier>, args: Vec<Expression>) -> Function {
     let joined: String = name
@@ -192,8 +204,15 @@ pub(crate) fn aggregate(
     filter: Option<Expression>,
     order_by: Vec<Ordered>,
 ) -> Expression {
+    let parts: Vec<Identifier> = match function.qualified_name.is_empty() {
+        true => vec![Identifier {
+            quoted: function.quoted,
+            ..Identifier::new(function.name)
+        }],
+        false => function.qualified_name,
+    };
     Expression::AggregateFunction(Box::new(AggregateFunction {
-        name: function.name,
+        name: name_text(&parts),
         args: function.args,
         distinct,
         filter,
