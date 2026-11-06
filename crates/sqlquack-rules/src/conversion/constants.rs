@@ -1272,8 +1272,10 @@ pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
 pub const LOGARITHM: &str = "rule.logarithm";
 /// POWER(10, n) of a whole exponent.
 pub const POWER_RULE: &str = "rule.power";
-/// The one base POWER converts, as its literal is written.
+/// The base POWER converts as the FLOAT nearest the power, as its literal is written.
 pub(crate) const POWER_BASE: &str = "10";
+/// The other POWER base converted: 2, whose whole powers a double holds exactly.
+pub(crate) const POWER_BASE_TWO: &str = "2";
 /// The natural logarithm's name, beside EXP.
 pub(crate) const LN_NAME: &str = "LN";
 /// ARRAY_SORT of one array.
