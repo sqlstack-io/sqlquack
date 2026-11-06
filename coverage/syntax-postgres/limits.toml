@@ -5317,6 +5317,160 @@ anchor = "doc.sql-createtype / Synopsis"
 sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , COLLATABLE = 'true' )"
 context = "raw"
 
+# DDL: batch-25 coverage notes: the constraint spellings of a foreign partition, and malformed
+# publication objects.
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "NOT NULL NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 NOT NULL NO INHERIT ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) VIRTUAL"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 GENERATED ALWAYS AS ( 1 ) VIRTUAL ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) with no kind"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 GENERATED ALWAYS AS ( 1 ) ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "CHECK ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 CHECK ( c1 > 0 ) ENFORCED ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "CHECK NOT ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 CHECK ( c1 > 0 ) NOT ENFORCED ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "CHECK ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( CHECK ( c1 > 0 ) ENFORCED ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "CHECK NOT ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( CHECK ( c1 > 0 ) NOT ENFORCED ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "NOT NULL on a column with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( NOT NULL c1 NO INHERIT ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "a named NOT NULL with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( CONSTRAINT k1 NOT NULL c1 NO INHERIT ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "TABLE with no table name"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "TABLES IN without SCHEMA"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN s1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a row filter without its parentheses"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 WHERE c1 > 0"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a first object with no kind (gram.y preprocess_pubobj_list: invalid publication object list, 42601)"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR t1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a column list on a schema (gram.y preprocess_pubobj_list: column specification not allowed for schema, 42601)"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN SCHEMA s1 ( c1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a row filter on a schema (gram.y preprocess_pubobj_list: WHERE clause not allowed for schema, 42601)"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN SCHEMA s1 WHERE ( c1 > 0 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "an empty column list"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 ( )"
+context = "raw"
+expect = "reject"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
