@@ -4,11 +4,11 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_geometry"
-description = "A square, and a collection of the square and a far point, whose point the page says is ignored; the SRID is kept. Catches: the point averaged in, or the SRID dropped"
+description = "A square and a line string, each with SRID 3857; the SRID is kept. The collection rule is measured on GEOGRAPHY, the page's own example, because Snowflake rejects a GEOMETRY collection (error 100249). Catches: the first vertex returned, or the SRID dropped"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
-  ["'GEOMETRYCOLLECTION(POLYGON((0 0,10 0,10 10,0 10,0 0)),POINT(100 100))'"],
+  ["'LINESTRING(0 0,10 0)'"],
 ]
 query = "SELECT ordinal, ST_X(ST_CENTROID(TO_GEOMETRY(v, 3857))) AS x, ST_Y(ST_CENTROID(TO_GEOMETRY(v, 3857))) AS y, ST_SRID(ST_CENTROID(TO_GEOMETRY(v, 3857))) AS srid FROM input ORDER BY ordinal"
 order = "ordered"
@@ -16,12 +16,13 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_geography"
-description = "A line string along the equator, whose centre is (5 0), rounded to 6 places. Catches: the first vertex returned"
+description = "A line string along the equator, whose centre is (5 0), and the page's collection of a polygon, a line string and a point, whose centre the page gives as the polygon's (15 15.014819855); rounded to 6 places. Catches: the first vertex returned, or the lower-dimension members averaged in"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'LINESTRING(0 0,10 0)'"],
+  ["'GEOMETRYCOLLECTION(POLYGON((10 10,10 20,20 20,20 10,10 10)),LINESTRING(0 0,0 -2),POINT(50 -50))'"],
 ]
-query = "SELECT ROUND(ST_X(ST_CENTROID(TO_GEOGRAPHY(v))), 6) AS x, ROUND(ST_Y(ST_CENTROID(TO_GEOGRAPHY(v))), 6) AS y FROM input"
+query = "SELECT ordinal, ROUND(ST_X(ST_CENTROID(TO_GEOGRAPHY(v))), 6) AS x, ROUND(ST_Y(ST_CENTROID(TO_GEOGRAPHY(v))), 6) AS y FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 

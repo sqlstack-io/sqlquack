@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_type"
-description = "The type of the name, and whether it is set; the session of the recording has a schema in use, so the recording decides. Catches: a schema name returned where Snowflake returns NULL, or the reverse"
+description = "The type of the name, and whether it is set, in a session with no schema in use: the recording returned NULL (type NULL, not set). Catches: a schema name returned when none is in use"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],

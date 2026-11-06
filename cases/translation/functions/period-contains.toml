@@ -20,15 +20,15 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_instant"
-description = "Instants at the begin, inside, at the end and after; the page says the end is not contained. Catches: the end bound treated as inclusive"
-columns = [{ name = "d", type = "DATE" }]
+description = "Instants at the begin, inside, at the end and after a period built from columns; the page says the end is not contained. A constant period here made Snowflake abort with internal error 300010 twice. Catches: the end bound treated as inclusive"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }, { name = "d", type = "DATE" }]
 rows = [
-  ["'2024-01-01'"],
-  ["'2024-03-31'"],
-  ["'2024-04-01'"],
-  ["'2024-05-01'"],
+  ["'2024-01-01'", "'2024-04-01'", "'2024-01-01'"],
+  ["'2024-01-01'", "'2024-04-01'", "'2024-03-31'"],
+  ["'2024-01-01'", "'2024-04-01'", "'2024-04-01'"],
+  ["'2024-01-01'", "'2024-04-01'", "'2024-05-01'"],
 ]
-query = "SELECT ordinal, PERIOD_CONTAINS(PERIOD_CONSTRUCT(DATE '2024-01-01', DATE '2024-04-01'), d) AS r FROM input ORDER BY ordinal"
+query = "SELECT ordinal, PERIOD_CONTAINS(PERIOD_CONSTRUCT(b1, e1), d) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
 
