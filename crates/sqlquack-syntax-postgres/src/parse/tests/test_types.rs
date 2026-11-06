@@ -53,3 +53,12 @@ pub(crate) struct ValueTestCase {
     pub(crate) pointer: &'static str,
     pub(crate) expected_json: &'static str,
 }
+
+/// Token ranges over `sql`, and the first byte they and the blanks between them leave uncovered.
+pub(crate) struct GapTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) ranges: &'static [(usize, usize)],
+    pub(crate) faulted: bool,
+    pub(crate) expected_gap: Option<usize>,
+}
