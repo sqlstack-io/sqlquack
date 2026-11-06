@@ -2148,9 +2148,9 @@ source = "doc.functions-geometry"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "<geometric_type> <geometric_type>",
+  "<geometric_type> <-> <geometric_type>",
 ]
-grammar_sha256 = "9b6d1697d1547853302955d40dbdc9c2d55a86ecbd55b87c1d289e5fbf32a4cd"
+grammar_sha256 = "36ac97a2756090cb65b6be8b01ed356e9402a7608b0bcfcfca7831e0adbc75af"
 uses = []
 status = "catalogued"
 
@@ -4205,9 +4205,9 @@ source = "doc.functions-textsearch"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "<tsquery> <tsquery>",
+  "<tsquery> <-> <tsquery>",
 ]
-grammar_sha256 = "e36a2e5f3e220d2f5650fc2d57bb7c7bae3e41f4624e81f6e90f2d06d531fb0b"
+grammar_sha256 = "03e95eac9f6436cc071fb463395df366b092c7d549f1b2a57da0fd4b81c74d78"
 uses = []
 status = "catalogued"
 

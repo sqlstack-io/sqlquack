@@ -119,8 +119,14 @@ upper case (Postgres synopses spell keywords and type names in lower case; every
 in angle brackets), with a few list spellings rewritten so the renderer can copy them
 (`GRAMMAR_REWRITES` in its constants: ONLY and `*` as alternatives, as gram.y relation_expr takes
 them; LIMIT and FETCH as one clause; DISTINCT with a required select list; a with_query as
-name AS ( query ); a list's second item written out). `limits.toml` holds the readings, suppressions and hand-written limits, each
-with its reason, in the format of `coverage/syntax/limits.toml`.
+name AS ( query ); a list's second item written out; a window definition optional inside
+OVER). The grammar is tokenized with Postgres's operators: a run of operator characters
+(`&&`, `<->`, `?-|`, …) is one token, and `\[ \]` in a reading is a literal bracket (array
+constructors, subscripts and array types) rather than an optional part. `limits.toml` holds the
+readings, suppressions and hand-written limits, each with its reason, in the format of
+`coverage/syntax/limits.toml`. Most expressions suppressions are one gram.y fact: every
+operator token is also a prefix operator (`qual_Op a_expr`), so an operator form with its left
+operand left out is valid syntax; with its right operand left out it stays a negative.
 
 Cases are written for the forms in `focus/postgres.toml` and for every form of the families in
 `CASED_FAMILIES`; the other families' case files hold only their focus forms until taken up.

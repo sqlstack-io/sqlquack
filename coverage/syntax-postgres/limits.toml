@@ -592,3 +592,1526 @@ target = ""
 note = "the form without its required NOT in [ FORCE NOT NULL <column_name> [ , <column_name> ] ]"
 reason = "without NOT, FORCE NULL column_list is the current COPY option of that name, which the legacy option list also parses (gram.y copy_opt_item)"
 
+
+# Expressions: readings of forms with literal brackets, quoted names or gram.y-narrower synopses,
+# and of the remaining lexical forms.
+
+[[reading]]
+form = "pg.expressions.sql-expressions.array-constructor"
+grammar_sha256 = "a81dece4cd4405ebede140f5b24b32daab60029aca47b58e42743fdfb02b50dc"
+grammar = ["ARRAY \\[ [ <expression> [, ...] ] \\]", "ARRAY \\[ \\[ <expression> [ , <expression> ] \\] [ , \\[ <expression> [ , <expression> ] \\] ] \\]"]
+reason = "the constructor's own brackets are literal (written \\[ \\]), not optional parts; the second line, the page's multidimensional ARRAY[[...], ...], with its sub-arrays' and their elements' second items written out, since the renderer copies a list item that holds a literal bracket wrongly"
+
+[[reading]]
+form = "pg.expressions.arrays.array-type"
+grammar_sha256 = "f6b8177b0410d84af5b5c81620aa07b0d526eece3ebf50e7d946d40f58826400"
+grammar = ["<type_name> \\[ [ <size> ] \\] [ \\[ [ <size> ] \\] ]", "<type_name> ARRAY [ \\[ <size> \\] ]"]
+reason = "the dimension brackets are literal (written \\[ \\]) around an optional size; the page's [ ... ] repetition of dimensions written out as a second dimension"
+
+[[reading]]
+form = "pg.expressions.sql-expressions.subscript"
+grammar_sha256 = "6ab70d1e01a25f12a357806762b8c9a35e206c95b599af8f509276d1ddbac952"
+grammar = ["<expression> \\[ <subscript> \\]"]
+reason = "the subscript brackets are literal (written \\[ \\]), not an optional part"
+
+[[reading]]
+form = "pg.expressions.sql-expressions.slice"
+grammar_sha256 = "2ecd1d228bb5c4f25b6972b37999c9d06f31fcdb86a3534a98991f00bf9f4cae"
+grammar = ["<expression> \\[ <lower_subscript> : <upper_subscript> \\]"]
+reason = "the slice brackets are literal (written \\[ \\]), not an optional part"
+
+[[reading]]
+form = "pg.expressions.datatype.numeric"
+grammar_sha256 = "048ba4656ff54dcf9447190982950760ecd5521cb5ac80e38b7211dd002dda0b"
+grammar = ["{ NUMERIC [ ( <p> [ , <s> ] ) ] | DECIMAL [ ( <p> [ , <s> ] ) ] }"]
+reason = "the type's precision and optional scale, as datatype-numeric writes NUMERIC(precision, scale), NUMERIC(precision) and NUMERIC and gives DECIMAL as the same type (gram.y Numeric: NUMERIC and DECIMAL_P take opt_type_modifiers); the table row's ( p | s ) is not a choice between the two"
+
+[[reading]]
+form = "pg.expressions.datatype-datetime.interval-fields"
+grammar_sha256 = "1dab0baa90920ce3cc08c1948130327233c8253547543290112452dec5c67771"
+grammar = ["INTERVAL { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] }"]
+reason = "the precision only after a field phrase ending in SECOND: datatype-datetime says that when both fields and p are given the fields must include SECOND, and gram.y opt_interval takes '(' Iconst ')' only in interval_second"
+
+[[reading]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+grammar_sha256 = "7098fa278eb6758f91fa82144510a07c1331fbcb38a867a503bae388b4c1d083"
+grammar = ["INTERVAL { '<value>' [ { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] } ] | ( <p> ) '<value>' }"]
+reason = "gram.y AexprConst takes ConstInterval Sconst opt_interval or ConstInterval '(' Iconst ')' Sconst: a leading precision excludes the field phrase, and a precision in the phrase follows SECOND only (interval_second)"
+
+[[reading]]
+form = "pg.expressions.datatype-pseudo.any"
+grammar_sha256 = "d6a7cd2a7371b1a15d543196979ff74fdb027023ebf187d5d329be11055c77fd"
+grammar = ["\"any\""]
+reason = "ANY is a reserved keyword (kwlist.h), so the pseudo-type is written as the quoted identifier \"any\", as the function signatures on the functions pages write it"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+grammar_sha256 = "9281fc0470e6bd42b5d656d7ea1101921840dbb4eb626953ce15c53dbdfa5d04"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+grammar_sha256 = "128a37d6b47a6f316a84670ca1df48519d6f0daa849610f46573b6ee0e101f14"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+grammar_sha256 = "2f58ca9c43a1cb2ca4694a17589805d3606e3a105044bce145b2b95cd5c52856"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+grammar_sha256 = "b85259d47f81f6c74b99b5b0ac5c2347cf8f109ded057d9f1f3c3aac306b9c25"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+grammar_sha256 = "5917992636d8a3e35b8b1f368109e001425e1a3acc24447bb8e62554a495504f"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+grammar_sha256 = "f3717d6a59245da19149c7864029d597267ecdd7892b801b634529de9f747f69"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+grammar_sha256 = "780f2b9ddeb097803eea4aa537dd00f61d969d25c8f89784e99dc332cf999978"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+grammar_sha256 = "29b8a1959bf7af702eeb7792aec5d9f8370c9bbe8b7865a1729b31e5360122ea"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+grammar_sha256 = "1344595477a31705971e823333a5b691ac0d79212cd70fa4e3874d3deb4f4cc1"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+grammar_sha256 = "6c94135a5ce6eea82d92f577575c5f9d67eb7ffc8154d786f2d8d0def930935b"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+grammar_sha256 = "c3ce3f61957f1a893a40dcc85b86bac49816d4855b61830491e8cbfbd357bc73"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+grammar_sha256 = "0478650ad37111fe23e0527785a8080f52dfd18c22a47e5bfb06c3f998114b94"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+# Expressions: hand-written obligations of the lexical forms read as empty above.
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "positive"
+note = "a binary integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b101"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "alternative"
+target = "0b<bindigits>"
+note = "the prefix in upper case"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0B101"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "negative_neighbour"
+note = "a digit that is not binary (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b102"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.binary-integer"
+kind = "negative_neighbour"
+note = "the prefix with no digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0b"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "positive"
+note = "an octal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0o17"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "alternative"
+target = "0o<octdigits>"
+note = "the prefix in upper case"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0O17"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.octal-integer"
+kind = "negative_neighbour"
+note = "a digit that is not octal (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0o18"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "positive"
+note = "a hexadecimal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x1F"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "alternative"
+target = "0x<hexdigits>"
+note = "the prefix in upper case and lower-case digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0Xff"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-integer"
+kind = "negative_neighbour"
+note = "a letter that is not a hexadecimal digit (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x1G"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "positive"
+note = "underscores between digit groups"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1_000_000"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "alternative"
+target = "<digits>_<digits>"
+note = "an underscore in a non-decimal constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 0x_FF"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "negative_neighbour"
+note = "two underscores in a row"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1__000"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.digit-separators"
+kind = "negative_neighbour"
+note = "a trailing underscore"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1000_"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "positive"
+note = "digits and an exponent without a point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "a signed exponent"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5E-2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.exponent"
+kind = "negative_neighbour"
+note = "an exponent sign without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5e+"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "positive"
+note = "a point and digits with no digits before it"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .001"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "alternative"
+target = "[ e[ +- ]<digits> ]"
+note = "a leading point and an exponent"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .5e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal-leading-point"
+kind = "negative_neighbour"
+note = "a point followed by an exponent and no digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT .e2"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "positive"
+note = "a binary bit-string constant"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT B'1001'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "alternative"
+target = "B'<binary_digits>'"
+note = "the prefix in lower case"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT b'1001'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.bit-string"
+kind = "negative_neighbour"
+note = "a bit-string constant left open"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT B'1001"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "positive"
+note = "a hexadecimal bit-string constant"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT X'1FF'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "alternative"
+target = "X'<hex_digits>'"
+note = "the prefix in lower case"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT x'1ff'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.hex-bit-string"
+kind = "negative_neighbour"
+note = "a hexadecimal bit-string constant left open"
+anchor = "doc.sql-syntax-lexical / Constants / Bit-String Constants"
+sql = "SELECT X'1FF"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+kind = "positive"
+note = "two string constants separated by a newline, read as one"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'foo'\n'bar'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string-continuation"
+kind = "negative_neighbour"
+note = "two string constants on one line, which the page says is not valid syntax"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'foo' 'bar'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "positive"
+note = "a string with Unicode escapes"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d\\0061t\\+000061'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "option_present"
+target = "[ UESCAPE '<escape_character>' ]"
+note = "a chosen escape character"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d!0061t!+000061' UESCAPE '!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-string"
+kind = "negative_neighbour"
+note = "an escape character of two characters"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with Unicode Escapes"
+sql = "SELECT U&'d!0061t' UESCAPE '!!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "positive"
+note = "an identifier with Unicode escapes"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d\\0061t\\+000061\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "option_present"
+target = "[ UESCAPE '<escape_character>' ]"
+note = "a chosen escape character"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d!0061t!+000061\" UESCAPE '!'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.unicode-identifier"
+kind = "negative_neighbour"
+note = "an escape character that is a hexadecimal digit"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 AS U&\"d!0061t\" UESCAPE 'a'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "positive"
+note = "a comment to the end of the line"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 -- note"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "alternative"
+target = "-- <comment_text>"
+note = "a comment ending at a newline, with the statement going on"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 -- note\n+ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.line-comment"
+kind = "negative_neighbour"
+note = "a comment that swallows the operand after it on the same line"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 + -- 2"
+context = "raw"
+
+# Expressions: derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.expressions.array.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatiblearray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatible>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anycompatiblearray> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.array.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyarray>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.binarystring.op-bar-bar"
+kind = "required_operand_missing"
+target = "<bytea>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-amp"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-bar-bar"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-gt-gt"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-hash"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-lt-lt"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.comparisons.all-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.comparisons.any-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ANY"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.comparisons.some-array"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SOME"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.conditional.case-simple"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "without its operand the expression is the searched CASE (gram.y case_expr: CASE case_arg when_clause_list, with case_arg optional), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+kind = "required_operand_missing"
+target = "'<value>'"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.interval-literal-fields"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { '<value>' [ { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND [ ( <p> ) ] | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND [ ( <p> ) ] | HOUR TO MINUTE | HOUR TO SECOND [ ( <p> ) ] | MINUTE TO SECOND [ ( <p> ) ] } ] | ( <p> ) '<value>' }"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ]"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ] #2"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required BIT after "
+reason = "the first word of the type name alone is an unreserved keyword (kwlist.h), which gram.y GenericType accepts as a type name: valid syntax that fails at type lookup (42704)"
+
+[[suppress]]
+form = "pg.expressions.datatype.bit"
+kind = "negative_neighbour"
+target = "<n> in [ ( <n> ) ]"
+reason = "a type modifier is any expression list (gram.y Bit: BIT opt_varying '(' expr_list ')'), so a string modifier fails in the type's modifier input, not in the parser"
+
+[[suppress]]
+form = "pg.expressions.datatype.double-precision"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PRECISION"
+reason = "the first word of the type name alone is an unreserved keyword (kwlist.h), which gram.y GenericType accepts as a type name: valid syntax that fails at type lookup (42704)"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<timestamp> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<date>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-minus"
+kind = "required_operand_missing"
+target = "<time>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<date> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<date> #3"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<interval> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<timestamp>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.datetime.op-plus"
+kind = "required_operand_missing"
+target = "<time> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-amp"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-lt-bar"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-amp-lt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-at-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-bar-amp-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-bar-gt-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-gt-caret"
+kind = "required_operand_missing"
+target = "<box>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-gt-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-hash-hash"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-at"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-caret"
+kind = "required_operand_missing"
+target = "<box>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-lt-bar"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-lt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-lt-minus-gt"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-minus"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-plus"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-plus"
+kind = "required_operand_missing"
+target = "<path>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar-bar"
+kind = "required_operand_missing"
+target = "<line>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar-bar"
+kind = "required_operand_missing"
+target = "<lseg>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-bar"
+kind = "required_operand_missing"
+target = "<point>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-hash"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus-bar"
+kind = "required_operand_missing"
+target = "<line>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus-bar"
+kind = "required_operand_missing"
+target = "<lseg>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-qmark-minus"
+kind = "required_operand_missing"
+target = "<point>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.geometry.op-tilde-eq"
+kind = "required_operand_missing"
+target = "<geometric_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.info.op-at-gt"
+kind = "required_operand_missing"
+target = "<aclitem[]>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-at"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-at-qmark"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-bar-bar"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-hash-minus"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-lt-at"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<json> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt-gt"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<json>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<json> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus-gt"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.json.op-minus"
+kind = "required_operand_missing"
+target = "<jsonb> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark-amp"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark-bar"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.json.op-qmark"
+kind = "required_operand_missing"
+target = "<jsonb>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.ilike"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.like"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.not-ilike"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.not-like"
+kind = "required_operand_missing"
+target = "<string>"
+reason = "with its left operand left out, LIKE 'm' or ILIKE 'm' is a typed literal: LIKE and ILIKE are type_func_name_keywords (kwlist.h), which gram.y AexprConst accepts as func_name Sconst (NOT LIKE 'm' is NOT applied to it), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.matching.op-bang-tilde-star"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-bang-tilde"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-tilde-star"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.matching.op-tilde"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-amp"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-gt-gt"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-hash"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-lt-lt"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-amp-amp"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-amp"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-gt-gt-eq"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-gt-gt"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-lt-lt-eq"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-lt-lt"
+kind = "required_operand_missing"
+target = "<inet>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-minus"
+kind = "required_operand_missing"
+target = "<inet> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.net.op-plus"
+kind = "required_operand_missing"
+target = "<bigint> #2"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-amp"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-amp-lt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-at-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #5"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-gt-gt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyelement>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyrange> #5"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-at"
+kind = "required_operand_missing"
+target = "<anyelement> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-lt-lt"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anymultirange> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus-bar-minus"
+kind = "required_operand_missing"
+target = "<anyrange> #4"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-minus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-plus"
+kind = "required_operand_missing"
+target = "<anyrange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.range.op-plus"
+kind = "required_operand_missing"
+target = "<anymultirange>"
+reason = "with its left operand left out the expression is unary plus or minus (gram.y a_expr: '+' a_expr | '-' a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.rangetypes.range-constructor"
+kind = "required_operand_missing"
+target = "<range_type>"
+reason = "without the type name the parenthesised list is a row constructor (gram.y implicit_row), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.rangetypes.range-constructor"
+kind = "required_operand_missing"
+target = "<upper>"
+reason = "a call with fewer arguments is valid syntax; the argument count is checked at function lookup (42883)"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression> in [ , [ <expression> [ , <expression> ] ] ]"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.field-selection"
+kind = "identifier_class"
+target = "<fieldname>"
+reason = "a field name after a dot is attr_name, a ColLabel, which takes reserved keywords (gram.y indirection_el), so the reserved-word spelling is no negative and a quoted name no different positive"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "required_operand_missing"
+target = "<typename>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "required_operand_missing"
+target = "<expression>"
+reason = "with its argument left out the expression is a call with no arguments (gram.y func_application: func_name '(' ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.function-style-cast"
+kind = "identifier_class"
+target = "<typename>"
+reason = "a reserved keyword in place of the type name renders SELECT ( ... ), a parenthesised scalar subquery inside the outer parentheses, which is valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.operator-call"
+kind = "identifier_class"
+target = "<operatorname>"
+reason = "the operator name is an operator symbol (gram.y any_operator: all_Op), not an identifier, so the identifier spellings do not apply: a quoted name is rejected and is no positive"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.row-constructor"
+kind = "required_operand_missing"
+target = "<expression> #2"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.scalar-subquery"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.slice"
+kind = "required_operand_missing"
+target = "<lower_subscript>"
+reason = "either bound of a slice may be left out (gram.y indirection_el: '[' opt_slice_bound ':' opt_slice_bound ']')"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.slice"
+kind = "required_operand_missing"
+target = "<upper_subscript>"
+reason = "either bound of a slice may be left out (gram.y indirection_el: '[' opt_slice_bound ':' opt_slice_bound ']')"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "required_operand_missing"
+target = "<typename>"
+reason = "the rendering is a parenthesised expression (gram.y c_expr: '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "required_operand_missing"
+target = "'<string>'"
+reason = "with its argument left out the expression is a call with no arguments (gram.y func_application: func_name '(' ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.function-style-string"
+kind = "identifier_class"
+target = "<typename>"
+reason = "a reserved keyword in place of the type name renders SELECT ( ... ), a parenthesised scalar subquery inside the outer parentheses, which is valid syntax"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.type-string"
+kind = "required_operand_missing"
+target = "'<string>'"
+reason = "the keyword alone is a column reference: it is a col_name_keyword (kwlist.h), which gram.y ColId accepts, so this is valid syntax that fails at name lookup"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<text> #3"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-bar-bar"
+kind = "required_operand_missing"
+target = "<anynonarray> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.string.op-caret-at"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.subquery.all-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.all"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.any-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.any"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ANY"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.in-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression list in place of the subquery is IN's value-list form (gram.y in_expr: '(' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.not-in-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression list in place of the subquery is IN's value-list form (gram.y in_expr: '(' expr_list ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.row-comparison"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "a parenthesised expression in place of the subquery is a plain comparison (gram.y a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.some-row"
+kind = "negative_neighbour"
+target = "<subquery>"
+reason = "an expression in place of the subquery is the array form of ANY, SOME and ALL (gram.y a_expr subquery_Op sub_type '(' a_expr ')'), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.subquery.some"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SOME"
+reason = "without ANY, SOME or ALL the expression is a plain comparison with a parenthesised operand (gram.y a_expr subquery_Op a_expr), valid syntax"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-amp-amp"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<tsvector>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<tsquery> #2"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-at"
+kind = "required_operand_missing"
+target = "<text>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-at-gt"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-bar-bar"
+kind = "required_operand_missing"
+target = "<tsvector>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-bar-bar"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-lt-at"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.textsearch.op-lt-minus-gt"
+kind = "required_operand_missing"
+target = "<tsquery>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"

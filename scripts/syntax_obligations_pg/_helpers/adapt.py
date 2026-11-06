@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, obligations
+from scripts.syntax_obligations._helpers import derive, grammar, obligations
 from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Spec
@@ -24,6 +24,7 @@ from scripts.syntax_obligations_pg.constants import (
     FORM_PREFIX,
     GRAMMAR_REWRITES,
     PG_CLASS_RULES,
+    PG_TOKEN,
     PROTECTED_TEXT,
 )
 
@@ -32,8 +33,12 @@ _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULE
 
 
 def style(*, form: str, family: str) -> FormStyle:
-    """The submission style of a family prefix or of one form."""
-    prefix, suffix = FORM_CONTEXTS.get(form, FAMILY_CONTEXTS[family])
+    """The submission style of a family prefix or of one form, by its longest context prefix."""
+    owners: list[str] = [key for key in FORM_CONTEXTS if form.startswith(key)]
+    context: tuple[str, str] = (
+        FORM_CONTEXTS[max(owners, key=len)] if owners else FAMILY_CONTEXTS[family]
+    )
+    prefix, suffix = context
     return FormStyle(
         prefix=prefix,
         suffix=suffix,
@@ -99,9 +104,10 @@ def _upper_bare_words(line: str) -> str:
 
 
 def install() -> None:
-    """Register the Postgres styles, class rules, grammar read and limit reader."""
+    """Register the Postgres styles, class rules, tokens, grammar read and limit reader."""
     derive.CLASS_RULES = (*PG_CLASS_RULES, *_shared_class_rules)
     setattr(obligations, "_grammar_read", pg_grammar_read)  # noqa: B010
+    setattr(grammar, "TOKEN", PG_TOKEN)  # noqa: B010
     for family in FAMILIES:
         styles: dict[str, FormStyle] = shared.FAMILY_STYLES.setdefault(family, {})
         styles[f"{FORM_PREFIX}.{family}."] = style(form="", family=family)

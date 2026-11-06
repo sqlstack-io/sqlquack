@@ -1,4 +1,9 @@
-# Cases recorded but not committed as receipts because the referee's method misjudges them;
-# each waits on the named referee change and is recorded again then. Not read by the checker.
-# None are pending: the TABLE and SELECT ... INTO cases held here were recorded with the
-# referee's SQL-function parse pass (parser_check "sql_function") once it existed.
+# Cases recorded but not committed as receipts because the referee's method or the checker
+# misjudges them; each waits on the named change and is recorded again then. Not read by the
+# checker. The TABLE and SELECT ... INTO cases once held here were recorded with the referee's
+# SQL-function parse pass (parser_check "sql_function") once it existed.
+
+[[pending]]
+case_id = "pg.expressions.geometry.op-at-minus-at.kb47109cbcd52"
+sql_sha256 = "b47109cbcd52ec0a49fc8e99be23758b30ab918064418c9567db016c2154ef34"
+reason = "the server's message names the operator @-@ (operator does not exist: @-@ box, semantic_error, agreeing with the case), and the checker refuses any receipt message containing @ as a possible account or address; waits on the checker narrowing that rule for /2 roots"

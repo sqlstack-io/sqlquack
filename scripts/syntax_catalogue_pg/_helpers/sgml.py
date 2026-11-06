@@ -7,9 +7,11 @@ import re
 
 from scripts.syntax_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_pg.constants import (
+    ANGLES,
     COMMENT,
     ENTITIES,
     INDEXTERM,
+    LITERAL_ANGLES,
     LITERAL_TAG,
     PARAM_TYPE,
     PARAMETER,
@@ -58,16 +60,16 @@ def synopsis_text(raw: str) -> str:
 
 
 def signature_text(raw: str) -> str:
-    """A function or operator signature as grammar text, without its return type."""
+    """A signature as grammar text without its return type; a literal `<->` survives tag removal."""
     text: str = RETURNVALUE.sub("", INDEXTERM.sub("", COMMENT.sub("", raw)))
     text = PARAM_TYPE.sub(lambda m: f"\x00{plain(m.group(1))} {plain(m.group(2))}\x01", text)
     text = TYPE_TAG.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = PARAMETER.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = REPLACEABLE.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
-    text = LITERAL_TAG.sub(lambda m: plain(m.group(1)), text)
+    text = LITERAL_TAG.sub(lambda m: plain(m.group(1)).translate(LITERAL_ANGLES), text)
     text = text.replace("<optional>", "[ ").replace("</optional>", " ]")
     text = normalize(entities(TAG.sub("", text)))
-    return text.replace("\x00", "<").replace("\x01", ">")
+    return text.translate(ANGLES)
 
 
 def literals(raw: str) -> list[str]:

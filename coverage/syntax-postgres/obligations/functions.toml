@@ -6042,11 +6042,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.any-value.o004"
+id = "pg.functions.aggregate.any-value.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.any-value.o005"
@@ -6067,18 +6067,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.array-agg-order-by.o005"
+id = "pg.functions.aggregate.array-agg-order-by.o024"
 kind = "operand_type_class"
 required = true
 target = "<anynonarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.aggregate.array-agg-order-by.o011"
+id = "pg.functions.aggregate.array-agg-order-by.o025"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.array-agg-order-by.o014"
@@ -6223,11 +6223,11 @@ target = "<bigint>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.aggregate.bit-and.o013"
+id = "pg.functions.aggregate.bit-and.o019"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.bit-and.o014"
@@ -6269,11 +6269,11 @@ target = "<bigint>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.aggregate.bit-or.o013"
+id = "pg.functions.aggregate.bit-or.o019"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.bit-or.o014"
@@ -6315,11 +6315,11 @@ target = "<bigint>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.aggregate.bit-xor.o013"
+id = "pg.functions.aggregate.bit-xor.o019"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.bit-xor.o014"
@@ -6753,11 +6753,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.json-agg-order-by.o005"
+id = "pg.functions.aggregate.json-agg-order-by.o015"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.json-agg-order-by.o008"
@@ -6796,11 +6796,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.json-agg-strict.o004"
+id = "pg.functions.aggregate.json-agg-strict.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.json-agg-strict.o005"
@@ -7424,11 +7424,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.jsonb-agg-order-by.o005"
+id = "pg.functions.aggregate.jsonb-agg-order-by.o015"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.jsonb-agg-order-by.o008"
@@ -7467,11 +7467,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.jsonb-agg-strict.o004"
+id = "pg.functions.aggregate.jsonb-agg-strict.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.jsonb-agg-strict.o005"
@@ -7744,11 +7744,11 @@ target = "<anyelement>"
 note = "omit <anyelement>"
 
 [[obligation]]
-id = "pg.functions.aggregate.mode-within-group-order-by.o005"
+id = "pg.functions.aggregate.mode-within-group-order-by.o014"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.mode-within-group-order-by.o006"
@@ -8104,11 +8104,11 @@ target = "<anyelement>"
 note = "omit <anyelement>"
 
 [[obligation]]
-id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o006"
+id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o024"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o009"
@@ -8125,11 +8125,11 @@ target = "<anyelement> #2"
 note = "omit <anyelement>"
 
 [[obligation]]
-id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o011"
+id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o025"
 kind = "operand_type_class"
 required = true
 target = "<anyelement> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.percentile-disc-within-group-order-by.o012"
@@ -9534,11 +9534,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.aggregate.xmlagg-order-by.o005"
+id = "pg.functions.aggregate.xmlagg-order-by.o015"
 kind = "operand_type_class"
 required = true
 target = "<xml>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.aggregate.xmlagg-order-by.o008"
@@ -9584,11 +9584,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-append.o005"
+id = "pg.functions.array.array-append.o010"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-append.o006"
@@ -9598,11 +9598,11 @@ target = "<anycompatible>"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-append.o007"
+id = "pg.functions.array.array-append.o011"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-append.o008"
@@ -9630,11 +9630,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-cat.o005"
+id = "pg.functions.array.array-cat.o010"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-cat.o006"
@@ -9644,11 +9644,11 @@ target = "<anycompatiblearray> #2"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-cat.o007"
+id = "pg.functions.array.array-cat.o011"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-cat.o008"
@@ -9669,11 +9669,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.array-dims.o004"
+id = "pg.functions.array.array-dims.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-dims.o005"
@@ -9701,11 +9701,11 @@ target = "<anyelement>"
 note = "omit <anyelement>"
 
 [[obligation]]
-id = "pg.functions.array.array-fill.o005"
+id = "pg.functions.array.array-fill.o013"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-fill.o006"
@@ -9766,11 +9766,11 @@ target = "<anyarray>"
 note = "omit <anyarray>"
 
 [[obligation]]
-id = "pg.functions.array.array-length.o005"
+id = "pg.functions.array.array-length.o011"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-length.o006"
@@ -9812,11 +9812,11 @@ target = "<anyarray>"
 note = "omit <anyarray>"
 
 [[obligation]]
-id = "pg.functions.array.array-lower.o005"
+id = "pg.functions.array.array-lower.o011"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-lower.o006"
@@ -9851,11 +9851,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.array-ndims.o004"
+id = "pg.functions.array.array-ndims.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-ndims.o005"
@@ -9883,18 +9883,18 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-position.o005"
+id = "pg.functions.array.array-position.o014"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.array.array-position.o006"
+id = "pg.functions.array.array-position.o015"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-position.o007"
@@ -9948,11 +9948,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-positions.o005"
+id = "pg.functions.array.array-positions.o010"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-positions.o006"
@@ -9962,11 +9962,11 @@ target = "<anycompatible>"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-positions.o007"
+id = "pg.functions.array.array-positions.o011"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-positions.o008"
@@ -9994,11 +9994,11 @@ target = "<anycompatible>"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-prepend.o005"
+id = "pg.functions.array.array-prepend.o010"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-prepend.o006"
@@ -10008,11 +10008,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-prepend.o007"
+id = "pg.functions.array.array-prepend.o011"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-prepend.o008"
@@ -10040,11 +10040,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-remove.o005"
+id = "pg.functions.array.array-remove.o010"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-remove.o006"
@@ -10054,11 +10054,11 @@ target = "<anycompatible>"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-remove.o007"
+id = "pg.functions.array.array-remove.o011"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-remove.o008"
@@ -10086,11 +10086,11 @@ target = "<anycompatiblearray>"
 note = "omit <anycompatiblearray>"
 
 [[obligation]]
-id = "pg.functions.array.array-replace.o005"
+id = "pg.functions.array.array-replace.o012"
 kind = "operand_type_class"
 required = true
 target = "<anycompatiblearray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-replace.o006"
@@ -10100,11 +10100,11 @@ target = "<anycompatible>"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-replace.o007"
+id = "pg.functions.array.array-replace.o013"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-replace.o008"
@@ -10114,11 +10114,11 @@ target = "<anycompatible> #2"
 note = "omit <anycompatible>"
 
 [[obligation]]
-id = "pg.functions.array.array-replace.o009"
+id = "pg.functions.array.array-replace.o014"
 kind = "operand_type_class"
 required = true
 target = "<anycompatible> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-replace.o010"
@@ -10139,11 +10139,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.array-reverse.o004"
+id = "pg.functions.array.array-reverse.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-reverse.o005"
@@ -10210,11 +10210,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.array-shuffle.o004"
+id = "pg.functions.array.array-shuffle.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-shuffle.o005"
@@ -10384,11 +10384,11 @@ target = "<anyarray>"
 note = "omit <anyarray>"
 
 [[obligation]]
-id = "pg.functions.array.array-upper.o005"
+id = "pg.functions.array.array-upper.o011"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.array-upper.o006"
@@ -10423,11 +10423,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.cardinality.o004"
+id = "pg.functions.array.cardinality.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.cardinality.o005"
@@ -10494,11 +10494,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.array.unnest.o004"
+id = "pg.functions.array.unnest.o014"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.unnest.o007"
@@ -10508,18 +10508,18 @@ target = "<anyarray> #2"
 note = "omit <anyarray>"
 
 [[obligation]]
-id = "pg.functions.array.unnest.o008"
+id = "pg.functions.array.unnest.o015"
 kind = "operand_type_class"
 required = true
 target = "<anyarray> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.array.unnest.o009"
+id = "pg.functions.array.unnest.o016"
 kind = "operand_type_class"
 required = true
 target = "<anyarray> #3"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.array.unnest.o010"
@@ -10578,11 +10578,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.bit-length.o004"
+id = "pg.functions.binarystring.bit-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.bit-length.o005"
@@ -10865,11 +10865,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.crc32.o004"
+id = "pg.functions.binarystring.crc32.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.crc32.o005"
@@ -10890,11 +10890,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.crc32c.o004"
+id = "pg.functions.binarystring.crc32c.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.crc32c.o005"
@@ -11099,11 +11099,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.length.o004"
+id = "pg.functions.binarystring.length.o015"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.length.o007"
@@ -11214,11 +11214,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.md5.o004"
+id = "pg.functions.binarystring.md5.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.md5.o005"
@@ -11239,11 +11239,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.octet-length.o004"
+id = "pg.functions.binarystring.octet-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.octet-length.o005"
@@ -11414,11 +11414,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.reverse.o004"
+id = "pg.functions.binarystring.reverse.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.reverse.o005"
@@ -11605,11 +11605,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.sha224.o004"
+id = "pg.functions.binarystring.sha224.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.sha224.o005"
@@ -11630,11 +11630,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.sha256.o004"
+id = "pg.functions.binarystring.sha256.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.sha256.o005"
@@ -11655,11 +11655,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.sha384.o004"
+id = "pg.functions.binarystring.sha384.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.sha384.o005"
@@ -11680,11 +11680,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.binarystring.sha512.o004"
+id = "pg.functions.binarystring.sha512.o007"
 kind = "operand_type_class"
 required = true
 target = "<bytea>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.binarystring.sha512.o005"
@@ -12022,11 +12022,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.bitstring.bit-count.o004"
+id = "pg.functions.bitstring.bit-count.o007"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.bitstring.bit-count.o005"
@@ -12047,11 +12047,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.bitstring.bit-length.o004"
+id = "pg.functions.bitstring.bit-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.bitstring.bit-length.o005"
@@ -12118,11 +12118,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.bitstring.length.o004"
+id = "pg.functions.bitstring.length.o007"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.bitstring.length.o005"
@@ -12143,11 +12143,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.bitstring.octet-length.o004"
+id = "pg.functions.bitstring.octet-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.bitstring.octet-length.o005"
@@ -13441,11 +13441,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.datetime.isfinite.o004"
+id = "pg.functions.datetime.isfinite.o015"
 kind = "operand_type_class"
 required = true
 target = "<date>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.datetime.isfinite.o013"
@@ -14768,11 +14768,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.area.o004"
+id = "pg.functions.geometry.area.o007"
 kind = "operand_type_class"
 required = true
 target = "<geometric_type>"
-note = "a valid data_type"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.area.o005"
@@ -14800,11 +14800,11 @@ target = "<box>"
 note = "omit <box>"
 
 [[obligation]]
-id = "pg.functions.geometry.bound-box.o005"
+id = "pg.functions.geometry.bound-box.o010"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.bound-box.o006"
@@ -14814,11 +14814,11 @@ target = "<box> #2"
 note = "omit <box>"
 
 [[obligation]]
-id = "pg.functions.geometry.bound-box.o007"
+id = "pg.functions.geometry.bound-box.o011"
 kind = "operand_type_class"
 required = true
 target = "<box> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.bound-box.o008"
@@ -14846,11 +14846,11 @@ target = "<circle>"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.functions.geometry.box.o007"
+id = "pg.functions.geometry.box.o019"
 kind = "operand_type_class"
 required = true
 target = "<point>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.box.o010"
@@ -14860,11 +14860,11 @@ target = "<point> #2"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.box.o011"
+id = "pg.functions.geometry.box.o020"
 kind = "operand_type_class"
 required = true
 target = "<point> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.box.o012"
@@ -14874,11 +14874,11 @@ target = "<point> #3"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.box.o013"
+id = "pg.functions.geometry.box.o021"
 kind = "operand_type_class"
 required = true
 target = "<point> #3"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.box.o016"
@@ -14906,11 +14906,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.center.o004"
+id = "pg.functions.geometry.center.o007"
 kind = "operand_type_class"
 required = true
 target = "<geometric_type>"
-note = "a valid data_type"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.center.o005"
@@ -14931,11 +14931,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.circle.o004"
+id = "pg.functions.geometry.circle.o017"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.circle.o007"
@@ -14945,11 +14945,11 @@ target = "<point>"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.circle.o008"
+id = "pg.functions.geometry.circle.o018"
 kind = "operand_type_class"
 required = true
 target = "<point>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.circle.o009"
@@ -14991,11 +14991,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.diagonal.o004"
+id = "pg.functions.geometry.diagonal.o007"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.diagonal.o005"
@@ -15041,11 +15041,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.height.o004"
+id = "pg.functions.geometry.height.o007"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.height.o005"
@@ -15066,11 +15066,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.isclosed.o004"
+id = "pg.functions.geometry.isclosed.o007"
 kind = "operand_type_class"
 required = true
 target = "<path>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.isclosed.o005"
@@ -15091,11 +15091,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.isopen.o004"
+id = "pg.functions.geometry.isopen.o007"
 kind = "operand_type_class"
 required = true
 target = "<path>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.isopen.o005"
@@ -15116,11 +15116,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.length.o004"
+id = "pg.functions.geometry.length.o007"
 kind = "operand_type_class"
 required = true
 target = "<geometric_type>"
-note = "a valid data_type"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.length.o005"
@@ -15148,11 +15148,11 @@ target = "<point>"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.line.o005"
+id = "pg.functions.geometry.line.o010"
 kind = "operand_type_class"
 required = true
 target = "<point>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.line.o006"
@@ -15162,11 +15162,11 @@ target = "<point> #2"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.line.o007"
+id = "pg.functions.geometry.line.o011"
 kind = "operand_type_class"
 required = true
 target = "<point> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.line.o008"
@@ -15187,11 +15187,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.lseg.o004"
+id = "pg.functions.geometry.lseg.o013"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.lseg.o007"
@@ -15201,11 +15201,11 @@ target = "<point>"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.lseg.o008"
+id = "pg.functions.geometry.lseg.o014"
 kind = "operand_type_class"
 required = true
 target = "<point>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.lseg.o009"
@@ -15215,11 +15215,11 @@ target = "<point> #2"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.lseg.o010"
+id = "pg.functions.geometry.lseg.o015"
 kind = "operand_type_class"
 required = true
 target = "<point> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.lseg.o011"
@@ -15240,11 +15240,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.npoints.o004"
+id = "pg.functions.geometry.npoints.o007"
 kind = "operand_type_class"
 required = true
 target = "<geometric_type>"
-note = "a valid data_type"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.npoints.o005"
@@ -15290,11 +15290,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.pclose.o004"
+id = "pg.functions.geometry.pclose.o007"
 kind = "operand_type_class"
 required = true
 target = "<path>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.pclose.o005"
@@ -15343,11 +15343,11 @@ target = "<double precision> #2"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.geometry.point.o010"
+id = "pg.functions.geometry.point.o024"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.point.o013"
@@ -15357,11 +15357,11 @@ target = "<circle>"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.functions.geometry.point.o016"
+id = "pg.functions.geometry.point.o025"
 kind = "operand_type_class"
 required = true
 target = "<lseg>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.point.o019"
@@ -15389,11 +15389,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.polygon.o004"
+id = "pg.functions.geometry.polygon.o020"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.polygon.o007"
@@ -15431,11 +15431,11 @@ target = "<circle> #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "pg.functions.geometry.polygon.o016"
+id = "pg.functions.geometry.polygon.o021"
 kind = "operand_type_class"
 required = true
 target = "<path>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.polygon.o017"
@@ -15456,11 +15456,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.popen.o004"
+id = "pg.functions.geometry.popen.o007"
 kind = "operand_type_class"
 required = true
 target = "<path>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.popen.o005"
@@ -15513,11 +15513,11 @@ target = "<point>"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.slope.o005"
+id = "pg.functions.geometry.slope.o010"
 kind = "operand_type_class"
 required = true
 target = "<point>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.slope.o006"
@@ -15527,11 +15527,11 @@ target = "<point> #2"
 note = "omit <point>"
 
 [[obligation]]
-id = "pg.functions.geometry.slope.o007"
+id = "pg.functions.geometry.slope.o011"
 kind = "operand_type_class"
 required = true
 target = "<point> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.slope.o008"
@@ -15552,11 +15552,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.geometry.width.o004"
+id = "pg.functions.geometry.width.o007"
 kind = "operand_type_class"
 required = true
 target = "<box>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.geometry.width.o005"
@@ -15623,11 +15623,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.aclexplode.o005"
+id = "pg.functions.info.aclexplode.o018"
 kind = "operand_type_class"
 required = true
 target = "<aclitem[]>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.info.aclexplode.o006"
@@ -22235,11 +22235,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.array-to-json.o004"
+id = "pg.functions.json.array-to-json.o012"
 kind = "operand_type_class"
 required = true
 target = "<anyarray>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.array-to-json.o005"
@@ -22668,11 +22668,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-array-elements.o004"
+id = "pg.functions.json.json-array-elements.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-array-elements.o005"
@@ -22693,11 +22693,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-array-elements-text.o004"
+id = "pg.functions.json.json-array-elements-text.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-array-elements-text.o005"
@@ -22718,11 +22718,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-array-length.o004"
+id = "pg.functions.json.json-array-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-array-length.o005"
@@ -22819,11 +22819,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-each.o005"
+id = "pg.functions.json.json-each.o014"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-each.o006"
@@ -22884,11 +22884,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-each-text.o005"
+id = "pg.functions.json.json-each-text.o014"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-each-text.o006"
@@ -23240,11 +23240,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-object.o004"
+id = "pg.functions.json.json-object.o013"
 kind = "operand_type_class"
 required = true
 target = "<text[]>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-object.o007"
@@ -23293,11 +23293,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-object-keys.o004"
+id = "pg.functions.json.json-object-keys.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-object-keys.o005"
@@ -24725,11 +24725,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-to-record.o004"
+id = "pg.functions.json.json-to-record.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-to-record.o005"
@@ -24750,11 +24750,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-to-recordset.o004"
+id = "pg.functions.json.json-to-recordset.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-to-recordset.o005"
@@ -24775,11 +24775,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.json-typeof.o004"
+id = "pg.functions.json.json-typeof.o007"
 kind = "operand_type_class"
 required = true
 target = "<json>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.json-typeof.o005"
@@ -25096,11 +25096,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-array-elements.o004"
+id = "pg.functions.json.jsonb-array-elements.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-array-elements.o005"
@@ -25121,11 +25121,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-array-elements-text.o004"
+id = "pg.functions.json.jsonb-array-elements-text.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-array-elements-text.o005"
@@ -25146,11 +25146,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-array-length.o004"
+id = "pg.functions.json.jsonb-array-length.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-array-length.o005"
@@ -25247,11 +25247,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-each.o005"
+id = "pg.functions.json.jsonb-each.o014"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-each.o006"
@@ -25312,11 +25312,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-each-text.o005"
+id = "pg.functions.json.jsonb-each-text.o014"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-each-text.o006"
@@ -25560,11 +25560,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-object.o004"
+id = "pg.functions.json.jsonb-object.o013"
 kind = "operand_type_class"
 required = true
 target = "<text[]>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-object.o007"
@@ -25613,11 +25613,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-object-keys.o004"
+id = "pg.functions.json.jsonb-object-keys.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-object-keys.o005"
@@ -26686,11 +26686,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-pretty.o004"
+id = "pg.functions.json.jsonb-pretty.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-pretty.o005"
@@ -26946,11 +26946,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-to-record.o004"
+id = "pg.functions.json.jsonb-to-record.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-to-record.o005"
@@ -26971,11 +26971,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-to-recordset.o004"
+id = "pg.functions.json.jsonb-to-recordset.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-to-recordset.o005"
@@ -26996,11 +26996,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.jsonb-typeof.o004"
+id = "pg.functions.json.jsonb-typeof.o007"
 kind = "operand_type_class"
 required = true
 target = "<jsonb>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.jsonb-typeof.o005"
@@ -27021,11 +27021,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.row-to-json.o004"
+id = "pg.functions.json.row-to-json.o012"
 kind = "operand_type_class"
 required = true
 target = "<record>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.row-to-json.o005"
@@ -27072,11 +27072,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.to-json.o004"
+id = "pg.functions.json.to-json.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.to-json.o005"
@@ -27097,11 +27097,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.json.to-jsonb.o004"
+id = "pg.functions.json.to-jsonb.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.json.to-jsonb.o005"
@@ -29166,11 +29166,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.abbrev.o004"
+id = "pg.functions.net.abbrev.o010"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.abbrev.o007"
@@ -29198,11 +29198,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.broadcast.o004"
+id = "pg.functions.net.broadcast.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.broadcast.o005"
@@ -29223,11 +29223,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.family.o004"
+id = "pg.functions.net.family.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.family.o005"
@@ -29248,11 +29248,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.host.o004"
+id = "pg.functions.net.host.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.host.o005"
@@ -29273,11 +29273,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.hostmask.o004"
+id = "pg.functions.net.hostmask.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.hostmask.o005"
@@ -29305,11 +29305,11 @@ target = "<inet>"
 note = "omit <inet>"
 
 [[obligation]]
-id = "pg.functions.net.inet-merge.o005"
+id = "pg.functions.net.inet-merge.o010"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.inet-merge.o006"
@@ -29319,11 +29319,11 @@ target = "<inet> #2"
 note = "omit <inet>"
 
 [[obligation]]
-id = "pg.functions.net.inet-merge.o007"
+id = "pg.functions.net.inet-merge.o011"
 kind = "operand_type_class"
 required = true
 target = "<inet> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.inet-merge.o008"
@@ -29351,11 +29351,11 @@ target = "<inet>"
 note = "omit <inet>"
 
 [[obligation]]
-id = "pg.functions.net.inet-same-family.o005"
+id = "pg.functions.net.inet-same-family.o010"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.inet-same-family.o006"
@@ -29365,11 +29365,11 @@ target = "<inet> #2"
 note = "omit <inet>"
 
 [[obligation]]
-id = "pg.functions.net.inet-same-family.o007"
+id = "pg.functions.net.inet-same-family.o011"
 kind = "operand_type_class"
 required = true
 target = "<inet> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.inet-same-family.o008"
@@ -29415,11 +29415,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.masklen.o004"
+id = "pg.functions.net.masklen.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.masklen.o005"
@@ -29440,11 +29440,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.netmask.o004"
+id = "pg.functions.net.netmask.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.netmask.o005"
@@ -29465,11 +29465,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.network.o004"
+id = "pg.functions.net.network.o007"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.network.o005"
@@ -29497,11 +29497,11 @@ target = "<inet>"
 note = "omit <inet>"
 
 [[obligation]]
-id = "pg.functions.net.set-masklen.o005"
+id = "pg.functions.net.set-masklen.o018"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.set-masklen.o006"
@@ -29564,11 +29564,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.net.text.o005"
+id = "pg.functions.net.text.o008"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.net.text.o006"
@@ -29621,18 +29621,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.isempty.o004"
+id = "pg.functions.range.isempty.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.isempty.o007"
+id = "pg.functions.range.isempty.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.isempty.o008"
@@ -29653,18 +29653,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.lower.o004"
+id = "pg.functions.range.lower.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.lower.o007"
+id = "pg.functions.range.lower.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.lower.o008"
@@ -29685,18 +29685,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.lower-inc.o004"
+id = "pg.functions.range.lower-inc.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.lower-inc.o007"
+id = "pg.functions.range.lower-inc.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.lower-inc.o008"
@@ -29717,18 +29717,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.lower-inf.o004"
+id = "pg.functions.range.lower-inf.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.lower-inf.o007"
+id = "pg.functions.range.lower-inf.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.lower-inf.o008"
@@ -29749,11 +29749,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.multirange.o004"
+id = "pg.functions.range.multirange.o007"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.multirange.o005"
@@ -29781,11 +29781,11 @@ target = "<anyrange>"
 note = "omit <anyrange>"
 
 [[obligation]]
-id = "pg.functions.range.range-merge.o005"
+id = "pg.functions.range.range-merge.o013"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.range-merge.o006"
@@ -29795,18 +29795,18 @@ target = "<anyrange> #2"
 note = "omit <anyrange>"
 
 [[obligation]]
-id = "pg.functions.range.range-merge.o007"
+id = "pg.functions.range.range-merge.o014"
 kind = "operand_type_class"
 required = true
 target = "<anyrange> #2"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.range-merge.o010"
+id = "pg.functions.range.range-merge.o015"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.range-merge.o011"
@@ -29827,11 +29827,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.unnest.o004"
+id = "pg.functions.range.unnest.o007"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.unnest.o005"
@@ -29852,18 +29852,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.upper.o004"
+id = "pg.functions.range.upper.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.upper.o007"
+id = "pg.functions.range.upper.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.upper.o008"
@@ -29884,18 +29884,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.upper-inc.o004"
+id = "pg.functions.range.upper-inc.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.upper-inc.o007"
+id = "pg.functions.range.upper-inc.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.upper-inc.o008"
@@ -29916,18 +29916,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.range.upper-inf.o004"
+id = "pg.functions.range.upper-inf.o010"
 kind = "operand_type_class"
 required = true
 target = "<anyrange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.range.upper-inf.o007"
+id = "pg.functions.range.upper-inf.o011"
 kind = "operand_type_class"
 required = true
 target = "<anymultirange>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.range.upper-inf.o008"
@@ -31487,11 +31487,11 @@ target = "<text>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.string.quote-literal.o007"
+id = "pg.functions.string.quote-literal.o011"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.string.quote-literal.o008"
@@ -31519,11 +31519,11 @@ target = "<text>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.string.quote-nullable.o007"
+id = "pg.functions.string.quote-nullable.o011"
 kind = "operand_type_class"
 required = true
 target = "<anyelement>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.string.quote-nullable.o008"
@@ -33906,11 +33906,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.array-to-tsvector.o004"
+id = "pg.functions.textsearch.array-to-tsvector.o007"
 kind = "operand_type_class"
 required = true
 target = "<text[]>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.array-to-tsvector.o005"
@@ -34079,11 +34079,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.length.o004"
+id = "pg.functions.textsearch.length.o007"
 kind = "operand_type_class"
 required = true
 target = "<tsvector>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.length.o005"
@@ -34104,11 +34104,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.numnode.o004"
+id = "pg.functions.textsearch.numnode.o007"
 kind = "operand_type_class"
 required = true
 target = "<tsquery>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.numnode.o005"
@@ -34231,11 +34231,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.querytree.o004"
+id = "pg.functions.textsearch.querytree.o007"
 kind = "operand_type_class"
 required = true
 target = "<tsquery>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.querytree.o005"
@@ -34344,11 +34344,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.strip.o004"
+id = "pg.functions.textsearch.strip.o007"
 kind = "operand_type_class"
 required = true
 target = "<tsvector>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.strip.o005"
@@ -35888,11 +35888,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.tsvector-to-array.o004"
+id = "pg.functions.textsearch.tsvector-to-array.o007"
 kind = "operand_type_class"
 required = true
 target = "<tsvector>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.tsvector-to-array.o005"
@@ -35913,11 +35913,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.textsearch.unnest.o004"
+id = "pg.functions.textsearch.unnest.o015"
 kind = "operand_type_class"
 required = true
 target = "<tsvector>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.textsearch.unnest.o005"
@@ -37748,11 +37748,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.xml.xmlagg.o004"
+id = "pg.functions.xml.xmlagg.o007"
 kind = "operand_type_class"
 required = true
 target = "<xml>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.xml.xmlagg.o005"
@@ -37798,11 +37798,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.xml.xmlconcat.o004"
+id = "pg.functions.xml.xmlconcat.o009"
 kind = "operand_type_class"
 required = true
 target = "<xml>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.xml.xmlconcat.o005"
@@ -38079,11 +38079,11 @@ target = "<xml>"
 note = "omit <xml>"
 
 [[obligation]]
-id = "pg.functions.xml.xmlexists-passing.o008"
+id = "pg.functions.xml.xmlexists-passing.o020"
 kind = "operand_type_class"
 required = true
 target = "<xml>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.xml.xmlexists-passing.o009"
@@ -38339,11 +38339,11 @@ target = "<xml>"
 note = "omit <xml>"
 
 [[obligation]]
-id = "pg.functions.xml.xmlroot-version.o005"
+id = "pg.functions.xml.xmlroot-version.o024"
 kind = "operand_type_class"
 required = true
 target = "<xml>"
-note = "a valid operand"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.xml.xmlroot-version.o006"
