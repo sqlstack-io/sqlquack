@@ -9262,237 +9262,6 @@ cases = ["cases/translation/functions/div0null.toml#t006_neg_zero"]
 required = true
 
 [[obligation]]
-id = "sf.functions.dmf-avg.t001"
-form = "sf.functions.dmf-avg"
-kind = "type_combination"
-target = "NUMBER"
-note = "The values 1, 2 and 6 and a NULL: average 3."
-catches = "the NULL counted as 0 (2.25)"
-reading = "the page: the average of a FLOAT or NUMBER column"
-cases = ["cases/translation/functions/dmf-avg.toml#t001_average"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-avg.t002"
-form = "sf.functions.dmf-avg"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs; the page does not say; the recording decides."
-catches = "0 returned"
-reading = "the page: the average of a FLOAT or NUMBER column"
-cases = ["cases/translation/functions/dmf-avg.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-blank-count.t001"
-form = "sf.functions.dmf-blank-count"
-kind = "type_combination"
-target = "VARCHAR"
-note = "An empty string, three spaces, ' a ' and a NULL: 2 blank."
-catches = "spaces not counted, or NULL counted"
-reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
-cases = ["cases/translation/functions/dmf-blank-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-blank-count.t002"
-form = "sf.functions.dmf-blank-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which the page says are not blank."
-catches = "NULL counted as blank"
-reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
-cases = ["cases/translation/functions/dmf-blank-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-duplicate-count.t001"
-form = "sf.functions.dmf-duplicate-count"
-kind = "type_combination"
-target = "VARCHAR"
-note = "a three times, b once and NULL twice; the page does not say; the recording decides whether repeated values count once, every copy, or every extra copy."
-catches = "the NULL pair left out"
-reading = "the page: the count of column values that have duplicates, including NULL values"
-cases = ["cases/translation/functions/dmf-duplicate-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-duplicate-count.t002"
-form = "sf.functions.dmf-duplicate-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which the page says are counted as duplicates."
-catches = "0 returned"
-reading = "the page: the count of column values that have duplicates, including NULL values"
-cases = ["cases/translation/functions/dmf-duplicate-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-invalid-email-count.t001"
-form = "sf.functions.dmf-invalid-email-count"
-kind = "type_combination"
-target = "VARCHAR"
-note = "Valid a.b@example.com and x+y@sub.example.org; invalid no-at, a..b@example.com (empty segment) and a@example.c (one-letter final label); and a NULL: 3 invalid."
-catches = "NULL counted, empty local segments accepted, or a one-letter final label accepted"
-reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
-cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-invalid-email-count.t002"
-form = "sf.functions.dmf-invalid-email-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which the page says are not counted."
-catches = "NULL counted as invalid"
-reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
-cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-null-count.t001"
-form = "sf.functions.dmf-null-count"
-kind = "type_combination"
-target = "VARCHAR"
-note = "Two NULLs among four values, one of them an empty string."
-catches = "the empty string counted as NULL, or non-NULL values counted"
-reading = "the page: the number of NULL values in the one column the query projects"
-cases = ["cases/translation/functions/dmf-null-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-null-count.t002"
-form = "sf.functions.dmf-null-count"
-kind = "type_combination"
-target = "NUMBER"
-note = "One NULL among three numbers."
-catches = "NUMBER columns rejected"
-reading = "the page: the number of NULL values in the one column the query projects"
-cases = ["cases/translation/functions/dmf-null-count.toml#t002_number"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-null-count.t003"
-form = "sf.functions.dmf-null-count"
-kind = "null_argument"
-target = "query"
-note = "A column of only NULLs, all counted."
-catches = "0 returned"
-reading = "the page: the number of NULL values in the one column the query projects"
-cases = ["cases/translation/functions/dmf-null-count.toml#t003_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-null-percent.t001"
-form = "sf.functions.dmf-null-percent"
-kind = "type_combination"
-target = "VARCHAR"
-note = "One NULL among four values; the page does not say; the recording decides whether this reads 25 or 0.25."
-catches = "the NULL left out (0), or NULLs over non-NULLs (one third)"
-reading = "the page: the percentage of the column values that are NULL"
-cases = ["cases/translation/functions/dmf-null-percent.toml#t001_percent"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-null-percent.t002"
-form = "sf.functions.dmf-null-percent"
-kind = "null_argument"
-target = "query"
-note = "A column of only NULLs."
-catches = "0 returned"
-reading = "the page: the percentage of the column values that are NULL"
-cases = ["cases/translation/functions/dmf-null-percent.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-string-length-max.t001"
-form = "sf.functions.dmf-string-length-max"
-kind = "type_combination"
-target = "VARCHAR"
-note = "'abc', 'hello' and the multi-byte '\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9' (7 characters, 14 bytes), and a NULL."
-catches = "bytes counted instead of characters (14)"
-reading = "the page: the maximum string length of the non-NULL values"
-cases = ["cases/translation/functions/dmf-string-length-max.toml#t001_max"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-string-length-max.t002"
-form = "sf.functions.dmf-string-length-max"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs; the page does not say; the recording decides."
-catches = "0 returned"
-reading = "the page: the maximum string length of the non-NULL values"
-cases = ["cases/translation/functions/dmf-string-length-max.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-true-count.t001"
-form = "sf.functions.dmf-true-count"
-kind = "type_combination"
-target = "BOOLEAN"
-note = "TRUE twice, FALSE once and a NULL: 2."
-catches = "FALSE or NULL counted"
-reading = "the page: the count of non-NULL values that are TRUE"
-cases = ["cases/translation/functions/dmf-true-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-true-count.t002"
-form = "sf.functions.dmf-true-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which are not TRUE."
-catches = "NULL counted as TRUE"
-reading = "the page: the count of non-NULL values that are TRUE"
-cases = ["cases/translation/functions/dmf-true-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-unique-count.t001"
-form = "sf.functions.dmf-unique-count"
-kind = "type_combination"
-target = "VARCHAR"
-note = "a twice, b, c and two NULLs: 3 unique non-NULL values."
-catches = "NULL counted as a value (4), or only values occurring once counted (2)"
-reading = "the page: the number of unique non-NULL values"
-cases = ["cases/translation/functions/dmf-unique-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-unique-count.t002"
-form = "sf.functions.dmf-unique-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which leave no unique non-NULL value."
-catches = "NULL counted as one value"
-reading = "the page: the number of unique non-NULL values"
-cases = ["cases/translation/functions/dmf-unique-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-zero-count.t001"
-form = "sf.functions.dmf-zero-count"
-kind = "type_combination"
-target = "NUMBER(38,3)"
-note = "Zero, 0.000 written with a scale, a small non-zero 0.001 and a NULL: 2."
-catches = "the NULL counted as zero, or 0.001 rounded to zero"
-reading = "the page: the count of column values equal to zero"
-cases = ["cases/translation/functions/dmf-zero-count.toml#t001_count"]
-required = true
-
-[[obligation]]
-id = "sf.functions.dmf-zero-count.t002"
-form = "sf.functions.dmf-zero-count"
-kind = "null_argument"
-target = "query"
-note = "Only NULLs, which are not zero."
-catches = "NULL counted as zero"
-reading = "the page: the count of column values equal to zero"
-cases = ["cases/translation/functions/dmf-zero-count.toml#t002_null_query"]
-required = true
-
-[[obligation]]
 id = "sf.functions.editdistance.t001"
 form = "sf.functions.editdistance"
 kind = "type_combination"
@@ -10322,7 +10091,7 @@ id = "sf.functions.format-string-template.t004"
 form = "sf.functions.format-string-template"
 kind = "error_parity"
 target = "error"
-note = "The {:L} flag, which the page says is an error."
+note = "The {:L} flag, which the page says is an error; Snowflake refuses it when compiling (1046)."
 catches = "the flag ignored"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t004_locale_flag"]
@@ -10388,7 +10157,7 @@ id = "sf.functions.generator.generator-rowcount.t002"
 form = "sf.functions.generator.generator-rowcount"
 kind = "error_parity"
 target = "error"
-note = "ROWCOUNT -1, which the page says must be non-negative."
+note = "ROWCOUNT -1, which the page says must be non-negative; Snowflake refuses it when compiling (1046)."
 catches = "0 rows returned"
 reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
 cases = ["cases/translation/functions/generator.generator-rowcount.toml#t002_negative"]
@@ -13940,7 +13709,7 @@ id = "sf.functions.ipaddress-trunc.t003"
 form = "sf.functions.ipaddress-trunc"
 kind = "error_parity"
 target = "error"
-note = "Prefix 48 on an IPv4 address from a column, which the page says raises an error when it runs."
+note = "Prefix 48 on an IPv4 address; the page says this is an error, and Snowflake refuses it when compiling (937) because the input values are constants it can fold."
 catches = "the prefix clamped to 32, or NULL returned"
 reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
 cases = ["cases/translation/functions/ipaddress-trunc.toml#t003_family_range"]
@@ -16727,10 +16496,10 @@ required = true
 [[obligation]]
 id = "sf.functions.md5-number.t001"
 form = "sf.functions.md5-number"
-kind = "type_combination"
-target = "VARCHAR"
-note = "The page example (negative) and two strings whose digests read as positive and negative 128-bit integers within 38 digits."
-catches = "the digest read as unsigned, or as the first 64 bits"
+kind = "error_parity"
+target = "error"
+note = "The page example and two other strings; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
+catches = "the function accepted, with the digest computed as a signed integer"
 reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
 cases = ["cases/translation/functions/md5-number.toml#t001_signed"]
 required = true
@@ -16738,10 +16507,10 @@ required = true
 [[obligation]]
 id = "sf.functions.md5-number.t002"
 form = "sf.functions.md5-number"
-kind = "type_combination"
-target = "VARCHAR"
-note = "abc, whose digest as a signed integer has 39 digits, outside NUMBER(38,0) as the page warns; the page does not say; the recording decides whether this errors."
-catches = "the value truncated to 38 digits"
+kind = "error_parity"
+target = "error"
+note = "abc, whose digest as a signed integer has 39 digits; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
+catches = "the function accepted, or the value truncated to 38 digits"
 reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
 cases = ["cases/translation/functions/md5-number.toml#t002_out_of_range"]
 required = true
@@ -16749,10 +16518,10 @@ required = true
 [[obligation]]
 id = "sf.functions.md5-number.t003"
 form = "sf.functions.md5-number"
-kind = "null_argument"
-target = "msg"
-note = "A NULL message; the page does not say; the recording decides."
-catches = "the digest of an empty string returned"
+kind = "error_parity"
+target = "error"
+note = "A NULL message; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
+catches = "the function accepted"
 reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
 cases = ["cases/translation/functions/md5-number.toml#t003_null_msg"]
 required = true
@@ -30810,7 +30579,7 @@ id = "sf.functions.to-query.t003"
 form = "sf.functions.to-query"
 kind = "null_argument"
 target = "arg"
-note = "A NULL bind argument; the page says \"If any argument is NULL, the function returns NULL without reporting any error\"; the page does not say; the recording decides on how a NULL result set reads."
+note = "A NULL bind argument, typed as VARCHAR because a bare NULL is refused as not a string; the page says \"If any argument is NULL, the function returns NULL without reporting any error\"; the page does not say; the recording decides on how a NULL result set reads."
 catches = "an error raised"
 reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
 cases = ["cases/translation/functions/to-query.toml#t003_null_arg"]

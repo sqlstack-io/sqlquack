@@ -28,7 +28,8 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_family_range"
-description = "Prefix 48 on an IPv4 address from a column, which the page says raises an error when it runs. Catches: the prefix clamped to 32, or NULL returned"
+compile_error = true
+description = "Prefix 48 on an IPv4 address; the page says this is an error, and Snowflake refuses it when compiling (937) because the input values are constants it can fold. Catches: the prefix clamped to 32, or NULL returned"
 columns = [{ name = "v", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
 rows = [
   ["'192.0.2.1'", "48"],
