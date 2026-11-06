@@ -57,3 +57,81 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.security_admin.create-group" = "d7469acd1cd29c17efa242815682a2f4022765ac9b96c88352d3d412f414db4a"
 "pg.security_admin.create-policy" = "e7f3ecbb38b76a7f535c490dd236c1dbd52dcfacaa7c66a1a342d004fae97b4d"
 "pg.security_admin.create-user-mapping" = "7c19988b23bdba36a7ece030f4966ef48c081cf26b60cee3f179441ec8da3e47"
+
+[[review]]
+id = "pg-auditor-security_admin-005"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "8650b82c6a9346de0562732bf39e56c5237fd6ce"
+reviewed_utc = "2026-11-06T15:22:51Z"
+verdict = "approved"
+forms = [
+  "pg.security_admin.alter-group.add-user",
+  "pg.security_admin.alter-group.drop-user",
+  "pg.security_admin.alter-group.rename-to",
+  "pg.security_admin.alter-policy.on-table-name",
+  "pg.security_admin.alter-policy.rename-to",
+  "pg.security_admin.alter-role.rename-to",
+  "pg.security_admin.alter-role.reset",
+  "pg.security_admin.alter-role.reset-all",
+  "pg.security_admin.alter-role.role-specification-option",
+  "pg.security_admin.alter-role.set",
+  "pg.security_admin.alter-role.set-from-current",
+  "pg.security_admin.alter-system.reset",
+  "pg.security_admin.alter-system.reset-all",
+  "pg.security_admin.alter-system.set",
+  "pg.security_admin.alter-user-mapping",
+  "pg.security_admin.alter-user.rename-to",
+  "pg.security_admin.alter-user.reset",
+  "pg.security_admin.alter-user.reset-all",
+  "pg.security_admin.alter-user.role-specification-option",
+  "pg.security_admin.alter-user.set",
+  "pg.security_admin.alter-user.set-from-current",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 8650b82c; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.security_admin.alter-group.add-user" = "24e2dc8f7b7f32dfaedccdb8d1be3c45916ad90b11d5357165f2c919c97f9d77"
+"pg.security_admin.alter-group.drop-user" = "9363dba14babedebb4eb25edd8a41e2583bdc8aedfbd86accb3f10c143a08821"
+"pg.security_admin.alter-group.rename-to" = "c8325964a66e71a7a2a90d49fc62d1afc57abfb646a1a0ca5bb889a2a3c1d261"
+"pg.security_admin.alter-policy.on-table-name" = "b7a7d07b8392027143f7941c3b90c2ec311c0b810a493d2b8001350f347fdc1a"
+"pg.security_admin.alter-policy.rename-to" = "e64a0a8ec4007216844fb61122a1c7dc861687a07f686a77fd906cd9fd365140"
+"pg.security_admin.alter-role.rename-to" = "f39625f66fff62d62531527f44bdc0f8456fc0de452f051e6eeae086898ff856"
+"pg.security_admin.alter-role.reset" = "d97b47f0af53c1290fb055030859bf3c130f28dd2f75d58783dc3a999b127006"
+"pg.security_admin.alter-role.reset-all" = "b931474e9bf3f1670a4272821445c4a735ab83e4ec528a32dcf9060d4653de63"
+"pg.security_admin.alter-role.role-specification-option" = "3f2c2a5da84e010afdf124f988a82aa33b7a720dd42a5675d3b1f026076725bb"
+"pg.security_admin.alter-role.set" = "bca60ce488440fe87c18f07c181b3e441e82d2902e4539a22d3194740f944e99"
+"pg.security_admin.alter-role.set-from-current" = "680da3ea1f569bc8b52f7af2b65da81ea0b04478193e4dc7d2dca266c439f5e3"
+"pg.security_admin.alter-system.reset" = "1488c17d81523f9ac709c5adb1d48bc088fa9bda1875bfd766458c0f609841e5"
+"pg.security_admin.alter-system.reset-all" = "bc2cda9eea388cf6ed4097da4d68f751748fd75cf8e1c219c0642f8b45f65fab"
+"pg.security_admin.alter-system.set" = "fa762065ff224a97cbd30f9f338ab665bb55b66efe3fab14b79ce78e4e750aa8"
+"pg.security_admin.alter-user-mapping" = "4f34e548d92412d948adf2e6e308e53d26b7a7a23adb21de88c634811436643a"
+"pg.security_admin.alter-user.rename-to" = "87431bdccf68707e575f0808f598717ad66e98842aa9b2fbccd751df1f65fc4f"
+"pg.security_admin.alter-user.reset" = "6b895308126f8629970ba8571424d9b3d9a8757760f124a3d593c6af7b827eb8"
+"pg.security_admin.alter-user.reset-all" = "bfddc561b3ed9012f5a4e27da808470d4b788a535415ea882f4755dd662eb052"
+"pg.security_admin.alter-user.role-specification-option" = "a3d4c7534b1a239a9d0d8b2b3bba0716f8ba6b38175d98a8f99002e6fef62340"
+"pg.security_admin.alter-user.set" = "a4dff155b3823368b001c36bc9762e4dc931256fa9701addc1ca5cfe0b4fb817"
+"pg.security_admin.alter-user.set-from-current" = "9dd9f3d6e5805b255c48638c8aa78d114e5af4f33e5d06c026171fcabc2f9aa5"
+
+[review.definitions]
+"pg.security_admin.alter-group.add-user" = "e91a7da16350cce825100f6bc1750b9b86d96d3009856e4e7c1c8222e71904c4"
+"pg.security_admin.alter-group.drop-user" = "c2e1c09c94a3a5820d1ad60ffb4ce3af789e7bf59f14f20b2983157d96ed6a6b"
+"pg.security_admin.alter-group.rename-to" = "1ff4c0b4b3c9e9c69541f76ff1718d13bcade520ff6857d21974af51293bfed4"
+"pg.security_admin.alter-policy.on-table-name" = "918c476ec9e632797dd3d247ac8e583b7bf96caf9fa56596c68bb2c0f2e0e270"
+"pg.security_admin.alter-policy.rename-to" = "eb9f6da5dfb14c9fcc2e38682486901f756b05122ec35483f51617680a306394"
+"pg.security_admin.alter-role.rename-to" = "c6092d82ad36f9c9def608313c549348ff016d2b86a74ed80662577701ea6f36"
+"pg.security_admin.alter-role.reset" = "f1bcd3230e498d205b4c9647304e1727fabc9479b955dfafb2cab840698af4db"
+"pg.security_admin.alter-role.reset-all" = "7dd22e34c5a22843892bad66a7770b4fb12e02f7f9b1437fd025f177d365e291"
+"pg.security_admin.alter-role.role-specification-option" = "1c3231e7a8a6edca12560a06deac838fb52b5687b3a6d5a74687a69eab09dd10"
+"pg.security_admin.alter-role.set" = "ecb97fbe14d90be107bbb5831a36844ef7882341d9bd3ea7f0cd1ba4fecc1e22"
+"pg.security_admin.alter-role.set-from-current" = "395a4dd7adcf04959efa101e0f21439473e16fbcada7de58d33f47df72d9aec2"
+"pg.security_admin.alter-system.reset" = "90e2c3b8a4214c7a107c5f56c19de5d39811bdb9fc9f395ad31b95dcef225d2e"
+"pg.security_admin.alter-system.reset-all" = "56acbf72b0bca369298266aae3a7885ef170d19f7316db6507520e09cf63c053"
+"pg.security_admin.alter-system.set" = "abaff6436a33f1282643ba160f716fe7b51caa171466c3b065946473b83b1b91"
+"pg.security_admin.alter-user-mapping" = "088cb6269d83e1510f62cf3d9844d679a5e11948e2c091183952f0717ce7a8a4"
+"pg.security_admin.alter-user.rename-to" = "7821996d39c66392f377702bbcc5b386896e021192e30162204c6cc9dccdd82c"
+"pg.security_admin.alter-user.reset" = "c1eed727e984bfc1fc6e55b30283d67394d4f358b07872318cea263babaf558d"
+"pg.security_admin.alter-user.reset-all" = "8a6fff9efc224c1fe570ab650ed0eb0c51148a43fc2572395b95718361ef364d"
+"pg.security_admin.alter-user.role-specification-option" = "2a0605a52a674d2f3fb0627a1aafaae3995e1cde9ba93886300224daf775c610"
+"pg.security_admin.alter-user.set" = "96f7d6a170f15912b19fbf6e4f4f57972701d01cf57e2d70123c7ad3c9fa3c85"
+"pg.security_admin.alter-user.set-from-current" = "57699424375ed212cca339b824684e0dfcd3c5e6327c10ea7ba178a27e6ad547"
