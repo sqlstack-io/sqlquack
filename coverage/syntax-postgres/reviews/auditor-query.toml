@@ -30,3 +30,21 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.query.queries-table-expressions.join-using" = "9cfbaa6c8c2da89d9605797b060ea13ee7369426d57e6cbcb57aa1c64ee4043f"
 "pg.query.queries-table-expressions.natural-join" = "01b4cef40f7344adce54f644e8524bb791830e1b6a74797edb776bbf598b08c9"
 "pg.query.select.table" = "4df360aaab0ae703b1a84af140f41c9660401458c1f3bcde4ba6e13598771a2e"
+
+[[review]]
+id = "pg-auditor-query-002"
+reviewer_lane = "auditor"
+family = "query"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.query.values",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.values" = "b027e2baf70767c9962bb7ebdcaffd9de1938f5a1ac4c85dcc090b78735c0765"
+
+[review.definitions]
+"pg.query.values" = "5723e702074da772320e60753158f01c8280525e08436dbb89c9a7d367e96f87"

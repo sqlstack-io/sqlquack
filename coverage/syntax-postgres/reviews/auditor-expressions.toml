@@ -99,7 +99,6 @@ forms = [
   "pg.expressions.datatype.boolean",
   "pg.expressions.datatype.box",
   "pg.expressions.datatype.bytea",
-  "pg.expressions.datatype.character",
   "pg.expressions.datatype.character-varying",
   "pg.expressions.datatype.cidr",
   "pg.expressions.datatype.circle",
@@ -368,7 +367,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.datatype.boolean" = "a00263d4e12809f5fefee3ecd10838fe132f7b6be6c640b0583d228e3684ba20"
 "pg.expressions.datatype.box" = "be4804335aa74e7c297e1e8787e6e1437c865bd1be367f9801909e46b7dd7589"
 "pg.expressions.datatype.bytea" = "82d249baccc2a74a2fcb0937837a9e9b65cf16be0dc70f8d648b8d84f7097dc1"
-"pg.expressions.datatype.character" = "e040a309598e8abfa577fac504d3b2675675a3c30abd312c05f957022931b67c"
 "pg.expressions.datatype.character-varying" = "0183a01067f127a91e6d499518156b830f0fc7cc1c4b8c617159f321ec5b1195"
 "pg.expressions.datatype.cidr" = "3fb3a53d394032ffa57fbe00b2748a4947a94e71646bb1132b27574020cbbed3"
 "pg.expressions.datatype.circle" = "5d56f7a1c722640a17fed7d92355afd1f262294ee883626de04a7023305bb6c1"
@@ -635,7 +633,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.datatype.boolean" = "183a307243ee23153d9f44cf2621cfac8279ec457ab158ce61c9184730e6aadf"
 "pg.expressions.datatype.box" = "4a5599fecff583553d66f04a3a8e7671a63ef66d411b744441ef47d94dddd91a"
 "pg.expressions.datatype.bytea" = "9f51e635f8f17a3e90c34c0cea94b8c5a3c0e062a315c1c9fbf6adcbf2401216"
-"pg.expressions.datatype.character" = "d31e78b7daa79913c34c10210309fa24ceefabdecb26417d8ff3a654476659ca"
 "pg.expressions.datatype.character-varying" = "0356e7d1d85c272f4b61e6793eb06f5b273548d0f05513c044f0dfb5cb98c8ad"
 "pg.expressions.datatype.cidr" = "6572570a7fa63ef6fd54141951ecc76a159e1151c12a0fed38b8a7090f88554f"
 "pg.expressions.datatype.circle" = "a9dea5a6ac2310191288e73d4e45ae0c48095909b14959d73cf738238fba7f30"
@@ -814,3 +811,162 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.textsearch.op-bar-bar" = "a617a788b2004b6afc85f2229af082497b8c77fc09cb56c214142ceee767b4a0"
 "pg.expressions.textsearch.op-lt-at" = "732c94612ed22e07b9229dacb48e2bfa43e3fd9d4a3418666480ea88565c8be2"
 "pg.expressions.textsearch.op-lt-minus-gt" = "ee5b9438c0724109f4f0ff941a68193b554ba666996c07ecf91270824a719e31"
+
+[[review]]
+id = "pg-auditor-expressions-002"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.bitstring.op-bar",
+  "pg.expressions.comparison.is-not-unknown",
+  "pg.expressions.comparison.is-unknown",
+  "pg.expressions.comparisons.all-array",
+  "pg.expressions.comparisons.any-array",
+  "pg.expressions.comparisons.row-comparison",
+  "pg.expressions.comparisons.row-is-distinct-from",
+  "pg.expressions.comparisons.row-is-not-distinct-from",
+  "pg.expressions.comparisons.some-array",
+  "pg.expressions.datatype-datetime.interval-fields",
+  "pg.expressions.datatype-datetime.interval-literal-fields",
+  "pg.expressions.datatype.bit-varying",
+  "pg.expressions.datatype.interval",
+  "pg.expressions.datatype.numeric",
+  "pg.expressions.datetime.at-local",
+  "pg.expressions.datetime.at-time-zone",
+  "pg.expressions.geometry.op-at-at",
+  "pg.expressions.geometry.op-at-minus-at",
+  "pg.expressions.geometry.op-hash",
+  "pg.expressions.geometry.op-qmark-bar",
+  "pg.expressions.geometry.op-qmark-minus",
+  "pg.expressions.math.op-at",
+  "pg.expressions.math.op-bar",
+  "pg.expressions.math.op-bar-bar-slash",
+  "pg.expressions.math.op-bar-slash",
+  "pg.expressions.net.op-bar",
+  "pg.expressions.sql-expressions.aggregate",
+  "pg.expressions.sql-expressions.aggregate-all",
+  "pg.expressions.sql-expressions.aggregate-distinct",
+  "pg.expressions.sql-expressions.aggregate-star",
+  "pg.expressions.sql-expressions.aggregate-within-group",
+  "pg.expressions.sql-expressions.array-constructor",
+  "pg.expressions.sql-expressions.collate",
+  "pg.expressions.sql-expressions.operator-call",
+  "pg.expressions.sql-expressions.window-call-definition",
+  "pg.expressions.sql-expressions.window-call-name",
+  "pg.expressions.sql-expressions.window-star-definition",
+  "pg.expressions.sql-expressions.window-star-name",
+  "pg.expressions.subquery.all",
+  "pg.expressions.subquery.all-row",
+  "pg.expressions.subquery.any",
+  "pg.expressions.subquery.any-row",
+  "pg.expressions.subquery.in-row",
+  "pg.expressions.subquery.not-in-row",
+  "pg.expressions.subquery.row-comparison",
+  "pg.expressions.subquery.some",
+  "pg.expressions.subquery.some-row",
+  "pg.expressions.textsearch.op-bang-bang",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.bitstring.op-bar" = "855c90308093084cfb070959bff277780f463c44fcd64bb9f9c2c2539a8b1ac6"
+"pg.expressions.comparison.is-not-unknown" = "e1be007bb11cd2186d7f5c638a8ce5e1ee63d87754b990c13c42c3dddcf25901"
+"pg.expressions.comparison.is-unknown" = "eba1dcf2a00a556481b6a11cae4634712afc9e32e47305d8036b0f34c2c71864"
+"pg.expressions.comparisons.all-array" = "835a3a3fd0488fae9620b8b587cd5135573893dfc08bd08a0c15ddf927b5473f"
+"pg.expressions.comparisons.any-array" = "14cf6c05d55f55d9f38dd85ca560a623564a5f7be6c287226b4412faf81330ce"
+"pg.expressions.comparisons.row-comparison" = "d39cd0fb8e9b1d1cee5505882c5bf823b54ea847cbc5563bcd5a96ab1b2e516a"
+"pg.expressions.comparisons.row-is-distinct-from" = "e7725f2f5a6bb425d5ca4f07c3d00b51720a98c060be74888878df41e92b044c"
+"pg.expressions.comparisons.row-is-not-distinct-from" = "9700ff31b3c93e9fc17849b4708b13e3e5b7bc1e57914a726d5a519aee73143f"
+"pg.expressions.comparisons.some-array" = "0e2f7c95757eb90b3d801e39868e008b02381190e534b9ecd9de8ccb72ba8eae"
+"pg.expressions.datatype-datetime.interval-fields" = "a01cbb4be5b670f2da7e20d1e67f56056326ecb37aabb53f00d9993501caf505"
+"pg.expressions.datatype-datetime.interval-literal-fields" = "a1bf0470a5d1fb0f34b2e259f10bc99b850c497c34e4a960aecadec7156dc645"
+"pg.expressions.datatype.bit-varying" = "f84b2e633ff8394a9ea4c8399f9c722738221943f5f7904cd67abab0443f259b"
+"pg.expressions.datatype.interval" = "c8f8b3cea4a210aaa032f93ad5ceeb54044655337539251213e9870f05b112ef"
+"pg.expressions.datatype.numeric" = "b98b49206a124723ca4c0b9d02e1573d73f128281a4b4ea50c9402991a935e41"
+"pg.expressions.datetime.at-local" = "5923b2b33d24b699c19f653ce2381a57369d0fb58a25658665e674c329b9a719"
+"pg.expressions.datetime.at-time-zone" = "e50ad9bcc0910d7633349e9265b9d4fef64dcabcff0f91089f9cbabb789cd527"
+"pg.expressions.geometry.op-at-at" = "d9d93f1f5a3bf48b0dfa322b9d2bbeb9657d8cafdf856d6c83e7d20dcf151bac"
+"pg.expressions.geometry.op-at-minus-at" = "bba66d02cdf81bca8e4c1be06b0c92e32550012d8a27a0129636c35c3d9488a5"
+"pg.expressions.geometry.op-hash" = "ef2a35e004e4a6515a6c1cfd725fd427e80a94d1f711134183eee244fb38d601"
+"pg.expressions.geometry.op-qmark-bar" = "bc587594fe419ed4dd09f7155b3a7ac628241b152fd13832c2b903ebc435f52d"
+"pg.expressions.geometry.op-qmark-minus" = "cbcfe852fd9b610af46590bec48487049b933d6970f82416c6fc9d72f78556a8"
+"pg.expressions.math.op-at" = "8c5f44dc79bf3dceff9435b86a3f55d18150db86b5f50e7b1dffd37e5f1c64a1"
+"pg.expressions.math.op-bar" = "e45c59a89fce2d1f5da1c278c376b4b979921133b4383f0e390f5e3979021137"
+"pg.expressions.math.op-bar-bar-slash" = "5d852e65e5ec9886d41e0c7ff35e68233a81380a6888c9fe97a2503407a3ec22"
+"pg.expressions.math.op-bar-slash" = "c67b8c9ee3387069174026aecc1a2bb8a54310abf033e3f74a46c09fd9c39cbc"
+"pg.expressions.net.op-bar" = "6f466468d7969d76c4a03189ddc6abbf92cdeea4a1af0a83cc7436202b78173d"
+"pg.expressions.sql-expressions.aggregate" = "c0212f1eb40de79a139cc109ceb11a297aaebd9e824a9d945d4722170acf6d2a"
+"pg.expressions.sql-expressions.aggregate-all" = "f510442d7662d8651520cc42db9386a5a8aae4018dd85c5f7ed06fed6ea30c24"
+"pg.expressions.sql-expressions.aggregate-distinct" = "4f83e1096e5e880153135fd480806bb1fb7ff68a9bfaa0d2b2f591b1b77f64f6"
+"pg.expressions.sql-expressions.aggregate-star" = "b7ef67b74c3efd61a3f7e7f7d48832a68fd336ef7a88c0a1a9781d15fce7c2dd"
+"pg.expressions.sql-expressions.aggregate-within-group" = "f8bcecc8a33c36145a3b5529f19300457fcbb1f98a72ffd17beb5ea4c00ec89a"
+"pg.expressions.sql-expressions.array-constructor" = "119f4b5e3fb8d4909df8a9e138c9e96131f04a9f3cdd9f5cb372ef7f874904eb"
+"pg.expressions.sql-expressions.collate" = "54355c2a2194125f5d6998ed322030774b0f29f81f86ccd4ebe957c427c9e346"
+"pg.expressions.sql-expressions.operator-call" = "7e278623aedf5396c3e251741a2b89ea0e5562dd2f2c7d3158718a22999ccfb2"
+"pg.expressions.sql-expressions.window-call-definition" = "dbb3564fb520bc36f496261a6ab6e3d468e297aebbc685d153f4b1fa66375209"
+"pg.expressions.sql-expressions.window-call-name" = "f06d90b48acb483983a3d0ce2d2eb03bfd5b3c0d95d1efd573e466ad964b80af"
+"pg.expressions.sql-expressions.window-star-definition" = "097572736c725b89e014370fedeef7fdac9f7ff99ac7761647edfdc0ca369c30"
+"pg.expressions.sql-expressions.window-star-name" = "8320a1fdc92dfa3152924f9e89d1602f61d70a3366b76629d2dcefa036a37e5a"
+"pg.expressions.subquery.all" = "1c7a08a0f3d154ebc88cee1cb301031668f0bd9497cc426ef72c4124e28998b0"
+"pg.expressions.subquery.all-row" = "fd236c00f812f8801b069c4959dbedc415f5b66eca710ff2f3dc3b96794f45f7"
+"pg.expressions.subquery.any" = "1fdff3f49d8c7bfb00a83d02b0487b73f13b504fdd26d6c078cb493c8f42fcf0"
+"pg.expressions.subquery.any-row" = "858413da6506b150df25f3ffcf6cb7918e69c0542d99da022e15323e6aeb2b82"
+"pg.expressions.subquery.in-row" = "cae7a0e907be456ac3b41849bd09ad76da5e2ffd8fe9b1fadf1aee8bafa841d1"
+"pg.expressions.subquery.not-in-row" = "58a77b5424ae307a839e40fdbbff3a3cf0605787e5ee45d0db65b02946510872"
+"pg.expressions.subquery.row-comparison" = "9dd2d4e3195f60bf91d963d605f782073f9ccb3642ee71cf6a47af4b25749a47"
+"pg.expressions.subquery.some" = "5713db22a384324fd666e158c50cf44c06c4f5246804d07fdb09fcf79811494b"
+"pg.expressions.subquery.some-row" = "11428f01c71f17311ce8d7398e6ba887766532b5950e54e85e1e01a8f7a50b58"
+"pg.expressions.textsearch.op-bang-bang" = "7ab8b43b80ea771c51bd7800012ec2f90817516fb522bc92479158ee151275c2"
+
+[review.definitions]
+"pg.expressions.bitstring.op-bar" = "b82dc63a63ad666cefe021842a9c8481f81328121c789d5f298971d74b02d911"
+"pg.expressions.comparison.is-not-unknown" = "6df2fa4a1f66a52301ce3d483e025c4abb1d5c8f9dd9cb06c651b8f3c01188e6"
+"pg.expressions.comparison.is-unknown" = "0da888471de90b40e88969e57d9b264e7aef68e30436c2e8508514ddde6bc874"
+"pg.expressions.comparisons.all-array" = "ab8a8db4cd4f64fbcbcaccaac76f568be35cade6b16e3a30d4482b5ed7094d4e"
+"pg.expressions.comparisons.any-array" = "87dc4ed5748f26a69881a1db4df363ac13069331d6d59fe8448437bd8bba60cd"
+"pg.expressions.comparisons.row-comparison" = "efc59af1cf68920bcaadffc3c18dd1f9fe4af56388a3adba39e641eb9bc16a72"
+"pg.expressions.comparisons.row-is-distinct-from" = "96527b1d1a561d3ea07bf6d828fe31cd85fda8b2e66e338397abb24855d92c91"
+"pg.expressions.comparisons.row-is-not-distinct-from" = "248d2a41cc79fad88e51209f85a13a62c5a17cf215a6b486de6b75ed30b74f0b"
+"pg.expressions.comparisons.some-array" = "23df261f3685438db62a8315169405aeec37a8cd389c538b68be1015b08ac52b"
+"pg.expressions.datatype-datetime.interval-fields" = "d27bd15dba10c1457efa9b7eda45afca766c64d56e6995a8dd7e264e2e11907f"
+"pg.expressions.datatype-datetime.interval-literal-fields" = "c3f760c113b3a324169224903ff2170f90235e7f21402e74e93d99e8b0e0956c"
+"pg.expressions.datatype.bit-varying" = "6fcecbc6168fedb0ca1ebcefefbe1041686e15acdf5193fd3159523f2d6811ca"
+"pg.expressions.datatype.interval" = "d2b0ca25015b11f0ede649af21c86017aca03aad1d73d07ca32dacd7aa4d22e1"
+"pg.expressions.datatype.numeric" = "792ba21f0342f821ee2eddb6b0f137267148f262cbc3718eaf0b285ea19c5d16"
+"pg.expressions.datetime.at-local" = "1b99efcea55539dad52136d2300c79f01b1ec3063d7f11d2220b699f550346bf"
+"pg.expressions.datetime.at-time-zone" = "9ad1bdfc75b26d7cd2659ef65a23f89b025e4992d8473f75612e3b85120b572c"
+"pg.expressions.geometry.op-at-at" = "62863887e54ee5c54ff172ece698255f60b72d30283d65c458e792e6cbe008c4"
+"pg.expressions.geometry.op-at-minus-at" = "9c6817832a7efe231c8be6bb58e7abe0f38e33ad82fc4a1535022edf5b8acb7d"
+"pg.expressions.geometry.op-hash" = "f7961d1993b037238c91a19441e395327ffac1b143c7ef5b9a5d685561b9fb38"
+"pg.expressions.geometry.op-qmark-bar" = "f267a4ea27ceb40bdeae46f661858a94d9fe3a5d39eaf71e584538ed0c7e0a12"
+"pg.expressions.geometry.op-qmark-minus" = "632073ef35649764275b03ee0d7ad7ef1ba3f29d0612f803ebdf0fb113149c96"
+"pg.expressions.math.op-at" = "33b307a526b2052ea8f69bb6f9e83570ec5dcf5add680845d3b2fd6ecdcd6d37"
+"pg.expressions.math.op-bar" = "c960aec62f8f576c78900faadcea5b397acf9a89eb7bc6b9589dcd4916e89771"
+"pg.expressions.math.op-bar-bar-slash" = "fe7f8556e86384574c2cef87b2b0d7a99855783125fefa3fc7f6d320f5ae1537"
+"pg.expressions.math.op-bar-slash" = "188d373e0fa093a2b479eebb1000755e545066f3b4f6703444d4a6efc4ef23c9"
+"pg.expressions.net.op-bar" = "6ed9ab3684b3a3c8b730e8a4700b080d2431061e86be66771f8faa74569cb5cd"
+"pg.expressions.sql-expressions.aggregate" = "be025658a836a093fb85b8d266b05fbfd1b999b6bef49d3a10df716872a546ca"
+"pg.expressions.sql-expressions.aggregate-all" = "923109143d533fbb68c111691693aad16ebd1f27ceb7e2d6eb3acc0e09ad7b81"
+"pg.expressions.sql-expressions.aggregate-distinct" = "4e4784bcf9488a026ae356c2ec7b244df3d85bc2cd93488d094be681bf96d26a"
+"pg.expressions.sql-expressions.aggregate-star" = "436aa6d5d63cfdad1ebc8c52e8f69f141fe779c2458d86d1cd8f0fb93889ccc5"
+"pg.expressions.sql-expressions.aggregate-within-group" = "4702b7a0ebb9f374f3d3e268e5012dcb251e70a02da2161c624d1ae23c7b0491"
+"pg.expressions.sql-expressions.array-constructor" = "4d99912136498b108106af0619698b360fe5443f8deccf77f6eb9e3c2a991f16"
+"pg.expressions.sql-expressions.collate" = "958302abaea7340fad096886a3ddaf4a360fc0debdc56ddf16add756d2306408"
+"pg.expressions.sql-expressions.operator-call" = "39c26be2c6369ed9c1cbf43afc4c7cc75caa4c3b90080eda0d01aa8b4610379e"
+"pg.expressions.sql-expressions.window-call-definition" = "661215883cb6d404b020518985e3e232ade4a53a2464d8ffa07b92e6773398a0"
+"pg.expressions.sql-expressions.window-call-name" = "0970360856cd0c9c0f31122db264c7329e75387b204954fb5a89c86d8762b3c3"
+"pg.expressions.sql-expressions.window-star-definition" = "a35c33de043ae7003fb6854429d78d13865eee2e00574135b1ea1ed5d07ea25a"
+"pg.expressions.sql-expressions.window-star-name" = "013b2938b6ce8fffb334961bb04f102d4718f7cf36d79466739518c9121c0912"
+"pg.expressions.subquery.all" = "9785be0cb5ebf780a77a7cb73eb443828b60bf0cc4f04ca15f5d21909ba08ffc"
+"pg.expressions.subquery.all-row" = "ee670bb1b7d0b435d0f62626791fc89d4bfa388ca2850165c4277d3fab1c3a66"
+"pg.expressions.subquery.any" = "06d87adee5cddc08ac95ea9b90f6d28d9bab22a97f10e006042d2e6d4dd2c906"
+"pg.expressions.subquery.any-row" = "f6fe953bb6ef44b24472b2ad7bd9e713bb94946d9c8802800ed3621de4227dc4"
+"pg.expressions.subquery.in-row" = "31db5285f63e296c486441c21ce401240fb149c34f2a88041fabd55b37b7e2a6"
+"pg.expressions.subquery.not-in-row" = "e86dd17670634805982847f517d6c606425bb20052fbb06c8bca01d2293a34c3"
+"pg.expressions.subquery.row-comparison" = "f5e0088811bc09d6b6cacec891e0d8bf3de12faa0b541a2986ad2d734ca4a11a"
+"pg.expressions.subquery.some" = "3f0862545fbae7700dd9cdef085f1bc1a61cfb072fd91e8f1c982546379d639d"
+"pg.expressions.subquery.some-row" = "2b5d967f68728a257ce43f9eab62b1491b7198fb21bdfa88e30ef8e1c78d1a28"
+"pg.expressions.textsearch.op-bang-bang" = "35568f94170bd099a3bccfbed5d8742af614a0c8e7434d7022d4569f72c8b383"
