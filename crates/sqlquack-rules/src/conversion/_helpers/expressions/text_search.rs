@@ -6,6 +6,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 
 use crate::conversion::_helpers::expressions::strings::text_operand;
+use crate::conversion::_helpers::expressions::text_functions::integer_operand;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -18,23 +19,30 @@ use crate::conversion::constants::{
 /// The name POSITION is called by, which converts as its CHARINDEX spelling.
 const POSITION_NAME: &str = "POSITION";
 
-/// CHARINDEX(s, t) or POSITION(s, t), without a start position.
+/// CHARINDEX(s, t [, start]) or POSITION(s, t [, start]).
 pub(crate) fn charindex_call(
     name: &str,
     arguments: &[Value],
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let [needle, haystack] = arguments else {
-        return Err(outside_conditions(
-            construct.clone(),
-            format!("{name} with a start position, which Snowflake was recorded rejecting"),
-        ));
+    let (needle, haystack, start) = match arguments {
+        [needle, haystack] => (needle, haystack, None),
+        [needle, haystack, start] => (needle, haystack, Some(start)),
+        _ => {
+            return Err(outside_conditions(
+                construct.clone(),
+                format!("{name} with other than two or three arguments"),
+            ));
+        }
     };
     if name == POSITION_NAME {
         site.context.log.equivalence(POSITION_PAIR);
     }
-    position_of((needle, haystack), construct, site)
+    match start {
+        None => position_of((needle, haystack), construct, site),
+        Some(start) => position_from((needle, haystack, start), construct, site),
+    }
 }
 
 /// POSITION(s IN t), the parser's `str_position` node.
@@ -70,6 +78,27 @@ fn position_of(
     let haystack = text_operand(haystack, construct, site)?;
     Ok(Emitted::new(
         format!("CAST(strpos({haystack}, {needle}) AS DECIMAL(9,0))"),
+        TEXT_SEARCH_POSITION_TYPE,
+    ))
+}
+
+/// The first position of `needle` in `haystack` at or after `start` (below 1 reads as 1).
+fn position_from(
+    (needle, haystack, start): (&Value, &Value, &Value),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(TEXT_SEARCH_POSITION);
+    let needle = text_operand(needle, construct, site)?;
+    let haystack = text_operand(haystack, construct, site)?;
+    let start = integer_operand(start, construct, site)?;
+    let from = format!("greatest({start}, 1)");
+    let found = format!("strpos(substr({haystack}, {from}), {needle})");
+    Ok(Emitted::new(
+        format!(
+            "CAST(CASE WHEN {start} IS NULL THEN NULL WHEN {found} = 0 THEN 0 \
+             ELSE {found} + {from} - 1 END AS DECIMAL(9,0))"
+        ),
         TEXT_SEARCH_POSITION_TYPE,
     ))
 }

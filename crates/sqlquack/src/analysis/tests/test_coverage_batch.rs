@@ -35,9 +35,9 @@ fn given_text_searches_when_converting_then_positions_count_characters_from_one(
             expected_outcome: Ok("null"),
         },
         FirstValueTestCase {
-            description: "a start position is refused",
-            sql: "SELECT CHARINDEX('o', 'order', 2) AS v",
-            expected_outcome: Err("start position"),
+            description: "a start position skips earlier matches and counts from the text's start",
+            sql: "SELECT CHARINDEX('r', 'order', 3) AS v",
+            expected_outcome: Ok("5"),
         },
         FirstValueTestCase {
             description: "a number operand is refused",
