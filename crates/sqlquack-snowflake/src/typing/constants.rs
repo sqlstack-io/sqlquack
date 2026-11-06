@@ -18,6 +18,8 @@ pub const AVERAGE_EXTRA_DIGITS: u8 = 12;
 pub const COUNT_PRECISION: u8 = 18;
 /// Precision of timestamps and times without a declared precision.
 pub const DEFAULT_FRACTIONAL_PRECISION: u8 = 9;
+/// The most bytes BINARY(n) declares, as recorded for BINARY results: BINARY(67108864).
+pub const MAX_BINARY_LENGTH: u32 = 67_108_864;
 
 /// `NUMBER(38,0)`, which integer type names denote.
 pub const NUMBER_38_0: SnowflakeType = SnowflakeType::Number {

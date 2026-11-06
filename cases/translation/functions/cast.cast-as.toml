@@ -88,7 +88,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t008_binary_odd_length"
-description = "Hex text of odd length cast to BINARY, which the page says is an error. Catches: a padded or truncated byte"
+description = "Hex text of odd length cast to BINARY; no page says what an odd digit count does, so the receipt decides. Catches: a padded or truncated byte"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'ABC'"],

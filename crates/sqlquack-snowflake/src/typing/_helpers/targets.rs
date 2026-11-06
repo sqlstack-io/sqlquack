@@ -1,7 +1,7 @@
 //! Parsing the arguments of a Snowflake type name.
 
 use crate::typing::_helpers::numbers::number;
-use crate::typing::constants::{DEFAULT_FRACTIONAL_PRECISION, MAX_PRECISION};
+use crate::typing::constants::{DEFAULT_FRACTIONAL_PRECISION, MAX_BINARY_LENGTH, MAX_PRECISION};
 use crate::typing::models::{CastTarget, SnowflakeType};
 
 pub(crate) fn parse_arguments(rest: &str, name: &str) -> Result<Vec<u32>, String> {
@@ -57,10 +57,13 @@ pub(crate) fn binary_target(arguments: &[u32], name: &str) -> Result<CastTarget,
             data_type: SnowflakeType::Binary,
             max_length: None,
         }),
-        [length] => Ok(CastTarget {
+        [length] if (1..=MAX_BINARY_LENGTH).contains(length) => Ok(CastTarget {
             data_type: SnowflakeType::Binary,
             max_length: Some(*length),
         }),
+        [length] => Err(format!(
+            "`{name}` declares {length} bytes, outside 1 to {MAX_BINARY_LENGTH}"
+        )),
         _ => Err(format!("too many arguments in `{name}`")),
     }
 }

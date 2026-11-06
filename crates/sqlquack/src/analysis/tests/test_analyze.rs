@@ -37,6 +37,21 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: converted(),
         },
         AnalyzeTestCase {
+            description: "hex text cast to BINARY(n) converts, raising for longer bytes as recorded",
+            sql: "SELECT CAST('AABB' AS BINARY(2)) AS b",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "BINARY cast to BINARY(n) is refused, since no recording shows its length check",
+            sql: "SELECT CAST(CAST('AABBCC' AS BINARY) AS BINARY(2)) AS b",
+            expected_summary: refused(RefusalCategory::TypeCondition),
+        },
+        AnalyzeTestCase {
+            description: "BINARY(0) is refused as a length Snowflake does not declare",
+            sql: "SELECT CAST('' AS BINARY(0)) AS b",
+            expected_summary: refused(RefusalCategory::TypeCondition),
+        },
+        AnalyzeTestCase {
             description: "an ORDER BY expression naming an alias that shadows a column uses the alias",
             sql: "SELECT amount * 2 AS amount FROM orders ORDER BY amount + 1",
             expected_summary: converted(),

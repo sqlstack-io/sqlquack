@@ -496,6 +496,9 @@ fn strict_cast(
             let _rule = cast_rule(CAST_TO_TEXT, log);
             Ok(bounded(cast(&operand.sql, to, log)?, target, log))
         }
+        (SnowflakeType::Binary, SnowflakeType::Binary) if target.max_length.is_some() => {
+            Err("BINARY to BINARY(n), whose length check no recording shows".to_owned())
+        }
         _ if from == to => {
             let _rule = cast_rule(CAST_SAME_TYPE, log);
             cast(&operand.sql, to, log)
