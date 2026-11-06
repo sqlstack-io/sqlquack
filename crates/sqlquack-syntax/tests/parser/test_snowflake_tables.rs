@@ -84,3 +84,62 @@ fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verd
         );
     }
 }
+
+#[test]
+fn given_incomplete_snowflake_constraint_clauses_when_parsing_then_they_are_refused() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "MATCH with no match type (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT REFERENCES v1 MATCH ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NO with no ACTION (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 ON DELETE NO ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INITIALLY with no mode (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) INITIALLY ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a constraint COMMENT with no string (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) COMMENT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a primary key on no columns (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , PRIMARY KEY ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as a tag name (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT TAG ( SELECT = 'm' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized property list after WITH (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT ) WITH ( STEWARD = v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a complete match type stays a table (recorded OK)",
+            sql: "CREATE TABLE v1 ( v1 INT REFERENCES v1 MATCH SIMPLE ) ;",
+            expected_kind: Some("create_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a complete referential action stays a table (recorded OK)",
+            sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 ON DELETE NO ACTION ) ;",
+            expected_kind: Some("create_table"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

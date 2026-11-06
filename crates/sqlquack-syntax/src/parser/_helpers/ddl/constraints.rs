@@ -106,6 +106,9 @@ impl Parser {
         let (columns, timeseries_columns) = {
             self.expect_token(TokenType::LParen)?;
             let timeseries_columns: Vec<Identifier> = Vec::new();
+            if self.is_snowflake() && self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a key column"));
+            }
             let cols = if self.check(TokenType::RParen) {
                 Vec::new()
             } else {
@@ -512,6 +515,8 @@ impl Parser {
                     modifiers.initially_deferred = Some(true);
                 } else if self.match_identifier("IMMEDIATE") {
                     modifiers.initially_deferred = Some(false);
+                } else if self.is_snowflake() {
+                    return Err(self.parse_error("Expected DEFERRED or IMMEDIATE after INITIALLY"));
                 }
             } else if self.match_identifier("NORELY") {
                 modifiers.norely = true;
@@ -526,6 +531,8 @@ impl Parser {
             } else if self.match_token(TokenType::Comment) {
                 if self.check(TokenType::String) {
                     modifiers.comment = Some(self.advance_text()?);
+                } else if self.is_snowflake() {
+                    return Err(self.parse_error("Expected a comment string"));
                 }
             } else if self.match_identifier("VISIBLE") {
                 modifiers.visible = Some(true);
@@ -624,8 +631,15 @@ impl Parser {
                 match text.as_str() {
                     "PARTIAL" => Some(MatchType::Partial),
                     "SIMPLE" => Some(MatchType::Simple),
+                    _ if self.is_snowflake() => {
+                        return Err(
+                            self.parse_error("Expected FULL, PARTIAL or SIMPLE after MATCH")
+                        );
+                    }
                     _ => None,
                 }
+            } else if self.is_snowflake() {
+                return Err(self.parse_error("Expected FULL, PARTIAL or SIMPLE after MATCH"));
             } else {
                 None
             }
@@ -665,8 +679,15 @@ impl Parser {
                 match text.as_str() {
                     "PARTIAL" => Some(MatchType::Partial),
                     "SIMPLE" => Some(MatchType::Simple),
+                    _ if self.is_snowflake() => {
+                        return Err(
+                            self.parse_error("Expected FULL, PARTIAL or SIMPLE after MATCH")
+                        );
+                    }
                     _ => None,
                 }
+            } else if self.is_snowflake() {
+                return Err(self.parse_error("Expected FULL, PARTIAL or SIMPLE after MATCH"));
             } else {
                 None
             }
@@ -709,6 +730,8 @@ impl Parser {
         } else if self.match_token(TokenType::No) {
             if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("ACTION") {
                 self.skip();
+            } else if self.is_snowflake() {
+                return Err(self.parse_error("Expected ACTION after NO"));
             }
             Ok(ReferentialAction::NoAction)
         } else {
@@ -722,6 +745,9 @@ impl Parser {
         let mut expressions: Vec<Expression> = Vec::new();
 
         loop {
+            if self.is_snowflake() && self.is_snowflake_reserved_keyword() {
+                return Err(self.parse_error("Expected a tag name"));
+            }
             let key = self.expect_identifier_or_keyword()?;
             self.expect_token(TokenType::Eq)?;
             let value = self.parse_primary()?;

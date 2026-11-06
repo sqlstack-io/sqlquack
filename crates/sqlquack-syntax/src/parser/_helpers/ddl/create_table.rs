@@ -668,6 +668,8 @@ impl Parser {
             if is_system_versioning || is_row_access_policy {
                 self.current = saved;
                 Vec::new()
+            } else if self.is_snowflake() {
+                return Err(self.parse_error("Expected a table property after WITH"));
             } else {
                 self.parse_with_properties()?
             }
