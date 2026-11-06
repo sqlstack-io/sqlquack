@@ -15,12 +15,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_key_type"
-description = "Keys 1 and '2', which the page says unify to a numeric type. Catches: the key '2' kept as text"
+description = "The page example MAP_CONSTRUCT(1, 'a', '2', 'b'), whose keys the page says unify to a numeric type; a value comes from the input. Catches: the key '2' kept as text"
 columns = [{ name = "x", type = "VARCHAR" }]
 rows = [
-  ["'2'"],
+  ["'a'"],
 ]
-query = "SELECT ARRAY_SORT(MAP_KEYS(MAP_CONSTRUCT(1, 'a', x, 'b'))::ARRAY) AS r FROM input ORDER BY ordinal"
+query = "SELECT ARRAY_SORT(MAP_KEYS(MAP_CONSTRUCT(1, x, '2', 'b'))::ARRAY) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
