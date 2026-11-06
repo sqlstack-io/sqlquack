@@ -1,5 +1,6 @@
 //! Statements: queries, FROM, DML, COMMENT, routines, and the statement dispatch with TRUNCATE and COPY.
 
+pub(crate) mod definitions;
 pub(crate) mod dml;
 pub(crate) mod from;
 pub(crate) mod objects;
