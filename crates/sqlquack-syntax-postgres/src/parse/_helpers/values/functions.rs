@@ -2,6 +2,7 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::columns::models::WithOperator;
 use sqlquack_syntax::expressions::functions::models::WithinGroup;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{NamedArgSeparator, NamedArgument};
@@ -337,16 +338,15 @@ impl Parser<'_> {
         self.comma_list(|parser| parser.sort_by())
     }
 
-    /// `sortby`: `a_expr [ASC|DESC | USING op] [NULLS FIRST|LAST]`.
+    /// `sortby`: `a_expr [ASC|DESC | USING op] [NULLS FIRST|LAST]`; `USING` keeps its operator.
     fn sort_by(&mut self) -> Parsing<Ordered> {
-        let this: Expression = self.a_expr()?;
+        let mut this: Expression = self.a_expr()?;
         let (mut desc, mut explicit_asc) = (false, false);
         if self.eat_kw("asc") {
             explicit_asc = true;
         } else if self.eat_kw("desc") {
             desc = true;
         } else if self.kw("using") {
-            let start: usize = self.offset();
             self.at += 1;
             let operator: String = match self.kw("operator") && self.char_at(1, '(') {
                 true => {
@@ -360,11 +360,10 @@ impl Parser<'_> {
                     token.value
                 }
             };
-            match operator.as_str() {
-                "<" => explicit_asc = true,
-                ">" => desc = true,
-                _ => self.gap("order_by_using_operator", start),
-            }
+            this = Expression::WithOperator(Box::new(WithOperator {
+                this: Box::new(this),
+                op: operator,
+            }));
         }
         let nulls_first: Option<bool> = self.nulls_order();
         Ok(ordered(this, desc, explicit_asc, nulls_first))

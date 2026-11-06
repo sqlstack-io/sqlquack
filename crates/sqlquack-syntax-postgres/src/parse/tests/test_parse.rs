@@ -7,7 +7,8 @@ use crate::parse::main::parse::parse;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::main::parse_type::parse_type;
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, ShapeTestCase, SpanTestCase, StrictTestCase, TypeTextTestCase, VerdictTestCase,
+    ExpectedVerdict, ShapeTestCase, SpanTestCase, StrictTestCase, TypeTextTestCase, ValueTestCase,
+    VerdictTestCase,
 };
 
 #[test]
@@ -699,6 +700,72 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
             .map_err(|failure| failure.parse_error().map(|error| error.syntax));
         assert_eq!(
             outcome, test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
+    let test_cases = [
+        ValueTestCase {
+            description: "ORDER BY ... USING keeps its operator, even < which ASC also means",
+            sql: "VALUES (1) ORDER BY 1 USING <",
+            pointer: "/0/select/order_by/expressions/0/this/with_operator/op",
+            expected_json: "\"<\"",
+        },
+        ValueTestCase {
+            description: "ORDER BY ... USING an operator of its own keeps it",
+            sql: "SELECT a FROM t ORDER BY a USING ~<~",
+            pointer: "/0/select/order_by/expressions/0/this/with_operator/op",
+            expected_json: "\"~<~\"",
+        },
+        ValueTestCase {
+            description: "ORDER BY ... USING is neither ASC nor DESC",
+            sql: "SELECT a FROM t ORDER BY a USING >",
+            pointer: "/0/select/order_by/expressions/0/desc",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "COPY TO PROGRAM names the command as a program target",
+            sql: "COPY t1 TO PROGRAM 'm' WITH ( x )",
+            pointer: "/0/copy/files/0/function/name",
+            expected_json: "\"program\"",
+        },
+        ValueTestCase {
+            description: "COPY TO a file whose options name program keeps the file",
+            sql: "COPY t1 TO 'm' WITH ( program , x )",
+            pointer: "/0/copy/files/0/literal/value",
+            expected_json: "\"m\"",
+        },
+        ValueTestCase {
+            description: "COPY FROM PROGRAM names the command as a program target",
+            sql: "COPY t1 FROM PROGRAM 'm'",
+            pointer: "/0/copy/files/0/function/name",
+            expected_json: "\"program\"",
+        },
+        ValueTestCase {
+            description: "TRUNCATE a * is one target, a, as in PostgreSQL's raw tree",
+            sql: "TRUNCATE a *",
+            pointer: "/0/truncate/extra_tables",
+            expected_json: "[]",
+        },
+        ValueTestCase {
+            description: "TRUNCATE a *, b * is two targets, the second b",
+            sql: "TRUNCATE a *, b *",
+            pointer: "/0/truncate/extra_tables/0/table/name/name",
+            expected_json: "\"b\"",
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        assert_eq!(
+            tree.pointer(test_case.pointer)
+                .map(Value::to_string)
+                .as_deref(),
+            Some(test_case.expected_json),
             "{}",
             test_case.description
         );
