@@ -10,8 +10,10 @@ id = "fn_charindex_combination_0_text_text"
 description = "fn:CHARINDEX over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "CHARINDEX(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -22,8 +24,10 @@ id = "fn_charindex_combination_1_text_text"
 description = "fn:CHARINDEX over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "POSITION(x0, x1)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -34,8 +38,10 @@ id = "fn_charindex_combination_2_text_text"
 description = "fn:CHARINDEX over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "POSITION(x0 IN x1)"
 tags = ["null", "empty", "whitespace", "unicode"]

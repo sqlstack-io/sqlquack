@@ -1,5 +1,6 @@
 //! Name resolution: relations in scope, CTEs, select-list aliases and outer queries.
 
+use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
@@ -14,6 +15,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::tree::node_construct;
+use crate::conversion::constants::SUBQUERY_PARAMETER_PREFIX;
 
 use crate::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
@@ -166,6 +168,8 @@ pub(crate) struct Context<'a> {
     pub(crate) typed: &'a TypedLeaves,
     /// Unordered values passed up unchecked so far, to tell what a conversion passed up.
     pub(crate) order: &'a OrderTrack,
+    /// The subquery values emitted so far, which DuckDB cannot bind inside a lambda body.
+    pub(crate) subqueries: &'a SubqueryTrack,
     /// Whether query results may keep unordered arrays: CTE and FROM subquery bodies.
     pub(crate) free_projections: bool,
     /// Whether this converts a case's input fixture, whose literals stand for source data.
@@ -192,6 +196,52 @@ impl OrderTrack {
     /// Forgets what was passed up since `mark`, which a consumer has absorbed.
     pub(crate) fn absorb(&self, mark: usize) {
         self.passed.set(mark);
+    }
+}
+
+/// What a statement's conversion tracks as it goes: unordered values passed up, subqueries emitted.
+#[derive(Debug, Default)]
+pub(crate) struct StatementTracks {
+    pub(crate) order: OrderTrack,
+    pub(crate) subqueries: SubqueryTrack,
+}
+
+/// A subquery value emitted in a statement's conversion.
+#[derive(Clone, Debug)]
+pub(crate) struct SubqueryValue {
+    pub(crate) sql: String,
+    /// Whether it may call a function whose result can change between calls.
+    pub(crate) volatile: bool,
+    pub(crate) location: Option<SourceLocation>,
+}
+
+/// The subquery values a statement's conversion emitted, in order, and the parameters it bound.
+#[derive(Debug, Default)]
+pub(crate) struct SubqueryTrack {
+    values: std::cell::RefCell<Vec<SubqueryValue>>,
+    bound: std::cell::Cell<usize>,
+}
+
+impl SubqueryTrack {
+    /// A subquery value emitted.
+    pub(crate) fn record(&self, value: SubqueryValue) {
+        self.values.borrow_mut().push(value);
+    }
+
+    /// The count so far.
+    pub(crate) fn mark(&self) -> usize {
+        self.values.borrow().len()
+    }
+
+    /// The values emitted since `mark`.
+    pub(crate) fn since(&self, mark: usize) -> Vec<SubqueryValue> {
+        self.values.borrow()[mark..].to_vec()
+    }
+
+    /// A lambda parameter name not yet used in the statement.
+    pub(crate) fn parameter(&self) -> String {
+        self.bound.set(self.bound.get() + 1);
+        format!("{SUBQUERY_PARAMETER_PREFIX}{}", self.bound.get())
     }
 }
 

@@ -1,0 +1,508 @@
+# Never-submitted obligations (cause = "not_submitted"): every case citing the obligation was held
+# offline by lane A's capture guard, so nothing ran. Each stays in the denominator, never counts as
+# satisfied, and is reported as "unverifiable: not submitted". The reason names the guard rule.
+
+[[unobservable]]
+obligation = "sf.functions.finetune-snowflake-cortex.o009"
+form = "sf.functions.finetune-snowflake-cortex"
+construct = "option_present: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.finetune-snowflake-cortex.o012"
+form = "sf.functions.finetune-snowflake-cortex"
+construct = "a valid operand: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.finetune-snowflake-cortex.o013"
+form = "sf.functions.finetune-snowflake-cortex"
+construct = "the list continued at least once: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.finetune-snowflake-cortex.o014"
+form = "sf.functions.finetune-snowflake-cortex"
+construct = "option_absent: SELECT FINETUNE ( 'CREATE' , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.finetune-snowflake-cortex.k5b4d8c50fc63", sql_sha256 = "5b4d8c50fc632bdc8c9eff54dd52cffed4830778bb41f5d1ba342c232aa9ca3f" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-generate-saml-csr.o001"
+form = "sf.functions.system-generate-saml-csr"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-generate-saml-csr.k45571bac0913", sql_sha256 = "45571bac0913010dc7674249a8dc30edd6a853d2e7691686794217a872c5b090" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-generate-saml-csr.o009"
+form = "sf.functions.system-generate-saml-csr"
+construct = "option_present: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-generate-saml-csr.k120d01312aa8", sql_sha256 = "120d01312aa8128cbbb8fa56a6cf3bc12d5c68818eb4ddba1a4a19d4d8ce2d47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-generate-saml-csr.o010"
+form = "sf.functions.system-generate-saml-csr"
+construct = "option_absent: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-generate-saml-csr.k45571bac0913", sql_sha256 = "45571bac0913010dc7674249a8dc30edd6a853d2e7691686794217a872c5b090" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-generate-saml-csr.o012"
+form = "sf.functions.system-generate-saml-csr"
+construct = "a valid string_literal: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-generate-saml-csr.k120d01312aa8", sql_sha256 = "120d01312aa8128cbbb8fa56a6cf3bc12d5c68818eb4ddba1a4a19d4d8ce2d47" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-generate-saml-csr.o013"
+form = "sf.functions.system-generate-saml-csr"
+construct = "a valid string_literal: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-generate-saml-csr.k45571bac0913", sql_sha256 = "45571bac0913010dc7674249a8dc30edd6a853d2e7691686794217a872c5b090" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-migrate-saml-idp-registration.o001"
+form = "sf.functions.system-migrate-saml-idp-registration"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$MIGRATE_SAML_IDP_REGISTRATION ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-migrate-saml-idp-registration.k9e7ed0bd1d51", sql_sha256 = "9e7ed0bd1d51c864a3502b967a468ce41f3c2a71d15717a80236159c845b9218" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-migrate-saml-idp-registration.o003"
+form = "sf.functions.system-migrate-saml-idp-registration"
+construct = "a valid string_literal: SELECT SYSTEM$MIGRATE_SAML_IDP_REGISTRATION ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-migrate-saml-idp-registration.k9e7ed0bd1d51", sql_sha256 = "9e7ed0bd1d51c864a3502b967a468ce41f3c2a71d15717a80236159c845b9218" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-migrate-saml-idp-registration.o011"
+form = "sf.functions.system-migrate-saml-idp-registration"
+construct = "option_absent: SELECT SYSTEM$MIGRATE_SAML_IDP_REGISTRATION ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-migrate-saml-idp-registration.k9e7ed0bd1d51", sql_sha256 = "9e7ed0bd1d51c864a3502b967a468ce41f3c2a71d15717a80236159c845b9218" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o001"
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.k638678f2722e", sql_sha256 = "638678f2722ec4bc95d1309ba8d0478ed916433402561f972edb3e5f154f7bf4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o002"
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+construct = "option_present: SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.kb02a5386c6d7", sql_sha256 = "b02a5386c6d714e543b9bb689c616c00b117e7491fbc4fe9d54de864830871ca" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o003"
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+construct = "option_absent: SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.k638678f2722e", sql_sha256 = "638678f2722ec4bc95d1309ba8d0478ed916433402561f972edb3e5f154f7bf4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o005"
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+construct = "a valid string_literal: SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.kb02a5386c6d7", sql_sha256 = "b02a5386c6d714e543b9bb689c616c00b117e7491fbc4fe9d54de864830871ca" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-opt-out-malicious-ip-protection-by-category.o009"
+form = "sf.functions.system-opt-out-malicious-ip-protection-by-category"
+construct = "a valid string_literal: SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-opt-out-malicious-ip-protection-by-category.k638678f2722e", sql_sha256 = "638678f2722ec4bc95d1309ba8d0478ed916433402561f972edb3e5f154f7bf4" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-pipe-force-resume.o001"
+form = "sf.functions.system-pipe-force-resume"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-pipe-force-resume.kc492307a705b", sql_sha256 = "c492307a705b086db7b7bafb15cd0e54fafa45c317b7e8851b6184c7cb40d015" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-pipe-force-resume.o003"
+form = "sf.functions.system-pipe-force-resume"
+construct = "a valid string_literal: SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-pipe-force-resume.kc492307a705b", sql_sha256 = "c492307a705b086db7b7bafb15cd0e54fafa45c317b7e8851b6184c7cb40d015" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-pipe-force-resume.o007"
+form = "sf.functions.system-pipe-force-resume"
+construct = "option_present: SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-pipe-force-resume.k405f7622e55c", sql_sha256 = "405f7622e55c8fb07ba1012dbf48a62b57e08652e6380518c9ce04d77f4afdf3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-pipe-force-resume.o008"
+form = "sf.functions.system-pipe-force-resume"
+construct = "option_absent: SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-pipe-force-resume.kc492307a705b", sql_sha256 = "c492307a705b086db7b7bafb15cd0e54fafa45c317b7e8851b6184c7cb40d015" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-pipe-force-resume.o010"
+form = "sf.functions.system-pipe-force-resume"
+construct = "a valid string_literal: SELECT SYSTEM$PIPE_FORCE_RESUME ( 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-pipe-force-resume.k405f7622e55c", sql_sha256 = "405f7622e55c8fb07ba1012dbf48a62b57e08652e6380518c9ce04d77f4afdf3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-schedule-async-replication-group-refresh.o001"
+form = "sf.functions.system-schedule-async-replication-group-refresh"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-schedule-async-replication-group-refresh.k93ea8c431241", sql_sha256 = "93ea8c431241da0da05c9863f4ccd57118445188cfc79399f55b780b8acff1c5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-schedule-async-replication-group-refresh.o014"
+form = "sf.functions.system-schedule-async-replication-group-refresh"
+construct = "a valid string_literal: SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-schedule-async-replication-group-refresh.k93ea8c431241", sql_sha256 = "93ea8c431241da0da05c9863f4ccd57118445188cfc79399f55b780b8acff1c5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-schedule-async-replication-group-refresh.o015"
+form = "sf.functions.system-schedule-async-replication-group-refresh"
+construct = "a valid string_literal: SELECT SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH ( 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-schedule-async-replication-group-refresh.k93ea8c431241", sql_sha256 = "93ea8c431241da0da05c9863f4ccd57118445188cfc79399f55b780b8acff1c5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-set-return-value.o008"
+form = "sf.functions.system-set-return-value"
+construct = "a valid identifier: SELECT SYSTEM$SET_RETURN_VALUE ( :v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-set-return-value.k607f3c75dd35", sql_sha256 = "607f3c75dd350ddcb27be817af3187e468e368fd8d56d1a2e1a9a55b7c7d57d8" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-set-return-value.o009"
+form = "sf.functions.system-set-return-value"
+construct = "a string literal in place of <variable>: SELECT SYSTEM$SET_RETURN_VALUE ( :'v1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-set-return-value.kad3ad204d011", sql_sha256 = "ad3ad204d01157a84e11c5f7f14c83b02e62f8d20c5ed41c55bc85a35aa75ba9" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-set-return-value.o010"
+form = "sf.functions.system-set-return-value"
+construct = "quoted: a double-quoted identifier with blanks and mixed case: SELECT SYSTEM$SET_RETURN_VALUE ( :\"v1 Q\" ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-set-return-value.kae3927f04af5", sql_sha256 = "ae3927f04af55211a2d7b9762f917eb39ba17a7c3b78b0730a75cfa3885b0280" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-set-return-value.o011"
+form = "sf.functions.system-set-return-value"
+construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): SELECT SYSTEM$SET_RETURN_VALUE ( :\"SELECT\" ) ;"
+reason = "not submitted: held by the capture guard in packet d118"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-set-return-value.kd3bf40fe3b4d", sql_sha256 = "d3bf40fe3b4d53eeeaa633be4002547a6dd1dbe0c69dd26a88e13442d5d394e3" },
+  { case_id = "sf.functions.system-set-return-value.kf656c0edec0c", sql_sha256 = "f656c0edec0c071302ba6ffe02f142d065e7a4ce273446e5c01ecc794c7a5190" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait.o011"
+form = "sf.functions.system-wait"
+construct = "option_present: SELECT SYSTEM$WAIT ( v1 , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait.kc4fdc2d9e4e6", sql_sha256 = "c4fdc2d9e4e67b345fa3104494cc011b12c8d83238fdb4a70206893d4434601d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait.o014"
+form = "sf.functions.system-wait"
+construct = "a valid string_literal: SELECT SYSTEM$WAIT ( v1 , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118b2"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait.kc4fdc2d9e4e6", sql_sha256 = "c4fdc2d9e4e67b345fa3104494cc011b12c8d83238fdb4a70206893d4434601d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o016"
+form = "sf.functions.system-send-email"
+construct = "the form without its required ): SELECT SYSTEM$SEND_EMAIL ( 'm' , 'a@example.com' , 'm' , 'm' ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.keb1c42c6249a", sql_sha256 = "eb1c42c6249ac2100aa02155967b6011ddb8834fec9592f9db1db435eb5e516b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o017"
+form = "sf.functions.system-send-email"
+construct = "omit '<email_address_list>': SELECT SYSTEM$SEND_EMAIL ( 'm' , , 'm' , 'm' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.k1c7681f16598", sql_sha256 = "1c7681f16598fbf9fb9dec9980fe115827916db74e324870b49b018ffdb95136" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-email.o021"
+form = "sf.functions.system-send-email"
+construct = "omit '<mime_type>': SELECT SYSTEM$SEND_EMAIL ( 'm' , 'a@example.com' , 'm' , 'm' , ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-email.kba2b28e933f0", sql_sha256 = "ba2b28e933f0a46908ffce95ffebcb9165595ce1809d74c95e981b8b017b6d83" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-send-snowflake-notification.o010"
+form = "sf.functions.system-send-snowflake-notification"
+construct = "the list continued at least once: SELECT SYSTEM$SEND_SNOWFLAKE_NOTIFICATION ( ( 'm' , 'm' , 'm' ) , v1 ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: billable or out-of-account: system function outside the account"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-send-snowflake-notification.k8f2c3177865d", sql_sha256 = "8f2c3177865d664c0625f013639ea53101150f376bb32e2d0381680cc8cc54b5" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o001"
+form = "sf.functions.system-wait-for-services"
+construct = "the documented form with every required part and no optional part: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o003"
+form = "sf.functions.system-wait-for-services"
+construct = "a valid operand: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o005"
+form = "sf.functions.system-wait-for-services"
+construct = "a valid string_literal: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o007"
+form = "sf.functions.system-wait-for-services"
+construct = "the list continued at least once: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.k688a83b9b927", sql_sha256 = "688a83b9b9270d1a475e0ab1d450a07d50e7cc969a7acd79938060dca071d448" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.system-wait-for-services.o008"
+form = "sf.functions.system-wait-for-services"
+construct = "option_absent: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
+reason = "not submitted: held by the capture guard in packet d118c: held system function (acts on services)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.infer-schema.o044"
+form = "sf.functions.infer-schema"
+construct = "an unquoted stage reference in place of the quoted location (observed: the slot takes an expression): SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => @s1 , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
+reason = "not submitted: held by the capture guard in packet d118e-b9a8750a (functions_catalogue): forbidden statement (stage reference @s1)"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.infer-schema.k600b2541e9bd", sql_sha256 = "600b2541e9bd9ef72b5c33a5e2d4db32f8a9dcac85c153368587f20d30fc479a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.functions.dmf-referential-integrity-count.table.syntax.o035"
+form = "sf.functions.dmf-referential-integrity-count.table.syntax"
+construct = "the list continued at least once: a third source and reference column: ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . REFERENTIAL_INTEGRITY_COUNT ON ( v1 , v2 , v3 , TABLE ( v1 ( v1 , v2 , v3 ) ) ) ;"
+reason = "not submitted: held by the capture guard in cat-d118 (import 155): not a SELECT, refused by the execute capture"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.functions.dmf-referential-integrity-count.table.syntax.k7478daff983e", sql_sha256 = "7478daff983eeca2a3bcd564ad1b2dc430e4147043d6d5eb990af23b2a859c28" },
+]
+runs = []
+probes = []

@@ -7,29 +7,45 @@ import json
 from pathlib import Path
 
 from scripts.syntax_obligations._helpers.cases import (
-    jsonl_text,
+    held_cases,
     packet_text,
     receipt_phases,
+    receipt_settlements,
     recorded_receipts,
-    settled_cases,
+    run_database_setups,
+    write_family,
 )
+from scripts.syntax_obligations.models import ReceiptView
 from scripts.syntax_obligations.types import Row
 
 
 def run_cases(argv: list[str] | None = None) -> int:
     """Regenerate the cases of the named families and list those that need a capture."""
     arguments: argparse.Namespace = _parse_args(argv)
-    root: Path = arguments.root
-    phases: dict[tuple[str, str], str] = receipt_phases(arguments.receipts)
+    receipts: ReceiptView = ReceiptView(
+        phases=receipt_phases(arguments.receipts),
+        settlements=receipt_settlements(arguments.receipts),
+    )
     recorded: set[tuple[str, str]] = recorded_receipts(arguments.receipts)
+    setups, flagged = run_database_setups(arguments.setups or arguments.receipts)
+    print(json.dumps({"setup_review": flagged}))
+    held: frozenset[str] = held_cases(arguments.held)
     to_capture: list[Row] = []
     for family in arguments.families:
-        cases: list[Row] = settled_cases(root=root, family=family, phases=phases)
-        path: Path = root / "cases" / f"{family}.jsonl"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(jsonl_text(cases))
-        to_capture += [c for c in cases if (c["case_id"], c["sql_sha256"]) not in recorded]
-        print(json.dumps({"family": family, "cases": len(cases), "to_capture": len(to_capture)}))
+        cases, arity = write_family(
+            root=arguments.root, family=family, receipts=receipts, setups=setups, held=held
+        )
+        to_capture += [c for c in cases + arity if (c["case_id"], c["sql_sha256"]) not in recorded]
+        print(
+            json.dumps(
+                {
+                    "family": family,
+                    "cases": len(cases),
+                    "arity": len(arity),
+                    "to_capture": len(to_capture),
+                }
+            )
+        )
     if arguments.packet:
         arguments.packet.write_text(packet_text(to_capture))
     return 0
@@ -43,6 +59,19 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         required=True,
         help="receipt directory: matches SQL hashes and gives accepted cases their stage",
+    )
+    parser.add_argument(
+        "--setups",
+        type=Path,
+        help="receipt directory whose run-database receipts give ddl cases their setup "
+        "(default: --receipts)",
+    )
+    parser.add_argument(
+        "--held",
+        type=Path,
+        action="append",
+        default=[],
+        help="held-case list (JSON lines with case_id) whose cases run in a d103 run database",
     )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
     parser.add_argument("families", nargs="+")

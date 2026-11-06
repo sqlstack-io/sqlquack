@@ -49,3 +49,11 @@ class TypedDiagnosticTestCase:
     options: ConvertOptions
     expected_identity: tuple[str, str, str]
     expected_span: Span
+
+
+@dataclass(frozen=True)
+class DeepChainTestCase:
+    description: str
+    sql: str
+    expected_converted: bool
+    expected_codes: tuple[str, ...]

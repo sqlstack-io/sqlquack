@@ -100,10 +100,8 @@ pub(crate) fn exists(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
         &site.context.projecting(false),
         false,
     )?;
-    Ok(Emitted::new(
-        format!("({} ({sql}))", negated(payload, "EXISTS")),
-        SnowflakeType::Boolean,
-    ))
+    let sql = format!("({} ({sql}))", negated(payload, "EXISTS"));
+    Ok(Emitted::new(sql, SnowflakeType::Boolean))
 }
 
 /// [NOT] IN with a list, or IN with a subquery.
@@ -210,14 +208,12 @@ fn in_subquery(
     same_family(value.data_type, column.data_type, &construct)?;
     let probe = Emitted::new(String::new(), column.data_type);
     let (value, _) = comparable(value, probe, &construct, site.context)?;
-    Ok(Emitted::new(
-        format!(
-            "({} {} ({sql}))",
-            value.sql,
-            if negated { "NOT IN" } else { "IN" }
-        ),
-        SnowflakeType::Boolean,
-    ))
+    let sql = format!(
+        "({} {} ({sql}))",
+        value.sql,
+        if negated { "NOT IN" } else { "IN" }
+    );
+    Ok(Emitted::new(sql, SnowflakeType::Boolean))
 }
 
 /// Whether `query` is a set operation with a branch selecting without FROM.

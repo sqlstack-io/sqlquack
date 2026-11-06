@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_rules::conversion::constants::USER_OVERRIDE;
+use sqlquack_policy::policy::constants::USER_OVERRIDE;
 use sqlquack_rules::conversion::main::override_macro::override_macro;
 use sqlquack_rules::conversion::models::ConversionOptions;
 

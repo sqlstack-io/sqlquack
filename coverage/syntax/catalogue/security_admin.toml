@@ -718,7 +718,8 @@ grammar = [
 ]
 grammar_sha256 = "1d0be5b4bd3a60768db38fe67171df8efde32d2e9c9e900bedc413cd5ff52901"
 uses = [
-  "restAuthenticationParams",
+  "restAuthenticationParams (for Bearer token)",
+  "restAuthenticationParams (for OAuth)",
 ]
 status = "catalogued"
 
@@ -4087,7 +4088,8 @@ grammar = [
 ]
 grammar_sha256 = "7feaa2b60000c01936b87554c174ccee027a85997ba5c9cc2cf1d5c00f7e9513"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Amazon S3)",
+  "cloudProviderParams (for Microsoft Azure)",
 ]
 status = "catalogued"
 
@@ -4847,7 +4849,9 @@ grammar = [
 ]
 grammar_sha256 = "c8baae332ee125c9b814494c3ba63bec87eb66e31e6ab093fb033b7f6ad54d69"
 uses = [
-  "restAuthenticationParams",
+  "restAuthenticationParams (for Bearer token)",
+  "restAuthenticationParams (for OAuth)",
+  "restAuthenticationParams (for OIDC)",
 ]
 status = "catalogued"
 
@@ -4914,7 +4918,9 @@ grammar = [
 ]
 grammar_sha256 = "08f82964f355a3508b1181b57268b2ea4f9805ea74fbe82b0055a90fca1e5518"
 uses = [
-  "restAuthenticationParams",
+  "restAuthenticationParams (for Bearer token)",
+  "restAuthenticationParams (for OAuth)",
+  "restAuthenticationParams (for SigV4)",
   "restConfigParams",
 ]
 status = "catalogued"
@@ -5975,7 +5981,9 @@ grammar = [
 ]
 grammar_sha256 = "7135ba3340406c714d3ffe522c0fab05e57d172dc9d0bf23af9bb95f7d5d3736"
 uses = [
-  "cloudProviderParams",
+  "cloudProviderParams (for Amazon S3)",
+  "cloudProviderParams (for Google Cloud Storage)",
+  "cloudProviderParams (for Microsoft Azure)",
 ]
 status = "catalogued"
 
@@ -8487,10 +8495,16 @@ name = "sessionParams"
 grammar = "sessionParams ::= ABORT_DETACHED_QUERY = TRUE | FALSE AUTOCOMMIT = TRUE | FALSE BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FORMAT = <string> DATE_INPUT_FORMAT = <string> DATE_OUTPUT_FORMAT = <string> DEFAULT_NULL_ORDERING = <string> ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS = TRUE | FALSE ERROR_ON_NONDETERMINISTIC_MERGE = TRUE | FALSE ERROR_ON_NONDETERMINISTIC_UPDATE = TRUE | FALSE JSON_INDENT = <num> LOCK_TIMEOUT = <num> OPT_OUT_ERROR_LOGGING = TRUE | FALSE QUERY_TAG = <string> ROWS_PER_RESULTSET = <num> S3_STAGE_VPCE_DNS_NAME = <string> SEARCH_PATH = <string> SIMULATED_DATA_SHARING_CONSUMER = <string> STATEMENT_TIMEOUT_IN_SECONDS = <num> STRICT_JSON_OUTPUT = TRUE | FALSE TIMESTAMP_DAY_IS_ALWAYS_24H = TRUE | FALSE TIMESTAMP_INPUT_FORMAT = <string> TIMESTAMP_LTZ_OUTPUT_FORMAT = <string> TIMESTAMP_NTZ_OUTPUT_FORMAT = <string> TIMESTAMP_OUTPUT_FORMAT = <string> TIMESTAMP_TYPE_MAPPING = <string> TIMESTAMP_TZ_OUTPUT_FORMAT = <string> TIMEZONE = <string> TIME_INPUT_FORMAT = <string> TIME_OUTPUT_FORMAT = <string> TRANSACTION_DEFAULT_ISOLATION_LEVEL = <string> TWO_DIGIT_CENTURY_START = <num> UNSUPPORTED_DDL_ACTION = <string> USE_CACHED_RESULT = TRUE | FALSE WEEK_OF_YEAR_POLICY = <num> WEEK_START = <num>"
 
 [[definition]]
-id = "doc.sql.alter-catalog-integration::restAuthenticationParams"
+id = "doc.sql.alter-catalog-integration::restAuthenticationParams (for Bearer token)"
 source = "doc.sql.alter-catalog-integration"
-name = "restAuthenticationParams"
+name = "restAuthenticationParams (for Bearer token)"
 grammar = "restAuthenticationParams (for Bearer token) ::= BEARER_TOKEN = '<bearer_token>'"
+
+[[definition]]
+id = "doc.sql.alter-catalog-integration::restAuthenticationParams (for OAuth)"
+source = "doc.sql.alter-catalog-integration"
+name = "restAuthenticationParams (for OAuth)"
+grammar = "restAuthenticationParams (for OAuth) ::= OAUTH_CLIENT_SECRET = '<oauth_client_secret>'"
 
 [[definition]]
 id = "doc.sql.alter-organization-user::objectProperties"
@@ -8505,9 +8519,15 @@ name = "triggerDefinition"
 grammar = "triggerDefinition ::= ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY }"
 
 [[definition]]
-id = "doc.sql.alter-storage-integration::cloudProviderParams"
+id = "doc.sql.alter-storage-integration::cloudProviderParams (for Amazon S3)"
 source = "doc.sql.alter-storage-integration"
-name = "cloudProviderParams"
+name = "cloudProviderParams (for Amazon S3)"
+grammar = "cloudProviderParams (for Amazon S3) ::= STORAGE_AWS_ROLE_ARN = '<iam_role>' [ STORAGE_AWS_OBJECT_ACL = 'bucket-owner-full-control' ] [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.alter-storage-integration::cloudProviderParams (for Microsoft Azure)"
+source = "doc.sql.alter-storage-integration"
+name = "cloudProviderParams (for Microsoft Azure)"
 grammar = "cloudProviderParams (for Microsoft Azure) ::= AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
 
 [[definition]]
@@ -8535,15 +8555,39 @@ name = "sessionParams"
 grammar = "sessionParams ::= ABORT_DETACHED_QUERY = TRUE | FALSE AUTOCOMMIT = TRUE | FALSE BINARY_INPUT_FORMAT = <string> BINARY_OUTPUT_FORMAT = <string> DATE_INPUT_FORMAT = <string> DATE_OUTPUT_FORMAT = <string> DEFAULT_NULL_ORDERING = <string> ENABLE_GET_DDL_USE_DATA_TYPE_ALIAS = TRUE | FALSE ENABLE_NOTEBOOK_CREATION_IN_PERSONAL_DB = TRUE | FALSE ERROR_ON_NONDETERMINISTIC_MERGE = TRUE | FALSE ERROR_ON_NONDETERMINISTIC_UPDATE = TRUE | FALSE JSON_INDENT = <num> LOCK_TIMEOUT = <num> OPT_OUT_ERROR_LOGGING = TRUE | FALSE QUERY_TAG = <string> ROWS_PER_RESULTSET = <num> S3_STAGE_VPCE_DNS_NAME = <string> SEARCH_PATH = <string> SIMULATED_DATA_SHARING_CONSUMER = <string> STATEMENT_TIMEOUT_IN_SECONDS = <num> STRICT_JSON_OUTPUT = TRUE | FALSE TIMESTAMP_DAY_IS_ALWAYS_24H = TRUE | FALSE TIMESTAMP_INPUT_FORMAT = <string> TIMESTAMP_LTZ_OUTPUT_FORMAT = <string> TIMESTAMP_NTZ_OUTPUT_FORMAT = <string> TIMESTAMP_OUTPUT_FORMAT = <string> TIMESTAMP_TYPE_MAPPING = <string> TIMESTAMP_TZ_OUTPUT_FORMAT = <string> TIMEZONE = <string> TIME_INPUT_FORMAT = <string> TIME_OUTPUT_FORMAT = <string> TRANSACTION_DEFAULT_ISOLATION_LEVEL = <string> TWO_DIGIT_CENTURY_START = <num> UNSUPPORTED_DDL_ACTION = <string> USE_CACHED_RESULT = TRUE | FALSE WEEK_OF_YEAR_POLICY = <num> WEEK_START = <num>"
 
 [[definition]]
-id = "doc.sql.create-catalog-integration-delta-sharing::restAuthenticationParams"
+id = "doc.sql.create-catalog-integration-delta-sharing::restAuthenticationParams (for Bearer token)"
 source = "doc.sql.create-catalog-integration-delta-sharing"
-name = "restAuthenticationParams"
+name = "restAuthenticationParams (for Bearer token)"
+grammar = "restAuthenticationParams (for Bearer token) ::= TYPE = BEARER BEARER_TOKEN = '<bearer_token>'"
+
+[[definition]]
+id = "doc.sql.create-catalog-integration-delta-sharing::restAuthenticationParams (for OAuth)"
+source = "doc.sql.create-catalog-integration-delta-sharing"
+name = "restAuthenticationParams (for OAuth)"
 grammar = "restAuthenticationParams (for OAuth) ::= TYPE = OAUTH [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ] OAUTH_CLIENT_ID = '<oauth_client_id>' OAUTH_CLIENT_SECRET = '<oauth_client_secret>' OAUTH_TOKEN_URI = 'https://<token_server_uri>'"
 
 [[definition]]
-id = "doc.sql.create-catalog-integration-rest::restAuthenticationParams"
+id = "doc.sql.create-catalog-integration-delta-sharing::restAuthenticationParams (for OIDC)"
+source = "doc.sql.create-catalog-integration-delta-sharing"
+name = "restAuthenticationParams (for OIDC)"
+grammar = "restAuthenticationParams (for OIDC) ::= TYPE = OIDC OIDC_AUDIENCE = '<audience>'"
+
+[[definition]]
+id = "doc.sql.create-catalog-integration-rest::restAuthenticationParams (for Bearer token)"
 source = "doc.sql.create-catalog-integration-rest"
-name = "restAuthenticationParams"
+name = "restAuthenticationParams (for Bearer token)"
+grammar = "restAuthenticationParams (for Bearer token) ::= TYPE = BEARER BEARER_TOKEN = '<bearer_token>'"
+
+[[definition]]
+id = "doc.sql.create-catalog-integration-rest::restAuthenticationParams (for OAuth)"
+source = "doc.sql.create-catalog-integration-rest"
+name = "restAuthenticationParams (for OAuth)"
+grammar = "restAuthenticationParams (for OAuth) ::= TYPE = OAUTH [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ] [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ] OAUTH_CLIENT_ID = '<oauth_client_id>' OAUTH_CLIENT_SECRET = '<oauth_client_secret>' OAUTH_ALLOWED_SCOPES = ('<scope_1>', '<scope_2>')"
+
+[[definition]]
+id = "doc.sql.create-catalog-integration-rest::restAuthenticationParams (for SigV4)"
+source = "doc.sql.create-catalog-integration-rest"
+name = "restAuthenticationParams (for SigV4)"
 grammar = "restAuthenticationParams (for SigV4) ::= TYPE = SIGV4 SIGV4_IAM_ROLE = '<iam_role_arn>' [ SIGV4_SIGNING_REGION = '<region>' ] [ SIGV4_EXTERNAL_ID = '<external_id>' ]"
 
 [[definition]]
@@ -8571,9 +8615,21 @@ name = "triggerDefinition"
 grammar = "triggerDefinition ::= ON <threshold> PERCENT DO { SUSPEND | SUSPEND_IMMEDIATE | NOTIFY }"
 
 [[definition]]
-id = "doc.sql.create-storage-integration::cloudProviderParams"
+id = "doc.sql.create-storage-integration::cloudProviderParams (for Amazon S3)"
 source = "doc.sql.create-storage-integration"
-name = "cloudProviderParams"
+name = "cloudProviderParams (for Amazon S3)"
+grammar = "cloudProviderParams (for Amazon S3) ::= STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = '<iam_role>' [ STORAGE_AWS_EXTERNAL_ID = '<external_id>' ] [ STORAGE_AWS_OBJECT_ACL = 'bucket-owner-full-control' ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
+
+[[definition]]
+id = "doc.sql.create-storage-integration::cloudProviderParams (for Google Cloud Storage)"
+source = "doc.sql.create-storage-integration"
+name = "cloudProviderParams (for Google Cloud Storage)"
+grammar = "cloudProviderParams (for Google Cloud Storage) ::= STORAGE_PROVIDER = 'GCS'"
+
+[[definition]]
+id = "doc.sql.create-storage-integration::cloudProviderParams (for Microsoft Azure)"
+source = "doc.sql.create-storage-integration"
+name = "cloudProviderParams (for Microsoft Azure)"
 grammar = "cloudProviderParams (for Microsoft Azure) ::= STORAGE_PROVIDER = 'AZURE' AZURE_TENANT_ID = '<tenant_id>' [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
 
 [[definition]]

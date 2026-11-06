@@ -1,0 +1,11 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [],
+ "receipts": 300,
+ "runs": [
+  "define-def-01"
+ ]
+}

@@ -20,9 +20,9 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:stored-procedures-and-hosted-execution"
-sha256 = "e457970e1fa4bb59c243dad019fba2905260a8fd12f36cf3e25ca8bb99d1b536"
+sha256 = "176c3851685bb0024bfb4b4a6a24fdf5b5fd094dda79248bd3fd7c4058d292a0"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-05T22:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:warehouses-sessions-and-query-history"

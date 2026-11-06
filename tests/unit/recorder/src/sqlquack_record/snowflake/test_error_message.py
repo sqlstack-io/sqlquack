@@ -42,6 +42,22 @@ _QUERY_ID: str = "01b2c3d4-0000-4a5b-8c9d-0123456789ab"
             query_id=None,
             expected_message=None,
         ),
+        ErrorMessageTestCase(
+            description="a listed built-in function error keeps its message",
+            message="100344 (P0000): Type LineString is not supported as argument to ST_AZIMUTH.",
+            sqlstate="P0000",
+            query_id=None,
+            expected_message="Type LineString is not supported as argument to ST_AZIMUTH.",
+            errno=100344,
+        ),
+        ErrorMessageTestCase(
+            description="an unlisted P0000 error's message is dropped",
+            message="100999 (P0000): Something internal",
+            sqlstate="P0000",
+            query_id=None,
+            expected_message=None,
+            errno=100999,
+        ),
     ),
     ids=lambda case: case.description,
 )
@@ -49,7 +65,10 @@ def test_given_warehouse_error_when_reading_message_then_data_error_kept_without
     test_case: ErrorMessageTestCase,
 ) -> None:
     error: ProgrammingError = ProgrammingError(
-        msg=test_case.message, errno=100038, sqlstate=test_case.sqlstate, sfqid=test_case.query_id
+        msg=test_case.message,
+        errno=test_case.errno,
+        sqlstate=test_case.sqlstate,
+        sfqid=test_case.query_id,
     )
 
     assert error_message(error) == test_case.expected_message

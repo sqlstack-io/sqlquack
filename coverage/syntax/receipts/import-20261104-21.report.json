@@ -1,0 +1,2016 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( SELECT 1 CALL v1 ( ) ;",
+   "sql_sha256": "01e4115ec8f47785f560cc5b96830f6424da5e66143d32983ee14a90d4603402"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , \"SELECT\" AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "041707f28e6885aa01693e8d703bce563eac9bc231a0c57482dc66f237cb105a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE \"v1 Q\" ;",
+   "sql_sha256": "04540ac49cb94709ad31eecd116ff544b3a231af6044511cc8857f65c0b512af"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 USING ( ) ;",
+   "sql_sha256": "06a69d68712c540f85752f4fa70aae789ab72855ac01ac04f25a12aafe76237a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL CALLED ON NULL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "0e1f3f70f73d8961754cefab82c73c0eb336e5bb3ed1ad7f5c41718dcc184544"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "19eb0e0be6f492f72391d2491e8d21904b3be8b824d7870ce28a5cfb4741a5a6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "19f50ea3d034ddd9381508e07fc65447592b3ac5b5fd48e983fa4d191c384d9e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' USING ( ) ;",
+   "sql_sha256": "1f5b5037c3eb71b6086f727f49487e100c6d8cfe3f8e5ea3400114f3494c3441"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT * FROM ( SELECT 1 ) ) ) ) ) ) ) ) CALL v1 ( ) ;",
+   "sql_sha256": "237594795cfe75579a1e7f338c30110ed17933ab9275c41ab123255e6e0e2d7b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "2519056e55aa0539ffbcb9552e531396287525e31c550846d00eb2673a68313c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( ) LANGUAGE SQL STRICT AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "2abf92fcd7d90ad9f2579f13775024daf20d2271bdacbbaaec9ffd1e0ac3ead7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' USING v1 ) ;",
+   "sql_sha256": "2f0d186160afc2236b3b44eed409cb859c28a874315f8c0807729c93e4d73080"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , SELECT AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "31cd006a61f73a2008691865ed8d75934c7fa0ffe9b879bac4296d41dd7e379b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL RETURNS NULL ON NULL INPUT AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "36e7d93347aea2e15ca09a4ac4859b8007758646b1e8f9b416b8def945da2cc8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL ( ) ;",
+   "sql_sha256": "39330b278dbd8ac67e7128a4bd663116431df6250f6990ce9928326471df6238"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH \"SELECT\" AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "3e4458244eec4c613ebeb6ed925ead8ede061d95be99d1c036b46e86f4744a2f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "3f04e7962025514eb214365d9c1e6aca8dd46e9905cbce3abb45f20c9aacc2d5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' ;",
+   "sql_sha256": "42c85e0ddadea9fc50ffcb34c03816ea72eeeef15bb929efeeb80036ddd9680d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' v1 ( ) ;",
+   "sql_sha256": "44b1a8c9ce806fb8f8e59ea5e3b4b16b5573f674113fcd9ca2b2071f79865481"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , \"v1 Q\" AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "4b221d46fade0b740bb2306ae3f8e063f1680a93df7fdbea7a2cf65123a69525"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' USING ( v1 ;",
+   "sql_sha256": "4c2e8ed4465f11924528d8d2ee7f502f6ec4f6f77d7bbf332cb7c76f4fd58035"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 USING ( v1 ) ;",
+   "sql_sha256": "4f9aaaaf3c00a5083325f347cf392602fb3b10fb01f6261d7ad29cd09303ffa2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "4fd2ebcdcd0b08ae869ff8ab4be80264ea95528309f1a38cf30b11b77ff07cc2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS 'INT' LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "5231b6fc73b8bc12e01ad8e702c5aa2ed836282c0c8906f27304ae5b59dfaefd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 'INT' ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "531b9d350b0765faa45a841b2ec65ede82c64dea556a69df5a61fe0f496d7a28"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , 'v1' AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "543d9513c95c132841373263926bfe9cff3cb53c517391a7e519e8154de6794b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( SELECT INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "56930f02b24a2238a0fc36b9f0707f7f409cf5c469cad20828a1b0a047af5e83"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' USING ( v1 ) ;",
+   "sql_sha256": "593ca20464989177c003796aeb3d2a8e1e57b5884fd4d3a6557882a3d8a92fef"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( \"SELECT\" INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "59b39543a0cfc22061a0d26e385d1fabe428d4ecc2eb3f231348fa410402e343"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 'INT' ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "5ad4c002c63ae49cd95ec2ec6977b61bb93c09167e4c0855b77b088dc4eb3eb6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "60bc8230c3df22434e46a1e5bf66daab165abadd6d7c76776fb80748fa8eb6f3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "6ae58696f2a64fa921cc3c24b3062b7ed82e2df654607cce2e6be06e07c69791"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( SELECT INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "71b5ffebed8fddf96af0b93711fc14229fa60e156051d9b3c6034153bd3e1957"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( 'v1' INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "732ea331c129c1eae6a18ecca4654103151cdb27460eaba0837ce88be209d5c2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE DCM PROJECT v1 DEPLOY AS \"d1\" USING ( 1 , 1 ) ENVIRONMENT ( v1 ) FROM 'm' ;",
+   "sql_sha256": "7395fc80364870babe83fcfa7b44ad33478554bd09ce0571e0cae85b0dc7f13e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "742a41c1c6706fa1befac084dc39d544170e1b121697f1db0f0a4a795e5b6320"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( \"SELECT\" INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "745ddf9b1575fe775466c62555570130f0aba88fe784e425ec0129e65ddf7348"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( 'v1' INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "7f15810434f9972e40cf87fe2e2791b5005e3898e63616a4b0141829f183587a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 USING ( v1 , v1 ) ;",
+   "sql_sha256": "8170eb25a30a61da7ad6e1cffc18563cf2ca9b7ce6a38ea99e9fe2f542f2093c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE \"SELECT\" ;",
+   "sql_sha256": "860c11df834568415e61613d1b6125abb0730f0980afe014a08d479178462982"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "86c9e5df3bb860dcf4ea46fc23f64e86a2dcfab1b1ec9cee818495f4572a4bcf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL 'v1' ( ) ;",
+   "sql_sha256": "8848cfabccc5d227190b9c0c48d33291b134968b11e11324cab18facf3d0e863"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "9177cb7e99decb966c5d5d6a4fcc8d6790ad7801c54fd15462a7697506700b62"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "91a0b3cb9738db824641a3ef0bbbce343ed92ea32aef6cac0a396a7609eda957"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( \"v1 Q\" ) AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "94d9844babdeff616e0e9d18f3a95edb6a3babd049b63fadad5894c4ea80ee4c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( v1 INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "953f02595222c8cad940086bc5dadda502c29679dac72cd65f13d3b13d1ddb9b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 USING v1 ) ;",
+   "sql_sha256": "9714bc072a8ed54a50ed658358941e817b50e3c18fa1c07c0e3d5b12d333e84e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( ) CALL v1 ( ) ;",
+   "sql_sha256": "9a05725b535bfe6b7179dd9130aab5c014be262b19fb4e63d594dcc68d57be87"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL CALLED ON INPUT AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "9cd6211bc133bd9d1b7053519221dd1e7130a5ecf7b312c14db9cf6f8dc7047f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "9f80c6cc254aa0c406ac66a74ce0d735cc1057e9f880e8277ae86b6175818f88"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE DCM PROJECT v1 PURGE AS \"d1\" ;",
+   "sql_sha256": "a24457af6eefd4b96e5af9966acdf3bd97d24c5ddb514655b62f82c26af90007"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS INT LANGUAGE SQL CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "a3421f7b64ff379e60472cccb6bd4227af6913a1eed9a932e7b39b991d52824e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( v1 AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "a6187cda60714211417c24c5b6c7c84a88f3f2a9cf125d1394b02e166837c2bc"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' , 'snowflake-snowpark-python' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm1.run' CALLED ON NULL INPUT , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "a6c1d3f3318ec5b9ceb7e816b8e589f192148fd7aa91b9f6d1068abf470b73b0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( \"v1Q\" INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "a7269b961fa3a7103a1c06befe8a7c2415b56e8a755fd660b5745ea868c3dbaf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "a8cdefb1dae39db9242156d01b73dfb124a8a566da8c164576bf74f74352bc1b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "acb6f48957d8288142ba0f11591c363554cf2e6c6afe92e25d969144abb3dedf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "ae8b702201d86a65f0119d1df5a8f61a834ee07447f133487c42531b30bdb977"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "afb4de9a386770a4921d79c4d95af1cb8263b1390b5e249cf6aa0c2fa83d8c0a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE DBT PROJECT IF EXISTS v1 ARGS = 'run --select m1' DBT_VERSION = 'version_number' EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) ENVIRONMENT = 'm' ENV_VARS = ( 'm' = 'm' , 'm' = 'm' ) IMPORTS = ( SYSTEM$DBT_GET_LAST_RUN_TARGET ( 'p1' ) AS 'm' , SYSTEM$DBT_GET_LAST_RUN_TARGET ( 'p1' ) AS 'm' ) WRITEBACK = TRUE ;",
+   "sql_sha256": "b14b50f66aea8d88b15147e007f96fbc823ae1100b3037c2948a95ab3f29db96"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( ) AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "b5ef2f4592e1bdf1d9ed6558b3b81cc7c424edbe01740c99b2a6a2314786fa2f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' , 'snowflake-snowpark-python' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "b6728ae55b60956f984d87c604e35d50e63eefbc4ba5500383fe5988d1e5d64c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH \"v1 Q\" AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL \"v1 Q\" ( ) ;",
+   "sql_sha256": "c362083775b9e3b8c76a0f9f7cf32a30749a08daf7893b9d2c4a71b6b7a03cbd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( \"SELECT\" ) AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "c6d6f2c631ade191a21bb694ee149cbcb643b2d2edfa97ea6a91b17d59fae01e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "c7a3c0d64596d1136bdba100dbca6b42137a3e158ce6d560dbed1a1855d6a553"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) INTO : ;",
+   "sql_sha256": "c97d4a0a82653c76207ac7169f9841213977ac60fde85e07f8ca2ed2f4aeb0c4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "ce9384ae42bf58220c920a8998b683688f4311d7bbdaf7fa1e60b2a2a6ca8b07"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS ( SELECT * FROM ( SELECT 1 ) ) CALL v1 ( ) ;",
+   "sql_sha256": "d0033cb697cdabaadc1e6a66f85bc3eb52f2623ee8552c1c1e3a9cf1e145340d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 AS SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "d16e7bf9e0a310b08b7c0264991828f3cb39f024ef192c282ddb31090dca7154"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( 'v1' ) AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "d542d7088cc34d10d5b485ad2b131d67c1268dd6cfd4071c6e82ebb6394191ad"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 USING ( v1 ;",
+   "sql_sha256": "da0824c75af09e1c9ae9e6b999221e76c4e0c4dabc5bc14472eded78598b110f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE 'm' ;",
+   "sql_sha256": "daf9ec43b3da2c59c4784931806befd4908b7fd496dffdc0164649de0e336d6a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( \"v1 Q\" INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "e724ef60891636331b7d79106da318d666a5a991caf831b85200d4e470549e46"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE DCM PROJECT v1 PLAN DELTA USING ( 1 , 1 ) ENVIRONMENT ( v1 ) FROM 'm' OUTPUT_PATH 'm' ;",
+   "sql_sha256": "e7ac10a51b2acbfbe6d229326d0af649d4f2f54b803a366b8c10269b985641c4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE SQL CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "e9b659be230c0b91e50648b7135a8a18e188be99bb1fe101fef499d49784d301"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE 'm' USING ( v1 , v1 ) ;",
+   "sql_sha256": "ea5c4db5f4c5388f2fe897b78ec890e15a0923924b332e8123c34e5686f52f24"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE SELECT ;",
+   "sql_sha256": "ec53303b088a02ec3bd1a2d0f11ea7312f7d2057074279abf92b58615a17f860"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL CALLED ON NULL INPUT AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "ececd0d846f0ef101d312379a6cbd2e66a56fc69849f53299221bb0684b0f315"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "edf771ea7655b4d6e79cf2709fbb3b2789457232192a4ce1cea2b846455f17a3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "ef3e7931b930d92bcb742a1711ce1832f991656130378703b0e590cf57bc0421"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "EXECUTE IMMEDIATE v1 ;",
+   "sql_sha256": "efb9dd2ba59ebec4a278c0c26a0c91ea644f3a0d1f12dce6c45f7ceb7e0e39d9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL CALLED NULL INPUT AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "f12f844f4cadef5454fad5a78d9b2282f0830e1f1d35e71946596cf990c612d1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( v1 INT , v1 INT ) RETURNS TABLE ( v1 INT , v1 INT ) LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' CALLED ON NULL INPUT AS 'm' , v1 ( v1 ) AS ( SELECT 1 ) CALL v1 ( v1 => v1 ) INTO :v1 ;",
+   "sql_sha256": "f60ce0f7072b5cfe4da04c346e0ffc4f8606cf8f44d5c5c327ead3007102f9e9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' , v1 ( SELECT ) AS ( SELECT 1 ) CALL v1 ( ) ;",
+   "sql_sha256": "f615a44e2087159fda30cc1d7586a0698a1ff1d050543dadc66f39978004ad94"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH SELECT AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "f682d017b9203f0b38d9cf2fc00a3f878e359f2706ca6f10e78c52d112fbe6e9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH 'v1' AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "f89da7362b8572fecbeaa8a418e07ab26a0669f0f566b55462a334250a629b94"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( INT ) LANGUAGE SQL AS 'm' CALL v1 ( ) ;",
+   "sql_sha256": "fe5c1dbbd41903fd5e079c6c13b396ec5498862174253c958e0ba97372afaa3d"
+  }
+ ],
+ "receipts": 941,
+ "receipts_file_sha256": "d43ec70463165216638e4a62fbdaf03741fff921cf7b2a304d34284a97b1d3ce",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-31fbf1fc5b6f",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 392032)",
+   "row_id": "a-ddl-2bf4338fec7e",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-0bef2b0291e9",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-s17-quoted_unicode_nested_declare",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_date",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_time",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_timestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_user",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtime",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtimestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-while",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-repeat",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-let",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-0ed73f855675",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1c0666c0ea3c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1f57ef757b7c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-209728947280",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-2a877fbbcf32",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-302455fa3bba",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-3aec89374149",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-40b513dae4ee",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4daf4294be43",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-58f0f58f5957",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-5c06310da441",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91124)",
+   "row_id": "d73-a-ddl-5ce1b8c9d30b",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-6338819436d7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-7a81ccf0c62e",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-807945a81f26",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-827d8c2cfc45",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-85036fbaf3a7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8c9591dea309",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-9bde7d855b34",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a7766f997d44",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d36-stream-at-stream-control",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-bc9a744ae8f2",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-bed862237231",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-d501e4c221ad",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-d790ef2bcd15",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d35-stream-before-stream",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-e4b602b7a478",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-ef3bc787e401",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 91413)",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.kf449d4369b4c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.break.k21f7c040141a",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.continue.ka6cb0f18b216",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k1c3b8382c3b0",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k713b3acc554b",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.ka0c2e721f5de",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf46147564dd3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf997f83cb6bb",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.k041899e81470",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.k1c2392f90eee",
+   "run_id": "d82-scripting-3-20261104T011650Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.kd8c284f355aa",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.ke9b4a198690b",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kcc18e3343634",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.case.end.syntax.k93f2857ca62c",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.if.k685d9d2a067e",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k0c9e61f79d5c",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k11068a83729d",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k4d31e394faee",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.k3e09455c9bfe",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kb4bda3f085a1",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kd6504ed97cf6",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.k388fdac65474",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.kee6da8eed1da",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 394011)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k0d101c3930f8",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394011)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k3c30ef93975c",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394007)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k791bed03ca8f",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3798)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k8cba6ab8a2fa",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3798)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.kb4188196faea",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394007)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.kcc7120ed79fa",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 2126)",
+   "row_id": "sf.transaction_session.set.set.k10ced3392cd9",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 60200)",
+   "row_id": "sf.transaction_session.set.set.k5de3d69cfe96",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3107)",
+   "row_id": "sf.transaction_session.use-secondary-roles.k360113970753",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "sf.utility.call-with.language-javascript-as-call.k029cd83c0350",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 90216)",
+   "row_id": "sf.utility.call-with.language-javascript-as-call.kacc48e49fd35",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-java-runtime-version.k0063bdc914d4",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-java-runtime-version.kac24b89bd2b3",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k14445c5df4c6",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k151107c64525",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k204c71843cac",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k205c6438b026",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k20cd9c11d78a",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k22e45542c004",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k3e3f171bfb5c",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k3f7242314b38",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k5449be628931",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k740e8f7203b3",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k865a73749a0e",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k8a9f953f22a1",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k8f91456b8e06",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k957f2cd54c04",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kad125d5a31f4",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kb2eaca3e6b24",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kc3d6e6c9b453",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kd3abecbe09a1",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kdf1ee1d81115",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.ke4184366b34b",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kef38569b17d1",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k014c22ecbecd",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k0ed58b0e8b99",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k27a92606e24d",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k34c8566c5b2a",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k37ad836de774",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k3d35458e4bb5",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k4189ef7774c0",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k579764f5905f",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k5c93f9f8cdf5",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k6670cbbd4d47",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k9a94728936f0",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k9e922fd8071c",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.ka005ae15e2a6",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kad0f1d84ebe0",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc12a76be292d",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc50537dcfc1c",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kd58fcc63cc9a",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kda84d74a3062",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.ke811f54dd578",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.ked75d4e26a78",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-scala-runtime-version.k2379641990b7",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1503)",
+   "row_id": "sf.utility.execute-immediate-from.k05ea598b08eb",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1503)",
+   "row_id": "sf.utility.execute-immediate-from.k29fc905a4bf5",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1503)",
+   "row_id": "sf.utility.execute-immediate-from.k2e94975d4819",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1503)",
+   "row_id": "sf.utility.execute-immediate-from.ke906fd42c75e",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1503)",
+   "row_id": "sf.utility.execute-immediate-from.kffc0f9765f0b",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1511)",
+   "row_id": "sf.utility.execute-job-service.k1a3017c1c3d7",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 1511)",
+   "row_id": "sf.utility.execute-job-service.k274bd91a0df8",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "sf.utility.call-with.language-javascript-as-call.kbf19adfcb964",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k0553bdcbaf9a",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k0bee3b63d961",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k2724c9a441c4",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k4567ff7259aa",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k6c36646fb1bb",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kb906bec637b9",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kc08f26e83273",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k0a982c33b616",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k3a971d2cc94a",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k470a23b4bb40",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k4a67b408bab4",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k9b85a34eef6c",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.ke1b48604c98f",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kf01f70fad0c3",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.call-with.table-language-scala-runtime-version.k2a87df853302",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "sf.utility.call-with.table-language-sql-as.k15b7c654a83e",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "sf.utility.call-with.table-language-sql-as.k7ba59bd9de0a",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 90214)",
+   "row_id": "sf.utility.call-with.table-language-sql-as.k8efef686ed8e",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "error phase not established (errno 1485)",
+   "row_id": "sf.utility.execute-code-bundle.k3e0f6abaed66",
+   "run_id": "d91-utility-2-20261104T042300Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-fn-results-1-20261104T033834Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-1-20261104T022520Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-2-20261104T023428Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-3-20261104T024428Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-4-20261104T024538Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.conditional-change-event.k7ce9015b2dd5",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.k05a97c2cef84",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 93313)",
+   "row_id": "sf.functions.system-list-application-restricted-features.k882c07a731e3",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.k194df305c1f4",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.k8fbc57a799f0",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.kfd42a6c4a126",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k10e7e9d6c24a",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k9eca34dbb4bc",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.kc89eec16fcd0",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.kbb56c33c63f6",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k925e4226f74e",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d06-task-other-session-param",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d07-task-session-no-comma",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d09-task-after-before-execute-control",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d10-task-trace-level",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d12-task-comma-between-props",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90216)",
+   "row_id": "a-ddl-6b2ce283b60a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-5166f9f77eb7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "a-ddl-fcca75747c99",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-facb192ba2f7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90080)",
+   "row_id": "a-ddl-d0e717489e81",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "a-ddl-e3a7b0ab273a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90207)",
+   "row_id": "a-ddl-909d03e593dd",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "a-ddl-fe118cb688c3",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-d841cfb9b6c2",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91471)",
+   "row_id": "a-ddl-aee0a7879f11",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_0",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_1",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "row_id": "*",
+   "run_id": "history-audit-20261103"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "4db838951496-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "b7bf01d2a39b-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  }
+ ],
+ "refused": 209,
+ "runs": [
+  {
+   "audit_sha256": "1acfcf6f1a79d2440be15f964f0bfbdcc2ab865ed88c73f4977488f70f24bae4",
+   "receipts": 94,
+   "refused_rows": 3,
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6650db4655a2b7a3b2709b670f49ed8cb59008ae3db92a7696501f729db9ac51",
+   "receipts": 32,
+   "refused_rows": 1,
+   "run_id": "b5-packet1-20261103T191328Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6e3d606d5205bcadb4c2ff1462ab5cb8389f6078ee2d21303ceabf86d51b5f7",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet2-20261103T201614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de897c46ab04353e2ce87e7ebc9cb11dff827f44fcb6a34b6ac5beecc2e154f2",
+   "receipts": 5,
+   "refused_rows": 2,
+   "run_id": "b5-packet3-20261103T214211Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "65224a8faa8839aa7d6922f336712ce64f1452d680d83f1663cd6c87cbc22f18",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "b5-packet4-20261103T224644Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a4d5f5807afe9406047e03d658836b016f4db94aa3e9930c60696cc5177fd6b",
+   "receipts": 42,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-2-20261103T204317Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "79e22c19c053689aeee5d498abd229571bc0029aee80785eca7f2f1931fc37ff",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-4-20261103T224526Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "14be5aa6758d6077334c8918ea545564106aa045bc7239010ace92b276477384",
+   "receipts": 90,
+   "refused_rows": 9,
+   "run_id": "c-audit-b5-5-20261103T232716Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5fe7f51716cc214b1a8993a65d68450354aef1b24cc03db356858e934d4fc399",
+   "receipts": 15,
+   "refused_rows": 0,
+   "run_id": "c-audit-query-6-20261103T232752Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ee188fc38fa9acdbc015a304c0eb86c7e77a0e1d2a69802cc50f35d46d65016b",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "current10-20261103T173608Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4bf1537b90134be4087efe224b3e5ecef9941cd8d2389691b3e64c8f01360c4a",
+   "receipts": 38,
+   "refused_rows": 33,
+   "run_id": "d73-missing-object-1-20261104T005826Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8e16ec44239248f4edccf3f58bdfb6e0c8189bb6d7425ec5e2d974ffaa67084c",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d73-missing-object-2-20261104T010308Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ce9ba60262beb94a711bf9af01bbc8573d24855931074ca54591a9357083d169",
+   "receipts": 16,
+   "refused_rows": 4,
+   "run_id": "d73-missing-object-3-20261104T010709Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d3b8f28a8d8e47a02b06496f9b571afe67c115abacd38d806beb4d884dc88cb0",
+   "receipts": 458,
+   "refused_rows": 9,
+   "run_id": "d82-scripting-1-20261104T005141Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b3f0d912ca7896611a8c149d68af29f026d714da41a8e65eefedebe8b808acc9",
+   "receipts": 85,
+   "refused_rows": 16,
+   "run_id": "d82-scripting-2-20261104T010552Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a7493dcca61f43dc75d8cf23e74df8e1bd5ebaf7f387197ca87481a85ed11d2",
+   "receipts": 22,
+   "refused_rows": 1,
+   "run_id": "d82-scripting-3-20261104T011650Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "73f23978534dce1831ca9226770de11132d25d491a4df5ac89e8161eb2123072",
+   "receipts": 8,
+   "refused_rows": 3,
+   "run_id": "d82-scripting-4-20261104T013200Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b252b8dc35bff6a27197060a5def1f7354a44c1cb65535dad89285124c4628b9",
+   "receipts": 9,
+   "refused_rows": 0,
+   "run_id": "d82-scripting-5-20261104T013906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fcd59014968d78e8f801d54342fcc20f598a90df849dd289d2cfc544a6204b4d",
+   "receipts": 22,
+   "refused_rows": 2,
+   "run_id": "d90-extreme-1-20261104T015457Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "83dafface5722be516d9ea99b87966ec6599613c170bf7aa1a19f0f0f2629093",
+   "receipts": 18,
+   "refused_rows": 0,
+   "run_id": "d90-extreme-2-20261104T020037Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "104159419672de23c1f5ff597ae8ae372b071440af874ce805009b9f2054bbe4",
+   "receipts": 848,
+   "refused_rows": 6,
+   "run_id": "d91-dml-1-20261104T035640Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2290776fc2467fb32b8b85a5e38fb06b16a049e2c18798b99efd7304c33580a6",
+   "receipts": 582,
+   "refused_rows": 0,
+   "run_id": "d91-dml-2-20261104T035945Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "faa42d154db408faa1f0c90df76b0f05582ec199f6853db10e9b6a541e55402d",
+   "receipts": 610,
+   "refused_rows": 2,
+   "run_id": "d91-expr-1-20261104T023704Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b113a4968e6901ec954f44d5032bf32e6b9c06d261695ddf1fb05fd241f4c187",
+   "receipts": 61,
+   "refused_rows": 0,
+   "run_id": "d91-expr-2-20261104T024216Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd1a29b07876dab099818f1e3fc1af7949ab0017f2638abe56b19e68a211fe13",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "d91-expr-3-20261104T030338Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f331100ea919f0d961b5fa91a3b4451b8502c48c65c20b67fb89016629357d5a",
+   "receipts": 13,
+   "refused_rows": 0,
+   "run_id": "d91-expr-ddl-1-20261104T024044Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b5682d95e39f4d507d07342cf2b2519c392b47bada8de5329004be0e0b3cd077",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d91-expr-flow-1-20261104T024041Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "062abd28664b4a59208cd4990283a3fa9db836ff92cc34954bc8d421498c9c48",
+   "receipts": 734,
+   "refused_rows": 0,
+   "run_id": "d91-query-1-20261104T021702Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "54b978e1616c72e9266542a3e07a7baaf8ec5fb565510979f46e63d02db8863a",
+   "receipts": 459,
+   "refused_rows": 0,
+   "run_id": "d91-query-2-20261104T022942Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fb2aa30d11c11a2a416e7cee72a929a97c86ce62f4102428c727f7640f017fa2",
+   "receipts": 179,
+   "refused_rows": 9,
+   "run_id": "d91-session-1-20261104T040417Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4a038e1c6649aebd40545107bcb292060f4de12373dd23294d2872def16987d5",
+   "receipts": 76,
+   "refused_rows": 0,
+   "run_id": "d91-session-2-20261104T041202Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "e25aaf5fd4101a35df536056583a3903ec7422aa0a31baf9dc86480e260f8b4c",
+   "receipts": 359,
+   "refused_rows": 53,
+   "run_id": "d91-utility-1-20261104T042056Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c87ee00078ef3558206a7ffb206b56627bfe537585316647fb511c200db1efeb",
+   "receipts": 582,
+   "refused_rows": 20,
+   "run_id": "d91-utility-2-20261104T042300Z",
+   "status": "imported"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-fn-results-1-20261104T033834Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-1-20261104T022520Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-2-20261104T023428Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-3-20261104T024428Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-4-20261104T024538Z",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "40bfed5e233434fc1b3e6a509cd919b682d5802e56c586452c21ed6b5b8cf365",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-1-20261104T032106Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ab72ab74ff725918653866bab51b2e3fbf4d64c51b6744af1565b3b8c8469d44",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-2-20261104T032436Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "92e77b6b5a31b4cac922e6e520bd9b50c371ef8834dff7e3d5fdc32556105292",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-3-20261104T032815Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de5228461b10379ea99be1160d8388ddfa49fe4314b01758f71f344901908ec7",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-4-20261104T033149Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cabff37c4741e566cc0d3895328521ed96bf0cf16a23b6230df494c24aa504df",
+   "receipts": 966,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-1-20261104T033537Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "546e24f20e1bb4172c6438c1ede2527987954f3de85c09cd7bdb997721a1cdb8",
+   "receipts": 973,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-2-20261104T033906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6990d916ae00a41974a77fa0b9453a0e07923c1fed51e2cfe4b47138865ad3d9",
+   "receipts": 969,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-3-20261104T034242Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "170564cb4e2a3619e347f4ace53e4a5909306787a77b9009107218fd6176446f",
+   "receipts": 943,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-4-20261104T034614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4ba0324f90e637ee9602c2bc1e8193ba84816627b2dbec5696808024f89ea0a1",
+   "receipts": 754,
+   "refused_rows": 3,
+   "run_id": "d97-fn-p3-1-20261104T035012Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a5430695a74bb0538f7a6b05ffb9df5e5831506dbca71d23dd14ea4fe0eee9ec",
+   "receipts": 192,
+   "refused_rows": 8,
+   "run_id": "d97-fn-stmt-1-20261104T035302Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9317ee78146cb1c4162ea8e49397c8fa17903d41bc8933dfca6f8a95e0ace5f7",
+   "receipts": 567,
+   "refused_rows": 11,
+   "run_id": "ddl-sweep-1-20261103T233411Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "648a090114a56ee046928a33b00149febd0103a61958314d9488825286b144a3",
+   "receipts": 135,
+   "refused_rows": 4,
+   "run_id": "ddl-sweep-2-20261103T234049Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "27252ee02a868f9e0d355323ef880fd623549235ef14fe1ee8601988b8d2ef8b",
+   "receipts": 12,
+   "refused_rows": 2,
+   "run_id": "diagnostic-20261103T173725Z",
+   "status": "imported"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "history-audit-20261103",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "c77d3f564bca6bfb69676bce3aab16c902c4bc093b81e8f3795a84f8f2a3c4ea",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "power5-20261103T211556Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "86fdde0a1d42fef66d65138ca5ccbe0c29e623b1fe4038cfd21b6c382eeecfc6",
+   "receipts": 46,
+   "refused_rows": 0,
+   "run_id": "query-packet1-20261103T2115Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a2ebb4837e2d1fbbf3f09fbe973fe7b5b1db4d76b740b62facae298ff3f5c7fd",
+   "receipts": 19,
+   "refused_rows": 0,
+   "run_id": "query-packet2-20261103T211816Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "68221365e59ed623a6b24bdff4ed7046051de104ddbc01b4eb6bf880ab959fe1",
+   "receipts": 6,
+   "refused_rows": 0,
+   "run_id": "setop-corpus-7-20261103T232953Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "75bfeb3f8d738049474042cebf6e8307e9430a7524ff4003400dc2f60a0c6b6d",
+   "receipts": 165,
+   "refused_rows": 2,
+   "run_id": "setup-query-1-20261104T004203Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": [
+  {
+   "case_id": "a-ddl-2bf4338fec7e",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392032)",
+   "receipt_sha256": "cad0a7c63abb0c516b517b36434c00143c6e626cbcd1e26fc5145fbdf7e655cb",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "case_id": "b5-s17-quoted_unicode_nested_declare",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "111bb37d84c609af6296dc5889f412518de109038ce6eee507ee5047e95b59e8",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "case_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "5ebae0d5f11b43342ec7ce37bffa41d64ee4dd5972300c51e377c8fa7c718f2d",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "46657833a05832d8047240bc649a918c52605c1165e90a770a4154c39ac661c7",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "a-ddl-fcca75747c99",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392030)",
+   "receipt_sha256": "1cced31cba08886f447662fe699bac59f7e1ad8e0b483bde9f1dd46c7245d54e",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  }
+ ]
+}

@@ -5,12 +5,16 @@ from __future__ import annotations
 import re
 
 from scripts.syntax_obligations.constants import (
+    ASSIGNMENT_SIZE,
+    ASSIGNMENTS,
     BAR,
     CLOSERS,
     GRAMMAR_DEFINITION,
+    NAMED_ARGUMENT,
     NODE_CHOICE,
     NODE_OPTIONAL,
     NODE_TOKEN,
+    OPEN_CHOICE,
     OPEN_OPTIONAL,
     QUOTED_PLACEHOLDER,
     TOKEN,
@@ -20,6 +24,7 @@ from scripts.syntax_obligations.constants import (
     TOKEN_LITERAL,
     TOKEN_PLACEHOLDER,
     TOKEN_PUNCT,
+    VALUE_TOKENS,
 )
 from scripts.syntax_obligations.models import Node
 
@@ -27,13 +32,16 @@ from scripts.syntax_obligations.models import Node
 def tokens(production: str) -> list[tuple[str, str]]:
     """(kind, text) pairs of a production; a definition's `<name> ::=` head is dropped."""
     text: str = GRAMMAR_DEFINITION.sub("", production)
+    pairs: list[tuple[str, str]] = [
+        (match.lastgroup, match.group(match.lastgroup))
+        for match in TOKEN.finditer(text)
+        if match.lastgroup is not None
+    ]
     found: list[tuple[str, str]] = []
-    for match in TOKEN.finditer(text):
-        kind: str | None = match.lastgroup
-        if kind is not None:
-            word: str = match.group(kind)
-            bare: bool = kind == TOKEN_KEYWORD and any(char.islower() for char in word)
-            found.append((TOKEN_PLACEHOLDER if bare else kind, word))
+    for index, (kind, word) in enumerate(pairs):
+        named: bool = index + 1 < len(pairs) and pairs[index + 1][1] == NAMED_ARGUMENT
+        bare: bool = kind == TOKEN_KEYWORD and not named and any(char.islower() for char in word)
+        found.append((TOKEN_PLACEHOLDER if bare else kind, word))
     return found
 
 
@@ -55,6 +63,11 @@ def _sequence(
         kind, text = stream[index]
         if kind == TOKEN_BRACKET and text == closer:
             break
+        if kind == TOKEN_BRACKET and text == BAR and _assigned_value(current):
+            values, index = _bound_values(stream=stream, start=index, first=current[-1])
+            if len(values) > 1:
+                current[-1] = Node(NODE_CHOICE, OPEN_CHOICE, tuple((value,) for value in values))
+                continue
         if kind == TOKEN_BRACKET and text == BAR:
             branches.append(tuple(current))
             current = []
@@ -76,6 +89,34 @@ def _sequence(
     if len(branches) == 1:
         return branches[0], index
     return (Node(NODE_CHOICE, BAR, tuple(branches)),), index
+
+
+def _assigned_value(current: list[Node]) -> bool:
+    """Whether `current` ends with `KEY = value` or `KEY => value`, a keyword or literal value."""
+    return (
+        len(current) >= ASSIGNMENT_SIZE
+        and current[-2].kind == NODE_TOKEN
+        and current[-2].text in ASSIGNMENTS
+        and current[-1].kind == NODE_TOKEN
+        and current[-1].token_kind in VALUE_TOKENS
+    )
+
+
+def _bound_values(
+    *, stream: list[tuple[str, str]], start: int, first: Node
+) -> tuple[list[Node], int]:
+    """An unbraced `= a | b | c` value list bound to its key, and the index after it."""
+    values: list[Node] = [first]
+    index: int = start
+    while (
+        index + 1 < len(stream)
+        and stream[index] == (TOKEN_BRACKET, BAR)
+        and stream[index + 1][0] in VALUE_TOKENS
+        and (index + 2 >= len(stream) or stream[index + 2][1] not in ASSIGNMENTS)
+    ):
+        values.append(Node(NODE_TOKEN, stream[index + 1][1], token_kind=stream[index + 1][0]))
+        index += 2
+    return values, index
 
 
 def _group(

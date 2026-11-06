@@ -16,8 +16,9 @@ use crate::conversion::_helpers::queries::function_body::{
     column_types, function_stub, override_stub,
 };
 use crate::conversion::_helpers::queries::query::convert_query;
+use crate::conversion::_helpers::support::depth::positioned;
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
+use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
 use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
 use crate::conversion::constants::OUTPUT_ALIAS;
 use crate::conversion::models::{ConversionOptions, Converted};
@@ -31,17 +32,12 @@ pub fn convert_statement(
     (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
     log: ProvenanceLog,
 ) -> Result<Converted, Refusal> {
-    let positioned = serde_json::to_value(statement).map_err(|error| {
-        missing(
-            node_construct("statement"),
-            format!("the tree does not serialise: {error}"),
-        )
-    })?;
+    let positioned = positioned(statement)?;
     let tree = session_tree(&positioned, options.quoted_identifiers_ignore_case)
         .map_err(|reason| outside_conditions(node_construct("statement"), reason))?;
     let locator = Locator::new(&tree, &positioned, lines);
     let typed = TypedLeaves::default();
-    let order = OrderTrack::default();
+    let tracks = StatementTracks::default();
     let context = Context {
         log: &log,
         schema,
@@ -49,7 +45,8 @@ pub fn convert_statement(
         ctes: Vec::new(),
         locator: &locator,
         typed: &typed,
-        order: &order,
+        order: &tracks.order,
+        subqueries: &tracks.subqueries,
         free_projections: false,
         fixture_body: false,
     };

@@ -10,8 +10,10 @@ id = "node_div_combination_0_integer_integer"
 description = "node:div over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "x0 / x1"
 tags = ["null", "zero", "negative", "boundary"]
@@ -46,8 +48,10 @@ id = "node_div_combination_0_decimal_decimal"
 description = "node:div over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "x0 / x1"
 tags = ["null", "zero", "negative", "boundary"]

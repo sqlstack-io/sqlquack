@@ -20,10 +20,10 @@ use crate::conversion::_helpers::support::scope::{Emitted, Literal};
 use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
-    BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION,
-    NUMERIC_RANGE, POWER_BASE, POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING,
-    SIGN_RULE, SQRT_NAME,
+    BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, POWER_BASE,
+    POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING, SIGN_RULE, SQRT_NAME,
 };
+use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
 /// ABS of a NUMBER or FLOAT, of the operand's type.
 pub(crate) fn absolute(

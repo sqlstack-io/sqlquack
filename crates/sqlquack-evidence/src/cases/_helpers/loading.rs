@@ -13,7 +13,7 @@ use crate::cases::models::{
     QueryOrder, Spelling,
 };
 use crate::constants::{
-    CANONICAL_SUFFIX, EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN,
+    CANONICAL_SUFFIX, ERROR_TAG, EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN,
 };
 
 pub(crate) fn load_file(
@@ -127,6 +127,7 @@ fn expand(
         expected_divergence: case.expected_divergence.clone(),
         values,
         compile_error: case.compile_error,
+        expected_error: case.tags.iter().any(|tag| tag == ERROR_TAG),
         functions: case.functions.clone(),
         overrides: case.overrides.clone(),
         setup_sql,
