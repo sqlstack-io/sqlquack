@@ -27,6 +27,7 @@ impl Parser<'_> {
             ) => self.preparable_statement(),
             Some("truncate") => self.truncate_statement(),
             Some("copy") => self.copy_statement(),
+            Some("comment") => self.comment_statement(),
             Some(word)
                 if STATEMENT_STARTS.contains(&word) || STATEMENT_STARTS_MORE.contains(&word) =>
             {
@@ -283,7 +284,7 @@ impl Parser<'_> {
     }
 
     /// `NumericOnly`: a number, with an optional sign.
-    fn numeric_only(&mut self) -> Parsing<Expression> {
+    pub(crate) fn numeric_only(&mut self) -> Parsing<Expression> {
         let sign: &str = match self.peek().map(|token| token.kind) {
             Some(TokenKind::Char('-')) => "-",
             Some(TokenKind::Char('+')) => "",

@@ -907,6 +907,42 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             pointer: "/0/select/expressions/0/function/name",
             expected_json: "\"pg_catalog.timezone\"",
         },
+        ValueTestCase {
+            description: "COMMENT ON names the object's kind",
+            sql: "COMMENT ON MATERIALIZED VIEW s.v IS 'x'",
+            pointer: "/0/comment/kind",
+            expected_json: "\"MATERIALIZED VIEW\"",
+        },
+        ValueTestCase {
+            description: "COMMENT ON keeps a qualified object name",
+            sql: "COMMENT ON TABLE s.t IS 'x'",
+            pointer: "/0/comment/this/dot/field/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
+            description: "COMMENT ... IS NULL removes the comment",
+            sql: "COMMENT ON COLUMN t.c IS NULL",
+            pointer: "/0/comment/expression",
+            expected_json: "{\"null\":null}",
+        },
+        ValueTestCase {
+            description: "COMMENT ON FUNCTION keeps a VARIADIC argument type",
+            sql: "COMMENT ON FUNCTION f(int, VARIADIC text[]) IS 'x'",
+            pointer: "/0/comment/this/function/args/1/variadic/this/data_type/data_type",
+            expected_json: "\"array\"",
+        },
+        ValueTestCase {
+            description: "COMMENT ON OPERATOR keeps NONE for a missing operand",
+            sql: "COMMENT ON OPERATOR - (NONE, int) IS 'x'",
+            pointer: "/0/comment/this/operator/this",
+            expected_json: "{\"null\":null}",
+        },
+        ValueTestCase {
+            description: "COMMENT ON CONSTRAINT ON DOMAIN names the domain as a type",
+            sql: "COMMENT ON CONSTRAINT k ON DOMAIN d IS 'x'",
+            pointer: "/0/comment/this/tuple/expressions/1/data_type/name",
+            expected_json: "\"d\"",
+        },
     ];
     for test_case in test_cases {
         let parsed = parse_strict(test_case.sql).expect(test_case.description);
