@@ -1400,5 +1400,13 @@ pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEG
 /// The setup statements a case's DuckDB replay runs.
 pub(crate) const SETUP_REPLAYED: &str = "CREATE TABLE of NUMBER and VARCHAR columns, INSERT INTO it \
      VALUES of literals, and SET of variables to literals or a deterministic scalar subquery";
+/// Name prefixes of functions whose result depends on when they run, so a SET differs from its reads.
+pub(crate) const TIME_DEPENDENT_PREFIXES: &[&str] = &[
+    "CURRENT_",
+    "LOCALTIME",
+    "SYSDATE",
+    "GETDATE",
+    "SYSTIMESTAMP",
+];
 /// `$name` read as the expression the case's setup SET the variable to.
 pub const SESSION_VARIABLE: &str = "rule.session_variable";

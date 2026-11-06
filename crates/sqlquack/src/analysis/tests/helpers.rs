@@ -695,8 +695,7 @@ pub(crate) fn relying_on_utc_session(constructs: &[&str]) -> DivergenceModeOutco
     }
 }
 
-/// The first value a translation case with `setup` and `query` returns, converted then replayed on
-/// DuckDB, or the fragment of a reason containing `expected`'s error, else every reason.
+/// A setup case's first value replayed on DuckDB, or the expected reason fragment, else every reason.
 pub(crate) fn setup_case_outcome(
     (setup, query): (&[&str], &str),
     expected: Result<&str, &str>,
@@ -735,9 +734,17 @@ pub(crate) fn setup_case_outcome(
             .and(fragment)
             .map_or_else(|| reasons.join("; "), str::to_owned)
     };
-    let (sql, statements) = match converter.convert(&cases[0]) {
-        Conversion::Converted { sql, setup, .. } => (sql, setup),
-        Conversion::Refused { reasons, .. } => return Err(failed(reasons)),
+    let conversion = converter.convert(&cases[0]);
+    let Conversion::Converted {
+        sql,
+        setup: statements,
+        ..
+    } = conversion.clone()
+    else {
+        let Conversion::Refused { reasons, .. } = conversion else {
+            return Err(failed(Vec::new()));
+        };
+        return Err(failed(reasons));
     };
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
     for statement in &statements {
