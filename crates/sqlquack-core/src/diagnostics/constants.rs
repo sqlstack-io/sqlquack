@@ -22,6 +22,11 @@ pub const ZONED_LOCAL_TIME_NOTE: &str = "a Snowflake TIMESTAMP_TZ stores each va
 pub const ZONED_LOCAL_TIME_HELP: &str = "convert the value to a wall time first: \
     `CONVERT_TIMEZONE('UTC', col)::TIMESTAMP_NTZ` for UTC, or \
     `CONVERT_TIMEZONE(<zone column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone";
+/// The delimiters of a dbt Jinja expression or statement, which Snowflake never parses.
+pub const JINJA_MARKERS: [&str; 2] = ["{{", "{%"];
+/// The help for SQL that does not parse where it holds Jinja: it was pasted before dbt compiled it.
+pub const JINJA_HELP: &str = "this looks like uncompiled dbt Jinja; run `dbt compile` and check \
+    the SQL it writes under target/compiled";
 /// The prefix of a complexity guard's message, before the rest of its `E_GUARD_*` name.
 pub const GUARD_PREFIX: &str = "E_GUARD_";
 /// The longest source line shown in full; longer lines show a window around the span.
@@ -62,7 +67,8 @@ pub const CODES: &[CodeEntry] = &[
             converted. The span points where the parser stopped and the label carries the \
             parser's message. Check the SQL at that point against Snowflake's grammar; if \
             Snowflake accepts the statement, SQLQuack's parser is missing the syntax and the \
-            statement should be reported with the label.",
+            statement should be reported with the label. Where the line holds dbt Jinja, the help says \
+            to compile the model with dbt first, since Snowflake does not parse Jinja either.",
         example: r#"echo "SELECT a, FROM orders WHERE (b = 1" | sqlquack check"#,
     },
     CodeEntry {

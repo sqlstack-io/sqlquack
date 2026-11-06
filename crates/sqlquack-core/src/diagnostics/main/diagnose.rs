@@ -6,8 +6,9 @@ use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
 use crate::diagnostics::constants::{
     CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, GUARD_PREFIX,
-    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION, UNPARSED_PREFIX,
-    UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
+    JINJA_HELP, JINJA_MARKERS, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION,
+    UNPARSED_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP,
+    ZONED_LOCAL_TIME_NOTE,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -24,6 +25,9 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             && refusal.reason.contains(CASE_ONLY_MATCH)
         {
             diagnostic.help = Some(CASE_ONLY_MATCH_HELP.to_owned());
+        }
+        if refusal.category == RefusalCategory::ParseFidelity && holds_jinja(refusal, source) {
+            diagnostic.help = Some(JINJA_HELP.to_owned());
         }
         if refusal.category == RefusalCategory::TypeCondition
             && refusal.reason.contains(ZONED_LOCAL_TIME)
@@ -42,6 +46,15 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         diagnostics.push(diagnostic);
     }
     diagnostics
+}
+
+/// Whether the line the parser stopped on, or the whole source without a location, holds Jinja.
+fn holds_jinja(refusal: &Refusal, source: &str) -> bool {
+    let text = refusal
+        .location
+        .and_then(|location| source.lines().nth(location.line.saturating_sub(1)))
+        .unwrap_or(source);
+    JINJA_MARKERS.iter().any(|marker| text.contains(marker))
 }
 
 /// The code a refusal maps to, and the label left once its code's own wording is removed.

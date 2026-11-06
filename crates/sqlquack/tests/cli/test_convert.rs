@@ -1725,6 +1725,34 @@ fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fi
 }
 
 #[test]
+fn given_uncompiled_dbt_jinja_when_converting_then_the_help_points_to_dbt_compile() {
+    let test_cases = [
+        DivergenceHelpTestCase {
+            description: "a pasted model with Jinja expressions",
+            sql: "select {{ dbt_utils.generate_surrogate_key(['order_id']) }} as k \
+                  from {{ ref('stg_orders') }}",
+            flags: &[],
+            expected_help: "this looks like uncompiled dbt Jinja; run `dbt compile` and check the \
+                SQL it writes under target/compiled",
+        },
+        DivergenceHelpTestCase {
+            description: "a parse failure without Jinja keeps no help",
+            sql: "SELECT a, FROM orders WHERE (b = 1",
+            flags: &[],
+            expected_help: "",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            first_refusal_help(test_case.sql, test_case.flags),
+            test_case.expected_help,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_in_schema_terms() {
     let test_cases = [
         SchemaErrorTestCase {
