@@ -799,6 +799,12 @@ polyglot_errors = ["Expected RParen, got Var"]
 note = "OBJECT_AGG(DISTINCT k, v) is documented and recorded; polyglot reads no DISTINCT in OBJECT_AGG"
 
 [[fix]]
+id = "snowflake_star_ilike"
+marker = "*ILIKE'"
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "SELECT * ILIKE 'pattern' is documented and recorded, alone and before REPLACE or RENAME; polyglot reads no ILIKE after a star"
+
+[[fix]]
 id = "snowflake_bare_trailing_limit"
 marker = "1LIMIT"
 polyglot_errors = ["Unexpected token: Limit"]

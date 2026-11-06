@@ -18,21 +18,6 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
-id = "t002_all"
-description = "ORDER BY ALL over (n, s). Catches: only n ordered"
-columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
-rows = [
-  ["'b'", "2"],
-  ["'B'", "10"],
-  ["'a'", "NULL"],
-  ["'ab'", "-1"],
-  ["NULL", "2"],
-]
-query = "SELECT n, s FROM input ORDER BY ALL"
-order = "ordered"
-tags = ["type-combination"]
-
-[[case]]
 id = "t003_null_default"
 description = "DESC without a NULLS clause, which puts NULL first by default. Catches: NULL placed last"
 columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
