@@ -130,3 +130,16 @@ rows = [
 query = "SELECT DATEADD(day, 1, t) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["error"]
+
+[[case]]
+id = "t012_ltz"
+description = "Days, hours and months added to a local timestamp in the UTC session, as incremental models filter on CURRENT_TIMESTAMP(); the result keeps TIMESTAMP_LTZ. Catches: the result turned naive, the offset applied twice, or a month end not clamped"
+columns = [{ name = "a", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-03-31 10:30:00.123456789 +00:00'"],
+  ["'2024-01-01 00:00:00 -08:00'"],
+  ["NULL"],
+]
+query = "SELECT ordinal, DATEADD(day, -3, a) AS d, DATEADD(hour, -24, a) AS h, DATEADD(month, -1, a) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

@@ -52,3 +52,31 @@ rows = [
 query = "SELECT x, COUNT(*) AS n FROM input GROUP BY x ORDER BY x NULLS LAST"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t004_select_alias"
+description = "GROUP BY naming a select item's alias, as GROUP BY month over DATE_TRUNC('month', ts) with COUNT(DISTINCT); the page lists column names, so the recording decides. Catches: the alias rejected, or the rows grouped by the raw timestamp instead of the month"
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ" }, { name = "c", type = "NUMBER(38,0)" }]
+rows = [
+  ["'2024-01-05 10:00:00'", "1"],
+  ["'2024-01-20 11:00:00'", "1"],
+  ["'2024-01-31 23:59:59'", "2"],
+  ["'2024-02-01 00:00:00'", "2"],
+  ["NULL", "3"],
+]
+query = "SELECT DATE_TRUNC('month', ts) AS month, COUNT(DISTINCT c) AS n FROM input GROUP BY month ORDER BY month NULLS LAST"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_alias_shadows_column"
+description = "A select alias spelled like an input column: the recording decides whether GROUP BY reads the column or the alias. Catches: the alias preferred where Snowflake reads the column, or the reverse"
+columns = [{ name = "ts", type = "TIMESTAMP_NTZ" }, { name = "c", type = "NUMBER(38,0)" }]
+rows = [
+  ["'2024-01-05 10:00:00'", "1"],
+  ["'2025-01-05 10:00:00'", "2"],
+  ["'2025-06-05 10:00:00'", "2"],
+]
+query = "SELECT YEAR(ts) AS c, COUNT(*) AS n FROM input GROUP BY c ORDER BY c, n"
+order = "ordered"
+tags = ["type-combination"]

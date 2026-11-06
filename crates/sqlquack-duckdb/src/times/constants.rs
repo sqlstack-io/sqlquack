@@ -42,3 +42,7 @@ pub const MICROSECOND_PRECISION: u8 = 6;
 pub const TIME_FORMAT_MESSAGE: &str = "Can't parse as time with the format";
 /// Nanoseconds in a millisecond.
 pub const NANOS_PER_MILLISECOND: i64 = 1_000_000;
+/// A DATE or nanosecond timestamp as a day-and-clock order key: `duckdb.date_timestamp_key`.
+pub const DATE_TIMESTAMP_KEY: &str = "duckdb.date_timestamp_key";
+/// Nanoseconds in a day.
+pub const DAY_NANOSECONDS: i64 = 86_400_000_000_000;

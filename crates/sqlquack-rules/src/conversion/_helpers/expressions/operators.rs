@@ -19,6 +19,7 @@ use sqlquack_duckdb::temporal::main::date_add_value::date_add_value;
 use sqlquack_duckdb::text::constants::TEXT_NUMBER_SCALE;
 use sqlquack_duckdb::text::main::compared_number_range::compared_number_range;
 use sqlquack_duckdb::text::main::compared_number_text::compared_number_text;
+use sqlquack_duckdb::times::main::date_timestamp_key::date_timestamp_key;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::main::comparison::comparison;
 use sqlquack_snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
@@ -41,15 +42,25 @@ use crate::conversion::constants::DATE_NAME;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 
 use crate::conversion::constants::{
-    COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
-    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
+    COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DATE_TIMESTAMP_COMPARISON, DAY_UNIT,
+    DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC,
+    MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
     VARIANT_EQUALITY,
 };
 use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC};
 
 /// Characters in a `YYYY-MM-DD` date.
 const ISO_DATE_LENGTH: usize = 10;
+/// The constructs whose DATE beside TIMESTAMP_NTZ comparisons are recorded.
+const DATE_TIMESTAMP_SITES: &[&str] = &[
+    "node:eq",
+    "node:neq",
+    "node:lt",
+    "node:lte",
+    "node:gt",
+    "node:gte",
+    "node:between",
+];
 /// Characters in an `HH:MI:SS` time.
 const CLOCK_TIME_LENGTH: usize = 8;
 
@@ -592,6 +603,13 @@ pub(crate) fn comparable(
             let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
+        (SnowflakeType::Date, SnowflakeType::TimestampNtz { .. }) => {
+            return date_timestamp(left, right, construct, context);
+        }
+        (SnowflakeType::TimestampNtz { .. }, SnowflakeType::Date) => {
+            let (right, left) = date_timestamp(right, left, construct, context)?;
+            return Ok((left, right));
+        }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
             let text = number_text(left, (number, &right.sql), construct, context)?;
             return Ok((text, number_range(right, context)));
@@ -615,6 +633,44 @@ pub(crate) fn comparable(
         )),
         _ => Ok((left, right)),
     }
+}
+
+/// A DATE and a TIMESTAMP_NTZ(9) as order keys, the DATE read as its midnight, as recorded.
+fn date_timestamp(
+    date: Emitted,
+    timestamp: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<(Emitted, Emitted), Refusal> {
+    let ntz = timestamp.data_type;
+    if !DATE_TIMESTAMP_SITES.contains(&construct.key().as_str()) {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("comparing DATE with {ntz} is recorded only in a comparison or BETWEEN"),
+        ));
+    }
+    if ntz
+        != (SnowflakeType::TimestampNtz {
+            precision: NANOSECOND_DIGITS,
+        })
+    {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("comparing DATE with {ntz} is recorded only for TIMESTAMP_NTZ(9)"),
+        ));
+    }
+    let log = context.log;
+    let _rule = log.rule(DATE_TIMESTAMP_COMPARISON);
+    let key = |emitted: &Emitted, is_timestamp: bool| {
+        Emitted::new(
+            date_timestamp_key(&emitted.sql, is_timestamp, log),
+            SnowflakeType::Number {
+                precision: MAX_PRECISION,
+                scale: 0,
+            },
+        )
+    };
+    Ok((key(&date, false), key(&timestamp, true)))
 }
 
 /// A NUMBER compared with text, raising where Snowflake's comparison overflows.
