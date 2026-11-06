@@ -103,19 +103,7 @@ impl Parser<'_> {
                 }
                 within = Some(sort);
             }
-            if self.kw("filter") && self.char_at(1, '(') {
-                self.at += 2;
-                self.expect_kw("where")?;
-                filter = Some(self.a_expr()?);
-                self.expect_char(')')?;
-            }
-            if self.kw("over") && (self.char_at(1, '(') || self.peek_at(1).is_some_and(is_col_id)) {
-                self.at += 1;
-                window = Some(match self.is_char('(') {
-                    true => self.window_specification()?,
-                    false => over(Some(self.name(is_col_id)?), Vec::new(), Vec::new(), None),
-                });
-            }
+            (filter, window) = self.filter_and_window()?;
         }
         let mut call = function(name, args);
         if all_star {
@@ -139,8 +127,28 @@ impl Parser<'_> {
         })
     }
 
+    /// `filter_clause over_clause`: `FILTER (WHERE ...)` and `OVER window`, when present.
+    pub(crate) fn filter_and_window(&mut self) -> Parsing<(Option<Expression>, Option<Over>)> {
+        let mut filter: Option<Expression> = None;
+        if self.kw("filter") && self.char_at(1, '(') {
+            self.at += 2;
+            self.expect_kw("where")?;
+            filter = Some(self.a_expr()?);
+            self.expect_char(')')?;
+        }
+        if !(self.kw("over") && (self.char_at(1, '(') || self.peek_at(1).is_some_and(is_col_id))) {
+            return Ok((filter, None));
+        }
+        self.at += 1;
+        let window: Over = match self.is_char('(') {
+            true => self.window_specification()?,
+            false => over(Some(self.name(is_col_id)?), Vec::new(), Vec::new(), None),
+        };
+        Ok((filter, Some(window)))
+    }
+
     /// `func_arg_expr`: `a_expr`, or `name := a_expr` / `name => a_expr`.
-    fn function_argument(&mut self) -> Parsing<Expression> {
+    pub(crate) fn function_argument(&mut self) -> Parsing<Expression> {
         let separator: Option<NamedArgSeparator> = match self.peek_at(1).map(|token| token.kind) {
             Some(TokenKind::ColonEquals) => Some(NamedArgSeparator::ColonEq),
             Some(TokenKind::EqualsGreater) => Some(NamedArgSeparator::DArrow),

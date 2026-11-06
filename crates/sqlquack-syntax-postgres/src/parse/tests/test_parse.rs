@@ -253,6 +253,41 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             sql: "MERGE INTO t USING s ON true WHEN NOT MATCHED BY TARGET THEN DELETE",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "SQL/JSON query options, which the parser checks and keeps opaque",
+            sql: "SELECT json_query(js, '$' RETURNING text WITH CONDITIONAL ARRAY WRAPPER KEEP QUOTES DEFAULT 1 ON EMPTY ERROR ON ERROR)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "ON ERROR before ON EMPTY in a SQL/JSON query",
+            sql: "SELECT json_query(js, '$' ERROR ON ERROR EMPTY ON EMPTY)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an operator expression before VALUE in JSON_OBJECT",
+            sql: "SELECT json_object(a || b VALUE 1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an unknown JSON encoding, refused as an invalid parameter",
+            sql: "SELECT json_object('a': 1 FORMAT JSON ENCODING latin1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a JSON_TABLE path that is not a string constant, refused as unsupported",
+            sql: "SELECT * FROM json_table(js, 1 COLUMNS (a int)) jt",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a second DEFAULT on an XMLTABLE column",
+            sql: "SELECT * FROM xmltable('/r' PASSING x COLUMNS a int DEFAULT 1 DEFAULT 2) t",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "XMLTABLE after LATERAL",
+            sql: "SELECT * FROM LATERAL xmltable('/r' PASSING x COLUMNS a int) t",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

@@ -12,9 +12,12 @@ as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stac
 ## Gaps
 
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the
-statement's text, and `Parsed.gaps` names each construct with its byte range. The text up to the
-next top-level `;` is not checked further, so a gap statement is accepted as opaque, never as
-parsed.
+statement's text, and `Parsed.gaps` names each construct with its byte range. A gap statement is
+accepted as opaque, never as parsed. For a statement gap (its first keyword), the text up to the
+next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREAT`, `XMLTABLE` and
+`JSON_TABLE` are checked against the full grammar, including gram.y's own errors: an unknown
+`FORMAT JSON ENCODING` (22023), a non-constant `JSON_TABLE` path (0A000), and repeated or unknown
+`XMLTABLE` column options (42601).
 
 | Gap | Construct |
 | --- | --- |

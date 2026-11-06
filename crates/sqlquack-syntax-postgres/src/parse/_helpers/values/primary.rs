@@ -16,7 +16,7 @@ use crate::parse::_helpers::tree::nodes::{
     tuple,
 };
 use crate::parse::_helpers::values::expressions::Flavor;
-use crate::parse::constants::{GAP_CALL_XMLSERIALIZE, GAP_CALLS, VALUE_FUNCTIONS};
+use crate::parse::constants::{JSON_AGGREGATES, JSON_CALLS, VALUE_FUNCTIONS, XML_CALLS};
 use crate::parse::constants::{MIN_IMPLICIT_ROW_ITEMS, TYPE_KEYWORDS};
 use crate::scan::models::{Token, TokenKind};
 
@@ -189,9 +189,18 @@ impl Parser<'_> {
             {
                 self.value_function(name)
             }
-            _ if call && (GAP_CALLS.contains(&name) || name == GAP_CALL_XMLSERIALIZE) => {
+            _ if call && JSON_CALLS.contains(&name) => {
                 self.at += 1;
-                self.skip_parenthesized()?;
+                self.json_call(name)?;
+                if JSON_AGGREGATES.contains(&name) {
+                    self.filter_and_window()?;
+                }
+                self.gap(name, start);
+                Ok(null())
+            }
+            _ if call && XML_CALLS.contains(&name) => {
+                self.at += 1;
+                self.xml_call(name)?;
                 self.gap(name, start);
                 Ok(null())
             }
