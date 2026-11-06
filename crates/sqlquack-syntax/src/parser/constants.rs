@@ -264,6 +264,9 @@ pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
     "TABLE",
 ];
 
+/// The fields every semantic view verified query needs.
+pub(crate) const SNOWFLAKE_VERIFIED_QUERY_FIELDS: &[&str] = &["QUESTION", "SQL"];
+
 /// The clause words of a SEMANTIC_VIEW call, which cannot be an alias there.
 pub(crate) const SNOWFLAKE_SEMANTIC_VIEW_CLAUSES: &[&str] =
     &["DIMENSIONS", "FACTS", "METRICS", "WHERE"];

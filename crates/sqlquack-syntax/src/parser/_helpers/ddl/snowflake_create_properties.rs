@@ -19,6 +19,9 @@ impl Parser {
         or_alter: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        if self.check_text_seq(&["SEMANTIC", "VIEW"]) {
+            self.check_snowflake_semantic_view()?;
+        }
         if self.check(TokenType::Alter) || self.check(TokenType::String) {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }

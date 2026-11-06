@@ -23,6 +23,7 @@ pub(crate) mod snowflake_data_metric;
 pub(crate) mod snowflake_execute_jobs;
 pub(crate) mod snowflake_grant;
 pub(crate) mod snowflake_routines;
+pub(crate) mod snowflake_semantic_view;
 pub(crate) mod snowflake_show;
 pub(crate) mod snowflake_statements;
 pub(crate) mod table_options;

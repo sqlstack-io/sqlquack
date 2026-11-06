@@ -1322,6 +1322,7 @@ impl Parser {
             if self.match_keywords(&[TokenType::Partition, TokenType::By])
                 || self.match_keywords(&[TokenType::Distribute, TokenType::By])
             {
+                self.skip_semantic_view_excluding();
                 self.parse_expression_list()?
             } else {
                 Vec::new()

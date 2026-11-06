@@ -1628,3 +1628,57 @@ fn given_snowflake_dml_when_parsing_then_recorded_verdicts_hold() {
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_create_semantic_view_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an empty TABLES list (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table alias without AS (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string view name (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW 'v1' TABLES ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a verified query field without a value (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' ONBOARDING_QUESTION SQL 'm' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a relationship range without EXCLUSIVE (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( BETWEEN v1 AND v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a metric window PARTITION BY EXCLUDING (recorded OK)",
+            sql: "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dimension with a Cortex Search service (recorded OK)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) DIMENSIONS ( v1 . v1 AS 1 WITH CORTEX SEARCH SERVICE v1 USING v1 ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION BY EXCLUDING outside a semantic view stays refused",
+            sql: "SELECT SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
