@@ -89,6 +89,9 @@ const INOUT_MODE: &str = "inout";
 /// `makeOrderedSetArgs`'s error (0A000) for a `VARIADIC` direct argument without its aggregated twin.
 const ORDERED_SET_VARIADIC: &str = "an ordered-set aggregate with a VARIADIC direct argument must have one VARIADIC aggregated argument of the same data type";
 
+/// The keyword that gives a type array bounds without brackets.
+const ARRAY_KEYWORD: &str = "array";
+
 /// `aggr_arg`'s error (0A000) for an `OUT` or `INOUT` argument.
 const AGGREGATE_OUTPUT: &str = "aggregates cannot have output arguments";
 
@@ -106,6 +109,47 @@ fn dotted(parts: Vec<Identifier>) -> Expression {
             inferred_type: None,
         }))
     })
+}
+
+/// Whether `token` ends a type's name: its modifiers, array bounds or `%TYPE`.
+fn type_suffix_start(token: &Token) -> bool {
+    matches!(token.kind, TokenKind::Char('(' | '[' | '%')) || bounds_start(token)
+}
+
+/// Whether `token` begins a type's array bounds.
+fn bounds_start(token: &Token) -> bool {
+    matches!(token.kind, TokenKind::Char('['))
+        || matches!(token.kind, TokenKind::Keyword(keyword) if keyword.name == ARRAY_KEYWORD)
+}
+
+/// `opt_array_bounds` or `ARRAY [n]` as the raw tree's `arrayBounds`: each bound, or -1 when absent.
+fn array_bounds(tokens: &[Token]) -> Vec<i64> {
+    let mut bounds: Vec<i64> = Vec::new();
+    let (mut open, mut after_array): (bool, bool) = (false, false);
+    for token in tokens {
+        let follows_array: bool = after_array;
+        after_array = false;
+        match token.kind {
+            TokenKind::Char('[') => {
+                open = true;
+                if !follows_array {
+                    bounds.push(-1);
+                }
+            }
+            TokenKind::Char(']') => open = false,
+            TokenKind::Integer if open => {
+                if let Some(last) = bounds.last_mut() {
+                    *last = token.value.parse::<i64>().unwrap_or(-1);
+                }
+            }
+            TokenKind::Keyword(_) => {
+                after_array = true;
+                bounds.push(-1);
+            }
+            _ => {}
+        }
+    }
+    bounds
 }
 
 fn tuple(expressions: Vec<Expression>) -> Expression {
@@ -357,22 +401,41 @@ impl Parser<'_> {
         self.at = to;
         self.gaps.truncate(gaps);
         self.opaque = opaque;
-        let text: String = format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
-        let system: bool = self.tokens.get(start).is_some_and(|token| {
+        let tokens: &[Token] = &self.tokens[start..to];
+        let base_end: usize = tokens
+            .iter()
+            .position(type_suffix_start)
+            .unwrap_or(tokens.len());
+        let bounds_start: usize = tokens.iter().position(bounds_start).unwrap_or(tokens.len());
+        let bounds: Vec<i64> = array_bounds(&tokens[bounds_start..]);
+        let system: bool = tokens.first().is_some_and(|token| {
             matches!(token.kind, TokenKind::Keyword(keyword) if TYPE_KEYWORDS.contains(&keyword.name))
         });
-        let names: Vec<&str> = self.tokens[start..to]
+        let names: Vec<&str> = tokens[..base_end]
             .iter()
-            .take_while(|token| {
-                !matches!(token.kind, TokenKind::Char('(' | '[' | '%'))
-                    && !matches!(token.kind, TokenKind::Keyword(keyword) if keyword.name == "array")
-            })
             .map(|token| token.value.as_str())
             .collect();
-        Ok(match (system, names.as_slice()) {
-            (true, _) | (_, [CATALOGUE_SCHEMA, ".", _]) => format!("system {text}"),
-            _ => format!("{} {text}", names.join(" ")),
-        })
+        let base: String = match (system, names.as_slice()) {
+            (true, _) | (_, [CATALOGUE_SCHEMA, ".", _]) => {
+                let text: String =
+                    format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
+                format!("system {}", text.trim_end_matches("[]"))
+            }
+            _ => {
+                let rest: Vec<String> = tokens[base_end..bounds_start]
+                    .iter()
+                    .map(|token| match token.kind {
+                        TokenKind::Integer => token
+                            .value
+                            .parse::<i64>()
+                            .map_or_else(|_| token.value.clone(), |value| value.to_string()),
+                        _ => token.value.clone(),
+                    })
+                    .collect();
+                format!("{} {}", names.join(" "), rest.join(" "))
+            }
+        };
+        Ok(format!("{base} {bounds:?}"))
     }
 
     /// `aggr_args` as a call of `name`, with `makeOrderedSetArgs`'s check of a `VARIADIC` direct argument.

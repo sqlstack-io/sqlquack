@@ -15,6 +15,21 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "ordered-set VARIADIC types compare after folding, as equal() does",
+            sql: "CREATE AGGREGATE a (VARIADIC \"foo\" ORDER BY VARIADIC foo) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ordered-set VARIADIC types compare their array bounds",
+            sql: "CREATE AGGREGATE a (VARIADIC int4[] ORDER BY VARIADIC int4[3]) (sfunc = f, stype = int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "an old-style aggregate element name is an IDENT, not a keyword",
+            sql: "CREATE AGGREGATE a (sfunc = f, parallel = safe)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a database option names a keyword PostgreSQL lists, or an identifier",
             sql: "CREATE DATABASE d LIMIT 5",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1301,6 +1316,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "COMMENT ON FUNCTION f(a int) IS 'x'",
             pointer: "/0/comment/this/function/args/0/column_def/name/name",
             expected_json: "\"a\"",
+        },
+        ValueTestCase {
+            description: "a four-part function name keeps its first part, as func_name does",
+            sql: "CREATE FUNCTION a.b.c.d () RETURNS int RETURN 1",
+            pointer: "/0/create_function/name/catalog/name",
+            expected_json: "\"a.b\"",
+        },
+        ValueTestCase {
+            description: "a four-part old-style aggregate name keeps its first part",
+            sql: "CREATE AGGREGATE a.b.c.d (basetype = int, sfunc = f, stype = int)",
+            pointer: "/0/create_object/name/catalog/name",
+            expected_json: "\"a.b\"",
         },
         ValueTestCase {
             description: "CONNECTION LIMIT is named connection_limit, as PostgreSQL names it",
