@@ -148,3 +148,12 @@ container, and the ddl, transaction_session, utility and security_admin runs eac
 container of the pinned image, removed afterwards, with its start and end state and a repeat
 run that matched. The case build reads them as the shared builder does: an accepted case takes its
 receipt's later stage, and an observed case its receipt's outcome.
+
+`baseline.json` is the first claims snapshot (`syntax-coverage snapshot --root
+coverage/syntax-postgres`), bound to catalogue commit 19aa1f28 and to the Postgres parser's tree
+on `wip/pg-local-parser` 7a9066b6, where `local_parser = "postgres"` runs that parser in the
+checker's isolated worker. It claims 7,908 of 22,217 obligations and no verified form: nothing is
+reviewed yet, and a statement the parser keeps as an opaque command is never verified. It holds
+the 5,552 cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
+coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
+from here.
