@@ -84,3 +84,29 @@ rows = [
 query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t008_month_ends_with_time"
+description = "Timestamps on month ends and on equal days, with times of day. Catches: the time counted when both are month ends or share a day, or the fraction taken over the month length instead of 31 days"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2019-03-31 23:00:00'", "'2019-02-28 01:00:00'"],
+  ["'2024-04-30 00:00:00'", "'2024-03-30 12:00:00'"],
+  ["'2024-01-31 06:00:00'", "'2024-02-29 18:00:00'"],
+  ["'2024-01-10 06:00:00'", "'2024-02-20 18:00:00'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_long_negative"
+description = "A span of years, negative. Catches: the whole months or the fraction miscounted far apart"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2000-01-15'", "'2024-07-20'"],
+  ["'2024-07-20'", "'1999-12-31'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

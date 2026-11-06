@@ -8295,6 +8295,97 @@ cases = ["cases/translation/functions/date-part.date-part.toml#t008_pre_epoch"]
 required = true
 
 [[obligation]]
+id = "sf.functions.date-part.date-part-from.t001"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based, or ISO numbering for dayofweek (7 instead of 0 on the Sunday row)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t002"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, or nanosecond scaled to milliseconds"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t003"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t004"
+form = "sf.functions.date-part.date-part-from"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error for a TIME, or seconds rounded (46)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t005"
+form = "sf.functions.date-part.date-part-from"
+kind = "error_parity"
+target = "error"
+note = "The part given as a string literal in the FROM form: Snowflake rejects it at parse time (1003, unexpected FROM), unlike the two-argument form."
+catches = "the quoted part accepted (a value returned where Snowflake refuses the statement)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse a quoted date part in DATE_PART ... FROM"
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t006"
+form = "sf.functions.date-part.date-part-from"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t007"
+form = "sf.functions.date-part.date-part-from"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.date-part.date-part-from.t008"
+form = "sf.functions.date-part.date-part-from"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/date-part.date-part-from.toml#t008_pre_epoch"]
+required = true
+
+[[obligation]]
 id = "sf.functions.date-trunc.t001"
 form = "sf.functions.date-trunc"
 kind = "type_combination"
@@ -16996,6 +17087,51 @@ note = "States merged in two partitions (q apart from p and r), q's row compared
 catches = "PARTITION BY ignored (the {1, 2, 7} state, below 1.0)"
 reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
 cases = ["cases/translation/functions/minhash-combine.minhash-combine-over.toml#t003_two_partitions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.t001"
+form = "sf.functions.minhash.minhash"
+kind = "type_combination"
+target = "NUMBER"
+note = "Groups p and q hold the same values in another order; r is disjoint."
+catches = "an order-sensitive state (p and q not 1.0) or every pair similar"
+reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
+cases = ["cases/translation/functions/minhash.minhash.toml#t001_equal_sets"]
+required = true
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.t002"
+form = "sf.functions.minhash.minhash"
+kind = "type_combination"
+target = "several expressions"
+note = "Rows hashed as (a, b) pairs: p and q share every a and b value but no pair."
+catches = "each column hashed on its own (1.0 instead of 0.0)"
+reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
+cases = ["cases/translation/functions/minhash.minhash.toml#t002_tuples"]
+required = true
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.t003"
+form = "sf.functions.minhash.minhash"
+kind = "type_combination"
+target = "DISTINCT"
+note = "DISTINCT, which the page says has no effect. Snowflake rejects it at parse (1003), so a translation must refuse it too."
+catches = "DISTINCT accepted where Snowflake rejects it"
+reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse MINHASH with DISTINCT"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.t004"
+form = "sf.functions.minhash.minhash"
+kind = "null_argument"
+target = "expr"
+note = "A NULL value in one of two otherwise equal groups."
+catches = "NULL hashed as a value (below 1.0) or the state NULL"
+reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
+cases = ["cases/translation/functions/minhash.minhash.toml#t004_null_expr"]
 required = true
 
 [[obligation]]

@@ -597,9 +597,8 @@ target = "no ROWS PER MATCH clause"
 note = "The page: ONE ROW PER MATCH is the default, so each match gives one summary row."
 catches = "all rows of each match returned"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t008_one_row_default"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t009"
@@ -609,9 +608,8 @@ target = "ALL ROWS PER MATCH with no empty-match option"
 note = "The page: SHOW EMPTY MATCHES is the default of ALL ROWS PER MATCH, so the empty matches of up* appear."
 catches = "empty matches omitted by default"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t009_all_rows_show_default"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t010"
@@ -633,9 +631,8 @@ target = "no AFTER MATCH SKIP clause"
 note = "The page: AFTER MATCH SKIP PAST LAST ROW is the default, so matches of up{2} do not overlap."
 catches = "overlapping matches returned by default"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t011_skip_default"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t012"
@@ -645,9 +642,8 @@ target = "AFTER MATCH SKIP PAST LAST ROW"
 note = "The page: PAST LAST ROW continues after the last row of the match, so matches of up{2} do not overlap."
 catches = "matching resumed inside the previous match"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t012_past_last_row"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t013"
@@ -657,9 +653,8 @@ target = "AFTER MATCH SKIP TO FIRST up"
 note = "The page: TO FIRST <symbol> continues at the first row mapped to the symbol. With any_row up+ on ABCD this gives d 2-4, 3-4, 5-8, 6-8 and 7-8; the resumed row is never the first row of the match."
 catches = "matching resumed past the last row (2-4 and 5-8 only), or at the last rising row"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t013_to_first_symbol"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t014"
@@ -681,9 +676,8 @@ target = "PATTERN quantifier ?"
 note = "The page: ? matches zero or one row, greedily."
 catches = "the optional row never taken, or taken more than once"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t015_quantifier_optional"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t016"
@@ -693,9 +687,8 @@ target = "PATTERN quantifier {n,m}"
 note = "The page: {2,3} matches two to three rows, greedily."
 catches = "fewer rows taken than available, or more than three"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t016_quantifier_range"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t017"
@@ -705,9 +698,8 @@ target = "PATTERN quantifier {n,}"
 note = "The page: {2,} matches two or more rows, greedily."
 catches = "a single rising row matched (XYZ d 8 and d 10), or the run of three cut short"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t017_quantifier_at_least"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t018"
@@ -717,9 +709,8 @@ target = "PATTERN quantifier {,m}"
 note = "The page: {,2} matches zero to two rows, greedily."
 catches = "more than two rows taken"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t018_quantifier_at_most"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t019"
@@ -729,9 +720,8 @@ target = "reluctant quantifier +?"
 note = "The page: a quantifier followed by ? is reluctant and matches as few rows as possible."
 catches = "the reluctant quantifier read as greedy"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t019_quantifier_reluctant"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t020"
@@ -741,9 +731,8 @@ target = "PATTERN alternation |"
 note = "The page: | matches either alternative; d 6 to 8 match both up and high, and the recording settles which symbol they are classified as."
 catches = "only one alternative matched, or a row matching neither taken into the run"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t020_alternation"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t021"
@@ -753,9 +742,8 @@ target = "PATTERN anchors ^ and $"
 note = "The page: ^ matches at the start of the partition and $ at its end."
 catches = "the anchors ignored, so matches inside the partition returned"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t021_anchors"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t022"
@@ -765,9 +753,8 @@ target = "PATTERN PERMUTE"
 note = "The page: PERMUTE(down, up) matches the symbols in any order, preferring the order written."
 catches = "only the written order matched"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t022_permute"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t023"
@@ -777,9 +764,8 @@ target = "PATTERN exclusion {- -}"
 note = "The page: rows matched inside {- -} are excluded from the output of ALL ROWS PER MATCH but still match."
 catches = "the excluded rows returned, or the match rejected"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t023_exclusion"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t024"
@@ -789,9 +775,8 @@ target = "MEASURES with RUNNING and FINAL"
 note = "The page: with ALL ROWS PER MATCH, RUNNING aggregates up to the current row and FINAL over the whole match."
 catches = "RUNNING and FINAL giving the same value on every row"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t024_running_final"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t025"
@@ -813,9 +798,8 @@ target = "DEFINE with LAG and NEXT"
 note = "The page: PREV is not available in DEFINE, where LAG reads the previous row of the window frame; NEXT reads the next row and equals LEAD. The peaks are d 4 and 8 of ABCD and d 5 and 8 of XYZ."
 catches = "LAG or NEXT reading the wrong row, or NULL at the partition edge treated as a match"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t026_lag_next"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t027"
@@ -825,9 +809,8 @@ target = "a PATTERN symbol without DEFINE"
 note = "The page: a symbol used in PATTERN but not defined in DEFINE matches every row."
 catches = "the undefined symbol refused or matching nothing"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t027_undefined_symbol"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t028"
@@ -837,9 +820,8 @@ target = "PARTITION BY two expressions"
 note = "The page: PARTITION BY takes a list of expressions; rows match only within one combination of them."
 catches = "only the first key used, so matches cross partitions"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t028_partition_two_keys"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t029"
@@ -849,9 +831,8 @@ target = "MEASURES without PARTITION BY"
 note = "The page: without PARTITION BY the whole input is one partition."
 catches = "rows partitioned anyway, or matches starting over at each c"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t029_no_partition"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t030"
@@ -861,9 +842,8 @@ target = "MEASURES with PREV under ALL ROWS PER MATCH"
 note = "The page: in MEASURES, PREV navigates to the previous row within the current match, so it is NULL on each match's first row (d 3 and d 6 of ABCD)."
 catches = "PREV read as LAG over the partition, giving the row before the match"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t030_measures_prev"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t031"
@@ -875,7 +855,7 @@ catches = "PREV in DEFINE translated and run as LAG"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
 cases = []
 required = true
-held = "awaits a Snowflake receipt"
+held = "Snowflake refuses PREV in DEFINE with error 2139, SQLSTATE 02000 ('Unknown function PREV'), a class no recorder admits"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t032"
@@ -885,9 +865,8 @@ target = "ORDER BY <expr> DESC"
 note = "The page: orderItem takes ASC or DESC; with ORDER BY d DESC the rows are read from d 10 down, so up+ matches d 9-8, d 4 and d 1."
 catches = "the direction ignored, giving the ascending matches 3-4 and 6-8"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t032_order_desc"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t033"
@@ -897,9 +876,8 @@ target = "ORDER BY <expr> NULLS FIRST"
 note = "The page: orderItem takes NULLS FIRST or LAST; with the NULL d (price 10) first, d 1 rises from it, so up+ matches d 1, 3-4 and 6-8."
 catches = "NULLS FIRST ignored, so the NULL row sorts last and d 1 does not match"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t033_order_nulls_first"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t034"
@@ -909,9 +887,8 @@ target = "ORDER BY <expr> DESC NULLS LAST"
 note = "The page: orderItem takes DESC with NULLS LAST; the NULL d (price 10) comes after d 1 and does not rise, so up+ matches d 9-8, d 4 and d 1."
 catches = "NULLS LAST ignored, so DESC's default NULLS FIRST puts the NULL row first and d 10 rises from it"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t034_order_desc_nulls_last"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t035"
@@ -921,9 +898,8 @@ target = "<symbol>.<column> inside a window function"
 note = "The page's FINAL FIRST(LT45.price) shape: inside a window function a predicated column reference looks only at rows mapped to the symbol, so FIRST(down.price) is the first down row, not the start row."
 catches = "the symbol ignored, giving FIRST and LAST over every row of the match"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t035_symbol_column_in_function"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t036"
@@ -933,9 +909,8 @@ target = "<symbol>.<column> outside a window function"
 note = "The page: outside a window function <symbol>.<column> is LAST(<symbol>.<column>), allowed in MEASURES with FINAL semantics; under ONE ROW PER MATCH it is the match's last down price (ABCD 1-4: 36, XYZ 1-5: 24, XYZ 6-8: 50)."
 catches = "read as the last row's price (42, 65, 54)"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t036_symbol_column_bare"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t037"
@@ -945,9 +920,8 @@ target = "PREV and NEXT with offset and default in MEASURES"
 note = "The page: PREV(expr, offset, default) and NEXT(expr, offset, default); PREV stays within the match and NEXT runs to the end of the window, with the default where the row is outside the frame (XYZ d 10 has no row two ahead)."
 catches = "the offset read as 1, or NULL instead of the default"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t037_prev_next_offset_default"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t038"
@@ -969,9 +943,8 @@ target = "<symbol>.<column> in MEASURES under RUNNING semantics"
 note = "The page's limitations table: <symbol>.<column>, plain or in LAST, is not available in MEASURES (Running), which ALL ROWS PER MATCH makes the default, so Snowflake refuses the query."
 catches = "the RUNNING form translated and run"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t039_symbol_column_running"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.t040"
@@ -981,9 +954,8 @@ target = "PATTERN alternation and concatenation without parentheses"
 note = "The page: the alternative operator has precedence over the concatenation operator, so start_row down | up up reads as start_row (down | up) up."
 catches = "read as (start_row down) | (up up)"
 reading = "the MATCH_RECOGNIZE page: PARTITION BY, ORDER BY, MEASURES with MATCH_NUMBER(), MATCH_SEQUENCE_NUMBER(), CLASSIFIER(), FIRST, LAST and COUNT; ONE ROW PER MATCH by default or ALL ROWS PER MATCH with SHOW EMPTY MATCHES (default), OMIT EMPTY MATCHES or WITH UNMATCHED ROWS; AFTER MATCH SKIP PAST LAST ROW (default), TO NEXT ROW or TO [FIRST | LAST] <symbol>; PATTERN like a regular expression with greedy quantifiers; DEFINE <symbol> AS <expr>, undefined symbols match every row"
-cases = []
+cases = ["cases/translation/query/match-recognize.match-recognize-pattern-define-as.toml#t040_alternation_precedence"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.query.operators-query.except.t001"
