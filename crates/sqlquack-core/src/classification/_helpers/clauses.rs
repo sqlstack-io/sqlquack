@@ -148,6 +148,7 @@ macro_rules! set_operation_clauses {
                 strict,
                 on_columns,
                 locks,
+                with_ties,
                 span: _,
             } = operation;
             present(&[
@@ -167,6 +168,7 @@ macro_rules! set_operation_clauses {
                 (sort_by.is_some(), "sort_by"),
                 (cluster_by.is_some(), "cluster_by"),
                 (!locks.is_empty(), "lock"),
+                (*with_ties, "with_ties"),
             ])
         }
     };
@@ -193,6 +195,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         directed,
         first_last,
         first_last_alias: _,
+        using_alias,
         span: _,
     } = join;
     let mut constructs = vec![Construct::new(
@@ -206,6 +209,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         (!pivots.is_empty(), "join_pivot"),
         (*directed, "join_directed"),
         (first_last.is_some(), "join_first_last"),
+        (using_alias.is_some(), "join_using_alias"),
     ]);
     constructs.extend(
         names

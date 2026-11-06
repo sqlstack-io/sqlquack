@@ -670,6 +670,7 @@ impl Parser {
 
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 Expression::boxed_table(TableRef {
+                    sample_call: None,
                     catalog: None,
                     schema: None,
                     name: table_name,
@@ -756,6 +757,7 @@ impl Parser {
                 let table_ident = self.parse_bigquery_table_part()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 return Ok(Expression::boxed_table(TableRef {
+                    sample_call: None,
                     catalog: Some(first_ident),
                     schema: Some(Identifier::new("")),
                     name: table_ident,
@@ -791,6 +793,7 @@ impl Parser {
 
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::boxed_table(TableRef {
+                        sample_call: None,
                         catalog: Some(Identifier::new(format!("{}.{}", first_name, second_name))),
                         schema: Some(third_ident),
                         name: table_name,
@@ -840,6 +843,7 @@ impl Parser {
 
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::boxed_table(TableRef {
+                            sample_call: None,
                             catalog: Some(first_ident),
                             schema: Some(second_ident),
                             name: table_name,
@@ -891,6 +895,7 @@ impl Parser {
 
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::boxed_table(TableRef {
+                        sample_call: None,
                         catalog: None,
                         schema: Some(first_ident),
                         name: table_name,
@@ -1088,6 +1093,7 @@ impl Parser {
                                         let part3 = self.parse_bigquery_table_part()?;
                                         let tc = self.previous_trailing_comments().to_vec();
                                         Expression::boxed_table(TableRef {
+                                            sample_call: None,
                                             catalog: Some(part1),
                                             schema: Some(part2),
                                             name: part3,
@@ -1111,6 +1117,7 @@ impl Parser {
                                     } else {
                                         let tc = self.previous_trailing_comments().to_vec();
                                         Expression::boxed_table(TableRef {
+                                            sample_call: None,
                                             catalog: None,
                                             schema: Some(part1),
                                             name: part2,
@@ -1135,6 +1142,7 @@ impl Parser {
                                 } else {
                                     let tc = self.previous_trailing_comments().to_vec();
                                     Expression::boxed_table(TableRef {
+                                        sample_call: None,
                                         catalog: None,
                                         schema: None,
                                         name: part1,
@@ -1697,6 +1705,7 @@ impl Parser {
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Expression::boxed_table(TableRef {
+                sample_call: None,
                 catalog: None,
                 schema: None,
                 name: table_name,
