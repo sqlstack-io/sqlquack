@@ -4,24 +4,24 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_float"
-description = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin. Catches: the inner product returned unnormalised, or the distance"
+description = "Vectors with a negative element, and parallel vectors; rounded to 2 places for the margin, which keeps the irrational result clear of a rounding boundary. Catches: the inner product returned unnormalised, or the distance"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
 rows = [
   ["'[1,2,3]'", "'[4,-5,6]'"],
   ["'[1,0,0]'", "'[2,0,0]'"],
 ]
-query = "SELECT ordinal, ROUND(VECTOR_COSINE_SIMILARITY(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(FLOAT, 3))), 3) AS r FROM input ORDER BY ordinal"
+query = "SELECT ordinal, ROUND(VECTOR_COSINE_SIMILARITY(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(FLOAT, 3))), 2) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
 id = "t002_int"
-description = "INT vectors. Catches: an integer result, or INT vectors rejected"
+description = "INT vectors; rounded to 2 places. Catches: an integer result, or INT vectors rejected"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
 rows = [
   ["'[1,2,3]'", "'[4,-5,6]'"],
 ]
-query = "SELECT ROUND(VECTOR_COSINE_SIMILARITY(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(INT, 3))), 3) AS r FROM input"
+query = "SELECT ROUND(VECTOR_COSINE_SIMILARITY(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(INT, 3))), 2) AS r FROM input"
 order = "ordered"
 tags = ["type-combination"]
 

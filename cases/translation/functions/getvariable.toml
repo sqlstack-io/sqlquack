@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_unset"
-description = "A variable name that no SET statement defined; the page does not say; the recording decides whether this is NULL or an error. Catches: NULL where Snowflake raises an error, or the reverse"
+description = "A variable name that no SET statement defined, which gives NULL: the page example returns NULL for GETVARIABLE('var_2') when only VAR_2 is defined. Catches: an error raised, or an empty string returned"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],

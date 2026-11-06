@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_fixed"
-description = "A fixed 16-byte key, 12-byte IV and AAD, so the ciphertext and tag are deterministic; compared as hex. Catches: another mode used by default, or the fields swapped"
+description = "A fixed 16-byte key, 12-byte IV and AAD, so the ciphertext and tag are deterministic; compared as hex. Catches: the fields swapped, or the AAD left out of the tag"
 columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
 rows = [
   ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
