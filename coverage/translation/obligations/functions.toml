@@ -16494,39 +16494,6 @@ cases = ["cases/translation/functions/md5-binary.toml#t003_empty"]
 required = true
 
 [[obligation]]
-id = "sf.functions.md5-number.t001"
-form = "sf.functions.md5-number"
-kind = "error_parity"
-target = "error"
-note = "The page example and two other strings; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
-catches = "the function accepted, with the digest computed as a signed integer"
-reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
-cases = ["cases/translation/functions/md5-number.toml#t001_signed"]
-required = true
-
-[[obligation]]
-id = "sf.functions.md5-number.t002"
-form = "sf.functions.md5-number"
-kind = "error_parity"
-target = "error"
-note = "abc, whose digest as a signed integer has 39 digits; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
-catches = "the function accepted, or the value truncated to 38 digits"
-reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
-cases = ["cases/translation/functions/md5-number.toml#t002_out_of_range"]
-required = true
-
-[[obligation]]
-id = "sf.functions.md5-number.t003"
-form = "sf.functions.md5-number"
-kind = "error_parity"
-target = "error"
-note = "A NULL message; Snowflake reports MD5_NUMBER as an unknown function (2139) when compiling."
-catches = "the function accepted"
-reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
-cases = ["cases/translation/functions/md5-number.toml#t003_null_msg"]
-required = true
-
-[[obligation]]
 id = "sf.functions.md5-number-lower64.t001"
 form = "sf.functions.md5-number-lower64"
 kind = "type_combination"

@@ -2346,3 +2346,10 @@ forms = [
   "sf.functions.dmf-invalid-timestamp-string-count",
   "sf.functions.dmf-invalid-timestamp-string-percent",
 ]
+
+[[group]]
+id = "obsoleted-functions"
+reason = "The page is marked Obsoleted and Snowflake reports the function as unknown (error 2139), so there is no Snowflake behaviour to translate."
+forms = [
+  "sf.functions.md5-number",
+]
