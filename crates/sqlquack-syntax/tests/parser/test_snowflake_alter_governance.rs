@@ -89,3 +89,42 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         );
     }
 }
+
+#[test]
+fn given_a_parenthesized_snowflake_alter_column_list_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized list of column actions (recorded OK)",
+            sql: "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ) ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized list left open (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET TYPE without DATA inside the list (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER ( v1 DROP DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 SET TYPE INT , v1 COMMENT 'm' , v1 UNSET COMMENT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a default without SET (recorded OK)",
+            sql: "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a default with no value (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 DEFAULT , v1 SET DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

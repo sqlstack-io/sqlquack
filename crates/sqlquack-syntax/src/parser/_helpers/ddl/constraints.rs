@@ -1843,31 +1843,16 @@ impl Parser {
                     self.current -= 1;
                     break;
                 }
-                let modify = self.is_snowflake() && self.check_identifier("MODIFY");
-                let typed = if modify {
-                    let start = self.current;
-                    self.skip();
-                    self.match_token(TokenType::Column);
-                    let typed = self.parse_simple_name().and_then(|name| {
-                        Ok(AlterTableAction::AlterColumn {
-                            name,
-                            action: self.parse_alter_column_action()?,
-                            use_modify_keyword: true,
-                        })
-                    });
-                    let ends = self.is_at_end()
-                        || self.check(TokenType::Comma)
-                        || self.check(TokenType::Semicolon);
-                    match typed {
-                        Ok(action) if ends => Some(action),
-                        _ => {
-                            self.current = start;
-                            None
-                        }
+                if let Some(listed) = self.parse_snowflake_alter_column_list()? {
+                    actions.extend(listed);
+                    (last_was_add_column, last_was_alter_column, dropping_columns) =
+                        (false, false, None);
+                    if !self.match_token(TokenType::Comma) {
+                        break;
                     }
-                } else {
-                    None
-                };
+                    continue;
+                }
+                let typed = self.parse_snowflake_modify_column()?;
                 let action = match typed {
                     Some(action) => action,
                     None => self.parse_alter_action()?,

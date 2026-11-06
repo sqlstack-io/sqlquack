@@ -1162,9 +1162,67 @@ impl Parser {
         )))
     }
 
+    /// A Snowflake `MODIFY [ COLUMN ] <column> <action>` that ends the action, or None (position unchanged).
+    pub(crate) fn parse_snowflake_modify_column(&mut self) -> Result<Option<AlterTableAction>> {
+        if !self.is_snowflake() || !self.check_identifier("MODIFY") {
+            return Ok(None);
+        }
+        let start = self.current;
+        self.skip();
+        self.match_token(TokenType::Column);
+        let typed = self.parse_simple_name().and_then(|name| {
+            Ok(AlterTableAction::AlterColumn {
+                name,
+                action: self.parse_alter_column_action()?,
+                use_modify_keyword: true,
+            })
+        });
+        let ends =
+            self.is_at_end() || self.check(TokenType::Comma) || self.check(TokenType::Semicolon);
+        match typed {
+            Ok(action) if ends => Ok(Some(action)),
+            _ => {
+                self.current = start;
+                Ok(None)
+            }
+        }
+    }
+
+    /// A Snowflake `ALTER ( [ COLUMN ] <column> <action> [ , ... ] )` list, or None (position unchanged) for any other action.
+    pub(crate) fn parse_snowflake_alter_column_list(
+        &mut self,
+    ) -> Result<Option<Vec<AlterTableAction>>> {
+        if !self.is_snowflake()
+            || !self.check(TokenType::Alter)
+            || !self.check_next(TokenType::LParen)
+        {
+            return Ok(None);
+        }
+        self.current += 2;
+        let mut actions: Vec<AlterTableAction> = Vec::new();
+        loop {
+            self.match_token(TokenType::Column);
+            let name = self.parse_simple_name()?;
+            let action = self.parse_alter_column_action()?;
+            actions.push(AlterTableAction::AlterColumn {
+                name,
+                action,
+                use_modify_keyword: false,
+            });
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Some(actions))
+    }
+
     /// Parse ALTER COLUMN action
     pub(crate) fn parse_alter_column_action(&mut self) -> Result<AlterColumnAction> {
         if self.is_snowflake() {
+            if self.match_token(TokenType::Default) {
+                return Ok(AlterColumnAction::SetDefault(self.parse_expression()?));
+            }
             if self.match_text_seq(&["UNSET", "COMMENT"]) {
                 return Ok(AlterColumnAction::UnsetComment);
             }
