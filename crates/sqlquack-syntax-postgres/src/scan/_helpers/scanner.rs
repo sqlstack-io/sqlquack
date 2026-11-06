@@ -87,6 +87,37 @@ impl<'sql> Scanner<'sql> {
         }
     }
 
+    /// The first byte no token, space or comment covers, scanning to the first fault; none when
+    /// every byte before it is covered.
+    pub(crate) fn uncovered(self) -> Option<usize> {
+        let (sql, bytes) = (self.sql, self.bytes);
+        let (raws, fault) = self.scan();
+        let mut covered: usize = 0;
+        for raw in &raws {
+            let mut blank: Scanner<'_> = Scanner {
+                sql,
+                bytes,
+                at: covered,
+            };
+            if blank.skip_blank().is_err() || blank.at != raw.token.start {
+                return Some(covered);
+            }
+            covered = raw.token.end;
+        }
+        if fault.is_some() {
+            return None;
+        }
+        let mut blank: Scanner<'_> = Scanner {
+            sql,
+            bytes,
+            at: covered,
+        };
+        match blank.skip_blank() {
+            Ok(()) if blank.at == bytes.len() => None,
+            _ => Some(covered),
+        }
+    }
+
     /// Every token up to the end of the input or the first fault.
     pub(crate) fn scan(mut self) -> (Vec<RawToken>, Option<Fault>) {
         let mut tokens: Vec<RawToken> = Vec::new();

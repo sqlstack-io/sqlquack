@@ -39,3 +39,11 @@ pub(crate) struct TypeTextTestCase {
     pub(crate) text: &'static str,
     pub(crate) expected_name: Result<&'static str, bool>,
 }
+
+/// An input and how strict parsing ends on PostgreSQL 18.6's verdict: its statement count, or
+/// `Err(Some(syntax))` for a parse error (42601 or not), `Err(None)` for an uncovered byte.
+pub(crate) struct StrictTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected: Result<usize, Option<bool>>,
+}

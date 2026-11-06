@@ -4,9 +4,10 @@ use serde_json::Value;
 
 use crate::parse::main::format_type::format_type;
 use crate::parse::main::parse::parse;
+use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::main::parse_type::parse_type;
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, ShapeTestCase, SpanTestCase, TypeTextTestCase, VerdictTestCase,
+    ExpectedVerdict, ShapeTestCase, SpanTestCase, StrictTestCase, TypeTextTestCase, VerdictTestCase,
 };
 
 #[test]
@@ -660,5 +661,42 @@ fn given_a_type_string_when_parsed_and_formatted_then_it_reads_as_postgresqls_fo
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
+    let test_cases = [
+        StrictTestCase {
+            description: "a statement with comments after it",
+            sql: "SELECT 1 /* c */ -- d",
+            expected: Ok(1),
+        },
+        StrictTestCase {
+            description: "only comments and semicolons",
+            sql: " ; /* c */ ;",
+            expected: Ok(0),
+        },
+        StrictTestCase {
+            description: "a 42601 syntax error",
+            sql: "SELECT 1 FROM",
+            expected: Err(Some(true)),
+        },
+        StrictTestCase {
+            description: "a 22023 error the grammar raises",
+            sql: "SELECT 1::float(0)",
+            expected: Err(Some(false)),
+        },
+        StrictTestCase {
+            description: "an unterminated comment",
+            sql: "SELECT 1 /* c",
+            expected: Err(Some(true)),
+        },
+    ];
+    for test_case in test_cases {
+        let outcome: Result<usize, Option<bool>> = parse_strict(test_case.sql)
+            .map(|parsed| parsed.statements.len())
+            .map_err(|failure| failure.parse_error().map(|error| error.syntax));
+        assert_eq!(outcome, test_case.expected, "{}", test_case.description);
     }
 }
