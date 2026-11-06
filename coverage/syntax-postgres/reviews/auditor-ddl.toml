@@ -1444,3 +1444,21 @@ note = "Re-read after the notes-7 obligation delta against the PostgreSQL 18.6 d
 [review.definitions]
 "pg.ddl.create-foreign-table.partition-of-server" = "35731fffc63e343e48947bb8c4ddc868c101348d586e2a04455174c087238949"
 "pg.ddl.create-publication" = "5a91e1029b6c04b8dafacd37ccfefbcbee97d5a5687852122f7aa6760a5d1afe"
+
+[[review]]
+id = "pg-auditor-ddl-019"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "d7df6560d1d3baad605ac9a6d109233809ca5999"
+reviewed_utc = "2026-11-06T17:18:16Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-publication",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree d7df6560; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-publication" = "5c9a41feb395d34adbeb7772a604dfe2b07be39df35e16e1084c889b443e3a7a"
+
+[review.definitions]
+"pg.ddl.create-publication" = "38ee20b4e2c97a6909930a6845a6978e3b172558b41e4314361fce90249f693c"
