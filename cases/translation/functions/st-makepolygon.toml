@@ -26,14 +26,14 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_open_loop"
-description = "A line string whose last point differs from the first, which the page says must form a loop. Catches: the loop closed silently"
+description = "A line string whose last point differs from the first, which the page says must form a loop; Snowflake returns rows rather than an error, so the recording decides. Catches: an error raised where Snowflake returns rows, or the loop closed differently"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'LINESTRING(0 0,10 0,10 10,0 10)'"],
 ]
 query = "SELECT ST_ASWKT(ST_MAKEPOLYGON(TO_GEOMETRY(v))) AS r FROM input"
 order = "ordered"
-tags = ["error"]
+tags = ["type-combination"]
 
 [[case]]
 id = "t004_null_geography_or_geometry_expression"

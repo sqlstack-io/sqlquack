@@ -737,3 +737,653 @@ catches = "the string passed through unconverted"
 reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
 cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t006_bad_text"]
 required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t001"
+form = "sf.expressions.operators-comparison.equal"
+kind = "type_combination"
+target = "NUMBER(38,0) = FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "a different operator, or the operands swapped, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t002"
+form = "sf.expressions.operators-comparison.equal"
+kind = "type_combination"
+target = "VARCHAR = VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "a different operator, or the operands swapped, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t003"
+form = "sf.expressions.operators-comparison.equal"
+kind = "type_combination"
+target = "DATE = TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "a different operator, or the operands swapped, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t004"
+form = "sf.expressions.operators-comparison.equal"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t005"
+form = "sf.expressions.operators-comparison.equal"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.equal.t006"
+form = "sf.expressions.operators-comparison.equal"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "FLOAT and NUMBER sums"
+note = "0.1 + 0.2 = 0.3 as FLOAT, where binary rounding makes them differ, and as NUMBER(10,2), where they are equal."
+catches = "FLOAT compared in decimal, or NUMBER compared in binary floating point"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.equal.toml#t006_float_sum"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater.t001"
+form = "sf.expressions.operators-comparison.greater"
+kind = "type_combination"
+target = "NUMBER(38,0) > FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater.t002"
+form = "sf.expressions.operators-comparison.greater"
+kind = "type_combination"
+target = "VARCHAR > VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater.t003"
+form = "sf.expressions.operators-comparison.greater"
+kind = "type_combination"
+target = "DATE > TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater.t004"
+form = "sf.expressions.operators-comparison.greater"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater.t005"
+form = "sf.expressions.operators-comparison.greater"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater-or-equal.t001"
+form = "sf.expressions.operators-comparison.greater-or-equal"
+kind = "type_combination"
+target = "NUMBER(38,0) >= FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater-or-equal.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater-or-equal.t002"
+form = "sf.expressions.operators-comparison.greater-or-equal"
+kind = "type_combination"
+target = "VARCHAR >= VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater-or-equal.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater-or-equal.t003"
+form = "sf.expressions.operators-comparison.greater-or-equal"
+kind = "type_combination"
+target = "DATE >= TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater-or-equal.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater-or-equal.t004"
+form = "sf.expressions.operators-comparison.greater-or-equal"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater-or-equal.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.greater-or-equal.t005"
+form = "sf.expressions.operators-comparison.greater-or-equal"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.greater-or-equal.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less.t001"
+form = "sf.expressions.operators-comparison.less"
+kind = "type_combination"
+target = "NUMBER(38,0) < FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less.t002"
+form = "sf.expressions.operators-comparison.less"
+kind = "type_combination"
+target = "VARCHAR < VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less.t003"
+form = "sf.expressions.operators-comparison.less"
+kind = "type_combination"
+target = "DATE < TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "a non-strict comparison (equal rows TRUE), or the operands swapped, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less.t004"
+form = "sf.expressions.operators-comparison.less"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less.t005"
+form = "sf.expressions.operators-comparison.less"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t001"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "type_combination"
+target = "NUMBER(38,0) <= FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t002"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "type_combination"
+target = "VARCHAR <= VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t003"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "type_combination"
+target = "DATE <= TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "a strict comparison (equal rows FALSE), or the operands swapped, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t004"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t005"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-angle.t001"
+form = "sf.expressions.operators-comparison.not-equal-angle"
+kind = "type_combination"
+target = "NUMBER(38,0) <> FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "equality returned, or NULL read as unequal, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-angle.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-angle.t002"
+form = "sf.expressions.operators-comparison.not-equal-angle"
+kind = "type_combination"
+target = "VARCHAR <> VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "equality returned, or NULL read as unequal, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-angle.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-angle.t003"
+form = "sf.expressions.operators-comparison.not-equal-angle"
+kind = "type_combination"
+target = "DATE <> TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "equality returned, or NULL read as unequal, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-angle.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-angle.t004"
+form = "sf.expressions.operators-comparison.not-equal-angle"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-angle.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-angle.t005"
+form = "sf.expressions.operators-comparison.not-equal-angle"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-angle.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-bang.t001"
+form = "sf.expressions.operators-comparison.not-equal-bang"
+kind = "type_combination"
+target = "NUMBER(38,0) != FLOAT"
+note = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair."
+catches = "equality returned, or NULL read as unequal, or the FLOAT side truncated"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t001_number_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-bang.t002"
+form = "sf.expressions.operators-comparison.not-equal-bang"
+kind = "type_combination"
+target = "VARCHAR != VARCHAR"
+note = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides."
+catches = "equality returned, or NULL read as unequal, or a case-insensitive or space-trimming comparison"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-bang.t003"
+form = "sf.expressions.operators-comparison.not-equal-bang"
+kind = "type_combination"
+target = "DATE != TIMESTAMP_NTZ"
+note = "A date against a timestamp at its midnight and at noon the same day."
+catches = "equality returned, or NULL read as unequal, or the timestamp truncated to its date"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t003_date_timestamp"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-bang.t004"
+form = "sf.expressions.operators-comparison.not-equal-bang"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t004_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-comparison.not-equal-bang.t005"
+form = "sf.expressions.operators-comparison.not-equal-bang"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, beside a set row; the page does not say, so the recording decides."
+catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.and.t001"
+form = "sf.expressions.operators-logical.and"
+kind = "type_combination"
+target = "BOOLEAN AND BOOLEAN"
+note = "All nine pairs of TRUE, FALSE and NULL, as in the page's truth table."
+catches = "FALSE AND NULL returned as NULL, or NULL read as FALSE (TRUE AND NULL as FALSE)"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.and.toml#t001_truth_table"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.and.t002"
+form = "sf.expressions.operators-logical.and"
+kind = "type_combination"
+target = "predicates"
+note = "The page example b = 'Down' OR a = 8 AND b = 'Up', which binds AND first: rows 1, 2 and 3."
+catches = "OR bound before AND (row 1 only)"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.and.toml#t002_precedence"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.and.t003"
+form = "sf.expressions.operators-logical.and"
+kind = "null_argument"
+target = "a"
+note = "NULL as the left operand with each right operand."
+catches = "NULL read as FALSE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.and.toml#t003_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.and.t004"
+form = "sf.expressions.operators-logical.and"
+kind = "null_argument"
+target = "b"
+note = "NULL as the right operand with each left operand."
+catches = "NULL read as FALSE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.and.toml#t004_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.not.t001"
+form = "sf.expressions.operators-logical.not"
+kind = "type_combination"
+target = "NOT BOOLEAN"
+note = "NOT of TRUE, FALSE and NULL."
+catches = "NOT NULL returned as TRUE or FALSE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.not.toml#t001_values"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.not.t002"
+form = "sf.expressions.operators-logical.not"
+kind = "type_combination"
+target = "predicates"
+note = "The page examples NOT a = 15 AND b = 'Down' (row 2) and NOT (a = 15 AND b = 'Down') (rows 1, 2 and 4), as two columns."
+catches = "NOT bound after AND, so the two columns agree"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.not.toml#t002_precedence"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.not.t003"
+form = "sf.expressions.operators-logical.not"
+kind = "null_argument"
+target = "a"
+note = "NOT of a NULL comparison beside a set one."
+catches = "NULL read as FALSE, so NOT gives TRUE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.not.toml#t003_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.or.t001"
+form = "sf.expressions.operators-logical.or"
+kind = "type_combination"
+target = "BOOLEAN OR BOOLEAN"
+note = "All nine pairs of TRUE, FALSE and NULL, as in the page's truth table."
+catches = "TRUE OR NULL returned as NULL, or NULL read as FALSE (FALSE OR NULL as FALSE)"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.or.toml#t001_truth_table"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.or.t002"
+form = "sf.expressions.operators-logical.or"
+kind = "type_combination"
+target = "predicates"
+note = "The page example (b = 'Down' OR a = 8) AND b = 'Up', where parentheses override the precedence: row 1."
+catches = "the parentheses dropped (rows 1, 2 and 3)"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.or.toml#t002_precedence"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.or.t003"
+form = "sf.expressions.operators-logical.or"
+kind = "null_argument"
+target = "a"
+note = "NULL as the left operand with each right operand."
+catches = "NULL read as FALSE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.or.toml#t003_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-logical.or.t004"
+form = "sf.expressions.operators-logical.or"
+kind = "null_argument"
+target = "b"
+note = "NULL as the right operand with each left operand."
+catches = "NULL read as FALSE"
+reading = "operators-logical: AND, OR and NOT on predicates, with precedence NOT, then AND, then OR; the page shows the AND and OR truth tables with NULL (FALSE AND NULL is FALSE, TRUE OR NULL is TRUE)"
+cases = ["cases/translation/expressions/operators-logical.or.toml#t004_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.t001"
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+kind = "type_combination"
+target = "> ALL"
+note = "Rows whose x is at least every x of group 'k' (5 and 10): only the row holding 10."
+catches = "ALL read as ANY"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.comparisonoperator-all-any.toml#t001_all"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.t002"
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+kind = "type_combination"
+target = "< ANY"
+note = "Rows whose x is below some x of group 'k': every set x below 10."
+catches = "ANY read as ALL"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.comparisonoperator-all-any.toml#t002_any"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.t003"
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+kind = "type_combination"
+target = "!= ALL and = ANY over no rows"
+note = "Subqueries that return no rows: != ALL is TRUE for every set row, = ANY for none; the page says ALL is TRUE when every row satisfies it."
+catches = "ALL over no rows read as FALSE, or ANY as TRUE"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.comparisonoperator-all-any.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.t004"
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+kind = "null_argument"
+target = "query"
+note = "A subquery holding a NULL (group 'v'): x != ALL over it is never TRUE, so no row qualifies."
+catches = "the NULL skipped, so rows unequal to 1 and 7 qualify"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.comparisonoperator-all-any.toml#t004_null_in_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.comparisonoperator-all-any.t005"
+form = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+kind = "null_argument"
+target = "expr"
+note = "A NULL left operand: x > ANY over group 'k' leaves the NULL row out."
+catches = "the NULL row kept"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.comparisonoperator-all-any.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.exists.t001"
+form = "sf.expressions.operators-subquery.exists"
+kind = "type_combination"
+target = "NOT EXISTS (correlated)"
+note = "The page's pattern: groups with no row of x above 6, by a correlated NOT EXISTS, and groups with one by EXISTS."
+catches = "the correlation dropped (every group or none)"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.exists.toml#t001_correlated"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.exists.t002"
+form = "sf.expressions.operators-subquery.exists"
+kind = "type_combination"
+target = "EXISTS in a SELECT list"
+note = "Uncorrelated EXISTS as a value, which the page allows anywhere a Boolean is: one subquery with rows and one without."
+catches = "EXISTS refused outside WHERE, or TRUE for an empty subquery"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.exists.toml#t002_uncorrelated"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.exists.t003"
+form = "sf.expressions.operators-subquery.exists"
+kind = "null_argument"
+target = "query"
+note = "A subquery returning only a NULL value still returns a row, so EXISTS is TRUE."
+catches = "a row of NULL counted as no row"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.exists.toml#t003_null_row"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.in.t001"
+form = "sf.expressions.operators-subquery.in"
+kind = "type_combination"
+target = "IN (query)"
+note = "x IN the x values of group 'k' (5 and 10)."
+catches = "a partial or range match"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.in.toml#t001_in"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.in.t002"
+form = "sf.expressions.operators-subquery.in"
+kind = "type_combination"
+target = "NOT IN (query)"
+note = "x NOT IN the x values of group 'w' (3), with no NULL in the subquery: every set x but 3."
+catches = "NOT IN applied as IN, or the NULL row kept"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.in.toml#t002_not_in"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.in.t003"
+form = "sf.expressions.operators-subquery.in"
+kind = "null_argument"
+target = "query"
+note = "NOT IN over group 'v', which holds a NULL: as != ALL, it is never TRUE, so no row qualifies."
+catches = "the NULL skipped, so rows other than 1 and 7 qualify"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.in.toml#t003_null_in_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-subquery.in.t004"
+form = "sf.expressions.operators-subquery.in"
+kind = "null_argument"
+target = "expr"
+note = "A NULL left operand: x IN group 'v' leaves the NULL row out, though the subquery holds a NULL."
+catches = "NULL matched to NULL"
+reading = "operators-subquery: expr op ALL/ANY (query) and [NOT] IN (query) compare against every value the subquery returns, in a WHERE clause; IN is = ANY and NOT IN is != ALL; [NOT] EXISTS is TRUE when the subquery returns rows (or none)"
+cases = ["cases/translation/expressions/operators-subquery.in.toml#t004_null_expr"]
+required = true

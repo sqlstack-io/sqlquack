@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 
-use crate::census::_helpers::corpus::model_relation;
+use crate::census::_helpers::corpus::{model_plain_name, model_relation, referenced_model};
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::errors::CensusError;
 
@@ -56,10 +56,14 @@ pub(crate) fn complete_in_waves(
         for (index, census, columns) in complete(&wave, &schema, &censuses)? {
             censuses[index] = census;
             pending.remove(&index);
-            if let (true, Some(columns), Some(relation)) =
-                (chain_models, columns, model_relation(&files[index]))
-            {
-                schema.relations.entry(relation).or_insert(columns);
+            if let (true, Some(columns)) = (chain_models, columns) {
+                let file = &files[index];
+                for relation in model_relation(file)
+                    .into_iter()
+                    .chain(model_plain_name(file))
+                {
+                    schema.relations.entry(relation).or_insert(columns.clone());
+                }
             }
         }
     }
@@ -74,7 +78,7 @@ fn refused_upstream(
 ) -> BTreeSet<usize> {
     let mut upstream: BTreeSet<usize> = BTreeSet::new();
     for relation in census.references.iter().chain(&census.unknown_relations) {
-        if let Some(model) = by_relation.get(&relation.to_ascii_uppercase())
+        if let Some(model) = by_relation.get(&referenced_model(relation))
             && *model != index
             && refused.contains(model)
         {

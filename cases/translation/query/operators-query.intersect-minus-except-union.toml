@@ -1,0 +1,71 @@
+category = "translation"
+construct = "sf.query.operators-query.intersect-minus-except-union"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_chain"
+description = "A UNION ALL followed by EXCEPT, left to right as written; the page does not say; the recording decides on precedence beyond that. Catches: EXCEPT applied to the second query only"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT x FROM (SELECT x FROM input WHERE g = 'a' OR g IS NULL) UNION ALL SELECT x FROM (SELECT x FROM input WHERE g = 'b' OR g IS NULL) EXCEPT SELECT 2 ORDER BY x NULLS LAST"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_parenthesised"
+description = "The same with the EXCEPT bracketed onto the second query. Catches: the parentheses ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT x FROM (SELECT x FROM input WHERE g = 'a' OR g IS NULL) UNION ALL (SELECT x FROM (SELECT x FROM input WHERE g = 'b' OR g IS NULL) EXCEPT SELECT 4) ORDER BY x NULLS LAST"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_order_limit"
+description = "A trailing ORDER BY x DESC and LIMIT 2, which apply to the combined rows. Catches: the LIMIT applied to the second query only"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT x FROM (SELECT x FROM input WHERE g = 'a' OR g IS NULL) UNION SELECT x FROM (SELECT x FROM input WHERE g = 'b' OR g IS NULL) ORDER BY x DESC NULLS LAST LIMIT 2"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_rows"
+description = "UNION DISTINCT over two NULL-only queries. Catches: two NULL rows kept"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1"],
+  ["'a'", "2"],
+  ["'a'", "2"],
+  ["'b'", "3"],
+  ["'b'", "NULL"],
+  ["NULL", "4"],
+  ["NULL", "NULL"],
+]
+query = "SELECT x FROM input WHERE x IS NULL UNION DISTINCT SELECT x FROM input WHERE x IS NULL ORDER BY x"
+order = "ordered"
+tags = ["null"]

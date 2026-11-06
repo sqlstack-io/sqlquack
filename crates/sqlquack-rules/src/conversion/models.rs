@@ -38,6 +38,10 @@ pub struct ConversionOptions {
     pub quoted_exclusions: bool,
     /// Whether quoted identifiers resolve to upper case, as `QUOTED_IDENTIFIERS_IGNORE_CASE = true`.
     pub quoted_identifiers_ignore_case: bool,
+    /// The session's current database, resolved, which completes a relation name without one.
+    pub current_database: Option<String>,
+    /// The session's current schema, resolved, which completes a relation name without one.
+    pub current_schema: Option<String>,
     /// User overrides by the name of the function each replaces, upper case.
     pub overrides: BTreeMap<String, UserOverride>,
     /// Override names to the SHA-256 of the body recorded cases verified, which strict mode allows.

@@ -85,7 +85,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_RELATION,
         constructs: &["node:table"],
-        conditions: "The relation is a CTE or has typed columns in the schema.",
+        conditions: "The relation is a CTE or has typed columns in the schema. A schema relation may be declared as TABLE, SCHEMA.TABLE or DATABASE.SCHEMA.TABLE, and a name reads the declared relation whose parts agree with the parts it writes, the longest agreement winning; it is written as the declared name. A name matching several declared relations equally, a qualified name a CTE of its declared name would capture, and two differently written names reading one declared relation are refused.",
         failures: &[],
     },
     RuleSpec {
@@ -194,7 +194,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ALIAS,
         constructs: &["node:alias"],
-        conditions: "A single name.",
+        conditions: "A single name. An unaliased select item that is not a column takes Snowflake's name for it: its text upper-cased as written, spacing, line breaks and quotes kept, as recorded; text outside ASCII or holding a comment is refused with SQ0009.",
         failures: &[],
     },
     RuleSpec {
@@ -384,7 +384,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:DATE_PART",
             "node:extract",
         ],
-        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, or as the operand of DATE_PART, EXTRACT and the single-part functions: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
+        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, as the operand of DATE_PART, EXTRACT and the single-part functions, or as a result column of the statement: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
         failures: &[],
     },
     RuleSpec {

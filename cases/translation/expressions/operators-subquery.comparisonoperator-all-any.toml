@@ -1,0 +1,83 @@
+category = "translation"
+construct = "sf.expressions.operators-subquery.comparisonoperator-all-any"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_all"
+description = "Rows whose x is at least every x of group 'k' (5 and 10): only the row holding 10. Catches: ALL read as ANY"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'k'", "5"],
+  ["'k'", "10"],
+  ["'v'", "1"],
+  ["'v'", "7"],
+  ["'v'", "NULL"],
+  ["'w'", "3"],
+]
+query = "SELECT ordinal FROM input WHERE x >= ALL (SELECT x FROM input WHERE g = 'k') ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_any"
+description = "Rows whose x is below some x of group 'k': every set x below 10. Catches: ANY read as ALL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'k'", "5"],
+  ["'k'", "10"],
+  ["'v'", "1"],
+  ["'v'", "7"],
+  ["'v'", "NULL"],
+  ["'w'", "3"],
+]
+query = "SELECT ordinal FROM input WHERE x < ANY (SELECT x FROM input WHERE g = 'k') ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_empty"
+description = "Subqueries that return no rows: != ALL is TRUE for every set row, = ANY for none; the page says ALL is TRUE when every row satisfies it. Catches: ALL over no rows read as FALSE, or ANY as TRUE"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'k'", "5"],
+  ["'k'", "10"],
+  ["'v'", "1"],
+  ["'v'", "7"],
+  ["'v'", "NULL"],
+  ["'w'", "3"],
+]
+query = "SELECT ordinal, (SELECT COUNT(*) FROM input i WHERE i.x != ALL (SELECT x FROM input WHERE g = 'none')) AS all_n, (SELECT COUNT(*) FROM input i WHERE i.x = ANY (SELECT x FROM input WHERE g = 'none')) AS any_n FROM input WHERE ordinal = 1"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_in_subquery"
+description = "A subquery holding a NULL (group 'v'): x != ALL over it is never TRUE, so no row qualifies. Catches: the NULL skipped, so rows unequal to 1 and 7 qualify"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'k'", "5"],
+  ["'k'", "10"],
+  ["'v'", "1"],
+  ["'v'", "7"],
+  ["'v'", "NULL"],
+  ["'w'", "3"],
+]
+query = "SELECT ordinal FROM input WHERE x != ALL (SELECT x FROM input WHERE g = 'v') ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_expr"
+description = "A NULL left operand: x > ANY over group 'k' leaves the NULL row out. Catches: the NULL row kept"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'k'", "5"],
+  ["'k'", "10"],
+  ["'v'", "1"],
+  ["'v'", "7"],
+  ["'v'", "NULL"],
+  ["'w'", "3"],
+]
+query = "SELECT ordinal FROM input WHERE x > ANY (SELECT x FROM input WHERE g = 'k') ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
