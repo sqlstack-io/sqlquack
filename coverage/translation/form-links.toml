@@ -470,6 +470,44 @@ forms = ["sf.expressions.bind-variables"]
 constructs = ["node:parameter", "spelling:positional_column"]
 forms = ["sf.query.select.select.selecting-specific-columns"]
 
+# Casts to DECFLOAT, IPADDRESS, PERIOD and VECTOR, ROLLUP and CUBE in GROUP BY, the COLLATE operator,
+# NTH_VALUE with its FROM and NULLS clauses, and unary plus.
+[[link]]
+constructs = ["cast:DECFLOAT"]
+forms = ["sf.expressions.data-types-numeric.decfloat"]
+
+[[link]]
+constructs = ["cast:IPADDRESS"]
+forms = ["sf.expressions.data-types-ipaddress"]
+
+[[link]]
+constructs = ["cast:PERIOD"]
+forms = ["sf.expressions.data-types-period"]
+
+[[link]]
+constructs = ["cast:VECTOR"]
+forms = ["sf.expressions.data-types-vector"]
+
+[[link]]
+constructs = ["fn:ROLLUP"]
+forms = ["sf.query.group-by-rollup"]
+
+[[link]]
+constructs = ["fn:CUBE"]
+forms = ["sf.query.group-by-cube"]
+
+[[link]]
+constructs = ["node:collation"]
+forms = ["sf.functions.collate.collate.syntax"]
+
+[[link]]
+constructs = ["node:nth_value"]
+forms = ["sf.functions.nth-value"]
+
+[[link]]
+constructs = ["node:pos"]
+forms = ["sf.expressions.operators-arithmetic.unary-plus"]
+
 [[no_form]]
 constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:paren", "node:annotated"]
 reason = "Column references, aliases, NULL, TRUE and FALSE, parentheses and comments are part of every form's grammar rather than forms of their own."
