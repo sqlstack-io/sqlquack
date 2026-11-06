@@ -1513,6 +1513,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-syntax-postgres"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+]
+
+[[package]]
 name = "stacker"
 version = "0.1.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
