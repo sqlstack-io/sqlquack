@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, and every `ALTER` other than `ALTER DEFAULT PRIVILEGES` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `DROP`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -125,6 +125,15 @@ are `rolemembers`. An unknown option (42601), `UNENCRYPTED PASSWORD` (0A000) and
 (42939) are refused. `CREATE POLICY` writes gram.y's defaults out: `(AS, PERMISSIVE)`, `(FOR, ALL)`
 and `(TO, (PUBLIC))`. `CREATE USER MAPPING FOR USER` is `FOR CURRENT_USER`.
 
+## DROP
+
+Every `DROP` statement becomes `DropObject`. One plain name is its `name`; anything else, such as a
+list, signatures, `name ON table`, `name USING method`, `(source AS target)` or `FOR type LANGUAGE l`,
+goes in `objects`, in order. `CASCADE`, `IF EXISTS`, `CONCURRENTLY` and `DROP DATABASE`'s `FORCE` are
+flags; `RESTRICT` is the default and adds nothing. As in gram.y, `DROP ROLE`, `USER` and `GROUP` all
+have kind `ROLE`, `PROCEDURAL` adds nothing, `DROP USER MAPPING FOR USER` is `FOR CURRENT_USER`, and
+`FORCE` given twice equals `FORCE`.
+
 ## ALTER
 
 `ALTER TABLE`, `FOREIGN TABLE`, `INDEX`, `SEQUENCE`, `VIEW` and `MATERIALIZED VIEW` become
@@ -154,16 +163,3 @@ publication objects, subscription publications, foreign-data options, operator f
 and missing kind words, such as `ALTER TEXT SEARCH t`, are refused. `ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
 stay opaque gaps. The grammar's own errors are kept, including `NOT VALID` on `ALTER CONSTRAINT`
 (0A000), a column number out of range, and identity options `SET` cannot take.
-
-## ALTER ROLE, USER, GROUP, POLICY, SYSTEM and USER MAPPING
-
-`ALTER ROLE`, `USER` and `GROUP` make one `AlterRoleStmt` or `RenameStmt`, so all three are
-`AlterObject` of kind `ROLE`. A role name is `name`; `ALL`, `PUBLIC` and the `CURRENT_*` words are
-the first operand with an empty `name`. Options are the `(name, value)` tuples of `CREATE ROLE`, with
-an empty `action`, so `ALTER GROUP g ADD USER a` equals `ALTER ROLE g USER a`; `DROP USER` has
-`action` `DROP`. `[IN DATABASE d] SET` and `RESET` are `(IN DATABASE, d)` and the setting tuple of
-`ALTER DATABASE`. A rename names itself in `action`, and a `RoleSpec` that is not a role name is
-refused there (42939). `ALTER POLICY` keeps `(ON, table)`, then `TO`, `USING` and `WITH CHECK` as
-written, with no defaults; only a rename takes `IF EXISTS`. `ALTER SYSTEM` takes `generic_set` and
-`generic_reset` only, so `FROM CURRENT` and the special forms are refused (42601). `ALTER USER
-MAPPING FOR USER` is `FOR CURRENT_USER`, and its `OPTIONS` are a `(OPTIONS, ...)` tuple.

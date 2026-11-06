@@ -6,6 +6,7 @@ pub(crate) mod catalog_creates;
 pub(crate) mod creates;
 pub(crate) mod definitions;
 pub(crate) mod dml;
+pub(crate) mod drops;
 pub(crate) mod from;
 pub(crate) mod object_alters;
 pub(crate) mod objects;

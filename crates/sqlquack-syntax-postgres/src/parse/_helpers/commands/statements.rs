@@ -64,6 +64,7 @@ impl Parser<'_> {
                 self.create_kind(kind)
             }
             Some("create") if self.created_catalog().is_some() => self.create_catalog(),
+            Some("drop") => self.drop_statement(),
             Some("create") if self.keyword_at(1).is_none() => {
                 self.at += 1;
                 Err(self.error())
