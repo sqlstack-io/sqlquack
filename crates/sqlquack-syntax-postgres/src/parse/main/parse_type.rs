@@ -6,11 +6,7 @@ use crate::parse::_helpers::tree::cursor::Parser;
 use crate::parse::errors::ParseError;
 use crate::scan::main::scan::scan;
 
-/// The type `text` names, such as `numeric(18, 2)` or `pg_catalog.varchar(5)[]`.
-///
-/// Only the grammar is checked, as PostgreSQL's raw parser does: an unknown name, or a modifier
-/// the type refuses (`int4(3)`, `varchar(0)`), parses and fails only when the type is looked up.
-/// `SETOF` is refused with 42601, as PostgreSQL refuses it in a type string.
+/// The type `text` names, grammar only, as `typeStringToTypeName` reads it; SETOF gives 42601.
 pub fn parse_type(text: &str) -> Result<DataType, ParseError> {
     let mut parser: Parser<'_> = Parser::new(text, scan(text));
     let data_type: DataType = parser.typename()?;

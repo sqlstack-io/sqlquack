@@ -18,3 +18,13 @@ pub enum StrictFailure {
     /// The byte at `position` is in no token, space or comment.
     Uncovered { position: usize },
 }
+
+impl StrictFailure {
+    /// The parse error, when strict parsing refused a parse error.
+    pub fn parse_error(&self) -> Option<&ParseError> {
+        match self {
+            Self::Parse(error) => Some(error),
+            Self::Uncovered { .. } => None,
+        }
+    }
+}

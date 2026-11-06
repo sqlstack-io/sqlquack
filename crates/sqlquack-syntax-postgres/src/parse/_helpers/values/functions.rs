@@ -1,5 +1,6 @@
 //! `func_expr` (gram.y): calls with their aggregate and window clauses, sorting, special calls.
 
+use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::functions::models::WithinGroup;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
@@ -43,36 +44,45 @@ fn call(name: &str, args: Vec<Expression>) -> Expression {
     Expression::Function(Box::new(function(vec![Identifier::new(name)], args)))
 }
 
-/// SQLBuild's analysis-only type assertion, `__polyglot_typed(expr, 'type')` or
-/// `__polyglot_typed_like(expr, like)`, lowered as sqlquack-syntax lowers it: an `Annotated`
-/// node around `expr`. A `__polyglot_typed` call whose type text does not parse stays a call.
-fn typed_marker(name: &[Identifier], args: &mut Vec<Expression>) -> Option<Expression> {
+/// A SQLBuild type marker call as an `Annotated` node, as sqlquack-syntax lowers it; else the args.
+fn typed_marker(name: &[Identifier], args: Vec<Expression>) -> Result<Expression, Vec<Expression>> {
     let [called] = name else {
-        return None;
+        return Err(args);
     };
-    if called.quoted || args.len() != MARKER_ARITY {
-        return None;
+    let [this, second]: [Expression; MARKER_ARITY] = args.try_into()?;
+    if called.quoted {
+        return Err(vec![this, second]);
     }
-    let (type_assertion, type_like) = if called.name == TYPED_EXPRESSION_FUNCTION {
-        let Some(Expression::Literal(asserted)) = args.last() else {
-            return None;
-        };
-        let Literal::String(text) = asserted.as_ref() else {
-            return None;
-        };
-        (Some(parse_type(text).ok()?), None)
-    } else if called.name == TYPED_LIKE_EXPRESSION_FUNCTION {
-        (None, args.pop().map(Box::new))
-    } else {
-        return None;
+    if called.name == TYPED_LIKE_EXPRESSION_FUNCTION {
+        return Ok(annotated(this, None, Some(Box::new(second))));
+    }
+    if called.name != TYPED_EXPRESSION_FUNCTION {
+        return Err(vec![this, second]);
+    }
+    let Expression::Literal(literal) = &second else {
+        return Err(vec![this, second]);
     };
-    args.truncate(1);
-    Some(Expression::Annotated(Box::new(Annotated {
-        this: args.pop()?,
+    let Literal::String(text) = literal.as_ref() else {
+        return Err(vec![this, second]);
+    };
+    match parse_type(text) {
+        Ok(data_type) => Ok(annotated(this, Some(data_type), None)),
+        Err(_) => Err(vec![this, second]),
+    }
+}
+
+/// `this` annotated with an asserted type, or with the expression whose type it takes.
+fn annotated(
+    this: Expression,
+    type_assertion: Option<DataType>,
+    type_like: Option<Box<Expression>>,
+) -> Expression {
+    Expression::Annotated(Box::new(Annotated {
+        this,
         trailing_comments: Vec::new(),
         type_assertion,
         type_like,
-    })))
+    }))
 }
 
 impl Parser<'_> {
@@ -151,9 +161,13 @@ impl Parser<'_> {
             && filter.is_none()
             && within.is_none()
             && window.is_none();
-        if plain && let Some(marker) = typed_marker(&name, &mut args) {
-            return Ok(marker);
-        }
+        let args: Vec<Expression> = match plain {
+            true => match typed_marker(&name, args) {
+                Ok(marker) => return Ok(marker),
+                Err(args) => args,
+            },
+            false => args,
+        };
         let mut call = function(name, args);
         if all_star {
             call.args = vec![star(None)];

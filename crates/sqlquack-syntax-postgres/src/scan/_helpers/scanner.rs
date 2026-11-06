@@ -87,8 +87,7 @@ impl<'sql> Scanner<'sql> {
         }
     }
 
-    /// The first byte no token, space or comment covers, scanning to the first fault; none when
-    /// every byte before it is covered.
+    /// The first byte before any fault that no token, space or comment covers.
     pub(crate) fn uncovered(self) -> Option<usize> {
         let (sql, bytes) = (self.sql, self.bytes);
         let (raws, fault) = self.scan();

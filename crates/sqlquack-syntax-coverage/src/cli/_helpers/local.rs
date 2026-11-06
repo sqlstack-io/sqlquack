@@ -45,8 +45,7 @@ pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
     }
 }
 
-/// SQLQuack's strict PostgreSQL verdict; a gap makes the parse opaque, and any parser error,
-/// whatever its SQLSTATE, or an uncovered byte rejects it, as Snowflake's strict parse does.
+/// SQLQuack's strict PostgreSQL verdict: a gap makes it opaque, and any refusal rejects it.
 pub(crate) fn postgres_verdict(sql: &str) -> LocalVerdict {
     match sqlquack_syntax_postgres::parse_strict(sql) {
         Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
