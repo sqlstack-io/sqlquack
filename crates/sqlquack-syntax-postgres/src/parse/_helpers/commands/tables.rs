@@ -68,7 +68,7 @@ const LIKE_OPTIONS: [&str; 10] = [
 ];
 
 /// Keywords that begin a `SeqOptElem`.
-const SEQUENCE_OPTIONS: [&str; 13] = [
+pub(crate) const SEQUENCE_OPTIONS: [&str; 13] = [
     "as",
     "cache",
     "cycle",
@@ -306,7 +306,11 @@ impl Parser<'_> {
     }
 
     /// `TableElementList` or `TypedTableElementList`: columns into `columns`, the rest into `properties`.
-    fn table_elements(&mut self, mut node: CreateTable, typed: bool) -> Parsing<CreateTable> {
+    pub(crate) fn table_elements(
+        &mut self,
+        mut node: CreateTable,
+        typed: bool,
+    ) -> Parsing<CreateTable> {
         loop {
             let constraint: bool = self.starts_table_constraint();
             let element: Option<Expression> = match self.keyword_at(0) {
