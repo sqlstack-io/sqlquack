@@ -162,10 +162,14 @@ pub(crate) fn recursive_findings(
     select: &Select,
     (scope, context): (&LineageScope<'_>, LineageContext<'_>),
 ) -> Vec<NameFinding> {
-    let Some(with) = select.with.as_ref().filter(|with| with.recursive) else {
+    let engine: Engine = Engine::of(context);
+    let Some(with) = select
+        .with
+        .as_ref()
+        .filter(|with| with.recursive && engine != Engine::Postgres)
+    else {
         return Vec::new();
     };
-    let engine: Engine = Engine::of(context);
     let mut findings: Vec<NameFinding> = Vec::new();
     for cte in &with.ctes {
         let Expression::Union(union) = &cte.this else {
@@ -181,7 +185,7 @@ pub(crate) fn recursive_findings(
             let literal: Option<&Expression> = projection_literal(&union.right, index);
             let invalid: bool = match engine {
                 Engine::Snowflake => !setop_compatible(target, source),
-                Engine::DuckDB => {
+                Engine::DuckDB | Engine::Postgres => {
                     literal.is_some_and(|value| invalid_literal_for(value, target))
                         || (source == Family::String
                             && !matches!(target, Family::String | Family::Unknown)
@@ -193,7 +197,7 @@ pub(crate) fn recursive_findings(
                 findings.push(finding(
                     match engine {
                         Engine::Snowflake => "E215",
-                        Engine::DuckDB => "W214",
+                        Engine::DuckDB | Engine::Postgres => "W214",
                     },
                     "Recursive branch cannot convert to the anchor column type".to_owned(),
                     node,

@@ -234,7 +234,9 @@ fn structure_rules(
                     node,
                 ));
             }
-            if !names.insert(level.key(&cte.alias)) && engine == Engine::DuckDB {
+            if !names.insert(level.key(&cte.alias))
+                && matches!(engine, Engine::DuckDB | Engine::Postgres)
+            {
                 findings.push(rule(
                     "E233",
                     format!("Duplicate CTE name '{}'", cte.alias.name),
@@ -741,18 +743,38 @@ fn grouping(
             _ => None,
         })
         .collect();
-    let mut read: Vec<&Expression> = select.expressions.iter().collect();
-    read.extend(select.having.iter().map(|having| &having.this));
-    read.extend(select.qualify.iter().map(|qualify| &qualify.this));
+    let aliases_outside_order: bool = Engine::of(level.context) != Engine::Postgres;
+    let mut read: Vec<(&Expression, bool)> = select
+        .expressions
+        .iter()
+        .map(|expression| (expression, aliases_outside_order))
+        .collect();
+    read.extend(
+        select
+            .having
+            .iter()
+            .map(|having| (&having.this, aliases_outside_order)),
+    );
+    read.extend(
+        select
+            .qualify
+            .iter()
+            .map(|qualify| (&qualify.this, aliases_outside_order)),
+    );
     for order in select
         .order_by
         .iter()
         .filter(|order| !order_by_all(order, level))
     {
-        read.extend(order.expressions.iter().map(|ordered| &ordered.this));
+        read.extend(
+            order
+                .expressions
+                .iter()
+                .map(|ordered| (&ordered.this, true)),
+        );
     }
     let mut findings: Vec<NameFinding> = Vec::new();
-    for expression in read {
+    for (expression, named) in read {
         let mut pending: Vec<&Expression> = vec![unalias(expression)];
         let mut expanded: HashSet<String> = HashSet::new();
         while let Some(current) = pending.pop() {
@@ -769,7 +791,7 @@ fn grouping(
                 if grouped_columns.contains(&column_key(column, level)) {
                     continue;
                 }
-                if column.table.is_none() {
+                if column.table.is_none() && named {
                     let name: String = level.key(&column.name);
                     if let Some(alias) = aliases.get(&name) {
                         if expanded.insert(name) {

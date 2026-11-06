@@ -228,6 +228,22 @@ pub(crate) fn typed_duckdb_shop_schema() -> TypedShopSchema {
     }
 }
 
+/// A PostgreSQL shop: the DuckDB shop's orders and customers, and shipments of temporal values.
+pub(crate) fn typed_postgres_shop_schema() -> TypedShopSchema {
+    let mut schema: TypedShopSchema = typed_duckdb_shop_schema();
+    schema.closed.insert(
+        "shipments".to_owned(),
+        vec![
+            typed_column("shipped_on", "DATE"),
+            typed_column("shipped_at", "TIMESTAMP"),
+            typed_column("cutoff", "TIME"),
+            typed_column("took", "INTERVAL"),
+            typed_column("rush", "BOOLEAN"),
+        ],
+    );
+    schema
+}
+
 pub(crate) fn typed_column(name: &str, data_type: &str) -> SchemaColumn {
     SchemaColumn {
         name: name.to_owned(),
