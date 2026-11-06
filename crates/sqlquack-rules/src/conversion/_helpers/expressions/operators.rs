@@ -595,21 +595,17 @@ pub(crate) fn comparable(
             let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
-        (ntz @ SnowflakeType::TimestampNtz { .. }, other)
-            if matches!(
-                other,
-                SnowflakeType::Date | SnowflakeType::TimestampLtz { .. }
-            ) =>
-        {
+        (
+            ntz @ SnowflakeType::TimestampNtz { .. },
+            SnowflakeType::Date | SnowflakeType::TimestampLtz { .. },
+        ) => {
             let right = beside_naive(right, ntz, construct, context)?;
             return Ok((left, right));
         }
-        (other, ntz @ SnowflakeType::TimestampNtz { .. })
-            if matches!(
-                other,
-                SnowflakeType::Date | SnowflakeType::TimestampLtz { .. }
-            ) =>
-        {
+        (
+            SnowflakeType::Date | SnowflakeType::TimestampLtz { .. },
+            ntz @ SnowflakeType::TimestampNtz { .. },
+        ) => {
             let left = beside_naive(left, ntz, construct, context)?;
             return Ok((left, right));
         }
