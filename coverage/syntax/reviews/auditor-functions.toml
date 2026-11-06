@@ -4444,3 +4444,19 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.functions.percent-rank" = "e633f62aafd869f72e30c6a911d52bcc2076ebd904593989b6898a5adc8f5fee"
 "sf.functions.search" = "76fb95a43f711e233196ffff9ba25a3fe3e8393c4d0e68f71313920d61b702a4"
 "sf.functions.search-ip" = "2e3389acece45d3a94d46916c3451777ee8db79fea3fc1f12f90c5ddaf8c3b7a"
+
+[[review]]
+id = "auditor-functions-020"
+reviewer_lane = "auditor"
+family = "functions"
+parser_tree = "cc21b65e16782fc53d833e5ec10a9bc3ba9fdc04"
+reviewed_utc = "2026-11-07T03:00:00Z"
+verdict = "approved"
+forms = ["sf.functions.trunc2"]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 219a540d819f; every scored case agrees with its Snowflake receipt. Renews auditor-functions-009 after PR #104 made TRUNC's bare second argument a column."
+
+[review.fingerprints]
+"sf.functions.trunc2" = "72e473023df5ff4934ed80b76b11b1245ae8b965ae4ce31229b6a34cf574f3fb"
+
+[review.definitions]
+"sf.functions.trunc2" = "68b34fd700dad6b111c5dca54696c7c6142a83229072bcbe20e47ac55511b3f7"
