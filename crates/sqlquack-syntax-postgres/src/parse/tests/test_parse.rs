@@ -670,33 +670,37 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
         StrictTestCase {
             description: "a statement with comments after it",
             sql: "SELECT 1 /* c */ -- d",
-            expected: Ok(1),
+            expected_outcome: Ok(1),
         },
         StrictTestCase {
             description: "only comments and semicolons",
             sql: " ; /* c */ ;",
-            expected: Ok(0),
+            expected_outcome: Ok(0),
         },
         StrictTestCase {
             description: "a 42601 syntax error",
             sql: "SELECT 1 FROM",
-            expected: Err(Some(true)),
+            expected_outcome: Err(Some(true)),
         },
         StrictTestCase {
             description: "a 22023 error the grammar raises",
             sql: "SELECT 1::float(0)",
-            expected: Err(Some(false)),
+            expected_outcome: Err(Some(false)),
         },
         StrictTestCase {
             description: "an unterminated comment",
             sql: "SELECT 1 /* c",
-            expected: Err(Some(true)),
+            expected_outcome: Err(Some(true)),
         },
     ];
     for test_case in test_cases {
         let outcome: Result<usize, Option<bool>> = parse_strict(test_case.sql)
             .map(|parsed| parsed.statements.len())
             .map_err(|failure| failure.parse_error().map(|error| error.syntax));
-        assert_eq!(outcome, test_case.expected, "{}", test_case.description);
+        assert_eq!(
+            outcome, test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
     }
 }

@@ -19,11 +19,7 @@ fn temporal(name: &str, precision: Option<u32>, timezone: bool) -> String {
     format!("{} {zone} time zone", sized(name, capped))
 }
 
-/// The name PostgreSQL 18 gives `data_type`, as `parse_type` reads it; none for a type the
-/// shared tree holds that PostgreSQL has no spelling for.
-///
-/// Array bounds are dropped and `pg_catalog.` is left off, as PostgreSQL does. An interval's
-/// fractional-second precision is not in the shared tree, so `interval(3)` comes back `interval`.
+/// PostgreSQL 18's `format_type` name for `data_type`; none when PostgreSQL has no spelling for it.
 pub fn format_type(data_type: &DataType) -> Option<String> {
     Some(match data_type {
         DataType::Int { .. } => "integer".to_owned(),
