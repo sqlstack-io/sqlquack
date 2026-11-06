@@ -10331,46 +10331,12 @@ required = true
 [[obligation]]
 id = "sf.functions.get-path.colon.syntax.t001"
 form = "sf.functions.get-path.colon.syntax"
-kind = "type_combination"
-target = ":(v, 'a.b[1]') beside GET_PATH and v:a.b[1]"
-note = "Dotted and indexed paths through the function-call spelling, beside GET_PATH and the colon operator on the same value; the page says the three are the same extraction, and an index is 0-based."
-catches = "a 1-based index, or the call spelling read as another function"
-reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are three spellings of one extraction; the path is JavaScript notation with dotted names and [index] operators, the first name needs no leading period, and a path that matches nothing gives NULL"
-cases = ["cases/translation/functions/get-path.colon.syntax.toml#t001_paths"]
-required = true
-
-[[obligation]]
-id = "sf.functions.get-path.colon.syntax.t002"
-form = "sf.functions.get-path.colon.syntax"
-kind = "type_combination"
-target = ":(v, 'array2[0].id3')"
-note = "The page's example path array2[0].id3 gives \"value_b3\" for its first row."
-catches = "the path read as one field name, so NULL"
-reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are three spellings of one extraction; the path is JavaScript notation with dotted names and [index] operators, the first name needs no leading period, and a path that matches nothing gives NULL"
-cases = ["cases/translation/functions/get-path.colon.syntax.toml#t002_page_example"]
-required = true
-
-[[obligation]]
-id = "sf.functions.get-path.colon.syntax.t003"
-form = "sf.functions.get-path.colon.syntax"
-kind = "boundary"
-subkind = "magnitude"
-target = "a path that matches nothing"
-note = "The page: GET_PATH returns NULL if the path name does not correspond to any element; an index past the end and a missing field both match nothing."
-catches = "an error instead of NULL, or the last element returned for an index past the end"
-reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are three spellings of one extraction; the path is JavaScript notation with dotted names and [index] operators, the first name needs no leading period, and a path that matches nothing gives NULL"
-cases = ["cases/translation/functions/get-path.colon.syntax.toml#t003_no_match"]
-required = true
-
-[[obligation]]
-id = "sf.functions.get-path.colon.syntax.t004"
-form = "sf.functions.get-path.colon.syntax"
-kind = "null_argument"
-target = "NULL column value"
-note = "A NULL value through the call spelling; GET_PATH of NULL gives NULL, and the page gives no other rule."
-catches = "an error, or a JSON null instead of SQL NULL"
-reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are three spellings of one extraction; the path is JavaScript notation with dotted names and [index] operators, the first name needs no leading period, and a path that matches nothing gives NULL"
-cases = ["cases/translation/functions/get-path.colon.syntax.toml#t004_null"]
+kind = "error_parity"
+target = ":(v, 'a.b[1]') as documented"
+note = "Snowflake refuses the documented spelling at parse time with 1003 (42000), unexpected '(' right after the colon, with or without spaces; only a quoted function name, \":\"(v, 'path'), compiles, and the page does not document that. The obligation is to refuse it as Snowflake does."
+catches = "the spelling accepted and translated as GET_PATH"
+reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are listed as three spellings of one extraction; the page gives no example of the third"
+cases = ["cases/translation/functions/get-path.colon.syntax.toml#t001_syntax_error"]
 required = true
 
 [[obligation]]
