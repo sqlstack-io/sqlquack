@@ -55,7 +55,8 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_above_limit"
-description = "n = 1001, above the limit of 1000 the page states. Catches: the call accepted"
+compile_error = true
+description = "n = 1001, above the limit of 1000 the page states; Snowflake refuses it when compiling. Catches: the call accepted"
 columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1", "NULL"],
