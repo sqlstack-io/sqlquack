@@ -9,3 +9,12 @@ pub struct ParseError {
     /// Whether PostgreSQL reports it with SQLSTATE 42601, unlike, say, 22025 or 54001.
     pub syntax: bool,
 }
+
+/// Why strict parsing refused the input.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StrictFailure {
+    /// The parser rejected the input, as PostgreSQL reports it.
+    Parse(ParseError),
+    /// The byte at `position` is in no token, space or comment.
+    Uncovered { position: usize },
+}
