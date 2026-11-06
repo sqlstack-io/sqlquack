@@ -6,7 +6,6 @@ use sqlquack::cli::main::convert_report::convert_report;
 use sqlquack::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
 use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::models::Diagnostic;
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 
 use crate::bindings::models::{ConvertRequest, Rendered};
 
@@ -21,12 +20,13 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         overrides: request.overrides,
         verified_overrides: pairs(request.verified_overrides),
         session: pairs(request.session),
+        compact: request.compact,
         output: OutputArguments {
             format: OutputFormat::Json,
             json: false,
         },
         conversion: PolicyArguments {
-            policy: request.policy.unwrap_or_else(|| POLICY_FILE_NAME.into()),
+            policy: request.policy,
             builtin_policy: request.builtin_policy,
             strict: request.strict,
             utc_session: request.utc_session,

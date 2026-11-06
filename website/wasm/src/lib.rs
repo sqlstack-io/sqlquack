@@ -23,6 +23,7 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::column_type::column_type;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
+use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
@@ -41,7 +42,8 @@ use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Every stage's result for `sql` over the relations `schema` declares, as JSON. `settings` is
-/// JSON `{"policy": TOML, "session": "NAME=VALUE" lines, "strict": bool, "utc_session": bool}`;
+/// JSON `{"policy": TOML, "session": "NAME=VALUE" lines, "strict": bool, "utc_session": bool,
+/// "compact": bool}`, `compact` printing each statement on one line as `convert --compact` does;
 /// an empty policy is the built-in default, as `sqlquack convert --builtin-policy`.
 #[wasm_bindgen]
 pub fn analyze(sql: &str, schema: &str, settings: Option<String>) -> String {
@@ -127,15 +129,14 @@ struct Settings {
     session: String,
     strict: bool,
     utc_session: bool,
+    compact: bool,
 }
 
 /// Conversion options for `settings` as `sqlquack convert` chooses them, and the matched profile;
 /// a session no recorded profile covers is a refusal, as on the command line.
-fn chosen_options(settings: &str) -> Result<Result<(ConversionOptions, String), String>, String> {
-    let settings: Settings = match settings.trim() {
-        "" => Settings::default(),
-        text => serde_json::from_str(text).map_err(|error| error.to_string())?,
-    };
+fn chosen_options(
+    settings: &Settings,
+) -> Result<Result<(ConversionOptions, String), String>, String> {
     let policy = match settings.policy.trim() {
         "" => None,
         text => Some(
@@ -208,7 +209,14 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
         Ok(catalog) => catalog,
         Err(error) => return json!({ "schema_error": error }),
     };
-    let session = match chosen_options(settings) {
+    let settings: Settings = match settings.trim() {
+        "" => Settings::default(),
+        text => match serde_json::from_str(text) {
+            Ok(settings) => settings,
+            Err(error) => return json!({ "settings_error": error.to_string() }),
+        },
+    };
+    let session = match chosen_options(&settings) {
         Ok(session) => session,
         Err(error) => return json!({ "settings_error": error }),
     };
@@ -306,7 +314,10 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
         let elapsed = Duration::from_secs_f64((now_ms() - started).max(0.0) / 1000.0);
         match done.and_then(|done| within_budget(done, (sql, elapsed), &options)) {
             Ok(done) => converted.push(json!({
-                "sql": done.sql,
+                "sql": match settings.compact {
+                    true => done.sql.clone(),
+                    false => layout_sql(&done.sql),
+                },
                 "columns": done.columns.iter().map(|column| json!({
                     "name": column.name,
                     "type": column.data_type.to_string(),
