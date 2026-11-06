@@ -5,14 +5,23 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import data from './data/figures.json' with { type: 'json' };
 
-export const figures = Object.fromEntries(Object.entries(data).filter(([name]) => !name.startsWith('_')));
+const entries = Object.entries(data).filter(([name]) => !name.startsWith('_'));
+// A null figure is hidden. It keeps its {{NAME}} token, so any use that shown() does not guard
+// still shows as a placeholder that `npm run check:figures` reports.
+const hidden = new Set(entries.filter(([, value]) => value === null).map(([name]) => name));
+export const figures = Object.fromEntries(entries.map(([name, value]) => [name, value ?? `{{${name}}}`]));
+export const shown = (name) => !hidden.has(name);
 
-// Markdown output, such as llms.txt, escapes the underscores: {{SYNTAX\_PCT}}.
+// Markdown output, such as llms.txt, escapes the underscores: {{SYNTAX\_PCT}}. A hidden figure's
+// marked block, <!-- figure:NAME --> to <!-- /figure:NAME -->, is dropped; a shown one's markers go.
 export function fill(text) {
-	return text.replace(/\{\{([A-Z\\_]+)\}\}/g, (token, name) => figures[name.replaceAll('\\', '')] ?? token);
+	return text
+		.replace(/<!-- figure:([A-Z_]+) -->([\s\S]*?)<!-- \/figure:\1 -->/g, (_, name, block) => (hidden.has(name) ? '' : block))
+		.replace(/\{\{([A-Z\\_]+)\}\}/g, (token, name) => figures[name.replaceAll('\\', '')] ?? token);
 }
 
-export const placeholders = () => Object.entries(figures).filter(([name, value]) => value === `{{${name}}}`).map(([name]) => name);
+export const placeholders = () =>
+	Object.entries(figures).filter(([name, value]) => !hidden.has(name) && value === `{{${name}}}`).map(([name]) => name);
 
 async function builtFiles(dir) {
 	const entries = await readdir(dir, { withFileTypes: true });
