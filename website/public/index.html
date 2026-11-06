@@ -158,7 +158,7 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 								</p>
 								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert div.sql --schema schema.json</span>
+<pre class="terminal"><span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
 SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID",
   (CASE WHEN "ORDERS"."TOTAL" IS NULL OR … THEN NULL
         WHEN CAST(3 AS DECIMAL(1,0)) = 0
@@ -181,7 +181,7 @@ FROM "ORDERS" AS "ORDERS"
 								</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json</span>
+<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json --builtin-policy</span>
 <span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --&gt; due.sql:2:8
   |
