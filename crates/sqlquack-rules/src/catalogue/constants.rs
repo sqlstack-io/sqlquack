@@ -85,7 +85,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_RELATION,
         constructs: &["node:table"],
-        conditions: "The relation is a CTE or has typed columns in the schema.",
+        conditions: "The relation is a CTE or has typed columns in the schema. A schema relation may be declared as TABLE, SCHEMA.TABLE or DATABASE.SCHEMA.TABLE, and a name reads the declared relation whose parts agree with the parts it writes, the longest agreement winning; it is written as the declared name. A name matching several declared relations equally, a qualified name a CTE of its declared name would capture, and two differently written names reading one declared relation are refused.",
         failures: &[],
     },
     RuleSpec {
