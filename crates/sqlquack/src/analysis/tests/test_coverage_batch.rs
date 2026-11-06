@@ -820,7 +820,7 @@ fn given_powers_of_ten_when_converting_power_then_the_nearest_double_is_kept() {
         },
         FirstValueTestCase {
             description: "another base refuses",
-            sql: "SELECT POWER(2, 3) AS v",
+            sql: "SELECT POWER(3, 3) AS v",
             expected_outcome: Err("other than the constant 10"),
         },
         FirstValueTestCase {
