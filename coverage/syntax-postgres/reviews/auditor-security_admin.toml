@@ -135,3 +135,33 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.security_admin.alter-user.role-specification-option" = "2a0605a52a674d2f3fb0627a1aafaae3995e1cde9ba93886300224daf775c610"
 "pg.security_admin.alter-user.set" = "96f7d6a170f15912b19fbf6e4f4f57972701d01cf57e2d70123c7ad3c9fa3c85"
 "pg.security_admin.alter-user.set-from-current" = "57699424375ed212cca339b824684e0dfcd3c5e6327c10ea7ba178a27e6ad547"
+
+[[review]]
+id = "pg-auditor-security_admin-006"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "8650b82c6a9346de0562732bf39e56c5237fd6ce"
+reviewed_utc = "2026-11-06T16:03:28Z"
+verdict = "approved"
+forms = [
+  "pg.security_admin.alter-policy.on-table-name",
+  "pg.security_admin.alter-policy.rename-to",
+  "pg.security_admin.create-group",
+  "pg.security_admin.create-role",
+  "pg.security_admin.create-user",
+]
+note = "Re-read after the notes-6 obligation delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 8650b82c; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.security_admin.alter-policy.on-table-name" = "02889fc8cd5150d0000bcdacd9f63cd32fa6ae90250f19ff8e0cd676af5a056a"
+"pg.security_admin.alter-policy.rename-to" = "3406d9af8dbd8e9c2e401738c41b98c56ab45fb7e7620f9dce07adfa9cc5d139"
+"pg.security_admin.create-group" = "b55b22fefae10402c0149923f0e5ea737df337d6a9205ad84065137e542eb9a1"
+"pg.security_admin.create-role" = "abf7a677a8ac3b4db6098524cd3d77a48050f7525e17277b435f4ea26de94902"
+"pg.security_admin.create-user" = "e010f263e2f1f294ac314760962edd354a6d0416761e4c6984a2697a43f8a21f"
+
+[review.definitions]
+"pg.security_admin.alter-policy.on-table-name" = "37651ddc406b59eac55bf6bd440898b4c514517e5361b1ac9194e4ee9c25af41"
+"pg.security_admin.alter-policy.rename-to" = "1aa5b5bf6797e58052d331d77eafe3de3a0b308b571807fc21fabf4d87aa25fb"
+"pg.security_admin.create-group" = "a063bec6afc088beab58ef4df6ed5a4839c0cb870085f48d51fa9a0edab3feed"
+"pg.security_admin.create-role" = "76e685f6b98bd402195555e42fa602251b55126807c35faef53168cb0ac4b233"
+"pg.security_admin.create-user" = "58661d3ec5c25a79d314221fb57012662a387238d640c0f50894e45503e93e5c"

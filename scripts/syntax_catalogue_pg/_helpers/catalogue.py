@@ -192,7 +192,7 @@ def command_build(*, page: PgPage, hand: HandInputs) -> PageBuild:
         if not block.in_synopsis_div:
             continue
         found, defs, _ = read_synopsis(text=block.text, statement_leads=leads)
-        statements += found
+        statements += [statement.removesuffix(";").rstrip() for statement in found]
         definitions += defs
     groups, decisions = statement_groups(
         statements=statements, definitions=definitions, heading=(page.title, SYNOPSIS_HEADING)

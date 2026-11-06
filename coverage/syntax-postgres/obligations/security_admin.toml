@@ -710,6 +710,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.security_admin.alter-policy.on-table-name.o042"
+kind = "option_present"
+required = true
+target = "[ WITH CHECK ( <check_expression> ) ]"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "USING and WITH CHECK with different expressions, so a swap of the two shows (gram.y AlterPolicyStmt: RowSecurityOptionalExpr, RowSecurityOptionalWithCheck)"
+
+[[obligation]]
+id = "pg.security_admin.alter-policy.on-table-name.o043"
+kind = "option_present"
+required = true
+target = "[ WITH CHECK ( <check_expression> ) ]"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "a role list, then USING and WITH CHECK with different expressions"
+
+[[obligation]]
 id = "pg.security_admin.alter-policy.rename-to.o001"
 kind = "positive"
 required = true
@@ -836,6 +852,14 @@ required = true
 target = "<new_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.security_admin.alter-policy.rename-to.o020"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "the table name left out together with ON (gram.y AlterPolicyStmt has no RENAME without ON qualified_name); with ON kept, RENAME is read as the table name, see the suppression below"
 
 [[obligation]]
 id = "pg.security_admin.alter-role.rename-to.o001"
@@ -2632,6 +2656,326 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.security_admin.create-group.o013"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "SUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o014"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOSUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o015"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "CREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o016"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOCREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o017"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "CREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o018"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOCREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o019"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "INHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o020"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOINHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o021"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "LOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o022"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOLOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o023"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "REPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o024"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOREPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o025"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "BYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o026"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "NOBYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o027"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "CONNECTION LIMIT <connlimit>"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o028"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o029"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o030"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o031"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "PASSWORD NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o032"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "VALID UNTIL '<timestamp>'"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o033"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "IN ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o034"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o035"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "IN GROUP <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o036"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "IN GROUP <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o037"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o038"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o039"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "ADMIN <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o040"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "ADMIN <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o041"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "USER <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o042"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "USER <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o043"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "SYSID <uid>"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o044"
+kind = "option_present"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o045"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o046"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o047"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "CONNECTION without LIMIT"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o048"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o049"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "ENCRYPTED without PASSWORD"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o050"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o051"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "a string for <uid>, which gram.y reads as Iconst"
+
+[[obligation]]
+id = "pg.security_admin.create-group.o052"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-creategroup / Synopsis"
+note = "IN ROLE with no role name"
+
+[[obligation]]
 id = "pg.security_admin.create-policy.o001"
 kind = "positive"
 required = true
@@ -3061,6 +3405,294 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.security_admin.create-role.o013"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "SUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o014"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOSUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o015"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "CREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o016"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOCREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o017"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "CREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o018"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOCREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o019"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "INHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o020"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOINHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o021"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "LOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o022"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOLOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o023"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "REPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o024"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOREPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o025"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "BYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o026"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "NOBYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o027"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "CONNECTION LIMIT <connlimit>"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o028"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o029"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o030"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o031"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "PASSWORD NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o032"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "VALID UNTIL '<timestamp>'"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o033"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "IN ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o034"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o035"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o036"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o037"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "ADMIN <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o038"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "ADMIN <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o039"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "SYSID <uid>"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o040"
+kind = "option_present"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o041"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o042"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o043"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "CONNECTION without LIMIT"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o044"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o045"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "ENCRYPTED without PASSWORD"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o046"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o047"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "a string for <uid>, which gram.y reads as Iconst"
+
+[[obligation]]
+id = "pg.security_admin.create-role.o048"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createrole / Synopsis"
+note = "IN ROLE with no role name"
+
+[[obligation]]
 id = "pg.security_admin.create-role.in-group.o001"
 kind = "positive"
 required = true
@@ -3391,6 +4023,326 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o013"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "SUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o014"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOSUPERUSER"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o015"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "CREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o016"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOCREATEDB"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o017"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "CREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o018"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOCREATEROLE"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o019"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "INHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o020"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOINHERIT"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o021"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "LOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o022"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOLOGIN"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o023"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "REPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o024"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOREPLICATION"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o025"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "BYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o026"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "NOBYPASSRLS"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o027"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "CONNECTION LIMIT <connlimit>"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o028"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o029"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o030"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o031"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "PASSWORD NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o032"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "VALID UNTIL '<timestamp>'"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o033"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "IN ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o034"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o035"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "IN GROUP <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o036"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "IN GROUP <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o037"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "ROLE <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o038"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "ROLE <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o039"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "ADMIN <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o040"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "ADMIN <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o041"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "USER <role_name> [, ...]"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o042"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "USER <role_name> [, ...] with its list continued"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o043"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "SYSID <uid>"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o044"
+kind = "option_present"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o045"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o046"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o047"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "CONNECTION without LIMIT"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o048"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o049"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "ENCRYPTED without PASSWORD"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o050"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o051"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "a string for <uid>, which gram.y reads as Iconst"
+
+[[obligation]]
+id = "pg.security_admin.create-user.o052"
+kind = "negative_neighbour"
+required = true
+target = "<option>"
+anchor = "doc.sql-createuser / Synopsis"
+note = "IN ROLE with no role name"
 
 [[obligation]]
 id = "pg.security_admin.create-user-mapping.o001"

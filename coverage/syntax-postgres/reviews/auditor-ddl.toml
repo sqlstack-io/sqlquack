@@ -1373,3 +1373,53 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.ddl.create-text-search-parser" = "ce677f2dcbc6f05ddf6a011bd50b33b3c5d8b33caffffacf00989742b16a293c"
 "pg.ddl.create-text-search-template" = "93a9a4c653ca879d4daff53d499f877066d71cd058067399e5f9030f1ffca4a0"
 "pg.ddl.create-transform" = "597b5010e569290c480e7c09912c8ab8c4338c4b27c5746eb05e49270adf926c"
+
+[[review]]
+id = "pg-auditor-ddl-016"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "8650b82c6a9346de0562732bf39e56c5237fd6ce"
+reviewed_utc = "2026-11-06T16:03:28Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-collation.name",
+  "pg.ddl.create-domain",
+  "pg.ddl.create-foreign-table.partition-of-server",
+  "pg.ddl.create-foreign-table.server",
+  "pg.ddl.create-operator",
+  "pg.ddl.create-publication",
+  "pg.ddl.create-text-search-configuration",
+  "pg.ddl.create-transform",
+  "pg.ddl.create-trigger",
+  "pg.ddl.create-type.as",
+  "pg.ddl.create-type.input-output",
+]
+note = "Re-read after the notes-6 obligation delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 8650b82c; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-collation.name" = "37a69cff66d8e42b1f41ed33abaf29b4846e8a525b33f21560eb429a54e58665"
+"pg.ddl.create-domain" = "16e0262e7abd8feb703f7c5256cad19b2f1dba1194c3f9eb0ad98e0e4528e6fd"
+"pg.ddl.create-foreign-table.partition-of-server" = "04297c7ea0a29fb4fb6466d08b4c0ba2f3b62d6bdced135166d7f0cfeac342b9"
+"pg.ddl.create-foreign-table.server" = "3a3b3f4fcf65a9357a1136633c918b02515f23a63daf13462fc8df3844dae6f1"
+"pg.ddl.create-operator" = "5eb81f218cc165b0b9b1b580968958908c02bd2cba509d4d1b6e917b67103520"
+"pg.ddl.create-publication" = "b587857d9c91eeeaabeea8ab6b24d22ab80a6069ae37a928435d497412d93987"
+"pg.ddl.create-text-search-configuration" = "a02b8bb4ffe9430f72ce55ae45e37f840884d3849d593921caeb5ee14e9dfb3b"
+"pg.ddl.create-transform" = "912e89a973dc59aac39b07a91ebf1b5994a98c2e90c446d979a30cbfa637899d"
+"pg.ddl.create-trigger" = "f426d9aa1e1caa33c3fbf04d09cc2d44c4f401f5ea048d5f17fcff1523223692"
+"pg.ddl.create-type.as" = "1db0915afc7bdb6dbe8b2ab2238d0317703f848a1c0a2b4f17f30f9cf095b501"
+"pg.ddl.create-type.input-output" = "a4a30f57fb1f37f3d229df3f3a1989a0d0e2b8c7b69d431cdc2218f9bc022f6d"
+
+[review.definitions]
+"pg.ddl.create-collation.name" = "5c5cd506b87015267a0affdada082e5fff0e1f2069b55ccb8e9d8e58e452a6d1"
+"pg.ddl.create-domain" = "4592f69128def8bf668ffa1d9dde4f8d1f5a027b36b45b8379da39e8c4287428"
+"pg.ddl.create-foreign-table.partition-of-server" = "73e3ed20629c5ee569445861a76614d5a58cc9b6c9f36fea5c57078c0f5e7792"
+"pg.ddl.create-foreign-table.server" = "5a7ec5eb82a7b762b732f781ff49fb5a3551b20b89f324d01a6f6b5f42db89ff"
+"pg.ddl.create-operator" = "fb4ee868a47439abb91c740147cf41bc12b6f4d9b9facb7781a8107ac8df1a3c"
+"pg.ddl.create-publication" = "b17e7585463a7f7c71356ce1a5eed93faeef5a6f245784245bcc19d2cab75b4f"
+"pg.ddl.create-text-search-configuration" = "7169990a7168bdfd15c6368eb30e2c71e5258d5b120843124b07a919d5ab5225"
+"pg.ddl.create-transform" = "4ed8279e412e47a8f0b957bdd59512a9baf1d1575c64d6644ce6be4a8a1754f3"
+"pg.ddl.create-trigger" = "1fad79738cfd0d499af7c6354af86b8711d887a4cec4ae095386c011c071030b"
+"pg.ddl.create-type.as" = "5a16cfc0f75593857f0adf2ff1d79d6132697aa312c32c0032bd312e4de563a1"
+"pg.ddl.create-type.input-output" = "7603d45e2d2d86148495fb4e8188d48b3042345413fb15fc69e7430abc22650e"
+
+# Ready to land as written in coverage/syntax-postgres/reviews/auditor-security_admin.toml, as a [[review]] entry with the same keys.

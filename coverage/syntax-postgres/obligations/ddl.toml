@@ -51104,16 +51104,46 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "pg.ddl.create-collation.name.o047"
+id = "pg.ddl.create-collation.name.o080"
 kind = "alternative"
 required = true
-target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype> } → LOCALE = <locale>"
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider> |… → LOCALE = <locale>"
 
 [[obligation]]
-id = "pg.ddl.create-collation.name.o048"
+id = "pg.ddl.create-collation.name.o081"
 kind = "alternative"
 required = true
-target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE =… → LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype>"
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER =… → LC_COLLATE = <lc_collate>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o082"
+kind = "alternative"
+required = true
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider>… → LC_CTYPE = <lc_ctype>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o083"
+kind = "alternative"
+required = true
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider>… → PROVIDER = <provider>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o084"
+kind = "alternative"
+required = true
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER =… → DETERMINISTIC = <boolean>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o085"
+kind = "alternative"
+required = true
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider> |… → RULES = <rules>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o086"
+kind = "alternative"
+required = true
+target = "{ LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider> |… → VERSION = <version>"
 
 [[obligation]]
 id = "pg.ddl.create-collation.name.o049"
@@ -51144,13 +51174,6 @@ target = "<lc_collate>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.ddl.create-collation.name.o053"
-kind = "negative_neighbour"
-required = true
-target = "<lc_collate>"
-note = "a string literal in place of <lc_collate>"
-
-[[obligation]]
 id = "pg.ddl.create-collation.name.o054"
 kind = "required_operand_missing"
 required = true
@@ -51162,6 +51185,114 @@ id = "pg.ddl.create-collation.name.o055"
 kind = "operand_type_class"
 required = true
 target = "<lc_ctype>"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o087"
+kind = "required_operand_missing"
+required = true
+target = "<provider>"
+note = "omit <provider>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o088"
+kind = "operand_type_class"
+required = true
+target = "<provider>"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o089"
+kind = "required_operand_missing"
+required = true
+target = "<boolean>"
+note = "omit <boolean>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o090"
+kind = "operand_type_class"
+required = true
+target = "<boolean>"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o091"
+kind = "required_operand_missing"
+required = true
+target = "<rules>"
+note = "omit <rules>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o092"
+kind = "operand_type_class"
+required = true
+target = "<rules>"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o093"
+kind = "required_operand_missing"
+required = true
+target = "<version>"
+note = "omit <version>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o094"
+kind = "operand_type_class"
+required = true
+target = "<version>"
+note = "a valid operand"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o095"
+kind = "option_present"
+required = true
+target = "[ , LC_COLLATE = <lc_collate> ]"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o096"
+kind = "option_absent"
+required = true
+target = "[ , LC_COLLATE = <lc_collate> ]"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o097"
+kind = "required_operand_missing"
+required = true
+target = "<lc_collate> in [ , LC_COLLATE = <lc_collate> ]"
+note = "omit <lc_collate>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o098"
+kind = "operand_type_class"
+required = true
+target = "<lc_collate> in [ , LC_COLLATE = <lc_collate> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o099"
+kind = "option_present"
+required = true
+target = "[ , LC_CTYPE = <lc_ctype> ]"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o100"
+kind = "option_absent"
+required = true
+target = "[ , LC_CTYPE = <lc_ctype> ]"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o101"
+kind = "required_operand_missing"
+required = true
+target = "<lc_ctype> in [ , LC_CTYPE = <lc_ctype> ]"
+note = "omit <lc_ctype>"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o102"
+kind = "operand_type_class"
+required = true
+target = "<lc_ctype> in [ , LC_CTYPE = <lc_ctype> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -51305,16 +51436,52 @@ required = true
 note = "the form without its required LC_COLLATE after ("
 
 [[obligation]]
-id = "pg.ddl.create-collation.name.o074"
+id = "pg.ddl.create-collation.name.o103"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required LC_CTYPE"
+note = "the form without its required LC_CTYPE after ("
 
 [[obligation]]
-id = "pg.ddl.create-collation.name.o075"
+id = "pg.ddl.create-collation.name.o104"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype> }"
+note = "the form without its required PROVIDER after ("
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o105"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required DETERMINISTIC after ("
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o106"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RULES after ("
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o107"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VERSION after ("
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o108"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider> | DETERMINISTIC = <boolean> | RULES = <rules> | VERSION = <version> }"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o109"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LC_COLLATE in [ , LC_COLLATE = <lc_collate> ]"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o110"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LC_CTYPE in [ , LC_CTYPE = <lc_ctype> ]"
 
 [[obligation]]
 id = "pg.ddl.create-collation.name.o076"
@@ -51367,6 +51534,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-collation.name.o111"
+kind = "operand_type_class"
+required = true
+target = "<lc_collate>"
+anchor = "doc.sql-createcollation / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
 
 [[obligation]]
 id = "pg.ddl.create-conversion.o001"
@@ -52457,6 +52632,62 @@ required = true
 target = "<collation>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o028"
+kind = "alternative"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "NOT NULL"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o029"
+kind = "alternative"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "NULL"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o030"
+kind = "option_present"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "a named CHECK constraint: CONSTRAINT <constraint_name> CHECK ( <expression> )"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o031"
+kind = "option_present"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "a named NOT NULL constraint"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o032"
+kind = "option_present"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "several constraints in one list"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o033"
+kind = "required_operand_missing"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "CONSTRAINT with its name but no constraint body"
+
+[[obligation]]
+id = "pg.ddl.create-domain.o034"
+kind = "negative_neighbour"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-createdomain / Synopsis"
+note = "CHECK without parentheses"
 
 [[obligation]]
 id = "pg.ddl.create-event-trigger.o001"
@@ -53556,6 +53787,134 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o065"
+kind = "alternative"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "IN with several values"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o066"
+kind = "alternative"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "FROM ... TO ..."
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o067"
+kind = "alternative"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "FROM MINVALUE TO MAXVALUE"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o068"
+kind = "alternative"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "FROM ... TO ... over two columns"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o069"
+kind = "alternative"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "WITH ( MODULUS , REMAINDER )"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o070"
+kind = "negative_neighbour"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "FROM with no TO"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o071"
+kind = "negative_neighbour"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "IN with an empty list"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o072"
+kind = "negative_neighbour"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "WITH and MODULUS but no REMAINDER (gram.y PartitionBoundSpec: remainder for hash partition must be specified, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o073"
+kind = "negative_neighbour"
+required = true
+target = "<partition_bound_spec>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "WITH with an unknown word (gram.y PartitionBoundSpec: unrecognized hash partition bound specification, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o074"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NULL"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o075"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "DEFAULT, after WITH OPTIONS"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o076"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named CHECK constraint"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o077"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) STORED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o078"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o079"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named CHECK with NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.partition-of-server.o080"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL on a column"
+
+[[obligation]]
 id = "pg.ddl.create-foreign-table.server.o001"
 kind = "positive"
 required = true
@@ -54084,6 +54443,174 @@ required = true
 target = "<server_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o086"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NULL"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o087"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o088"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK with NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o089"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "DEFAULT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o090"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) STORED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o091"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) VIRTUAL"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o092"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS ( ... ) with no kind"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o093"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named NOT NULL constraint"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o094"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named CHECK constraint"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o095"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK NOT ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o096"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o097"
+kind = "alternative"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "several constraints on one column"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o098"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named CHECK with NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o099"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL on a column"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o100"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "a named NOT NULL with NO INHERIT"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o101"
+kind = "alternative"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CHECK NOT ENFORCED"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o102"
+kind = "negative_neighbour"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "DEFAULT with no expression"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o103"
+kind = "negative_neighbour"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "GENERATED ALWAYS AS without parentheses"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o104"
+kind = "negative_neighbour"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "CONSTRAINT with its name but no constraint body"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o105"
+kind = "negative_neighbour"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NO INHERIT with no constraint before it"
+
+[[obligation]]
+id = "pg.ddl.create-foreign-table.server.o106"
+kind = "negative_neighbour"
+required = true
+target = "<table_constraint>"
+anchor = "doc.sql-createforeigntable / Synopsis"
+note = "NOT NULL with no column"
 
 [[obligation]]
 id = "pg.ddl.create-function.o001"
@@ -57197,13 +57724,6 @@ target = "<function_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.ddl.create-operator.o009"
-kind = "negative_neighbour"
-required = true
-target = "<function_name>"
-note = "a string literal in place of <function_name>"
-
-[[obligation]]
 id = "pg.ddl.create-operator.o010"
 kind = "option_present"
 required = true
@@ -57230,13 +57750,6 @@ target = "<left_type> in [ , LEFTARG = <left_type> ]"
 note = "a valid data_type"
 
 [[obligation]]
-id = "pg.ddl.create-operator.o014"
-kind = "negative_neighbour"
-required = true
-target = "<left_type> in [ , LEFTARG = <left_type> ]"
-note = "a string literal in place of <left_type>"
-
-[[obligation]]
 id = "pg.ddl.create-operator.o015"
 kind = "option_present"
 required = true
@@ -57261,13 +57774,6 @@ kind = "operand_type_class"
 required = true
 target = "<right_type> in [ , RIGHTARG = <right_type> ]"
 note = "a valid data_type"
-
-[[obligation]]
-id = "pg.ddl.create-operator.o019"
-kind = "negative_neighbour"
-required = true
-target = "<right_type> in [ , RIGHTARG = <right_type> ]"
-note = "a string literal in place of <right_type>"
 
 [[obligation]]
 id = "pg.ddl.create-operator.o020"
@@ -57468,6 +57974,110 @@ id = "pg.ddl.create-operator.o051"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o056"
+kind = "operand_type_class"
+required = true
+target = "<function_name>"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o057"
+kind = "operand_type_class"
+required = true
+target = "<left_type> in [ , LEFTARG = <left_type> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o058"
+kind = "operand_type_class"
+required = true
+target = "<right_type> in [ , RIGHTARG = <right_type> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o059"
+kind = "operand_type_class"
+required = true
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "an operator symbol (gram.y def_arg: qual_all_Op, all_Op)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o060"
+kind = "operand_type_class"
+required = true
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) around a schema-qualified operator (gram.y qual_all_Op: OPERATOR ( any_operator ))"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o061"
+kind = "operand_type_class"
+required = true
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) around an unqualified operator"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o062"
+kind = "negative_neighbour"
+required = true
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "a schema-qualified operator without OPERATOR ( ) (def_arg has no qualified operator)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o063"
+kind = "negative_neighbour"
+required = true
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) with no operator"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o064"
+kind = "operand_type_class"
+required = true
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "an operator symbol (gram.y def_arg: qual_all_Op, all_Op)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o065"
+kind = "operand_type_class"
+required = true
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) around a schema-qualified operator (gram.y qual_all_Op: OPERATOR ( any_operator ))"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o066"
+kind = "operand_type_class"
+required = true
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) around an unqualified operator"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o067"
+kind = "negative_neighbour"
+required = true
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "a schema-qualified operator without OPERATOR ( ) (def_arg has no qualified operator)"
+
+[[obligation]]
+id = "pg.ddl.create-operator.o068"
+kind = "negative_neighbour"
+required = true
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+anchor = "doc.sql-createoperator / Synopsis"
+note = "OPERATOR ( ) with no operator"
 
 [[obligation]]
 id = "pg.ddl.create-operator-class.o001"
@@ -59200,6 +59810,94 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-publication.o031"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "ONLY"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o032"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a trailing *"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o033"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a column list"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o034"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a row filter"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o035"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a column list and a row filter"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o036"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a schema-qualified table"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o037"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "TABLES IN SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o038"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "CURRENT_SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o039"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o040"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a schema continuation"
+
+[[obligation]]
+id = "pg.ddl.create-publication.o041"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-createpublication / Synopsis"
+note = "a table and a schema in one list"
+
+[[obligation]]
 id = "pg.ddl.create-rule.o001"
 kind = "positive"
 required = true
@@ -59449,6 +60147,102 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-rule.o041"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "SELECT"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o042"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "UPDATE"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o043"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "DELETE"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o044"
+kind = "negative_neighbour"
+required = true
+target = "<event>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "TRUNCATE, which is no rule event (gram.y event)"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o045"
+kind = "operand_type_class"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "a SELECT action"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o046"
+kind = "operand_type_class"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "an INSERT action using NEW"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o047"
+kind = "operand_type_class"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "an UPDATE action using OLD"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o048"
+kind = "operand_type_class"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "a NOTIFY action"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o049"
+kind = "operand_type_class"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "INSTEAD with an action"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o050"
+kind = "option_present"
+required = true
+target = "<command> #2"
+anchor = "doc.sql-createrule / Synopsis"
+note = "several actions of different kinds in parentheses"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o051"
+kind = "option_present"
+required = true
+target = "[ WHERE <condition> ]"
+anchor = "doc.sql-createrule / Synopsis"
+note = "WHERE referring to NEW and OLD, with INSTEAD and an action"
+
+[[obligation]]
+id = "pg.ddl.create-rule.o052"
+kind = "negative_neighbour"
+required = true
+target = "<command>"
+anchor = "doc.sql-createrule / Synopsis"
+note = "a statement no rule action takes (gram.y RuleActionStmt)"
+
+[[obligation]]
 id = "pg.ddl.create-schema.authorization.o001"
 kind = "positive"
 required = true
@@ -59485,6 +60279,70 @@ id = "pg.ddl.create-schema.authorization.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o008"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE VIEW (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o009"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE INDEX (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o010"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE SEQUENCE (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o011"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE TRIGGER (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o012"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "GRANT (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o013"
+kind = "option_present"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "several elements of different kinds, in order"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o014"
+kind = "negative_neighbour"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE FUNCTION, which gram.y schema_stmt does not take"
+
+[[obligation]]
+id = "pg.ddl.create-schema.authorization.o015"
+kind = "negative_neighbour"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "a DML statement, which gram.y schema_stmt does not take"
 
 [[obligation]]
 id = "pg.ddl.create-schema.if-not-exists.o001"
@@ -59715,6 +60573,70 @@ required = true
 target = "<schema_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o016"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE VIEW (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o017"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE INDEX (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o018"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE SEQUENCE (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o019"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE TRIGGER (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o020"
+kind = "alternative"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "GRANT (gram.y schema_stmt)"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o021"
+kind = "option_present"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "several elements of different kinds, in order"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o022"
+kind = "negative_neighbour"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "CREATE FUNCTION, which gram.y schema_stmt does not take"
+
+[[obligation]]
+id = "pg.ddl.create-schema.schema-name.o023"
+kind = "negative_neighbour"
+required = true
+target = "<schema_element>"
+anchor = "doc.sql-createschema / Synopsis"
+note = "a DML statement, which gram.y schema_stmt does not take"
 
 [[obligation]]
 id = "pg.ddl.create-sequence.o001"
@@ -64207,13 +65129,6 @@ target = "<parser_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.ddl.create-text-search-configuration.o009"
-kind = "negative_neighbour"
-required = true
-target = "<parser_name>"
-note = "a string literal in place of <parser_name>"
-
-[[obligation]]
 id = "pg.ddl.create-text-search-configuration.o010"
 kind = "required_operand_missing"
 required = true
@@ -64290,6 +65205,14 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-text-search-configuration.o029"
+kind = "operand_type_class"
+required = true
+target = "<parser_name>"
+anchor = "doc.sql-createtsconfig / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
 
 [[obligation]]
 id = "pg.ddl.create-text-search-dictionary.o001"
@@ -65088,6 +66011,46 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-transform.o055"
+kind = "alternative"
+required = true
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-createtransform / Synopsis"
+note = "FROM SQL only (gram.y transform_element_list)"
+
+[[obligation]]
+id = "pg.ddl.create-transform.o056"
+kind = "alternative"
+required = true
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-createtransform / Synopsis"
+note = "TO SQL only (gram.y transform_element_list)"
+
+[[obligation]]
+id = "pg.ddl.create-transform.o057"
+kind = "alternative"
+required = true
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-createtransform / Synopsis"
+note = "TO SQL before FROM SQL (gram.y transform_element_list)"
+
+[[obligation]]
+id = "pg.ddl.create-transform.o058"
+kind = "negative_neighbour"
+required = true
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-createtransform / Synopsis"
+note = "an empty list"
+
+[[obligation]]
+id = "pg.ddl.create-transform.o059"
+kind = "negative_neighbour"
+required = true
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-createtransform / Synopsis"
+note = "FROM SQL twice"
+
+[[obligation]]
 id = "pg.ddl.create-trigger.o001"
 kind = "positive"
 required = true
@@ -65488,12 +66451,6 @@ required = true
 target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ] ] → NOT DEFERRABLE"
 
 [[obligation]]
-id = "pg.ddl.create-trigger.o028"
-kind = "alternative"
-required = true
-target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
-
-[[obligation]]
 id = "pg.ddl.create-trigger.o029"
 kind = "option_present"
 required = true
@@ -65862,6 +66819,150 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.create-trigger.o147"
+kind = "alternative"
+required = true
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "DEFERRABLE alone"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o148"
+kind = "alternative"
+required = true
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "DEFERRABLE INITIALLY DEFERRED"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o149"
+kind = "alternative"
+required = true
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "INITIALLY DEFERRED before DEFERRABLE (gram.y ConstraintAttributeSpec takes the attributes in any order)"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o150"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o151"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE OF one column"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o152"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE OF a column list"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o153"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "DELETE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o154"
+kind = "alternative"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "TRUNCATE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o155"
+kind = "option_present"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "every event combined with OR"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o156"
+kind = "option_present"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE OF a column list combined with OR"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o157"
+kind = "negative_neighbour"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE OF with no column"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o158"
+kind = "negative_neighbour"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "OF after an event other than UPDATE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o159"
+kind = "negative_neighbour"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "an event repeated in the OR list (gram.y TriggerEvents: duplicate trigger events, 42601)"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o160"
+kind = "negative_neighbour"
+required = true
+target = "<event>"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "SELECT, which is no trigger event"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o161"
+kind = "alternative"
+required = true
+target = "<event> #2"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o162"
+kind = "alternative"
+required = true
+target = "<event> #2"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "UPDATE OF a column list"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o163"
+kind = "alternative"
+required = true
+target = "<event> #2"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "DELETE"
+
+[[obligation]]
+id = "pg.ddl.create-trigger.o164"
+kind = "option_present"
+required = true
+target = "<event> #2"
+anchor = "doc.sql-createtrigger / Synopsis"
+note = "INSERT, UPDATE OF and DELETE combined with OR"
+
+[[obligation]]
 id = "pg.ddl.create-type.as.o001"
 kind = "positive"
 required = true
@@ -66106,6 +67207,22 @@ required = true
 target = "<collation>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-type.as.o047"
+kind = "option_present"
+required = true
+target = "[ COLLATE <collation> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "COLLATE on the second attribute only (gram.y TableFuncElement: opt_collate_clause on every element)"
+
+[[obligation]]
+id = "pg.ddl.create-type.as.o048"
+kind = "option_present"
+required = true
+target = "[ COLLATE <collation> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "COLLATE on every attribute"
 
 [[obligation]]
 id = "pg.ddl.create-type.as-enum.o001"
@@ -66587,11 +67704,11 @@ target = "<send_function> in [ , SEND = <send_function> ]"
 note = "omit <send_function>"
 
 [[obligation]]
-id = "pg.ddl.create-type.input-output.o016"
+id = "pg.ddl.create-type.input-output.o105"
 kind = "operand_type_class"
 required = true
 target = "<send_function> in [ , SEND = <send_function> ]"
-note = "a valid expression"
+note = "a valid operand"
 
 [[obligation]]
 id = "pg.ddl.create-type.input-output.o017"
@@ -66819,13 +67936,6 @@ target = "<like_type> in [ , LIKE = <like_type> ]"
 note = "a valid data_type"
 
 [[obligation]]
-id = "pg.ddl.create-type.input-output.o052"
-kind = "negative_neighbour"
-required = true
-target = "<like_type> in [ , LIKE = <like_type> ]"
-note = "a string literal in place of <like_type>"
-
-[[obligation]]
 id = "pg.ddl.create-type.input-output.o053"
 kind = "option_present"
 required = true
@@ -66982,13 +68092,6 @@ target = "<collatable> in [ , COLLATABLE = <collatable> ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "pg.ddl.create-type.input-output.o077"
-kind = "negative_neighbour"
-required = true
-target = "<collatable> in [ , COLLATABLE = <collatable> ]"
-note = "a string literal in place of <collatable>"
-
-[[obligation]]
 id = "pg.ddl.create-type.input-output.o078"
 kind = "negative_neighbour"
 required = true
@@ -67141,6 +68244,126 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o106"
+kind = "operand_type_class"
+required = true
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the alignment char, a type name word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o107"
+kind = "operand_type_class"
+required = true
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the alignment int2, a type name word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o108"
+kind = "operand_type_class"
+required = true
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the alignment int4, a type name word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o109"
+kind = "operand_type_class"
+required = true
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the alignment double, a type name word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o110"
+kind = "operand_type_class"
+required = true
+target = "<storage> in [ , STORAGE = <storage> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the storage strategy plain, a word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o111"
+kind = "operand_type_class"
+required = true
+target = "<storage> in [ , STORAGE = <storage> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the storage strategy external, a word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o112"
+kind = "operand_type_class"
+required = true
+target = "<storage> in [ , STORAGE = <storage> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the storage strategy extended, a word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o113"
+kind = "operand_type_class"
+required = true
+target = "<storage> in [ , STORAGE = <storage> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the storage strategy main, a word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o114"
+kind = "operand_type_class"
+required = true
+target = "<category> in [ , CATEGORY = <category> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a one-character string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o115"
+kind = "operand_type_class"
+required = true
+target = "<preferred> in [ , PREFERRED = <preferred> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the boolean true, a reserved keyword (gram.y def_arg: reserved_keyword)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o116"
+kind = "operand_type_class"
+required = true
+target = "<preferred> in [ , PREFERRED = <preferred> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the boolean false, a reserved keyword (gram.y def_arg: reserved_keyword)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o117"
+kind = "operand_type_class"
+required = true
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "the boolean true, a reserved keyword (gram.y def_arg: reserved_keyword)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o118"
+kind = "operand_type_class"
+required = true
+target = "<delimiter> in [ , DELIMITER = <delimiter> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a one-character string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o119"
+kind = "operand_type_class"
+required = true
+target = "<like_type> in [ , LIKE = <like_type> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o120"
+kind = "operand_type_class"
+required = true
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
 
 [[obligation]]
 id = "pg.ddl.create-type.name.o001"

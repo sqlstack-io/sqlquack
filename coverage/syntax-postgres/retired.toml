@@ -3509,6 +3509,41 @@ ids = [
   "pg.ddl.create-view.o009",
 ]
 
+[[retired]]
+retired_in = "1a48c3c5a6e3d33462fc5ff8c60645d880877aa2"
+reason = "CREATE TYPE's <send_function> was classed as an expression because its name contains 'end', so its case filled SEND = 1 (batch-19 note); it is a function name (gram.y def_arg: func_type), now an operand like the other support functions, under a new id"
+ids = [
+  "pg.ddl.create-type.input-output.o016",
+]
+
+[[retired]]
+retired_in = "1a48c3c5a6e3d33462fc5ff8c60645d880877aa2"
+reason = "the derived case of CREATE CONSTRAINT TRIGGER's [ DEFERRABLE ] [ INITIALLY ... ] alternative left both attributes out, the same raw node as no clause (batch-19 note); the alternative is now written out with DEFERRABLE and INITIALLY DEFERRED under new ids"
+ids = [
+  "pg.ddl.create-trigger.o028",
+]
+
+[[retired]]
+retired_in = "1a48c3c5a6e3d33462fc5ff8c60645d880877aa2"
+reason = "a string literal in a definition value was tagged a negative, but gram.y def_arg takes a string constant (Sconst) and PostgreSQL 18.6 parses it (batch-21 notes); replaced by operand-class obligations under new ids"
+ids = [
+  "pg.ddl.create-collation.name.o053",
+  "pg.ddl.create-operator.o009",
+  "pg.ddl.create-operator.o014",
+  "pg.ddl.create-operator.o019",
+  "pg.ddl.create-text-search-configuration.o009",
+]
+
+[[retired]]
+retired_in = "1a48c3c5a6e3d33462fc5ff8c60645d880877aa2"
+reason = "CREATE COLLATION's reading required LOCALE or LC_COLLATE plus LC_CTYPE, a rule of the page's prose that DefineCollation checks after parsing (42P17), not syntax (batch-21 note); the reading now follows the synopsis and gram.y definition, where any item may stand alone, so the prose choice's two alternatives and its two negatives leave"
+ids = [
+  "pg.ddl.create-collation.name.o047",
+  "pg.ddl.create-collation.name.o048",
+  "pg.ddl.create-collation.name.o074",
+  "pg.ddl.create-collation.name.o075",
+]
+
 # Ids issued again with a new meaning before retirement was recorded. Both forms were
 # approved with the new meaning, so the ids stay; the old meanings have no id.
 
@@ -3523,3 +3558,11 @@ id = "pg.ddl.create-procedure.sql-body-atomic.o043"
 reissued_in = "7bf8d2778e8c959bb3d565efea203700b4622051"
 before = "nesting_depth: statement operands nested; no documented bound"
 after = "option_present <statement> ; [ ... ]: several statements in one BEGIN ATOMIC block"
+
+[[retired]]
+retired_in = "84836c7aca9aa76ae550c9e61e48cac8a1da9864"
+reason = "a string literal in a definition value was tagged a negative, but gram.y def_arg takes a string constant (Sconst) and PostgreSQL 18.6 parses it (the same pattern as the batch-21 notes, found in CREATE TYPE's LIKE and COLLATABLE); replaced by operand-class obligations under new ids"
+ids = [
+  "pg.ddl.create-type.input-output.o052",
+  "pg.ddl.create-type.input-output.o077",
+]
