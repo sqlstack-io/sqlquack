@@ -8170,6 +8170,18 @@ cases = ["cases/translation/functions/date-part.date-part-from.toml#t004_time"]
 required = true
 
 [[obligation]]
+id = "sf.functions.date-part.date-part-from.t005"
+form = "sf.functions.date-part.date-part-from"
+kind = "error_parity"
+target = "error"
+note = "The part given as a string literal in the FROM form: Snowflake rejects it at parse time (1003, unexpected FROM), unlike the two-argument form."
+catches = "the quoted part accepted (a value returned where Snowflake refuses the statement)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse a quoted date part in DATE_PART ... FROM"
+
+[[obligation]]
 id = "sf.functions.date-part.date-part-from.t006"
 form = "sf.functions.date-part.date-part-from"
 kind = "null_argument"
@@ -9530,6 +9542,18 @@ catches = "an error for a TIME, or seconds rounded (46)"
 reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
 cases = ["cases/translation/functions/extract.extract-from.toml#t004_time"]
 required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t005"
+form = "sf.functions.extract.extract-from"
+kind = "error_parity"
+target = "error"
+note = "The part given as a string literal in the FROM form: Snowflake rejects it at parse time (1003, unexpected FROM), unlike the two-argument form."
+catches = "the quoted part accepted (a value returned where Snowflake refuses the statement)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse a quoted date part in EXTRACT ... FROM"
 
 [[obligation]]
 id = "sf.functions.extract.extract-from.t006"
@@ -16782,6 +16806,18 @@ catches = "each column hashed on its own (1.0 instead of 0.0)"
 reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
 cases = ["cases/translation/functions/minhash.minhash.toml#t002_tuples"]
 required = true
+
+[[obligation]]
+id = "sf.functions.minhash.minhash.t003"
+form = "sf.functions.minhash.minhash"
+kind = "type_combination"
+target = "DISTINCT"
+note = "DISTINCT, which the page says has no effect. Snowflake rejects it at parse (1003), so a translation must refuse it too."
+catches = "DISTINCT accepted where Snowflake rejects it"
+reading = "the page: MINHASH(k, expr+) builds a MinHash state of k hash functions (at most 1024) over the values or, with *, over whole rows; MINHASH_COMBINE merges states; APPROXIMATE_SIMILARITY and APPROXIMATE_JACCARD_INDEX estimate the Jaccard similarity of the states as a FLOAT from 0.0 to 1.0; states need equal k; DISTINCT has no effect; each can be used as an aggregate or a window function"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse MINHASH with DISTINCT"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash.t004"
