@@ -42,3 +42,30 @@ rows = [
 ]
 expression = "updated_at <= CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())"
 tags = ["null"]
+
+[[case]]
+id = "ntz_beside_zoned_past_nanosecond_range"
+description = "A naive TIMESTAMP_NTZ(9) compared with TIMESTAMP_TZ and TIMESTAMP_LTZ sentinels past 2262, which DuckDB cannot widen to nanoseconds."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'9999-12-31 00:00:00 +00:00'", "'9999-12-31 00:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2300-01-01 12:00:00 +02:00'", "'2300-01-01 12:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n < tz, n = tz, n < l, n >= l)"
+expected_divergence = "timestamp_range"
+tags = ["boundary"]
+
+[[case]]
+id = "ntz_between_zoned_bounds"
+description = "A naive timestamp BETWEEN a TIMESTAMP_TZ and a TIMESTAMP_LTZ bound, and a zoned value BETWEEN naive bounds."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 11:00:00 +02:00'", "'2024-06-01 11:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 13:00:00 +02:00'", "'2024-06-01 09:00:00 +00:00'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'", "'2024-06-01 10:00:00 +00:00'"],
+]
+query = "SELECT n BETWEEN tz AND l AS a, tz BETWEEN n AND '2024-06-01 10:30:00'::TIMESTAMP_NTZ AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
