@@ -18,6 +18,7 @@ const COSMETIC_FIELDS: &[&str] = &[
     "comments",
     "leading_comments",
     "pre_alias_comments",
+    "post_select_comments",
     "left_comments",
     "operator_comments",
     "right_comments",
@@ -194,11 +195,30 @@ pub(crate) fn integer_literal(node: &Value) -> Option<u64> {
 
 /// The tree conversion reads, positions stripped and quoted identifiers folded if case is ignored.
 pub(crate) fn session_tree(positioned: &Value, ignore_quoted_case: bool) -> Result<Value, String> {
-    let mut tree = strip_positions(positioned);
+    let mut tree = without_comment_wrappers(&strip_positions(positioned));
     if ignore_quoted_case {
         fold_quoted(&mut tree)?;
     }
     Ok(tree)
+}
+
+/// `value` with each node that only wrapped a comment replaced by the node it wrapped.
+fn without_comment_wrappers(value: &Value) -> Value {
+    match value {
+        Value::Object(fields) => match fields.get("annotated").and_then(Value::as_object) {
+            Some(annotated) if fields.len() == 1 && annotated.len() == 1 => annotated
+                .get("this")
+                .map_or_else(|| value.clone(), without_comment_wrappers),
+            _ => Value::Object(
+                fields
+                    .iter()
+                    .map(|(key, field)| (key.clone(), without_comment_wrappers(field)))
+                    .collect(),
+            ),
+        },
+        Value::Array(items) => Value::Array(items.iter().map(without_comment_wrappers).collect()),
+        other => other.clone(),
+    }
 }
 
 /// Upper-cases the name of each quoted identifier under `value`.

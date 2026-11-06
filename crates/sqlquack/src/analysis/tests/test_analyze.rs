@@ -93,6 +93,27 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
+            description: "a block comment straight after SELECT is dropped",
+            sql: "SELECT /* c */ amount AS v FROM orders",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "a line comment straight after SELECT is dropped",
+            sql: "SELECT -- note\n amount AS v FROM orders",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "a comment after SELECT inside a CTE and a subquery is dropped",
+            sql: "WITH x AS (SELECT /* c */ amount FROM orders) \
+                  SELECT v FROM (SELECT /* d */ amount AS v FROM x) AS s",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "a comment after a literal argument leaves the literal a literal",
+            sql: "SELECT ROUND(amount, 1 /* c */) AS v FROM orders",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
             description: "comments after select items and inside expressions are dropped",
             sql: "SELECT amount /* net */ + 1 AS gross, -- trailing\n customer_id -- last\n \
                   FROM orders -- source\n WHERE amount > 0",
