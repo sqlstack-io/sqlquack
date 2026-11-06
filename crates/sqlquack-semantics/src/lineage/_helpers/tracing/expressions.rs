@@ -12,12 +12,13 @@ use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if,
 use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
 use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
+use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
-    SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+    POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -79,6 +80,7 @@ pub(crate) fn expression_lineage(
             let inner: Lineage = expression_lineage(&cast.this, scope, context);
             let target: Option<String> = match context.profile.name() {
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
+                POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =
@@ -132,12 +134,15 @@ pub(crate) fn expression_lineage(
             expression_lineage(&lambda.body, &inner, context)
         }
         Expression::WindowFunction(window) => {
-            let mut parts: Vec<Lineage> = vec![children_lineage(
-                expression,
-                scope,
-                context,
-                TransformKind::Expression,
-            )];
+            let function: Lineage =
+                children_lineage(&window.this, scope, context, TransformKind::Window);
+            let value_type: ValueType = (function.data_type.clone(), function.nullability);
+            let mut parts: Vec<Lineage> = vec![function];
+            for child in expression.children() {
+                if !std::ptr::eq(child, &window.this) {
+                    parts.push(expression_lineage(child, scope, context));
+                }
+            }
             if let Some(name) = &window.over.window_name {
                 let name: String = key(name, context);
                 let named: Option<&Lineage> = scope
@@ -147,9 +152,7 @@ pub(crate) fn expression_lineage(
                     .map(|(_, lineage)| lineage);
                 parts.push(named.cloned().unwrap_or_else(unresolved));
             }
-            let floor: TransformKind = parts[0].kind.max(TransformKind::Expression);
-            let value_type: ValueType = (parts[0].data_type.clone(), parts[0].nullability);
-            typed(combined(parts, floor), value_type)
+            typed(combined(parts, TransformKind::Window), value_type)
         }
         _ if is_aggregate(expression) => {
             children_lineage(expression, scope, context, TransformKind::Aggregation)
@@ -168,7 +171,9 @@ fn children_lineage(
         .children()
         .into_iter()
         .map(|child| match (child, floor) {
-            (Expression::Star(_), TransformKind::Aggregation) => (child, constant()),
+            (Expression::Star(_), TransformKind::Aggregation | TransformKind::Window) => {
+                (child, constant())
+            }
             _ if date_part_argument(expression, child) => (child, constant()),
             _ => (child, expression_lineage(child, scope, context)),
         })

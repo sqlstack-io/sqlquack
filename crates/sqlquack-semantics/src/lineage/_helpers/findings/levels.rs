@@ -6,6 +6,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{JoinKind, Select, With};
 
+use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::in_scope;
 use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
@@ -123,6 +124,8 @@ fn select_findings(
             )
         }),
     };
+    let postgres: bool = Engine::of(context) == Engine::Postgres;
+    let unnamed: [String; 0] = [];
     for projection in &select.expressions {
         let own_name: String = output_key(unannotated(projection), context);
         let mut others: Vec<String> = aliases.to_vec();
@@ -134,7 +137,7 @@ fn select_findings(
         let (found, inner) = clause_findings(
             projection,
             &Level {
-                outputs: &others,
+                outputs: if postgres { &unnamed } else { &others },
                 ..level
             },
             context,
@@ -142,8 +145,14 @@ fn select_findings(
         own.extend(found);
         nested.extend(inner);
     }
+    let own_outputs: Vec<String> = aliased_outputs(select, context);
     for clause in clauses(select) {
-        let (found, inner) = clause_findings(clause, &level, context);
+        let outputs: &[String] = match postgres {
+            false => level.outputs,
+            true if output_name_place(select, clause) => &own_outputs,
+            true => &unnamed,
+        };
+        let (found, inner) = clause_findings(clause, &Level { outputs, ..level }, context);
         own.extend(found);
         nested.extend(inner);
     }
@@ -170,6 +179,26 @@ fn aliased_outputs(select: &Select, context: LineageContext<'_>) -> Vec<String> 
         .filter(|projection| matches!(unannotated(projection), Expression::Alias(_)))
         .map(|projection| output_key(projection, context))
         .collect()
+}
+
+/// Where PostgreSQL reads output names: GROUP BY items and ORDER BY keys that are a bare name.
+fn output_name_place(select: &Select, clause: &Expression) -> bool {
+    let item = |candidate: &Expression| std::ptr::eq(candidate, clause);
+    let mut bare: &Expression = unannotated(clause);
+    while let Expression::Paren(paren) = bare {
+        bare = unannotated(&paren.this);
+    }
+    select
+        .group_by
+        .iter()
+        .flat_map(|group| &group.expressions)
+        .any(item)
+        || (matches!(bare, Expression::Column(column) if column.table.is_none())
+            && select
+                .order_by
+                .iter()
+                .flat_map(|order| &order.expressions)
+                .any(|ordered| item(&ordered.this)))
 }
 
 /// Whether a FROM item is LATERAL, reading the items before it.
