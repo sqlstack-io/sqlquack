@@ -895,6 +895,8 @@ pub const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
 ];
 /// Fields writing an English month name, recorded only as written in upper case.
 pub(crate) const MONTH_NAME_FIELDS: &[&str] = &["MMMM", "MON"];
+/// The month abbreviation, which Snowflake reads differently before another field (MONMM writes the full name).
+pub(crate) const MONTH_ABBREVIATION: &str = "MON";
 /// The format element writing as many fraction digits as the timestamp's precision.
 pub(crate) const BARE_FRACTION: &str = "FF";
 /// What FF writes for each precision recorded: none for 0, then milli-, micro- and nanoseconds.

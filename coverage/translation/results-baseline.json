@@ -11103,6 +11103,7 @@
     "translation/functions/to-char.month-names.toml#t002_mmmm_every_month": "matching",
     "translation/functions/to-char.month-names.toml#t003_month_names_in_a_format": "refused",
     "translation/functions/to-char.month-names.toml#t004_null": "matching",
+    "translation/functions/to-char.month-names.toml#t007_names_beside_month_and_day": "refused",
     "translation/functions/to-char.to-char.toml#t001_number_format": "refused",
     "translation/functions/to-char.to-char.toml#t002_date_format": "matching",
     "translation/functions/to-char.to-char.toml#t003_binary_format": "refused",

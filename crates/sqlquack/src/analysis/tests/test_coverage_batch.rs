@@ -1592,6 +1592,21 @@ fn given_each_documented_format_element_when_writing_text_then_it_converts_as_re
             expected_outcome: Err("which no recording shows"),
         },
         FirstValueTestCase {
+            description: "MMMM directly before DD, as recorded",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MMMMDD') AS v",
+            expected_outcome: Ok("September05"),
+        },
+        FirstValueTestCase {
+            description: "MONMM, which Snowflake writes as the full name, not MON then MM",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MONMM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MON directly before DD, unrecorded",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MONDD') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
             description: "time fields of a DATE",
             sql: "SELECT TO_CHAR(DATE '2024-09-05', 'HH24 MI') AS v",
             expected_outcome: Err("which no recording shows"),
