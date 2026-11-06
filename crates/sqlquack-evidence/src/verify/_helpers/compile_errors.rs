@@ -13,7 +13,7 @@ pub(crate) fn undeclared_compile_error(
     let compile_class = COMPILE_ERROR_SQLSTATE_CLASSES
         .iter()
         .any(|class| sqlstate.starts_with(class));
-    (compile_class && !case.compile_error && case.setup_sql.is_empty()).then(|| {
+    (compile_class && !case.compile_error && case.setup_sql.is_empty() && case.setup.is_empty()).then(|| {
         format!(
             "the recording is a compile-class Snowflake error (SQLSTATE {sqlstate}), which the case \
              must declare with compile_error = true"

@@ -48,6 +48,18 @@ fn given_case_edit_when_hashing_then_only_result_changing_edits_change_the_hash(
             expected_same_hash: false,
         },
         HashTestCase {
+            description: "an empty setup keeps the hash",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\nsetup = []",
+            expected_same_hash: true,
+        },
+        HashTestCase {
+            description: "a setup statement changes the hash",
+            replace: "tags = [\"null\", \"empty\"]",
+            with: "tags = [\"null\", \"empty\"]\nsetup = [\"SET x = 1\"]",
+            expected_same_hash: false,
+        },
+        HashTestCase {
             description: "another session profile changes the hash",
             replace: "session_profile = \"utc-v1\"",
             with: "session_profile = \"utc-v2\"",
