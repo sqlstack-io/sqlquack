@@ -1771,6 +1771,10 @@ impl Parser {
             while self.check(TokenType::Dot) {
                 self.skip();
                 stage_path.push('.');
+                if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
+                    stage_path.push('%');
+                    self.skip();
+                }
                 if self.check(TokenType::QuotedIdentifier) {
                     let text = &self.peek_text();
                     stage_path.push('"');
@@ -1807,6 +1811,7 @@ impl Parser {
     /// Parses Snowflake PUT file://path @stage [options].
     pub(crate) fn parse_put(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Put)?;
+        self.check_snowflake_put()?;
 
         let (source, source_quoted) = if self.check(TokenType::String) {
             (self.advance_text()?, true)

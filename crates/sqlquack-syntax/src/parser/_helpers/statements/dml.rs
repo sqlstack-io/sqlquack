@@ -36,6 +36,7 @@ impl Parser {
 
         let mut tables: Vec<TableRef> = Vec::new();
         let mut early_output = None;
+        self.check_snowflake_delete_head()?;
         let _has_from = if self.check(TokenType::From) {
             self.skip();
             true
@@ -173,6 +174,14 @@ impl Parser {
         Ok(
             if force_index.is_none() && self.match_token(TokenType::As) {
                 (Some(self.expect_identifier_with_quoted()?), true)
+            } else if self.is_snowflake()
+                && self.check(TokenType::Using)
+                && self
+                    .tokens
+                    .get(self.current + 1)
+                    .is_none_or(|token| token.token_type == TokenType::Semicolon)
+            {
+                (Some(Identifier::new(self.advance_text()?)), false)
             } else if force_index.is_none()
                 && self.is_identifier_token()
                 && !self.check(TokenType::Using)
@@ -208,6 +217,15 @@ impl Parser {
                             trailing_comments: Vec::new(),
                             span: SourceSpan::default(),
                         }))
+                    } else if self.is_snowflake()
+                        && !matches!(
+                            self.tokens
+                                .get(self.current + 1)
+                                .map(|token| token.token_type),
+                            Some(TokenType::Select | TokenType::With | TokenType::LParen)
+                        )
+                    {
+                        return Err(self.parse_error("Expected a query in DELETE USING ( )"));
                     } else {
                         self.parse_primary()?
                     };

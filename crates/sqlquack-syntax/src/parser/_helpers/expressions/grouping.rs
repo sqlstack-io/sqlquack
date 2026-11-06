@@ -582,7 +582,9 @@ impl Parser {
 
     /// Parses a MERGE statement.
     pub(crate) fn parse_merge(&mut self) -> Result<Option<Expression>> {
-        self.match_token(TokenType::Into);
+        if !self.match_token(TokenType::Into) && self.is_snowflake() {
+            return Err(self.parse_error("Expected INTO after MERGE"));
+        }
 
         let mut target = Expression::Table(Box::new(self.parse_table_ref()?));
 
@@ -769,7 +771,9 @@ impl Parser {
 
         while self.match_token(TokenType::When) {
             let matched = !self.match_token(TokenType::Not);
-            self.match_text_seq(&["MATCHED"]);
+            if !self.match_text_seq(&["MATCHED"]) && self.is_snowflake() {
+                return Err(self.parse_error("Expected MATCHED in a MERGE WHEN clause"));
+            }
 
             let source = if self.match_text_seq(&["BY", "TARGET"]) {
                 Some(Box::new(Expression::Boolean(BooleanLiteral {
@@ -868,7 +872,12 @@ impl Parser {
                 this: "INSERT".to_string(),
             }))];
 
-            if self.match_token(TokenType::Star) {
+            let by_name = self.is_snowflake() && self.match_text_seq(&["ALL", "BY", "NAME"]);
+            if by_name {
+                elements.push(Expression::Var(Box::new(Var {
+                    this: "ALL BY NAME".to_string(),
+                })));
+            } else if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
                     ilike: None,
@@ -949,7 +958,7 @@ impl Parser {
                 {
                     return Err(self.parse_error("Expected a value list after VALUES"));
                 }
-            } else if self.merge_action_ends() {
+            } else if self.merge_action_ends() && !by_name {
                 return Err(self.parse_error("Expected VALUES in MERGE INSERT"));
             } else if self.match_text_seq(&["ROW"]) {
                 elements.push(Expression::Var(Box::new(Var {
@@ -981,7 +990,11 @@ impl Parser {
                 this: "UPDATE".to_string(),
             }))];
 
-            if self.match_token(TokenType::Star) {
+            if self.is_snowflake() && self.match_text_seq(&["ALL", "BY", "NAME"]) {
+                elements.push(Expression::Var(Box::new(Var {
+                    this: "ALL BY NAME".to_string(),
+                })));
+            } else if self.match_token(TokenType::Star) {
                 elements.push(Expression::Star(crate::expressions::names::models::Star {
                     table: None,
                     ilike: None,

@@ -1534,3 +1534,97 @@ fn given_snowflake_match_recognize_and_semantic_view_when_parsing_then_recorded_
         );
     }
 }
+
+#[test]
+fn given_snowflake_dml_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "UPDATE ALL BY NAME (recorded OK)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "INSERT ALL BY NAME without VALUES (recorded OK)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN NOT MATCHED THEN INSERT ALL BY NAME ;",
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "MERGE without INTO (recorded errno 1003)",
+            sql: "MERGE v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WHEN without MATCHED (recorded errno 1003)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN THEN UPDATE ALL BY NAME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE without FROM (recorded errno 1003)",
+            sql: "DELETE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE FROM a reserved word (recorded errno 1003)",
+            sql: "DELETE FROM SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE USING of a parenthesized value (recorded errno 1003)",
+            sql: "DELETE FROM v1 USING ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DELETE USING of a subquery",
+            sql: "DELETE FROM v1 USING ( SELECT 1 ) ;",
+            expected_kind: Some("delete"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing USING is the table's alias (recorded OK)",
+            sql: "DELETE FROM v1 USING ;",
+            expected_kind: Some("delete"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted stage name with a space, unquoted (recorded errno 1003)",
+            sql: "LIST @\"s1 Q\" ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a quoted stage name without a space",
+            sql: "LIST @\"SELECT\" ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage path with a space (recorded errno 1003)",
+            sql: "LIST @s1/p 1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a GET target with a space (recorded errno 1003)",
+            sql: "GET @s1 file:///tmp/d 1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PUT without a source (recorded errno 1003)",
+            sql: "PUT @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a PUT source with a space (recorded errno 1003)",
+            sql: "PUT file:///tmp/d 1/f1.csv @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PUT to a qualified table stage (recorded OK)",
+            sql: "PUT file:///tmp/d1/f1.csv @v1.%v1/p1 PARALLEL = 1 AUTO_COMPRESS = TRUE SOURCE_COMPRESSION = AUTO_DETECT OVERWRITE = TRUE ;",
+            expected_kind: Some("put"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
