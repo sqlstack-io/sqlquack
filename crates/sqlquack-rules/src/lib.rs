@@ -5,3 +5,4 @@
 pub mod catalogue;
 pub mod conversion;
 pub mod session;
+pub mod time_zones;
