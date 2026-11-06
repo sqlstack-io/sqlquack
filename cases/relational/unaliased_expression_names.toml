@@ -56,3 +56,22 @@ rows = [["4.00", "0.50"]]
 query = "SELECT SUM(total - discount), max(total) - min(total) FROM input WHERE total > 100"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_literal_spellings"
+description = "How Snowflake names unaliased literals written in different spellings: a trailing dot, a leading dot, trailing zeros, exponents in both cases and with a sign, leading zeros, unary minus and plus, booleans, NULL, text and typed date and timestamp literals."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT 1., .5, 1.50, 1e3, 1E-2, 1.0E+3, 001, -1, - 1, +1, -1.5, true, NULL, null, 'text', DATE '2024-01-01', date '2024-01-01', TIMESTAMP '2024-01-01 10:00:00' FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_hex_literal"
+compile_error = true
+description = "Whether Snowflake accepts 0x1F as an unaliased numeric literal, and what it names the column."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT 0x1F FROM input"
+order = "ordered"
+tags = ["boundary"]
