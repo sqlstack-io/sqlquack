@@ -123,8 +123,7 @@ impl Parser<'_> {
         Ok(clauses)
     }
 
-    /// `set_clause_list` as pairs, and also, when `(cols) = source` takes anything but a row of
-    /// as many items, as the whole list in order, each `(targets, source)`.
+    /// `set_clause_list` as pairs, and as `(targets, source)` items when a `(cols) = source` is no row.
     fn set_clause_list(&mut self) -> Parsing<SetClauses> {
         let mut clauses: Vec<(Identifier, Expression)> = Vec::new();
         let mut assignments: Vec<Expression> = Vec::new();
@@ -207,7 +206,6 @@ impl Parser<'_> {
             target.columns = self.parenthesized(|parser| parser.set_target())?;
         }
         target.overriding = self.overriding()?;
-        // insert_rest takes OVERRIDING only before a SelectStmt, never before DEFAULT VALUES.
         if target.overriding.is_none() && self.kw("default") && self.kw_at(1, "values") {
             self.at += 2;
             target.default_values = true;

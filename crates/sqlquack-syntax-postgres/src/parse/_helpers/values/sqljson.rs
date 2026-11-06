@@ -1,17 +1,13 @@
-//! SQL/JSON (gram.y): constructors, query functions, aggregates, `JSON_TABLE` and `MERGE_ACTION()`,
-//! as `KeywordCall`s.
-//!
-//! Each clause is a tuple led by its keywords, holding what gram.y's raw tree keeps: a default
-//! gram.y fills in reads as that default written out, and noise words leave no trace.
+//! SQL/JSON calls, `JSON_TABLE` and `MERGE_ACTION()` as `KeywordCall`s holding gram.y's raw tree.
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::commands::routines::var;
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id, is_col_label, identifier};
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
 use crate::parse::_helpers::tree::nodes::{keyword_call, tuple};
 use crate::parse::_helpers::values::expressions::Flavor;
-use crate::parse::constants::{JSON_ENCODINGS, QUERY_STARTS};
+use crate::parse::constants::{JSON_ENCODINGS, JSON_QUERY_FUNCTION, QUERY_STARTS};
 use crate::parse::errors::ParseError;
 use crate::scan::models::TokenKind;
 
@@ -57,7 +53,7 @@ impl Parser<'_> {
                     "json_exists" => options.extend(self.json_on_error()?),
                     _ => {
                         options.extend(self.json_returning()?);
-                        if name == "json_query" {
+                        if name == JSON_QUERY_FUNCTION {
                             options.extend(self.json_wrapper()?);
                             options.extend(self.json_quotes()?);
                         }
@@ -104,7 +100,10 @@ impl Parser<'_> {
         let constant: bool = self.string_constant_between(path_start);
         let mut options: Vec<Expression> = Vec::new();
         if self.eat_kw("as") {
-            options.push(clause("AS", vec![Expression::Identifier(self.name(is_col_id)?)]));
+            options.push(clause(
+                "AS",
+                vec![Expression::Identifier(self.name(is_col_id)?)],
+            ));
         }
         options.extend(self.json_passing()?);
         self.expect_kw("columns")?;
@@ -143,8 +142,7 @@ impl Parser<'_> {
         Err(furthest.map_or_else(|| self.error(), |(error, _)| error))
     }
 
-    /// `JSON_OBJECT`'s arguments: none, `RETURNING` alone, key-value pairs, or the old plain list,
-    /// which is the `json_object` call gram.y makes of it.
+    /// `JSON_OBJECT`'s arguments: none, `RETURNING` alone, pairs, or the old list as `json_object`.
     fn json_object_arguments(&mut self) -> Parsing<Expression> {
         if self.eat_char(')') {
             return Ok(keyword_call("JSON_OBJECT", Vec::new(), Vec::new()));
@@ -178,8 +176,7 @@ impl Parser<'_> {
         ])
     }
 
-    /// `JSON_ARRAY`'s arguments: none, `RETURNING` alone, a query, or values; only a list of
-    /// values may say how it treats nulls, and every other form absents them.
+    /// `JSON_ARRAY`'s arguments: none, `RETURNING` alone, a query, or values, which alone set nulls.
     fn json_array_arguments(&mut self) -> Parsing<Expression> {
         let absent: Expression = var(ABSENT_ON_NULL);
         if self.eat_char(')') {
@@ -197,7 +194,11 @@ impl Parser<'_> {
         {
             true => {
                 let query: Expression = self.query()?;
-                ("JSON_ARRAY QUERY", vec![self.json_formatted(query)?], vec![absent])
+                (
+                    "JSON_ARRAY QUERY",
+                    vec![self.json_formatted(query)?],
+                    vec![absent],
+                )
             }
             false => {
                 let values: Vec<Expression> = self.comma_list(|parser| parser.json_value_expr())?;
@@ -230,8 +231,7 @@ impl Parser<'_> {
         self.json_formatted(value)
     }
 
-    /// `this` with any `json_format_clause` after it, as a `FORMAT JSON` call holding the encoding;
-    /// an encoding other than UTF8, UTF16 or UTF32 is refused (22023).
+    /// `this` with any `json_format_clause`, as a `FORMAT JSON` call; other encodings are 22023.
     fn json_formatted(&mut self, this: Expression) -> Parsing<Expression> {
         if !(self.kw("format") && self.kw_at(1, "json")) {
             return Ok(this);
@@ -285,8 +285,7 @@ impl Parser<'_> {
         }
     }
 
-    /// `NULL ON NULL` or `ABSENT ON NULL`, as `ABSENT ON NULL` when nulls are absented;
-    /// `absent_by_default` is what gram.y takes when neither is written.
+    /// The null clause as written, or gram.y's default (`absent_by_default`) when none is.
     fn json_null_option(&mut self, absent_by_default: bool) -> Vec<Expression> {
         let mut absent: bool = absent_by_default;
         if (self.kw("null") || self.kw("absent")) && self.kw_at(1, "on") && self.kw_at(2, "null") {
@@ -304,7 +303,10 @@ impl Parser<'_> {
         let context: Expression = self.json_value_expr()?;
         self.expect_char(',')?;
         let path: Expression = self.a_expr()?;
-        Ok((vec![context, path], self.json_passing()?.into_iter().collect()))
+        Ok((
+            vec![context, path],
+            self.json_passing()?.into_iter().collect(),
+        ))
     }
 
     /// `PASSING json_value_expr AS ColLabel, ...`, as `(PASSING, (value, name), ...)`.
@@ -415,8 +417,7 @@ impl Parser<'_> {
         self.parenthesized(|parser| parser.json_table_column())
     }
 
-    /// `json_table_column_definition`: ordinality, regular, formatted, `EXISTS` and `NESTED`
-    /// columns, each a `KeywordCall` of that kind holding its name and type, then its clauses.
+    /// `json_table_column_definition`: each column kind as a `KeywordCall` of its name, type and clauses.
     fn json_table_column(&mut self) -> Parsing<Expression> {
         if self.kw("nested") && (self.sconst_at(1) || self.kw_at(1, "path")) {
             self.at += 1;
@@ -424,7 +425,10 @@ impl Parser<'_> {
             let path: Expression = self.sconst()?;
             let mut options: Vec<Expression> = Vec::new();
             if self.eat_kw("as") {
-                options.push(clause("AS", vec![Expression::Identifier(self.name(is_col_id)?)]));
+                options.push(clause(
+                    "AS",
+                    vec![Expression::Identifier(self.name(is_col_id)?)],
+                ));
             }
             self.expect_kw("columns")?;
             options.push(clause("COLUMNS", self.json_table_columns()?));

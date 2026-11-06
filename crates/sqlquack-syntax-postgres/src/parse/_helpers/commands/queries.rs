@@ -215,7 +215,6 @@ impl Parser<'_> {
         let explicit: bool = self.eat_kw("as");
         let alias: Identifier = match explicit {
             true => self.name(is_col_label)?,
-            // FORMAT before JSON is gram.y's FORMAT_LA, which is no label.
             false if self.is(is_bare_label) && !(self.kw("format") && self.kw_at(1, "json")) => {
                 self.name(is_bare_label)?
             }

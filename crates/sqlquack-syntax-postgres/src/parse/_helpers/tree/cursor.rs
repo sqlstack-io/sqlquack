@@ -257,10 +257,11 @@ impl<'sql> Parser<'sql> {
         found
     }
 
-    /// Eat an unreserved noise word such as `SAVEPOINT` only when more of the statement follows;
-    /// as the statement's last word it is the name itself, as gram.y reduces it.
+    /// Eat a noise word such as `SAVEPOINT` only when more follows; last, it is the name (gram.y).
     pub(crate) fn eat_noise_kw(&mut self, name: &str) -> bool {
-        let more: bool = self.peek_at(1).is_some_and(|token| token.kind != TokenKind::Char(';'));
+        let more: bool = self
+            .peek_at(1)
+            .is_some_and(|token| token.kind != TokenKind::Char(';'));
         more && self.eat_kw(name)
     }
 

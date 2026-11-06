@@ -15,8 +15,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
 use crate::parse::_helpers::tree::nodes::{
-    between, binary, cast, function, in_list, keyword_call, literal, name_text, null_test,
-    subquery,
+    between, binary, cast, function, in_list, keyword_call, literal, name_text, null_test, subquery,
 };
 use crate::parse::constants::{
     ADD, AND, AT, BITWISE_NOT, CATALOGUE_SCHEMA, COLLATE, COMPARE, EXPONENT, ILIKE, IS, LIKE,
@@ -37,7 +36,10 @@ fn negated(not: bool, this: Expression) -> Expression {
 fn normalized(this: Expression, form: Option<&str>) -> Expression {
     let mut args: Vec<Expression> = vec![this];
     args.extend(form.map(|form| literal(Literal::String(form.to_uppercase()))));
-    Expression::Function(Box::new(function(vec![Identifier::new("is_normalized")], args)))
+    Expression::Function(Box::new(function(
+        vec![Identifier::new("is_normalized")],
+        args,
+    )))
 }
 
 /// Which of gram.y's two expression grammars: `a_expr`, or the restricted `b_expr`.
@@ -567,8 +569,7 @@ impl Parser<'_> {
         Ok(None)
     }
 
-    /// The test after `IS`: `[NOT] NULL|TRUE|FALSE|UNKNOWN|DOCUMENT|JSON ...|[form] NORMALIZED`
-    /// or `[NOT] DISTINCT FROM`.
+    /// The test after `IS`: `[NOT]` NULL, a truth value, DOCUMENT, JSON, NORMALIZED or DISTINCT FROM.
     fn after_is(&mut self, left: Expression, flavor: Flavor) -> Parsing<(Expression, bool)> {
         let not: bool = self.eat_kw("not");
         let word: &str = self.keyword_at(0).unwrap_or_default();
@@ -603,7 +604,10 @@ impl Parser<'_> {
                 };
                 Ok((binary(kind, left, right), true))
             }
-            "document" => Ok((negated(not, keyword_call("IS DOCUMENT", vec![left], Vec::new())), false)),
+            "document" => Ok((
+                negated(not, keyword_call("IS DOCUMENT", vec![left], Vec::new())),
+                false,
+            )),
             "normalized" => Ok((negated(not, normalized(left, None)), false)),
             form @ ("nfc" | "nfd" | "nfkc" | "nfkd") => {
                 self.expect_kw("normalized")?;
