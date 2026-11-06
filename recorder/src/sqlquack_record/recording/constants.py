@@ -27,6 +27,43 @@ RESULT_FORMAT_PARAMETER: str = "PYTHON_CONNECTOR_QUERY_RESULT_FORMAT"
 ARROW_RESULT_FORMAT: str = "ARROW"
 RECORDABLE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "21", "22", "42"})
 RECORDABLE_FUNCTION_ERRORS: frozenset[tuple[int, str]] = frozenset({(100357, "P0000")})
+EXPECTED_FUNCTION_ERRORS: dict[tuple[int, str], str] = {
+    (100254, "P0000"): (
+        "unparsable or non-4326 WKB: st-geographyfromwkb t003/t004, st-geometryfromwkb t004"
+    ),
+    (100255, "P0000"): (
+        "unparsable or non-4326 WKT: st-geographyfromwkt t003/t004, st-geometryfromwkt t004"
+    ),
+    (100256, "P0000"): "unrecognised geo input: to-geography t005/t006, to-geometry t005",
+    (100281, "P0000"): "ST_X of a non-point: st-x t002",
+    (100282, "P0000"): "ST_Y of a non-point: st-y t002",
+    (100319, "P0000"): (
+        "geohash precision 0: st-geohash t003, st-geogfromgeohash t004, st-geomfromgeohash t003"
+    ),
+    (100344, "P0000"): "ST_AZIMUTH of a non-point: st-azimuth t003",
+    (100388, "P0000"): (
+        "SRID mismatch: st-contains, st-coveredby, st-covers, st-disjoint, "
+        "st-distance, st-intersects, st-makeline t003"
+    ),
+    (100401, "P0000"): "a polygon as a line: st-endpoint t002, st-startpoint t002, st-pointn t003",
+    (100402, "P0000"): "point index out of bounds: st-pointn t002",
+    (100404, "P0000"): "unsupported SRID: st-transform t003",
+    (100410, "P0000"): (
+        "H3 resolution 16: h3-coverage t004, h3-latlng-to-cell t003, "
+        "h3-point-to-cell t002, h3-polygon-to-cells t002, and their string forms"
+    ),
+    (100411, "P0000"): "NaN latitude: h3-latlng-to-cell t004 and its string form",
+    (100412, "P0000"): "H3 unspecified error for a negative k: h3-grid-disk t003",
+    (100415, "P0000"): (
+        "H3 target resolution out of range: h3-cell-to-children t002 and its string "
+        "form, h3-cell-to-parent t003"
+    ),
+    (100418, "P0000"): "too many H3 cells: h3-coverage t003 and its string form",
+    (100422, "P0000"): (
+        "mixed H3 resolutions: h3-grid-distance t003, h3-uncompact-cells t002/t003 "
+        "and its string form"
+    ),
+}
 DATA_EXCEPTION_SQLSTATE_CLASSES: frozenset[str] = frozenset({"22"})
 SESSION_DEPENDENT_SQLSTATES: frozenset[str] = frozenset({"42501"})
 SESSION_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"08", "28", "53", "57", "XX"})
@@ -55,8 +92,9 @@ VALUES_KEY: str = "values"
 SETUP_KEY: str = "setup_sql"
 PINNED_KEY: str = "pinned_parameters"
 COMPILE_ERROR_KEY: str = "compile_error"
+EXPECTED_ERROR_KEY: str = "expected_error"
 OPTIONAL_PENDING_KEYS: frozenset[str] = frozenset(
-    {VALUES_KEY, SETUP_KEY, PINNED_KEY, COMPILE_ERROR_KEY}
+    {VALUES_KEY, SETUP_KEY, PINNED_KEY, COMPILE_ERROR_KEY, EXPECTED_ERROR_KEY}
 )
 EXPLAIN_PREFIX: str = "EXPLAIN USING TEXT "
 COMPILE_FAILURE_SQLSTATE_CLASSES: frozenset[str] = frozenset({"0A", "42"})

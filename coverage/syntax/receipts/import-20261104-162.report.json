@@ -1,0 +1,20 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [],
+ "receipts": 409,
+ "receipts_file_sha256": "7c37d1dc99b243cb7813810930b3d4f4566f1229845e6cc0790b8c0345b6a1ad",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "1f2da5542907fd268d1cba1b0662a778e9c78b743441b75765b83edcdd788fd2",
+   "receipts": 409,
+   "refused_rows": 0,
+   "run_id": "c9-dd-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

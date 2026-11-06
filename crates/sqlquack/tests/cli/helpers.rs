@@ -681,10 +681,19 @@ rows = [["1"]]
 query = "SELECT quantity AS order_quantity FROM input"
 order = "ordered"
 tags = ["null", "duplicates", "empty-input"]
+
+[[case]]
+id = "zero_divisor"
+description = "A division by zero, which Snowflake raises as an error."
+columns = [{ name = "quantity", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT quantity / 0 AS ratio FROM input"
+order = "ordered"
+tags = ["error"]
 "#;
 
-/// Each pending file's case reference and `compile_error`, for one case declaring it.
-pub(crate) fn pending_compile_errors() -> Vec<(String, Option<bool>)> {
+/// Each pending file's case reference, `compile_error` and `expected_error`.
+pub(crate) fn pending_flags() -> Vec<(String, Option<bool>, Option<bool>)> {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::copy(
         repository_root().join("sqlquack.toml"),
@@ -701,7 +710,7 @@ pub(crate) fn pending_compile_errors() -> Vec<(String, Option<bool>)> {
         .expect("sqlquack runs")
         .status;
     assert!(status.success(), "pending succeeds");
-    let mut flags: Vec<(String, Option<bool>)> =
+    let mut flags: Vec<(String, Option<bool>, Option<bool>)> =
         std::fs::read_dir(directory.path().join("evidence/pending"))
             .expect("pending files")
             .flatten()
@@ -715,6 +724,7 @@ pub(crate) fn pending_compile_errors() -> Vec<(String, Option<bool>)> {
                         .unwrap_or_default()
                         .to_owned(),
                     pending["compile_error"].as_bool(),
+                    pending["expected_error"].as_bool(),
                 )
             })
             .collect();
