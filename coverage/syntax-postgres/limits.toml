@@ -2500,6 +2500,33 @@ anchor = "doc.sql-alterforeigndatawrapper / Synopsis"
 sql = "ALTER FOREIGN DATA WRAPPER w1 OPTIONS ( ADD o1 'v' )"
 context = "raw"
 
+[[limit]]
+form = "pg.ddl.create-function"
+kind = "option_present"
+target = "{ ... } ..."
+note = "several options together: a language, a volatility, a null-input behaviour, a parallel mode and a body"
+anchor = "doc.sql-createfunction / Synopsis"
+sql = "CREATE FUNCTION t1 ( ) RETURNS INT LANGUAGE SQL IMMUTABLE STRICT PARALLEL SAFE AS 'SELECT 1'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-function.sql-body-atomic"
+kind = "option_present"
+target = "<statement> ; [ ... ]"
+note = "several statements in one BEGIN ATOMIC block"
+anchor = "doc.sql-createfunction / Parameters"
+sql = "CREATE FUNCTION t1 ( ) RETURNS INT LANGUAGE SQL BEGIN ATOMIC SELECT 1 ; SELECT 2 ; END"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-procedure.sql-body-atomic"
+kind = "option_present"
+target = "<statement> ; [ ... ]"
+note = "several statements in one BEGIN ATOMIC block"
+anchor = "doc.sql-createprocedure / Parameters"
+sql = "CREATE PROCEDURE t1 ( ) BEGIN ATOMIC SELECT 1 ; SELECT 2 ; END"
+context = "raw"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
