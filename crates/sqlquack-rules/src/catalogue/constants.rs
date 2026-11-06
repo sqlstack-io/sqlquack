@@ -904,7 +904,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: POWER_RULE,
         constructs: &["fn:POWER"],
-        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. POWER of the constant 2 to a whole NUMBER exponent is the exact power of two a double holds, from 2^-1074 to 2^1023, as recorded; NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
+        conditions: "POWER of the constant 10 to a whole NUMBER exponent, as the FLOAT nearest the power, ties to even, as recorded from 10^-3 to 10^38 (10^23 is the tie DuckDB's pow rounds the other way); far out of range inf or 0. NULL is NULL. POWER of the constant 2 to a whole NUMBER exponent is the exact power of two a double holds, from 2^-1074 to 2^1023, inf above that range and 0 below it, as recorded (2^1024 and 2^-1075); NULL is NULL. Other bases refuse: DuckDB's pow is not correctly rounded, and no recording shows Snowflake's rounding.",
         failures: &[],
     },
     RuleSpec {
