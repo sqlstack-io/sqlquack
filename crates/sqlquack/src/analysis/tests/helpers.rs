@@ -734,7 +734,10 @@ pub(crate) fn everyday_changes(directory: &str, description: &str) -> Vec<String
                 let place = format!("{} under {policy}", query.sql);
                 let changed = (outcome != *expected)
                     .then(|| format!("{place}: expected {expected}, got {outcome}"));
-                let improved = outcome == TRANSLATED || expected == UNRECORDED;
+                // Only a refusal that now translates improves; a parse or check diagnostic that
+                // disappears means SQL Snowflake may reject now converts, so it fails.
+                let improved = expected == UNRECORDED
+                    || (outcome == TRANSLATED && expected.starts_with(REFUSED));
                 improvements.extend(changed.clone().filter(|_| improved));
                 regressions.extend(changed.filter(|_| !improved));
                 regressions.extend((outcome == *expected && result != *expected_result).then(
@@ -1032,6 +1035,9 @@ const EVERYDAY_QUERIES: &str = "queries.toml";
 
 /// DuckDB SQL creating and filling a corpus's relations, where it has one.
 const EVERYDAY_FIXTURE: &str = "fixture.sql";
+
+/// How a recorded refusal's outcome begins.
+const REFUSED: &str = "refused ";
 
 /// The outcome the basics generator writes, for `make corpus-rerecord` to fill in.
 const UNRECORDED: &str = "unrecorded";

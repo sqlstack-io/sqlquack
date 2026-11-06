@@ -2,8 +2,9 @@
 # `expect` is its outcome from SQLQuack under the built-in default policy, which the playground
 # offers as "strict": "translated", "parse <code>", "check <code>" or "refused <code> <construct>".
 # `expect_repository` is the outcome under the repository's sqlquack.toml with a UTC session, the
-# playground's default. The test fails when an outcome changes; update the expectation when a
-# change is intended. `snowflake` is Snowflake's own verdict where one was recorded, "compiles" or
+# playground's default. The test fails when an outcome changes, except a refusal that now
+# translates, which it only reports; `make corpus-rerecord` records every change, intended ones
+# in the same commit. `snowflake` is Snowflake's own verdict where one was recorded, "compiles" or
 # "rejects <errno>", from snowflake-receipts.json; it decides whether a query counts as valid SQL in
 # the translation rates, over its category.
 

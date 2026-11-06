@@ -4,6 +4,7 @@
 # corpora/everyday/queries.toml: `expect` under the built-in default policy, `expect_repository`
 # under the repository's sqlquack.toml with a UTC session, `snowflake` for Snowflake's recorded
 # verdict from snowflake-receipts.json, and `uncertain` for a query whose validity is not recorded.
+# The test fails and reports changes as for that corpus; `make corpus-rerecord` records them.
 
 [[query]]
 category = "dbt_staging"
