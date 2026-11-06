@@ -1,0 +1,118 @@
+category = "translation"
+construct = "sf.functions.like.like"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_wildcards"
+description = "The _ and % wildcards, anchored at both ends. Catches: an unanchored match (TRUE for abc against b), _ matching zero characters, or a regex reading of the pattern"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a_c'"],
+  ["'abc'", "'b'"],
+  ["'ac'", "'a_c'"],
+  ["'xabcx'", "'%b%'"],
+  ["'a.c'", "'a.c'"],
+  ["'abc'", "'a.c'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_case"
+description = "Letters in another case, including non-ASCII. Catches: case-insensitive matching (TRUE for ABC against abc, or \u00c9t\u00e9 against \u00e9t\u00e9)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'ABC'", "'abc'"],
+  ["'\u00c9t\u00e9'", "'\u00e9t\u00e9'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_newline"
+description = "A newline matched by _ and %, which the page documents. Catches: wildcards stopping at a newline"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'a' || CHR(10) || 'b'", "'a_b'"],
+  ["'a' || CHR(10) || 'b'", "'a%'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_no_default_escape"
+description = "A backslash in the pattern with no ESCAPE clause. Catches: backslash used as a default escape (a\\b would then match only ab)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'a\\\\b'", "'a\\\\b'"],
+  ["'ab'", "'a\\\\b'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_subject"
+description = "NULL subject. Catches: NULL read as an empty string (TRUE against %)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'%'"],
+  ["''", "'%'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_pattern"
+description = "NULL pattern, and NULL against NULL. Catches: NULL matching NULL (TRUE) or NULL read as an empty pattern"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["''", "NULL"],
+  ["NULL", "NULL"],
+  ["'a'", "'a'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_empty"
+description = "Empty subject and pattern. Catches: the empty pattern matching every string"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["''", "''"],
+  ["'a'", "''"],
+  ["''", "'%'"],
+]
+query = "SELECT LIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t008_escape"
+description = "An escape character before % and _. Catches: the escape ignored (5! % read as a wildcard) or the escape kept as a literal"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'5%'", "'5!%'"],
+  ["'50'", "'5!%'"],
+  ["'a_b'", "'a!_b'"],
+  ["'axb'", "'a!_b'"],
+]
+query = "SELECT LIKE(a, p, '!') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_null_escape"
+description = "NULL escape. Catches: NULL read as no escape (a value instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'"],
+]
+query = "SELECT LIKE(a, p, NULL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

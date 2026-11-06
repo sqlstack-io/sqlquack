@@ -1,0 +1,132 @@
+category = "translation"
+construct = "sf.functions.timestampadd"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "Days, months and years added to dates, including negatives. Catches: value and expression swapped, or months added as 30 days"
+columns = [{ name = "n", type = "NUMBER(38,0)" }, { name = "d", type = "DATE" }]
+rows = [
+  ["45", "'2024-01-20'"],
+  ["-3", "'2024-05-31'"],
+]
+query = "SELECT TIMESTAMPADD(day, n, d) AS dd, TIMESTAMPADD(month, n, d) AS mm, TIMESTAMPADD(year, n, d) AS yy FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_date_hour"
+description = "Hours added to a DATE, which the page says gives a TIMESTAMP. Catches: a DATE result (the hours dropped) or an error"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-28'"],
+]
+query = "SELECT TIMESTAMPADD(hour, 30, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp_ntz"
+description = "The part aliases ms, mi and mm on a timestamp. Catches: mm read as minutes (Snowflake: months), mi as months, or ms as microseconds"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-12-31 23:59:59.999'"],
+]
+query = "SELECT TIMESTAMPADD(ms, 2, t) AS ms, TIMESTAMPADD(mi, 1, t) AS mi, TIMESTAMPADD(mm, 1, t) AS mm FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_time"
+description = "Hours added to a TIME past midnight. Catches: an error or a timestamp instead of wrapping to 01:30"
+columns = [{ name = "t", type = "TIME" }]
+rows = [
+  ["'23:30:00'"],
+]
+query = "SELECT TIMESTAMPADD(hour, 2, t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_timestamp_tz"
+description = "A day added to a TIMESTAMP_TZ. Catches: the offset dropped or converted to UTC (the wall column shows the offset, which the instant comparison ignores)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT TIMESTAMPADD(day, 1, t) AS r, CAST(TIMESTAMPADD(day, 1, t) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_value"
+description = "NULL value. Catches: NULL read as 0 (the date unchanged)"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TIMESTAMPADD(day, n, '2024-01-01'::DATE) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_date_or_time_expr"
+description = "NULL date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT TIMESTAMPADD(day, 1, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_month_end"
+description = "Month and year steps from month ends and 29 February. Catches: overflow into the next month (2024-03-02) instead of clamping to 2024-02-29, or 2025-03-01 from 2024-02-29"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-31'"],
+  ["'2024-02-29'"],
+  ["'2023-01-31'"],
+]
+query = "SELECT TIMESTAMPADD(month, 1, d) AS m, TIMESTAMPADD(year, 1, d) AS y FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t009_fractional_value"
+description = "A fractional value: records how Snowflake rounds it. Catches: truncation (1 day) where Snowflake rounds 1.7 to 2, or the reverse"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.70"],
+  ["-1.50"],
+]
+query = "SELECT TIMESTAMPADD(day, n, '2024-01-01'::DATE) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t010_dst"
+description = "An hour added at 01:30 New York time on both DST change days, through the two-argument CONVERT_TIMEZONE of a UTC timestamp. Catches: wall-clock arithmetic in the zone (07:30Z instead of the elapsed 06:30Z on the autumn row) (the wall column shows the offset, which the instant comparison ignores)"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-03-10 06:30:00'"],
+  ["'2024-11-03 05:30:00'"],
+]
+query = "SELECT TIMESTAMPADD(hour, 1, CONVERT_TIMEZONE('America/New_York', t)) AS r, CAST(TIMESTAMPADD(hour, 1, CONVERT_TIMEZONE('America/New_York', t)) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t011_time_day"
+compile_error = true
+description = "Days added to a TIME, which the page says is an error. Catches: a wrapped TIME instead of an error"
+columns = [{ name = "t", type = "TIME" }]
+rows = [
+  ["'10:00:00'"],
+]
+query = "SELECT TIMESTAMPADD(day, 1, t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.space"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "SPACE with its length shown beside it. Catches: the count off by one or another character"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["3"],
+  ["1"],
+]
+query = "SELECT SPACE(n) AS r, LENGTH(SPACE(n)) AS l, '[' || SPACE(n) || ']' AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fraction"
+description = "A fractional count: records Snowflake's rounding. Catches: truncation (2 blanks) where Snowflake rounds 2.7 to 3, or the reverse"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["2.70"],
+  ["2.20"],
+]
+query = "SELECT LENGTH(SPACE(n)) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_n"
+description = "NULL count. Catches: NULL read as 0"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["0"],
+]
+query = "SELECT SPACE(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_negative"
+description = "A negative count: records what Snowflake returns. Catches: an error where Snowflake returns an empty string, or the reverse"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["-2"],
+]
+query = "SELECT SPACE(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

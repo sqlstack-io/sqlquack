@@ -1,0 +1,71 @@
+category = "translation"
+construct = "sf.functions.concat-ws"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "A multi-character separator between three strings. Catches: the separator after the last argument, the separator taken as the first value, or arguments reordered"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'-+'", "'a'", "'bc'", "'\u00e9'"],
+]
+query = "SELECT CONCAT_WS(d, a, b, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_single"
+description = "One argument after the separator. Catches: a separator appended"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["','", "'only'"],
+]
+query = "SELECT CONCAT_WS(d, a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_binary"
+description = "Binary separator and values. Catches: hex text concatenated as VARCHAR (the length column tells 3 bytes from 6 hex characters even when both render as hex)"
+columns = [{ name = "d", type = "BINARY" }, { name = "a", type = "BINARY" }, { name = "b", type = "BINARY" }]
+rows = [
+  ["'FF'", "'00'", "'01'"],
+]
+query = "SELECT CONCAT_WS(d, a, b) AS r, OCTET_LENGTH(CONCAT_WS(d, a, b)) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_separator"
+description = "NULL separator. Catches: NULL read as an empty separator (ab instead of NULL)"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'", "'b'"],
+  ["'/'", "'a'", "'b'"],
+]
+query = "SELECT CONCAT_WS(d, a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_expression"
+description = "NULL value between set ones. Catches: NULL skipped (Postgres CONCAT_WS gives a,c) instead of NULL"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["','", "'a'", "NULL", "'c'"],
+]
+query = "SELECT CONCAT_WS(d, a, b, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty"
+description = "Empty values and an empty separator. Catches: empty values dropped (a,c instead of a,,c)"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["','", "'a'", "''", "'c'"],
+  ["''", "'a'", "'b'", "'c'"],
+]
+query = "SELECT CONCAT_WS(d, a, b, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.upper"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "UPPER of the page's mixed-script example. Catches: ASCII-only upper-casing, or \u00df kept instead of SS"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'1\u010d2\u04293\u00df4\u0118!-?abc@'"],
+  ["'\u00c4\u00e4\u00d6\u00f6\u00df\u00dc\u00fc'"],
+]
+query = "SELECT UPPER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_collation"
+description = "UPPER under the Turkish collation, as the page shows. Catches: the collation ignored (I instead of \u0130)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'i'"],
+]
+query = "SELECT UPPER(a COLLATE 'tr') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT UPPER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "The empty string. Catches: NULL for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT UPPER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

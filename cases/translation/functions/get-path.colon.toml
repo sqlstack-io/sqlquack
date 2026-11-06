@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.get-path.colon"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_paths"
+description = "Dotted, indexed and bracketed paths on the same value (the bracketed key single-quoted; the screen refused a double-quoted one as an identifier), and a path that matches nothing. Catches: a 1-based index, or an error for a path that matches nothing"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":{\"b\":[10,20]},\"x y\":3}'"],
+  ["'{\"a\":5}'"],
+]
+query = "SELECT v:a.b[1] AS p1, v:a['b'][0] AS p2, v:\"x y\" AS p3, v:a.b.c AS p4 FROM (SELECT ordinal, PARSE_JSON(a) AS v FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_case"
+description = "An unquoted and a double-quoted field name on an object whose key is mixed case. Catches: the unquoted name upper-cased like a SQL identifier (NULL for v:Key), or matched case-insensitively (a value for v:key)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"Key\":1}'"],
+]
+query = "SELECT v:Key AS unquoted, v:\"Key\" AS quoted, v:key AS lower FROM (SELECT PARSE_JSON(a) AS v FROM input)"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_column_identifier"
+description = "A NULL value; the page says the path is GET_PATH, which gives NULL when nothing matches. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT v:a AS r FROM (SELECT PARSE_JSON(a) AS v FROM input)"
+order = "ordered"
+tags = ["null"]

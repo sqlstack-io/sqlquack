@@ -1,0 +1,60 @@
+category = "translation"
+construct = "sf.functions.period-construct"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "A one-day period. Catches: the end made inclusive"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }]
+rows = [
+  ["'2024-02-29'", "'2024-03-01'"],
+]
+query = "SELECT ordinal, PERIOD_BEGIN(PERIOD_CONSTRUCT(b1, e1)) AS b, PERIOD_END(PERIOD_CONSTRUCT(b1, e1)) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp"
+description = "Timestamps with fractional seconds. Catches: the fraction dropped"
+columns = [{ name = "b", type = "TIMESTAMP_NTZ" }, { name = "e", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-29 13:14:15.123'", "'2024-02-29 13:14:15.124'"],
+]
+query = "SELECT TO_VARCHAR(PERIOD_BEGIN(PERIOD_CONSTRUCT(b, e)), 'YYYY-MM-DD HH24:MI:SS.FF9') AS b, TO_VARCHAR(PERIOD_END(PERIOD_CONSTRUCT(b, e)), 'YYYY-MM-DD HH24:MI:SS.FF9') AS e FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_empty"
+description = "Equal begin and end, which the page says is an error. Catches: an empty period returned"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01'"],
+]
+query = "SELECT ordinal, PERIOD_BEGIN(PERIOD_CONSTRUCT(b1, e1)) AS b, PERIOD_END(PERIOD_CONSTRUCT(b1, e1)) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_varchar"
+compile_error = true
+description = "VARCHAR bounds, which the page says are not converted and raise an error. Catches: the strings converted to dates"
+columns = [{ name = "b", type = "VARCHAR" }, { name = "e", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-01'", "'2024-02-01'"],
+]
+query = "SELECT ordinal, PERIOD_BEGIN(PERIOD_CONSTRUCT(b, e)) AS b, PERIOD_END(PERIOD_CONSTRUCT(b, e)) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_begin"
+description = "A NULL begin, which the page says gives NULL. Catches: an unbounded period returned"
+columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }]
+rows = [
+  ["NULL", "'2024-02-01'"],
+  ["'2024-01-01'", "'2024-02-01'"],
+]
+query = "SELECT ordinal, PERIOD_BEGIN(PERIOD_CONSTRUCT(b1, e1)) AS b, PERIOD_END(PERIOD_CONSTRUCT(b1, e1)) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.object-delete"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_keys"
+description = "Two keys removed, one absent, and one differing only in case. Catches: an error for the absent key, or a case-insensitive removal"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"b\":2,\"c\":3}'", "'z'"],
+  ["'{\"a\":1,\"b\":2,\"c\":3}'", "'A'"],
+]
+query = "SELECT OBJECT_DELETE(PARSE_JSON(a), 'b', k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nested"
+description = "A key that exists only in a nested object. Catches: the nested key removed"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":{\"b\":1},\"c\":2}'"],
+]
+query = "SELECT OBJECT_DELETE(PARSE_JSON(a), 'b') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_object"
+description = "A NULL object and a NULL key; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'{\"a\":1}'", "NULL"],
+]
+query = "SELECT OBJECT_DELETE(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

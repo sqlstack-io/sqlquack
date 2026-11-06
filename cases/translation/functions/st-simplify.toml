@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.st-simplify"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A line string with a bump of 0.001: tolerance 0.1 removes it, 0.0001 keeps it; a point is unchanged. Catches: the tolerance compared the wrong way"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,5 0.001,10 0)'"],
+]
+query = "SELECT ST_NPOINTS(ST_SIMPLIFY(TO_GEOMETRY(v), 0.1)) AS coarse, ST_NPOINTS(ST_SIMPLIFY(TO_GEOMETRY(v), 0.0001)) AS fine, ST_X(ST_SIMPLIFY(TO_GEOMETRY('POINT(3 4)'), 10)) AS pt FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "The same line string as GEOGRAPHY (the bump is about 110 m) with tolerances of 1000 m and 1 m. Catches: degrees used for the tolerance"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,5 0.001,10 0)'"],
+]
+query = "SELECT ST_NPOINTS(ST_SIMPLIFY(TO_GEOGRAPHY(v), 1000)) AS coarse, ST_NPOINTS(ST_SIMPLIFY(TO_GEOGRAPHY(v), 1)) AS fine FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_preserve_collapsed"
+description = "A 100 m square with a 10 km tolerance: with preserve_collapsed TRUE the page says it is retained, so it stays a polygon (dimension 2); with FALSE the page example reduces a too-small shape to a lower dimension, and the recording decides which. Catches: the square collapsed despite TRUE, or TRUE ignored"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,0.001 0,0.001 0.001,0 0.001,0 0))'"],
+]
+query = "SELECT ST_DIMENSION(ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, TRUE)) AS kept_dim, ST_DIMENSION(ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, FALSE)) AS collapsed_dim FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_geography_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_SIMPLIFY(TO_GEOGRAPHY(v), 10) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

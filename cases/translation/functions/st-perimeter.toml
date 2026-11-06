@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.st-perimeter"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A 10 by 10 square, a line string, and a collection of the square and a triangle (40 + 11.4049), rounded to 1 place (51.4). Catches: a line string given its length"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+  ["'LINESTRING(0 0,3 4)'"],
+  ["'GEOMETRYCOLLECTION(POLYGON((0 0,10 0,10 10,0 10,0 0)),POLYGON((20 0,24 0,21 3,20 0)))'"],
+]
+query = "SELECT ordinal, ROUND(ST_PERIMETER(TO_GEOMETRY(v)), 1) AS p FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "A 1-degree square at the equator in kilometres, rounded (443 to 445 on any earth model). Catches: degrees returned (4)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,1 0,1 1,0 1,0 0))'"],
+]
+query = "SELECT ROUND(ST_PERIMETER(TO_GEOGRAPHY(v)) / 1000) BETWEEN 440 AND 448 AS ok FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_PERIMETER(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

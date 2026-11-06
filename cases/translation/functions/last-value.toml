@@ -1,0 +1,67 @@
+category = "translation"
+construct = "sf.functions.last-value"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_default_frame"
+description = "IGNORE NULLS without a frame, which the page says covers the whole partition. Catches: the ANSI default frame ending at the current row (a running last value)"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "10"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "40"],
+  ["'a'", "7", "NULL"],
+  ["'b'", "1", "7"],
+  ["'b'", "3", "9"],
+]
+query = "SELECT ordinal, LAST_VALUE(x) IGNORE NULLS OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_respect"
+description = "A partition whose last value is NULL. Catches: NULLs skipped by default"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "10"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "40"],
+  ["'a'", "7", "NULL"],
+  ["'b'", "1", "7"],
+  ["'b'", "3", "9"],
+]
+query = "SELECT ordinal, LAST_VALUE(x) OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_frame"
+description = "A frame ending one row after the current row. Catches: the frame ignored"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "10"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "40"],
+  ["'a'", "7", "NULL"],
+  ["'b'", "1", "7"],
+  ["'b'", "3", "9"],
+]
+query = "SELECT ordinal, LAST_VALUE(x) OVER (PARTITION BY p ORDER BY o ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_expr"
+description = "A partition whose values are all NULL, with IGNORE NULLS. Catches: an error, or a value from another partition"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'c'", "1", "NULL"],
+  ["'c'", "2", "NULL"],
+  ["'a'", "1", "4"],
+]
+query = "SELECT ordinal, LAST_VALUE(x) IGNORE NULLS OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

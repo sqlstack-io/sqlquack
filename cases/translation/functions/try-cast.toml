@@ -1,0 +1,60 @@
+category = "translation"
+construct = "sf.functions.try-cast"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "Strings that convert. Catches: NULL returned for a valid string"
+columns = [{ name = "n", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'42'", "'2024-02-29'", "'off'"],
+]
+query = "SELECT TRY_CAST(n AS NUMBER) AS n, TRY_CAST(d AS DATE) AS d, TRY_CAST(b AS BOOLEAN) AS b FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Strings that do not convert, including 30 February. Catches: an error raised, or the date rolled over to March"
+columns = [{ name = "n", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'4x'", "'2023-02-30'", "'maybe'"],
+]
+query = "SELECT TRY_CAST(n AS NUMBER) AS n, TRY_CAST(d AS DATE) AS d, TRY_CAST(b AS BOOLEAN) AS b FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_precision"
+description = "A string with more digits than the target precision. Catches: an error raised, or the value truncated"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'1234'"],
+  ["'123'"],
+]
+query = "SELECT TRY_CAST(v AS NUMBER(3,0)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t004_number_input"
+compile_error = true
+description = "A NUMBER argument; the page says TRY_CAST only works for string expressions. Catches: the number converted as CAST would"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TRY_CAST(x AS VARCHAR) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_source_string_expr"
+description = "A NULL string. Catches: an error"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_CAST(v AS NUMBER) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

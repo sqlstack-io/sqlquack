@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.to-json"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_compact"
+description = "A document with spaces, a decimal with a trailing zero and an escaped quote, on single-key objects so key order cannot vary. Catches: the original spacing kept, or the quote unescaped"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{ \"a\" : [1, 2.50] }'"],
+  ["'[\"x\\\\\"y\"]'"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_json_null"
+description = "A JSON null, which the page says gives the text null. Catches: a SQL NULL returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'null'"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(a)) AS r, TO_JSON(PARSE_JSON(a)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "A SQL NULL, which the page says gives NULL. Catches: the text null returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_JSON(PARSE_JSON(a)) AS r, TO_JSON(PARSE_JSON(a)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

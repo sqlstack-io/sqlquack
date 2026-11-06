@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.array-prepend"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_front"
+description = "An element prepended to a two-element array and to an empty one. Catches: the element appended at the end"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "e", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2]'", "0"],
+  ["'[]'", "5"],
+]
+query = "SELECT ARRAY_PREPEND(PARSE_JSON(a), e) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nested_array"
+description = "An array prepended as one element. Catches: the arrays concatenated"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[3]'", "'[1,2]'"],
+]
+query = "SELECT ARRAY_PREPEND(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_array"
+description = "A NULL array, and a NULL element; the page does not say; the recording decides for the NULL array. Catches: the NULL element dropped (the array unchanged)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "e", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1"],
+  ["'[1]'", "NULL"],
+]
+query = "SELECT ARRAY_PREPEND(PARSE_JSON(a), e) AS r, ARRAY_SIZE(ARRAY_PREPEND(PARSE_JSON(a), e)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

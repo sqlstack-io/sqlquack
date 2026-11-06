@@ -1,0 +1,84 @@
+category = "translation"
+construct = "sf.functions.decompress-binary"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_snappy"
+description = "DECOMPRESS_BINARY of fixed Snappy blocks, one from the page. Catches: another codec or a framing offset (the varint length read as data)"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'0920536E6F77666C616B65'"],
+  ["'051048656C6C6F'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_method_level"
+description = "A lower-case method name with a level, which the page says is ignored. Catches: the level or the lower-case name rejected"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'051048656C6C6F'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, 'snappy(3)') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_input"
+description = "NULL input next to a set one. Catches: NULL decompressed as an empty value"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["NULL"],
+  ["'051048656C6C6F'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_method"
+description = "NULL method. Catches: NULL read as a default method"
+columns = [{ name = "a", type = "BINARY" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'051048656C6C6F'", "NULL"],
+  ["'051048656C6C6F'", "'SNAPPY'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_corrupt"
+description = "Bytes that are not a valid Snappy block. Catches: NULL or partial output instead of an error"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'FF0102'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t006_unknown_method"
+compile_error = true
+description = "An unknown method; Snowflake refuses it when compiling (SQLSTATE 42P19). Catches: a fallback codec instead of an error"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'051048656C6C6F'"],
+]
+query = "SELECT DECOMPRESS_BINARY(a, 'LZ4') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t007_other_methods"
+description = "Round trips through each non-Snappy method. Catches: only SNAPPY supported, or COMPRESS and DECOMPRESS disagreeing on the framing of another method"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake Snowflake Snowflake'"],
+]
+query = "SELECT DECOMPRESS_BINARY(COMPRESS(a, 'ZLIB'), 'ZLIB') AS z, DECOMPRESS_BINARY(COMPRESS(a, 'ZSTD'), 'ZSTD') AS d, DECOMPRESS_BINARY(COMPRESS(a, 'BZ2'), 'BZ2') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

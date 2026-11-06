@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.st-asewkt"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geography"
+description = "A GEOGRAPHY point, whose text starts with SRID=4326. Catches: the SRID prefix left out, or longitude and latitude swapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_ASEWKT(TO_GEOGRAPHY(v)) AS r, STARTSWITH(ST_ASEWKT(TO_GEOGRAPHY(v)), 'SRID=4326;') AS prefixed FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geometry"
+description = "A GEOMETRY with SRID 3857, whose text carries that SRID. Catches: SRID 4326 written for every shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 2,3 4)'"],
+]
+query = "SELECT ST_ASEWKT(TO_GEOMETRY(v, 3857)) AS r, STARTSWITH(ST_ASEWKT(TO_GEOMETRY(v, 3857)), 'SRID=3857;') AS prefixed FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_ASEWKT(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.sanitize-webhook-content"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_plain"
+description = "Text without placeholders, which should come back unchanged, and text with SNOWFLAKE_WEBHOOK_SECRET, a placeholder the page names and says becomes REDACTED; the page does not say; the recording decides on the exact text around it. Catches: plain text altered"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'hello world'"],
+  ["'token SNOWFLAKE_WEBHOOK_SECRET end'"],
+]
+query = "SELECT ordinal, SNOWFLAKE.NOTIFICATION.SANITIZE_WEBHOOK_CONTENT(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_message"
+description = "A NULL message; the page does not say; the recording decides. Catches: an error, or an empty string"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT SNOWFLAKE.NOTIFICATION.SANITIZE_WEBHOOK_CONTENT(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

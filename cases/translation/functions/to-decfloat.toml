@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.to-decfloat"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_strings"
+description = "Decimal strings with trailing zeros and an exponent, compared as text; whether the trailing zero is kept the page does not say, so the recording decides. Catches: the exponent rejected, or trailing zeros handled differently from Snowflake"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'1.10'"],
+  ["'-2.5e3'"],
+  ["'0.000000000000000000000000000000000001'"],
+]
+query = "SELECT TO_DECFLOAT(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_format"
+description = "A string with a group separator parsed with a format model. Catches: the format ignored (an error or NULL)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'1,234.5'"],
+]
+query = "SELECT TO_DECFLOAT(v, '9,999.9')::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_nan"
+description = "The string NaN, which the page says is not supported. Catches: a NaN value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'NaN'"],
+]
+query = "SELECT TO_DECFLOAT(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_expr"
+description = "A NULL, which the page says gives NULL. Catches: zero returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_DECFLOAT(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

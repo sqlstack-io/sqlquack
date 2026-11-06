@@ -1,0 +1,62 @@
+category = "translation"
+construct = "sf.functions.cast.double-colon"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_scale"
+description = "Values with three fractional digits cast to NUMBER(5,1), including halves. Catches: truncation (1.2 for 1.25), or half-even rounding (1.2 for 1.25, -1.2 for -1.25)"
+columns = [{ name = "x", type = "NUMBER(10,3)" }]
+rows = [
+  ["1.250"],
+  ["-1.250"],
+  ["1.349"],
+]
+query = "SELECT x::NUMBER(5,1) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t002_float_to_integer"
+description = "Floating-point halves cast to INTEGER. Catches: truncation toward zero, or half-even rounding (2 for 2.5)"
+columns = [{ name = "f", type = "DOUBLE" }]
+rows = [
+  ["2.5"],
+  ["-2.5"],
+  ["3.5"],
+]
+query = "SELECT f::INTEGER AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_text"
+description = "Text cast to a date, a number with spaces around it, and a boolean spelled yes. The yes is documented under TO_BOOLEAN; whether the spaces are accepted the page does not say, so the recording decides. Catches: the yes rejected (only true and false accepted), or the spaced number handled differently from Snowflake"
+columns = [{ name = "d", type = "VARCHAR" }, { name = "n", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'", "' 12 '", "'yes'"],
+]
+query = "SELECT d::DATE AS d, n::NUMBER AS n, b::BOOLEAN AS b FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_precision"
+description = "A value with more integer digits than the target precision, which the page says raises an error. Catches: the value rounded, truncated or returned as NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1234"],
+]
+query = "SELECT x::NUMBER(3,0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_source_expr"
+description = "A NULL source. Catches: an error, or a default value such as 0"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT x::NUMBER AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

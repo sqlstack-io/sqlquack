@@ -1,0 +1,67 @@
+category = "translation"
+construct = "sf.functions.listagg.listagg-over"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_partition"
+description = "Per-partition lists in a fixed order. Catches: the whole input listed, or ASC order"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'b'"],
+  ["'q'", "'y'"],
+  ["'p'", "'c'"],
+  ["'p'", "'a'"],
+]
+query = "SELECT LISTAGG(x, '-') WITHIN GROUP (ORDER BY x DESC) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty_over"
+description = "An empty OVER clause. Catches: a running list"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'b'"],
+  ["'a'"],
+]
+query = "SELECT LISTAGG(x, '-') WITHIN GROUP (ORDER BY x) OVER () AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_distinct"
+description = "DISTINCT inside a partition. Catches: DISTINCT ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'p'", "'a'"],
+  ["'p'", "'b'"],
+]
+query = "SELECT LISTAGG(DISTINCT x, ',') WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t004_null_expr1"
+description = "A partition of only NULL. Catches: NULL instead of an empty string"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "'a'"],
+]
+query = "SELECT LISTAGG(x, ',') WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_expr2"
+description = "NULL partition keys. Catches: NULL-keyed rows split or dropped"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'p'", "'b'"],
+  ["NULL", "'c'"],
+]
+query = "SELECT LISTAGG(x, ',') WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

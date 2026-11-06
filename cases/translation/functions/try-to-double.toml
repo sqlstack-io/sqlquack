@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.try-to-double"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "Scientific notation and a special value. Catches: the special value rejected"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'1.5e2'"],
+  ["'-inf'"],
+]
+query = "SELECT TRY_TO_DOUBLE(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Text that is not a number. Catches: an error raised"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'1.2.3'"],
+]
+query = "SELECT TRY_TO_DOUBLE(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_number_input"
+compile_error = true
+description = "A NUMBER argument; the page says the function only accepts string expressions. Catches: the number converted"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TRY_TO_DOUBLE(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_string_expr"
+description = "A NULL string. Catches: zero returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_DOUBLE(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

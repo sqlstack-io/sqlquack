@@ -1,0 +1,34 @@
+category = "translation"
+construct = "sf.functions.approx-percentile-combine"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_merge"
+description = "States of the low and the high half merged, read at the median. Catches: only the first state used, or the medians averaged"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'p'", "2"],
+  ["'q'", "10"],
+  ["'q'", "20"],
+  ["'q'", "30"],
+]
+query = "SELECT APPROX_PERCENTILE_ESTIMATE(APPROX_PERCENTILE_COMBINE(st), 0.5) AS r FROM (SELECT g, APPROX_PERCENTILE_ACCUMULATE(x) AS st FROM input GROUP BY g)"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_state"
+description = "A NULL state beside states. Catches: the result NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "4"],
+  ["'p'", "9"],
+  ["'p'", "3"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+]
+query = "SELECT APPROX_PERCENTILE_ESTIMATE(APPROX_PERCENTILE_COMBINE(st), 0.5) AS r FROM (SELECT st FROM (SELECT g, APPROX_PERCENTILE_ACCUMULATE(x) AS st FROM input GROUP BY g) UNION ALL SELECT NULL)"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,45 @@
+category = "translation"
+construct = "sf.functions.typeof"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_json"
+description = "TYPEOF over each JSON kind; the page warns an integer may report DECIMAL, so the recording decides the integer's name. Catches: the JSON null named NULL instead of a distinct name, or a decimal and an exponent number given the same name"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1]'"],
+  ["'{\"a\":1}'"],
+  ["'\"x\"'"],
+  ["'\"2024-02-29\"'"],
+  ["'5'"],
+  ["'1.50'"],
+  ["'1.5e0'"],
+  ["'true'"],
+  ["'null'"],
+]
+query = "SELECT TYPEOF(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_typed"
+description = "TYPEOF over typed values cast to VARIANT. Catches: all timestamps given one name, or a DATE reported as VARCHAR"
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIME" }, { name = "n", type = "TIMESTAMP_NTZ" }, { name = "z", type = "TIMESTAMP_TZ" }, { name = "l", type = "TIMESTAMP_LTZ" }, { name = "b", type = "BINARY" }, { name = "f", type = "DOUBLE" }, { name = "k", type = "NUMBER(10,2)" }]
+rows = [
+  ["'2024-02-29'", "'13:14:15.123'", "'2024-02-29 13:14:15.123'", "'2024-02-29 13:14:15.123 -08:00'", "'2024-02-29 13:14:15.123'", "'ABCD'", "1.5", "2.50"],
+]
+query = "SELECT TYPEOF(d::VARIANT) AS d, TYPEOF(t::VARIANT) AS t, TYPEOF(n::VARIANT) AS n, TYPEOF(z::VARIANT) AS z, TYPEOF(l::VARIANT) AS l, TYPEOF(b::VARIANT) AS b, TYPEOF(f::VARIANT) AS f, TYPEOF(k::VARIANT) AS k FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "A SQL NULL. Catches: the string NULL_VALUE returned for a SQL NULL, or an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TYPEOF(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

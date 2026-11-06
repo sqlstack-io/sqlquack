@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.to-array"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_array"
+description = "Arrays, including an empty one. Catches: an array wrapped in another array"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2]'"],
+  ["'[]'"],
+]
+query = "SELECT TO_ARRAY(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_scalar"
+description = "A string with a comma, a number and an object. Catches: the string split on the comma, or the object turned into its values"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\"a,b\"'"],
+  ["'1.5'"],
+  ["'{\"a\":1}'"],
+]
+query = "SELECT TO_ARRAY(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_typed"
+description = "Typed values that are not VARIANT. Catches: the text parsed as JSON, or the decimal scale lost"
+columns = [{ name = "k", type = "NUMBER(10,2)" }, { name = "v", type = "VARCHAR" }]
+rows = [
+  ["2.50", "'[1]'"],
+]
+query = "SELECT TO_ARRAY(k) AS k, TO_ARRAY(v) AS v FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_expr"
+description = "A SQL NULL and a JSON null, both of which the page says give NULL. Catches: a one-element array holding the null"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'null'"],
+]
+query = "SELECT TO_ARRAY(PARSE_JSON(a)) AS r, TO_ARRAY(PARSE_JSON(a)) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

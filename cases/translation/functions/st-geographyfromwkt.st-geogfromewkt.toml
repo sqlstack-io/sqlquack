@@ -1,0 +1,71 @@
+category = "translation"
+construct = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_wkt"
+description = "A point and a line string in WKT, written back as WKT. Catches: longitude and latitude swapped, or the line string reduced to a point"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'LINESTRING(0 0,1 2)'"],
+]
+query = "SELECT ordinal, ST_ASWKT(ST_GEOGFROMEWKT(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_ewkt"
+description = "EWKT with SRID 4326, which the page accepts. Catches: the SRID prefix rejected, or kept in the shape text"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'SRID=4326;POINT(10 20)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOGFROMEWKT(v)) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_ewkt_srid"
+description = "EWKT with SRID 3857, which the page says is an error. Catches: the point accepted in another SRID"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'SRID=3857;POINT(10 20)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOGFROMEWKT(v)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_unparsable"
+description = "Text that is not WKT, which the page says is an error. Catches: NULL returned, or the text read as an empty shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10)'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOGFROMEWKT(v)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_allow_invalid"
+description = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square. Catches: the bow tie repaired or rejected despite allow_invalid"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ordinal, ST_ISVALID(ST_GEOGFROMEWKT(v, TRUE)) AS valid FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_varchar_expression"
+description = "A NULL text; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOGFROMEWKT(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

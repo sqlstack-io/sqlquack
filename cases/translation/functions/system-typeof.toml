@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.system-typeof"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_examples"
+description = "The page's examples: 1, 1e10, 10000 and 'something'. Catches: the TYPEOF names returned (INTEGER, VARCHAR), or the storage suffix left out"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT SYSTEM$TYPEOF(1) AS a, SYSTEM$TYPEOF(1e10) AS b, SYSTEM$TYPEOF(10000) AS c, SYSTEM$TYPEOF('something') AS d FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_concat"
+description = "The page's CONCAT example, typed by its result length. Catches: the type of the first argument returned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT SYSTEM$TYPEOF(CONCAT('every', 'body')) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "A NULL literal, which the page example types as NULL[LOB]. Catches: NULL returned instead of a type name"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT SYSTEM$TYPEOF(NULL) AS r FROM input"
+order = "ordered"
+tags = ["null"]
