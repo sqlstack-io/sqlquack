@@ -1220,6 +1220,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             expected_json: "\"ROLLBACK\"",
         },
         ValueTestCase {
+            description: "SAVEPOINT as the last word is the savepoint's name",
+            sql: "ROLLBACK TRANSACTION TO SAVEPOINT",
+            pointer: "/0/utility_statement/operands/0/identifier/name",
+            expected_json: "\"savepoint\"",
+        },
+        ValueTestCase {
+            description: "PREPARE as the last word is the prepared statement's name",
+            sql: "DEALLOCATE PREPARE",
+            pointer: "/0/utility_statement/operands/0/identifier/name",
+            expected_json: "\"prepare\"",
+        },
+        ValueTestCase {
+            description: "a GRANT's objects are all in objects, with securable left empty",
+            sql: "GRANT SELECT ON t TO r",
+            pointer: "/0/grant/securable/name",
+            expected_json: "\"\"",
+        },
+        ValueTestCase {
+            description: "a GRANT's one object is the first of objects",
+            sql: "GRANT SELECT ON t TO r",
+            pointer: "/0/grant/objects/0/table/name/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
             description: "a VACUUM keyword is the option gram.y lists for it",
             sql: "VACUUM FULL t",
             pointer: "/0/utility_statement/options/0/tuple/expressions/0/identifier/name",

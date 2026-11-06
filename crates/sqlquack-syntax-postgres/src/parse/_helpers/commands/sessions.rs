@@ -93,7 +93,7 @@ impl Parser<'_> {
             }
             "savepoint" => Ok(utility("SAVEPOINT", Vec::new(), vec![self.savepoint()?])),
             "release" => {
-                self.eat_kw("savepoint");
+                self.eat_noise_kw("savepoint");
                 Ok(utility("RELEASE", Vec::new(), vec![self.savepoint()?]))
             }
             "prepare" => {
@@ -121,7 +121,7 @@ impl Parser<'_> {
         };
         self.opt_transaction();
         if savepoints && self.eat_kw("to") {
-            self.eat_kw("savepoint");
+            self.eat_noise_kw("savepoint");
             return Ok(utility("ROLLBACK TO", Vec::new(), vec![self.savepoint()?]));
         }
         let mut options: Vec<Expression> = Vec::new();

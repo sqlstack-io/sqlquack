@@ -261,7 +261,7 @@ impl Parser<'_> {
     /// `DeallocateStmt`: `DEALLOCATE [PREPARE] {name | ALL}`.
     pub(crate) fn deallocate_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("deallocate")?;
-        self.eat_kw("prepare");
+        self.eat_noise_kw("prepare");
         Ok(utility(
             "DEALLOCATE",
             Vec::new(),
