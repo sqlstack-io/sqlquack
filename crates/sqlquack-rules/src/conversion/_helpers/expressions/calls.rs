@@ -27,7 +27,7 @@ use crate::conversion::_helpers::expressions::casts::{
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
 use crate::conversion::_helpers::expressions::conditionals::{
-    decode, div0, null_if_zero, zero_if_null,
+    decode, div0, null_if_zero, nvl2, zero_if_null,
 };
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
@@ -326,6 +326,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("TRY_TO_TIMESTAMP_TZ", parts) => to_timestamp_tz(parts, &construct, site),
         ("TO_TIMESTAMP_TZ" | "TO_TIMESTAMP_LTZ" | "TRY_TO_TIMESTAMP_LTZ", [value]) => {
             zoned_text_call(&name, value, &construct, site)
+        }
+        ("NVL2", [tested, when_set, otherwise]) => {
+            nvl2((tested, when_set, otherwise), &construct, site)
         }
         ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
             least_greatest(&name, parts, &construct, site)

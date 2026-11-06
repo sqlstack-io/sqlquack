@@ -605,6 +605,8 @@ pub const CASE: &str = "rule.case";
 pub const COALESCE: &str = "rule.coalesce";
 /// IFF.
 pub const IFF: &str = "rule.iff";
+/// NVL2 of a non-semi-structured value and two branches that unify without reading text.
+pub const NVL2_RULE: &str = "rule.nvl2";
 /// NULLIF.
 pub const NULLIF: &str = "rule.nullif";
 /// Casts between NUMBER and FLOAT.

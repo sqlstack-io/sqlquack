@@ -35,7 +35,7 @@ use crate::conversion::constants::{
     LAST_DAY_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC,
     MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
     NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
-    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, OBJECT_CONSTRUCT_RULE,
+    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, NVL2_RULE, OBJECT_CONSTRUCT_RULE,
     OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
     PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
@@ -397,6 +397,12 @@ pub const RULES: &[RuleSpec] = &[
         id: IFF,
         constructs: &["fn:IFF"],
         conditions: "A BOOLEAN condition; branches unify.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: NVL2_RULE,
+        constructs: &["fn:NVL2"],
+        conditions: "Exactly three arguments, the first not semi-structured: the second where the first is not NULL, else the third; branches unify as recorded for NUMBER, FLOAT, text and untyped NULL branches, and text beside another type refuses.",
         failures: &[],
     },
     RuleSpec {
