@@ -60002,20 +60002,20 @@ anchor = "doc.sql-createpublication / Synopsis"
 note = "a first object with no kind (gram.y preprocess_pubobj_list: invalid publication object list, 42601)"
 
 [[obligation]]
-id = "pg.ddl.create-publication.o046"
+id = "pg.ddl.create-publication.o049"
 kind = "negative_neighbour"
 required = true
 target = "<publication_object>"
 anchor = "doc.sql-createpublication / Synopsis"
-note = "a column list on a schema (gram.y preprocess_pubobj_list: column specification not allowed for schema, 42601)"
+note = "a column list on a schema (gram.y PublicationObjSpec: TABLES IN SCHEMA takes no column list, 42601)"
 
 [[obligation]]
-id = "pg.ddl.create-publication.o047"
+id = "pg.ddl.create-publication.o050"
 kind = "negative_neighbour"
 required = true
 target = "<publication_object>"
 anchor = "doc.sql-createpublication / Synopsis"
-note = "a row filter on a schema (gram.y preprocess_pubobj_list: WHERE clause not allowed for schema, 42601)"
+note = "a row filter on a schema (gram.y PublicationObjSpec: TABLES IN SCHEMA takes no WHERE, 42601)"
 
 [[obligation]]
 id = "pg.ddl.create-publication.o048"
