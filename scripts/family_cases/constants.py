@@ -143,5 +143,4 @@ VARIANT_AGGREGATED_DIVERGENCES: dict[str, str] = {
 ZONED_TEXT_COMPARISONS: frozenset[str] = frozenset(
     {"gte_naive_text", "lt_date_text", "eq_offset_text", "between_texts"}
 )
-# A TIMESTAMP_LTZ compared with a TIMESTAMP_NTZ is read at its UTC wall time: nanoseconds raise.
 ZONED_NAIVE_COMPARISONS: frozenset[tuple[str, str]] = frozenset({("TIMESTAMP_LTZ(9)", "eq_ntz")})
