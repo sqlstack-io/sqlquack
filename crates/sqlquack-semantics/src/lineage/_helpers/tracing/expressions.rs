@@ -166,7 +166,9 @@ pub(crate) fn expression_lineage(
     }
 }
 
-/// Whether a window function never gives NULL, even over an empty frame: a count or a rank.
+/// Whether a window function never gives NULL, even over an empty frame: counts and ranks. Only
+/// these keep their function's nullability over a window; any other, an aggregate over a frame
+/// included, can give NULL for an empty frame, and `ntile(NULL)` gives NULL, so it is unknown.
 fn never_null_window(function: &Expression) -> bool {
     let name: &str = match function {
         Expression::Count(_)

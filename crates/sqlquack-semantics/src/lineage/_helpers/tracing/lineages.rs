@@ -151,7 +151,9 @@ pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> L
     coerced(lineage, &parts_typed, profile)
 }
 
-/// `lineage` at least a cast when a column-reading branch it merges is implicitly cast to its type.
+/// `lineage` at least a cast when a branch it merges, reading a column, is implicitly cast to
+/// its type, as in a set operation, a VALUES column or an UNPIVOT value. Without a merged type,
+/// two such branches of different types mean at least one of them is cast.
 pub(crate) fn coerced(
     mut lineage: Lineage,
     branches: &[Lineage],
@@ -167,21 +169,14 @@ pub(crate) fn coerced(
                 .filter(|branch| !branch.sources.is_empty())
                 .filter_map(|branch| branch.data_type.as_deref())
                 .collect();
-            mixed_types(&read, profile)
+            read.iter()
+                .any(|own| read.iter().any(|other| !profile.same_type(own, other)))
         }
     };
     if cast {
         lineage.kind = lineage.kind.max(TransformKind::Cast);
     }
     lineage
-}
-
-/// Whether `types` are not all one type, so without a merged type some branch is cast.
-fn mixed_types(types: &[&str], profile: &dyn DialectProfile) -> bool {
-    let Some(first) = types.first() else {
-        return false;
-    };
-    types.iter().any(|other| !profile.same_type(first, other))
 }
 
 /// Alternative branches merged into one column, which takes the most significant branch's kind.
