@@ -8,6 +8,7 @@ import re
 from scripts.syntax_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_pg.constants import (
     ANGLES,
+    BAR,
     COMMENT,
     ENTITIES,
     INDEXTERM,
@@ -16,6 +17,8 @@ from scripts.syntax_catalogue_pg.constants import (
     PARAM_TYPE,
     PARAMETER,
     PHRASE_KEEP,
+    PROSE_TYPE_CHOICE,
+    QUOTED_BAR,
     REPLACEABLE,
     RETURN_ONWARD,
     RETURNVALUE,
@@ -67,10 +70,15 @@ def signature_text(raw: str) -> str:
     text = TYPE_TAG.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = PARAMETER.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
     text = REPLACEABLE.sub(lambda m: "\x00" + plain(m.group(1)) + "\x01", text)
-    text = LITERAL_TAG.sub(lambda m: plain(m.group(1)).translate(LITERAL_ANGLES), text)
+    text = LITERAL_TAG.sub(lambda m: _literal(plain(m.group(1))), text)
     text = text.replace("<optional>", "[ ").replace("</optional>", " ]")
-    text = normalize(entities(TAG.sub("", text)))
+    text = PROSE_TYPE_CHOICE.sub(r"{ \1 | \2 }", normalize(entities(TAG.sub("", text))))
     return text.translate(ANGLES)
+
+
+def _literal(text: str) -> str:
+    """A literal's text; the operator `|` alone is quoted so it is not read as alternation."""
+    return QUOTED_BAR if text == BAR else text.translate(LITERAL_ANGLES)
 
 
 def literals(raw: str) -> list[str]:

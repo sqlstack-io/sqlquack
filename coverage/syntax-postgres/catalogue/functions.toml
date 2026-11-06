@@ -4138,9 +4138,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_any_column_privilege ( [ <user name> or <oid>, ] <table text> or <oid>, <privilege text> )",
+  "has_any_column_privilege ( [ { <user name> | <oid> }, ] { <table text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "4cd88513c38c2f743380ec78d83b595b0a44a5ccda36af3f761f08632b8525b7"
+grammar_sha256 = "e79603c75a367d8508e74f56900a175c27bb94f6a067149db89106a71850595b"
 uses = []
 status = "catalogued"
 
@@ -4151,9 +4151,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_column_privilege ( [ <user name> or <oid>, ] <table text> or <oid>, <column text> or <smallint>, <privilege text> )",
+  "has_column_privilege ( [ { <user name> | <oid> }, ] { <table text> | <oid> }, { <column text> | <smallint> }, <privilege text> )",
 ]
-grammar_sha256 = "e1a3635dff795ecf7bff28bd240f8e4f4e135f0a2a3b983e51050479b1333734"
+grammar_sha256 = "3e8bbebe7a49f504df7098bdcfd5ec748b3692c043ddc979a51594efd469252a"
 uses = []
 status = "catalogued"
 
@@ -4164,9 +4164,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_database_privilege ( [ <user name> or <oid>, ] <database text> or <oid>, <privilege text> )",
+  "has_database_privilege ( [ { <user name> | <oid> }, ] { <database text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "6628ab7ad0ac24038261036a248122b17a68d326fb77f66b3e1d849c52dc860c"
+grammar_sha256 = "8f7a15ed5075211ea68ceb5846f076e7c081d8b455f14895a654e8b65085bd56"
 uses = []
 status = "catalogued"
 
@@ -4177,9 +4177,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_foreign_data_wrapper_privilege ( [ <user name> or <oid>, ] <fdw text> or <oid>, <privilege text> )",
+  "has_foreign_data_wrapper_privilege ( [ { <user name> | <oid> }, ] { <fdw text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "4f9d44ea73df931e80e54bbb0b6205de77b579345db1b961eb6a7cc30a7f7241"
+grammar_sha256 = "a5d03df190e874029de375484ad2cc7bd6f51e353e1d13adc3475cf4565e5f31"
 uses = []
 status = "catalogued"
 
@@ -4190,9 +4190,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_function_privilege ( [ <user name> or <oid>, ] <function text> or <oid>, <privilege text> )",
+  "has_function_privilege ( [ { <user name> | <oid> }, ] { <function text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "fd2756f5800acd4e0a81464877d064b25d1927b8e2500d0f877b7c057190aea5"
+grammar_sha256 = "2a451ed0416742f6e2bba52500dca690670bf516f4b2a8ef1ed8c23dfacdd315"
 uses = []
 status = "catalogued"
 
@@ -4203,9 +4203,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_language_privilege ( [ <user name> or <oid>, ] <language text> or <oid>, <privilege text> )",
+  "has_language_privilege ( [ { <user name> | <oid> }, ] { <language text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "ecbb07003f5370272de355056f3620550843a93d212e8add185caba6e3742a82"
+grammar_sha256 = "b744ed86a059e18609ac0e4724f9ed81e9e676480e2783b2116ecbd4429f69bb"
 uses = []
 status = "catalogued"
 
@@ -4216,9 +4216,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_largeobject_privilege ( [ <user name> or <oid>, ] <largeobject oid>, <privilege text> )",
+  "has_largeobject_privilege ( [ { <user name> | <oid> }, ] <largeobject oid>, <privilege text> )",
 ]
-grammar_sha256 = "1572cf14990bf009b4686ca0722aea2add1e946c0fdd4f176e436156de57903b"
+grammar_sha256 = "9b0a7776c4730606877a5fdc772c7f364fbfba39a4b54b937d2c7b1e53225283"
 uses = []
 status = "catalogued"
 
@@ -4229,9 +4229,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_parameter_privilege ( [ <user name> or <oid>, ] <parameter text>, <privilege text> )",
+  "has_parameter_privilege ( [ { <user name> | <oid> }, ] <parameter text>, <privilege text> )",
 ]
-grammar_sha256 = "5430a8aa9d5b3c45460824ef3dbc8c6e586bcb516ca1ba9b59a2400dd7743dfa"
+grammar_sha256 = "eb4e51bb194a3e1385d820548797e4b1dc59c8afb5c0a5ff22eeb4331bb61333"
 uses = []
 status = "catalogued"
 
@@ -4242,9 +4242,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_schema_privilege ( [ <user name> or <oid>, ] <schema text> or <oid>, <privilege text> )",
+  "has_schema_privilege ( [ { <user name> | <oid> }, ] { <schema text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "8773cff039a807f4daab5667ea6fa30c722925d92f22ebd8fc26930d8021b595"
+grammar_sha256 = "e7de64b747b9d68e85e34a8a6c8b90c6f3c663dd88139e15bbbed965aca88803"
 uses = []
 status = "catalogued"
 
@@ -4255,9 +4255,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_sequence_privilege ( [ <user name> or <oid>, ] <sequence text> or <oid>, <privilege text> )",
+  "has_sequence_privilege ( [ { <user name> | <oid> }, ] { <sequence text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "a442e5b7be53c9acc053939fa178f2acf73a57ddce6b1de5e9f2e888cd6e65f8"
+grammar_sha256 = "cdab9e885f3b17cde1b8eb0fe33c9b013b15bdb568a8a40a915715822e24fa09"
 uses = []
 status = "catalogued"
 
@@ -4268,9 +4268,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_server_privilege ( [ <user name> or <oid>, ] <server text> or <oid>, <privilege text> )",
+  "has_server_privilege ( [ { <user name> | <oid> }, ] { <server text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "863f16d136cd449d3ad39a268a7ee50337ee4d3153be738015caf9519725d223"
+grammar_sha256 = "e2bae85b5f23628b262d78ccfece9f5b30e88de74e55313dca812e311a6be6e5"
 uses = []
 status = "catalogued"
 
@@ -4281,9 +4281,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_table_privilege ( [ <user name> or <oid>, ] <table text> or <oid>, <privilege text> )",
+  "has_table_privilege ( [ { <user name> | <oid> }, ] { <table text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "761d590ceb07911da32022f7c1bd7fa70f25ec4c44f8e4dc402d9c6427e10be7"
+grammar_sha256 = "2a8b6fe3c139e054b9ffc0b1facc5730374f698621db3ac9a9ed961fadaf0840"
 uses = []
 status = "catalogued"
 
@@ -4294,9 +4294,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_tablespace_privilege ( [ <user name> or <oid>, ] <tablespace text> or <oid>, <privilege text> )",
+  "has_tablespace_privilege ( [ { <user name> | <oid> }, ] { <tablespace text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "a28ce99c9db5623268b0ec9891ac9fe775f3888bd8b9ad6cbf3f72a105d8cb7d"
+grammar_sha256 = "5980fbcd5d2747ae2c42c6af0e11d672295560935a594e437473d2d6e297db49"
 uses = []
 status = "catalogued"
 
@@ -4307,9 +4307,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "has_type_privilege ( [ <user name> or <oid>, ] <type text> or <oid>, <privilege text> )",
+  "has_type_privilege ( [ { <user name> | <oid> }, ] { <type text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "cf9940d5daf61e28281b460551a133809f01a5fbc9f15c89d87d37a08deca2ba"
+grammar_sha256 = "1b3a04bf4505e41654b273911d39b62c99c433a6cdb08df1325c3e92afe2161c"
 uses = []
 status = "catalogued"
 
@@ -4960,9 +4960,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "pg_has_role ( [ <user name> or <oid>, ] <role text> or <oid>, <privilege text> )",
+  "pg_has_role ( [ { <user name> | <oid> }, ] { <role text> | <oid> }, <privilege text> )",
 ]
-grammar_sha256 = "cd07aaf6857990a0e5b75d4b1929d3e7c4fce9e0fff45049cd3b0352443f5ade"
+grammar_sha256 = "52d0ef94f0ec6e41b4ae780c7a965293734cc96d172e6a87fe516eb92430f18d"
 uses = []
 status = "catalogued"
 
@@ -5493,9 +5493,9 @@ source = "doc.functions-info"
 anchor = "Access Privilege Inquiry Functions"
 kind = "call"
 grammar = [
-  "row_security_active ( <table text> or <oid> )",
+  "row_security_active ( { <table text> | <oid> } )",
 ]
-grammar_sha256 = "d288663184bfa48a39911f8cf78b7a479f7474ec861bcdfdc40becb0714b2b48"
+grammar_sha256 = "ba51c0428f72d56f295c7923ed924480a89db7454d407e3d449ce3205844c089"
 uses = []
 status = "catalogued"
 

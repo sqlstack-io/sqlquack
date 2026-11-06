@@ -116,6 +116,20 @@ target = "<aggregate_name>"
 reason = "with SELECT as the name, SELECT ( 1 ) inside parentheses is a scalar subquery, which is valid"
 
 [[suppress]]
+form = "pg.expressions.comparison.isnull"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ISNULL"
+reason = "without ISNULL the minimal form is its operand alone, SELECT ( 1 ), which is a valid expression"
+
+[[suppress]]
+form = "pg.expressions.comparison.notnull"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NOTNULL"
+reason = "without NOTNULL the minimal form is its operand alone, SELECT ( 1 ), which is a valid expression"
+
+[[suppress]]
 form = "pg.expressions.datatype.character-varying"
 kind = "negative_neighbour"
 target = ""
@@ -598,9 +612,9 @@ reason = "without NOT, FORCE NULL column_list is the current COPY option of that
 
 [[reading]]
 form = "pg.expressions.sql-expressions.array-constructor"
-grammar_sha256 = "a81dece4cd4405ebede140f5b24b32daab60029aca47b58e42743fdfb02b50dc"
-grammar = ["ARRAY \\[ [ <expression> [, ...] ] \\]", "ARRAY \\[ \\[ <expression> [ , <expression> ] \\] [ , \\[ <expression> [ , <expression> ] \\] ] \\]"]
-reason = "the constructor's own brackets are literal (written \\[ \\]), not optional parts; the second line, the page's multidimensional ARRAY[[...], ...], with its sub-arrays' and their elements' second items written out, since the renderer copies a list item that holds a literal bracket wrongly"
+grammar_sha256 = "41ef64ea927401b4f4e5f2be1ba297ba63122a4ed909bd6ecba429ce47d6dcb4"
+grammar = ["ARRAY \\[ [ <expression> [, ...] ] \\]", "ARRAY \\[ ARRAY \\[ <expression> [ , <expression> ] \\] [ , ARRAY \\[ <expression> [ , <expression> ] \\] ] \\]", "ARRAY \\[ \\[ <expression> [ , <expression> ] \\] [ , \\[ <expression> [ , <expression> ] \\] ] \\]"]
+reason = "the constructor's own brackets are literal (written \\[ \\]), not optional parts; the second and third lines, the page's multidimensional ARRAY[ARRAY[...], ...] and ARRAY[[...], ...], with their sub-arrays' and their elements' second items written out, since the renderer copies a list item that holds a literal bracket wrongly"
 
 [[reading]]
 form = "pg.expressions.arrays.array-type"
@@ -622,9 +636,9 @@ reason = "the slice brackets are literal (written \\[ \\]), not an optional part
 
 [[reading]]
 form = "pg.expressions.datatype.numeric"
-grammar_sha256 = "048ba4656ff54dcf9447190982950760ecd5521cb5ac80e38b7211dd002dda0b"
+grammar_sha256 = "40662a81ee07e5fccf5f9028a744cf4ea320c457e3e7c24d919f59ad4419e727"
 grammar = ["{ NUMERIC [ ( <p> [ , <s> ] ) ] | DECIMAL [ ( <p> [ , <s> ] ) ] }"]
-reason = "the type's precision and optional scale, as datatype-numeric writes NUMERIC(precision, scale), NUMERIC(precision) and NUMERIC and gives DECIMAL as the same type (gram.y Numeric: NUMERIC and DECIMAL_P take opt_type_modifiers); the table row's ( p | s ) is not a choice between the two"
+reason = "the type's precision and optional scale, as datatype-numeric writes NUMERIC(precision, scale), NUMERIC(precision) and NUMERIC and gives DECIMAL as the same type (gram.y Numeric: NUMERIC and DECIMAL_P take opt_type_modifiers); the table row writes only the two-modifier spelling"
 
 [[reading]]
 form = "pg.expressions.datatype-datetime.interval-fields"
@@ -1073,6 +1087,24 @@ reason = "with its left operand left out the operator is used as a prefix operat
 form = "pg.expressions.bitstring.op-amp"
 kind = "required_operand_missing"
 target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.bitstring.op-bar"
+kind = "required_operand_missing"
+target = "<bit>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.math.op-bar"
+kind = "required_operand_missing"
+target = "<integral_type>"
+reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
+
+[[suppress]]
+form = "pg.expressions.net.op-bar"
+kind = "required_operand_missing"
+target = "<inet>"
 reason = "with its left operand left out the operator is used as a prefix operator, which gram.y a_expr accepts for every operator token (qual_Op a_expr): valid syntax that fails only at operator lookup (42883); the right operand left out stays a negative, as PostgreSQL 14 removed postfix operators"
 
 [[suppress]]
@@ -1901,6 +1933,18 @@ reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an
 form = "pg.expressions.sql-expressions.array-constructor"
 kind = "required_operand_missing"
 target = "<expression> in [ , [ <expression> [ , <expression> ] ] ]"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression> in [ , ARRAY [ <expression> [ , <expression> ] ] ]"
+reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "required_operand_missing"
+target = "<expression> #2"
 reason = "an empty inner array is valid: gram.y array_expr accepts '[' ']' as an element"
 
 [[suppress]]

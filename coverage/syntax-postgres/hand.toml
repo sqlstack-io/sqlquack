@@ -1729,7 +1729,7 @@ source = "doc.sql-expressions"
 anchor = "Array Constructors"
 kind = "special"
 label = "array-constructor"
-grammar = ["ARRAY[ [ <expression> [, ...] ] ]", "ARRAY[ [ <expression> [, ...] ] ] [, ...] ]"]
+grammar = ["ARRAY[ [ <expression> [, ...] ] ]", "ARRAY[ ARRAY[ [ <expression> [, ...] ] ] [, ...] ]", "ARRAY[ [ [ <expression> [, ...] ] ] [, ...] ]"]
 basis = "example"
 page_sha256 = "b402e5c5c61c46ea158c2a3b9afa6f7d05ba7e44856f0a5e430783d1dd492565"
 

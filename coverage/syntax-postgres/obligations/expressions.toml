@@ -358,23 +358,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.expressions.bitstring.op-bar.o002"
-kind = "alternative"
-required = true
-target = "{ <bit> | <bit> } → <bit>"
-
-[[obligation]]
-id = "pg.expressions.bitstring.op-bar.o003"
-kind = "alternative"
-required = true
-target = "{ <bit> | <bit> } → <bit> #2"
-
-[[obligation]]
 id = "pg.expressions.bitstring.op-bar.o006"
 kind = "operand_type_class"
 required = true
 target = "<bit>"
 note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.bitstring.op-bar.o009"
+kind = "required_operand_missing"
+required = true
+target = "<bit> #2"
+note = "omit <bit>"
 
 [[obligation]]
 id = "pg.expressions.bitstring.op-bar.o007"
@@ -7699,23 +7694,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.expressions.math.op-bar.o002"
-kind = "alternative"
-required = true
-target = "{ <integral_type> | <integral_type> } → <integral_type>"
-
-[[obligation]]
-id = "pg.expressions.math.op-bar.o003"
-kind = "alternative"
-required = true
-target = "{ <integral_type> | <integral_type> } → <integral_type> #2"
-
-[[obligation]]
 id = "pg.expressions.math.op-bar.o008"
 kind = "operand_type_class"
 required = true
 target = "<integral_type>"
 note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.math.op-bar.o011"
+kind = "required_operand_missing"
+required = true
+target = "<integral_type> #2"
+note = "omit <integral_type>"
 
 [[obligation]]
 id = "pg.expressions.math.op-bar.o009"
@@ -8172,23 +8162,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.expressions.net.op-bar.o002"
-kind = "alternative"
-required = true
-target = "{ <inet> | <inet> } → <inet>"
-
-[[obligation]]
-id = "pg.expressions.net.op-bar.o003"
-kind = "alternative"
-required = true
-target = "{ <inet> | <inet> } → <inet> #2"
-
-[[obligation]]
 id = "pg.expressions.net.op-bar.o006"
 kind = "operand_type_class"
 required = true
 target = "<inet>"
 note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.net.op-bar.o009"
+kind = "required_operand_missing"
+required = true
+target = "<inet> #2"
+note = "omit <inet>"
 
 [[obligation]]
 id = "pg.expressions.net.op-bar.o007"
@@ -10393,22 +10378,22 @@ target = "<expression> in [ , <expression> ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.expressions.sql-expressions.array-constructor.o029"
+id = "pg.expressions.sql-expressions.array-constructor.o037"
 kind = "option_present"
 required = true
-target = "[ , [ <expression> [ , <expression> ] ] ]"
+target = "[ , ARRAY [ <expression> [ , <expression> ] ] ]"
 
 [[obligation]]
-id = "pg.expressions.sql-expressions.array-constructor.o030"
+id = "pg.expressions.sql-expressions.array-constructor.o038"
 kind = "option_absent"
 required = true
-target = "[ , [ <expression> [ , <expression> ] ] ]"
+target = "[ , ARRAY [ <expression> [ , <expression> ] ] ]"
 
 [[obligation]]
-id = "pg.expressions.sql-expressions.array-constructor.o032"
+id = "pg.expressions.sql-expressions.array-constructor.o040"
 kind = "operand_type_class"
 required = true
-target = "<expression> in [ , [ <expression> [ , <expression> ] ] ]"
+target = "<expression> in [ , ARRAY [ <expression> [ , <expression> ] ] ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -10436,6 +10421,90 @@ kind = "operand_type_class"
 required = true
 target = "<expression> in [ , <expression> ] #2"
 note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o042"
+kind = "operand_type_class"
+required = true
+target = "<expression> #2"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o043"
+kind = "option_present"
+required = true
+target = "[ , <expression> ] #3"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o044"
+kind = "option_absent"
+required = true
+target = "[ , <expression> ] #3"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o045"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ , <expression> ] #3"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o046"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , <expression> ] #3"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o029"
+kind = "option_present"
+required = true
+target = "[ , [ <expression> [ , <expression> ] ] ]"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o030"
+kind = "option_absent"
+required = true
+target = "[ , [ <expression> [ , <expression> ] ] ]"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o032"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , [ <expression> [ , <expression> ] ] ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o047"
+kind = "option_present"
+required = true
+target = "[ , <expression> ] #4"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o048"
+kind = "option_absent"
+required = true
+target = "[ , <expression> ] #4"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o049"
+kind = "required_operand_missing"
+required = true
+target = "<expression> in [ , <expression> ] #4"
+note = "omit <expression>"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o050"
+kind = "operand_type_class"
+required = true
+target = "<expression> in [ , <expression> ] #4"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ARRAY in [ , ARRAY [ <expression> [ , <expression> ] ] ]"
 
 [[obligation]]
 id = "pg.expressions.sql-expressions.array-constructor.o018"
