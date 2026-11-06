@@ -1767,7 +1767,7 @@ impl Parser {
         if let Some(qualifier) = self.try_parse_snowflake_interval_qualifier()? {
             return Ok(Some(qualifier));
         }
-        if !self.is_snowflake() && self.is_function_start() {
+        if !self.applies_snowflake_context_rules() && self.is_function_start() {
             let start = self.parse_primary()?;
             if self.check_keyword_text("TO") {
                 let saved = self.current;

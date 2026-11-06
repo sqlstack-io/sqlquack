@@ -27,7 +27,7 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a row access policy swap onto no columns (recorded OK)",
             sql: "ALTER TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v1 ON ( ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_table"),
         },
         SnowflakeVerdictTestCase {
             description: "a contact purpose on a view (recorded OK)",
@@ -37,7 +37,7 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a bare JOIN property after UNSET (recorded OK)",
             sql: "ALTER TABLE v1 UNSET JOIN ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_table"),
         },
         SnowflakeVerdictTestCase {
             description: "a plain property SET stays with the table parser (recorded OK)",

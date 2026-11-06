@@ -582,7 +582,7 @@ impl Parser {
 
     /// Parses a MERGE statement.
     pub(crate) fn parse_merge(&mut self) -> Result<Option<Expression>> {
-        if !self.match_token(TokenType::Into) && self.is_snowflake() {
+        if !self.match_token(TokenType::Into) && self.applies_snowflake_context_rules() {
             return Err(self.parse_error("Expected INTO after MERGE"));
         }
 

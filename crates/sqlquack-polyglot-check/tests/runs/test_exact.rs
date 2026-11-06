@@ -21,6 +21,33 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                 rejected: BTreeMap::from([
                     ("malformed_typed_type_text".to_owned(), 1),
                     ("snowflake_bare_values_cte".to_owned(), 1),
+                    ("snowflake_table_unset_projection_policy".to_owned(), 1),
+                    ("snowflake_put_prose_with_quoted_file_uri".to_owned(), 1),
+                    ("snowflake_put_prose_with_placeholder".to_owned(), 1),
+                    ("snowflake_put_prose_with_quoted_stage".to_owned(), 1),
+                    ("snowflake_put_prose_minimal_with".to_owned(), 1),
+                    ("snowflake_put_prose_roundtrip".to_owned(), 1),
+                    (
+                        "snowflake_put_prose_with_dollar_quoted_stage_target".to_owned(),
+                        1,
+                    ),
+                    ("snowflake_put_prose_with_uuid_name_path".to_owned(), 1),
+                    (
+                        "snowflake_put_prose_with_uuid_compressupload_path".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_put_prose_with_stage_uuid_auto_compress_false".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_put_prose_with_stage_uuid_auto_compress_true".to_owned(),
+                        1,
+                    ),
+                    (
+                        "snowflake_put_prose_with_long_path_stage_uuid".to_owned(),
+                        1,
+                    ),
                     ("snowflake_cte_without_as_prose".to_owned(), 1),
                     ("snowflake_copy_prose_into_with".to_owned(), 1),
                     ("snowflake_copy_prose_on_error".to_owned(), 1),

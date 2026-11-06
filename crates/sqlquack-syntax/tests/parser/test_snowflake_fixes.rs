@@ -786,7 +786,7 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
             sql: "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_table"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
@@ -1436,6 +1436,16 @@ fn given_a_snowflake_from_clause_when_parsing_then_recorded_query_verdicts_hold(
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "RESAMPLE's METADATA_COLUMNS needs a function, and the interval does not take it as its unit (recorded errno 1003)",
+            sql: "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a sample size that is a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 SAMPLE ( 'x' ROWS ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a negative sample size (recorded errno 1003)",
             sql: "SELECT * FROM t1 SAMPLE ( -1 ) ;",
             expected_kind: None,
@@ -1725,6 +1735,46 @@ fn given_a_snowflake_create_external_table_when_parsing_then_recorded_verdicts_h
             description: "NOT UNIQUE after a virtual column (recorded errno 1003)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 NOT UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
             expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare template query keeps the structured table (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 USING TEMPLATE ( SELECT 1 ) ;",
+            expected_kind: Some("create_table"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_table_governance_action_when_parsing_then_only_a_faithful_tree_is_structured(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an unquoted tag stays structured (recorded OK)",
+            sql: "ALTER TABLE v1 SET TAG v1 = 'm' ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted tag, whose quoting the tree drops, stays raw (recorded OK)",
+            sql: "ALTER TABLE v1 SET TAG \"v1 Q\" = 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unquoted row access policy stays structured (recorded OK)",
+            sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY v1 ON ( v1 ) ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted row access policy stays raw (recorded OK)",
+            sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY \"v1 Q\" ON ( v1 ) ;",
+            expected_kind: Some("raw"),
         },
     ];
     for test_case in test_cases {

@@ -969,6 +969,90 @@ sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CT
 note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"
 
 [[rejection]]
+id = "snowflake_table_unset_projection_policy"
+sql = "ALTER TABLE t UNSET PROJECTION POLICY"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the end of the statement"
+note = "Snowflake refuses UNSET PROJECTION POLICY on a table, which takes it only on a column (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_put_prose_with_quoted_file_uri"
+sql = "PUT with quoted file URI failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_placeholder"
+sql = "PUT with ? placeholder failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_quoted_stage"
+sql = "PUT with quoted stage failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_minimal_with"
+sql = "PUT minimal with ? failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_roundtrip"
+sql = "PUT roundtrip failed to re-parse: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_dollar_quoted_stage_target"
+sql = "PUT with dollar-quoted stage target failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_uuid_name_path"
+sql = "PUT with @~/UUID/name path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_uuid_compressupload_path"
+sql = "PUT with @~/UUID/compressUpload path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_stage_uuid_auto_compress_false"
+sql = "PUT with @stage/UUID AUTO_COMPRESS=FALSE failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_stage_uuid_auto_compress_true"
+sql = "PUT with @stage/UUID AUTO_COMPRESS=TRUE failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_long_path_stage_uuid"
+sql = "PUT with long path + @stage/UUID failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
 id = "snowflake_empty_select_list"
 sql = "SELECT"
 dialects = ["Snowflake"]

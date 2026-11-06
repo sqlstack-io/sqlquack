@@ -268,7 +268,7 @@ impl Parser {
             }));
         }
 
-        if self.is_snowflake() && !self.check(TokenType::Number) {
+        if self.applies_snowflake_context_rules() && !self.check(TokenType::Number) {
             return Err(self.parse_error("Expected an unsigned sample size"));
         }
         let size = self.parse_unary()?;

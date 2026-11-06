@@ -8,13 +8,16 @@ use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
 impl Parser {
-    /// A Snowflake CREATE [OR REPLACE] EXTERNAL TABLE, checked and kept as written; None for any other CREATE.
+    /// A Snowflake CREATE [OR REPLACE] EXTERNAL TABLE, checked and kept as written; None for any other CREATE, outside the faithful Snowflake modes, and for a bare USING TEMPLATE ( <query> ) or '<text>', which the table parser keeps whole.
     pub(crate) fn parse_snowflake_create_external_table(
         &mut self,
         or_replace: bool,
         or_alter: bool,
     ) -> Result<Option<Expression>> {
-        if or_alter || !self.check_text_seq(&["EXTERNAL", "TABLE"]) {
+        if or_alter
+            || !self.applies_snowflake_context_rules()
+            || !self.check_text_seq(&["EXTERNAL", "TABLE"])
+        {
             return Ok(None);
         }
         let start = self.current;
@@ -26,11 +29,18 @@ impl Parser {
         }
         self.parse_object_name()?;
         let template = self.match_text_seq(&["USING", "TEMPLATE"]);
+        let query_or_text =
+            template && (self.check(TokenType::LParen) || self.check(TokenType::String));
         match template {
             true => self.check_external_template()?,
             false => self.check_external_columns()?,
         }
+        let after_template = self.current;
         self.check_external_properties(!template)?;
+        if query_or_text && self.current == after_template {
+            self.current = start;
+            return Ok(None);
+        }
         let mut sql = String::from("CREATE");
         if or_replace {
             sql.push_str(" OR REPLACE");

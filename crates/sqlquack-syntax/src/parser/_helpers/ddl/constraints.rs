@@ -1598,15 +1598,30 @@ impl Parser {
         } else {
             None
         };
+        let snowflake = matches!(
+            self.config.dialect,
+            Some(crate::tokens::models::DialectType::Snowflake)
+        );
+        let target = self.current;
+        if snowflake {
+            if let Some(raw) =
+                self.parse_snowflake_alter_governance(alter_table_modifier.is_some())?
+            {
+                return Ok(self.structured_governance_or_raw(target, raw, alter_table_modifier));
+            }
+        }
+        self.parse_alter_after_kind_modifier(alter_table_modifier)
+    }
+
+    /// The ALTER after ALTER [ ICEBERG ]: its object kind, name and actions.
+    fn parse_alter_after_kind_modifier(
+        &mut self,
+        alter_table_modifier: Option<String>,
+    ) -> Result<Expression> {
         if matches!(
             self.config.dialect,
             Some(crate::tokens::models::DialectType::Snowflake)
         ) {
-            if let Some(expr) =
-                self.parse_snowflake_alter_governance(alter_table_modifier.is_some())?
-            {
-                return Ok(expr);
-            }
             if let Some(expr) =
                 self.parse_alter_snowflake_table_action(alter_table_modifier.is_some())?
             {
@@ -1639,6 +1654,45 @@ impl Parser {
                 }
             }
             _ => self.parse_alter_view_or_raw(),
+        }
+    }
+
+    /// The structured tree of a governance ALTER that passed its grammar check, when it covers the same tokens and no name after the object is quoted (tag and row access policy actions drop the quotes; a contact keeps them); the Raw statement otherwise.
+    fn structured_governance_or_raw(
+        &mut self,
+        target: usize,
+        raw: Expression,
+        alter_table_modifier: Option<String>,
+    ) -> Expression {
+        let end = self.current;
+        self.current = target;
+        let _ = self.match_text_seq(&["MATERIALIZED", "VIEW"])
+            || self.match_token(TokenType::Table)
+            || self.match_token(TokenType::View);
+        self.match_keywords(&[TokenType::If, TokenType::Exists]);
+        let named = match self.check_iceberg_object_name() {
+            Ok(()) => true,
+            Err(_) => false,
+        };
+        let contact =
+            self.check_text_seq(&["SET", "CONTACT"]) || self.check_text_seq(&["UNSET", "CONTACT"]);
+        let quoted = !contact
+            && self.tokens[self.current.min(end)..end]
+                .iter()
+                .any(|token| token.token_type == TokenType::QuotedIdentifier);
+        self.current = target;
+        match named && !quoted {
+            true => match self.parse_alter_after_kind_modifier(alter_table_modifier) {
+                Ok(tree) if self.current == end => tree,
+                _ => {
+                    self.current = end;
+                    raw
+                }
+            },
+            false => {
+                self.current = end;
+                raw
+            }
         }
     }
 
