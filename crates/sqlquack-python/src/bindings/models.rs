@@ -40,4 +40,6 @@ pub struct ConvertRequest {
     pub verified_overrides: BTreeMap<String, String>,
     /// `--session NAME=VALUE`, by name.
     pub session: BTreeMap<String, String>,
+    /// `--compact`.
+    pub compact: bool,
 }

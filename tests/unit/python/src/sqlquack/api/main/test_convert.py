@@ -32,6 +32,13 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
             expected_converted=True,
         ),
         CommandLineTestCase(
+            description="a converted query on one line",
+            sql="SELECT order_id, price * 2 AS doubled FROM orders",
+            arguments=("--builtin-policy", "--schema", "schema.json", "--compact"),
+            options=ConvertOptions(builtin_policy=True, schema="schema.json", compact=True),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
             description="no policy flag and no sqlquack.toml: the built-in policy",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
             arguments=("--schema", "schema.json"),

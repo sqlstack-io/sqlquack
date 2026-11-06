@@ -86,7 +86,12 @@ statement reads. Declare them in a [schema file](/docs/schema/):
 
 ```console
 $ sqlquack convert revenue.sql --schema schema.json --builtin-policy
-SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID", CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE" FROM "ORDERS" AS "ORDERS" WHERE ("ORDERS"."STATUS" = 'shipped') GROUP BY "ORDERS"."CUSTOMER_ID"
+SELECT
+    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+WHERE ("ORDERS"."STATUS" = 'shipped')
+GROUP BY "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted under the built-in default
 ```
 
