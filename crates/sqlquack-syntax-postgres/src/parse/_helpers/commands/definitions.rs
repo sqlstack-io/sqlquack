@@ -1,15 +1,25 @@
-//! `DefineStmt` (gram.y): `CREATE [OR REPLACE] AGGREGATE`, its definition kept as properties in order.
+//! `DefineStmt` and `CreatedbStmt` (gram.y): `CREATE AGGREGATE` and `CREATE DATABASE`, options kept in order.
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
-use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
+use sqlquack_syntax::expressions::schema_objects::models::{
+    CreateDatabase, CreateObject, ObjectProperty,
+};
 
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label};
-use crate::parse::_helpers::tree::nodes::table;
+use crate::parse::_helpers::commands::routines::var;
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
+use crate::parse::_helpers::tree::nodes::{table, tuple};
 use crate::scan::models::TokenKind;
 
 /// The object kind `CREATE AGGREGATE` gives.
 const AGGREGATE_KIND: &str = "AGGREGATE";
+
+/// `createdb_opt_name` keywords other than `CONNECTION LIMIT`, which PostgreSQL names `connection_limit`.
+const DATABASE_OPTION_KEYWORDS: [&str; 5] =
+    ["encoding", "location", "owner", "tablespace", "template"];
+
+/// The option name `CONNECTION LIMIT` gives.
+const CONNECTION_LIMIT: &str = "connection_limit";
 
 /// The source of the pre-8.2 form, `old_aggr_definition`, which takes no argument list.
 const OLD_STYLE_SOURCE: &str = "OLD STYLE";
@@ -72,6 +82,54 @@ impl Parser<'_> {
             operands,
             properties,
         })))
+    }
+}
+
+impl Parser<'_> {
+    /// `CREATE DATABASE name [WITH] createdb_opt_item...`, each option a `(name, value)` tuple.
+    pub(crate) fn create_database(&mut self) -> Parsing<Expression> {
+        self.expect_kw("create")?;
+        self.expect_kw("database")?;
+        let name: Identifier = self.name(is_col_id)?;
+        let mut node: CreateDatabase = CreateDatabase::new(String::new());
+        node.name = name;
+        self.eat_kw("with");
+        while let Some(option) = self.database_option_name()? {
+            self.eat_char('=');
+            let value: Expression = match self.peek().map(|token| token.kind) {
+                Some(TokenKind::Integer | TokenKind::Numeric | TokenKind::Char('+' | '-')) => {
+                    self.numeric_only()?
+                }
+                _ if self.eat_kw("default") => var("DEFAULT"),
+                _ => self.boolean_or_string()?,
+            };
+            node.properties
+                .push(tuple(vec![Expression::Identifier(option), value]));
+        }
+        Ok(Expression::CreateDatabase(Box::new(node)))
+    }
+
+    /// `createdb_opt_name`, or `None` when none comes next.
+    fn database_option_name(&mut self) -> Parsing<Option<Identifier>> {
+        let Some(token) = self.peek().cloned() else {
+            return Ok(None);
+        };
+        match token.kind {
+            TokenKind::Ident | TokenKind::QuotedIdent => {
+                self.at += 1;
+                Ok(Some(identifier(&token)))
+            }
+            TokenKind::Keyword(keyword) if DATABASE_OPTION_KEYWORDS.contains(&keyword.name) => {
+                self.at += 1;
+                Ok(Some(Identifier::new(keyword.name)))
+            }
+            TokenKind::Keyword(_) if self.kw("connection") => {
+                self.at += 1;
+                self.expect_kw("limit")?;
+                Ok(Some(Identifier::new(CONNECTION_LIMIT)))
+            }
+            _ => Ok(None),
+        }
     }
 }
 

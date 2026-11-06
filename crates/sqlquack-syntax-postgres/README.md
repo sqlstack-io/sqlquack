@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, and `CREATE [OR REPLACE] AGGREGATE` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, and `CREATE DATABASE` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -75,3 +75,9 @@ value is absent when written bare. The pre-8.2 form has no argument list and the
 `OLD STYLE`. An `OUT` or `INOUT` argument, and a `VARIADIC` direct argument without one `VARIADIC`
 aggregated argument of the same type name, are refused (0A000). Type names are compared as
 PostgreSQL's `equal()` compares them, so `int` matches `integer` and `pg_catalog.int4` but not `int4`.
+
+## CREATE DATABASE
+
+`CREATE DATABASE` becomes `CreateDatabase`, each option a `(name, value)` tuple in `properties`, in
+order. `CONNECTION LIMIT` is named `connection_limit`, as PostgreSQL names it; a value is a number,
+a string or word, a boolean, or `DEFAULT`.
