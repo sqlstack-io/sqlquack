@@ -1006,3 +1006,24 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.sql-syntax-lexical.cast-string" = "a082b862baed93e5559fc95c560cfdce70287bd703aae0b674a901a33ca217e4"
 "pg.expressions.sql-syntax-lexical.string-cast" = "89cfeeaf429b9f0f4d56eeb62806f113b38b860f4d4b58e74ea9893979835a91"
 "pg.expressions.sql-syntax-lexical.type-string" = "5dfa22b5cd8870a98b4477ae59f4227911f526510fe906c3bc146e7669daab57"
+
+[[review]]
+id = "pg-auditor-expressions-005"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "bb29fc0ea41d9c91470367eedd5e6bac935190d4"
+reviewed_utc = "2026-11-06T11:41:21Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.bitstring.op-bar",
+  "pg.expressions.sql-expressions.array-constructor",
+]
+note = "Re-read after the obligation-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree bb29fc0e; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.bitstring.op-bar" = "3611afe9d6fb2e296f3c6164d192b96ed81571db155ea1ea0afd414bb5755e77"
+"pg.expressions.sql-expressions.array-constructor" = "767dc341288f9ab4155455ad2a68a30b03870ded52480b7c23af59b93b5da40b"
+
+[review.definitions]
+"pg.expressions.bitstring.op-bar" = "24ab756dba47b7871cfd13c7589b3601feff76e261c8e3ccd80de9f0a31db75a"
+"pg.expressions.sql-expressions.array-constructor" = "522ceb74156d2b81b2f5dd674dcdd5ef43b4dea88274b2f3a140d065a82e18c8"

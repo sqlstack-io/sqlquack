@@ -477,3 +477,53 @@ note = "Read against the PostgreSQL 18.6 documentation (release SGML), every obl
 "pg.ddl.alter-view.reset" = "4fa1ce30b7d797f46794c202d54f26559ce2ebc5ecad05b2f7fa121e7fa4fe1b"
 "pg.ddl.alter-view.set" = "a98ba021e94e9dbe3738b387904cb7e90c4dcd11a7970cc814cdd8fba6294085"
 "pg.ddl.alter-view.set-schema" = "be3ff6dda55baa136e46da4f7d946e0f08136393d1010f0c699706dc4a4248a0"
+
+[[review]]
+id = "pg-auditor-ddl-007"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "bb29fc0ea41d9c91470367eedd5e6bac935190d4"
+reviewed_utc = "2026-11-06T11:41:21Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-foreign-table.alter-set",
+  "pg.ddl.alter-foreign-table.rename-to-only-column",
+  "pg.ddl.alter-materialized-view.rename-to-column",
+  "pg.ddl.alter-sequence.name",
+  "pg.ddl.alter-sequence.set-schema",
+  "pg.ddl.alter-table.add-column-not-collate",
+  "pg.ddl.alter-table.alter",
+  "pg.ddl.alter-table.rename-to-only-column",
+  "pg.ddl.alter-view.rename-to-column",
+  "pg.ddl.create-database",
+  "pg.ddl.create-table.table-name",
+]
+note = "Re-read after the obligation-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree bb29fc0e; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-foreign-table.alter-set" = "e0634241e807c059eb5712f6ca97ec5afb90864b223b1de24293eeb9f796f3cc"
+"pg.ddl.alter-foreign-table.rename-to-only-column" = "ad7acdc6ed477163649d3da45624f6a0f57970cd8c5bfde45a22f4dccbc17c77"
+"pg.ddl.alter-materialized-view.rename-to-column" = "6c94b88f3b16d2c431892fb8145c35d8cc4541f311afbcdf848013ad4430805e"
+"pg.ddl.alter-sequence.name" = "8e5ff17f546aad0b31b04e51df56eb95f18896f69e02b8d8e6bdea5af9632d24"
+"pg.ddl.alter-sequence.set-schema" = "cccb9f5e4d9dee4070a655466d896b2bf6db88d307f8938470981bd05b60b735"
+"pg.ddl.alter-table.add-column-not-collate" = "2a05631e4b0b9e643ab74ba902e24b9fca0a9ee8850cdc1d7ace6d30e4387d46"
+"pg.ddl.alter-table.alter" = "d0de3ad38a6b148c133fb9dfb598f0371246d86470d68caa11b50ef6442676f4"
+"pg.ddl.alter-table.rename-to-only-column" = "7375679d660e39cffd078822c9b2863e9f5b0b5f0496120503ef66fca18308d2"
+"pg.ddl.alter-view.rename-to-column" = "04c8ea70a02a6f738915344768b43ec33e8a3c6209bbfb675391ac1308bf9fa5"
+"pg.ddl.create-database" = "996444892b3338c673087e2ceb477fa88dd31d4bdfc6540ba3a536b78a6acae2"
+"pg.ddl.create-table.table-name" = "5b8de0ed5c30d4340ad30f3b2e7602c17dab510a4aa581186fed7adda56696a0"
+
+[review.definitions]
+"pg.ddl.alter-foreign-table.alter-set" = "146ddc2d19560956cd8c5e34f549f26ba01ce29ca1db194b7b97217645f48bb3"
+"pg.ddl.alter-foreign-table.rename-to-only-column" = "0c7ddbe405e304e28d13431ef477a93f9c11b33ba750bd8b11235e1d05ec4877"
+"pg.ddl.alter-materialized-view.rename-to-column" = "17192e45d43638c0d4f1f0a197b46517ff8e3033a02797acef490b49125ba8c6"
+"pg.ddl.alter-sequence.name" = "2104cd4f2c5281d10d95b5382812a30a9f52fb49deffa20e4f8b9c73eee6274a"
+"pg.ddl.alter-sequence.set-schema" = "55e624c4fa16dfdce172637eda548d79d00bfe13518252ccacb5b4b8f22c52ef"
+"pg.ddl.alter-table.add-column-not-collate" = "d4532b687d8336c7c3cf83ee4e00a190452bd3ce6e8cc4092543e7b1eb0b6674"
+"pg.ddl.alter-table.alter" = "1dac311f5a4d843510caa8f5e1e3ca8dd40ebaa08d262eb3e9209b523b1109c3"
+"pg.ddl.alter-table.rename-to-only-column" = "1e073427a1d83e6d0764a6710ac00ca4c0686f19ff59dcf11ad7a0160e94519f"
+"pg.ddl.alter-view.rename-to-column" = "6dd5249ebfb3a93bfa7a75f6b6ebb0ed0dbea05dbfe11973a903d0e40f31ff51"
+"pg.ddl.create-database" = "cc94eed5d63f0d27790837685acafc90890ac057f26dcb3d35253887c02e6f84"
+"pg.ddl.create-table.table-name" = "57f909724ffe328ed49bdf04700159351a3fdb25aeff5d32effe72243aa9502a"
+
+# Ready to land as written in coverage/syntax-postgres/reviews/auditor-expressions.toml, as a [[review]] entry with the same keys.
