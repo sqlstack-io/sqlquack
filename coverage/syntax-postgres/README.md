@@ -152,8 +152,8 @@ receipt's later stage, and an observed case its receipt's outcome.
 `baseline.json` is the first claims snapshot (`syntax-coverage snapshot --root
 coverage/syntax-postgres`), bound to catalogue commit 19aa1f28 and to the Postgres parser's tree
 on `wip/pg-integration` e48be3a8 (tree 17b35dd8), where `local_parser = "postgres"` runs that
-parser's strict entry point in the checker's isolated worker: any parser error rejects the case. It claims 8,119 of 22,217 obligations and the 8 forms the auditor's first review batch
-approved; a statement the parser keeps as an opaque command is never verified.
+parser's strict entry point in the checker's isolated worker: any parser error rejects the case. It claims 8,119 of 22,217 obligations and the 963 forms the auditors' first three review
+batches approved; a statement the parser keeps as an opaque command is never verified.
 
 `reviews/auditor-<family>.toml` holds the independent auditor's approvals (D235). Each `[[review]]`
 is copied verbatim from the auditor's record on `wip/syntax-omission-audit`
