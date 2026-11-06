@@ -212,11 +212,13 @@ GRAMMAR_REWRITES: tuple[tuple[re.Pattern[str], str], ...] = (
             r"\[ LIMIT \{ <count> \| ALL \} \] (\[ OFFSET <start> \[ ROW \| ROWS \] \]) "
             r"\[ FETCH \{ FIRST \| NEXT \} \[ <count> \] \{ ROW \| ROWS \} ONLY \]"
         ),
-        r"[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ] \1",
+        r"[ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ] "
+        r"\1",
     ),
     (
         re.compile(
-            r"(VALUES \( (?:\{ <expression> \| DEFAULT \}|<expression>) \[, \.\.\.\] \)) \[, \.\.\.\]"
+            r"(VALUES \( (?:\{ <expression> \| DEFAULT \}|<expression>) \[, \.\.\.\] \)) "
+            r"\[, \.\.\.\]"
         ),
         r"\1 [ , ( <expression> ) ]",
     ),

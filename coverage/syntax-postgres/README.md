@@ -116,11 +116,16 @@ Postgres's own: the submission context of each family (statements as written, ex
 `CAST ( NULL AS … )`), placeholder fills by synopsis name, class rules for operator and function
 placeholders that name a value of a type, and a grammar read that writes a form's bare words in
 upper case (Postgres synopses spell keywords and type names in lower case; every placeholder is
-in angle brackets). `limits.toml` holds the readings, suppressions and hand-written limits, each
+in angle brackets), with a few list spellings rewritten so the renderer can copy them
+(`GRAMMAR_REWRITES` in its constants: ONLY and `*` as alternatives, as gram.y relation_expr takes
+them; LIMIT and FETCH as one clause; DISTINCT with a required select list; a with_query as
+name AS ( query ); a list's second item written out). `limits.toml` holds the readings, suppressions and hand-written limits, each
 with its reason, in the format of `coverage/syntax/limits.toml`.
 
-Cases are written for the forms in `focus/postgres.toml` only; the other families' case files are
-empty until their forms are taken up. Each case has the referee's shape: the session
+Cases are written for the forms in `focus/postgres.toml` and for every form of the families in
+`CASED_FAMILIES`; the other families' case files hold only their focus forms until taken up.
+`pending.toml` lists cases recorded but held out of the receipts because the referee's method
+misjudges them, each with the referee change it waits on. Each case has the referee's shape: the session
 `{"TimeZone": "UTC", "statement_timeout": "30s"}`, capture `execute_in_rolled_back_transaction`,
 or `execute_autocommit_in_throwaway_database` for statements Postgres refuses inside a
 transaction block (the referee's `engine.toml` `autocommit` list), no setup, and one statement
