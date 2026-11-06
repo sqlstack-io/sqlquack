@@ -81,6 +81,11 @@ forms = ["sf.query.with.select"]
 constructs = ["clause:with_recursive"]
 forms = ["sf.query.with.select.syntax"]
 
+# The converter refuses WITH RECURSIVE at its WITH node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:with", "clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
 [[link]]
 constructs = ["clause:where"]
 forms = ["sf.query.where"]
@@ -105,12 +110,22 @@ forms = ["sf.query.order-by.orderitem"]
 constructs = ["clause:order_by_all"]
 forms = ["sf.query.order-by.all"]
 
+# The converter refuses ORDER BY ALL at its ORDER BY node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:order_by", "clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
 [[link]]
 constructs = ["clause:qualify"]
 forms = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
 
 [[link]]
 constructs = ["clause:sample"]
+forms = ["sf.query.sample"]
+
+# The converter refuses a sampled table at its table node, so a refusal there names SAMPLE too.
+[[link]]
+constructs = ["node:table", "clause:sample"]
 forms = ["sf.query.sample"]
 
 [[link]]
