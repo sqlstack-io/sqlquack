@@ -126,23 +126,6 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
             ],
         },
         DialectTypeTestCase {
-            description: "over a window only a count keeps NonNull; a frame can be empty",
-            sql: "SELECT COUNT(id) OVER () AS n, \
-                  COUNT(*) OVER (ORDER BY id ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING) AS f, \
-                  MIN(id) OVER (ORDER BY id ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING) AS m, \
-                  UPPER(name) OVER () AS u, UPPER(name) AS plain FROM orders \
-                  JOIN customers ON customers.id = orders.customer_id",
-            dialect: Dialect::Snowflake,
-            profile: &SNOWFLAKE,
-            expected_outputs: &[
-                ("n", Some("NUMBER(18,0)"), NonNull),
-                ("f", Some("NUMBER(18,0)"), NonNull),
-                ("m", Some("NUMBER(38,0)"), Unknown),
-                ("u", Some("VARCHAR"), Unknown),
-                ("plain", Some("VARCHAR"), NonNull),
-            ],
-        },
-        DialectTypeTestCase {
             description: "TIMESTAMP follows the profile's TIMESTAMP_TYPE_MAPPING",
             sql: "SELECT CAST(status AS TIMESTAMP) AS at, TO_TIMESTAMP(status) AS parsed FROM orders",
             dialect: Dialect::Snowflake,

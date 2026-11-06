@@ -148,32 +148,10 @@ pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> L
     if profile.name() == POSTGRES_PROFILE {
         lineage.data_type = postgres_set_type(&parts_typed).unwrap_or(lineage.data_type);
     }
-    coerced(lineage, &parts_typed, profile)
-}
-
-/// `lineage` at least a cast when a branch it merges, reading a column, is implicitly cast to
-/// its type, as in a set operation, a VALUES column or an UNPIVOT value. Without a merged type,
-/// two such branches of different types mean at least one of them is cast.
-pub(crate) fn coerced(
-    mut lineage: Lineage,
-    branches: &[Lineage],
-    profile: &dyn DialectProfile,
-) -> Lineage {
-    let cast: bool = match lineage.data_type.as_deref() {
-        Some(merged) => branches
-            .iter()
-            .any(|branch| implicitly_cast(branch, Some(merged), profile)),
-        None => {
-            let read: Vec<&str> = branches
-                .iter()
-                .filter(|branch| !branch.sources.is_empty())
-                .filter_map(|branch| branch.data_type.as_deref())
-                .collect();
-            read.iter()
-                .any(|own| read.iter().any(|other| !profile.same_type(own, other)))
-        }
-    };
-    if cast {
+    let coerced: bool = parts_typed
+        .iter()
+        .any(|branch| implicitly_cast(branch, lineage.data_type.as_deref(), profile));
+    if coerced {
         lineage.kind = lineage.kind.max(TransformKind::Cast);
     }
     lineage

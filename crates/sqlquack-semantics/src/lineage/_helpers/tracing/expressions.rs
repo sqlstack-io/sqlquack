@@ -17,9 +17,8 @@ use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
 use crate::lineage::constants::{
-    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE,
-    NEVER_NULL_WINDOW_FUNCTIONS, POSITIONAL_COLUMN_BASE, POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS,
-    SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
+    POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -137,11 +136,7 @@ pub(crate) fn expression_lineage(
         Expression::WindowFunction(window) => {
             let function: Lineage =
                 children_lineage(&window.this, scope, context, TransformKind::Window);
-            let nullability: Nullability = match never_null_window(&window.this) {
-                true => function.nullability,
-                false => Nullability::Unknown,
-            };
-            let value_type: ValueType = (function.data_type.clone(), nullability);
+            let value_type: ValueType = (function.data_type.clone(), function.nullability);
             let mut parts: Vec<Lineage> = vec![function];
             for child in expression.children() {
                 if !std::ptr::eq(child, &window.this) {
@@ -164,27 +159,6 @@ pub(crate) fn expression_lineage(
         }
         _ => children_lineage(expression, scope, context, TransformKind::Expression),
     }
-}
-
-/// Whether a window function never gives NULL, even over an empty frame: counts and ranks. Only
-/// these keep their function's nullability over a window; any other, an aggregate over a frame
-/// included, can give NULL for an empty frame, and `ntile(NULL)` gives NULL, so it is unknown.
-fn never_null_window(function: &Expression) -> bool {
-    let name: &str = match function {
-        Expression::Count(_)
-        | Expression::RowNumber(_)
-        | Expression::Rank(_)
-        | Expression::DenseRank(_)
-        | Expression::PercentRank(_)
-        | Expression::CumeDist(_) => return true,
-        Expression::Function(call) => &call.name,
-        Expression::AggregateFunction(call) => &call.name,
-        _ => return false,
-    };
-    let last: &str = name.rsplit('.').next().unwrap_or(name);
-    NEVER_NULL_WINDOW_FUNCTIONS
-        .iter()
-        .any(|never_null| never_null.eq_ignore_ascii_case(last))
 }
 
 fn children_lineage(
