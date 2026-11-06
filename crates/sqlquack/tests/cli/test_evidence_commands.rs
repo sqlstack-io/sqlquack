@@ -91,6 +91,14 @@ fn given_recorded_cases_when_verify_writes_translation_statements_then_each_outc
     };
     let test_cases = [
         TranslationStatementTestCase {
+            description: "a statement SQLQuack cannot parse is one refused line, not an aborted file",
+            id: "quoted_part_from",
+            expected_outcome: "unrecorded_refused",
+            expected_codes: &["SQ0001"],
+            expected_refused: &["statement"],
+            expected_use: "spelling:quoted_string",
+        },
+        TranslationStatementTestCase {
             description: "matching rows",
             id: "any_value_all_null",
             expected_outcome: "matching",
@@ -183,5 +191,5 @@ fn given_recorded_cases_when_verify_writes_translation_statements_then_each_outc
                 .is_some_and(|reference| reference.starts_with("aggregate/"))
         })
         .count();
-    assert_eq!(aggregates, 50);
+    assert_eq!(aggregates, 51);
 }

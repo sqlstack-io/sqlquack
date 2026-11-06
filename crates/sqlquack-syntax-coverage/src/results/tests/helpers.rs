@@ -99,6 +99,7 @@ pub(crate) fn statement(
         codes: vec!["SQ0003".to_owned()],
         refused: Vec::new(),
         constructs: with_call_shapes(constructs),
+        unparsed: None,
     }
 }
 

@@ -990,6 +990,19 @@ pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
     format!("{} {}", outcomes[0]["id"], outcomes[0]["outcome"])
 }
 
+/// A case Snowflake rejects at parse (1003) and SQLQuack's parser refuses too.
+const UNPARSED_CASE: &str = r#"
+[[case]]
+id = "quoted_part_from"
+compile_error = true
+description = "A quoted part before FROM, which Snowflake rejects at parse."
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-11-05'"]]
+query = "SELECT DATE_PART('month' FROM d) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+"#;
+
 /// Each statement `verify --translation-statements` writes for the batch-2 aggregates and fidelity.
 pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
     let directory = tempfile::tempdir().expect("temporary directory");
@@ -1010,6 +1023,9 @@ pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
         cases.join("aggregates_batch2.toml"),
     )
     .expect("case copied");
+    let batch = cases.join("aggregates_batch2.toml");
+    let text = std::fs::read_to_string(&batch).expect("case read") + UNPARSED_CASE;
+    std::fs::write(&batch, text).expect("unparsed case added");
     copy_files(
         &root.join("evidence/results"),
         &directory.path().join("evidence/results"),

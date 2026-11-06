@@ -30,6 +30,7 @@ pub fn write_translation_statements(
         };
         let (outcome, codes, refused) = outcome(case, verdict, converter);
         let own = own_functions(case);
+        let (constructs, unparsed) = constructs(case, &own);
         statements.push(Statement {
             reference: verdict.reference.clone(),
             hash: verdict.hash.clone(),
@@ -39,7 +40,8 @@ pub fn write_translation_statements(
                 .into_iter()
                 .map(|key| project_key(key, &own))
                 .collect(),
-            constructs: constructs(case, &own)?,
+            constructs,
+            unparsed,
         });
     }
     let count = statements.len();

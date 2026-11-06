@@ -28,6 +28,9 @@ pub struct RecordedStatement {
     pub refused: Vec<String>,
     /// Every construct the statement uses, sorted.
     pub constructs: Vec<String>,
+    /// Why SQLQuack's parser refused the statement; its constructs are then only token spellings.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub unparsed: Option<String>,
 }
 
 /// What one statement shows; only the first two are results matching Snowflake.

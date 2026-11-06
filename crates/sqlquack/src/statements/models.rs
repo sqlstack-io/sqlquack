@@ -39,6 +39,9 @@ pub struct Statement {
     pub refused: Vec<String>,
     /// Every construct the Snowflake statement uses, which links it to catalogue forms.
     pub constructs: Vec<String>,
+    /// Why SQLQuack's parser refused the statement; its constructs are then only token spellings.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unparsed: Option<String>,
 }
 
 /// The whole file `sqlquack verify --translation-statements` writes.
