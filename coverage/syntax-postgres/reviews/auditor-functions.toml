@@ -1,0 +1,2088 @@
+# Approvals by the independent syntax auditor (D235). Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+
+[[review]]
+id = "pg-auditor-functions-001"
+reviewer_lane = "auditor"
+family = "functions"
+parser_tree = "17b35dd8e162cf4f53a47da96498f6a4669a9164"
+reviewed_utc = "2026-11-06T08:23:55Z"
+verdict = "approved"
+forms = [
+  "pg.functions.admin.brin-desummarize-range",
+  "pg.functions.admin.brin-summarize-new-values",
+  "pg.functions.admin.brin-summarize-range",
+  "pg.functions.admin.current-setting",
+  "pg.functions.admin.gin-clean-pending-list",
+  "pg.functions.admin.pg-advisory-lock",
+  "pg.functions.admin.pg-advisory-lock-shared",
+  "pg.functions.admin.pg-advisory-unlock",
+  "pg.functions.admin.pg-advisory-unlock-all",
+  "pg.functions.admin.pg-advisory-unlock-shared",
+  "pg.functions.admin.pg-advisory-xact-lock",
+  "pg.functions.admin.pg-advisory-xact-lock-shared",
+  "pg.functions.admin.pg-backup-start",
+  "pg.functions.admin.pg-backup-stop",
+  "pg.functions.admin.pg-cancel-backend",
+  "pg.functions.admin.pg-clear-attribute-stats",
+  "pg.functions.admin.pg-clear-relation-stats",
+  "pg.functions.admin.pg-collation-actual-version",
+  "pg.functions.admin.pg-column-compression",
+  "pg.functions.admin.pg-column-size",
+  "pg.functions.admin.pg-column-toast-chunk-id",
+  "pg.functions.admin.pg-copy-logical-replication-slot",
+  "pg.functions.admin.pg-copy-physical-replication-slot",
+  "pg.functions.admin.pg-create-logical-replication-slot",
+  "pg.functions.admin.pg-create-physical-replication-slot",
+  "pg.functions.admin.pg-create-restore-point",
+  "pg.functions.admin.pg-current-wal-flush-lsn",
+  "pg.functions.admin.pg-current-wal-insert-lsn",
+  "pg.functions.admin.pg-current-wal-lsn",
+  "pg.functions.admin.pg-database-collation-actual-version",
+  "pg.functions.admin.pg-database-size",
+  "pg.functions.admin.pg-drop-replication-slot",
+  "pg.functions.admin.pg-export-snapshot",
+  "pg.functions.admin.pg-filenode-relation",
+  "pg.functions.admin.pg-get-wal-replay-pause-state",
+  "pg.functions.admin.pg-get-wal-resource-managers",
+  "pg.functions.admin.pg-import-system-collations",
+  "pg.functions.admin.pg-indexes-size",
+  "pg.functions.admin.pg-is-in-recovery",
+  "pg.functions.admin.pg-is-wal-replay-paused",
+  "pg.functions.admin.pg-last-wal-receive-lsn",
+  "pg.functions.admin.pg-last-wal-replay-lsn",
+  "pg.functions.admin.pg-last-xact-replay-timestamp",
+  "pg.functions.admin.pg-log-backend-memory-contexts",
+  "pg.functions.admin.pg-log-standby-snapshot",
+  "pg.functions.admin.pg-logical-emit-message",
+  "pg.functions.admin.pg-logical-slot-get-binary-changes",
+  "pg.functions.admin.pg-logical-slot-get-changes",
+  "pg.functions.admin.pg-logical-slot-peek-binary-changes",
+  "pg.functions.admin.pg-logical-slot-peek-changes",
+  "pg.functions.admin.pg-ls-archive-statusdir",
+  "pg.functions.admin.pg-ls-dir",
+  "pg.functions.admin.pg-ls-logdir",
+  "pg.functions.admin.pg-ls-logicalmapdir",
+  "pg.functions.admin.pg-ls-logicalsnapdir",
+  "pg.functions.admin.pg-ls-replslotdir",
+  "pg.functions.admin.pg-ls-summariesdir",
+  "pg.functions.admin.pg-ls-tmpdir",
+  "pg.functions.admin.pg-ls-waldir",
+  "pg.functions.admin.pg-partition-ancestors",
+  "pg.functions.admin.pg-partition-root",
+  "pg.functions.admin.pg-partition-tree",
+  "pg.functions.admin.pg-promote",
+  "pg.functions.admin.pg-read-binary-file",
+  "pg.functions.admin.pg-read-file",
+  "pg.functions.admin.pg-relation-filenode",
+  "pg.functions.admin.pg-relation-filepath",
+  "pg.functions.admin.pg-relation-size",
+  "pg.functions.admin.pg-reload-conf",
+  "pg.functions.admin.pg-replication-origin-advance",
+  "pg.functions.admin.pg-replication-origin-create",
+  "pg.functions.admin.pg-replication-origin-drop",
+  "pg.functions.admin.pg-replication-origin-oid",
+  "pg.functions.admin.pg-replication-origin-progress",
+  "pg.functions.admin.pg-replication-origin-session-is-setup",
+  "pg.functions.admin.pg-replication-origin-session-progress",
+  "pg.functions.admin.pg-replication-origin-session-reset",
+  "pg.functions.admin.pg-replication-origin-session-setup",
+  "pg.functions.admin.pg-replication-origin-xact-reset",
+  "pg.functions.admin.pg-replication-origin-xact-setup",
+  "pg.functions.admin.pg-replication-slot-advance",
+  "pg.functions.admin.pg-restore-attribute-stats",
+  "pg.functions.admin.pg-restore-relation-stats",
+  "pg.functions.admin.pg-rotate-logfile",
+  "pg.functions.admin.pg-size-bytes",
+  "pg.functions.admin.pg-size-pretty",
+  "pg.functions.admin.pg-split-walfile-name",
+  "pg.functions.admin.pg-stat-file",
+  "pg.functions.admin.pg-switch-wal",
+  "pg.functions.admin.pg-sync-replication-slots",
+  "pg.functions.admin.pg-table-size",
+  "pg.functions.admin.pg-tablespace-size",
+  "pg.functions.admin.pg-terminate-backend",
+  "pg.functions.admin.pg-total-relation-size",
+  "pg.functions.admin.pg-try-advisory-lock",
+  "pg.functions.admin.pg-try-advisory-lock-shared",
+  "pg.functions.admin.pg-try-advisory-xact-lock",
+  "pg.functions.admin.pg-try-advisory-xact-lock-shared",
+  "pg.functions.admin.pg-wal-lsn-diff",
+  "pg.functions.admin.pg-wal-replay-pause",
+  "pg.functions.admin.pg-wal-replay-resume",
+  "pg.functions.admin.pg-walfile-name",
+  "pg.functions.admin.pg-walfile-name-offset",
+  "pg.functions.admin.set-config",
+  "pg.functions.aggregate.any-value",
+  "pg.functions.aggregate.array-agg-order-by",
+  "pg.functions.aggregate.avg",
+  "pg.functions.aggregate.bit-and",
+  "pg.functions.aggregate.bit-or",
+  "pg.functions.aggregate.bit-xor",
+  "pg.functions.aggregate.bool-and",
+  "pg.functions.aggregate.bool-or",
+  "pg.functions.aggregate.corr",
+  "pg.functions.aggregate.count",
+  "pg.functions.aggregate.covar-pop",
+  "pg.functions.aggregate.covar-samp",
+  "pg.functions.aggregate.cume-dist-within-group-order-by",
+  "pg.functions.aggregate.dense-rank-within-group-order-by",
+  "pg.functions.aggregate.every",
+  "pg.functions.aggregate.grouping",
+  "pg.functions.aggregate.json-agg-order-by",
+  "pg.functions.aggregate.json-agg-strict",
+  "pg.functions.aggregate.json-object-agg-order-by",
+  "pg.functions.aggregate.json-object-agg-strict",
+  "pg.functions.aggregate.json-object-agg-unique",
+  "pg.functions.aggregate.json-object-agg-unique-strict",
+  "pg.functions.aggregate.jsonb-agg-order-by",
+  "pg.functions.aggregate.jsonb-agg-strict",
+  "pg.functions.aggregate.jsonb-object-agg-order-by",
+  "pg.functions.aggregate.jsonb-object-agg-strict",
+  "pg.functions.aggregate.jsonb-object-agg-unique",
+  "pg.functions.aggregate.jsonb-object-agg-unique-strict",
+  "pg.functions.aggregate.max",
+  "pg.functions.aggregate.min",
+  "pg.functions.aggregate.mode-within-group-order-by",
+  "pg.functions.aggregate.percent-rank-within-group-order-by",
+  "pg.functions.aggregate.percentile-cont-within-group-order-by",
+  "pg.functions.aggregate.percentile-disc-within-group-order-by",
+  "pg.functions.aggregate.range-agg",
+  "pg.functions.aggregate.range-intersect-agg",
+  "pg.functions.aggregate.rank-within-group-order-by",
+  "pg.functions.aggregate.regr-avgx",
+  "pg.functions.aggregate.regr-avgy",
+  "pg.functions.aggregate.regr-count",
+  "pg.functions.aggregate.regr-intercept",
+  "pg.functions.aggregate.regr-r2",
+  "pg.functions.aggregate.regr-slope",
+  "pg.functions.aggregate.regr-sxx",
+  "pg.functions.aggregate.regr-sxy",
+  "pg.functions.aggregate.regr-syy",
+  "pg.functions.aggregate.stddev",
+  "pg.functions.aggregate.stddev-pop",
+  "pg.functions.aggregate.stddev-samp",
+  "pg.functions.aggregate.string-agg",
+  "pg.functions.aggregate.string-agg-order-by",
+  "pg.functions.aggregate.sum",
+  "pg.functions.aggregate.var-pop",
+  "pg.functions.aggregate.var-samp",
+  "pg.functions.aggregate.variance",
+  "pg.functions.aggregate.xmlagg-order-by",
+  "pg.functions.array.array-append",
+  "pg.functions.array.array-cat",
+  "pg.functions.array.array-dims",
+  "pg.functions.array.array-fill",
+  "pg.functions.array.array-length",
+  "pg.functions.array.array-lower",
+  "pg.functions.array.array-ndims",
+  "pg.functions.array.array-position",
+  "pg.functions.array.array-positions",
+  "pg.functions.array.array-prepend",
+  "pg.functions.array.array-remove",
+  "pg.functions.array.array-replace",
+  "pg.functions.array.array-reverse",
+  "pg.functions.array.array-sample",
+  "pg.functions.array.array-shuffle",
+  "pg.functions.array.array-sort",
+  "pg.functions.array.array-to-string",
+  "pg.functions.array.array-upper",
+  "pg.functions.array.cardinality",
+  "pg.functions.array.trim-array",
+  "pg.functions.array.unnest",
+  "pg.functions.binarystring.bit-count",
+  "pg.functions.binarystring.bit-length",
+  "pg.functions.binarystring.btrim",
+  "pg.functions.binarystring.convert",
+  "pg.functions.binarystring.convert-from",
+  "pg.functions.binarystring.convert-to",
+  "pg.functions.binarystring.crc32",
+  "pg.functions.binarystring.crc32c",
+  "pg.functions.binarystring.decode",
+  "pg.functions.binarystring.encode",
+  "pg.functions.binarystring.get-bit",
+  "pg.functions.binarystring.get-byte",
+  "pg.functions.binarystring.length",
+  "pg.functions.binarystring.ltrim",
+  "pg.functions.binarystring.md5",
+  "pg.functions.binarystring.octet-length",
+  "pg.functions.binarystring.overlay-placing-from",
+  "pg.functions.binarystring.position-in",
+  "pg.functions.binarystring.reverse",
+  "pg.functions.binarystring.rtrim",
+  "pg.functions.binarystring.set-bit",
+  "pg.functions.binarystring.set-byte",
+  "pg.functions.binarystring.sha224",
+  "pg.functions.binarystring.sha256",
+  "pg.functions.binarystring.sha384",
+  "pg.functions.binarystring.sha512",
+  "pg.functions.binarystring.substr",
+  "pg.functions.binarystring.substring",
+  "pg.functions.binarystring.trim",
+  "pg.functions.binarystring.trim-from",
+  "pg.functions.bitstring.bit-count",
+  "pg.functions.bitstring.bit-length",
+  "pg.functions.bitstring.get-bit",
+  "pg.functions.bitstring.length",
+  "pg.functions.bitstring.octet-length",
+  "pg.functions.bitstring.overlay-placing-from",
+  "pg.functions.bitstring.position-in",
+  "pg.functions.bitstring.set-bit",
+  "pg.functions.bitstring.substring",
+  "pg.functions.comparison.num-nonnulls",
+  "pg.functions.comparison.num-nulls",
+  "pg.functions.conditional.coalesce",
+  "pg.functions.conditional.greatest",
+  "pg.functions.conditional.least",
+  "pg.functions.conditional.nullif",
+  "pg.functions.datetime.age",
+  "pg.functions.datetime.clock-timestamp",
+  "pg.functions.datetime.current-date-noparens",
+  "pg.functions.datetime.current-time",
+  "pg.functions.datetime.current-time-noparens",
+  "pg.functions.datetime.current-timestamp",
+  "pg.functions.datetime.current-timestamp-noparens",
+  "pg.functions.datetime.date-add",
+  "pg.functions.datetime.date-bin",
+  "pg.functions.datetime.date-part",
+  "pg.functions.datetime.date-subtract",
+  "pg.functions.datetime.date-trunc",
+  "pg.functions.datetime.extract",
+  "pg.functions.datetime.isfinite",
+  "pg.functions.datetime.justify-days",
+  "pg.functions.datetime.justify-hours",
+  "pg.functions.datetime.justify-interval",
+  "pg.functions.datetime.localtime",
+  "pg.functions.datetime.localtime-noparens",
+  "pg.functions.datetime.localtimestamp",
+  "pg.functions.datetime.localtimestamp-noparens",
+  "pg.functions.datetime.make-date",
+  "pg.functions.datetime.make-interval",
+  "pg.functions.datetime.make-time",
+  "pg.functions.datetime.make-timestamp",
+  "pg.functions.datetime.make-timestamptz",
+  "pg.functions.datetime.now",
+  "pg.functions.datetime.pg-sleep",
+  "pg.functions.datetime.pg-sleep-for",
+  "pg.functions.datetime.pg-sleep-until",
+  "pg.functions.datetime.statement-timestamp",
+  "pg.functions.datetime.timeofday",
+  "pg.functions.datetime.to-timestamp",
+  "pg.functions.datetime.transaction-timestamp",
+  "pg.functions.enum.enum-first",
+  "pg.functions.enum.enum-last",
+  "pg.functions.enum.enum-range",
+  "pg.functions.event-triggers.pg-event-trigger-ddl-commands",
+  "pg.functions.event-triggers.pg-event-trigger-dropped-objects",
+  "pg.functions.event-triggers.pg-event-trigger-table-rewrite-oid",
+  "pg.functions.event-triggers.pg-event-trigger-table-rewrite-reason",
+  "pg.functions.formatting.to-char",
+  "pg.functions.formatting.to-date",
+  "pg.functions.formatting.to-number",
+  "pg.functions.formatting.to-timestamp",
+  "pg.functions.geometry.area",
+  "pg.functions.geometry.bound-box",
+  "pg.functions.geometry.box",
+  "pg.functions.geometry.center",
+  "pg.functions.geometry.circle",
+  "pg.functions.geometry.diagonal",
+  "pg.functions.geometry.diameter",
+  "pg.functions.geometry.height",
+  "pg.functions.geometry.isclosed",
+  "pg.functions.geometry.isopen",
+  "pg.functions.geometry.length",
+  "pg.functions.geometry.line",
+  "pg.functions.geometry.lseg",
+  "pg.functions.geometry.npoints",
+  "pg.functions.geometry.path",
+  "pg.functions.geometry.pclose",
+  "pg.functions.geometry.point",
+  "pg.functions.geometry.polygon",
+  "pg.functions.geometry.popen",
+  "pg.functions.geometry.radius",
+  "pg.functions.geometry.slope",
+  "pg.functions.geometry.width",
+  "pg.functions.info.acldefault",
+  "pg.functions.info.aclexplode",
+  "pg.functions.info.age",
+  "pg.functions.info.col-description",
+  "pg.functions.info.collation-for",
+  "pg.functions.info.current-catalog-noparens",
+  "pg.functions.info.current-database",
+  "pg.functions.info.current-query",
+  "pg.functions.info.current-role-noparens",
+  "pg.functions.info.current-schema",
+  "pg.functions.info.current-schema-noparens",
+  "pg.functions.info.current-schemas",
+  "pg.functions.info.current-user-noparens",
+  "pg.functions.info.format-type",
+  "pg.functions.info.icu-unicode-version",
+  "pg.functions.info.inet-client-addr",
+  "pg.functions.info.inet-client-port",
+  "pg.functions.info.inet-server-addr",
+  "pg.functions.info.inet-server-port",
+  "pg.functions.info.makeaclitem",
+  "pg.functions.info.mxid-age",
+  "pg.functions.info.obj-description",
+  "pg.functions.info.pg-available-wal-summaries",
+  "pg.functions.info.pg-backend-pid",
+  "pg.functions.info.pg-basetype",
+  "pg.functions.info.pg-blocking-pids",
+  "pg.functions.info.pg-char-to-encoding",
+  "pg.functions.info.pg-collation-is-visible",
+  "pg.functions.info.pg-conf-load-time",
+  "pg.functions.info.pg-control-checkpoint",
+  "pg.functions.info.pg-control-init",
+  "pg.functions.info.pg-control-recovery",
+  "pg.functions.info.pg-control-system",
+  "pg.functions.info.pg-conversion-is-visible",
+  "pg.functions.info.pg-current-logfile",
+  "pg.functions.info.pg-current-snapshot",
+  "pg.functions.info.pg-current-xact-id",
+  "pg.functions.info.pg-current-xact-id-if-assigned",
+  "pg.functions.info.pg-describe-object",
+  "pg.functions.info.pg-encoding-to-char",
+  "pg.functions.info.pg-function-is-visible",
+  "pg.functions.info.pg-get-acl",
+  "pg.functions.info.pg-get-catalog-foreign-keys",
+  "pg.functions.info.pg-get-constraintdef",
+  "pg.functions.info.pg-get-expr",
+  "pg.functions.info.pg-get-function-arguments",
+  "pg.functions.info.pg-get-function-identity-arguments",
+  "pg.functions.info.pg-get-function-result",
+  "pg.functions.info.pg-get-functiondef",
+  "pg.functions.info.pg-get-indexdef",
+  "pg.functions.info.pg-get-keywords",
+  "pg.functions.info.pg-get-loaded-modules",
+  "pg.functions.info.pg-get-multixact-members",
+  "pg.functions.info.pg-get-object-address",
+  "pg.functions.info.pg-get-partition-constraintdef",
+  "pg.functions.info.pg-get-partkeydef",
+  "pg.functions.info.pg-get-ruledef",
+  "pg.functions.info.pg-get-serial-sequence",
+  "pg.functions.info.pg-get-statisticsobjdef",
+  "pg.functions.info.pg-get-triggerdef",
+  "pg.functions.info.pg-get-userbyid",
+  "pg.functions.info.pg-get-viewdef",
+  "pg.functions.info.pg-get-wal-summarizer-state",
+  "pg.functions.info.pg-identify-object",
+  "pg.functions.info.pg-identify-object-as-address",
+  "pg.functions.info.pg-index-column-has-property",
+  "pg.functions.info.pg-index-has-property",
+  "pg.functions.info.pg-indexam-has-property",
+  "pg.functions.info.pg-input-error-info",
+  "pg.functions.info.pg-input-is-valid",
+  "pg.functions.info.pg-is-other-temp-schema",
+  "pg.functions.info.pg-jit-available",
+  "pg.functions.info.pg-last-committed-xact",
+  "pg.functions.info.pg-listening-channels",
+  "pg.functions.info.pg-my-temp-schema",
+  "pg.functions.info.pg-notification-queue-usage",
+  "pg.functions.info.pg-numa-available",
+  "pg.functions.info.pg-opclass-is-visible",
+  "pg.functions.info.pg-operator-is-visible",
+  "pg.functions.info.pg-opfamily-is-visible",
+  "pg.functions.info.pg-options-to-table",
+  "pg.functions.info.pg-postmaster-start-time",
+  "pg.functions.info.pg-safe-snapshot-blocking-pids",
+  "pg.functions.info.pg-settings-get-flags",
+  "pg.functions.info.pg-snapshot-xip",
+  "pg.functions.info.pg-snapshot-xmax",
+  "pg.functions.info.pg-snapshot-xmin",
+  "pg.functions.info.pg-statistics-obj-is-visible",
+  "pg.functions.info.pg-table-is-visible",
+  "pg.functions.info.pg-tablespace-databases",
+  "pg.functions.info.pg-tablespace-location",
+  "pg.functions.info.pg-trigger-depth",
+  "pg.functions.info.pg-ts-config-is-visible",
+  "pg.functions.info.pg-ts-dict-is-visible",
+  "pg.functions.info.pg-ts-parser-is-visible",
+  "pg.functions.info.pg-ts-template-is-visible",
+  "pg.functions.info.pg-type-is-visible",
+  "pg.functions.info.pg-typeof",
+  "pg.functions.info.pg-visible-in-snapshot",
+  "pg.functions.info.pg-wal-summary-contents",
+  "pg.functions.info.pg-xact-commit-timestamp",
+  "pg.functions.info.pg-xact-commit-timestamp-origin",
+  "pg.functions.info.pg-xact-status",
+  "pg.functions.info.session-user-noparens",
+  "pg.functions.info.shobj-description",
+  "pg.functions.info.system-user-noparens",
+  "pg.functions.info.to-regclass",
+  "pg.functions.info.to-regcollation",
+  "pg.functions.info.to-regnamespace",
+  "pg.functions.info.to-regoper",
+  "pg.functions.info.to-regoperator",
+  "pg.functions.info.to-regproc",
+  "pg.functions.info.to-regprocedure",
+  "pg.functions.info.to-regrole",
+  "pg.functions.info.to-regtype",
+  "pg.functions.info.to-regtypemod",
+  "pg.functions.info.txid-current",
+  "pg.functions.info.txid-current-if-assigned",
+  "pg.functions.info.txid-current-snapshot",
+  "pg.functions.info.txid-snapshot-xip",
+  "pg.functions.info.txid-snapshot-xmax",
+  "pg.functions.info.txid-snapshot-xmin",
+  "pg.functions.info.txid-status",
+  "pg.functions.info.txid-visible-in-snapshot",
+  "pg.functions.info.unicode-version",
+  "pg.functions.info.user-noparens",
+  "pg.functions.info.version",
+  "pg.functions.json.array-to-json",
+  "pg.functions.json.json-array-elements",
+  "pg.functions.json.json-array-elements-text",
+  "pg.functions.json.json-array-length",
+  "pg.functions.json.json-build-array",
+  "pg.functions.json.json-build-object",
+  "pg.functions.json.json-each",
+  "pg.functions.json.json-each-text",
+  "pg.functions.json.json-extract-path",
+  "pg.functions.json.json-extract-path-text",
+  "pg.functions.json.json-object-keys",
+  "pg.functions.json.json-populate-record",
+  "pg.functions.json.json-populate-recordset",
+  "pg.functions.json.json-strip-nulls",
+  "pg.functions.json.json-to-record",
+  "pg.functions.json.json-to-recordset",
+  "pg.functions.json.json-typeof",
+  "pg.functions.json.jsonb-array-elements",
+  "pg.functions.json.jsonb-array-elements-text",
+  "pg.functions.json.jsonb-array-length",
+  "pg.functions.json.jsonb-build-array",
+  "pg.functions.json.jsonb-build-object",
+  "pg.functions.json.jsonb-each",
+  "pg.functions.json.jsonb-each-text",
+  "pg.functions.json.jsonb-extract-path",
+  "pg.functions.json.jsonb-extract-path-text",
+  "pg.functions.json.jsonb-insert",
+  "pg.functions.json.jsonb-object",
+  "pg.functions.json.jsonb-object-keys",
+  "pg.functions.json.jsonb-path-exists",
+  "pg.functions.json.jsonb-path-exists-tz",
+  "pg.functions.json.jsonb-path-match",
+  "pg.functions.json.jsonb-path-match-tz",
+  "pg.functions.json.jsonb-path-query",
+  "pg.functions.json.jsonb-path-query-array",
+  "pg.functions.json.jsonb-path-query-array-tz",
+  "pg.functions.json.jsonb-path-query-first",
+  "pg.functions.json.jsonb-path-query-first-tz",
+  "pg.functions.json.jsonb-path-query-tz",
+  "pg.functions.json.jsonb-populate-record",
+  "pg.functions.json.jsonb-populate-record-valid",
+  "pg.functions.json.jsonb-populate-recordset",
+  "pg.functions.json.jsonb-pretty",
+  "pg.functions.json.jsonb-set",
+  "pg.functions.json.jsonb-set-lax",
+  "pg.functions.json.jsonb-strip-nulls",
+  "pg.functions.json.jsonb-to-record",
+  "pg.functions.json.jsonb-to-recordset",
+  "pg.functions.json.jsonb-typeof",
+  "pg.functions.json.row-to-json",
+  "pg.functions.json.to-json",
+  "pg.functions.json.to-jsonb",
+  "pg.functions.matching.substring",
+  "pg.functions.math.abs",
+  "pg.functions.math.acos",
+  "pg.functions.math.acosd",
+  "pg.functions.math.acosh",
+  "pg.functions.math.asin",
+  "pg.functions.math.asind",
+  "pg.functions.math.asinh",
+  "pg.functions.math.atan",
+  "pg.functions.math.atan2",
+  "pg.functions.math.atan2d",
+  "pg.functions.math.atand",
+  "pg.functions.math.atanh",
+  "pg.functions.math.cbrt",
+  "pg.functions.math.ceil",
+  "pg.functions.math.ceiling",
+  "pg.functions.math.cos",
+  "pg.functions.math.cosd",
+  "pg.functions.math.cosh",
+  "pg.functions.math.cot",
+  "pg.functions.math.cotd",
+  "pg.functions.math.degrees",
+  "pg.functions.math.div",
+  "pg.functions.math.erf",
+  "pg.functions.math.erfc",
+  "pg.functions.math.exp",
+  "pg.functions.math.factorial",
+  "pg.functions.math.floor",
+  "pg.functions.math.gamma",
+  "pg.functions.math.gcd",
+  "pg.functions.math.lcm",
+  "pg.functions.math.lgamma",
+  "pg.functions.math.ln",
+  "pg.functions.math.log",
+  "pg.functions.math.log10",
+  "pg.functions.math.min-scale",
+  "pg.functions.math.mod",
+  "pg.functions.math.pi",
+  "pg.functions.math.power",
+  "pg.functions.math.radians",
+  "pg.functions.math.random",
+  "pg.functions.math.random-normal",
+  "pg.functions.math.round",
+  "pg.functions.math.scale",
+  "pg.functions.math.setseed",
+  "pg.functions.math.sign",
+  "pg.functions.math.sin",
+  "pg.functions.math.sind",
+  "pg.functions.math.sinh",
+  "pg.functions.math.sqrt",
+  "pg.functions.math.tan",
+  "pg.functions.math.tand",
+  "pg.functions.math.tanh",
+  "pg.functions.math.trim-scale",
+  "pg.functions.math.trunc",
+  "pg.functions.math.width-bucket",
+  "pg.functions.net.abbrev",
+  "pg.functions.net.broadcast",
+  "pg.functions.net.family",
+  "pg.functions.net.host",
+  "pg.functions.net.hostmask",
+  "pg.functions.net.inet-merge",
+  "pg.functions.net.inet-same-family",
+  "pg.functions.net.macaddr8-set7bit",
+  "pg.functions.net.masklen",
+  "pg.functions.net.netmask",
+  "pg.functions.net.network",
+  "pg.functions.net.set-masklen",
+  "pg.functions.net.text",
+  "pg.functions.net.trunc",
+  "pg.functions.range.isempty",
+  "pg.functions.range.lower",
+  "pg.functions.range.lower-inc",
+  "pg.functions.range.lower-inf",
+  "pg.functions.range.multirange",
+  "pg.functions.range.range-merge",
+  "pg.functions.range.unnest",
+  "pg.functions.range.upper",
+  "pg.functions.range.upper-inc",
+  "pg.functions.range.upper-inf",
+  "pg.functions.sequence.currval",
+  "pg.functions.sequence.lastval",
+  "pg.functions.sequence.nextval",
+  "pg.functions.sequence.setval",
+  "pg.functions.srf.generate-series",
+  "pg.functions.srf.generate-subscripts",
+  "pg.functions.statistics.pg-mcv-list-items",
+  "pg.functions.string.ascii",
+  "pg.functions.string.bit-length",
+  "pg.functions.string.btrim",
+  "pg.functions.string.casefold",
+  "pg.functions.string.char-length",
+  "pg.functions.string.character-length",
+  "pg.functions.string.chr",
+  "pg.functions.string.concat",
+  "pg.functions.string.concat-ws",
+  "pg.functions.string.format",
+  "pg.functions.string.initcap",
+  "pg.functions.string.left",
+  "pg.functions.string.length",
+  "pg.functions.string.lower",
+  "pg.functions.string.lpad",
+  "pg.functions.string.ltrim",
+  "pg.functions.string.md5",
+  "pg.functions.string.normalize",
+  "pg.functions.string.octet-length",
+  "pg.functions.string.overlay-placing-from",
+  "pg.functions.string.parse-ident",
+  "pg.functions.string.pg-client-encoding",
+  "pg.functions.string.position-in",
+  "pg.functions.string.quote-ident",
+  "pg.functions.string.quote-literal",
+  "pg.functions.string.quote-nullable",
+  "pg.functions.string.regexp-count",
+  "pg.functions.string.regexp-instr",
+  "pg.functions.string.regexp-like",
+  "pg.functions.string.regexp-match",
+  "pg.functions.string.regexp-matches",
+  "pg.functions.string.regexp-replace",
+  "pg.functions.string.regexp-split-to-array",
+  "pg.functions.string.regexp-split-to-table",
+  "pg.functions.string.regexp-substr",
+  "pg.functions.string.repeat",
+  "pg.functions.string.replace",
+  "pg.functions.string.reverse",
+  "pg.functions.string.right",
+  "pg.functions.string.rpad",
+  "pg.functions.string.rtrim",
+  "pg.functions.string.split-part",
+  "pg.functions.string.starts-with",
+  "pg.functions.string.string-to-array",
+  "pg.functions.string.string-to-table",
+  "pg.functions.string.strpos",
+  "pg.functions.string.substr",
+  "pg.functions.string.substring",
+  "pg.functions.string.substring-from",
+  "pg.functions.string.substring-from-for",
+  "pg.functions.string.substring-similar-escape",
+  "pg.functions.string.to-ascii",
+  "pg.functions.string.to-bin",
+  "pg.functions.string.to-hex",
+  "pg.functions.string.to-oct",
+  "pg.functions.string.translate",
+  "pg.functions.string.trim",
+  "pg.functions.string.trim-from",
+  "pg.functions.string.unicode-assigned",
+  "pg.functions.string.unistr",
+  "pg.functions.string.upper",
+  "pg.functions.textsearch.array-to-tsvector",
+  "pg.functions.textsearch.get-current-ts-config",
+  "pg.functions.textsearch.json-to-tsvector",
+  "pg.functions.textsearch.jsonb-to-tsvector",
+  "pg.functions.textsearch.length",
+  "pg.functions.textsearch.numnode",
+  "pg.functions.textsearch.phraseto-tsquery",
+  "pg.functions.textsearch.plainto-tsquery",
+  "pg.functions.textsearch.querytree",
+  "pg.functions.textsearch.setweight",
+  "pg.functions.textsearch.strip",
+  "pg.functions.textsearch.to-tsquery",
+  "pg.functions.textsearch.to-tsvector",
+  "pg.functions.textsearch.ts-debug",
+  "pg.functions.textsearch.ts-delete",
+  "pg.functions.textsearch.ts-filter",
+  "pg.functions.textsearch.ts-headline",
+  "pg.functions.textsearch.ts-lexize",
+  "pg.functions.textsearch.ts-parse",
+  "pg.functions.textsearch.ts-rank",
+  "pg.functions.textsearch.ts-rank-cd",
+  "pg.functions.textsearch.ts-rewrite",
+  "pg.functions.textsearch.ts-stat",
+  "pg.functions.textsearch.ts-token-type",
+  "pg.functions.textsearch.tsquery-phrase",
+  "pg.functions.textsearch.tsvector-to-array",
+  "pg.functions.textsearch.unnest",
+  "pg.functions.textsearch.websearch-to-tsquery",
+  "pg.functions.trigger.suppress-redundant-updates-trigger",
+  "pg.functions.trigger.tsvector-update-trigger",
+  "pg.functions.trigger.tsvector-update-trigger-column",
+  "pg.functions.uuid.gen-random-uuid",
+  "pg.functions.uuid.uuid-extract-timestamp",
+  "pg.functions.uuid.uuid-extract-version",
+  "pg.functions.uuid.uuidv4",
+  "pg.functions.uuid.uuidv7",
+  "pg.functions.window.cume-dist",
+  "pg.functions.window.dense-rank",
+  "pg.functions.window.first-value",
+  "pg.functions.window.lag",
+  "pg.functions.window.last-value",
+  "pg.functions.window.lead",
+  "pg.functions.window.nth-value",
+  "pg.functions.window.ntile",
+  "pg.functions.window.percent-rank",
+  "pg.functions.window.rank",
+  "pg.functions.window.row-number",
+  "pg.functions.xml.cursor-to-xml",
+  "pg.functions.xml.cursor-to-xmlschema",
+  "pg.functions.xml.database-to-xml",
+  "pg.functions.xml.database-to-xml-and-xmlschema",
+  "pg.functions.xml.database-to-xmlschema",
+  "pg.functions.xml.query-to-xml",
+  "pg.functions.xml.query-to-xml-and-xmlschema",
+  "pg.functions.xml.query-to-xmlschema",
+  "pg.functions.xml.schema-to-xml",
+  "pg.functions.xml.schema-to-xml-and-xmlschema",
+  "pg.functions.xml.schema-to-xmlschema",
+  "pg.functions.xml.table-to-xml",
+  "pg.functions.xml.table-to-xml-and-xmlschema",
+  "pg.functions.xml.table-to-xmlschema",
+  "pg.functions.xml.xml-is-well-formed",
+  "pg.functions.xml.xml-is-well-formed-content",
+  "pg.functions.xml.xml-is-well-formed-document",
+  "pg.functions.xml.xmlagg",
+  "pg.functions.xml.xmlcomment",
+  "pg.functions.xml.xmltext",
+  "pg.functions.xml.xpath",
+  "pg.functions.xml.xpath-exists",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 17b35dd8; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.functions.admin.brin-desummarize-range" = "e69af452c39d5427f0fc64dc95cf4137725ffc7d6600f0ec362caeeb6ce3fea9"
+"pg.functions.admin.brin-summarize-new-values" = "1f2a59ea078b6cdf77f2a02ed3b5f1d99d25cf6e87b92bcd09838d3d44958490"
+"pg.functions.admin.brin-summarize-range" = "ab6eb9eee49e3f0dff69946e1a1a9a14b6665c7102c0941a7fa7f22477e9b50d"
+"pg.functions.admin.current-setting" = "6bc3c1900ff4b0def22b7f25e90f054f963fab65c8319e685da316a4133bfaf4"
+"pg.functions.admin.gin-clean-pending-list" = "714a10208ed7396a0274878b51b1d27ff5598628fe12215c016ccb59ba8caa2a"
+"pg.functions.admin.pg-advisory-lock" = "7aa112ce108148e17980164ad6d2b409cb85539814b02ca2d96bb7c89c3ea858"
+"pg.functions.admin.pg-advisory-lock-shared" = "3bedf087766b98c9777212654df57f04d0b314f2ae6cd0a56e3b15bb78c46a71"
+"pg.functions.admin.pg-advisory-unlock" = "f9f9be2ebf125723eb1260b2fe301bdc3b1c57b200491cb76e62322fe2449215"
+"pg.functions.admin.pg-advisory-unlock-all" = "359b9a43daa49f8c3611c9d3262acb1100bf23832f8dbdd902bf6e0b32ae984e"
+"pg.functions.admin.pg-advisory-unlock-shared" = "d32e568598c616df01f1cc7eeb8914ca22d809a51648ca7e1b3304e271fef505"
+"pg.functions.admin.pg-advisory-xact-lock" = "3968f584f212d4f430ff962a5627164d1e412273558a8707c2af323a635fa417"
+"pg.functions.admin.pg-advisory-xact-lock-shared" = "07af834a9d23a1180dab61661b40b8269f579eecd941937da5f0e77544f4ee99"
+"pg.functions.admin.pg-backup-start" = "d2883e14006ec8069d489fe6a3585e2563e42dc585e11de719fb3cc90cb018da"
+"pg.functions.admin.pg-backup-stop" = "24b5ac1ee841ef18875a658017528539c96c240af7f76ecbee68322c47aeaede"
+"pg.functions.admin.pg-cancel-backend" = "6db8e1a89b6556a3b9bb5f6bc82738b59416f485a0cf5b64c0482ae9ed5ce578"
+"pg.functions.admin.pg-clear-attribute-stats" = "dd14cd552e3a61b88936f5aa926ec4b1d010643c78bbe3c590f036963a9890e1"
+"pg.functions.admin.pg-clear-relation-stats" = "0fbad8d4e28e00d5c3950178e4ae1754e88a1293701dde63ee47258f852b18ff"
+"pg.functions.admin.pg-collation-actual-version" = "2ea0610db16146b73d2aec060ea2b1cf0d9fa0dae58f50a8072766b320d038f6"
+"pg.functions.admin.pg-column-compression" = "40e4ab17cdd56b2a356683c120c1900e7a8298454326385cab02c33f5061e181"
+"pg.functions.admin.pg-column-size" = "5f25a5085d836b20180b3fa436ad095ada071f10729957027b5eba1d4293879b"
+"pg.functions.admin.pg-column-toast-chunk-id" = "9e1a39216dde0c86998ddc5df64adc9339da5f13bbcab3255d392ee534dfb9eb"
+"pg.functions.admin.pg-copy-logical-replication-slot" = "d1e2bc4660ace1f2b68490b576d27e8d3dc22b9025c09224615ed1bbcc16c3c9"
+"pg.functions.admin.pg-copy-physical-replication-slot" = "b5bd926c40b8d7138bd58b01aad06ac03bbac9ab1192372f88ae60dee29b263c"
+"pg.functions.admin.pg-create-logical-replication-slot" = "07d7a0d152cd1438789d0a2644e2906c81e241cc764f2678145ce60cbb5870c0"
+"pg.functions.admin.pg-create-physical-replication-slot" = "a95045e9ec04a60da1eb49d785c01e7be7642581957a07fcb33e5755a5347941"
+"pg.functions.admin.pg-create-restore-point" = "4d251913ca5ac196cb324a958e20262b58a0cc214deb7244ef90b59ac8d75f21"
+"pg.functions.admin.pg-current-wal-flush-lsn" = "857b7a78ae424160d476739689c2f9ee6d4e4663260f14d06e04fd01ec776da7"
+"pg.functions.admin.pg-current-wal-insert-lsn" = "26ee8721cd709bf613acec490eb34f5f8ba6f7563045e8881b03d475347b8744"
+"pg.functions.admin.pg-current-wal-lsn" = "8af641653c1a6f680fa126201ce3985f49d75894337a68351892df34468c4fd4"
+"pg.functions.admin.pg-database-collation-actual-version" = "234d8950fd66a96806732269d63dcb7e9f8ce504abb784b01500cf337e9f67f8"
+"pg.functions.admin.pg-database-size" = "611f7a939a9d47f49cf5fb0ca12e5d97348de3117afbc4cd34b259d1e7ac3a08"
+"pg.functions.admin.pg-drop-replication-slot" = "74bbc893228cd80fb25a626478423ff5f67025fcb4043d022d5ffde97b6e889b"
+"pg.functions.admin.pg-export-snapshot" = "27cf67a628bd7b94ac633ad65b4d08342c4a6dc28ef7f9bf92a8233aee54c8a3"
+"pg.functions.admin.pg-filenode-relation" = "754d3aa5d4c30a85eaf3fa31a4bc884a0a41a92a445c7235ad43f190e1603eed"
+"pg.functions.admin.pg-get-wal-replay-pause-state" = "02d7204f31da0bd2cda775b7dae39b56f195af55f67b261f8c75fe5b72318f7d"
+"pg.functions.admin.pg-get-wal-resource-managers" = "5a955efef0aa5354788ed5031afb43c0dc6ffdfacc008779ea19ae3dae794d92"
+"pg.functions.admin.pg-import-system-collations" = "aeed887a67d33b40dfd8b2ad5d1cf650f493d41d6932fb32fd526c19b498a506"
+"pg.functions.admin.pg-indexes-size" = "90c205e1c1b8b0911221cacd888f75b158e19f944327be2694fdc415a3bb9613"
+"pg.functions.admin.pg-is-in-recovery" = "abde8bbd5c38efee70036970c7b909e7190cbbaa6656e6fad1f9d8dd722b57f8"
+"pg.functions.admin.pg-is-wal-replay-paused" = "a1e561dcea04116441e6614b03c5170d051ee56a1183fbc3c5dd26c1fbbd4c03"
+"pg.functions.admin.pg-last-wal-receive-lsn" = "cc471c4a3f8ea75d1151344200fc69802aaaa7785500d07779835e67c339d6c0"
+"pg.functions.admin.pg-last-wal-replay-lsn" = "def096e1ed2d1b65c077730c0c58f84dd5a9bb2b22f6bbe6aef7bd52bd43a0a0"
+"pg.functions.admin.pg-last-xact-replay-timestamp" = "66143e8335ddf461a53b507ab36c5f81b22c41aa6f70eeebeebc6b0a1805b5dd"
+"pg.functions.admin.pg-log-backend-memory-contexts" = "af535afd4727be2586bae9109de865411668b53129eac321ea70f2ffae9576ce"
+"pg.functions.admin.pg-log-standby-snapshot" = "a27aead24611af85b76490a904aaaa855fdfeb01d18a0ecdc94c31c71013d55c"
+"pg.functions.admin.pg-logical-emit-message" = "f316cdf62e011ca43c31163bed9fc8a5ef13c1475394ae4d93cc3cff18123932"
+"pg.functions.admin.pg-logical-slot-get-binary-changes" = "fc540aea2b05993ae109f5a309980cca8c2cdfa80bdb9fd0933a155ac5157d41"
+"pg.functions.admin.pg-logical-slot-get-changes" = "49b523f5e83781fe099ea665aafbea742fbaf9c60ef80f53af7408c32e99e026"
+"pg.functions.admin.pg-logical-slot-peek-binary-changes" = "9a98a91b884b384117b7ef7046694c7b10dce8ad509a047a699a5c4f78350b79"
+"pg.functions.admin.pg-logical-slot-peek-changes" = "328353036a69435d92d678c9ab783e9b448b2b144dcee7216799837b7b02e131"
+"pg.functions.admin.pg-ls-archive-statusdir" = "0912c43f0ba7c63b23ccc7b15d3193b4b086bd255ce232eb5e130ce51580f1d3"
+"pg.functions.admin.pg-ls-dir" = "70f5074959d2b8a773f775620f60d2f0a847ee7216a6773d0b5da00efc667ba6"
+"pg.functions.admin.pg-ls-logdir" = "d22d0873a6cca91449987f4a047beb70b0d7f7ba4f4e6c81f60b4e2f54ea5b6f"
+"pg.functions.admin.pg-ls-logicalmapdir" = "50b181206ecf591daa9385aed9d132f75777475a7057bba03c08a0c4e29c9abb"
+"pg.functions.admin.pg-ls-logicalsnapdir" = "16d9abfb19646b8bfbabba6b155e9768eddcc3e980b732a7f942104d93a9c447"
+"pg.functions.admin.pg-ls-replslotdir" = "dd7571a0d2a02170f501fc72f1e51a3eda3bfbc90d5c44f3d9f40a4e39b8efae"
+"pg.functions.admin.pg-ls-summariesdir" = "5a7b9ec4b46319bebc289e642414ce043c8a20fe2df3f55462129f82f0a9210b"
+"pg.functions.admin.pg-ls-tmpdir" = "1a8d92de1eeb749ca83ebd4697396d6790ec715e9aa35f5b125093b8d4a19c4f"
+"pg.functions.admin.pg-ls-waldir" = "e354ad64aee17746f5b138b78285a04c9e817f5ca0112bb58b8785fc50347991"
+"pg.functions.admin.pg-partition-ancestors" = "aa4f747911ab1d170a9a3f519fcbd48c2e4d8d7c2226338e3ad8a7d0ce04bd48"
+"pg.functions.admin.pg-partition-root" = "e45c3ea24a0fd76faec1c04eefc498f76b2e52fa1dcea24c8dd1ee682b36fac6"
+"pg.functions.admin.pg-partition-tree" = "a09ca1e880b26dd13a88d77fe705640404da7686863ce72c2d88afb4a816e555"
+"pg.functions.admin.pg-promote" = "d93dbacc96e3869a2e503d3c6135c3a3a92b1ff21a3950d97930a9267a77087e"
+"pg.functions.admin.pg-read-binary-file" = "606f6ce00c72928a2b2594d1d21fa10525ee54ab522dc477cba42318bab1c909"
+"pg.functions.admin.pg-read-file" = "5b9a82e8a784deed2469f3ad8036a37fd2398c0e56b46afc856f6a2bc806418c"
+"pg.functions.admin.pg-relation-filenode" = "a213d1d9dd719874c195cb7196c761c0e6174f1b4aa450b4867b8944f5651b38"
+"pg.functions.admin.pg-relation-filepath" = "4e942465f181d54ceb52090193dea967092b64a85fe0dd612fc560e1f16f7ea2"
+"pg.functions.admin.pg-relation-size" = "58481ffd68f623d897728179dfdd7342ef161cfa973a8f8924bf0518ad4c3c10"
+"pg.functions.admin.pg-reload-conf" = "5178b95ba0eb0e1d6781ff2795646efa077708cc815781784c587cd45a56a842"
+"pg.functions.admin.pg-replication-origin-advance" = "3e409388f27eb4458808653850c731f1ea4d842a1454fe387da3db26d52a6812"
+"pg.functions.admin.pg-replication-origin-create" = "a0f5f63a1eb35ead5b3151759894052ad99e65362cb6c6b06f1697f8c1b8f315"
+"pg.functions.admin.pg-replication-origin-drop" = "939de614a3734313837e50b9c3d88263106299e809f03810ff1ede93ee7aaf9f"
+"pg.functions.admin.pg-replication-origin-oid" = "ca5e8fca9ffdb05b5a9767d0a4f62eec9d69215e1bde90f17f5cb73489a6e2e6"
+"pg.functions.admin.pg-replication-origin-progress" = "71ce48bd2dd5f2c075e9587da609bf643e4f8c4eab61d0704d4aa637fd195ea3"
+"pg.functions.admin.pg-replication-origin-session-is-setup" = "477e174f25c70476fb971e99932858c48defe16a8830fcaed25d0511a22c978e"
+"pg.functions.admin.pg-replication-origin-session-progress" = "22e09514be24e61f48355cb3d05727d4d4f569584689701d39825bc943eccf1e"
+"pg.functions.admin.pg-replication-origin-session-reset" = "d164e15feed89f97784dacbd9613fca7b2d3f3ebcf908ab9ae2edb9383b48314"
+"pg.functions.admin.pg-replication-origin-session-setup" = "08dcc41a872bc7be3022cc0f368d705a22129a393174b5ba40e0a9f0033648f0"
+"pg.functions.admin.pg-replication-origin-xact-reset" = "b38db56a236787df6ed06cdbb55441d580f4f5cbdd3e5114a95818a8f37ded19"
+"pg.functions.admin.pg-replication-origin-xact-setup" = "364a2c8ea7e6475979519a3552a4b1305f8874a3b42c56ff8f52d2c5674942d3"
+"pg.functions.admin.pg-replication-slot-advance" = "47498f06f7193528da3d2c8a927cc8e8b3752f04a564f825cf50cf1c34bf0579"
+"pg.functions.admin.pg-restore-attribute-stats" = "d716518a7d337ac4b86c2aa56b16477917fad1f00ace42283ac597b0239eabb8"
+"pg.functions.admin.pg-restore-relation-stats" = "e8ab318f3931a69f17041d6396f791e7a96dffeb12a33fcd2ae8748537a36535"
+"pg.functions.admin.pg-rotate-logfile" = "1d9389fb8dad77a9e5d2d775c06e96b0ae2a5d09748e383617cca454b05dc97c"
+"pg.functions.admin.pg-size-bytes" = "cda13ddf4bb476155fd671fb20222cfd3df75686b5d2e112f1c9626e3bdc3e37"
+"pg.functions.admin.pg-size-pretty" = "5f16783ac74f1344dff72fe6166ea50503f3442e991f50683d3f515f2e0d5c81"
+"pg.functions.admin.pg-split-walfile-name" = "38e7369f290f552630a16ca9d8b037e8734a45208ea967396755eebe90c9575d"
+"pg.functions.admin.pg-stat-file" = "24169458eda8d0e37fe747ceb066ab58af698f478986347542ea1b95b6582b81"
+"pg.functions.admin.pg-switch-wal" = "c6cb0f4c3f413045a84a2fe1aa2528c56f5f3085cbcafab6cabc3c7b6cac9ac4"
+"pg.functions.admin.pg-sync-replication-slots" = "ae076f75af7e113cdc25c5b62b8526393592919992eff8971498f2e5db3892d7"
+"pg.functions.admin.pg-table-size" = "1fe7dea75668503559cf24fb5e64c0005c74aaf6c129994ab06caa6f1d6ab2d0"
+"pg.functions.admin.pg-tablespace-size" = "cc31d61f35d3039f5000a8f33c65dcfb99a201437203f5a03f6d4ed0bb93ea70"
+"pg.functions.admin.pg-terminate-backend" = "bb368591bc0743a22e7bc658a5a1ce6ec77797e91a766f91043c67ceff350ad2"
+"pg.functions.admin.pg-total-relation-size" = "5d5153e39fdc59f27b782971a7d7230d3851dd6e51d212902f5d34d261247e60"
+"pg.functions.admin.pg-try-advisory-lock" = "a028971e193a49afa339a52e9fc558c34fb18ba24db9c42b757cb3d8ba5b0c2a"
+"pg.functions.admin.pg-try-advisory-lock-shared" = "a1274b8183d9cc4e26537c74af687a87bf9b2ecc2481b4ff96004b1b49996790"
+"pg.functions.admin.pg-try-advisory-xact-lock" = "11b294aa4e8744cbdc045619220089a904884ac0bd18518d0da8665a3cd6910b"
+"pg.functions.admin.pg-try-advisory-xact-lock-shared" = "1dea496f49710bab45bfad175297f9e2d7b671d0511781125df8f47b2ae1f0c1"
+"pg.functions.admin.pg-wal-lsn-diff" = "b2cf4b8e637ba3f90932160df087946123abfe24608fff34d998052c5ce625b2"
+"pg.functions.admin.pg-wal-replay-pause" = "adea2ca122156d07df0dd3efb9eab7111e2cfb45230257d7d888f60eed9bf64f"
+"pg.functions.admin.pg-wal-replay-resume" = "e5f883591dea3a1e1bc7fee071f5d3be59f4a3284cdcad36b1cd652909edd481"
+"pg.functions.admin.pg-walfile-name" = "977fdeaa295fbd68e8673e728c3d571f1840257a0b2a946a9def956ee13e25af"
+"pg.functions.admin.pg-walfile-name-offset" = "7ef4324ad0709bad33ba6837e276f92d6510ad857cf15c0a67e2a340078ba1b1"
+"pg.functions.admin.set-config" = "9f71aeafc8512b4fc68e5271710fd81e912487b6791bef1acb6f78ad00a55ee5"
+"pg.functions.aggregate.any-value" = "8808df07b171acbb77c1bf440ad5dadffc5a8a86fe8c5c2d90705f02ddf71b61"
+"pg.functions.aggregate.array-agg-order-by" = "eb6da1a984ac01cfde061862a2ede2e596b4197e38916e204c7d68231a7a455c"
+"pg.functions.aggregate.avg" = "381a26267e97fcd391ef2a61b336861606834ccc37eb00aa1678ba252468bc02"
+"pg.functions.aggregate.bit-and" = "766bac23d341593701a2c34e158955e5b4a2e5d9efbca3a261e3e367201a20d4"
+"pg.functions.aggregate.bit-or" = "8d077ed2a33d84b7494cee118652fdb3f2e096785790ebe1807358b81c894806"
+"pg.functions.aggregate.bit-xor" = "cf962ce2b6f5e457b5b52a77d05a5454d6b92d9386128c3efeb5c6dbac7dff82"
+"pg.functions.aggregate.bool-and" = "36112e9b9bae947adb6dfece008b0c0f362c1819b19f0995b764db514359b61b"
+"pg.functions.aggregate.bool-or" = "99ef377d3f764ee9a854c8623ec6f0b2f6fb008c84dcd2c01f11a1f28790a191"
+"pg.functions.aggregate.corr" = "7a62cff7f163358d7f4b570fb48c20fb8dc9c00938b5d975472c257eed08f0e4"
+"pg.functions.aggregate.count" = "d267ec5868763bdc8b0566338635a5cab2f97256439dd2de509a70dc70102e7c"
+"pg.functions.aggregate.covar-pop" = "5a7250a7fa44b5c61339b1fba9814a14e0f2499057442c2f7ee93aed73e040f6"
+"pg.functions.aggregate.covar-samp" = "c62f2ab6a77d1810cf6be669771dbd8bddc7ccc492076b708b6de3cf8e3ffa8d"
+"pg.functions.aggregate.cume-dist-within-group-order-by" = "22a5fd90a0bf4ec5578efa904b135f104e23db8393cd2f34466f87601c89750d"
+"pg.functions.aggregate.dense-rank-within-group-order-by" = "09566a8ddcce27a4a6380af0ccf1f58357dcb77bc75c5221a048f6bcb96b2154"
+"pg.functions.aggregate.every" = "0012308ba695f827dcffa069756f65ea23a32f6848fcc73f93fb65274d0a0dfa"
+"pg.functions.aggregate.grouping" = "d7bcffbe0d55930470790301b88ba2e22bb27e2c6073fcbcfdbdc25e1422142e"
+"pg.functions.aggregate.json-agg-order-by" = "7ec18afd746cfefd70fc3c0532db961e1e7096b2887cde5e6a1ebb5774cfb20b"
+"pg.functions.aggregate.json-agg-strict" = "c7bd745f72dcc6031190c968bed47d70d4722e6dd1e9d2df9afe74a516785d19"
+"pg.functions.aggregate.json-object-agg-order-by" = "59bb74bc0223c69cb10471960f44bfc702b0f9e16e2565c1ba1d8067828b6d8d"
+"pg.functions.aggregate.json-object-agg-strict" = "2546762842dfd35f6e9f4f3d408fde18c23df2d73e9894f75aa1644c4ce31af5"
+"pg.functions.aggregate.json-object-agg-unique" = "bf7d6f66458f548db2a97a418b66cdd1ed949ba52c29008a952e03c164384238"
+"pg.functions.aggregate.json-object-agg-unique-strict" = "2b94f37245d3c970aab84f56120a1cc8c722d295f6bdf5e0230ab4aa68bb3b33"
+"pg.functions.aggregate.jsonb-agg-order-by" = "a330eedda1e81fec36264ffbb878574263bc8e58cbcb0ffe2b9eb718ef8e9da3"
+"pg.functions.aggregate.jsonb-agg-strict" = "e197a8530668e1455e08a3134bcd1a58ae46b4a1bf1b31e46d33855aa43cb147"
+"pg.functions.aggregate.jsonb-object-agg-order-by" = "bc8bfc1714e3ede77a00516b5896c558efb81af255a992c38ee4fbaec19bb96f"
+"pg.functions.aggregate.jsonb-object-agg-strict" = "d7f35e0360e15dc0e911d0d09ffe510a37d7094029437a5de5a61b6ff7885538"
+"pg.functions.aggregate.jsonb-object-agg-unique" = "6e490418b86aaab11d3b4aad9af59a3e815235a13159825b6ea2e4d462d64ff2"
+"pg.functions.aggregate.jsonb-object-agg-unique-strict" = "36d9d1052576b215d43c0268959c9aec5edae335f0e69bad784432c264ba6179"
+"pg.functions.aggregate.max" = "6ba9ebd06dd8d5afacba4f1e37a17de5484d8664a0621439d67e310dedf2cd71"
+"pg.functions.aggregate.min" = "7628a11c077450de9d32047d19073aa1e453b5dcfef0dedbf89e939eabc421ad"
+"pg.functions.aggregate.mode-within-group-order-by" = "ec6cb8bdf0161d792291ca71aa011b8ffe4cbd541d8ff8dc79458a58b3f6b18f"
+"pg.functions.aggregate.percent-rank-within-group-order-by" = "2c577380f6d8f9e2ad013ad10f44470fabf1be184041a37a12ede31390948d36"
+"pg.functions.aggregate.percentile-cont-within-group-order-by" = "03c8ba532a6a23428b760179c072c42fb4999e9db5446e76b75ac8b495a7dd93"
+"pg.functions.aggregate.percentile-disc-within-group-order-by" = "9b24beb2b1343e56cb40c5f8d503a17e87a478335679a66572450501e0290afc"
+"pg.functions.aggregate.range-agg" = "cccf30ff686c5486c9113d8686cfb1da53c7aea59ec6394af131d7b4d9cf70bc"
+"pg.functions.aggregate.range-intersect-agg" = "7a75825d454b7a2fd3ea68cef1b1fcb33774903b5f2675c37e57f5dd89061286"
+"pg.functions.aggregate.rank-within-group-order-by" = "a4e79d6d80f5a0d1268dfcf1094a774c1cf143f1c5485fc27d7145c4f7098e2b"
+"pg.functions.aggregate.regr-avgx" = "362b9a058eddf15087ee2f1dc96697058f5871b69aafba9fdffbddb4451febc0"
+"pg.functions.aggregate.regr-avgy" = "b3a7025068e798dad1be0a397f30ba4b2f3d16a40b68d7ca3841361d83e121c3"
+"pg.functions.aggregate.regr-count" = "a63c21fffe73a3e3ae4b650f620afd2d6bc0e58f51f631d40a9c437eec817f4d"
+"pg.functions.aggregate.regr-intercept" = "b83bc5f3adec8d0045c97eba8bf79d66ad33891a1809a1a0eac4c058c92466af"
+"pg.functions.aggregate.regr-r2" = "6a47f90772fbcbe2511eab745b6accdab864a001f4cb2b5b31a1954676a93a90"
+"pg.functions.aggregate.regr-slope" = "6d443edf7c3ee2bc3f8eb8745d357c1481873f04903901c1e8b4f56e710d5aa7"
+"pg.functions.aggregate.regr-sxx" = "71ddab8de393f88cdc5f4080fcdd5e2bbb3e1e52729630f9cabb69c89459aafa"
+"pg.functions.aggregate.regr-sxy" = "1f26fb74d085e5d48244dfa9ba3d76abf1590f3662daafd133ef139ec46495af"
+"pg.functions.aggregate.regr-syy" = "a919ef4330c30e5d6462de3912f8262e1764092745fae89012a3a9a9bb00a935"
+"pg.functions.aggregate.stddev" = "3ef0a932304ba250206c297a35a752965c411aed9d530fb5f8297920c84f0745"
+"pg.functions.aggregate.stddev-pop" = "49d8c27636ba5b6cf7082cef00f097bd2e122877b9c3c4dc29b6d409b140d611"
+"pg.functions.aggregate.stddev-samp" = "9d504fb7b776de84222b42632ad7897b937980ea69b3e00d6f7b5fa2130bdc7d"
+"pg.functions.aggregate.string-agg" = "50bc0e53283be66d30af694da8c81cdd2d3380d329e04be5c0bf1083e386cb76"
+"pg.functions.aggregate.string-agg-order-by" = "db607b401216857efd2e48b3860bab58cca7de1ee6c0c83336fd60924a09f708"
+"pg.functions.aggregate.sum" = "019e2d30f7367417a09483d875cb0dfee4d71bcb24db2c6f92c28cdd9b95a5c9"
+"pg.functions.aggregate.var-pop" = "a984659babad34a7f6b5ca85a982dc519ac0ae0c7b135069daa2fb9064704d55"
+"pg.functions.aggregate.var-samp" = "fabcc20761b507e1f998a824d33053ef237c3271a75aa81d4739964367d5d52f"
+"pg.functions.aggregate.variance" = "17dec0b43104f00287d33545f435611439612a92f75f249faa12705063b49cce"
+"pg.functions.aggregate.xmlagg-order-by" = "067bea411e2f457a59cbc5f8ab41509338db3a7f7e1713dc691bc92f4b64f518"
+"pg.functions.array.array-append" = "de04d0855195b82556b26f724fd605ffe08d3d4801138cf73c56c25a6c6f35ab"
+"pg.functions.array.array-cat" = "93baeff280fbb385b68a99fa6d37a42149b96550bc968af40e5efef103c45d3b"
+"pg.functions.array.array-dims" = "04203b83c8f023ecb3cb99c1b26dee05fa29a21f62085088bcc2b96473c789b3"
+"pg.functions.array.array-fill" = "a16376b6c06d48b2a05595fca118ccff5fdb0a8da4edeebb836c1dadc84f73da"
+"pg.functions.array.array-length" = "64dbcb245c730ffe719e34670060c2f7d44bbcaa2a764611acdaf21ae9205d2e"
+"pg.functions.array.array-lower" = "b8e092542b539e3e212e91c0c895768a294fc0da526679d17085ec5bbb318e77"
+"pg.functions.array.array-ndims" = "b6fd156448e0efea32889872e124a57bd27e15e70c0f1724a08c2b8075aa03a2"
+"pg.functions.array.array-position" = "04a1f757bf239498baf86f1130b3162e857b6002105a8e56302eade77f47b8a3"
+"pg.functions.array.array-positions" = "ba05b4e1e3532419bd8d4ed83e05765fba9732f9c3be3a5339b38217473f4eab"
+"pg.functions.array.array-prepend" = "b3114f9b21e9a86d9051a16640d75b428f31c8aded042e75e1b9edcc9d26743a"
+"pg.functions.array.array-remove" = "43256dfd3fad12dc8935061c765797ccd88d939a582a4d314f0e47a9cb3feaac"
+"pg.functions.array.array-replace" = "d2df8b06908554defb681d65d3d0adf9923d73a4ee9b40a324b1478af0ce84ba"
+"pg.functions.array.array-reverse" = "b4fa6cfafb6c0c7426dd8f832c3dad45bb85c61ccdc5e0b7808f876b56f69630"
+"pg.functions.array.array-sample" = "ff9035e36d2873e04b6bd6092e8ac9f975c232208ba741a4bb9b041deca5e9c3"
+"pg.functions.array.array-shuffle" = "0a64af826dea7e5acdce7cab88cc19cb25176ceb29022acde781cd6dcb2b1ed8"
+"pg.functions.array.array-sort" = "a3cc24c35ba051bf6d2b66b6ae6bb0cee3e5d69aebbc5f509c14ca98bca0f590"
+"pg.functions.array.array-to-string" = "71572e63c354586bd96ead28b36c6906f00a2878e8c4de429494435184f0c538"
+"pg.functions.array.array-upper" = "d97ed7959453fb81065a983eeb24c1a848cd2acb44bf6a987539a0966ddf7ce7"
+"pg.functions.array.cardinality" = "6a9893b8ffdbaaacdd6f2916f3818073f75ca6957a28d87c4d98a50303159aae"
+"pg.functions.array.trim-array" = "6491d431fb0ee4b5e57e00aceeca12efd803f61583077fe6309c74efd965129a"
+"pg.functions.array.unnest" = "e45b6c1e047c5227f455b0288a3b0a8ae0cbf8b2e8413c0ead26e9a44485ff1a"
+"pg.functions.binarystring.bit-count" = "341b1e722b56e92a664352733dc3cab13121ac9171631de69824f42e68828c69"
+"pg.functions.binarystring.bit-length" = "3206428e646330243b2576c53996c3f06a74c9dba6760a24d01de70d67bd655e"
+"pg.functions.binarystring.btrim" = "33fbc347d21108317f77f9ed57af77ce17283871d994f3986704515d0b93bdf4"
+"pg.functions.binarystring.convert" = "db4e77c45463df44799023b29d9ea8d21934c6a5a3930cbbd394546aaddd7b5a"
+"pg.functions.binarystring.convert-from" = "33bf4d055153d487933b6d96b0bd6d5d6e7cb1bc7a565e47852f019c6bfbcc10"
+"pg.functions.binarystring.convert-to" = "3f1bc9375d1eae2bf12009f49d6221aae494564bf9e5aabc275f0bceaa3ff997"
+"pg.functions.binarystring.crc32" = "00c5a6260fa8b132b14109127e32d54a313b769eb1307c7131b86987c8913ced"
+"pg.functions.binarystring.crc32c" = "eb39218d24ab4173a078e59e7f9e4afa049eb0660c72c643bc4207875ce73ce9"
+"pg.functions.binarystring.decode" = "4dcda7f63d9ecb221d79ccf0cbe1671ad1aa49f7650c86e79b45c31c07635c1f"
+"pg.functions.binarystring.encode" = "f8e4ab76f9e42766fce3dd976274ed3a2721d2026179520c656cd2b1628b867f"
+"pg.functions.binarystring.get-bit" = "090a66a1544ef8fc892d640cc8910dc8964aba3abeea9778692a1446c822151b"
+"pg.functions.binarystring.get-byte" = "4d0d4c319d715f283cce49d4c1a79fb642c88d75960bc506c34fa4bbfe9c9e90"
+"pg.functions.binarystring.length" = "a1afdcd52f3c013529d62cb066fa07c08f824b5adef2e1949a36a1f50bee086f"
+"pg.functions.binarystring.ltrim" = "22e475cecfc751d2e835ee1e28454ba53c9b1bbf150f55636176b9e298f44155"
+"pg.functions.binarystring.md5" = "cc39b6cc9c5947e41764f383fe87d7e922f8a053f5d09a5715221a899332f513"
+"pg.functions.binarystring.octet-length" = "d714e0998b400f2bcb18284e5e80ca8e944300e2c7b1328659d6a1f9deb599fe"
+"pg.functions.binarystring.overlay-placing-from" = "72b603a00877cf08f0ab3dd30d994c053c1190c553c11b94783d51fdf753212c"
+"pg.functions.binarystring.position-in" = "3c0169b5601f6c97f8ed0716db88f7894a8a578c8819fca38ddaca5705c84751"
+"pg.functions.binarystring.reverse" = "92644cf558812c65f30cb76e0acb216a53373bb426f616089c4b5a6b49899e99"
+"pg.functions.binarystring.rtrim" = "5d5dd47c6908a71046967b4b05ac62423a940d8618ae9161175f118f2089a2ba"
+"pg.functions.binarystring.set-bit" = "e6cc3955a660af229a3a9912082b4b141b5cbabe3aaaa99cc48acefaadf9d5f4"
+"pg.functions.binarystring.set-byte" = "64588eb98fc24649769a6cb77c6dfffd035d47464901fbfde2414859bc1a53ea"
+"pg.functions.binarystring.sha224" = "61f4bd700de62bb72e782cf59d2ca53ff89ad942a4c5dd99e0f339633b1cf07a"
+"pg.functions.binarystring.sha256" = "6f41a3a7f7fc708091eb6255aeb603b4a188d04ee42c8edddf433406ed212a55"
+"pg.functions.binarystring.sha384" = "1686e7deec29ad73cfbb9560d76caf790df3b422140a292a5ee32ea919d4fd79"
+"pg.functions.binarystring.sha512" = "9347b795cdbb5f9fed58eac5c6c165d5ea352b2bf7562d18a65823e059820247"
+"pg.functions.binarystring.substr" = "1d19c0e273d6e18293f046e070c8443f4ec134c290e7c137e63fd0209223cd20"
+"pg.functions.binarystring.substring" = "f0c7e480ed41d62683269aaf1d493dfea54678606525f9614758554b78727263"
+"pg.functions.binarystring.trim" = "7623c4f1dc8e23026ca5ac718b8b1875a489c274c37edeb5a9ef134f4495c799"
+"pg.functions.binarystring.trim-from" = "ae48659a51de2ce483c9e51436a42c953b9a70774bafb3cf9f2c3a4f6ca6b515"
+"pg.functions.bitstring.bit-count" = "0a64df597d827b18f253d4626928eb200de6224c27a50f13f99732df0b08807d"
+"pg.functions.bitstring.bit-length" = "cba6bb5f38f41d78694f97dc3e2ef5767c0cb1a46dc130f8c276066abc2c67f7"
+"pg.functions.bitstring.get-bit" = "090a66a1544ef8fc892d640cc8910dc8964aba3abeea9778692a1446c822151b"
+"pg.functions.bitstring.length" = "7f8f88d34471394718c9f90bd4e2ddd2440787ae1e885979aa76fe12cf72e4f7"
+"pg.functions.bitstring.octet-length" = "8b523f579f27e0a9a2f8faff3d6792d8502c9296866729f76f71e052bd161d49"
+"pg.functions.bitstring.overlay-placing-from" = "72b603a00877cf08f0ab3dd30d994c053c1190c553c11b94783d51fdf753212c"
+"pg.functions.bitstring.position-in" = "3c0169b5601f6c97f8ed0716db88f7894a8a578c8819fca38ddaca5705c84751"
+"pg.functions.bitstring.set-bit" = "e6cc3955a660af229a3a9912082b4b141b5cbabe3aaaa99cc48acefaadf9d5f4"
+"pg.functions.bitstring.substring" = "f0c7e480ed41d62683269aaf1d493dfea54678606525f9614758554b78727263"
+"pg.functions.comparison.num-nonnulls" = "e94a735a36d372799ef721feed42d55c0b05735c03c773aca228577bd4ad43aa"
+"pg.functions.comparison.num-nulls" = "6fd2de30231307b642030f6ba6edea1f5eccc3bd2550b951f830b1732bd839d5"
+"pg.functions.conditional.coalesce" = "253ed13f4ddca6217b688c942f152d5d28e75f822c5b2cc66b99a003d31148f6"
+"pg.functions.conditional.greatest" = "eda7d202918b325257b7b72e53d498134f976728d017175d76c977923ab4b72b"
+"pg.functions.conditional.least" = "6cef8e3529412bdd26ea0417c2e1c34793477921138cb82ea950938f043102c1"
+"pg.functions.conditional.nullif" = "fec7915ab0eab5f79c9128f26bac6f897759f3a9e0c0807d70990f111cad9470"
+"pg.functions.datetime.age" = "0fb1b4db0c6e8a3ee587c424ef9843d25f7c64ecadaa020eb797e21f86ea3d17"
+"pg.functions.datetime.clock-timestamp" = "387e5bae2a10cfbb25a751b9a9537aaebd006a426b6dd95834780bf852442f4b"
+"pg.functions.datetime.current-date-noparens" = "562138c1d9d9c6b3e5b0c65acc183005e195b4759dbe016a94944c546f857f9c"
+"pg.functions.datetime.current-time" = "b4c0e155dfa597cbbf87dca4b12356a3f3881c52f6aaff074d2a3d6ec871f663"
+"pg.functions.datetime.current-time-noparens" = "43a0ccf72f7b57e89a4b31934eb3410b167f5aa7380256c2a8e203dc22c0c2e4"
+"pg.functions.datetime.current-timestamp" = "71290e5205db90a435930a9ae58935c156d575f18320243fc74010ea9b08cb95"
+"pg.functions.datetime.current-timestamp-noparens" = "74238e4a32aca06b4e04510f0af1fae9c5924830e921ffd0ff6f09b9cc180833"
+"pg.functions.datetime.date-add" = "bc4144257961d7860f0ba3539a971fc2393c41a0f3cf1733ef6c9cf8021f8035"
+"pg.functions.datetime.date-bin" = "53f4b9bed4c8b5f51a1b8c1168bd61dd6ab2ae6baaac2fdb349aa029176eecc5"
+"pg.functions.datetime.date-part" = "ea6a67edc9db4015f4c558e12f4c689b6457d51354664930fbdc170a64805671"
+"pg.functions.datetime.date-subtract" = "53f0eed4f94b22b5b3309ffac7b8f86501eb32fdb301d1e641b0b6554f59d94c"
+"pg.functions.datetime.date-trunc" = "bd7a3edafea63ed99340d7492df171f8efac6594f899e3713698c51be87cab24"
+"pg.functions.datetime.extract" = "7f4aff7e75278b47b95a128a1e6641f3307a2c933548c9521b7f76b4e5a3da33"
+"pg.functions.datetime.isfinite" = "1011e9d628b5f56fa3822129b95effbf94b7b2626185c5aee33d9b9ca3f997ac"
+"pg.functions.datetime.justify-days" = "f4218d9ff932c3c98679aacd0a28069164c317cdef9a2e13de22c344c27407ee"
+"pg.functions.datetime.justify-hours" = "6edeb554b120b5c7bcfa38a6c6299d8e182e2e98aa4f25b8898d756be15f785e"
+"pg.functions.datetime.justify-interval" = "ab557a0f2383c09750b731b09caafea81a657d40e2c86f3481b0b00af784f6dd"
+"pg.functions.datetime.localtime" = "30aa13162f5628b19e37fa6f43454d67d3e8108f196a13fbe8fa2535aff0657f"
+"pg.functions.datetime.localtime-noparens" = "025e862abded7fa0cdade8b23e5929176dc6294523e80277a9ca270b2f100b99"
+"pg.functions.datetime.localtimestamp" = "5f81732674a67eaf8fdb0fd23a2e48fec1f369869688c887b7e898117b6c65e1"
+"pg.functions.datetime.localtimestamp-noparens" = "3bdec340bc2d3266b1bf68f92deefcf833f4463016dac89a23a810379ee5e31d"
+"pg.functions.datetime.make-date" = "88ad01273ff59e1003edcd7f6920ca724e3ad5a30cce54b5b469c188a5d867cc"
+"pg.functions.datetime.make-interval" = "a2f62eeff2d5882b239a11bee1c16aaf3ce6611ff6391d93c69ccb0488f9c4ad"
+"pg.functions.datetime.make-time" = "75455ac88aaffbfbd355f9ae24a74be288467425516412ea8f60dfa68b82e034"
+"pg.functions.datetime.make-timestamp" = "0a8a5ba3a7526f5f9b29766b1fd317082f9b83e319cac17526f02793f147cc01"
+"pg.functions.datetime.make-timestamptz" = "dc529bb355121584e172883379121d1f51eb61892e3c23be930a1fa1d33de46e"
+"pg.functions.datetime.now" = "4b704bc3543786359207e47be0ef43932fda5894de1aad408d2b5a2c4f2b49bf"
+"pg.functions.datetime.pg-sleep" = "0e41be677cd571be91b53e317c39035374e6febb8bb063889e45c81cdcac4edf"
+"pg.functions.datetime.pg-sleep-for" = "75d59f922be01e041a09f386be26e575f9c1052981d69ad868115e48487f0656"
+"pg.functions.datetime.pg-sleep-until" = "e088bce5bf1b7b51ccb5434ef120be3ec49431480dc5262c150874b978909aeb"
+"pg.functions.datetime.statement-timestamp" = "0135b653eb9c2e4344fd1c48c7f4705a074c86267b9ade371c965063c65f3b1e"
+"pg.functions.datetime.timeofday" = "d2c07fbce40551a6d620914a73686c9434a98f1781cf6827f77508760a79ed97"
+"pg.functions.datetime.to-timestamp" = "ea15f2323493ab957cae496fc12c385f45924199cb534c6d0b4657bbefdb4bc2"
+"pg.functions.datetime.transaction-timestamp" = "78e8bac2e027b06a51501455a6a0c260004566739d1107d0001c09ce548a16f7"
+"pg.functions.enum.enum-first" = "e197b9a9cd0ed91ca5210d15f96a37af05ca93e17899496ca9e9d834a6710844"
+"pg.functions.enum.enum-last" = "b10de3056b9c74addde4a2f9d40b2fd22bf1e4bc3aca6b530cc2535d9fe2241d"
+"pg.functions.enum.enum-range" = "cfdf4a872b306a8ce2c403791a5ce51f98d9fc5f963f0542299834c6f3e6951d"
+"pg.functions.event-triggers.pg-event-trigger-ddl-commands" = "dad1bd21f4475bebb7a9176c5258912644e2fbb9d9384484aa29bb2e9f7cfd45"
+"pg.functions.event-triggers.pg-event-trigger-dropped-objects" = "77c8e43779a32403b5e4a0a71cf28199662a39b2513d6ede158b76ca9fe37677"
+"pg.functions.event-triggers.pg-event-trigger-table-rewrite-oid" = "14394d8eb81a0996a3466d7ca9e1c4348b525d23ed5b928f5d3f97e8f0b813bc"
+"pg.functions.event-triggers.pg-event-trigger-table-rewrite-reason" = "aff78ef575a3f4820732994f51995632373490f895e9a754746c377917ccd487"
+"pg.functions.formatting.to-char" = "f9a1a0df9e3c269dfc2843a23456266065a6d728e42d84704f932659722dc173"
+"pg.functions.formatting.to-date" = "9719c90cb7768f0302894a318354adb961afd1a08fbd5c7c80dc56525065a7e5"
+"pg.functions.formatting.to-number" = "b93c7cd0a5048508ce5af5c441ba0cc7a88aded523429c06e4cdc483109be9b1"
+"pg.functions.formatting.to-timestamp" = "ddae8ae381aa7b77cc3aa899958cdba9f39504dbe975c133b56375f6cbf5ecaa"
+"pg.functions.geometry.area" = "611b0701f6d7d23aebf630bf26560ad92b0b818d75c203461fff9e6091aa6975"
+"pg.functions.geometry.bound-box" = "694c26881c7f39c5bef0bccbdb618a71c20bb97cbf898c263aa2cfabbfa3744c"
+"pg.functions.geometry.box" = "dc1bdb2b2257bd98d62e37ea519e1cc475e86a9f35f7fbff7ac4e2f6d478e3ee"
+"pg.functions.geometry.center" = "831e4c366649f695e63c3d4b2cfc61ee96317fbcb2e375497715511bcb6f223c"
+"pg.functions.geometry.circle" = "cb6aaaba51d509adbb51143bdfb4108a6a6d1e3827d814648b5703bf2b402eb7"
+"pg.functions.geometry.diagonal" = "fd8371125d3819f3ce477349f0426ccd0fffee8577c98a436439aeb8adf58c9c"
+"pg.functions.geometry.diameter" = "862448ae2336dd8a65fbfddd538ada913bb76129678b8a05d286cb49e60616bf"
+"pg.functions.geometry.height" = "81d955bbebab2c6c473b029243f04c2735d8b3ec11254d0325ecd9711775da16"
+"pg.functions.geometry.isclosed" = "ad9704fa72558c68b0e200d7f16c47ba688b4a4d50acabccce8905926643801f"
+"pg.functions.geometry.isopen" = "e816ca49502853b785a7bf7c81ef5e31f337e24bdad4c70dcecee2bcba44daad"
+"pg.functions.geometry.length" = "ba01f0196b22696458784c8685ea94505da32e9da823434e00961f43271515d1"
+"pg.functions.geometry.line" = "5e7a13435c1d91d461c39f5ba96a5bd3424cc9abbd0cc60ea9166ef4e081c73a"
+"pg.functions.geometry.lseg" = "582fe2f74ab842f4932e491f1bd77181a50ec1dd725b0186009bb17922e7f6ea"
+"pg.functions.geometry.npoints" = "422809dfdb665ef687cb381774c6ae2f69b23066cbba04465549b5336440c9c9"
+"pg.functions.geometry.path" = "944129f35793f1dd305f96d7f28d204c884236d9fbe77b15a190e50f0792c5cf"
+"pg.functions.geometry.pclose" = "d350a9ba097bf36964f6e096df32a279727091a3946967fe6fb4a50ea2c4d8fb"
+"pg.functions.geometry.point" = "f7530545498b75e5c1a4dab06c7135c01f9e7dd39a1f3e81fb77e328f0354957"
+"pg.functions.geometry.polygon" = "35310224dbadfcdd7722e05d47d8d84eb646b3632947ee98d2c0d58666adf1d6"
+"pg.functions.geometry.popen" = "2e7d72c0cf04f17e13dc37d5462bbef51a817b7b02ec2b84d815d14914846277"
+"pg.functions.geometry.radius" = "2c275e1a2c1e690b870f2485841166c53ab0f02f73eb2715368bb27cea1e419e"
+"pg.functions.geometry.slope" = "81ad6446ce427ff82a7948c1346fbf4ccef9879354d88a4f21b0a9c30764b863"
+"pg.functions.geometry.width" = "749370bf42e4ce63f87c4790f83d242e6b9eb0dd792eded2f2be256e7680fa16"
+"pg.functions.info.acldefault" = "d186a68142df816b1f1ead942283370083d0c1b6aee2c42efb4e56abea054057"
+"pg.functions.info.aclexplode" = "81c3b08bf713b374937550c747ad3b915ef41e570a5614cf288dc234c0b6a764"
+"pg.functions.info.age" = "380482f9b390cf8b32f6ad2d0891d90fe1cb3729fe68695dc2b071f4693a7f4e"
+"pg.functions.info.col-description" = "ec86702f7bbd6eec29ad7b6246dfb347936009c1b4e6729ea6862413a9f8c7fd"
+"pg.functions.info.collation-for" = "98aa0b5e4a6c2bfea02979df7ca906a076a99f12ff5b9d1b09d1810014e7b939"
+"pg.functions.info.current-catalog-noparens" = "d94ded45324d97f3358a546c1b7611a9a7afd3010f6f5ad2f6e7c3621f9d30b7"
+"pg.functions.info.current-database" = "817d9119d5a30aebd1101215fbb36443d3a83560c88cacf30f7733cf7e5e7ae4"
+"pg.functions.info.current-query" = "52ba2dcb40d4cd0727ac3c7485548063e052c6c02ea5f1dd146f7729383fe435"
+"pg.functions.info.current-role-noparens" = "d111586e30c9b7a475fb61b98bb51ea369ddc5064dc5e4f5ffaec81864e28f75"
+"pg.functions.info.current-schema" = "c97963d4a95792d4507425b27a89a981bb9f39665c4675ed070da74dd3222476"
+"pg.functions.info.current-schema-noparens" = "7a20752d03ae53ec8ae39239c4fc6157969be4ea90d6726140924a32095ca886"
+"pg.functions.info.current-schemas" = "a342ab6ee13aafb4d56a41898fc65218a1c63d06152c3d982d3b7558d8b7aea0"
+"pg.functions.info.current-user-noparens" = "709db0b4aa89a0d8424facb5a38e709fd96607a4b55889c94adf1e3552860db9"
+"pg.functions.info.format-type" = "d0043c71ce762dd0f2a4f0e32a6ceaa85d21116aeccd831dab0e3428fb53d2c1"
+"pg.functions.info.icu-unicode-version" = "2ac73bfa60c19f04bb96e1507f13ea3b114ccb35fb0be622b86fe2f3d1bb8e37"
+"pg.functions.info.inet-client-addr" = "6d06b0f84c3073c40e5b93715a85fffd23f208b6b68caaf61f721209cdb676a0"
+"pg.functions.info.inet-client-port" = "9874b7b2e77c0b02d05ae74af26c07d9b8811fa7fa8e748112df113667cc1d59"
+"pg.functions.info.inet-server-addr" = "13e606a7f21970def546dee496f191f542418bbe14d207d2f3fab3d65702be86"
+"pg.functions.info.inet-server-port" = "68654edb7fabdaaa981f54426a3c2d612d84cfa04222120305b176b0f40716aa"
+"pg.functions.info.makeaclitem" = "3194b251356353cfeda34e1a33a88a5409cae673072b4663167aec24d6e2262f"
+"pg.functions.info.mxid-age" = "f6b89c328a1b197a36654fb61673bb7908bcb6aa82499663ece8e4b9bdc12c63"
+"pg.functions.info.obj-description" = "bef398773adc5422b149f646d9845ba79b5665055c6ea6d49b2bc588026e4759"
+"pg.functions.info.pg-available-wal-summaries" = "66cbea5ab6e133b3d21ddcb840f69ab6b40ef0cdc15f5befc139465f0f196d1a"
+"pg.functions.info.pg-backend-pid" = "922090cc9cf96727ca63c87aba2f8a1a29b08436fa2c9d8e6677f682b06b8135"
+"pg.functions.info.pg-basetype" = "d8897ef93a9f1a399b0573a12622e28f25abf6921b11734d8b37a317fe7b9f42"
+"pg.functions.info.pg-blocking-pids" = "732ead7f7802f052e6e333d1f246a1166660df7e8cc0a912aba86ff3ab898b23"
+"pg.functions.info.pg-char-to-encoding" = "52a703ea3d3823252a34143a17c1c3e4b224733719fc62784e3ce66c5f84e065"
+"pg.functions.info.pg-collation-is-visible" = "2c62e79d9a34153895933d9cfca763e3e06c4b35d3edefe31ba7bfb3b65ef8c5"
+"pg.functions.info.pg-conf-load-time" = "f31b18d472e7fff206de9117a5ebab080bc5c60a5e5fd77ba6592a25d1f2edc5"
+"pg.functions.info.pg-control-checkpoint" = "2c19d6377865e2016f8a96464902846504dde028c4bb3012e434e38ead4a2b9f"
+"pg.functions.info.pg-control-init" = "88006cb97309ed5a40d97dfaa9012c01b8bd97091f62fffcd8e3e9f148131065"
+"pg.functions.info.pg-control-recovery" = "58afa0e1c9a7efa11c3e3b1631b07a5ce53436f4e057ba3e38833df64c4a8ffc"
+"pg.functions.info.pg-control-system" = "56b21221b3c74d8ac8fc1fd1292a45105d3d92404eb2dd8c507725cb3ce1f248"
+"pg.functions.info.pg-conversion-is-visible" = "414b1293d7f9f16ed4b67936dd77839787696f9f5759f46a7e6971abd656d5e3"
+"pg.functions.info.pg-current-logfile" = "7b4bc72a708eb6d72d965885e28b30b8b57e11ad01340a4baac4f592e2770c7d"
+"pg.functions.info.pg-current-snapshot" = "215d50a5536da602ae448114c8506f2e05f84cbf783fbee7169f7f20328d93f7"
+"pg.functions.info.pg-current-xact-id" = "0d6e8a455c0d072034bf8a0c8404e0cb24493e7f8fd25f8824c5d0591f4342a2"
+"pg.functions.info.pg-current-xact-id-if-assigned" = "e4af279eb85e1d26c6f236c388e5501a8efd363f3b3cfa2141a7cb3784fb45d1"
+"pg.functions.info.pg-describe-object" = "6b8f482e8d58a54a40fc293f90dee4c6a4211c9dea29b6339abddc4d24892240"
+"pg.functions.info.pg-encoding-to-char" = "2f8055e8793549d7f2ea4d9331fa66eaf075f60c8a7c5f6d963eb6d24fadcd69"
+"pg.functions.info.pg-function-is-visible" = "8e7df47ed03e1b8a466a3a148a81378c0f2a10fa15c2b0a23d50bb4572c705bd"
+"pg.functions.info.pg-get-acl" = "f8cbc0d3212ae364d3c2570eef251b1b1c4f11e26a7214624866860f95609b95"
+"pg.functions.info.pg-get-catalog-foreign-keys" = "acff7a9e5a9716b6455bd383acc6afd9df495f120a6cd947f4fe84b207cd6c91"
+"pg.functions.info.pg-get-constraintdef" = "c6cf0fdc8fe5a7a9c3c826141596a4cbe789cab50f5ec3edfbe147e3476c47ea"
+"pg.functions.info.pg-get-expr" = "2e9a8d61ba2222980cedf8c52c6bae786517ec8008f9f0dc478559011204f27a"
+"pg.functions.info.pg-get-function-arguments" = "987cc88ed668f117b09b6afc544dc8e52f5a086ea2d180231df9cccbd3f0c0c9"
+"pg.functions.info.pg-get-function-identity-arguments" = "d292073e037b00838f4b242d69121b2096428854431fe9122f0d479c4c2d2b6c"
+"pg.functions.info.pg-get-function-result" = "33b703bac2cebc8070e892ebed421adf8a65517292d15f1f361dcb77c70aa5cc"
+"pg.functions.info.pg-get-functiondef" = "3f2b90ec719bd45adb2a70237246cd252497c537274ce096d8b5cf2b25c768c9"
+"pg.functions.info.pg-get-indexdef" = "d3302340cf6303614ecb9f0f05d60120b751eb978c24ffb2828a44b4c4ad5638"
+"pg.functions.info.pg-get-keywords" = "6e6832e47aaccc99a7a626f8795fa094c88301008f9368b1955bda38e297f12f"
+"pg.functions.info.pg-get-loaded-modules" = "7129d6282f8f7f0add667f28e6c48bad212476cb29d0f3cfc7c1eb1c1ebdd0e9"
+"pg.functions.info.pg-get-multixact-members" = "16c0f0b271e9a9b5bd53deebce16e3af9fce81b8c9fac90ec146b5ddb03a177a"
+"pg.functions.info.pg-get-object-address" = "c3e7552cdb0efa152e6e909e559ae4eb8bb0cde35ec9fae7622027af137ee1eb"
+"pg.functions.info.pg-get-partition-constraintdef" = "b7e658f00bdd8fc41e2dbf5fce79bfe64689aefd2b452c10064b2c02a375d7d9"
+"pg.functions.info.pg-get-partkeydef" = "252b903d007800177ece955c5bd9c27869b6f18c44dfa1cf2983488a8f500ea1"
+"pg.functions.info.pg-get-ruledef" = "310f15cb62c5cb9bee5605420af25d574e35695b17b47b1db43b26ae66a3b22f"
+"pg.functions.info.pg-get-serial-sequence" = "05ee37b648d92f8a2788ef9d2967bd8ff184c0a80c2bb21fbb1f10dab4c79153"
+"pg.functions.info.pg-get-statisticsobjdef" = "6a0d3e25c46f012e23f5b2f9d3bba04ad6c9d83cfbb4ac59736a66d2e868640f"
+"pg.functions.info.pg-get-triggerdef" = "85ce6f317e0ce2593e7fbeace8bd956e4a060235087e591b5ac9733e86bc1f17"
+"pg.functions.info.pg-get-userbyid" = "d704f6c08a9042d4bb8aadae00bddccbbca740c5c30bdf4c44f7faf138192012"
+"pg.functions.info.pg-get-viewdef" = "4163e59189c05747073c080b81e6e8cbd10857358562e02cd3756f9aff44a85b"
+"pg.functions.info.pg-get-wal-summarizer-state" = "5d9f2aea0e20e7a35d6f72de2c5c13a781ed1525897118b07eafa617948edda4"
+"pg.functions.info.pg-identify-object" = "7eebe88df952cca50f8047a4b19532662a87334e187cd29368cdde31a17da306"
+"pg.functions.info.pg-identify-object-as-address" = "c826513e307dac24489a636cbe28974fb7b7ee185704e3f07f8101a0eb6a8214"
+"pg.functions.info.pg-index-column-has-property" = "4cd9c67b90dc58773fab41fb0a3a7168a3ec04e7f0e66fa65cc09fb1a939c6d3"
+"pg.functions.info.pg-index-has-property" = "37b924faef389c743b51f243b3944e319d886c7d6a1f27746457dcbc283a4609"
+"pg.functions.info.pg-indexam-has-property" = "6029a22644a8322a34607c985044a4da63c5d0c380720d2405c4e62e0cc4de0d"
+"pg.functions.info.pg-input-error-info" = "624091e21b1de7ca7f898e5b4830423cf03297f1794d8ee72e2891b809e0f7a3"
+"pg.functions.info.pg-input-is-valid" = "f94d2231948b6e80b77f18a5569b65195b0182a05bcf48f029a16ded0ab70f7b"
+"pg.functions.info.pg-is-other-temp-schema" = "adf37a11071beb06106089a50b1c9e812434534c6c971608d8e95d619da19804"
+"pg.functions.info.pg-jit-available" = "ceb0aeeb9a7d5392d7931890fef6b8a63fc88bd4b9c1887098ace78f9e551d19"
+"pg.functions.info.pg-last-committed-xact" = "d089fd8db14c2ca6babe2c1767f8ba9f84836bc8f46708dc78d984ac9c468608"
+"pg.functions.info.pg-listening-channels" = "8915274714565d392a632194af4c6655457320b8be331788ef84a8498e426a00"
+"pg.functions.info.pg-my-temp-schema" = "e0dea480a35169f62582c56356ce72ea766795f396f05cc7d76b951c11930577"
+"pg.functions.info.pg-notification-queue-usage" = "1184b132f316e5386b5ab17416bcf084f4cfaf429926d10ba3b67166b9358a3f"
+"pg.functions.info.pg-numa-available" = "d149bc8628a9e87969c96c71035422004ff0ea5cab5c4abec6e720c71c37df14"
+"pg.functions.info.pg-opclass-is-visible" = "48d9683a2780989b502e4a414f300c988d246f3dfd07a42549f6821a2b8a4c23"
+"pg.functions.info.pg-operator-is-visible" = "d21eca8160693e3d4a408089154104890b9f647f35bb45866641aa22ecad3703"
+"pg.functions.info.pg-opfamily-is-visible" = "3e82b02c81ac3f0bfc62072faf199fff3b6cccd957a749d22064171f59fd7a51"
+"pg.functions.info.pg-options-to-table" = "98aa3153b010637e6a9d4725a934ad199c10b0a7ede6f15fe25e0f09ae097a37"
+"pg.functions.info.pg-postmaster-start-time" = "e193511bccb1b79755b20d16e8e66b888e64bcfdffd74a20f7d68327463416bd"
+"pg.functions.info.pg-safe-snapshot-blocking-pids" = "edf43da859d79b30adbc5cb2376b79d3106f5a246d79136c9c13b10f4071890c"
+"pg.functions.info.pg-settings-get-flags" = "a552b1a672d19af08bd65849d096037a61d0cb12ef59ca8db7c2af2be7226366"
+"pg.functions.info.pg-snapshot-xip" = "811e115307831ed414b70d1fd466b6918bd43b422d6f85c841045cd882dfa290"
+"pg.functions.info.pg-snapshot-xmax" = "f3da150d67476c31218ff51b3d82d65ab9d8fa5eaf997fd834118298c5a38fe7"
+"pg.functions.info.pg-snapshot-xmin" = "df509c8a22ab36298f7d2676701ec6eda1070d26a5de6b86de668a36e4704a87"
+"pg.functions.info.pg-statistics-obj-is-visible" = "698ea2a57a7cd72c6a0466778478b7347e6056e9320325396e8ee1f6e27c1646"
+"pg.functions.info.pg-table-is-visible" = "bbdd1433a7ffa867fd9e916d64ec1466b227b411f638ce07e8dd8ee09e26080a"
+"pg.functions.info.pg-tablespace-databases" = "7c0d1f945be5bae2bebc683a4c36c0e8ba6d9e6d3578de000b6e54cf75e75ab2"
+"pg.functions.info.pg-tablespace-location" = "1eb1aac889ab9a8acacd68fad1aefce1becdb2da9382ae6de8a727cbd04ce3f7"
+"pg.functions.info.pg-trigger-depth" = "39e903132c3e85b90ea79223e0369c278d197fd7a2860194f483e2a14ff77c1d"
+"pg.functions.info.pg-ts-config-is-visible" = "d5250f2ac4796bc2c2f2b185e09ffeb86d11cdd5b55d182ed79291f40c4d864f"
+"pg.functions.info.pg-ts-dict-is-visible" = "15ca0851a8f7a8e17a6d947587ad4ed8acba7ff84c3632336e148e60488674f2"
+"pg.functions.info.pg-ts-parser-is-visible" = "51714dd294191cd330f3fa3673cc41388e7f0168894ba2aa24a7294a4f060b63"
+"pg.functions.info.pg-ts-template-is-visible" = "5dc21526b057990732c35285903b842b10d8ad9351dd47771481c9cb27b205e4"
+"pg.functions.info.pg-type-is-visible" = "5be06481a5c6cbc967b72cadf60522fb8c14e0e39a784f78cb9756fd8df10ed8"
+"pg.functions.info.pg-typeof" = "505379a77cdf0ce6f4c7c2cf71702ab0fb6f11e057009eab196774d9a3ab1e09"
+"pg.functions.info.pg-visible-in-snapshot" = "bbb77479609b1e1112ff294498b98abb2863d28fa3884f8ac164397dbab919a0"
+"pg.functions.info.pg-wal-summary-contents" = "d9e8c6991be3caa8ac34859826bc18ee8108564576a0a798a0d097f1d43bacf9"
+"pg.functions.info.pg-xact-commit-timestamp" = "edd90e70736f4bd9d9d9d4d112ffd35561f2185cdb50af746d46f16b50b14dfa"
+"pg.functions.info.pg-xact-commit-timestamp-origin" = "37f5e5799bb6c7cb6f20c4e58a4d8f8e55b855cd0455adbc746002631894328c"
+"pg.functions.info.pg-xact-status" = "dbb719e00eeeff6ebe66dc6599414a2835536c3bd4de1badf33a866d9c376826"
+"pg.functions.info.session-user-noparens" = "df20d251ce601d6773c5b917b5e9229c5835ea4e09d296870c5d68087d95ea97"
+"pg.functions.info.shobj-description" = "3012c995779c6572062fbee33e715c04114c68bbcdbe964df9ec776c1e3efdc5"
+"pg.functions.info.system-user-noparens" = "58d31560a0c5c8a9f2d3ede45c38d8fe3193892319cecc878af259cc85a8e794"
+"pg.functions.info.to-regclass" = "aa4f53372521efc4f0ebdd1070cef5b75644b3721f9b3d466e8c7ec64055e3ea"
+"pg.functions.info.to-regcollation" = "27ff2cda8d5c15ff94880d937c7030de6677a8382cdb89334d8468e6395edc58"
+"pg.functions.info.to-regnamespace" = "d412e125fb19d54c5fddfdaeedae5c0e72bf913a8e17f59becd8287824947098"
+"pg.functions.info.to-regoper" = "d88bce92917b2d202e603de0bdb2d4ec59617b4ebf26f4fb6c775cca4f90147a"
+"pg.functions.info.to-regoperator" = "5749a6da1deb9bf665ceccc3698acdb7b9d3fc0b631a699f501cb0344427d31e"
+"pg.functions.info.to-regproc" = "11019fbce5d297ad1d8325fd95ebd19ab14304bf4958205f01c79251d036b816"
+"pg.functions.info.to-regprocedure" = "186fc21d35db93fa7e0a368daa20c8e8fb6238afae172c38313ca0c72e9a6608"
+"pg.functions.info.to-regrole" = "f2905a224f5d1b0e1eef353a27abfc290da74a286aac04ea38960f58362dfedc"
+"pg.functions.info.to-regtype" = "a5891ab58f2d55bd9effee11a7bc3b01aed26620c2da090d1d8e4887bfb64975"
+"pg.functions.info.to-regtypemod" = "baba138269c54e18d7f98f6c4447744175e32c3a98fb68bc524e7b3d437f377a"
+"pg.functions.info.txid-current" = "0ad1cae2083f5ca3632607c0030170a2cd17c0b796e771b45a3823081bc3a164"
+"pg.functions.info.txid-current-if-assigned" = "33de1821bdb6063e5fce71045b89bbdefb8dd1db7d6a44e5160f32546bd41eae"
+"pg.functions.info.txid-current-snapshot" = "68a819db23f22f9eb6fa43e994c725c12eb582bfca9e421da732ee1b047ac296"
+"pg.functions.info.txid-snapshot-xip" = "56a322d860d617e563fc3b550f386e4ab934492667336042db32fe63d8bcdb76"
+"pg.functions.info.txid-snapshot-xmax" = "b6f70ff1c0e3ff0c8788e28d6e91ab859b1267a6fb1ccf15f94c76577ee07fb0"
+"pg.functions.info.txid-snapshot-xmin" = "0eaddd853055b391dc4c4138c15174387009e4daf6747e265e8ba937e3856f95"
+"pg.functions.info.txid-status" = "e71e89485b0331e7dd1963f69964f84254df89bd78912b8485fce03e965c4a1f"
+"pg.functions.info.txid-visible-in-snapshot" = "3cf08ecf1f38bd3ffde0074e5764d5dd09411a4822ce807b529ff8810f258fd8"
+"pg.functions.info.unicode-version" = "6220c647f1772a577ff7a72d4bc8fa0ea1ff958e615060ab19f976b4fb9cca77"
+"pg.functions.info.user-noparens" = "540091f1b27919239546371b20236a8c705e64124409fbf279ca245599a1eabf"
+"pg.functions.info.version" = "acb9f61fd4bae23d94684f3773de1805ba6e6773eb912355985e1ede97b88df1"
+"pg.functions.json.array-to-json" = "5f09c5bbf685f1f8c4fb74d0754d8839bd96afa6520c9f896c2cfdc64ad49c90"
+"pg.functions.json.json-array-elements" = "794b0ccbf130f9deac6045d755b0be4d2222eb5a0411d43d268d2a3831a98a5b"
+"pg.functions.json.json-array-elements-text" = "4bb277df6d3810b026f65f41dca53790ddb3859e51e0c67ab907d5d64554d27b"
+"pg.functions.json.json-array-length" = "545c7d8f7050dbd2e738e75c8adc8f05f27f0a24de12aba6b455b8051e5b59d0"
+"pg.functions.json.json-build-array" = "a805ba6b09218ccefe7756809d66fe175cb6cdad14e3faaf3ac109cc96397054"
+"pg.functions.json.json-build-object" = "675724483dd990b2e418cbbec8c9d5e0c619577efe338a43b77cbdde94471c63"
+"pg.functions.json.json-each" = "4db642590a51f796942b20c0c13cf678237a02ac484cb9cd7a6a3d8559e95566"
+"pg.functions.json.json-each-text" = "6b9830fae71547de74a7ef7a804017cd87c81adc1c8878d292ece5a18a8b3ecd"
+"pg.functions.json.json-extract-path" = "3f2d048b18ed76799ba3ceef7781281db0b534a114f0bd40d32a3db1c8f17dc6"
+"pg.functions.json.json-extract-path-text" = "b9a9b2732aa367433aa3df11843bf7876e9053bcbcd00a467bad605c949dd8d2"
+"pg.functions.json.json-object-keys" = "e3a866ab8ed5b1f4bf6cf3ae96d9bf362591b9b560ebec60d1eab52179f90c6e"
+"pg.functions.json.json-populate-record" = "05e41cb2cd80759400b3c36ae0ef7b8ec7300fbdd241fe3a424221574dc04d36"
+"pg.functions.json.json-populate-recordset" = "6ee06ac0093404be7811214fdec2e744d20ce917bbbe00fa5cd9881a2189e7b5"
+"pg.functions.json.json-strip-nulls" = "3cc8ee9b73c0179f1e112d90da41063b1860ccfb627b110b75588f82f3e96417"
+"pg.functions.json.json-to-record" = "7134422f530f0b14ac1921ec3646fa13093df752f5cf4a477eb1a2a10baf4fa5"
+"pg.functions.json.json-to-recordset" = "069e87c59a61eebd9ec6b5085ed0051010375e260c9bdd8ae52918ee957aec94"
+"pg.functions.json.json-typeof" = "75e5b0c775ba168a6bd0ff7ea26e328abb30dbd12f05e1debb390b10a90dfc18"
+"pg.functions.json.jsonb-array-elements" = "4fd0e856b317e6bd82310cabf78e949318fc34ae7e70afcfbcdff4a82006b14a"
+"pg.functions.json.jsonb-array-elements-text" = "481751e817cd45eb39d65e4e88df8007541eaa2d2c257278bac37f92e8d89d80"
+"pg.functions.json.jsonb-array-length" = "23423beadfdccfdb32b3de34ebb1fe29982eee766c12f4bed07ff5f9a8e44ee8"
+"pg.functions.json.jsonb-build-array" = "177626b5624d30b8697c4d49fcbaa8aa460ce006187588aa7ff4e52ea72859fa"
+"pg.functions.json.jsonb-build-object" = "5e6f5a879139d9683790eb402d782bf80703079fed6529c2581b05caa32a664f"
+"pg.functions.json.jsonb-each" = "240c3222a5a5399ceb61e11952886ee5fad6772756f0267e291eb735a841cdbb"
+"pg.functions.json.jsonb-each-text" = "f6410042bb28168290ed4258d181bd79bcb76148301e1a27c1df138ba30f4e53"
+"pg.functions.json.jsonb-extract-path" = "6a9e10e8e7cc43b4fd95558b6c30a1014f968509c1f47c11e01ff79db345ad1c"
+"pg.functions.json.jsonb-extract-path-text" = "ed7da52c5d124beee06778e6a0ad88f7f4c88f4656921bdc04e2408dbb2355ea"
+"pg.functions.json.jsonb-insert" = "274467f11b56cfd09e85cc1ac7b17a61ecc5463a0c9eb0c2971236911c0812b4"
+"pg.functions.json.jsonb-object" = "32822a653e2487b1cc7c0681fa933ec5eba9a6d881acbb15cbc38e051d7a9368"
+"pg.functions.json.jsonb-object-keys" = "27a083a38627c2d0a65b5a1580997915caa9ea9270fabc11573636ef553e33de"
+"pg.functions.json.jsonb-path-exists" = "b955f669265a3dedace8440ec5c42e0f9b9a4947c119e36a111b0a0bf5653be5"
+"pg.functions.json.jsonb-path-exists-tz" = "44e58a6a80fd9d1dd5a9836475db0659f9573e4e745281aa4bf5455a3b803ff2"
+"pg.functions.json.jsonb-path-match" = "75ab6426b58e491ccd88e2a963c1270de4d71b2cc05140c16f329aafe223572c"
+"pg.functions.json.jsonb-path-match-tz" = "643d99736e17d7eed2e13f299fb73eea355ced8659235bdd060aa81d24615151"
+"pg.functions.json.jsonb-path-query" = "f613e93ac1cb293ab7090ba29635fcbe11c9cbd967989974210c06559ec55304"
+"pg.functions.json.jsonb-path-query-array" = "9fc4e360b80276fd57ed0618e8bebbbdd820a8489f274b28f134fdc8714caaa8"
+"pg.functions.json.jsonb-path-query-array-tz" = "6617d8ec16849b58a96bc396196fc0aecdf6ad9bfef79471ce9700e4dec430dc"
+"pg.functions.json.jsonb-path-query-first" = "772ae670ef6a12cb6197a4334f92c9f96e2f446531f13c8050a2e13a6c016fec"
+"pg.functions.json.jsonb-path-query-first-tz" = "d296cd27f40167ffbf6d1221b5d890687292d6f8387d368208490609881fd910"
+"pg.functions.json.jsonb-path-query-tz" = "2abc043ef4d9b625e31ff924944db6cb41c506cb558ecdea5cc75c904099a501"
+"pg.functions.json.jsonb-populate-record" = "7e568f50eebb52f7cc55d70312e7daeb5b0e92f347af02f6ea6164a9f5aadf41"
+"pg.functions.json.jsonb-populate-record-valid" = "eb19bd86c7ff8366978193d4d17f6f47d4be9a5780441ef7d06d81992b53428e"
+"pg.functions.json.jsonb-populate-recordset" = "0177041ab5c11ebe3988ae734f28ae1db676c1181d854686a2ce6e14fbbd68b4"
+"pg.functions.json.jsonb-pretty" = "6c2f927ee930426241c2c521b78ccb8558a1faf582cfed727ec5d98e7c545711"
+"pg.functions.json.jsonb-set" = "fd6b7ddfeb913b8ec6f6b9aa10248b28611fbb952d26d60aefeafcc94a6077d0"
+"pg.functions.json.jsonb-set-lax" = "ec68df31d8f1e16fc3b908728cb64591779faba8581fa3468471fb5081869854"
+"pg.functions.json.jsonb-strip-nulls" = "1bd413901447fc34b00387194e7c6b52ec2eb5fff18e49008fcf13f0013db591"
+"pg.functions.json.jsonb-to-record" = "f8e624dfdba3d85d25faa4c3b09090729f83b668953b00782c85e7b0f9d8f0b6"
+"pg.functions.json.jsonb-to-recordset" = "a0b8c00e51751f0ca093f581340199d930720638ee38f1f3d123f42a7e1c7def"
+"pg.functions.json.jsonb-typeof" = "3492ed9076529843fa6c5f2a6ba5aaafa50ff433e74d5ae2c0b196de717296de"
+"pg.functions.json.row-to-json" = "e7d6b34cbd37da24aaa66300e0134b2eeee809baa4261c44e4fc53234b267a86"
+"pg.functions.json.to-json" = "fd7aedbaa6fffc7d03482759ba6fd234932c8aed219d7125b7764c796effbef0"
+"pg.functions.json.to-jsonb" = "2a4f98958c159993d69e2ceaa22d76892c77d7c9851def6a46a4d91d5c6cbefc"
+"pg.functions.matching.substring" = "ff167e0643f20772eb4b5135b4b1c6ff5d4e08efc245f37addddc3927f97438c"
+"pg.functions.math.abs" = "b50ee8cdd2418c12459536cc4a766ddbfc730a041b641dc3144b94c6bb7a86df"
+"pg.functions.math.acos" = "0b4450735695d2320f35c21f6af71fe0b58e32ccf3e6cdd847c9552d2b372761"
+"pg.functions.math.acosd" = "914dbd78c9f95557a8ea4cd5ccf2e4d4f2c09151e7efb396d1f7cfd212bd651f"
+"pg.functions.math.acosh" = "0e6e2bd47191fed3048c926cec58a85c344b21d46a01774d4cde697074b8f3a7"
+"pg.functions.math.asin" = "63b487e1cd2b66a97458f58c22d2d63b50afd3ab655014805591df25dd2fb529"
+"pg.functions.math.asind" = "17743547ae9caa120fa17e51778dee99985061cfb22d74cd029c0466c13af757"
+"pg.functions.math.asinh" = "8db3d5eb93f03c14a1e7490294338e96c9ca7c66553e8635513e104660433811"
+"pg.functions.math.atan" = "0bc9b1d672fba2c020f37ed5d0437b4fc2af60cb96d7e35f0091d9ae07f78c6a"
+"pg.functions.math.atan2" = "3db2d254d0281dd156e64f602fd359d0aae83347f5bf07d921cdc7e33f7b0e2c"
+"pg.functions.math.atan2d" = "f7f70afa716410fd47a26e2b2ab988f25246694c36e2f7b95e922ca187244e46"
+"pg.functions.math.atand" = "b7eb1ef2de3fc6410bfa702241993ce8cc2de190bf18a80128d30348a68eb125"
+"pg.functions.math.atanh" = "000a3f3696de826bbb99b173798a73990bd5d029043dee7eb070e8e9abeee83e"
+"pg.functions.math.cbrt" = "e19407cf18dfa418cba6fab109baa1ea84283dfa0d4d06650c594b447e55ccfd"
+"pg.functions.math.ceil" = "dc4b404cd0cf912b2f68a78e8ae1651ead7b167510ec8d60baae3d1d5e214de9"
+"pg.functions.math.ceiling" = "54d6f429ec38a0d401acad4f97d81a72a8e75d4f5469e0fa6337b891c41c28e6"
+"pg.functions.math.cos" = "3df027009d582988cfb8834e6e1097656f752cc1639b7856077cffe7c790144d"
+"pg.functions.math.cosd" = "60da1f8654777576671c42961ddd6f660fa38f0b9584d828ce1f558b79438820"
+"pg.functions.math.cosh" = "8a03fc6cc453131a56b00e2081f75d2ba5d44a1c53fd1e59fa4ac9367ac39d5d"
+"pg.functions.math.cot" = "08ff5e35d254f8a6d7ea16523b9393a5d48b54c558f58b46b9ac67a6b9a38658"
+"pg.functions.math.cotd" = "bed652e1765b3f00659e5b7ba584c23af01ba2c80293c95676bc6c660ecee8b1"
+"pg.functions.math.degrees" = "c86c69e334d54f239a54fdbbb2a86f2c8c40a8fdfba1565934dc246647022895"
+"pg.functions.math.div" = "62081b174bde5d07173280490adead5d958d71207c1e665cfe2798b1738ec3e9"
+"pg.functions.math.erf" = "116ef759bc2d722612b676a5d024658364b20ca7a1661fc4e8599c603cde9695"
+"pg.functions.math.erfc" = "fe903d94521421835f3df0593253416e3d9528a50e2cc3bafbf3becb0b402d83"
+"pg.functions.math.exp" = "e5ee3c7734e0bbe8f98c406753a94f9cef1e5840452659cf29838d34f1f56ee5"
+"pg.functions.math.factorial" = "2ed5b27e4d0a72d25af68a66a5b205d3251f0edaef7263ba8fcd07da56eadce9"
+"pg.functions.math.floor" = "ee8da9c320aacd62b8a42339966cfeb2ddf7b74478d9233d1e55ce0fe736b890"
+"pg.functions.math.gamma" = "c6bca92e432c6d5efe46409909af245c2c8db13901633ca2431a2f74c36e5b12"
+"pg.functions.math.gcd" = "1023fa748d11548b3118c1f75f1d70eece6677a2905fe3fc668ee590198a34a9"
+"pg.functions.math.lcm" = "b569937b39844ab57aa9d3068863c126ea98af19e6e5efa67d535dbb8a086ad9"
+"pg.functions.math.lgamma" = "01b074751d75e067026a6248730e63a0439c35c6036a59bc56ff08119341dc24"
+"pg.functions.math.ln" = "7b229531194e20185f207aba35df8e44a6431b0ec228486be72215e86b70d7eb"
+"pg.functions.math.log" = "6b8ebd364a05cae5ea5e745ffa672313bffcc5a2b8c50d3ad484f568439366ce"
+"pg.functions.math.log10" = "4ec738469061f7f8228dedcfdd65bb092fc87a8063ca664460eb365217189c58"
+"pg.functions.math.min-scale" = "b7f42bc59615795d65f02b7ca9faba3657564a533661f10585a3a2574bf2d1bc"
+"pg.functions.math.mod" = "2ec655f9d430fe7c85f84bd9c1c523289798cff3c2cc7e9d44e11d81336240f6"
+"pg.functions.math.pi" = "29e3a3d2213be66438d0e45d2fdf0823dcee00c9a863a8e9f2f3e883c5e2d633"
+"pg.functions.math.power" = "91e75388146d94d487c90a70aa3293e5b5643dff1fe7d0e45eaf0d6c4aa2e125"
+"pg.functions.math.radians" = "04814edaff9749891b9893cf38a731fb16e1c401513976d78de56da675ba7822"
+"pg.functions.math.random" = "1479e1c244115583d96de16761d5d46c65af82fde2411da404f3c63f24cb08df"
+"pg.functions.math.random-normal" = "72260636d6cc93b22b1324c05512de0f0fc47c125eea892031c1a32b8852c722"
+"pg.functions.math.round" = "9648adc8711a045c2f8e7f1780fd7ac3518240f6af6b978bb3d8e7b8cd62490e"
+"pg.functions.math.scale" = "db58b3c1c03deca3f25d338ac40b755afa090d558eab5ae130bd6dce7de8eb0b"
+"pg.functions.math.setseed" = "a7edb35381be78084a941c2a6375bea72ff0393caeec55e128120e2ad635b013"
+"pg.functions.math.sign" = "86100d9331fd89a261671f9fa9c8db493e6e2133befbc0df24b1caa4718e22c4"
+"pg.functions.math.sin" = "0137484ad34758d5e61b921583a8ff3cddb7d5af05f071e1211b355783acc37c"
+"pg.functions.math.sind" = "3edb1be27a13ba537b49462893e52332822ca9b7662b252266d5c5c39979e433"
+"pg.functions.math.sinh" = "345fc966c27d0d9983ef7b5888c297b54990710ab864932b8fda4e41b3849024"
+"pg.functions.math.sqrt" = "a1a611e8ad9d70aae8f70ad41e3efc8827ec6919366aa8121fc2f8f6b4f36f28"
+"pg.functions.math.tan" = "21d77f4d2da8c884290985118621d1fe529fa14bf21b759ee2ab1ad7fe8ab404"
+"pg.functions.math.tand" = "bc111de34268b012391bda03c18488eef0edd1c1d5d713ed95b9710fb243252e"
+"pg.functions.math.tanh" = "79132cd8548615276713a65483cd443ed3d87a93c460599a029b9b0429a5cc6f"
+"pg.functions.math.trim-scale" = "90a6f915585b6803af6717f3896709588a02ce54ecfa7c979f7690b9d577e2a1"
+"pg.functions.math.trunc" = "99b318e44bdea1d4e0f89519e95ef33ead7484d535481f16503a1dfa137182b1"
+"pg.functions.math.width-bucket" = "3622c48849382600b7b0f8a792393bc1d4514eb1f6f761ade2636127b0550f0f"
+"pg.functions.net.abbrev" = "39a9ff629fa7ab65c0419f501553c2a6af51df9f131617510606337da6442fbb"
+"pg.functions.net.broadcast" = "c209e9997973eb2b8abfde4c9fd4f42158a81d178e83cb6a6e61a516a4b2bce3"
+"pg.functions.net.family" = "99293a43105387bdec6d36095c6aa56405dabd1f6e8151f2a495cf369f410edf"
+"pg.functions.net.host" = "6d7bff31a45e648d91656c21d4f6b34e4857f4bfd2cad4d47f384a6670a8fadb"
+"pg.functions.net.hostmask" = "1dd17c017b42b0a5a75df419764414b482e7febbdc437df5afac21659daa82c0"
+"pg.functions.net.inet-merge" = "a2a65312bade2656a4c1d9a12425ec9437f964f26eada4ac964352981491f386"
+"pg.functions.net.inet-same-family" = "aeb430167b4de0491cea8b4a53e2dead660ee69fbe88a5716005d1c78a3081fd"
+"pg.functions.net.macaddr8-set7bit" = "9cca690701de624cd848d709e3b6726c76efb483269c8673330189d142f2d319"
+"pg.functions.net.masklen" = "eb33052a68e5fc0e75abb90bfa20102d85b242d8eed9a67d4f6c2440651e32a8"
+"pg.functions.net.netmask" = "bb69fa58fc9f930f052d53eba0bec02caf9ea782ef9799f8f64dc00879b8bd0a"
+"pg.functions.net.network" = "b167262bd91019bd1ed1b54b2fd35946d292a565074309d6f943155be481ffdc"
+"pg.functions.net.set-masklen" = "51f6be4872e343e83a56b828bc91487bc5bbdee38d3cdfe3570e1e1dcd477861"
+"pg.functions.net.text" = "4599c3ec60465facd1f93f9f55c3f031d1e37fe6fe0bdd4cf2d902c19ed0f98d"
+"pg.functions.net.trunc" = "cd5d1e12e31d0bed715bfd12cdd6ab203b545b7c889f52834443f2af28c270ba"
+"pg.functions.range.isempty" = "f59ad1a0352fff8fe216764c3bee96beac73b0ff438bde3da93b53dd7227aa4b"
+"pg.functions.range.lower" = "ade4deb493039d6dbfe742095a87a423cc06d60a8aefe1f8ee00f5be16845052"
+"pg.functions.range.lower-inc" = "3e5d1d4455e8f34f60c7c419765bf56399d390e31df426711e5068805d45878d"
+"pg.functions.range.lower-inf" = "2e28e9ace35a82b3f254ad596d5232aee141e066d94b5da775e9220855e1c7e6"
+"pg.functions.range.multirange" = "f0000794dc586b8c08084c740a597b83a79cc2339ac4cb0272bf75c2b39e942d"
+"pg.functions.range.range-merge" = "291bb65d09c73aabc3f081e149727a82f4e7aadec275e6c65ea83e7ab72dca5f"
+"pg.functions.range.unnest" = "0a724bd99912d2841eace3bb02b5ea650b3eec265312f4705beb9ed7019ac175"
+"pg.functions.range.upper" = "433eb9562a1aaf4327414c0ce251aeb42fcb5f12132353935f07b53ae8d43b11"
+"pg.functions.range.upper-inc" = "3bcbf42c1f6f00ca93ac55885f2974c77b2e8c310b25b09307a7545d0be43a9d"
+"pg.functions.range.upper-inf" = "bf6fc9c3299324d2dd5a5bd1c2bb30c8414611368f19f6d71988ca3d8c98658f"
+"pg.functions.sequence.currval" = "5dc7d2d9e9fcee49a96a04f69a3a5a208213303e4d4673dcd4a40323b3f917da"
+"pg.functions.sequence.lastval" = "f402330d4e3b41244d57fb58377c7837ac5c6b42c7abfec4f09743f447f17aec"
+"pg.functions.sequence.nextval" = "fa25556a362d45fa724a4d8ad23d9065e59823c9d67e63bba1635a82b709bbfb"
+"pg.functions.sequence.setval" = "19caff65367619cf28d370c572d04b3e46d5133fd67aa56e175f9ecb9fef6b59"
+"pg.functions.srf.generate-series" = "6a87c413feffe0f0b854a5e449c45a86e79f355bf48a37f79e51504801e3c218"
+"pg.functions.srf.generate-subscripts" = "d80349e0509b2d17f98a71c3f18e18a5ec7128e0c483a5d6d67e0243e426614e"
+"pg.functions.statistics.pg-mcv-list-items" = "94acf7b5f67de4298d0bafad63caf7ee0e32fc82b64e56bf8a9bb8fa88ad550f"
+"pg.functions.string.ascii" = "1edb202a7232c300645b573f7c1fea2ef1c8358d4b25c64997b74812e91ca0f4"
+"pg.functions.string.bit-length" = "0c7cc0f3f3038d42b409aa77ceabfc4cffdf2f55c1f24ecae080ab010f0142e9"
+"pg.functions.string.btrim" = "5f0197c16cecd7ee0f9e3f180afc1ed0107e8041e103ad7b765c115ab3e2d207"
+"pg.functions.string.casefold" = "e705932539eb8b6c8b0cbe83e68a6939feb10d04ad5b87b0b0ddfc27ca32e875"
+"pg.functions.string.char-length" = "a245803443939a31547cfb3830b433fac66bf316018937635e810e13cbe5b799"
+"pg.functions.string.character-length" = "13fdba9c9009aabfb5ee2a88ae185480ebc00067a6e11f1c4499d1bc995a1368"
+"pg.functions.string.chr" = "0e5d8d882617fbf9010452aa51f1597a45a363aaccc0d2b1fe9ec17cc4780b74"
+"pg.functions.string.concat" = "540da2e1f7bc682137ecff93f9d95047de590d971f6a7b529d6b77887f3119cf"
+"pg.functions.string.concat-ws" = "b7d239990747b5219b2bb74a671656f1484609b174011078c2cb2224467edd61"
+"pg.functions.string.format" = "d22a91f4bcbc2bb9328f9101f83187cc4f7058e897b7acb65ac5270f2e5ff8aa"
+"pg.functions.string.initcap" = "f35d349f284e66a47e9eedbb87be94c089d86c31e34d656285f56e1d2f1b0bde"
+"pg.functions.string.left" = "e58b79254816cbe5e84fe1b64f4e29cfbf2b265fdfa7c63b10f58270bdf56d53"
+"pg.functions.string.length" = "c418332264c73302dc3615f3069a427c7edece9f2b8d7d8c099f29b86130b77d"
+"pg.functions.string.lower" = "81d04adb473da45a2dd99a0a3bfb9eb468b40ff5ea98ba277ed1774c1374f694"
+"pg.functions.string.lpad" = "9748323216b29f1ee548721be8c014f1330c5f06510bfdabc6f5af0e76e5f809"
+"pg.functions.string.ltrim" = "6900b16ba6fec42dd6220ab23fbc1320aaff614467abb3a41de7266820bb56c9"
+"pg.functions.string.md5" = "548fd4c11d66ef55c3112a68f522b8d21b9074704abda32a6e1f4dc90d86e5fa"
+"pg.functions.string.normalize" = "54a8ee48f7e60fb97983d1b56d60a038cbb4f2046a7075bb46269879edf68035"
+"pg.functions.string.octet-length" = "aae1304adce12758bd0a30724f3a469e26f0f27bd984325aa59a7d80f5fe32ea"
+"pg.functions.string.overlay-placing-from" = "72b603a00877cf08f0ab3dd30d994c053c1190c553c11b94783d51fdf753212c"
+"pg.functions.string.parse-ident" = "49649d9e97cc3fe1f99476a0c2a8277fc1045e66bacee068d57d8c04840eed18"
+"pg.functions.string.pg-client-encoding" = "28673d7a5ae67341efb86d7d022b39ef013c2dd9a93efd844d413ed54b394eb4"
+"pg.functions.string.position-in" = "3c0169b5601f6c97f8ed0716db88f7894a8a578c8819fca38ddaca5705c84751"
+"pg.functions.string.quote-ident" = "279765e126c8dc9a20ba761188a78843410cf4ac17e25c4a100ae98598820b78"
+"pg.functions.string.quote-literal" = "eec33bde6f6cb8e4d28a8bdb707506f17e6109e7dfc671daa498f98efaad9360"
+"pg.functions.string.quote-nullable" = "873f4bcc1966c9e40ac96b687b114a516208c481bec8ef684f1c6cfaf34f2abe"
+"pg.functions.string.regexp-count" = "e1ac1fb80610865d6abc141b5c9ed0e48a555f2c78ddfd01ca91ef8e8fff275d"
+"pg.functions.string.regexp-instr" = "8a05349cc39513e806e87d39c6e380e9b4baa6a15d429703fed3e889c6d5a924"
+"pg.functions.string.regexp-like" = "8cce0cf80b74003f8db255e54483b4c0e6d974b980a10efa2674d67845e3d7bf"
+"pg.functions.string.regexp-match" = "e8c814ac27568f68565f14e34cd87d34fb8706b48635b8e2e779cca9b3aa01dc"
+"pg.functions.string.regexp-matches" = "ab217f20f4d33b308d67c390fc5e7586b814fb6101da53ac0b15b8c278d01844"
+"pg.functions.string.regexp-replace" = "de0dab3ef843465a9af59ded07976fa82e002c5585b2266a09fd681094b26c06"
+"pg.functions.string.regexp-split-to-array" = "4d6e4c9cbb9ea8e6b1ad238b7e5ca504a28047666abd1f4513d65b9dbadc0091"
+"pg.functions.string.regexp-split-to-table" = "e8ab15004d7e5af99acd407adb9d919ad673d56f0c62023f436208cc6c7f1e2e"
+"pg.functions.string.regexp-substr" = "e378811f15be14ee98893affd144dd5901529394a51a915c6171f17850c066f2"
+"pg.functions.string.repeat" = "5e95a39de2940b584623afe6c81cb9d159d7cc0a9281583299ed2607cfeccf95"
+"pg.functions.string.replace" = "c22f6d427108d48914b22b528419a0749cb14802e2dc1b0b3edf19a10acd4775"
+"pg.functions.string.reverse" = "88ab98123fc2c91a9a9d9148c8eebe56b3488e0800ad89967a6d0586a46d6d1a"
+"pg.functions.string.right" = "a121655407c40983fd4ff75d99119e55f77347cbfa215346053df6907843d1d7"
+"pg.functions.string.rpad" = "67a04f1ad27943ef9aa32af023bcd4bc9d66dfe9c2e1d25354b52ae4f68898b3"
+"pg.functions.string.rtrim" = "c0682a022a36ea575f773f2ed7114e5b95ff935d14c24f26da459a9db7caaa2c"
+"pg.functions.string.split-part" = "f260a15183cb26e7b0e51f798ed7be3087b925c5d36f3d5c823ba9511736a7bd"
+"pg.functions.string.starts-with" = "4bb1306c2c8596d287eb98224a021287ba42f7511641168d2febdfc67365cc6b"
+"pg.functions.string.string-to-array" = "84f3100dd229ed6b5b52a9082816350475c7d20f28487cffc126777e414226cf"
+"pg.functions.string.string-to-table" = "bdb299be0bcfde0efc73bce47d2c0a0165296cd3a197fc3a4a2cc76d1770a7c4"
+"pg.functions.string.strpos" = "79ceb7809ff2f1b16370f440473effb2f050fb6904970453f495662eaff1a015"
+"pg.functions.string.substr" = "1d19c0e273d6e18293f046e070c8443f4ec134c290e7c137e63fd0209223cd20"
+"pg.functions.string.substring" = "f0c7e480ed41d62683269aaf1d493dfea54678606525f9614758554b78727263"
+"pg.functions.string.substring-from" = "a22f84b19ba52d2674df8898ed4868591bfcecddc2f1581061a5ea3a29c65556"
+"pg.functions.string.substring-from-for" = "79ba11b1bbd2ffad7c9657ed06e468cdd479acca13c918a935cdffb58fd20a18"
+"pg.functions.string.substring-similar-escape" = "ef796c61490a5166c2c86700b83875ef3b4a9b5f21a61d5b40966edc07ecf573"
+"pg.functions.string.to-ascii" = "76d30071185b8711e289e1e0305931b8adc42cee0367f53e577ee02f1eac3d56"
+"pg.functions.string.to-bin" = "f54ce5e17b5631642dd99e11f243f71c9328ee826dafdadf2684239617e2a5ad"
+"pg.functions.string.to-hex" = "e927acc24738f3091c786b16d575e4fd7d738dc6062822806bc17e7c632b3d03"
+"pg.functions.string.to-oct" = "bd8c7c24eca3077eb80f68da8c829e30d5f36ded46f26e948aaed85ff6b9d181"
+"pg.functions.string.translate" = "e702d4805c9f986937f3bc9e175c5a63e56ff8a3005f456a375c711cbd524c9a"
+"pg.functions.string.trim" = "30bd71ec04dd91036a21c217e7c9244a9ff9cc0a51ded77893080ab0ef433fd3"
+"pg.functions.string.trim-from" = "989bade3d3eb03f3e049d39d0269893a3d90aabef3d50a6c9116052b13e73adb"
+"pg.functions.string.unicode-assigned" = "740fb49bc28f5819c671d5ca6ee33dbafffdb358d1fd9a71bdd783e4557dcc05"
+"pg.functions.string.unistr" = "75a53cf3f1d049a16cdb34100a49487715ea7455cdad793c54e746b24c9ca959"
+"pg.functions.string.upper" = "8d231166f117e7d16f514adb296e4d4ae90b6b99e7a503048fd07dfc116959df"
+"pg.functions.textsearch.array-to-tsvector" = "910f0fbd7de7c6ec7ad58af4deac3d9c41f9621b91292985c558b9a97f1b732e"
+"pg.functions.textsearch.get-current-ts-config" = "c5d820cf681e78b8ee02eeb269ade8d032205c64240da37568484994b88b2dcd"
+"pg.functions.textsearch.json-to-tsvector" = "e6b3cb5770a9b19a64a655a78fb90243414a481bc39c553403da8f34af090e4d"
+"pg.functions.textsearch.jsonb-to-tsvector" = "9f7518d5081dd8050b4ca6c6638c5836dd6988660b16446848fd9a286adee9ec"
+"pg.functions.textsearch.length" = "6510c438e5d6bdf5127e59bf49b6ddae05509eae43a88c2d0e062fce49f28a0f"
+"pg.functions.textsearch.numnode" = "d8c851333fb714197e310afd97768f5cfc26ccc1229165dcf3709357f90fa404"
+"pg.functions.textsearch.phraseto-tsquery" = "0f78ebe15e1d6959509d16c5cb46c69d7290e77973f58ac2d2b550ecd9737a72"
+"pg.functions.textsearch.plainto-tsquery" = "66d250c1fa601a40313aaaf06a940b4e636849e2b07ddcdf48aa1822ea1baa46"
+"pg.functions.textsearch.querytree" = "e4245f803a15e57af3880e35b1ab3b625a92e34bfe934bd3f8fc3004e2cd1690"
+"pg.functions.textsearch.setweight" = "9bf14fb13b93c8d9ec5c73a3bc7a7f85540998de4a8596932eb528becdb8200e"
+"pg.functions.textsearch.strip" = "b9d81af0b98ceb9f502183139801f771d720fa1f15b981865fd0c4150e877e91"
+"pg.functions.textsearch.to-tsquery" = "11a8e46bc1352f080f0a6e7c0d827d543c5e2378324605426ab6ca9727a60eb7"
+"pg.functions.textsearch.to-tsvector" = "5341449ff8624e729914138f3f68c0c4a94315bcd2970989baeb761d9a29c556"
+"pg.functions.textsearch.ts-debug" = "33c883791468a6170e21c8ed8c7e3884c7a1843c631b509785d10a58124b672c"
+"pg.functions.textsearch.ts-delete" = "4141c3fca7457a851d67547ad506447cfc9c4bab7f29c3fec680e431185b8915"
+"pg.functions.textsearch.ts-filter" = "9f07412e98c8098d1f194a848da43ba50d53bb5e11457650ebabc046cf5f300b"
+"pg.functions.textsearch.ts-headline" = "006827c47fc42bcf679dd2709868eb6875d1d9e056ec01c7c7e91b3f1abbc93e"
+"pg.functions.textsearch.ts-lexize" = "2d080c4cc68a4e8bc8c4d44031254a5886ffbd1416762df2975b73470b5b01fc"
+"pg.functions.textsearch.ts-parse" = "d99b841733ee9340e7e82b80847fd055f7a1c33a03e3ac8094a602041ec3538f"
+"pg.functions.textsearch.ts-rank" = "6c97d2b3052155e8c304382916c5bcf979f1b36fa392d3473b522fba08dce498"
+"pg.functions.textsearch.ts-rank-cd" = "bd26156a66ccca7af3359967fdc920619de7b366d1c7e8cb0c1d586b9aa75c30"
+"pg.functions.textsearch.ts-rewrite" = "f3606b55aa71c1b013c02721c9034e9e03958fb7886d70beb6b854a8106814de"
+"pg.functions.textsearch.ts-stat" = "c17343116a17fbd62a55de43376712509f8be72d0b39d323c872d5bb4993bb1e"
+"pg.functions.textsearch.ts-token-type" = "afbeb8e06f62cb5aff67897059b938ca1ae08c58b1481f77519509550a2152c7"
+"pg.functions.textsearch.tsquery-phrase" = "17940be12fcb8c8f861ced54be1f1bd52f1d0b1533f1ad7bfafeeb4dba11053d"
+"pg.functions.textsearch.tsvector-to-array" = "c4e9b5078760c32cfebd8d33051f0a98b14bd4eef6fcc5d866a330510344c5c3"
+"pg.functions.textsearch.unnest" = "a97c51779751dfc031e35a6aea7cc5839f7fa5d1eec27b04d9f21992f85ee53f"
+"pg.functions.textsearch.websearch-to-tsquery" = "b53686e68e35ee84066ef8c2cef161a0e8b758ad24cf62b102e88d12f838944b"
+"pg.functions.trigger.suppress-redundant-updates-trigger" = "1466f476bafdccf177901bf90f9dd74ece810d2870ada0a2930845da488cf88d"
+"pg.functions.trigger.tsvector-update-trigger" = "7eed102553a1ca13e672b9777f3f16758db8fde1c0d7dd47142e8d9384655db6"
+"pg.functions.trigger.tsvector-update-trigger-column" = "a22802e3b2abf3ad8bd249c273ec6c7463252ac82e3448c3de9808dea4d9bb5f"
+"pg.functions.uuid.gen-random-uuid" = "7a9a73fbb1ec1dc64378400c330c5f794848b48054dcb2385454ef4d3ec63d2f"
+"pg.functions.uuid.uuid-extract-timestamp" = "903e1ac7d60d6402c25817203822ce5400257ceaa67ac5ab3ffcc845f94053de"
+"pg.functions.uuid.uuid-extract-version" = "bfc6d0bb414eb259088b76ee98cd0e8692dcd67120a47ee8a70f7f9f2eedb3ba"
+"pg.functions.uuid.uuidv4" = "32df4422f57cd435a284323d9c2ed7d3724bf596fbc533eb97e396f55f41f5cf"
+"pg.functions.uuid.uuidv7" = "3866e5f71ba0b88caa92743362354cc8341e2eb6f6b893bda7eaeb8c7fec3c7c"
+"pg.functions.window.cume-dist" = "73aa6fa59529c90bbbbc4e800bb2d2300c58d6c66bef734bd1f54f46f4e94bd3"
+"pg.functions.window.dense-rank" = "fc51963eae07a1d2c1c1dd1b06ab553fc5eb03294af8bf358974f9ce8ebdd08c"
+"pg.functions.window.first-value" = "6d3fcdc65548a3e7c9cfab69d73fb96db80e4048b12ef875525b81dcb1764b13"
+"pg.functions.window.lag" = "b5c113fc2bf06c67c033a4f5c9ebde3cf390bc214dfc1e2c1dc2a881c9f90159"
+"pg.functions.window.last-value" = "619756e115996784d6930fcc92bd969bd5beb4adbf3f0d80f0d1f819a8199e43"
+"pg.functions.window.lead" = "6b85feb1cb5e84c4a6757002b07a5b57992e8fecfdda69b856658e3499efbc96"
+"pg.functions.window.nth-value" = "86f3e4a292fd6053ea4ee6b024a473f015646d9820a0f51ae43c92d00c9adc7d"
+"pg.functions.window.ntile" = "87cc7a291dad37d486a926efd5db10ab9178b31b1b1eb10a46ef0f5e29e6c088"
+"pg.functions.window.percent-rank" = "fc50b8e57c9fde13731d9d2535996b933976ac1f0c51839ee95f5a730770ed20"
+"pg.functions.window.rank" = "a0a4943955024f7c88b5351618823961163a6657cd718bca00b9f625b9989340"
+"pg.functions.window.row-number" = "a5b6117b624479f3fa268d386bb05796b37807a36f1f8f917390b41c4851e0c0"
+"pg.functions.xml.cursor-to-xml" = "9584889432a323a07e826081d711c3f580e85b30fc2556f8694cd83f2d7eafe5"
+"pg.functions.xml.cursor-to-xmlschema" = "9e762de61d702df127db5513c546d6fc2d6d3704b79a4514e77ef288242fc81f"
+"pg.functions.xml.database-to-xml" = "be14cb233308c433a42fa38a69796fc3d5490b2159833a70b6489c87f17eb5c5"
+"pg.functions.xml.database-to-xml-and-xmlschema" = "1a1822c35a07dbb1bd4496213e357814e6b3690e6106d3ff6e4d2b0b276acd93"
+"pg.functions.xml.database-to-xmlschema" = "620f38dc3ddd4ea62cd400c753a80ee494b1632ba7bbab997a7200c86e274418"
+"pg.functions.xml.query-to-xml" = "c14561adacd44a126c9e850be1efb9e1a7a9127e5e7f726af83f4d0820fb4e58"
+"pg.functions.xml.query-to-xml-and-xmlschema" = "b9b57570771afb0016491b3f66d9e471adce14e7e31bb15f07759c3e070a6b55"
+"pg.functions.xml.query-to-xmlschema" = "6bcdd01e4be0bdfd262e85572d1939ef81a517f7198602fa9c527ee0ad0eee17"
+"pg.functions.xml.schema-to-xml" = "d4a39d0871e923415337d272b081af77d90773f7136f85c8296a20e9c60ba771"
+"pg.functions.xml.schema-to-xml-and-xmlschema" = "7972854cb9d9462714e8b7bfc00599d230390772f6bb11d057c30945481debaf"
+"pg.functions.xml.schema-to-xmlschema" = "90305cb47ee9a6dd62858f5b48b0f1990bd1bb2675b1245af7798512cd500a30"
+"pg.functions.xml.table-to-xml" = "b6ff21d68e3a4500efbeb45308c603b01441a2a086263238b801d06ad88cfbc4"
+"pg.functions.xml.table-to-xml-and-xmlschema" = "f837732525fb2c98efc0f8a4bb94b339882ad9d2b47647ef6ae77566cd4266f7"
+"pg.functions.xml.table-to-xmlschema" = "a521315a47b133f9a5cd4ccc7690c8554a9b0f2888b07ce0cd5fea372a473cd2"
+"pg.functions.xml.xml-is-well-formed" = "d504f469f44fc60356267f88d83db2c14a31abfe7cd6ca8adfcb23436b7b3019"
+"pg.functions.xml.xml-is-well-formed-content" = "0dffa372b9cba694715c6d2795b8c1762aa68b5bb7ae53bacb91faa8d6abc2e9"
+"pg.functions.xml.xml-is-well-formed-document" = "16010e07761b53e88ea4a8bcc1b36b209f74e58f94d13cdffe4749e335b8efcf"
+"pg.functions.xml.xmlagg" = "32cc1895e830ac7f5a2304753eef7863d2b91ee047e12f82721006670230dd0e"
+"pg.functions.xml.xmlcomment" = "1bf197f7900bf067cdc3b8ab02cbc6f30e937e3548ba421d97e4094b3b544ffc"
+"pg.functions.xml.xmltext" = "9565caeaeff8e92ffe5e8650a88887fd5c1b62cf2b4553b7caef0adba23cd4d4"
+"pg.functions.xml.xpath" = "a7f3350bf2bbeb3ce0d79b9c4998f30b8e45950bdab0d7ede3fe56da1238061d"
+"pg.functions.xml.xpath-exists" = "bee01fe5c7673ea746936d68c3934a3288a6453afd0c7ce1bf90f878fd54043f"
+
+[review.definitions]
+"pg.functions.admin.brin-desummarize-range" = "44887f9d2216f242067442c8846d82a4abebdbdb53da927aa725242aad286c55"
+"pg.functions.admin.brin-summarize-new-values" = "26a8397d36798a53eb21b961da78ca87912d7748980323af5096596f3de00fd9"
+"pg.functions.admin.brin-summarize-range" = "e23ee5d300a5fa17e6da1413f69f462fd376841fefb7e6c7f6c4e34bea2fdf90"
+"pg.functions.admin.current-setting" = "850914a779a1bc25e03b586e63a05e2c1bfe2c747ac415ca9aaea20d88fa699c"
+"pg.functions.admin.gin-clean-pending-list" = "1a64e4332314176666d78ce74e42507eba4b35dda5262b11b06cb6b48967f15e"
+"pg.functions.admin.pg-advisory-lock" = "f7b98c4f49ec3ac16620537f98fa4bb79cdc4a450c7a420e426f8022100d0b3a"
+"pg.functions.admin.pg-advisory-lock-shared" = "5c901558092d0c776a8d95dacf0dd39195754ce592d3205102f23f7ef6171382"
+"pg.functions.admin.pg-advisory-unlock" = "3fb832804700afca6d0f91e252a5972a8ba879cc6296341a79726ccabe922b0d"
+"pg.functions.admin.pg-advisory-unlock-all" = "56f86f0ceed9b3007a2909630d925dd3d377fcafc8d49b7d6e3697df257a06da"
+"pg.functions.admin.pg-advisory-unlock-shared" = "2b635faf1b3b4b5886ced870830772f503c88e6406537b9b1f7f5b6c0f11797d"
+"pg.functions.admin.pg-advisory-xact-lock" = "b5b6d40d1f5f0d32b8b64e2ca72fac083f9380d8e7422c39d5fea2dcbc4117fb"
+"pg.functions.admin.pg-advisory-xact-lock-shared" = "ea8d412c7f7022a8ac5281d6dc6b44190300a19f309fea52c737c3a9f44ac486"
+"pg.functions.admin.pg-backup-start" = "38899da313aab1df5d794199ccc0b957c4aebe03497d88532d0a377645710532"
+"pg.functions.admin.pg-backup-stop" = "701454acffd456c473c2a4a786db15f4b8d62149bdc7e0a010ff53afaff0430a"
+"pg.functions.admin.pg-cancel-backend" = "d57873bc3179d836fcba6f26dd1a6ddd2c40d141ff86d764d776fe14086215c1"
+"pg.functions.admin.pg-clear-attribute-stats" = "6ea808acbbe91d18d1d4055431522e527977040a635bc57683c85e944680d0b9"
+"pg.functions.admin.pg-clear-relation-stats" = "e0e89218a14b95ebe6bd8e10108afc1bf53c292f4b6e7ceed09211cd0a049a70"
+"pg.functions.admin.pg-collation-actual-version" = "0bc965c114a77945da7ae2c2c259a405afbca0fa6e308e174ceb639bcd410284"
+"pg.functions.admin.pg-column-compression" = "c0e8a98a3e593678b0e2bf61187a095160f5980b03596fc631db53817aeda8c6"
+"pg.functions.admin.pg-column-size" = "7d47a5c63e7d2cecdd8763336323608bf25f7af015d51024e54f5ae29f0ef6cb"
+"pg.functions.admin.pg-column-toast-chunk-id" = "b85da13ca72f38f2ae8f9fed8b97d0aeda55f477d7e8bbebb55a13d86e18b7b5"
+"pg.functions.admin.pg-copy-logical-replication-slot" = "099d19f2f6b4939fbdf5e35ec13e2efe7296641fa7e09b818218c9986fc1ae33"
+"pg.functions.admin.pg-copy-physical-replication-slot" = "e80b737a2673cc0cf465aa22d1cbb32dc561fef825334f8c4dad7ccc058a744f"
+"pg.functions.admin.pg-create-logical-replication-slot" = "725dc803fc8be38a96c40048ab10f20ec200787b7cf0d939ef9f4c32c2b487f5"
+"pg.functions.admin.pg-create-physical-replication-slot" = "371963a7fe6cb71bbf9942e4f7215663eda9e30ce813caaef61ea8125e8d3cc5"
+"pg.functions.admin.pg-create-restore-point" = "5d5490a7ed6566d5b6b59298bce4d3e87e676ffb7cb7ecdc3b0e5f5bba3d213b"
+"pg.functions.admin.pg-current-wal-flush-lsn" = "11b995b98e67ff1543f3b817bd45ebad1cbbf7a1cf02984fd7304142ce8155df"
+"pg.functions.admin.pg-current-wal-insert-lsn" = "04a7fbc1b8ce0bbdd93697e08dd23a2ba8a5ad1b1b6f7ed8e11aae9b97e7f8a7"
+"pg.functions.admin.pg-current-wal-lsn" = "b9194657f499a34965dcdb5130f2018cc50b29316efb08d6d567f2bca228a1a8"
+"pg.functions.admin.pg-database-collation-actual-version" = "5e93ab67c60a4b873811238931aec6ef348195398eb04cb1855de27825d99f36"
+"pg.functions.admin.pg-database-size" = "651b6c7274dc659440f6e577b4ab786449f7d315fdcfa9b3c51c4590126553b4"
+"pg.functions.admin.pg-drop-replication-slot" = "402b156467f97ef222642a9ba2b635a64cd08334b8aeedf040a5e4815ae4a644"
+"pg.functions.admin.pg-export-snapshot" = "17b715a2749a922ad38ea10fbaccd53f8217036e36d455cdd7033315b3ee7d15"
+"pg.functions.admin.pg-filenode-relation" = "69486dcb23527c8c3f1ae01e69543215756dfd18a154aeebe08b4b82852ec42d"
+"pg.functions.admin.pg-get-wal-replay-pause-state" = "f0a54abd3ba07d4c310f3aa1da2abc10f489a73d455f911dcda0f44cc7ecb6a4"
+"pg.functions.admin.pg-get-wal-resource-managers" = "40a5acdb50246bd2ae6ef11896bd66667ad1142976c40112b496da7b9ddd970c"
+"pg.functions.admin.pg-import-system-collations" = "13467e582a9403b6f7baffffcbc850ae446ca64cd5b86f11a2c2bc8b6330c73c"
+"pg.functions.admin.pg-indexes-size" = "506399d7b0c5e2603c5241625104d5a6985f8ea3f9f7b27ae227a9563f9af2f1"
+"pg.functions.admin.pg-is-in-recovery" = "080cd1cda02fd63c2eb03ab239d41e5b3e86eda8320abb239e34140c7198c054"
+"pg.functions.admin.pg-is-wal-replay-paused" = "f8ccce573f840cd47c3a7c5759dfdab8cab17c00635064324100cf798563a81b"
+"pg.functions.admin.pg-last-wal-receive-lsn" = "c84042689a2f5ed71b6e8dd5c98e3b181b03570aaaf12e2aa584873bde0aab58"
+"pg.functions.admin.pg-last-wal-replay-lsn" = "6c6be00a694b60ac672efe195aa59c7cd5b377ea6102ae90cdc6beb4a5a5bab8"
+"pg.functions.admin.pg-last-xact-replay-timestamp" = "043d2d2ad8697aaa94d587221f197ff44c0698cf9ede5d7d382318e5a619c571"
+"pg.functions.admin.pg-log-backend-memory-contexts" = "b83f04df1102fd109519468fd6c7f3e6dbe48971aeb63fd53d8bc461a0a9199c"
+"pg.functions.admin.pg-log-standby-snapshot" = "1bb5d2b10dfc5d1f63ba04871b6c248ca9ffda809f4eec0dd8f5cf55ca15ca24"
+"pg.functions.admin.pg-logical-emit-message" = "38172040bab63479e334e65c7b1ede903cb0999d45046dfbdecd9dfe961b4e9a"
+"pg.functions.admin.pg-logical-slot-get-binary-changes" = "e4ba08f2206d263fa9c50e43ad68ddab68bdeb27778073c002a5701f996971a0"
+"pg.functions.admin.pg-logical-slot-get-changes" = "d69671796136c13fdd291a6bb5f824b59a6c0f53bb9c538b20662dbdfb70ad47"
+"pg.functions.admin.pg-logical-slot-peek-binary-changes" = "1d43b8c8b800be0614564136a4d61ee2980cb66736c61a5df04e9d7552ff86da"
+"pg.functions.admin.pg-logical-slot-peek-changes" = "ece3d7e39cd9ef25d7344239b94f75f0ac6ebbaef88cf9d1038c3d565eaec0b9"
+"pg.functions.admin.pg-ls-archive-statusdir" = "45a34dc587dc09f1a1e38f869e5521d75290b8ccb4aa5d35ba526e3d50fae398"
+"pg.functions.admin.pg-ls-dir" = "4dbb156790071e5c0b2ec920fc402bb703249098146d68394fdfed2ef50f0498"
+"pg.functions.admin.pg-ls-logdir" = "db4a3fc65a7a76db3f35126bfd942ee30dc7f8dba703eea3b5ba4663a7d400fd"
+"pg.functions.admin.pg-ls-logicalmapdir" = "6f50b8b597d8fe48a70fc0ac313599cac7e0ce2047b6f1b54c22d0b1ebd5dfb0"
+"pg.functions.admin.pg-ls-logicalsnapdir" = "371b812b784674b498b3c06f3add27a1a0a2194908b01a94f87d1d0b04bcd6ca"
+"pg.functions.admin.pg-ls-replslotdir" = "aaaa8f2bdf5685bde2e92f75bf6160c1f43f857c93d1c3f9f8ca1d1b5bea0712"
+"pg.functions.admin.pg-ls-summariesdir" = "515767948c020cc53e05ec3ce216282f3e34dca615329db775e8273629994b92"
+"pg.functions.admin.pg-ls-tmpdir" = "8a9e0a8344b1ccc1a31e08274ff8d28cb2a60c44fec7934085bfd1d080fa16f3"
+"pg.functions.admin.pg-ls-waldir" = "12f4514c017b3762b92c52aad2e04e0299d7fd11d4863b9d9567804048039a2a"
+"pg.functions.admin.pg-partition-ancestors" = "3a963d2e6ba1faa7bd914e953835ba3e32285993994276ce1583ecebdb3433f2"
+"pg.functions.admin.pg-partition-root" = "679b471b6b752291678b3096845b16272307f579ec825246fe06aede918adb87"
+"pg.functions.admin.pg-partition-tree" = "66b064472dd54958c09ea59ed6feb90d3b6be287a4ef314f5de9bf1d4ec63572"
+"pg.functions.admin.pg-promote" = "25aa701acee5eb181364d1467c4ec0c7e4e163aaaa4f98fea102876b82effc99"
+"pg.functions.admin.pg-read-binary-file" = "ee28095cfe60e6fb4d36c1506a4f57fbc62e47816f1d05d5c5ee98846a525946"
+"pg.functions.admin.pg-read-file" = "e0facd29891c0e87f18b43350ff45fb53950b69974d4139181b64ec07ca73a74"
+"pg.functions.admin.pg-relation-filenode" = "8996f5f5e2085c907bef6bc3fde60e1182d10869d2d2eeeb94306ef8b143ffd6"
+"pg.functions.admin.pg-relation-filepath" = "2a57d57fe506d48de294245d578235e8b17c57c7cadd51c5e0919d6942f4f243"
+"pg.functions.admin.pg-relation-size" = "6c2dc6364ffa08d569060fc8efdf6e4abb6536ae08cd25ec815acf26c922420e"
+"pg.functions.admin.pg-reload-conf" = "4a0ec38b1f9ec967741291c104b749588f4255cd9071c5e98b35574b994ee194"
+"pg.functions.admin.pg-replication-origin-advance" = "0f0adf76e4b825d872660ac61aebb845ce9a22988fd465a22498724541666375"
+"pg.functions.admin.pg-replication-origin-create" = "0840cce48a8dc53f96f7a78e8519c6b2343a73603bdc6536db5228072a019cb6"
+"pg.functions.admin.pg-replication-origin-drop" = "7719606894480da3dcc1dec01211d33d52c3ebefb902ea792b82ef6bb62070de"
+"pg.functions.admin.pg-replication-origin-oid" = "2c3ca19e0e17aaacdb8fd38da07dec78744b6c5df513222f4689fa16e2390782"
+"pg.functions.admin.pg-replication-origin-progress" = "e085d6e2b9264631d98e984556cba39fad42fdd2b1410865ee17fcb723495b6b"
+"pg.functions.admin.pg-replication-origin-session-is-setup" = "aaf187c981a0ae4cbe425bd4b66da99b34b108ad278ec2e659ade016b70cf9dd"
+"pg.functions.admin.pg-replication-origin-session-progress" = "ec53539aed5d391b48abca00670815aaad072330ee1b2aafdf46c7d67d545bf3"
+"pg.functions.admin.pg-replication-origin-session-reset" = "af2cc28806443f965d30c1abf8f4984c3476997ca41f4364a786267ca47433f5"
+"pg.functions.admin.pg-replication-origin-session-setup" = "6bd17831aa8d14b4da1c0c197e8dd2d51af7bc66a31166d42402e36ec62ba830"
+"pg.functions.admin.pg-replication-origin-xact-reset" = "d9c31adaa81bbca5bbf6d853bd933419513ec319aca7fc495f4cd73d47a3c81c"
+"pg.functions.admin.pg-replication-origin-xact-setup" = "81791c5622b0873c8b65fa408e974f449273dd6a56e666cc988eda9df6fe8b4f"
+"pg.functions.admin.pg-replication-slot-advance" = "bad72d24013aac3fcb0aa3ebb4fdee5c288d1b7cfdd5b0e90c26090517d844e0"
+"pg.functions.admin.pg-restore-attribute-stats" = "5063ee3e7810446dbc9d33a52c6c3d78932d57a7dc96c73d1ef21a8dd7b1499b"
+"pg.functions.admin.pg-restore-relation-stats" = "19a2b025f20664fedc571cc4a0e35e8e7f25f1d3f75586d4bbb1f32adbfcfd88"
+"pg.functions.admin.pg-rotate-logfile" = "eacecc2c30946d28c9e5428e002ab6e7d8fab1e881559098b13792503c252b2e"
+"pg.functions.admin.pg-size-bytes" = "a116af33b391b72dd2e3d9f2cad0ff8274c14f2c6f367c17d4ea6d7e4b320128"
+"pg.functions.admin.pg-size-pretty" = "a3c26c58ee3f6ab2c66330c4c22d6e3c3c3663c21a1c293064c31de0ab3ba11f"
+"pg.functions.admin.pg-split-walfile-name" = "36cfc914d70da7981afb91b8ed2615dc07187cf782b4a6ca6d8cc17e078a16e4"
+"pg.functions.admin.pg-stat-file" = "2f82b4b8684451fc48729925faf78df4fda4943fe1d83788400374feaf736db8"
+"pg.functions.admin.pg-switch-wal" = "4da93c354ab0cd831812e214d910a23b3f687924ea514d5f99ea9d9d1e4d552c"
+"pg.functions.admin.pg-sync-replication-slots" = "413ee9ab5415e3af08a33a2c66f29f6bf18ba413f510c26eeb7db0a92283649e"
+"pg.functions.admin.pg-table-size" = "8cf2af4af9863f276981c4b2d158a386867dfde91fd39d0e1295e24ea02b6628"
+"pg.functions.admin.pg-tablespace-size" = "f202dd078588d789dfe861e935cd4e67ed648d727e6e06144adf3e8f0fb968bd"
+"pg.functions.admin.pg-terminate-backend" = "cb48f1c9a5b9053e4cb02463e8da4b920903262c9d35a6094ba069ade5097eba"
+"pg.functions.admin.pg-total-relation-size" = "66b5614a1045de88e753fc4c111f48ca636c5e1a609a7d6cbbfbd3ae8978d6cc"
+"pg.functions.admin.pg-try-advisory-lock" = "236f341719e2628fbb1560947a6ff5fe029fa66ff618857f71a624fb2e469511"
+"pg.functions.admin.pg-try-advisory-lock-shared" = "1d38756b03addd56acf350c17c5d0f206f9772aef3d9e78b096c01110016f79e"
+"pg.functions.admin.pg-try-advisory-xact-lock" = "0030c57b583f4747d9b0aa2d4c7e0bff56902f22c3882fe5c8991fcd28671bbe"
+"pg.functions.admin.pg-try-advisory-xact-lock-shared" = "289ac2c74184c95cfc5d2b91701ce798a7b4be7d039de3d33a0cbbe8d0ed7640"
+"pg.functions.admin.pg-wal-lsn-diff" = "b42170510333b5aa70547096573b6bcce3b1458da5f95f3e717dfed35b92bd7c"
+"pg.functions.admin.pg-wal-replay-pause" = "d140a5eb0e2cc3a35161281a740564655be9edd0ebacf566b3b1daf7d89b9583"
+"pg.functions.admin.pg-wal-replay-resume" = "703a09aeea2f3cc16c99410f55bf72235435da969e964548c8c7ca3b73724bca"
+"pg.functions.admin.pg-walfile-name" = "e9d2a9e302c45a1310521a610ff9880cbabee5af5b8249f15aa6766b47175cfe"
+"pg.functions.admin.pg-walfile-name-offset" = "b46df715a0d459e9572d440efcbadb0a67757948af77a16a551d8a228a18ef74"
+"pg.functions.admin.set-config" = "cb07c1a34d127bf1731100f297c3bf4c939d7b45a33732849e9408333d011193"
+"pg.functions.aggregate.any-value" = "0b08c235ed2ffaccedca8b95c67403264004711763a963be4345d9e1a288e1a4"
+"pg.functions.aggregate.array-agg-order-by" = "287782100e130d7e1cca76d1dfeeac275f23ef78beee06cd6650157681d75e18"
+"pg.functions.aggregate.avg" = "ebd42770d6ebfca561476d1b031fa281a3b51cfaae3ed1c063849dbf4cdf5f8f"
+"pg.functions.aggregate.bit-and" = "21f3cb6b07bd217277a9f92bbe4eadb08b905ed663c31d4bfbc188838b99923b"
+"pg.functions.aggregate.bit-or" = "b6ea969e6515f31976c7d79f5ca9f0e9744f9bfde371c6be3320f03e57b50098"
+"pg.functions.aggregate.bit-xor" = "d43e6bd31bdd205845af25b0e9f97fcacfd2ad7efd198cd07554361d68106112"
+"pg.functions.aggregate.bool-and" = "297a3e43a42c103c79eb60942aa2b4de8197bf3ae1379be7c8e49a96b0964154"
+"pg.functions.aggregate.bool-or" = "08ca7b68d50bdfbdf5d6ed6a5b37848cc3b32dff63cdc93f94da9a99d66775de"
+"pg.functions.aggregate.corr" = "d2ccb1a28baaaf02d110ca95148c74c72ffac97efdfb67dad9219e437fbc419d"
+"pg.functions.aggregate.count" = "2fd53e61dd4e8af8bd99b2e245cafc17b03d99a8112b9d578f5908234a8950c4"
+"pg.functions.aggregate.covar-pop" = "fe3e55dabbc184cdffafe260e7cc77241dcf62665848a7e4f0b64d1db7297ee8"
+"pg.functions.aggregate.covar-samp" = "f78b97a8be4e63b1a90a2ce28638fb0e0fdfdf8eb0db9990370a916db961a487"
+"pg.functions.aggregate.cume-dist-within-group-order-by" = "3e0931ee748ed4623964b9a5c1f5860aa8f8cd372875d3e483a5005d836d7550"
+"pg.functions.aggregate.dense-rank-within-group-order-by" = "fc7c602d9f7c629d857ac20002602282d1f5f2b779d7440e4aa61753a4bc1cdd"
+"pg.functions.aggregate.every" = "e2e8d9b00918337abae7675014ad20bcd29a1ad803ad238700af27370babefdd"
+"pg.functions.aggregate.grouping" = "f065e33e2cbad8cf8cd81a6a40d97413f69d6bc813eea25f15ea354797cc0364"
+"pg.functions.aggregate.json-agg-order-by" = "dd57d1ac69d5ba4ea04288195dcb1f294a885ee9095d5f88fc33dae25bf88cbb"
+"pg.functions.aggregate.json-agg-strict" = "a59d76d93a55f2448c0e734476c6b19ab918bec8eb6e49aa0e6cf4e408769cad"
+"pg.functions.aggregate.json-object-agg-order-by" = "8afc9b9cb8f90808a6d11d494b094e691e7aea9a2cab1be00a1ccdf27539d4b8"
+"pg.functions.aggregate.json-object-agg-strict" = "127269b16ca14c87e0028cacb294192ba4e588688eaddeca9631bcd8284f9679"
+"pg.functions.aggregate.json-object-agg-unique" = "67a945ffc2d5dbd8c448ef794860cd8df34a2084bd94942db69108a31cf81f47"
+"pg.functions.aggregate.json-object-agg-unique-strict" = "42ea00bb0ce8834d2fbb3c1e5ac199ec02e6d5f5d9c53c6b1aa3bc7ae3026165"
+"pg.functions.aggregate.jsonb-agg-order-by" = "9546cc19948e109dea4c46b2b11e2fd33b37bad96f159a2177ddccc52a8cfcfd"
+"pg.functions.aggregate.jsonb-agg-strict" = "ed3490bdc3d6c7128ceaf1ea22e15399f0127d8edebb915870b08e8c213b1ffc"
+"pg.functions.aggregate.jsonb-object-agg-order-by" = "46ab0cce1901d4d28d5485c05a3eccc621bd8e1bae3f5cc169cdb3a90e443898"
+"pg.functions.aggregate.jsonb-object-agg-strict" = "4f0d14feeb13e7e9a798114dc79bd287d0edb1859be5c0c29c9be406e7bf7fa3"
+"pg.functions.aggregate.jsonb-object-agg-unique" = "470c2c4415de5d2f68e95f2a3d5b20b7dd389e09e7b3d7bcf97d82fcaf94155e"
+"pg.functions.aggregate.jsonb-object-agg-unique-strict" = "35c20fab4dce47d4f8c23078035f754ecff56d1cd64111b65de034169865ede4"
+"pg.functions.aggregate.max" = "295f1e2d647f248fef44cafd16d2e2550f9e61c7fd0a3952382400c7f8487667"
+"pg.functions.aggregate.min" = "17081afadd6568f9ff55ee565a62e7348856aa9c77024a828fe111f3a3af57f7"
+"pg.functions.aggregate.mode-within-group-order-by" = "e06028030e0ab67ab4a855ef70b93c40d74d34897c0b1f74b4cd8b9bd1ceaa78"
+"pg.functions.aggregate.percent-rank-within-group-order-by" = "72ee93b6b8aa6c95f4a69768ef9b4a2153776b611f837c307b911d90756bca4c"
+"pg.functions.aggregate.percentile-cont-within-group-order-by" = "ebcfab36f43d7998660d77b422cbf9619dddbf85d6874038f694ca897d699bc3"
+"pg.functions.aggregate.percentile-disc-within-group-order-by" = "e8c23f2fd938e4631d9f3cc0c0ca77aead7c0bb2efed1310df084739a5455ac8"
+"pg.functions.aggregate.range-agg" = "e2d9f8d6e2fe66f3ea23a508b4a90ca3eb89a47048f926eec59e2760fedb96e2"
+"pg.functions.aggregate.range-intersect-agg" = "cdd33676dc553708eee296d63dca8ed5e2a6f16288cdbe7bb5b6b6057e584e40"
+"pg.functions.aggregate.rank-within-group-order-by" = "692bf1307afaedb5b33dd4f71ec0ebbfad4f367869446914f6521b74a071bef8"
+"pg.functions.aggregate.regr-avgx" = "1bb7d11115db71346cf1f1dc385f1b84e11e4154dc07e569cb44dc4b0fda086c"
+"pg.functions.aggregate.regr-avgy" = "90092f1f2676bf2dddfbb9ea9a3c04ca93fd123a4e84def32cdfda820ee4bd75"
+"pg.functions.aggregate.regr-count" = "ac2420d57bd4d6ee37c60fa48263e47d29b876a2c889e1b0536642c61146475b"
+"pg.functions.aggregate.regr-intercept" = "fc4c828867c6942e44a478ca7fa6f01ec35806dde14d2d831eeca953c234ea00"
+"pg.functions.aggregate.regr-r2" = "50319d6a3d9af9905ca284abdc97d26af38d674d415e7be409900808aa1987c4"
+"pg.functions.aggregate.regr-slope" = "da0dc0c58c2e2f179002d239d98016e8f459a6139eb2d401b84dee1ff56164b6"
+"pg.functions.aggregate.regr-sxx" = "cb3f39ae109c1b3224b9fa10c46f3fb1dc936bedb623332e94b8f7c091220230"
+"pg.functions.aggregate.regr-sxy" = "9c85b5f46a37091b67c5da4ff3c44b5ea1a5ff549c9cb65389337aafec8e3a80"
+"pg.functions.aggregate.regr-syy" = "6d43b8040c5be5a15435887830773e8709fc6d1eec8ab23defe9aded5d48389a"
+"pg.functions.aggregate.stddev" = "666c555240f6e21a7fec790e636d946e1857b849f64e36a3b214d9253d6f5634"
+"pg.functions.aggregate.stddev-pop" = "5fe0b3715a71fc26db2bcf288c345ca376830e6b6477093ea568aa50d27c5f02"
+"pg.functions.aggregate.stddev-samp" = "d637c7e9e1be6c278ed847ebff8c972dee2d3f194f508fded691eb11ea75e454"
+"pg.functions.aggregate.string-agg" = "013a1ef29aece943681209c123f4a8a11751ea756c31afb8d6e225387ac96d3d"
+"pg.functions.aggregate.string-agg-order-by" = "9d6a8f9e9d7d8090a6bf409c9a48cb3118d84b1519d542e2e207b5fa97d53957"
+"pg.functions.aggregate.sum" = "173f9569b3d4ef7ffa9cc503b6753ac452eb658b8d876f8b9b50da58d4b05463"
+"pg.functions.aggregate.var-pop" = "0c6e78691fe9ab607e66e7981f02be203ad0b1650a301812b33026cb861555a9"
+"pg.functions.aggregate.var-samp" = "85e95de0e72b4d19e3bdcb231a8b606a0a1550044f7cf0366730781e7b2aac04"
+"pg.functions.aggregate.variance" = "00cdbe54a67426b92001359a6936ad7be3dd3c76f659c6586b75da2a8a2a6e01"
+"pg.functions.aggregate.xmlagg-order-by" = "7f46a9cecdfad6a9999aa7fe2f879cb5261500550729d664dfcecb2ce42682c4"
+"pg.functions.array.array-append" = "61350cf78afa95b5be5c63bbcff558a04770c61064b5f2232b645da416d99c3d"
+"pg.functions.array.array-cat" = "2a37db6e158b94cfc6d1a18951b042601a024d3a07c598a3ccc6946d8522a356"
+"pg.functions.array.array-dims" = "b56c16f3e49d1fe8c40c4dc6127e8ab024a535fad295497a48f1fd0930afd029"
+"pg.functions.array.array-fill" = "e6747508c52d867d82683c832158abb88a9d6da37255c21a86728ace01a9ee16"
+"pg.functions.array.array-length" = "1ab95a5f048e5589b2b2740bafcedbcca526542663a757ec3b8348b76af47d8e"
+"pg.functions.array.array-lower" = "f4bcf68171757591fc3a0ea3902ca5e9a739691f54c80ff219187c17bd3d1563"
+"pg.functions.array.array-ndims" = "2dde54a6fd164ee31de93cf00c04d5b21f1807f740bfa1a575f0b5edd8385bb6"
+"pg.functions.array.array-position" = "ecdebe91f5099339781e5e02d58aec15a6f931d54d39acab33c5fb00e956b738"
+"pg.functions.array.array-positions" = "3953e322bd18c2bb5cd5ea5d61c53e6ecca50ccb858b7c61c5d24e361cc9d250"
+"pg.functions.array.array-prepend" = "57b671387944d1fd4af30ef8421863234fa6f3308c81fa17c9ac6ad6e92e7fd5"
+"pg.functions.array.array-remove" = "8368cd4fac467a4d7128950b6044ed0c4f7cf8d8f72833f2b3e1ad0eb5ff8472"
+"pg.functions.array.array-replace" = "e4931da451de1b0662b0533c41a1d4dfc2f2d8b7146b1d2d7fbd27192087c1ee"
+"pg.functions.array.array-reverse" = "e53bf066b1886b074197ded0ad824cac3a2fedff24a4709db16bd500f51e4ba6"
+"pg.functions.array.array-sample" = "d18426f44be41adbf5a9932c5f82dc656947c43c99953b8be8b4f32629c24d0e"
+"pg.functions.array.array-shuffle" = "5aceebecc021afb489a89a04ab50e3d44858d490807b5c593e2202b9b2a332ce"
+"pg.functions.array.array-sort" = "130da7c415cea16c63a9dde26cde67bd1e8694f8aca848471c8a11742070f8b2"
+"pg.functions.array.array-to-string" = "32d1b6634dcbc06607af1078c1fcf54e97d2c86d89cbac3aca9327317f7b24d4"
+"pg.functions.array.array-upper" = "37f263e42501937da02572fcfc6da078d5ab844826603aa4417ad3dd3def0c9e"
+"pg.functions.array.cardinality" = "b8bba2e6cd7248ea212fc1debdb04755524c48c4251a984785a7bd4a2c5e974f"
+"pg.functions.array.trim-array" = "656f5ad86f9dc36b46b360edb9fb789703494461bca951d89557815011dd9822"
+"pg.functions.array.unnest" = "fbbc08b56d098d8ba681621399d40a05526f7685cd75d15e79c1e232196f6920"
+"pg.functions.binarystring.bit-count" = "492a7ec10d8eb9799380c8fed1087b5f91f7135a061b11e24330da4796ce2936"
+"pg.functions.binarystring.bit-length" = "576788d48452559f4e9bcbad07d8ec3be49f409242aedb269473b99e95ae8bee"
+"pg.functions.binarystring.btrim" = "5ca1cd88c09a15ebcb3a97293eb39817d979314d1e44932c3db28c471939d054"
+"pg.functions.binarystring.convert" = "5a071d85e52ad64e161d0ba124151c768a0b8b89c98a86b858b673ec7ae5aa90"
+"pg.functions.binarystring.convert-from" = "a5f5cd285d62844b8bdb307d53204492e14bc84eb471c80c2a592a0bf8971596"
+"pg.functions.binarystring.convert-to" = "647433ca2b17b2fe84cb85f2480638f9b7570e6cb58242b812fdea6da2027d7e"
+"pg.functions.binarystring.crc32" = "7fe0934ed3d66a761680e81be7680053c10f9543367f2480f7913321950ca95c"
+"pg.functions.binarystring.crc32c" = "508c7e93bb132659aca1f8122acc17eb34dd80c36ca3ebce6d091acbbad95d3f"
+"pg.functions.binarystring.decode" = "20c4fa121172998ed9711d3aef711623c2bd732636cb4a6da13032b4dc949f1a"
+"pg.functions.binarystring.encode" = "a96c0310b5c3bb88a532996d98db1a148e739bcdd88688b60184834f5f5952b0"
+"pg.functions.binarystring.get-bit" = "3497431da12df93461b5879b574e655bb25e39c2e2e879d7e206d83d1cce6cba"
+"pg.functions.binarystring.get-byte" = "57bfdea3b9ff9ab61e0702117601bb431a56b76b0d6f57b3f72bae5b07c44dc5"
+"pg.functions.binarystring.length" = "80eaf410e66fc0143b38a01b53d3695152e71db5acb506481e851f1b19e74af5"
+"pg.functions.binarystring.ltrim" = "bf10c73db83c5aaf23b2a435f64aaffede7846ee5a39831c9acd435ef0cc1c85"
+"pg.functions.binarystring.md5" = "0cff19bba7ac173050d5f31c5a0f3c6519c51ce535abbc949070310d49815705"
+"pg.functions.binarystring.octet-length" = "b7a844c79fa6d552fbc5452040f5c05fc6897ab3dfd613dfcaa237f4e5e8821a"
+"pg.functions.binarystring.overlay-placing-from" = "b92ccbbb36f5c1d7fc915093fe1a48f5bebe86d0fa9aa02da9ca2628ad4dfb13"
+"pg.functions.binarystring.position-in" = "6292e0e96066054eeda8266c00d3ffbf27ce0baf7ce4aaccc49da733f3ae47f2"
+"pg.functions.binarystring.reverse" = "6d56d41f279a35b008c078d59a0dcf843402cb14c7ed09b1bbf401fef5af8c4b"
+"pg.functions.binarystring.rtrim" = "47dc2cf5f3faac68093eccdd944e7e71dd33c6a9eaff434cd3677c20abeeab8c"
+"pg.functions.binarystring.set-bit" = "0b757fe8782038fa9ffc6403773dee7ada280e786f0f897836ac040fbba1d33d"
+"pg.functions.binarystring.set-byte" = "20041e06e293b0ffab7b52ba04221cf2da6115097e2174182f40bb484d67ff39"
+"pg.functions.binarystring.sha224" = "3ff7ac23abef42e50b2b1835e399909d033e5f905e17af0b284fec64d785713f"
+"pg.functions.binarystring.sha256" = "94c6ca5d0c0011b8a20eb5aa8b2b909cc6a3a58dea3268f092d869763539961f"
+"pg.functions.binarystring.sha384" = "1ca9413b34fe123e9c8352ced802cb0c3b1d9bf781629f7267b09b227cc5cc16"
+"pg.functions.binarystring.sha512" = "fe197a9c2bbcbd24f523d79dcd33355ff7f4874e292bf8855ddec8ad6aa025ea"
+"pg.functions.binarystring.substr" = "218f79c5c36181aad64aad70d546a10cadea563b8ad867c63b4026cff5f8cb07"
+"pg.functions.binarystring.substring" = "c0c0af130a8282884302fc2b51369116b7bdf50d88f4cb2f9f04306829938876"
+"pg.functions.binarystring.trim" = "c556545cbe397f636a12927d48431bd047143552832299a3732bd8c731b5abbe"
+"pg.functions.binarystring.trim-from" = "cc013591aa78aef069d33ecff284ae75e3c39140e0fff4fc3b5e63549d8dec40"
+"pg.functions.bitstring.bit-count" = "0e021230c782ac47dd7edbda2fe6e498ad4dd05e31a48868a4c6660ae115d662"
+"pg.functions.bitstring.bit-length" = "4196bdf04b65c1bf42be3275dead09d93792de53051bd095788770c69754a20d"
+"pg.functions.bitstring.get-bit" = "078f7e531116d661261d8c125f5e632ff160a25b57bd6b5f7f22f741f776af80"
+"pg.functions.bitstring.length" = "e659258d17ecf5f92ffb6ea3c6bace0c8bb9194248a675beca8281b482fed282"
+"pg.functions.bitstring.octet-length" = "cef2a21da6ab0bdae7aff4ded1373255dcb7c6e83146d9eb214866b1ca620ab5"
+"pg.functions.bitstring.overlay-placing-from" = "52f11e8a0d16db4f03429654ff26221ac056edec3b98fa62e0fdaecd2b95cbe4"
+"pg.functions.bitstring.position-in" = "ef78a9dbf381475fcaa0c85bcd2fc954fd58df52ba8d88d2d30fcb0d04f998c4"
+"pg.functions.bitstring.set-bit" = "e545cf57e8e0d74b2cbb73f8b476823cf30fe6d9623aadf9a8304b0b587e65c8"
+"pg.functions.bitstring.substring" = "b0533eff1365e637a046215b26aa0589a3364127d1c416e9580a447b4334d0af"
+"pg.functions.comparison.num-nonnulls" = "d66d953f19f32a994dcc489dfcf4eb328fead23de1034a9b3ed7e237beadc39c"
+"pg.functions.comparison.num-nulls" = "d2e018c46d1a05e23b42ca6374cce35b3103eff02031e21dc853435fefd2b0bd"
+"pg.functions.conditional.coalesce" = "e193481043696621f6beadd67f260827b3a2f3e9477b3b717a95456d02cd142d"
+"pg.functions.conditional.greatest" = "d64c573d94dada23dec41bbaa59ad13b387cf64f224708095413c7f421aedd94"
+"pg.functions.conditional.least" = "76e2ebdd5048816ef930c90c498de419040f4ffc8df33c1e8d2f6562ef8aa9eb"
+"pg.functions.conditional.nullif" = "6c5932128242ff05a1f01e3464ac4208943ccfdcc7af8001c4d93340781066d8"
+"pg.functions.datetime.age" = "6e58c947dcde043a20d9215af3c16a91015bb5990c37d51b73332ac1d1bd7aba"
+"pg.functions.datetime.clock-timestamp" = "f85db62415b74c912ee1ccf9d667a3eb8952359a63f5f64880f0d180e90d18e8"
+"pg.functions.datetime.current-date-noparens" = "a50f0fe32e5b93b52c7af1bcd162115031f8b44d481a44324e94da835b4c94f7"
+"pg.functions.datetime.current-time" = "29ca7db1cb18e94925d7aa830bedf30b4c09011bc6af779a325d9bc322aa2895"
+"pg.functions.datetime.current-time-noparens" = "be32ec4552fa6ba8c0a7c8c45a0974312a4ca1c4dcd94e0be229bb43aa2b8fe3"
+"pg.functions.datetime.current-timestamp" = "b9f169e6794f91d8e456902db41c60fb41c80e40025cbd3f8c8b9dccbc605a2e"
+"pg.functions.datetime.current-timestamp-noparens" = "91b675bd2718345e93f2e4f04f09ac9783e2fc76b1593651db74141f42af19de"
+"pg.functions.datetime.date-add" = "383a122651bc364d47848c48e5480e67cf12a145910f6338ca8d6179f743c39d"
+"pg.functions.datetime.date-bin" = "1869e2c1646d43927ab5c8711213d5c1277f9b446aed5e1711e938b3afc94b77"
+"pg.functions.datetime.date-part" = "1157a0834c90ef4868c35bb1ecee9b77b08968e734cc38bdac6d579fb43b9b0b"
+"pg.functions.datetime.date-subtract" = "5a4322b858676112216aca18101fc86c352be18f5c6243aabfc823ac86284c98"
+"pg.functions.datetime.date-trunc" = "531c8af751e158d38d513e04c41b38714db19bd4f66c360b8b761bdf0f3e25a6"
+"pg.functions.datetime.extract" = "d22daa34bc674300a0af7f621788732d98102718a3f4f1a5e751112ad4b3d63c"
+"pg.functions.datetime.isfinite" = "a386db3cb0301cb0dd2480d41af3d5f8bc8c06a64aceb2f6691cefd596bb8ff5"
+"pg.functions.datetime.justify-days" = "a5c7da373a8c7da88c7fc07f657d032947d7dd8ebb35e1bb1dbeb232f33f0362"
+"pg.functions.datetime.justify-hours" = "8134199e37bc841f7a938c7b66103748a8409fddc2505d6c2603d868a750b6bd"
+"pg.functions.datetime.justify-interval" = "d6e99eba306f18ad74c5be4e674df6b5b91db9bfda95f0e0017e73c590332944"
+"pg.functions.datetime.localtime" = "2717616bc244626afd2920cbf15158b99b8e52be62dfc538a7493e121c317ece"
+"pg.functions.datetime.localtime-noparens" = "02c429257cf25643d67502cd570cf0f548fae59a8aba3e56c3cb7ab4f33148a6"
+"pg.functions.datetime.localtimestamp" = "7ba409860a38fccd93321046c6824f6b5c711450f0422d91e63fbe114e8979e7"
+"pg.functions.datetime.localtimestamp-noparens" = "007a0317355aad2f6d16ccd005fd305901beef51cc279b94d5f7241bc9f8866c"
+"pg.functions.datetime.make-date" = "91111ce7e29c6fc3cbb745d9cd8cd429b0223cde75368e7e683ee0b7c125b283"
+"pg.functions.datetime.make-interval" = "eb0fcd6652e4d16daeb42bd082e3b39b4cc340924057ed9b39cc653eb90a8d46"
+"pg.functions.datetime.make-time" = "384cac8113f196ce15416773c3d8efa8679d03bfbddf00f88c2abe2763f7907f"
+"pg.functions.datetime.make-timestamp" = "5d2e5de2bb08a3ccd284936e3cef8cd893a2a3842077fb2222fd01a116550717"
+"pg.functions.datetime.make-timestamptz" = "e8b2309889bab123a741a5c0472e96df190e2fdfeb46566c0d00b21a003df1a0"
+"pg.functions.datetime.now" = "a4e8db9c0ed82edee16727965ccdb1fe536ad36b762a5c5ceccf69af601f6850"
+"pg.functions.datetime.pg-sleep" = "2a8f06d545c72fa1680c8e347dc522ba31f60f838dca0d4278b32b7dc4aa7ccc"
+"pg.functions.datetime.pg-sleep-for" = "7c2d962b9171de47504ca5d3df237b25cab3613d5cfc82d5d153f9c3675ab20a"
+"pg.functions.datetime.pg-sleep-until" = "41c545c637ac11d06b1c8c561aa9c3b7d9fbbea80d5823ea08be99cac9c5a6d7"
+"pg.functions.datetime.statement-timestamp" = "757aecd72e58605f8f6509dd0b37bc43475f9186b397657a9bbcbb88ebbb899f"
+"pg.functions.datetime.timeofday" = "1c379a6efafb28513b32aa5bddda931f45c18112c212fafc9fab1784cb059760"
+"pg.functions.datetime.to-timestamp" = "864b9b18e243ced2020ce2caa40fa2afcfdabf98bcc5ff7d1490027f0f8bfaed"
+"pg.functions.datetime.transaction-timestamp" = "161bb0ba6c97408c2c3848a931e7dcac04b0abc7af0fb4a3aac727b8e832f825"
+"pg.functions.enum.enum-first" = "6504f6bed0d22f5d66b550d63340822cbd7b38d0166f7bf9b761cfd9af87dfbb"
+"pg.functions.enum.enum-last" = "e0028aad032f1c9754ac36417c1cf4642dd4ce4ee952d56e9f159d91b632edf0"
+"pg.functions.enum.enum-range" = "22e56b55877825de24df26fed5621d8541fef43313e95ef370a9bf17e8bfe009"
+"pg.functions.event-triggers.pg-event-trigger-ddl-commands" = "5c54253721dde50af5544f46f5122e76534e6ed3e93c657a8d76511ba7c4d80f"
+"pg.functions.event-triggers.pg-event-trigger-dropped-objects" = "aa4653e7620586a5a79e827862798d48af2d29086d39daf183af2b675c53ec22"
+"pg.functions.event-triggers.pg-event-trigger-table-rewrite-oid" = "dbff8ce8f18543754f8ad94e8058a9e4c2fea01aeee990ea9183a06dff6bd2b9"
+"pg.functions.event-triggers.pg-event-trigger-table-rewrite-reason" = "27751e52afb392091b85223c4391e3b1a32eace13b41026fbc462c72056264d9"
+"pg.functions.formatting.to-char" = "09232fafcd72e728aab3f5c96141138c74894566ae63543a927eb87847413fee"
+"pg.functions.formatting.to-date" = "9c1df0e9fa62084488694f2ace6788a7184e2950e4cd583dc9018364dfc0c5b7"
+"pg.functions.formatting.to-number" = "811836e056c1a977c8421cc556a79b4fc7e7325e97db30dfaf38b0303e517c57"
+"pg.functions.formatting.to-timestamp" = "29558c2ca7a593015757961359d4476ae3b4d18d336e8fad836ec3bb3bb3a4d8"
+"pg.functions.geometry.area" = "9251be65cad625d7a27af5a021d4e05d51cec53c126f02d656bb7b991673db4d"
+"pg.functions.geometry.bound-box" = "8c14c7ff73f4871f84d15353b09a4dd06c723815a49971e51a284909c2ea3c82"
+"pg.functions.geometry.box" = "147e19a1042fc290764b5ec5931f2d9832c17bed5deb56b70ee8012d9a43da0f"
+"pg.functions.geometry.center" = "7b44c10c11c7aef9a3c5282da46deeeb23b3a174117b80386532d5a5b07e040a"
+"pg.functions.geometry.circle" = "b11c77cda5358dcdd3905d1a2c03eb4e77b3d87346c84fb95b0927b31325209b"
+"pg.functions.geometry.diagonal" = "e0bc4d77886bef54b50b61cc7cfcd314155b52854f07f869abe97e2fc2119432"
+"pg.functions.geometry.diameter" = "c81b717a544e171453a50c66d24c25b40490b1c54b3682de5495f309e9c9f31e"
+"pg.functions.geometry.height" = "ccac4fbf64eaeaa708c67534558ab13352db1f2d70f9376c29025d26be64f877"
+"pg.functions.geometry.isclosed" = "7370c5bd95d14e2ee802ee652d46c8cf23e4f09e26340fafc659cc731160397c"
+"pg.functions.geometry.isopen" = "011982a3cd5a5aaa716ea99be68149cd85b75d4be34ca16fd956f14945cb13ed"
+"pg.functions.geometry.length" = "342cf3c0223bf52f4af37f04aa64fb7aa1ead557b69d339d06e99c7e428ad344"
+"pg.functions.geometry.line" = "c35e77d398afe471e10aa4a01b03def421a004c437d277534d7939b9857c7c33"
+"pg.functions.geometry.lseg" = "22fa070fadceac2353c7bfff3155936d97344b25867391a79f5c1e67def5cadb"
+"pg.functions.geometry.npoints" = "8864fed142852a479429c2c78f6cfc00183fd414793849b0150d8c61f95da998"
+"pg.functions.geometry.path" = "8e3acbe81a7007a8e1f9d8effdd10650a22b40d27cf2d2383246d2376b7b4022"
+"pg.functions.geometry.pclose" = "27094603f51e3783bedbea25be27f90753362b591f103b957fa1b95f8bab6eac"
+"pg.functions.geometry.point" = "7e5ece5d1f0601c7746ad635d77ba2562c52171d0bdbfa8bf65bb53e742c635a"
+"pg.functions.geometry.polygon" = "7beab749b5428f85bbc7f8d8205ab0de65e77c144fd054136fbaa60a51dd9b02"
+"pg.functions.geometry.popen" = "0a803e579d7045c6d516f4aff946da57001f09c8b186809568c0e5c2dba3c5f1"
+"pg.functions.geometry.radius" = "fa8acb96663c1b19af294f42c054bf8c5d0b939b5e43f770c853585de96f3807"
+"pg.functions.geometry.slope" = "5c1d734e059f9b43bb41b27b48e1111871c0ea61b473104f3f4e7e3e36a734b1"
+"pg.functions.geometry.width" = "4de3f359741d8502cdd0c9d21bc159a2e81ae65c9a89c18d82fd8d1223d4eefe"
+"pg.functions.info.acldefault" = "f9e6762187597a362bff100d19fb75688b67344237a4e7cbf69c1cacb5eb7c44"
+"pg.functions.info.aclexplode" = "d78a6cd4bd987c2636d4b0a83b84dfac6a5a1eb1381a021db6f81ab4ec4b8b0f"
+"pg.functions.info.age" = "dea12a92ed5fbb39b0ce35e7329dd84c0ec43a55c60fdc0a5c27ecfeb01b3bfb"
+"pg.functions.info.col-description" = "8bbd71c5ba3938374e82a6aa559abe27113a99a281409375a16a6df931b58e58"
+"pg.functions.info.collation-for" = "402250b425cc09549bf87c48281f4d747af32a421c4a07ddc201b327d529968b"
+"pg.functions.info.current-catalog-noparens" = "117478529601a8610d03f88f1c278bfa054826540ea9d9857cdc2478a355f349"
+"pg.functions.info.current-database" = "5fac43d2470568250d9ae6be4756395879306479c4808cd0b5321cfeddb19005"
+"pg.functions.info.current-query" = "7ec10923c20120e4ed7cc888830853efe09d7b48fec3be1d34604241ace4a67e"
+"pg.functions.info.current-role-noparens" = "ca780c47e250f5e173568524883745443592616f3ee372028a258c43389332a0"
+"pg.functions.info.current-schema" = "c385377dca69c435fa6ebad533b8ca447aef34da1e626341da81ef9b62962b11"
+"pg.functions.info.current-schema-noparens" = "6b2f2708acfdb4a8f5a664cdd506b12546713d74902af8eab64ad0a393bbaad9"
+"pg.functions.info.current-schemas" = "59c72cdd5bebb109b74ed10a4900cab166147c25c5eca75e57f45e96d6b3a50e"
+"pg.functions.info.current-user-noparens" = "5e58c3ab8c90c0720c07f5a3164a92435327eec574138c76e11413b01aeb4391"
+"pg.functions.info.format-type" = "36e8cdb5adea62e1b17e3f708118220bec5ec9661949f4928d50f2ceb191e6f5"
+"pg.functions.info.icu-unicode-version" = "e51273e91cce10d0dcce0fed8aee259155c30da9bfa75eccc4df3999ab3333af"
+"pg.functions.info.inet-client-addr" = "a9f02df2eb42fd582ed02fc33ca5ef5175325c47961223088f57716defad168c"
+"pg.functions.info.inet-client-port" = "7b7bd743c77f93b2b4b8e0327edcd9663f87cd063b9d8891679c58585756166c"
+"pg.functions.info.inet-server-addr" = "a8789eccad0ec4b9992320581f5d060e01cf9b6d17ae6d4756296b9ec578b3be"
+"pg.functions.info.inet-server-port" = "4af3cdfbce60cc38b27e6fc770dad56a5edfe6fbe8c4b4b09bbbcf885b50bf6b"
+"pg.functions.info.makeaclitem" = "ac474af0ce3a3d84317028fff2af3499a3ae20199c1077be713e157f797ef752"
+"pg.functions.info.mxid-age" = "79016f00436300b4b4773d9a4571ae2f44a03632e24ff3aa6076c37c33d693a2"
+"pg.functions.info.obj-description" = "7362667e9858da066be65bdbf3840877ad859db0e8243e8e4221a1c6c170c105"
+"pg.functions.info.pg-available-wal-summaries" = "41b1c549fb00791b7aaf3bc71c6bbd4e27e54217f179fc5dcff60d248101e420"
+"pg.functions.info.pg-backend-pid" = "a62ed9ecd45752ee4f891a4af148f1ef3c61b043d9cda2fbc19c07e95a5cc461"
+"pg.functions.info.pg-basetype" = "6707d68b642108f0dbe5f069cb58b8bd8cb81865f43eb1fd216b1ded4acaec1a"
+"pg.functions.info.pg-blocking-pids" = "32e0e94c854a21ddca957098b6e80b32858ecef9b1d53b3ed560789f9cc78390"
+"pg.functions.info.pg-char-to-encoding" = "28d78259f338932eac2356ae0c0401c2390ee667f1bd38652781c49b21141781"
+"pg.functions.info.pg-collation-is-visible" = "d546dfdbf8214a4daff24097100381c9f2c8cd81255c33a05ddb9742f1c0cb75"
+"pg.functions.info.pg-conf-load-time" = "beac96583de7f98aed1865a19c94e32d77862128bc525060a2ee3eab0c769a4d"
+"pg.functions.info.pg-control-checkpoint" = "43a1d6e3ed7e177630af469bbe4d3963504826fc8b30ea1254afa7e6c466d28d"
+"pg.functions.info.pg-control-init" = "8bb89267d3ac956f80f345c5500543db0173e08d7630fe606f3fa131514c4700"
+"pg.functions.info.pg-control-recovery" = "e92a105ae061d8d49ed3cc9fb45ed74506e49ece8db7c76bb301485b8f07404f"
+"pg.functions.info.pg-control-system" = "3ef68f0f2f102c17326de8e2c04e6aaf087405677d97b7363cd78166f64a581e"
+"pg.functions.info.pg-conversion-is-visible" = "fc5b6936434782975c8a0d9f9b8f3ce56491f14e95846895d5dcb16b450908d3"
+"pg.functions.info.pg-current-logfile" = "feb84eca6d762700504497178d427149ad579e523ddd6f09903e5cf430c18a8f"
+"pg.functions.info.pg-current-snapshot" = "b9f9f0d8f58046e61df10bf3dde764484046fd37584077fdba4105542c6b5e1d"
+"pg.functions.info.pg-current-xact-id" = "b4987dc738559de5e6e322c028faf72d426b83850c08c1a8100d21d7ae806d08"
+"pg.functions.info.pg-current-xact-id-if-assigned" = "bf54929cdbc5f94a7c3c690c7c93acb988784ada594a114f02f3bec39b8b311f"
+"pg.functions.info.pg-describe-object" = "244c70c7797c5eea225e4216c6d0114316e5d5fcb8c807d8917ae7ff72847e01"
+"pg.functions.info.pg-encoding-to-char" = "5f1c78ea0d3dfa6b068556659f4acb5e9a048abb62a759b1d92dfe29cb828a50"
+"pg.functions.info.pg-function-is-visible" = "7e013da0a76875a864853d48f55b687800836668cfbc1d58e4f58dc3a7f87bad"
+"pg.functions.info.pg-get-acl" = "0d5970c2bd78d11c7d99f636cb8308ce6a5fd7ce98fd39cce17dd8f8adf9d206"
+"pg.functions.info.pg-get-catalog-foreign-keys" = "860ede6684570794de88ce13ad816c16058854599475b7636f43ad2f12aa6c5b"
+"pg.functions.info.pg-get-constraintdef" = "c8aabea29f20cc970ca8da508fcb5dfd1a0da2742b4857706a82f0ddf0286eb4"
+"pg.functions.info.pg-get-expr" = "640571e9ff5cf66d829f3ad89b8d8879f5a123c2a261300c6a7fded38b518770"
+"pg.functions.info.pg-get-function-arguments" = "7b32bf3b1969b593d498c25c3f3e435f5fa0f573682a3beb959b039371c1d792"
+"pg.functions.info.pg-get-function-identity-arguments" = "7f49770dd7bd84ddbf8cd7975a62b4e721e5af5d2b7c4a02b3bad68285e2505e"
+"pg.functions.info.pg-get-function-result" = "6dc567a7b4e0fc457ef0c1a6c140d574561ad1d7fac7b9ee667babf776fdb791"
+"pg.functions.info.pg-get-functiondef" = "d91ea538a1b4560fb16e880ab7f07faa60716f409112f66bff5f1e0eea2d1dce"
+"pg.functions.info.pg-get-indexdef" = "edc51760b8bb6785728a8177a3d4d4997439d59ed2118ae9cd7c4983eed5a1de"
+"pg.functions.info.pg-get-keywords" = "d2931df808509f2d711c4e2af83eab2f62ed011b847115f939fc0cc7cc39f960"
+"pg.functions.info.pg-get-loaded-modules" = "cfa34d3b2d2fdce668c6c6894bb4af11711f9cc82dd5a9626a5dade2c3adb6b6"
+"pg.functions.info.pg-get-multixact-members" = "f4850070c9b8adaf921f7b68519b838095b2f280caf5b6c0f639bbe40097ab85"
+"pg.functions.info.pg-get-object-address" = "513404b836505f009d7a57a93009c17338d44aa4ac93f21de6b7d4584d3afe41"
+"pg.functions.info.pg-get-partition-constraintdef" = "88ff3e008867aed9a54b28cdb191af675b11718fe783cc9a8672266da42ccead"
+"pg.functions.info.pg-get-partkeydef" = "c17d767a84a2eca8a7ab8f1c7f21a8a4623dc606ed848b0ac055c991e43fd088"
+"pg.functions.info.pg-get-ruledef" = "ea0597bc6c37cb22697fd85b85ec3b9684497cbe610a3a4a2600c6d6dc6518bd"
+"pg.functions.info.pg-get-serial-sequence" = "0c50619dfa46395abcc5450f3da61d38426fa218c8db426eb2b51496872d445e"
+"pg.functions.info.pg-get-statisticsobjdef" = "5e30cff0f12e569b0c4433c35b6fe2da929a32a4e12077161477bf9c235080b8"
+"pg.functions.info.pg-get-triggerdef" = "32de4aa7aab75a03914d202ca414aec06e022c9be53f418a0279acf672f2f547"
+"pg.functions.info.pg-get-userbyid" = "62ac6c2484a6e8cb093e2e80a32d4a8fd76f8b855c661e7a3fa8fbe754f2e2c6"
+"pg.functions.info.pg-get-viewdef" = "89644c1a8357d1e727a46c770083fefa1efd36fb2891e26d13606596c281998e"
+"pg.functions.info.pg-get-wal-summarizer-state" = "542a0b6a2b51d6bf6ce30e5d9ec1fcd8f7aaeaa093343710053beeb65762291a"
+"pg.functions.info.pg-identify-object" = "dc2a762f02f2ed93b5a8933aea070f8ce78349feca430e89e15d366807f3595d"
+"pg.functions.info.pg-identify-object-as-address" = "593b4ccb15ad7ab0de0fdfa74083bbb4a87047aa87dcca57e6cc6495b913a94a"
+"pg.functions.info.pg-index-column-has-property" = "b70cd18fd9778010169b2f0a2765f057539c2fa5ba48fcedf666c15400b253ef"
+"pg.functions.info.pg-index-has-property" = "5dba9bd11f5ca6f2b60d932d152fa97b46c912977f613afb798096bd8a6e9bfd"
+"pg.functions.info.pg-indexam-has-property" = "bebc372379f5caf10ca58da4b2c50ad35e4fe8d7808368bfacc114f56a8b05c4"
+"pg.functions.info.pg-input-error-info" = "5bb7506bfbe9deda9e86bfcaac79ccd76da598c1f8b2326cebe1685c66b145b9"
+"pg.functions.info.pg-input-is-valid" = "87da7c8c3adfb559c312f0813da7160d07080312cd4fa39812b812eefc510c83"
+"pg.functions.info.pg-is-other-temp-schema" = "a14c94464ea884260019de9a6d46638ad60f954de31637902c235004aad96cc8"
+"pg.functions.info.pg-jit-available" = "56cab0c8b60c096734b78f9dbcc314a10d64c5f3024ba354a2c4470e530d9a6e"
+"pg.functions.info.pg-last-committed-xact" = "54324b193ede18817396ecf700af8867efbd88ef9f87307237db80146f78bc9a"
+"pg.functions.info.pg-listening-channels" = "27fcee82b5ca6abe9b2e202d8cbdf77d9331edf9cb5ab17d856691ee846fc195"
+"pg.functions.info.pg-my-temp-schema" = "4d208f55a2331da3cdbf600f032493cd8829cdaf2adddc10e33a937898c99075"
+"pg.functions.info.pg-notification-queue-usage" = "62b7e930d69ed2d2c0720cd105c0c6b53fe5db541913b0069d9b779c8732f2b6"
+"pg.functions.info.pg-numa-available" = "284650d3d99d79cd8b1d1811ff8f3c2a3040ec8893d4a4568da72ed890c11b75"
+"pg.functions.info.pg-opclass-is-visible" = "bf3580fe6855afd3da1dfde1dd8d10d5c8c1058b2f924af48ff558bd00ac3787"
+"pg.functions.info.pg-operator-is-visible" = "2786bbde03559b7567316d4da23fa2c6feb5cf0d3682b0e626a2141630597235"
+"pg.functions.info.pg-opfamily-is-visible" = "2faf2e7375db6bba3fca5502bfccc2f86f4fd3cf5bbc066b4fddbefa7fc9c547"
+"pg.functions.info.pg-options-to-table" = "38cbd4ca4039dc97869886127aa4ff0ce1bc1d062c1a5fe2ba5a9ee935e7afad"
+"pg.functions.info.pg-postmaster-start-time" = "e216f3c1235151f8734cbbb89125aab0f72dab4f532e4eda111bb3709af51b8a"
+"pg.functions.info.pg-safe-snapshot-blocking-pids" = "75a89df1834c483b5a91e87bd7c5d0d703018497d70b3b0324da153cedc65a23"
+"pg.functions.info.pg-settings-get-flags" = "19cec5b5325bb395879dbd50b362d35bad77f06789ab64651d18d027c61b00a1"
+"pg.functions.info.pg-snapshot-xip" = "c70bccd09dd8844d6c4633c6d78b9f8f0b4953c66b55a12440160f22c969f54c"
+"pg.functions.info.pg-snapshot-xmax" = "8aed771bfb144d991756fe15abcd779c0d70ec0f32552c5156ece7da07e7f8b4"
+"pg.functions.info.pg-snapshot-xmin" = "49908eccbac7c50fc45c3bfcd6e07f08612de533e98747f01815817311e8fb0b"
+"pg.functions.info.pg-statistics-obj-is-visible" = "8af647512253c0f5b1bdaee738ac3e4d363f1bd9b3aa6097b91e8714d39fe90d"
+"pg.functions.info.pg-table-is-visible" = "fdff97ca1529498bb3b6e85aa488639434064686f0bd5350f5a3124a4c3e2761"
+"pg.functions.info.pg-tablespace-databases" = "871e23b91e655838e9ffeea4c6543ae55cc65d8605ed3d9db97451ba66b290ba"
+"pg.functions.info.pg-tablespace-location" = "db65c1d25b2b5436aec9edfe8d62b67bf1a2aca404ac4286028b5988e2863fe2"
+"pg.functions.info.pg-trigger-depth" = "0cf2eb58825363824800b144cf6b45e458c399103ccf33bbfb7fcdf509fa0f39"
+"pg.functions.info.pg-ts-config-is-visible" = "2a41f453af95a0c4872ef1b97aa55f1716d19b1e437a9bbc87bcd1762e417f49"
+"pg.functions.info.pg-ts-dict-is-visible" = "fdc1716c965fb4667e4430aa3706f75f79603644803ff7805317afd5cd49d77e"
+"pg.functions.info.pg-ts-parser-is-visible" = "84ae54ecf98f37c82061d2e6cfa5a31c34611a5fd9e84ae291e0e33e636ea1dc"
+"pg.functions.info.pg-ts-template-is-visible" = "e471b2425fe319a9400c07c41058d206344aae76c0a450e94ed82a3539e7d128"
+"pg.functions.info.pg-type-is-visible" = "af933796c08d6e4ca1f022df63c17267363861c92da8e59e853392c9f8ef1c11"
+"pg.functions.info.pg-typeof" = "a366f6f13bb782755036d13ff1d6a4d10ef411f5503274a190d06b65788580bc"
+"pg.functions.info.pg-visible-in-snapshot" = "55f62c4a0638492da8aca4128d48310b2e346cfc50a1b95a0f5da59ebae40d7a"
+"pg.functions.info.pg-wal-summary-contents" = "798197605f794d6779e07a3fc74ddaeeff40e1045282d465d0b9edbcd16319c5"
+"pg.functions.info.pg-xact-commit-timestamp" = "9b59968a2d9a6b8420c1ccc04470b536792adc1298af7d985803577f4f553074"
+"pg.functions.info.pg-xact-commit-timestamp-origin" = "79a76670ee57eed5fb0c6d8dc9385cc02f7fb564dc61227d9a6ba54d99b9b1b0"
+"pg.functions.info.pg-xact-status" = "c1254fc180aa2291a1a621bc143271cc14a6a2d068d9fb938d3db5d28970fc18"
+"pg.functions.info.session-user-noparens" = "2549aba16301ddc69b27b810abcb0457d16c082ab82ffac06ecd64b1b67a9b34"
+"pg.functions.info.shobj-description" = "87385526f299e40f3d36aa73f6777e7dba994315ed26ac134914506c10b14d50"
+"pg.functions.info.system-user-noparens" = "e7b2c7c9d8eee4b90347ad81d635df625dff130b57110ca286e43586bec21d66"
+"pg.functions.info.to-regclass" = "485bd7c889ae59861158465bca2310b0668265a958b42c9fe8af3c5d0b660747"
+"pg.functions.info.to-regcollation" = "8e2d4b452b1c7fbde1a6be3e6dcfe4d3d2b114f61013b2bdc77fa4b137d81c57"
+"pg.functions.info.to-regnamespace" = "c86088f17d3c115374bbc2484847453ac46c4b5c477c3cb9f14d4aaa59b92ba8"
+"pg.functions.info.to-regoper" = "eee8fe8e7b05f482dd892e361c364a56b118310251c9c65205b6f7e394916b61"
+"pg.functions.info.to-regoperator" = "6e5d21d26b14e4e2f474a8d1a70fc9c3b632aef6fc79daf622bcfeb781eee128"
+"pg.functions.info.to-regproc" = "fa710452747229ce507bb47ed3cdaaaecaa39a787c931b94a1a6d0d273e3aac1"
+"pg.functions.info.to-regprocedure" = "91ce35680a49394a7afb52d1e42dfcf1ee8340455e9675cb7b673939535d89d8"
+"pg.functions.info.to-regrole" = "a04aa6e46bc725567d01f8cbeb2101f21568656af6b33d853cc5de770ddb626e"
+"pg.functions.info.to-regtype" = "a9e9d4e78ea811b197117ed9da1c61b68f5c06b5ca03108e785d9effadf25550"
+"pg.functions.info.to-regtypemod" = "679062f00919e2a96d02fc0e0e3a431f342d77c4f214c6736c14a4d2b7997764"
+"pg.functions.info.txid-current" = "02a9d0b6379372b9e4711bbc86f4a4eb26e78f42d0da6e9311292ee4ecf9f350"
+"pg.functions.info.txid-current-if-assigned" = "1cd7f361ef4e3fafd418995bc249caaae099aba64b5ea76c0ca81db2cfd5f127"
+"pg.functions.info.txid-current-snapshot" = "edf56996cdd884c306aa78df935eb7b395b9b1a1702292e5e410abca8976c751"
+"pg.functions.info.txid-snapshot-xip" = "6d9023c52e22fdf48608edf40d207e3039696c784753db0742d4fbe1c4bb1022"
+"pg.functions.info.txid-snapshot-xmax" = "6d57531b8d0494477a94c1e10b029cabead22a7cde59e090ea55eddd02dd3696"
+"pg.functions.info.txid-snapshot-xmin" = "0cc89005f38b6f6cb9352ff46fe0c4d27f26f636f6dced5928fea3bc484e4baf"
+"pg.functions.info.txid-status" = "19006242bd059a6ee1a547be7bfb4675bfecba8fc48f2c71154f6512013042fa"
+"pg.functions.info.txid-visible-in-snapshot" = "b8b96584a93a1c1558efeecedd7e65208bef2cf51cda66189814622aa527386a"
+"pg.functions.info.unicode-version" = "43a0988d8580969eb7ef1e1bd79414a5fa0b76f02a3ee645b5b95e8af7b98030"
+"pg.functions.info.user-noparens" = "bcd6ba1e82d2c93028bfabd956f2f39effe94c2342a20c5464efbee88da2fe53"
+"pg.functions.info.version" = "f641d34f8844e1b1d7cff9642ba18704fe73f25fb7d5927ae0778d4ee7f94542"
+"pg.functions.json.array-to-json" = "0eb2816583c849e8d3a55960be7f0bee93b892c6df0b1613ffea0cd0d65aec6b"
+"pg.functions.json.json-array-elements" = "be1145837c119efb6b82464396fe62f21440e8cb0cf21678742886c3cfb8eeac"
+"pg.functions.json.json-array-elements-text" = "fbe4411fba22bd5e3bdd74c105dc7920df0f6e957272a499e48bc1d19d577bcd"
+"pg.functions.json.json-array-length" = "a8b14ffc2720698af61680d73b650c61704184978fb3884b9916d137cd43585a"
+"pg.functions.json.json-build-array" = "a370b6d9a3c904320eafd3f0c4e3aa287400c0f0c208629b385e301908583c40"
+"pg.functions.json.json-build-object" = "dd2d8d8348bf0273996dc0365a928bed242356056c9bfd0f434a058d47a74734"
+"pg.functions.json.json-each" = "40b6356fb625103d8f3929aae5b2b97ebe21c7d368a3aa5d50370c0a6be9e316"
+"pg.functions.json.json-each-text" = "77f193c8ffce0cef438d0cf76e37b6ef82a0a43be1847b688072bcb5b06117a7"
+"pg.functions.json.json-extract-path" = "b3d7ecc975e156de858c9da5fe3f87a87c0b484d0fd12049c0a4ca8fd17d2982"
+"pg.functions.json.json-extract-path-text" = "bd4bdbdef5b432ac87ca8c3c2dc1ac0bc6c47bfe0dbd8bca7fd2d556e63247ad"
+"pg.functions.json.json-object-keys" = "1c364f34cc2819e3d9b260db79349daf5beacfd7c805e09aa9c7a3449c306221"
+"pg.functions.json.json-populate-record" = "d54eb1b693740133d8934fef962d9ed1091435d98397b792ee728c00d5c1f9ad"
+"pg.functions.json.json-populate-recordset" = "34095f7c03cf382bc4f6285a4b0c2b1e64a9511289653e41ef04f9a5280360c9"
+"pg.functions.json.json-strip-nulls" = "be78e88f394b3b7f60673983d849f2a79600ccfdb9c4a299ba3a3557f55453a1"
+"pg.functions.json.json-to-record" = "93f8cb248254117478667c81b20db18479b2f124037eb775c0db3c1a08c10af6"
+"pg.functions.json.json-to-recordset" = "c9b8ba9b76217a7d6da3f0f92edf888139ea23a462a02b03e567642ec6039f25"
+"pg.functions.json.json-typeof" = "79c29ba25c10c43e507d610cc36d17c1ebfc8e5d02237e14d79b8abf45df5afa"
+"pg.functions.json.jsonb-array-elements" = "f0a7431c12e6bfb3d5823970ce5c82f1fe2650341a7ba88189db50f264e44f7c"
+"pg.functions.json.jsonb-array-elements-text" = "c8a530171d21285f40368d334c212032c7b0690611ae37deb4f9a21ea095be1f"
+"pg.functions.json.jsonb-array-length" = "fb166e5e4f9c2ea837d5b11a81285ea2f2a501346738ffd995134f92091a8397"
+"pg.functions.json.jsonb-build-array" = "5be708bba1c4ff802f0db2375e30c0b7d5f2f1ae6d83aeb1b792319d63c6f4ad"
+"pg.functions.json.jsonb-build-object" = "0c508bf3a4ad38d0a508dc58ce07d5b42d798c596d1e616c1e1def7290afb31d"
+"pg.functions.json.jsonb-each" = "717e9fca967a3fbdc60a07ac10addc771a7a3af7e2cbae9555586e40a553e5dd"
+"pg.functions.json.jsonb-each-text" = "3e0cae615c55288b2a2a9caedab76ff685759f2a6b5e4b94ede22832347053b6"
+"pg.functions.json.jsonb-extract-path" = "f1ba8e823dae364f357c71b6ba68e5952b540488c2e716e75839ebf86b849d96"
+"pg.functions.json.jsonb-extract-path-text" = "022725e83eb83a9a417929af0dc8aac64a3292951b1a60052b5474a7640078ab"
+"pg.functions.json.jsonb-insert" = "ba5693eb8ca586c20c8584b2591b5784f34c53308574f73f300a71b580a037d7"
+"pg.functions.json.jsonb-object" = "e44b7c5376e9442b5f39ea9ae9488c41de6dd79088906db7cfe13b9b77c2ecb8"
+"pg.functions.json.jsonb-object-keys" = "fd382aaf5ddf31fcb33007b051dd5d3b7f8bd0b587b163041f61ab3206eb7719"
+"pg.functions.json.jsonb-path-exists" = "de4451ab0a54f05d03d214b010652362360d34919ed736d51ae899351a1243eb"
+"pg.functions.json.jsonb-path-exists-tz" = "387e7126df64f916db4649d14d313b8bb1048ff4bd9d7649425d3f662a3b668f"
+"pg.functions.json.jsonb-path-match" = "43a4cae2ad1710335c856af78282683cd7340314c9ca407bb909132b9d69443e"
+"pg.functions.json.jsonb-path-match-tz" = "ab0dfdc3421017b55e36b6070a6606b67f14b8af59ea543852dbb2aed34551c4"
+"pg.functions.json.jsonb-path-query" = "ecd9dea3bf49f1782d8395b72c8bad97eb6d759c0d130dc2e40f61cb82e6c3c6"
+"pg.functions.json.jsonb-path-query-array" = "40574e1bd45b847676ef9258f4d3f5fd3fc5f117b2b30d38d628b4e276f2604d"
+"pg.functions.json.jsonb-path-query-array-tz" = "8d97803c2182b4891d692ed2db71977d369edd2732bf4b5ebee27db8dbebc333"
+"pg.functions.json.jsonb-path-query-first" = "eacea04cd9a3fe1e4d35533d065c45bd4d5e147897dc6a934b65b7d91342b8eb"
+"pg.functions.json.jsonb-path-query-first-tz" = "e2e0ba04d44e129fdde39591bed26e853551fa2c67651c176d368f9f72ccf37d"
+"pg.functions.json.jsonb-path-query-tz" = "5ceff5bf7c0a422d14aa712031f5039280ba97bf21c1ed198882c139982df569"
+"pg.functions.json.jsonb-populate-record" = "ebac16bb4c4433e664147402dfac03040bef0f5560b0135da410f0091ed1fe0f"
+"pg.functions.json.jsonb-populate-record-valid" = "c27e16c922f220ed382d1aa37de12412c365098e6e46f2bab19123994c4a89f9"
+"pg.functions.json.jsonb-populate-recordset" = "1c91760f0da0bcd1d25d318cbc5395e420c45fe92059ff6f8423488a3a44a917"
+"pg.functions.json.jsonb-pretty" = "a9e370a5c53c19ea348804ea8ed255c91649ab2d54f473c5095bf1f0c76f9387"
+"pg.functions.json.jsonb-set" = "4fbb2b835591b74ddc272d02cc9c2a7c78c6ccc664a326ef929a263f584a1255"
+"pg.functions.json.jsonb-set-lax" = "2249f97cdaa8e08f2393d559aa1bd3198ed2c06b0dd54b1aa6ff9b3782d2a571"
+"pg.functions.json.jsonb-strip-nulls" = "63103d9bd4d1868f49ba6f468d169118c3ee2328989fa1c38622252dceb4d2c6"
+"pg.functions.json.jsonb-to-record" = "a3eeeb46198891528104470e95f5b0506f6fadd384b6ed9214111f37e646cde7"
+"pg.functions.json.jsonb-to-recordset" = "783b6b57a5d8af34730970b47d2c0761222683b7e4d7e96d0f8fbf462bae3010"
+"pg.functions.json.jsonb-typeof" = "f71c8b88a2a12ec208c7041fbe5b04b34cb7f211f287d303eabb8b0fcc901cb5"
+"pg.functions.json.row-to-json" = "5eca00fcba0fb58506f3e1e1067654cc19e7abec1cfa7437f3742852b604591a"
+"pg.functions.json.to-json" = "e97e895db9e58201fb151fed392d9ea6b860298bd83f877c7e64a162a80be0ed"
+"pg.functions.json.to-jsonb" = "ce7d620f25738ed8bb1ca0e6f92706597fc62e55fbaaf27c9d67bdf5d839f682"
+"pg.functions.matching.substring" = "dd460372cf8d1c581e74f0f990009450bb16e003609d0869a1b55b3054b397be"
+"pg.functions.math.abs" = "6149d9a410dbe4e203ec320c0306eb67d447531db44a0f6e8956e21aeb0477bc"
+"pg.functions.math.acos" = "1994e2cf7a6934a3f9d3d687a427fef2cbc93e8fbdbb03bf13d6e67f96b17f45"
+"pg.functions.math.acosd" = "0d0b5019c123cff0cb4aa045dc87a5b7e122346763e6e3fb02520b7dbbe75844"
+"pg.functions.math.acosh" = "42f92604c2d091d6b9a19f911e398e748bee8373c5a4a001cfe5ac91a8db921c"
+"pg.functions.math.asin" = "c9a8ccb75e2c4e550ca45882aad2faf1a09efcb7f9c36b767e4d6cddb889f955"
+"pg.functions.math.asind" = "97e28df62c0900b76e4cf0d19f59c09b74a14a1bae383cc367ef1d78d2f7dd0c"
+"pg.functions.math.asinh" = "7c0851663072ea6b85742d362fe02be315058359b90e382e1db1bdc1312bc348"
+"pg.functions.math.atan" = "fd780ea166a98cf82a44442264f31f86681eb0bdf1f84446d235b77325a522d3"
+"pg.functions.math.atan2" = "669886edb4f6b9ba453d3836c48e178247f870295e2652ac7440a27830214df8"
+"pg.functions.math.atan2d" = "98267e1c8c89a7beecf9f7e5350b9e22096d4967984d26a4fadc2435d1daac86"
+"pg.functions.math.atand" = "600f010180510073b2b1cb912b250ee389ac132299820c38485bcd7931ab456c"
+"pg.functions.math.atanh" = "0af452d31f5a9077343ecd4f117471e9b2ecf5e4f8812654969815e624318de1"
+"pg.functions.math.cbrt" = "23631b3caea72f13ec3ed2b52a8f6cb577c65240a228ba67dfff07165fe54b3f"
+"pg.functions.math.ceil" = "9125efa66832f7153b1dd91f8951367122e49cf38d14e4dc95baa5f900a8037e"
+"pg.functions.math.ceiling" = "f4056ce52977e16f4576365695aaa84bfcf8059c039f1a47c18a644649eede28"
+"pg.functions.math.cos" = "696c36b7c8a182175e66f2a6c7a09bae5fc20a4328d8d941d05ed8a69dd598c1"
+"pg.functions.math.cosd" = "ace04ef81b541bb5ef8add3fdb0aaf9f4c59cf092bee6132fabbf61364d1ce2d"
+"pg.functions.math.cosh" = "d105cb6e9bcdf520f56be8d28b92137b8d51304cf89f2b6c357eeb8bccd95bb8"
+"pg.functions.math.cot" = "81edc6a898b1aae4799eea24f45b60f0eaff044e079e2d338e286f3b110d7695"
+"pg.functions.math.cotd" = "fc494be50c0aae48c9129390e0cbc467a2967425ae6c67834b83d1afaa617815"
+"pg.functions.math.degrees" = "53d4d58537dbd48adc213fc239d525e42c91a741e3010bff21759be1a236619d"
+"pg.functions.math.div" = "c841bfe5ee6ad8f97e3437a68e72deaf34f81901908a809eeb1adc52f59a6c51"
+"pg.functions.math.erf" = "b2a0c8b5f65e258b152fd6f72060e14a6d2069da259e208d6d77c6089798f759"
+"pg.functions.math.erfc" = "9356668d866bb28a28520d1c16634e647e89d66a7ac47f59b4179d58a0f71ff7"
+"pg.functions.math.exp" = "d9c895a517865a14fc3fb0cf5621228b048f70cab9f27cc5db9f9ba0c1d6cd6f"
+"pg.functions.math.factorial" = "9d1f75de7ed3e60b19108159f77772ca3a703f7bc079482bf7f9717aa3fee872"
+"pg.functions.math.floor" = "50d4c430ea3f637b7f39ad722fc708a29c86c01828f64c7459b53e0aae01f85a"
+"pg.functions.math.gamma" = "70cb9d23033dfe61d581961ee1e3f01bfd8aab24f3a2332fc42cbb3f4330fa34"
+"pg.functions.math.gcd" = "355f971b00f5eb4fa569d36fe801a456df5bd6086f72b2270526a79dd0e9fa13"
+"pg.functions.math.lcm" = "10307d2b3a627c5eda99ff8857a87170116f34b43a2c0904b96fdb9ad2c09d7a"
+"pg.functions.math.lgamma" = "209d1fe674b023aedf7e7074ec97dcb8ce32f009cfb70f147ecce5ba2c8f0896"
+"pg.functions.math.ln" = "aea5e3d04070170734e141c8e29f830f3e38267a98076c31c74f2736464dee6b"
+"pg.functions.math.log" = "f285a9bec820346cec86b670b624671224e7bdc3e20c160706a1d0f3f9869a1f"
+"pg.functions.math.log10" = "3636ee7a54e83740800bcb1602710d7e601e7fb7cf0c20a7743ee96f06748dde"
+"pg.functions.math.min-scale" = "bf97fabe4175565981386f7d1ad111e8a26df29d7412917952c29a8e31cb38e5"
+"pg.functions.math.mod" = "ccad2fa560e743d9a6ba6bd8125cf7f80882c5d73fb10c19110191a1f46645b4"
+"pg.functions.math.pi" = "cbdf4ce174fc770ed8982034db88a22bc09cd8161e3b8835ee262c756f09b6c3"
+"pg.functions.math.power" = "5d2427b2514697c461951aa08403eeb5b1ffccb1442eb56723ab5d461bf7a7eb"
+"pg.functions.math.radians" = "21aaad094daf7a1d8344af402994d18a1a3d4b81d09506e2eb50bfe5cfc52ee6"
+"pg.functions.math.random" = "95b76e9c400407b9c165b751508fadbab419b35808f3698240d00c2619bccf15"
+"pg.functions.math.random-normal" = "6cb17d8c3b3b2d859148ada13b08d9c19ac1a67e96062a7a14f887ba31093559"
+"pg.functions.math.round" = "5196d134f1a2c7c0f3cdc3507cb55c637b32f0abc75b096fb20e4fd2ad4ced5e"
+"pg.functions.math.scale" = "a6bf1c6ee2ce3fa703f25cd16c876eb82a87b6f7eb269b376c2547c3a991ed60"
+"pg.functions.math.setseed" = "89a45a5b2cb0de6f8cead28e729442b1f5b75585047b24306303bcf811408c53"
+"pg.functions.math.sign" = "cd3cb0390ab25960ddda823b651268932ca7ad0814381d66a1001eea6d958cd7"
+"pg.functions.math.sin" = "3f4753315276bfa15415351176700c8e2b289a24e6afc180dca243f654b75b06"
+"pg.functions.math.sind" = "abe4cbe6848c06818dad466d4a6308ec638ceffcc9f6424d1130b8c6851cb833"
+"pg.functions.math.sinh" = "47dfdd612003f3f9a81fa5c6dbf4780c4d84072cd0a10ee70b43b8c59d3080e5"
+"pg.functions.math.sqrt" = "d52004efd904d7bd658e99da9d514ca33ef554097e6621991d027dc1649a9751"
+"pg.functions.math.tan" = "be30857c0c4f6c78ecbde392c91b56dd753328a8cc6dd72937a817a425efa2d0"
+"pg.functions.math.tand" = "9380057cbd0e5bd6752ff83154e83da7a82ee958ab5b73f25c9c58e514c14a9a"
+"pg.functions.math.tanh" = "6365be2c2743c56a7494dd4c30157a9d166623ddfa7357dbb4561f4b077b1bac"
+"pg.functions.math.trim-scale" = "8311bb7e10acbc7dd22b833617b14862a25634608af202eb783014ea83545eb9"
+"pg.functions.math.trunc" = "3a5143e7f25559ad554126ace87b4af40119ad3271fe7ec45a36a0bd7d6cf33b"
+"pg.functions.math.width-bucket" = "6e7a71573d8876f86d501bf297d8a1ec7df481067c663ade9d1dfe507e1c46ec"
+"pg.functions.net.abbrev" = "66ee6ebe8892e7246fb4f7a32b9c7fbc212449eacf0fb49273a43b8427b3712c"
+"pg.functions.net.broadcast" = "6f4bf539cf436d959ad5d67d43e49d940fec8f4c55dff54550f10b04bd1b1517"
+"pg.functions.net.family" = "d0efe9e6a05ed341fea3e10dca51d183138728fff4465eaee43a3974e1c40b60"
+"pg.functions.net.host" = "eaf3729198df6ace3fd7063565c2d3dd804ff8de5660ba5bb1dc61586699c34c"
+"pg.functions.net.hostmask" = "245c710c2b97ed6d8ab8112b51428fc8bceef9e0bb76b86c142fb09a65da6dad"
+"pg.functions.net.inet-merge" = "3010c07798a18d6ff41bf1681ae65108f8513a6ff21a9e57343ed779c9b30050"
+"pg.functions.net.inet-same-family" = "697b1606d6f6048582f055bc50958eb8802581b06ad72edf2cbab393594e9d86"
+"pg.functions.net.macaddr8-set7bit" = "0755abea89c3057ad1a50eb310b6131119d932e287f0158aca91a606c1d88fc8"
+"pg.functions.net.masklen" = "dd6e56eefd26b0177a117f54c71d16c947cbb08c2c2ae13fbb88410369fd86d9"
+"pg.functions.net.netmask" = "980327c3aab79998841642ba48420e107087f69c860c4c5c9cad2f505dc20046"
+"pg.functions.net.network" = "95e1a987147f828c72fc73b1e01db1f2046351963aad7377c76b02460c82a33c"
+"pg.functions.net.set-masklen" = "5c46ecb8ffa57dc15ddbda5097b3940a5cc143c9847302d178e8b3b200aa7ace"
+"pg.functions.net.text" = "9eba5c634ca96d271821c006b0a5946077d8228d88f4495295060094290f7530"
+"pg.functions.net.trunc" = "930cd931d982d900a26ad167029a31a5461be98f94ca6b643fdb78bee8d6f96b"
+"pg.functions.range.isempty" = "7f6e55f07ad5ee610fabad9eee9be85f05ea4b400b326e706257157bdb3b4ce9"
+"pg.functions.range.lower" = "b7ddfba5c6e2876b5686b3d68eaaff2c289620d0b9cbcf04d5484dbd2d18d980"
+"pg.functions.range.lower-inc" = "25ef8e568ccf2f33cd7da6c856c66e89de214edd4568fcf46d5577d040098fb4"
+"pg.functions.range.lower-inf" = "b38494d6cd2c05d7232490da07eb9e7af3bcab4ee6c6780ca0b025487a40534c"
+"pg.functions.range.multirange" = "e40c4d7b72d35af7dfac69a184f7a3919209bcd1374cf41c7a170acaa7d3fc21"
+"pg.functions.range.range-merge" = "6b1def6590faa02574a573fd67cc4178bcd07a8590b5c26b850e1973892737d3"
+"pg.functions.range.unnest" = "42d04ebf6080bea36b7a4d618f450d4fc5a135104ab38c914f8f9e6609d4685e"
+"pg.functions.range.upper" = "d2e55948f0d92c9412ff107acb15dcbf08d6341411f3892ce44ca7f0f9f5157c"
+"pg.functions.range.upper-inc" = "d8cfe61e2a7da12b2fdd285e0f8265e6cfa10a95d08888e57555dd90d7875e7a"
+"pg.functions.range.upper-inf" = "bad5aad0a8fb8ea6533df815342eff257fef800f47d76f220d9c3f23a3dad688"
+"pg.functions.sequence.currval" = "50a046d0ba58efe8e853607476f4c41b4000b5b4290b64f2415a96e2c0b32e16"
+"pg.functions.sequence.lastval" = "d525e17f579189c948b7a6104f5ef91210fc4ee7af04f44fb41ea3c176c8acb5"
+"pg.functions.sequence.nextval" = "0ae8647c14b722fe21038765331644c697cde335f0f4cffd2ed0ff01e95d59d4"
+"pg.functions.sequence.setval" = "40ff9fed45f6d70518f3ed3895b68d087dff2b5d9a101c2900291431edec34c4"
+"pg.functions.srf.generate-series" = "00dcccb8e7186ff246a5fab489c6f721f26e9cc0cd9b3443a553f087b6531947"
+"pg.functions.srf.generate-subscripts" = "a2df6fa12cac1c820297d7ca1f9a75285d1d1b788264e2c13b1548f8cc0dd9b6"
+"pg.functions.statistics.pg-mcv-list-items" = "266ab2afe8989e4c597b4d70947a7c12b35159cd766a0a82c66782360f1c1a26"
+"pg.functions.string.ascii" = "16faa61b88520b3de89077d0931a8e64f2eaec892895f677b3c0ffa2d46667ec"
+"pg.functions.string.bit-length" = "8f5dee5266621282f12728023f924aeea77f00a2993422be46d3d55b3d95087e"
+"pg.functions.string.btrim" = "579b4e0a32d851f27c942c9cd32d0c74b2c6d7d284ab0c07b1ca754bf86a4085"
+"pg.functions.string.casefold" = "2a49fb09de6d609c1bc22b57137c905582230723078c56fc48edfcd7d36fd552"
+"pg.functions.string.char-length" = "76a2c54c646ab6c1fc9205dc0e2af7838cbf0d7d752af97d352310cfc0da7cc8"
+"pg.functions.string.character-length" = "790e434120c13e759f65243f4fe243bc9b2c5763fe0b39399d2974298c5e5918"
+"pg.functions.string.chr" = "1f042ed15a8841d96aa94f6b911c77abcfde402ed50d5dbc17f112177cf43c1c"
+"pg.functions.string.concat" = "fc6d5288f4d6e97d51cbbedf78c7810db3e2418356be39a4b54c91efb9ab4458"
+"pg.functions.string.concat-ws" = "413f5f9901896820d17a6fa97bc8b3f93c9916390d7894f1b90d911fb2196ce1"
+"pg.functions.string.format" = "a8b9a990578e21937bcaf59d3e86e6ec47ec9975b600e255acc2a873219a82ce"
+"pg.functions.string.initcap" = "7a4eede8f439a6b0a2e8b4b33e80e6e1443289a5ce89df3dd98c35697783d3e8"
+"pg.functions.string.left" = "349d79d63fdd2c37ad4d9708920f57013cc38172cef501ca768238eba4fd38c5"
+"pg.functions.string.length" = "ce4b47e1fb2f5d827a16b89450e9a7c045f2176a2528f6541da5811f7b493f87"
+"pg.functions.string.lower" = "3a7a5705e473928a12d5b362c6cdae8eeb17ce50a53e22c28a4f0be1e90cf5e9"
+"pg.functions.string.lpad" = "c236999793d03b8ffd65bff9f4fd40fc5cc23701dabb016db35f5df7fcc27c08"
+"pg.functions.string.ltrim" = "6ad873bcf8f4d920f188716d866978c42aece3753f15ef4a6d946dcda4485e91"
+"pg.functions.string.md5" = "5f9a88bf6f092e48cba248435cab05350019b56b56bb9ba90c9a91fac7044a10"
+"pg.functions.string.normalize" = "632fdf3d90956beeddbc616f1a041518acd762d844874730e31e7a821d6f4ce9"
+"pg.functions.string.octet-length" = "b8c68f93d6629e2751da641c29529a4e1e9e06fa5ff8195804828e36859d28bf"
+"pg.functions.string.overlay-placing-from" = "590fdd4a77986e04e1e32b0296929e692abee328d6f6f020680cc3b306a58aa7"
+"pg.functions.string.parse-ident" = "fceba414bcfe703f27fb53f7540d9cdff9f509b9f993a744bfbd21e18f8e6011"
+"pg.functions.string.pg-client-encoding" = "cef8142e9acd346c459d944aa794bf70fa313e15b4373208afc441c92e5e0107"
+"pg.functions.string.position-in" = "a075dfb615ae6deba48a10b5beae6c640ead92744b445ca3decbd791655fe66e"
+"pg.functions.string.quote-ident" = "4c8052b2baf420defd93f6c5de1bdaa2718c0be462b338b35968be6bbb4d8d7a"
+"pg.functions.string.quote-literal" = "43a58d2a2441eeb6fe582c45db5720cc7b7f5fff1afd7cd21be6c1287f50b568"
+"pg.functions.string.quote-nullable" = "e83013c054eb804ee3be391b8022b4adb1e82de7c6179d2721eafd6379563098"
+"pg.functions.string.regexp-count" = "7c4b57d5c3bdb7862a07d69a18c8736ae50ad8a8941058df9ab96dafecffe8c4"
+"pg.functions.string.regexp-instr" = "5eae5b30619f0544fcf74b52cbdc3d84bd331be999c4edabdebae099cc5c7bc5"
+"pg.functions.string.regexp-like" = "d9c4dd579d45c15f85fd54254f6d1e8b814e5d79c863c14bb6188c3528ff6a1f"
+"pg.functions.string.regexp-match" = "cb4ca915d6e46fbacd7cb4914c89565c8c75103fc516073205320997208e5535"
+"pg.functions.string.regexp-matches" = "abcb08664d98045e7ce4d711bc7697af8b45b3b743c8e4d3917e168ee8e4aece"
+"pg.functions.string.regexp-replace" = "eb41cbcc6431e683999f1d62ac94c6d07975596e8a0577cab5a0cfa8d8e2ebb8"
+"pg.functions.string.regexp-split-to-array" = "908e6a9379d495ea30431ba42313dd61294fa4b8fcef23f6c19b86e2c344a8f1"
+"pg.functions.string.regexp-split-to-table" = "b65f24036669da85c0c3243a44c2488d61b501dd285aeacf2e27f80c9665d490"
+"pg.functions.string.regexp-substr" = "d9425b9c0850ca7c6fc85a94519094985e565268b13f0f4e058bb1f5ed2e999e"
+"pg.functions.string.repeat" = "65027f5e0d99903b03dff9ed8663837c3e00a43a83a3d567ad27f65c91d3d1ed"
+"pg.functions.string.replace" = "2d186b6377b647bd1314a102325bfb371893ec943ac2b9b34e4f6ca17014eec3"
+"pg.functions.string.reverse" = "43dddf993c3550ade3bd4d92e0a16d6f03286c56bb1d31799c89f6b0d9242cf9"
+"pg.functions.string.right" = "20bd3eaefb4769c1cf4e2ad8b677fe3473a1c67e6578f365489309c61af6b0f6"
+"pg.functions.string.rpad" = "65bcaf6e2ff75ce56dec7227e462494e27545fa25d13492afd91f55c83a7813b"
+"pg.functions.string.rtrim" = "d5895344f2edaa1c571f2cc8731e008f68a579a4b1ff78afdf75fefb3e000de0"
+"pg.functions.string.split-part" = "2c4a0251b2e399885405012478173839101c4b883014cedd8dcc8f8b8a0983b2"
+"pg.functions.string.starts-with" = "22e5f143b780683f731e850576c1def85c49ab4b74a22a32126fae0b1dc0e6c0"
+"pg.functions.string.string-to-array" = "7e17ff88a694aea32961a7ef6de8eb0a59361c6f222a12adeee27b60f6c9372d"
+"pg.functions.string.string-to-table" = "7f28cb618d2eec7538c60c4369433916fa7e599047a591eb9ed58d1f0db62fe2"
+"pg.functions.string.strpos" = "4708960d6b056e86283f6dbf721a793abda903db586d4766a5d14328066639d0"
+"pg.functions.string.substr" = "3a6e5f54b7c8b622ecaae3e1e5df4219b101ebaa0afb0dea10abc35fad2f8f19"
+"pg.functions.string.substring" = "384921a4229cecf03a8f40c96345dab5b796b811d2eb8d80ff882ce96dae0fe4"
+"pg.functions.string.substring-from" = "9048abd4c0ef76a2ac3e07e9a66fc1ddf3042b49c80275a29d516bd458d6b3a4"
+"pg.functions.string.substring-from-for" = "08dff2e9b8dbda0e8848b29e7ca1723306805300bb719c290aae19ae3c318b4a"
+"pg.functions.string.substring-similar-escape" = "7ae202e626f718b2d920052a756d7c3bd748d5506a8aa8674453b4e5274f0ece"
+"pg.functions.string.to-ascii" = "d635cd1181f31122a2df95c45c9b5e0372369a14d603b001a155d4368b0b7643"
+"pg.functions.string.to-bin" = "24f8f7e2846c3a77591a98288b8b6ebe618491bb7b63935d9c8b0403ab206142"
+"pg.functions.string.to-hex" = "91085041ba4b0fdc3c2018b36065e151f66371a3a4292bb5f69b622c096b5bba"
+"pg.functions.string.to-oct" = "8111d4063eb286c4177118b316052eb2e2169c24076cf5011050e99d3bc6a4d0"
+"pg.functions.string.translate" = "8898bba1363b1fb77ab174a00022e9979b14927dfacb1f00f669199767aa0e90"
+"pg.functions.string.trim" = "3704687532dbea32e2526fb4f2bf6420c295dcc92c4a092da8f6240d0da979a9"
+"pg.functions.string.trim-from" = "8b6dab2aa56e64c13cce872b878e5302ab0d562c3a3acfe33bffdf45d7b4ee02"
+"pg.functions.string.unicode-assigned" = "13ff34d9a6d617bf9a26bf915d048a3631461e87d398ff754df4bbc55ea97e21"
+"pg.functions.string.unistr" = "95b4107efb9b1bf9e0f3da3496e5e79ea8c6fd007065bb97442b5d9c5300e2dc"
+"pg.functions.string.upper" = "520ee06a8687ba670c213483bc6ffc0c8205e9e9e2e1b3c2debcf6969264d797"
+"pg.functions.textsearch.array-to-tsvector" = "166515b0212707bf019477254fb74ca2e192119cdbe169e8565e7a6918011f38"
+"pg.functions.textsearch.get-current-ts-config" = "11bfda086e5968fb9a9a21cee84bf941a34111cc982c334447b053e3723cfd33"
+"pg.functions.textsearch.json-to-tsvector" = "4a9e2fd4717d4b3324dc9f9bd76b59a849892d52703697121b4e0a462adb59a1"
+"pg.functions.textsearch.jsonb-to-tsvector" = "7a86f363ee6768477b0797d306549a6ab413a5b270c1ea7de4489282b51e71ff"
+"pg.functions.textsearch.length" = "a6918011ce9b1d3577783ffb65da003c11a0572893427ce666848c5287fb650a"
+"pg.functions.textsearch.numnode" = "3aa3f734525025a8d5b0578c4fe869eaef673fa346fe0f9e055f9d63f725e043"
+"pg.functions.textsearch.phraseto-tsquery" = "613e7ef0bafe0dda0504e911bca2483b1674f176c5c8f95a5c1042e614471a16"
+"pg.functions.textsearch.plainto-tsquery" = "ce54400638f6b7a522d41a9c03f926c7d0ff5fa4c479dab12533b236df265d58"
+"pg.functions.textsearch.querytree" = "c4d0f297a8da1768dfe445773b13800242d63b9b19928e29d13d7539040cc04d"
+"pg.functions.textsearch.setweight" = "23d7816fddfa23436150a4352183e6d3dec6aa3fdcdeeffefb9292dc06e1c512"
+"pg.functions.textsearch.strip" = "064c26a8dc3f57ea19609383ddf14cb63e32a6fe6d8384be297b004af4773188"
+"pg.functions.textsearch.to-tsquery" = "d0f0920571b30d82a60452307b006993e5cdae1cb4fbb043b42fe3e424dc02a4"
+"pg.functions.textsearch.to-tsvector" = "15ddee99b7d6e3881b04956f7eedc41e1748461c097462d72c3ba254878a7d4c"
+"pg.functions.textsearch.ts-debug" = "61ac99f4528280a13ff892510a7c78de59e2fd467bfb2e4e96bb69eb34e188f2"
+"pg.functions.textsearch.ts-delete" = "fadcfb430e02d78ea84e7cd1d4e5305f1bcde05ad3b49882278c6e9fbf076051"
+"pg.functions.textsearch.ts-filter" = "f29ca27668b96de855a62ca7db6d80bf0d988223c739a3a68d32dc7a30b6b508"
+"pg.functions.textsearch.ts-headline" = "c86b33f20d8998a8603d24da8a8d72b1ca17c9c226df32199e5b9efa38c0fc83"
+"pg.functions.textsearch.ts-lexize" = "c01459cd2edebc02099684e24efd9a97c49a8d1a474c496e41f4477b82011fca"
+"pg.functions.textsearch.ts-parse" = "14744f9e03b5a1efe98cf91faae8458a3527c662ed9af47f627838f9e510f8d6"
+"pg.functions.textsearch.ts-rank" = "e219b3d79c601307698a5961b083b5a72bcb8493fa49ddad49051329b354899d"
+"pg.functions.textsearch.ts-rank-cd" = "423794be9ead480faa7803565884851e86d50222e3d9c56d5d1f22eabaab2b98"
+"pg.functions.textsearch.ts-rewrite" = "123424ad11364e9316179663e796626751a794f49e938747058568ed2229370d"
+"pg.functions.textsearch.ts-stat" = "7b93bce606e7e0d037744f019c84a2974ea3034a59fdbf2063abf5ab100dce93"
+"pg.functions.textsearch.ts-token-type" = "0a0cd5cc066e4f2eb7e4e933b28cbd2d3406fb07a231f0b879d3b8330aee31a4"
+"pg.functions.textsearch.tsquery-phrase" = "5222e977fb4efac14ceafaa90684c87e01743ae6c80ec3078441b723731c2f2e"
+"pg.functions.textsearch.tsvector-to-array" = "2a70fd46f38f9ac7dbfc2ab53faa639d2e5e9325e0e6deaa5a6083f45d342843"
+"pg.functions.textsearch.unnest" = "362cfaa6205d619f6988f6692121eb9afc8c670f42237dc8302c01441fa9695c"
+"pg.functions.textsearch.websearch-to-tsquery" = "f7c8a5086961ee9164075731daffb19167d974243f5b27d7ace6d2f267b21aaa"
+"pg.functions.trigger.suppress-redundant-updates-trigger" = "294d93874b0cb423fa1b6bed458418658c4ffbe92beb4a6175e4ac1d9eea7c24"
+"pg.functions.trigger.tsvector-update-trigger" = "c50c07d44176997c9c455a9b5ca6572debf70f29a0d5abe2379a05c741b01654"
+"pg.functions.trigger.tsvector-update-trigger-column" = "3807011c59a612bef8ae1292784ed54bb32200df145e84f6c6ad36e391d1bb5e"
+"pg.functions.uuid.gen-random-uuid" = "5928e1e81799c13d9424c35e98145083b827acaa27b649c881a9efe8da22a577"
+"pg.functions.uuid.uuid-extract-timestamp" = "d8239fbd57d44df4d266f3a2cdf537dd86f6a2a861ec3d80c0485c40a2198832"
+"pg.functions.uuid.uuid-extract-version" = "337a7bc3ac910922b64a48930957fe4fbb73859a5884213c39bb1a995f0a1c16"
+"pg.functions.uuid.uuidv4" = "1a55b6a19faef723c72e1444dc861c700dc32133340563821201e7e074d75591"
+"pg.functions.uuid.uuidv7" = "387bdef6833d8b83d0a4a7522ad406c97105c6f1b27ddb8ca67c84b8d5de8d57"
+"pg.functions.window.cume-dist" = "9fee84c661885714b9831f18723255d53521eeaabb1f11c3751f812293ff3d05"
+"pg.functions.window.dense-rank" = "ad83acc7a2cad5599bcc82f5568ec7384ce3466d66bf69ff16e48dc3bad240ff"
+"pg.functions.window.first-value" = "815e157c09aac32138acf73d2d18435b44e846d223d18bc48595769fa9d5de08"
+"pg.functions.window.lag" = "bf187d2c6097947ca343200a8d74e8a4005cc103f0c8932e5e5020270f35d990"
+"pg.functions.window.last-value" = "6df1782e59edc8cd0456be7ee43d297aef974f13cab6919aad182144c13a8f5b"
+"pg.functions.window.lead" = "47331bd3ffb31f9507ab1ca54151047e678ee9f764f84a5a517230c899d0313e"
+"pg.functions.window.nth-value" = "e75e9e99f511808cb8be1cb88b54ef392f7d7138e8cd6b5e75b1e7602e9a31db"
+"pg.functions.window.ntile" = "987686365212d592d1d7161707b3b34f83c228531f0e1ef0b41824cb67e2d73d"
+"pg.functions.window.percent-rank" = "f7c73489ea9edddf0b11d52b4850a10ad45f384cc8ce357268730f91b8b29ba5"
+"pg.functions.window.rank" = "df6bb410d9e693451dc12a3aca6b735c2819fc3716249522ab48ba21ab29c10b"
+"pg.functions.window.row-number" = "d1f10e17b5df63026d71d7dc08202081f4e4e9d85842c6f00e189f8732b2c913"
+"pg.functions.xml.cursor-to-xml" = "23ef62abbba975fa132874529373ced56a4079dac4885acfa8d84336858ea723"
+"pg.functions.xml.cursor-to-xmlschema" = "7c1aeec742f0cf30762ecc0bfed4954e444e93d989f78c67ad050dc5bb679c11"
+"pg.functions.xml.database-to-xml" = "693128c9590def7aa187005175b6860a7edc9b3156de733adeef72da5d97dc6c"
+"pg.functions.xml.database-to-xml-and-xmlschema" = "3fa2df33b3b5b4019cf647c23a9e8d41992de1de8338f26d53a558baea2d0f7a"
+"pg.functions.xml.database-to-xmlschema" = "d366ff9585b68e67f46d62ceaf598548959c6e04e00db4acfceb99b5716566db"
+"pg.functions.xml.query-to-xml" = "9399f41ca3a40ec8ef2bba03b6808ff4927140198bae1ca96823a393320846d6"
+"pg.functions.xml.query-to-xml-and-xmlschema" = "3604419e2192007683fa0a2f00c52a01e48f16cb442d54ac6cb90ea17745e52d"
+"pg.functions.xml.query-to-xmlschema" = "2855b110b9e68694046fa49b498d9f6e8499b4e1feaf5ebb15e6aadb9d7a6ef6"
+"pg.functions.xml.schema-to-xml" = "c94c0c4db6c431fa08ef7205409896f52e0b0783b023499023c0d3d32573c29a"
+"pg.functions.xml.schema-to-xml-and-xmlschema" = "95a75dcfa8f8779c20c4ddc2456846aad6e6c43a32bb059434370c84d98209e3"
+"pg.functions.xml.schema-to-xmlschema" = "992e0bca98bb9ef9dcba97758f7a5c6c8c322e75dc61a90de8b6bfd00d14cc20"
+"pg.functions.xml.table-to-xml" = "52aa9c22447ba8db50653d402a3edbe2d52c14d56c0377a51a90fdfa55db6439"
+"pg.functions.xml.table-to-xml-and-xmlschema" = "ad152896d7a2c43ded4b1239e7610be02910b369deaa5695ae837dcedb7a8070"
+"pg.functions.xml.table-to-xmlschema" = "b6cb9b3901d3bc66e8d32e5c6bce9bc780c0843c8984b78d65c5ad103f293c8d"
+"pg.functions.xml.xml-is-well-formed" = "4231a81c77e5a46c57a4de6bb02ea38389fb101a0ad2f3cc8c21ae5434c4d540"
+"pg.functions.xml.xml-is-well-formed-content" = "bcfe7ecb358c886cce2b6cef43d37726b20f40577ea4575b60ab501717699462"
+"pg.functions.xml.xml-is-well-formed-document" = "41cb54026b72530e4540256889677babae12d1050e0af3fd87e17b3676a89961"
+"pg.functions.xml.xmlagg" = "41c914e1372b92302d6be2c857a53fbc9465cc3531779553c0584a8f161e5ddb"
+"pg.functions.xml.xmlcomment" = "c66d287d9380e8c1a5b1200bd9786453a05548ff1fe77a7c3305937d3a752ac3"
+"pg.functions.xml.xmltext" = "46324ba379805919347f08925bd21709ade526312712d1f45fc9d7c70939b694"
+"pg.functions.xml.xpath" = "8b2020ddfae7da0f7d2a7f1946afcfa4bab9f48d77dcb4f981377abae3076867"
+"pg.functions.xml.xpath-exists" = "9de1238073480f6ff096acfa25eab1e76835dfe616743b00519e64e67d6563be"
