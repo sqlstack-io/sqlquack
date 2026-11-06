@@ -28,14 +28,14 @@ const ELEMENT: &str = "ELEMENT";
 const UNLOGGED: &str = "UNLOGGED";
 
 /// `ConstraintAttributeElem` bits, as gram.y's `CAS_` flags.
-const NOT_DEFERRABLE: u8 = 1;
-const DEFERRABLE: u8 = 2;
-const INITIALLY_IMMEDIATE: u8 = 4;
-const INITIALLY_DEFERRED: u8 = 8;
-const NOT_VALID: u8 = 16;
-const NO_INHERIT: u8 = 32;
-const NOT_ENFORCED: u8 = 64;
-const ENFORCED: u8 = 128;
+pub(crate) const NOT_DEFERRABLE: u8 = 1;
+pub(crate) const DEFERRABLE: u8 = 2;
+pub(crate) const INITIALLY_IMMEDIATE: u8 = 4;
+pub(crate) const INITIALLY_DEFERRED: u8 = 8;
+pub(crate) const NOT_VALID: u8 = 16;
+pub(crate) const NO_INHERIT: u8 = 32;
+pub(crate) const NOT_ENFORCED: u8 = 64;
+pub(crate) const ENFORCED: u8 = 128;
 
 /// The `processCASbits` checks in order: the bits, what they mark, and the bit a constraint must allow.
 const CAS_CHECKS: [(u8, &str, u8); 6] = [
@@ -88,14 +88,14 @@ const SEQUENCE_OPTIONS: [&str; 13] = [
 const KEY_CALLS: [&str; 2] = ["cast", "collation"];
 
 /// A keyword tuple: the keyword, then its values.
-fn clause(keyword: &str, values: Vec<Expression>) -> Expression {
+pub(crate) fn clause(keyword: &str, values: Vec<Expression>) -> Expression {
     let mut parts: Vec<Expression> = vec![var(keyword)];
     parts.extend(values);
     tuple(parts)
 }
 
 /// A dotted name as one identifier, a part holding `.` or `"` quoted.
-fn name_value(parts: &[Identifier]) -> Expression {
+pub(crate) fn name_value(parts: &[Identifier]) -> Expression {
     Expression::Identifier(Identifier::new(name_text(parts)))
 }
 
@@ -104,11 +104,25 @@ fn number(text: String) -> Expression {
 }
 
 /// An error PostgreSQL's grammar actions raise with a SQLSTATE other than 42601.
-fn unsupported(message: String, position: usize) -> ParseError {
+pub(crate) fn unsupported(message: String, position: usize) -> ParseError {
     ParseError {
         message,
         position,
         syntax: false,
+    }
+}
+
+/// `processCASbits`: refuses the attributes a `kind` constraint cannot take (0A000).
+pub(crate) fn check_attributes(kind: &str, allowed: u8, bits: u8, start: usize) -> Parsing<()> {
+    match CAS_CHECKS
+        .iter()
+        .find(|(mask, _, needed)| bits & mask != 0 && allowed & needed == 0)
+    {
+        Some((_, marked, _)) => Err(unsupported(
+            format!("{kind} constraints cannot be marked {marked}"),
+            start,
+        )),
+        None => Ok(()),
     }
 }
 
@@ -294,12 +308,7 @@ impl Parser<'_> {
     /// `TableElementList` or `TypedTableElementList`: columns into `columns`, the rest into `properties`.
     fn table_elements(&mut self, mut node: CreateTable, typed: bool) -> Parsing<CreateTable> {
         loop {
-            let constraint: bool = match self.keyword_at(0) {
-                Some("constraint" | "check" | "unique" | "primary" | "foreign") => true,
-                Some("not") => self.kw_at(1, "null"),
-                Some("exclude") => self.kw_at(1, "using") || self.char_at(1, '('),
-                _ => false,
-            };
+            let constraint: bool = self.starts_table_constraint();
             let element: Option<Expression> = match self.keyword_at(0) {
                 _ if constraint => Some(self.table_constraint()?),
                 Some("like") if !typed => {
@@ -341,7 +350,7 @@ impl Parser<'_> {
     }
 
     /// `columnDef`, or `columnOptions` in a typed table: name, type, then options and constraints.
-    fn column_definition(&mut self, typed: bool) -> Parsing<ColumnDef> {
+    pub(crate) fn column_definition(&mut self, typed: bool) -> Parsing<ColumnDef> {
         let name: Identifier = self.name(is_col_id)?;
         let data_type: DataType = match typed {
             true => DataType::Unknown,
@@ -516,7 +525,7 @@ impl Parser<'_> {
     }
 
     /// `'(' a_expr ')'`.
-    fn parenthesized_condition(&mut self) -> Parsing<Expression> {
+    pub(crate) fn parenthesized_condition(&mut self) -> Parsing<Expression> {
         self.expect_char('(')?;
         let expression: Expression = self.a_expr()?;
         self.expect_char(')')?;
@@ -655,7 +664,7 @@ impl Parser<'_> {
     }
 
     /// `TableConstraint`: `[CONSTRAINT name] ConstraintElem ConstraintAttributeSpec`, checked as `processCASbits`.
-    fn table_constraint(&mut self) -> Parsing<Expression> {
+    pub(crate) fn table_constraint(&mut self) -> Parsing<Expression> {
         let mut parts: Vec<Expression> = Vec::new();
         if self.eat_kw("constraint") {
             parts.push(var(CONSTRAINT));
@@ -736,15 +745,18 @@ impl Parser<'_> {
         let start: usize = self.offset();
         let (bits, attributes): (u8, Vec<Expression>) = self.constraint_attributes()?;
         parts.extend(attributes);
-        for (mask, marked, needed) in CAS_CHECKS {
-            if bits & mask != 0 && allowed & needed == 0 {
-                return Err(unsupported(
-                    format!("{kind} constraints cannot be marked {marked}"),
-                    start,
-                ));
-            }
-        }
+        check_attributes(kind, allowed, bits, start)?;
         Ok(tuple(parts))
+    }
+
+    /// Whether a `TableConstraint` begins here rather than a column definition.
+    pub(crate) fn starts_table_constraint(&self) -> bool {
+        match self.keyword_at(0) {
+            Some("constraint" | "check" | "unique" | "primary" | "foreign") => true,
+            Some("not") => self.kw_at(1, "null"),
+            Some("exclude") => self.kw_at(1, "using") || self.char_at(1, '('),
+            _ => false,
+        }
     }
 
     /// `'(' columnList opt_without_overlaps ')' opt_c_include opt_definition OptConsTableSpace`, or `ExistingIndex`.
@@ -781,7 +793,7 @@ impl Parser<'_> {
     }
 
     /// `ConstraintAttributeSpec`: its `CAS_` bits and each element as written.
-    fn constraint_attributes(&mut self) -> Parsing<(u8, Vec<Expression>)> {
+    pub(crate) fn constraint_attributes(&mut self) -> Parsing<(u8, Vec<Expression>)> {
         let (mut bits, mut parts): (u8, Vec<Expression>) = (0, Vec::new());
         loop {
             let start: usize = self.offset();
@@ -973,7 +985,7 @@ impl Parser<'_> {
     }
 
     /// `PartitionBoundSpec`: `FOR VALUES WITH | IN | FROM ... TO ...`, or `DEFAULT`.
-    fn partition_bound(&mut self) -> Parsing<Expression> {
+    pub(crate) fn partition_bound(&mut self) -> Parsing<Expression> {
         if self.eat_kw("default") {
             return Ok(clause("DEFAULT", Vec::new()));
         }
@@ -1066,7 +1078,7 @@ impl Parser<'_> {
     }
 
     /// One `SeqOptElem`, as its keyword and value.
-    fn sequence_option(&mut self) -> Parsing<Expression> {
+    pub(crate) fn sequence_option(&mut self) -> Parsing<Expression> {
         let Some(word) = self
             .keyword_at(0)
             .filter(|word| SEQUENCE_OPTIONS.contains(word))
