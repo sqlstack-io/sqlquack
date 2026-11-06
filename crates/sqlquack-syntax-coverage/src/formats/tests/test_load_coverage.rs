@@ -313,6 +313,18 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "mark select-from: unknown mark \"documented\"",
         },
         FormatFaultTestCase {
+            description: "a Snowflake case with an engine referee's capture",
+            mutate: |root| {
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    "\"capture\":\"execute\"",
+                    "\"capture\":\"execute_in_rolled_back_transaction\"",
+                )
+            },
+            expected_problem: "case query.select-17: receipt format /2 roots take exactly",
+        },
+        FormatFaultTestCase {
             description: "a deleted family catalogue",
             mutate: |root| std::fs::remove_file(root.join("catalogue/dml.toml")).expect("remove"),
             expected_problem: "catalogue/dml.toml: missing",

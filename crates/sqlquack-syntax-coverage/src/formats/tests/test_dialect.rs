@@ -44,6 +44,27 @@ fn given_a_dialect_file_when_loading_then_the_root_loads_as_that_dialect() {
             expected_first_query_form: "pg.query.select",
             expected_engine_versions: &[Some("18.6"), Some("18.6")],
         },
+        DialectLoadTestCase {
+            description: "a Postgres case and receipt captured in autocommit in a throwaway database",
+            tree: |root| {
+                postgres_tree(root);
+                for (path, field) in [
+                    ("cases/query.jsonl", "capture"),
+                    ("receipts/first.jsonl", "capture_method"),
+                ] {
+                    replace(
+                        root,
+                        path,
+                        &format!("\"{field}\":\"execute_in_rolled_back_transaction\""),
+                        &format!("\"{field}\":\"execute_autocommit_in_throwaway_database\""),
+                    );
+                }
+            },
+            expected_dialect: "postgres",
+            expected_families: &POSTGRES_FAMILIES,
+            expected_first_query_form: "pg.query.select",
+            expected_engine_versions: &[Some("18.6")],
+        },
     ];
     for test_case in test_cases {
         let directory = tempfile::tempdir().expect("temporary directory");
@@ -129,6 +150,29 @@ fn given_a_dialect_fault_when_loading_then_the_problem_is_named() {
                 write(root, "receipts/first.jsonl", &format!("{line}\n"));
             },
             expected_problem: "/2 carries engine",
+        },
+        FormatFaultTestCase {
+            description: "a /2 root case with a Snowflake capture",
+            mutate: |root| {
+                replace(
+                    root,
+                    "cases/query.jsonl",
+                    "\"capture\":\"execute_in_rolled_back_transaction\"",
+                    "\"capture\":\"execute\"",
+                )
+            },
+            expected_problem: "case query.select-17: receipt format /2 roots take exactly",
+        },
+        FormatFaultTestCase {
+            description: "a /2 receipt with a Snowflake capture",
+            mutate: |root| {
+                let line = engine_receipt_line().replace(
+                    "\"capture_method\":\"execute_in_rolled_back_transaction\"",
+                    "\"capture_method\":\"execute\"",
+                );
+                write(root, "receipts/first.jsonl", &format!("{line}\n"));
+            },
+            expected_problem: "receipt query.select-17: engine captures go with format /2",
         },
         FormatFaultTestCase {
             description: "a family the checker does not know",

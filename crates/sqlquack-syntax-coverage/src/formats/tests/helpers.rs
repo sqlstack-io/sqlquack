@@ -253,6 +253,10 @@ pub(crate) fn engine_receipt_line() -> String {
                  \"parser_check\":\"do_block\",\"parse_only_sqlstate\":null"
             ),
         )
+        .replace(
+            "\"capture_method\":\"execute\"",
+            "\"capture_method\":\"execute_in_rolled_back_transaction\"",
+        )
 }
 
 /// `valid_tree` as a Postgres root: its dialect file, eight families, `pg` ids, a `/2` receipt.
@@ -289,6 +293,12 @@ pub(crate) fn postgres_tree(root: &Path) {
         let text = std::fs::read_to_string(root.join(path)).expect("read");
         write(root, path, &text.replace("\"sf.", "\"pg."));
     }
+    replace(
+        root,
+        "cases/query.jsonl",
+        "\"capture\":\"execute\"",
+        "\"capture\":\"execute_in_rolled_back_transaction\"",
+    );
     write(
         root,
         "receipts/first.jsonl",

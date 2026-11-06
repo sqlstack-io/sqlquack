@@ -303,6 +303,12 @@ pub(crate) fn check_case(case: &Case, family: &str) -> Vec<String> {
             "case {id}: needs obligation ids of family {family}"
         ));
     }
+    if case.capture.is_engine() != (current_dialect().receipt_format == RECEIPT_FORMAT_ENGINE) {
+        problems.push(format!(
+            "case {id}: receipt format /2 roots take exactly the engine captures \
+             execute_in_rolled_back_transaction and execute_autocommit_in_throwaway_database"
+        ));
+    }
     if case.stage.is_some() && case.expect != Some(Expect::Accept) {
         problems.push(format!(
             "case {id}: a stage is only for a case expected to be accepted"
@@ -330,6 +336,11 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         ));
     }
     problems.extend(version_problems(receipt));
+    if receipt.capture_method.is_engine() != (receipt.format == RECEIPT_FORMAT_ENGINE) {
+        problems.push(format!(
+            "receipt {id}: engine captures go with format /2 and only with it"
+        ));
+    }
     if !is_case_id(id) {
         problems.push(format!(
             "receipt {id}: id is empty, too long or holds whitespace"

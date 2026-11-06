@@ -263,6 +263,20 @@ pub enum CaptureMethod {
     ExecuteDdlInRunDatabase,
     /// A definition file of the case SQL, planned by `EXECUTE DCM PROJECT … PLAN` in a run project.
     DcmDefinitionFile,
+    /// Receipt format `/2`: executed in a transaction the engine referee rolls back.
+    ExecuteInRolledBackTransaction,
+    /// Receipt format `/2`: executed in autocommit in a database the engine referee drops.
+    ExecuteAutocommitInThrowawayDatabase,
+}
+
+impl CaptureMethod {
+    /// Whether this capture belongs to an engine referee, and so to receipt format `/2` only.
+    pub fn is_engine(self) -> bool {
+        matches!(
+            self,
+            Self::ExecuteInRolledBackTransaction | Self::ExecuteAutocommitInThrowawayDatabase
+        )
+    }
 }
 
 /// One line of `receipts/*.jsonl`, as the evidence owner's importer writes it.
