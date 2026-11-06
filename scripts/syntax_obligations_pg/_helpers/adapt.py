@@ -9,11 +9,11 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, obligations
+from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations
 from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Spec
-from scripts.syntax_obligations.types import Row
+from scripts.syntax_obligations.types import Key, Row
 from scripts.syntax_obligations_pg.constants import (
     FAMILIES,
     FAMILY_CONTEXTS,
@@ -26,9 +26,12 @@ from scripts.syntax_obligations_pg.constants import (
     PG_CLASS_RULES,
     PG_TOKEN,
     PROTECTED_TEXT,
+    RETIRED_FILE,
+    RETIRED_KIND,
 )
 
 _shared_grammar_read: Callable[..., list[str]] = obligations._grammar_read  # noqa: SLF001
+_shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
 _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
 
 
@@ -103,6 +106,26 @@ def _upper_bare_words(line: str) -> str:
     return "".join(part if PROTECTED_TEXT.fullmatch(part) else part.upper() for part in parts)
 
 
+def retired_ids(root: Path) -> set[str]:
+    """The obligation ids the root has retired; they are never issued again."""
+    path: Path = root / RETIRED_FILE
+    if not path.exists():
+        return set()
+    groups: list[Row] = tomllib.loads(path.read_text()).get("retired", [])
+    retired: set[str] = set()
+    for group in groups:
+        retired.update(str(identifier) for identifier in group["ids"])
+    return retired
+
+
+def pg_existing_ids(path: Path) -> dict[Key, str]:
+    """The kept ids of one obligations file, plus the root's retired ids under keys no draft has."""
+    kept: dict[Key, str] = _shared_existing_ids(path)
+    for identifier in retired_ids(path.parent.parent):
+        kept[(identifier.rsplit(".", 1)[0], RETIRED_KIND, identifier, "", "")] = identifier
+    return kept
+
+
 def install() -> None:
     """Register the Postgres styles, class rules, tokens, grammar read and limit reader."""
     derive.CLASS_RULES = (*PG_CLASS_RULES, *_shared_class_rules)
@@ -119,3 +142,4 @@ def install() -> None:
             }
         )
     setattr(obligations, "limit_drafts", pg_limit_drafts)  # noqa: B010
+    setattr(obligations, "existing_ids", pg_existing_ids)  # noqa: B010
