@@ -15,6 +15,16 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "SECURITY LABEL names no CAST, which only COMMENT names",
+            sql: "SECURITY LABEL ON CAST (int AS text) IS 'x'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SECURITY needs LABEL, its only statement",
+            sql: "SECURITY ON TABLE t IS 'x'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "an unknown table, which only analysis rejects",
             sql: "SELECT a, b FROM missing_t WHERE a > 1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -942,6 +952,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "COMMENT ON CONSTRAINT k ON DOMAIN d IS 'x'",
             pointer: "/0/comment/this/tuple/expressions/1/data_type/name",
             expected_json: "\"d\"",
+        },
+        ValueTestCase {
+            description: "SECURITY LABEL is kept apart from COMMENT by its kind",
+            sql: "SECURITY LABEL ON TABLE s.t IS 'x'",
+            pointer: "/0/comment/kind",
+            expected_json: "\"SECURITY LABEL TABLE\"",
+        },
+        ValueTestCase {
+            description: "SECURITY LABEL without a provider pairs NULL with the object",
+            sql: "SECURITY LABEL ON TABLE s.t IS 'x'",
+            pointer: "/0/comment/this/tuple/expressions/0",
+            expected_json: "{\"null\":null}",
+        },
+        ValueTestCase {
+            description: "SECURITY LABEL FOR keeps the provider's name, as a word or a string",
+            sql: "SECURITY LABEL FOR \"Sel\" ON ROLE r IS NULL",
+            pointer: "/0/comment/this/tuple/expressions/0/literal/value",
+            expected_json: "\"Sel\"",
         },
         ValueTestCase {
             description: "COMMENT ON FUNCTION keeps an IN mode apart from no mode",

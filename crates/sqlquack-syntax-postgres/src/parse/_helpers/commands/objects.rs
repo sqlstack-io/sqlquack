@@ -2,16 +2,17 @@
 
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::functions::models::{Operator, WithinGroup};
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::DotAccess;
 use sqlquack_syntax::expressions::statements::models::{Comment, Var, Variadic};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::parse::_helpers::tree::cursor::{
-    Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
+    Parser, Parsing, identifier, is_col_id, is_col_label, is_non_reserved_word,
+    is_type_function_name,
 };
-use crate::parse::_helpers::tree::nodes::{function, null, ordered, star};
+use crate::parse::_helpers::tree::nodes::{function, literal, null, ordered, star};
 use crate::parse::_helpers::values::expressions::is_operator_token;
 use crate::scan::models::{Token, TokenKind};
 
@@ -51,6 +52,20 @@ const NAME_KINDS: [&[&str]; 13] = [
 
 /// `object_type_name_on_any_name`: kinds named by `name ON any_name`.
 const ON_TABLE_KINDS: [&str; 3] = ["policy", "rule", "trigger"];
+
+/// Kinds `COMMENT ON` names that `SECURITY LABEL ON` does not.
+const COMMENT_ONLY_KINDS: [&str; 7] = [
+    "constraint",
+    "policy",
+    "rule",
+    "trigger",
+    "operator",
+    "cast",
+    "transform",
+];
+
+/// The prefix of a security label's kind, which keeps it apart from a comment's.
+const SECURITY_LABEL_KIND: &str = "SECURITY LABEL";
 
 /// Kinds named by `function_with_argtypes`.
 const ROUTINE_KINDS: [&str; 3] = ["function", "procedure", "routine"];
@@ -104,6 +119,42 @@ impl Parser<'_> {
             this,
             materialized: kind.starts_with("MATERIALIZED"),
             kind,
+            expression,
+            exists: false,
+        })))
+    }
+
+    /// `SECURITY LABEL [FOR p] ON object IS label`: a Comment of kind `SECURITY LABEL …` on (p, object).
+    pub(crate) fn security_label_statement(&mut self) -> Parsing<Expression> {
+        self.expect_kw("security")?;
+        self.expect_kw("label")?;
+        let provider: Expression = match self.eat_kw("for") {
+            true => match self.sconst_at(0) {
+                true => self.sconst()?,
+                false => {
+                    let word: Token = self.expect_token(is_non_reserved_word)?;
+                    literal(Literal::String(identifier(&word).name))
+                }
+            },
+            false => null(),
+        };
+        self.expect_kw("on")?;
+        if self
+            .keyword_at(0)
+            .is_some_and(|word| COMMENT_ONLY_KINDS.contains(&word))
+        {
+            return Err(self.error());
+        }
+        let (kind, this): (String, Expression) = self.commented_object()?;
+        self.expect_kw("is")?;
+        let expression: Expression = match self.eat_kw("null") {
+            true => null(),
+            false => self.sconst()?,
+        };
+        Ok(Expression::Comment(Box::new(Comment {
+            this: tuple(vec![provider, this]),
+            materialized: kind.starts_with("MATERIALIZED"),
+            kind: format!("{SECURITY_LABEL_KIND} {kind}"),
             expression,
             exists: false,
         })))
