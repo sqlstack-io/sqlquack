@@ -1205,3 +1205,51 @@ note = "Re-read after the batch-17 obligation-notes delta against the PostgreSQL
 [review.definitions]
 "pg.ddl.alter-extension.add" = "2508db773b45b2776823a073687b4ca5018982727d751a224927fdfa736fc20e"
 "pg.ddl.alter-extension.drop" = "3dbafebaafdabd275de2b93f42e219a936546d81a1aa83cd3689505e223b0634"
+
+[[review]]
+id = "pg-auditor-ddl-012"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "de1cb0acfbb035764600cc916fd1fea6853d64e5"
+reviewed_utc = "2026-11-06T13:30:02Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-view",
+  "pg.ddl.create-materialized-view",
+  "pg.ddl.create-index",
+  "pg.ddl.create-sequence",
+  "pg.ddl.create-trigger",
+  "pg.ddl.create-type.as",
+  "pg.ddl.create-type.as-enum",
+  "pg.ddl.create-type.as-range-subtype",
+  "pg.ddl.create-type.name",
+  "pg.ddl.create-foreign-table.server",
+  "pg.ddl.create-foreign-table.partition-of-server",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree de1cb0ac; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-view" = "9bd9947e7fbed86f365fada8f19909b7bda304d99ae9050c755d89148df841c3"
+"pg.ddl.create-materialized-view" = "bcac65fda24df2a940f343dcf6aac8c213a1ab640ed825d1c17734e85a5fda19"
+"pg.ddl.create-index" = "c6de63f3905f941e48bcfb11deb9c1a1be2857545e64d98e26a9ad2dc7f67d23"
+"pg.ddl.create-sequence" = "34954aac6a3ba001dfe38dcd685a71024082827b958e463b42b011a4840cdb86"
+"pg.ddl.create-trigger" = "c77ffc54f881bc3e6da8be841850fe60f7001adaada04d35007ad66817b0a10f"
+"pg.ddl.create-type.as" = "f6ae97a500337ce0315dfa2243bc4cfff30f292d40f28d8099401827e0287c52"
+"pg.ddl.create-type.as-enum" = "8d59374d06296552e4a45fe47ebd87e9dfe3921c1b8cdca147772933ef30dc36"
+"pg.ddl.create-type.as-range-subtype" = "94f9f9e1dc869e44708e8d43e755dd961214aed6de88c4c8e15ccbe4509ccba1"
+"pg.ddl.create-type.name" = "a31b21e879fea9acdb766cbb1e6a448ec4140f2d9d01e234b036de7bdd5ccd1a"
+"pg.ddl.create-foreign-table.server" = "f93bd95f1f582d197354b4a64596a693226ab765869efdf8993658237727081d"
+"pg.ddl.create-foreign-table.partition-of-server" = "7c6ee152ccea9edfdda9427cbbc1c6aa7f8dbc8d8db0ddcc088ebfd6b008da58"
+
+[review.definitions]
+"pg.ddl.create-view" = "7e1e3e9f6123368100db2cfe151ca7a172730db726e83564afef94576a419ed3"
+"pg.ddl.create-materialized-view" = "caae5c1735e2dfee0beb9b091af222c2535789a63b3c727ad79236363b086b59"
+"pg.ddl.create-index" = "56055b9cdc84e23caad507d0b76f3a01bf56e8bbc965e244a03e9fc3632fcfab"
+"pg.ddl.create-sequence" = "55356549fbe6495c3dbddfa9851faf681c7d290302e847de41f9c3d933664a48"
+"pg.ddl.create-trigger" = "d9a52eccae0b93b2cbc5420bb2f061b7cf008188f0004f168905f436f24c39b8"
+"pg.ddl.create-type.as" = "31dacbe1628b36fe332632fc05cd1634784436c7605d23cc47349bca9b731946"
+"pg.ddl.create-type.as-enum" = "a4c8fc11a4ac20db2e50bc94ae3932c6c60e3a1589b7e7352c23e25394a06509"
+"pg.ddl.create-type.as-range-subtype" = "41a15f0ba89fe1e41f93bc7c71277304619820b951f6edf32f52de668ce0d4c0"
+"pg.ddl.create-type.name" = "8d45337c9541421f2ff1cab47ffa36f1d5d3e654523af027d9b8e6221d49dcf9"
+"pg.ddl.create-foreign-table.server" = "559b932ffc1c5bc3f718546d04fabb408aceea232cf3f9e94cf27c2e451e9fc2"
+"pg.ddl.create-foreign-table.partition-of-server" = "58549b2d9413e19a078e3566879eb6f390792747528fe57e995c152f881d707d"
