@@ -65,6 +65,22 @@ _STATEMENTS: tuple[str, ...] = ("SELECT 1", "SELECT 1 / 0")
             expected_errors=frozenset({"SELECT 1 / 0"}),
         ),
         BatchRecordingTestCase(
+            description="a listed P0000 error raised by the batch request itself, not wrapped, "
+            "reruns the batch case by case and records it for the case expecting an error",
+            statements=_STATEMENTS,
+            batch_error=(100344, "P0000"),
+            statement_errors=(("SELECT 1 / 0", 100344, "P0000"),),
+            json_results=frozenset(),
+            overflow_results=frozenset(),
+            truncated_results=frozenset(),
+            null_results=frozenset(),
+            expected_outcomes=("rows", "error"),
+            expected_single_runs=_STATEMENTS,
+            expected_files_written=3,
+            expected_message="",
+            expected_errors=frozenset({"SELECT 1 / 0"}),
+        ),
+        BatchRecordingTestCase(
             description="the same P0000 error on a case expecting success stops the run without "
             "writing anything",
             statements=_STATEMENTS,
