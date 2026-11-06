@@ -244,3 +244,27 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.query.pivot" = "0143158f5f51016a4e932fbde42fa1ab0786b9dbb4de7872980cb89c743174eb"
 "sf.query.with.select" = "19d0a58ffbccd906ccbd2e8249af5f8a8888210aaa8e4533a9eb663926af24d8"
 "sf.query.with.select.syntax" = "89bdc6f1c45a069f52f2d9b37fb295ba7a410535033e355d84472682cdb3583a"
+
+[[review]]
+id = "auditor-query-011"
+reviewer_lane = "auditor"
+family = "query"
+parser_tree = "eb83c300cc26fda9cb3d1c05a71441890754db24"
+reviewed_utc = "2026-11-06T23:26:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.group-by-cube",
+  "sf.query.group-by-grouping-sets",
+  "sf.query.group-by-rollup",
+]
+note = "Re-read after D322 at 381ff30d5, which parses ROLLUP, CUBE and GROUPING SETS in GROUP BY as their own nodes instead of function calls. Definitions are unchanged; only the parse trees moved. Every obligation stays satisfied (55/55, 105/105, 55/55), nested and mixed lists keep their keys in order and GROUPING SETS keep the empty set, and conversion still refuses each node with SQ0002."
+
+[review.fingerprints]
+"sf.query.group-by-cube" = "09ce7afcbbec7bf9b3f062ea5bc862886882fb90ef9db3eb4b2083071fee9683"
+"sf.query.group-by-grouping-sets" = "ee103ed49142601fd101c1d2b7fb927579f189bf3dc520e35425b0e70eebc50b"
+"sf.query.group-by-rollup" = "7fa47bdefde6d37bf4d4d2729e71bf478ae5a0fea1f1865585e01b0b03d511eb"
+
+[review.definitions]
+"sf.query.group-by-cube" = "03f8aa5febed635b8e87af5eb3dd10f488541f4a63738fc1bf3aa51e092d63cc"
+"sf.query.group-by-grouping-sets" = "c76492fc096009e540ab2a28806bad47e582d4af8cfa7e3f5c854cf8b1f60128"
+"sf.query.group-by-rollup" = "a950177a2d84361481c1f0233e529a78469d24ab0baf26c3c25b6be9f956d1c8"
