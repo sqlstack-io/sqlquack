@@ -227,6 +227,7 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "pg.expressions.subquery.not-in-row": {"subquery": "SELECT 1 , 2"},
     "pg.expressions.subquery.row-comparison": {"subquery": "SELECT 1 , 2"},
     "pg.expressions.subquery.some-row": {"subquery": "SELECT 1 , 2"},
+    "pg.ddl.create-type.input-output": {"internallength": "16"},
     "pg.security_admin.alter-default-privileges": {
         "abbreviated_grant_or_revoke": "GRANT SELECT ON TABLES TO PUBLIC"
     },
