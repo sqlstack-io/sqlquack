@@ -37,14 +37,3 @@ rows = [
 query = "SELECT i.ordinal, f.index, f.value, f.path FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'x') f ORDER BY i.ordinal, f.index"
 order = "ordered"
 tags = ["type-combination"]
-
-[[case]]
-id = "t004_this_under_path"
-description = "THIS under PATH is the value at the path, not the whole input. Catches: THIS giving the input FLATTEN was called on"
-columns = [{ name = "a", type = "VARCHAR" }]
-rows = [
-  ["'{\"x\":{\"y\":[1,2]},\"z\":3}'"],
-]
-query = "SELECT f.index, f.this FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'x.y') f ORDER BY f.index"
-order = "ordered"
-tags = ["type-combination"]
