@@ -327,7 +327,7 @@ impl Parser<'_> {
     }
 
     /// `function_with_argtypes`: a name with `func_args`, or a bare name.
-    fn function_with_argtypes(&mut self) -> Parsing<Expression> {
+    pub(crate) fn function_with_argtypes(&mut self) -> Parsing<Expression> {
         let bare: bool = !self.char_at(1, '.') && !self.char_at(1, '(');
         if bare {
             let token: Token =
@@ -348,7 +348,7 @@ impl Parser<'_> {
     }
 
     /// `aggregate_with_argtypes`: `func_name aggr_args`.
-    fn aggregate_with_argtypes(&mut self) -> Parsing<Expression> {
+    pub(crate) fn aggregate_with_argtypes(&mut self) -> Parsing<Expression> {
         let name: Vec<Identifier> = self.func_name()?;
         self.aggregate_arguments(name)
     }

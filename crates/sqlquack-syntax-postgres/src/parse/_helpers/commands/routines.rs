@@ -9,6 +9,7 @@ use sqlquack_syntax::expressions::schema_objects::models::{
 use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::{DataType, Expression};
 
+use crate::parse::_helpers::commands::tables::unsupported;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_col_id, is_non_reserved_word, is_type_function_name,
 };
@@ -26,10 +27,36 @@ const BARE_OPTIONS: [&str; 6] = [
     "window",
 ];
 
-/// `set_rest_more` forms other than `generic_set`, each a gap the shared tree cannot hold.
-const SPECIAL_SETTINGS: [&str; 7] = [
-    "time", "catalog", "schema", "names", "role", "session", "xml",
+/// `set_rest_more` forms other than `generic_set`.
+const SPECIAL_SETTINGS: [&str; 8] = [
+    "time",
+    "catalog",
+    "schema",
+    "names",
+    "role",
+    "session",
+    "xml",
+    "transaction",
 ];
+
+/// `reset_rest` special forms: their words and the setting PostgreSQL names.
+const SPECIAL_RESETS: [(&[&str], &str); 3] = [
+    (&["time", "zone"], "timezone"),
+    (
+        &["transaction", "isolation", "level"],
+        "transaction_isolation",
+    ),
+    (&["session", "authorization"], "session_authorization"),
+];
+
+/// The `opt_interval` field words.
+const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];
+
+/// `createfunc_opt_item` keywords `common_func_opt_item` lacks, which `ALTER FUNCTION` refuses.
+const CREATE_ONLY_OPTIONS: [&str; 4] = ["as", "language", "transform", "window"];
+
+/// The option `SET TRANSACTION SNAPSHOT` sets, a `VAR_SET_MULTI` no generic setting spells.
+const SNAPSHOT_OPTION: &str = "SET TRANSACTION SNAPSHOT";
 
 /// The option `STRICT` and `RETURNS NULL ON NULL INPUT` both set, as PostgreSQL's raw tree has it.
 const STRICT_OPTION: &str = "STRICT";
@@ -381,7 +408,7 @@ impl Parser<'_> {
                 self.at += 1;
                 match self.eat_kw("all") {
                     true => option("RESET ALL", Vec::new()),
-                    false => option("RESET", vec![self.setting_name()?]),
+                    false => option("RESET", vec![self.reset_name()?]),
                 }
             }
             _ => return Ok(None),
@@ -398,9 +425,8 @@ impl Parser<'_> {
         Ok(Expression::Identifier(Identifier::new(name_text(&parts))))
     }
 
-    /// `set_rest_more` after `SET`: `generic_set` or `var_name FROM CURRENT`; other forms are gaps.
+    /// `set_rest_more` after `SET`: `generic_set`, `var_name FROM CURRENT` or a special form.
     fn setting(&mut self) -> Parsing<RoutineOption> {
-        let start: usize = self.offset();
         let generic: bool = self.char_at(1, '=')
             || self.char_at(1, '.')
             || self.kw_at(1, "to")
@@ -410,9 +436,7 @@ impl Parser<'_> {
                 .keyword_at(0)
                 .is_some_and(|word| SPECIAL_SETTINGS.contains(&word))
         {
-            self.special_setting()?;
-            self.gap("set_special", start);
-            return Ok(option("SET", Vec::new()));
+            return self.special_setting();
         }
         let name: Expression = self.setting_name()?;
         if self.eat_kw("from") {
@@ -446,46 +470,138 @@ impl Parser<'_> {
         }
     }
 
-    /// The `set_rest_more` forms the shared tree cannot hold, read to their end.
-    fn special_setting(&mut self) -> Parsing<()> {
-        match self.keyword_at(0).unwrap_or_default() {
+    /// A special `set_rest_more` form, as the generic setting PostgreSQL's raw tree makes of it.
+    fn special_setting(&mut self) -> Parsing<RoutineOption> {
+        let word: &str = self.keyword_at(0).unwrap_or_default();
+        self.at += 1;
+        let (name, value): (&str, Option<Expression>) = match word {
             "time" => {
-                self.at += 1;
                 self.expect_kw("zone")?;
-                if self.kw("interval") {
-                    self.c_expr(Flavor::B)?;
-                } else if !(self.eat_kw("default") || self.eat_kw("local")) {
-                    self.setting_value()?;
-                }
+                ("timezone", self.zone_value()?)
             }
-            "catalog" | "schema" => {
-                self.at += 1;
+            "catalog" => {
+                let start: usize = self.offset();
                 self.sconst()?;
+                return Err(unsupported(
+                    "current database cannot be changed".to_owned(),
+                    start,
+                ));
             }
-            "names" => {
-                self.at += 1;
-                if !self.eat_kw("default") && self.sconst_at(0) {
-                    self.sconst()?;
+            "schema" => ("search_path", Some(self.sconst()?)),
+            "names" => match self.sconst_at(0) {
+                true => ("client_encoding", Some(self.sconst()?)),
+                false => {
+                    self.eat_kw("default");
+                    ("client_encoding", None)
+                }
+            },
+            "role" => ("role", Some(self.word_or_string()?)),
+            "session" => {
+                self.expect_kw("authorization")?;
+                match self.eat_kw("default") {
+                    true => ("session_authorization", None),
+                    false => ("session_authorization", Some(self.word_or_string()?)),
                 }
             }
-            "role" => {
-                self.at += 1;
-                self.word_or_string()?;
-            }
-            "session" => {
-                self.at += 1;
-                self.expect_kw("authorization")?;
-                self.word_or_string()?;
+            "transaction" => {
+                self.expect_kw("snapshot")?;
+                return Ok(option(SNAPSHOT_OPTION, vec![self.sconst()?]));
             }
             _ => {
-                self.at += 1;
                 self.expect_kw("option")?;
-                if !self.eat_kw("document") {
-                    self.expect_kw("content")?;
-                }
+                let mode: &str = match self.eat_kw("document") {
+                    true => "DOCUMENT",
+                    false => {
+                        self.expect_kw("content")?;
+                        "CONTENT"
+                    }
+                };
+                ("xmloption", Some(string(mode.to_owned())))
             }
+        };
+        let name: Expression = Expression::Identifier(Identifier::new(name));
+        Ok(match value {
+            Some(value) => option("SET", vec![name, value]),
+            None => option("SET DEFAULT", vec![name]),
+        })
+    }
+
+    /// `reset_rest` other than `ALL`: a `var_name`, or a special form as the name PostgreSQL gives it.
+    fn reset_name(&mut self) -> Parsing<Expression> {
+        let special: Option<&(&[&str], &str)> = SPECIAL_RESETS
+            .iter()
+            .find(|(words, _)| self.kw(words[0]) && self.kw_at(1, words[1]));
+        let Some((words, name)) = special else {
+            return self.setting_name();
+        };
+        for word in words.iter() {
+            self.expect_kw(word)?;
         }
-        Ok(())
+        Ok(Expression::Identifier(Identifier::new(*name)))
+    }
+
+    /// Whether `INTERVAL 'text'` here ends in fields beyond `HOUR` and `MINUTE`, which gram.y refuses.
+    fn zone_interval_refused(&self) -> bool {
+        let fielded: bool = self.sconst_at(1)
+            && self
+                .keyword_at(2)
+                .is_some_and(|word| INTERVAL_FIELDS.contains(&word));
+        let hour_or_minute: bool = (self.kw_at(2, "hour") || self.kw_at(2, "minute"))
+            && (!self.kw_at(3, "to") || self.kw_at(4, "minute"));
+        fielded && !hour_or_minute
+    }
+
+    /// `zone_value`: a string, an identifier, an interval or a number; `None` for `DEFAULT` or `LOCAL`.
+    fn zone_value(&mut self) -> Parsing<Option<Expression>> {
+        if self.eat_kw("default") || self.eat_kw("local") {
+            return Ok(None);
+        }
+        if self.kw("interval") {
+            if self.zone_interval_refused() {
+                self.at += 2;
+                return Err(self.error_with(
+                    "time zone interval must be HOUR or HOUR TO MINUTE",
+                    self.offset(),
+                ));
+            }
+            return Ok(Some(self.c_expr(Flavor::B)?));
+        }
+        if self.sconst_at(0) {
+            return Ok(Some(self.sconst()?));
+        }
+        let identifier: bool = self.peek().is_some_and(|token| {
+            matches!(
+                token.kind,
+                crate::scan::models::TokenKind::Ident | crate::scan::models::TokenKind::QuotedIdent
+            )
+        });
+        match identifier {
+            true => {
+                let token = self.advance()?;
+                Ok(Some(string(
+                    crate::parse::_helpers::tree::cursor::identifier(&token).name,
+                )))
+            }
+            false => Ok(Some(self.numeric_only()?)),
+        }
+    }
+
+    /// `alterfunc_opt_list`: one or more `common_func_opt_item`, as option tuples.
+    pub(crate) fn common_routine_options(&mut self) -> Parsing<Vec<Expression>> {
+        let mut options: Vec<Expression> = Vec::new();
+        while !self
+            .keyword_at(0)
+            .is_some_and(|word| CREATE_ONLY_OPTIONS.contains(&word))
+        {
+            let Some(item) = self.routine_option()? else {
+                break;
+            };
+            options.push(option_tuple(&item));
+        }
+        match options.is_empty() {
+            true => Err(self.error()),
+            false => Ok(options),
+        }
     }
 
     /// `opt_routine_body`: `RETURN a_expr`, or `BEGIN ATOMIC stmt; ... END`.
