@@ -69,3 +69,39 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 [review.definitions]
 "pg.ddl.create-aggregate.sfunc-stype" = "da56f0f3505b5ed0af3541223c8d8cb51b0338dc81df3a70642c6ce2e465cfdc"
 "pg.ddl.create-database" = "a1f699c51156642bb04b5fcd5dee5dd11e5944aa255cdc160e6d318fe337fe7d"
+
+[[review]]
+id = "pg-auditor-ddl-004"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "9138a8de54f576027fdbda3e004ddbb426bfebac"
+reviewed_utc = "2026-11-06T11:07:22Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-aggregate.basetype-sfunc-stype",
+  "pg.ddl.create-aggregate.order-by-sfunc-stype",
+  "pg.ddl.create-function",
+  "pg.ddl.create-function.sql-body-atomic",
+  "pg.ddl.create-function.sql-body-return",
+  "pg.ddl.create-procedure",
+  "pg.ddl.create-procedure.sql-body-atomic",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 9138a8de; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-aggregate.basetype-sfunc-stype" = "34dda4dcb0ff4c8564a89758674d8e57b80c901eaf703fa0f8304ab6a3732796"
+"pg.ddl.create-aggregate.order-by-sfunc-stype" = "f2a71b3ce4de2bd9a932b8b30aeae03d784582d14bd517388496e6daaa363258"
+"pg.ddl.create-function" = "2eecf559ff87e0813f9bf701e5b8fbc1bc3b54037f9ddb46c5b06d07b93ad8bb"
+"pg.ddl.create-function.sql-body-atomic" = "75fed97bdac57a42fb50f8ea3450e14db3047bdde6d6f56273af97e1da88ee69"
+"pg.ddl.create-function.sql-body-return" = "22324d3271601655aff9705a3430fc7198c4e154844e3fe16f8ee8bebd4e9757"
+"pg.ddl.create-procedure" = "2aaf131e7c072ce777671cc541eebf2fb5255f562888f21738536a778f5ebbf0"
+"pg.ddl.create-procedure.sql-body-atomic" = "0010c36ac10d7a51a60af3a5c9b659277ff7dab63bb74da485677d52aeca8a56"
+
+[review.definitions]
+"pg.ddl.create-aggregate.basetype-sfunc-stype" = "e83c34f3c0058b32a3f0cd8d1fe97d934b13fc019a95d3458709474f18775ab5"
+"pg.ddl.create-aggregate.order-by-sfunc-stype" = "05a475b928f99bd50192ea94f3a9b418504b102a77d1cc6b7914d71b07aa191c"
+"pg.ddl.create-function" = "72fee22fac72527e98d85090f53770549ef89df013dec21e11084da5e567a1d4"
+"pg.ddl.create-function.sql-body-atomic" = "a8488ccec13c586a534947c79e49093e12d501a6a226864a812f0859dfc937ce"
+"pg.ddl.create-function.sql-body-return" = "aeca768d81797523291e2dd34a985c2599e280f1c149424da6f43b7cdcaa256a"
+"pg.ddl.create-procedure" = "731961bcdb3eed7b91817885ef74ae096b15356bc39ea9b437901afae9a234cd"
+"pg.ddl.create-procedure.sql-body-atomic" = "d04b54795b861bd8c88dbf44cd137474a05b188ede805ea43c3fe18375cd46b1"
