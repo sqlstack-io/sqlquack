@@ -5,6 +5,7 @@ use std::process::Command;
 use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
+use crate::formats::constants::SNOWFLAKE_DIALECT;
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::main::current_dialect::current_dialect;
 
@@ -57,12 +58,13 @@ fn git_output(arguments: &[&str]) -> Result<String, String> {
     }
 }
 
-/// The committed tree of the dialect's parser path, none if uncommitted or absent, or git's failure.
+/// The parser path's committed tree, none if uncommitted or absent outside Snowflake, or a failure.
 pub(crate) fn parser_tree() -> Result<Option<String>, String> {
-    let parser_path: String = current_dialect().parser_path.clone();
-    let status: String = git_output(&["status", "--porcelain", "--", &parser_path])?;
+    let dialect = current_dialect();
+    let parser_path: &str = &dialect.parser_path;
+    let status: String = git_output(&["status", "--porcelain", "--", parser_path])?;
     let head_path: String = format!("HEAD:{parser_path}");
-    if git(&["cat-file", "-e", &head_path])?.0 != 0 {
+    if dialect.name != SNOWFLAKE_DIALECT && git(&["cat-file", "-e", &head_path])?.0 != 0 {
         return Ok(None);
     }
     let tree: String = git_output(&["rev-parse", &head_path])?;
