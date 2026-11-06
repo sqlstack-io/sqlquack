@@ -1,5 +1,5 @@
 {
- "schema": "corpora/everyday/schema.json @ wip/battle-corpus 6622ffec, as empty CTEs (WITH <table> AS (SELECT CAST(NULL AS <type>) AS <col>, ... WHERE FALSE)) before each query",
+ "schema": "corpora/everyday/schema.json as empty CTEs (WITH <table> AS (SELECT CAST(NULL AS <type>) AS <col>, ... WHERE FALSE)) before each query",
  "screen": "EXPLAIN USING TEXT per query; compiling queries then executed on the empty inputs",
  "results": [
   {

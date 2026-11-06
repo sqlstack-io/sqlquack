@@ -1,16 +1,16 @@
+//! Each corpus keeps its outcomes; regressions fail and new translations are only reported.
+
 use crate::analysis::tests::helpers::{
-    BASICS_CORPUS, EVERYDAY_CORPUS, EVERYDAY_MODELS_CORPUS, everyday_outcome_mismatches,
-    everyday_snowflake_rejections_not_caught, everyday_translation_rates,
+    BASICS_CORPUS, EVERYDAY_CORPUS, EVERYDAY_MODELS_CORPUS, RERECORD_COMMAND, everyday_changes,
+    everyday_snowflake_rejections_not_caught,
 };
 use crate::analysis::tests::test_types::EverydayCorpusTestCase;
 
 #[test]
-fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_its_outcome() {
+fn given_everyday_snowflake_queries_when_checked_and_converted_then_none_regresses() {
     let test_cases = [EverydayCorpusTestCase {
-        description: "every corpora/everyday query parses, checks, converts or refuses as recorded, under the strict built-in policy and the repository policy",
+        description: "corpora/everyday: hand-written analyst queries",
         directory: EVERYDAY_CORPUS,
-        expected_mismatches: Vec::new(),
-        expected_rates: "362 of 537 strict, 459 of 537 repository",
         // SQL Snowflake rejects (snowflake-receipts.json) that SQLQuack neither fails to parse nor
         // flags in its checks; each should become a parse or check error.
         expected_rejections_not_caught: vec![
@@ -23,19 +23,14 @@ fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_i
             "SELECT LENGTH(order_id, 2) AS x FROM orders",
             "SELECT order_id FROM orders o, orders o",
         ],
+        expected_regressions: Vec::new(),
     }];
 
     for test_case in test_cases {
         assert_eq!(
-            everyday_outcome_mismatches(test_case.directory),
-            test_case.expected_mismatches,
-            "{}",
-            test_case.description
-        );
-        assert_eq!(
-            everyday_translation_rates(test_case.directory),
-            test_case.expected_rates,
-            "{}",
+            everyday_changes(test_case.directory, test_case.description),
+            test_case.expected_regressions,
+            "{}: regressions. If a change is intended, run `{RERECORD_COMMAND}` and commit the corpus with it",
             test_case.description
         );
         assert_eq!(
@@ -48,12 +43,10 @@ fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_i
 }
 
 #[test]
-fn given_dbt_style_snowflake_models_when_checked_and_converted_then_each_keeps_its_outcome() {
+fn given_dbt_style_snowflake_models_when_checked_and_converted_then_none_regresses() {
     let test_cases = [EverydayCorpusTestCase {
-        description: "every corpora/everyday-models query parses, checks, converts or refuses as recorded, under the strict built-in policy and the repository policy",
+        description: "corpora/everyday-models: dbt-style models",
         directory: EVERYDAY_MODELS_CORPUS,
-        expected_mismatches: Vec::new(),
-        expected_rates: "278 of 458 strict, 404 of 458 repository",
         // SQL Snowflake rejects that SQLQuack neither fails to parse nor flags in its checks:
         // an ambiguous column, ON after LATERAL FLATTEN, a WINDOW clause, a pivoted-away
         // column, and CHANGES without change tracking.
@@ -64,19 +57,14 @@ fn given_dbt_style_snowflake_models_when_checked_and_converted_then_each_keeps_i
             "select customer_id, channel, total_web, total_store\nfrom (select customer_id, channel, total from orders)\npivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))",
             "select *\nfrom stg_customers\nchanges (information => default)\nat (offset => -3600)",
         ],
+        expected_regressions: Vec::new(),
     }];
 
     for test_case in test_cases {
         assert_eq!(
-            everyday_outcome_mismatches(test_case.directory),
-            test_case.expected_mismatches,
-            "{}",
-            test_case.description
-        );
-        assert_eq!(
-            everyday_translation_rates(test_case.directory),
-            test_case.expected_rates,
-            "{}",
+            everyday_changes(test_case.directory, test_case.description),
+            test_case.expected_regressions,
+            "{}: regressions. If a change is intended, run `{RERECORD_COMMAND}` and commit the corpus with it",
             test_case.description
         );
         assert_eq!(
@@ -89,26 +77,24 @@ fn given_dbt_style_snowflake_models_when_checked_and_converted_then_each_keeps_i
 }
 
 #[test]
-fn given_generated_basic_statements_in_several_spellings_when_converted_then_each_keeps_its_outcome()
- {
+fn given_generated_basic_statements_in_several_spellings_when_converted_then_none_regresses() {
     let test_cases = [EverydayCorpusTestCase {
-        description: "every corpora/basics statement, from scripts/generate_basics_corpus.py, parses, checks, converts or refuses as recorded, under the strict built-in policy and the repository policy",
+        description: "corpora/basics: generated basics, from scripts/generate_basics_corpus.py",
         directory: BASICS_CORPUS,
-        expected_mismatches: Vec::new(),
-        expected_rates: "1095 of 1832 strict, 1160 of 1832 repository",
+        expected_regressions: Vec::new(),
         expected_rejections_not_caught: Vec::new(),
     }];
 
     for test_case in test_cases {
         assert_eq!(
-            everyday_outcome_mismatches(test_case.directory),
-            test_case.expected_mismatches,
-            "{}",
+            everyday_changes(test_case.directory, test_case.description),
+            test_case.expected_regressions,
+            "{}: regressions. If a change is intended, run `{RERECORD_COMMAND}` and commit the corpus with it",
             test_case.description
         );
         assert_eq!(
-            everyday_translation_rates(test_case.directory),
-            test_case.expected_rates,
+            everyday_snowflake_rejections_not_caught(test_case.directory),
+            test_case.expected_rejections_not_caught,
             "{}",
             test_case.description
         );

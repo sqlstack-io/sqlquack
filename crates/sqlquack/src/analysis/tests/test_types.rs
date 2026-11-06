@@ -210,19 +210,20 @@ pub(crate) struct OverrideCallsTestCase {
 pub(crate) struct EverydayCorpusTestCase {
     pub(crate) description: &'static str,
     pub(crate) directory: &'static str,
-    pub(crate) expected_mismatches: Vec<String>,
-    pub(crate) expected_rates: &'static str,
+    pub(crate) expected_regressions: Vec<String>,
     pub(crate) expected_rejections_not_caught: Vec<&'static str>,
 }
 
 /// The everyday corpus file.
 #[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct EverydayCorpus {
     pub(crate) query: Vec<EverydayQuery>,
 }
 
 /// One everyday query and the outcome recorded for it.
-#[derive(serde::Deserialize)]
+#[derive(Clone, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct EverydayQuery {
     pub(crate) category: String,
     pub(crate) sql: String,
@@ -231,4 +232,13 @@ pub(crate) struct EverydayQuery {
     /// Snowflake's recorded verdict, `compiles` or `rejects <errno>`, where one was recorded.
     #[serde(default)]
     pub(crate) snowflake: Option<String>,
+    /// The strict translation's result on the corpus's fixture rows, where it has them.
+    #[serde(default)]
+    pub(crate) result: Option<String>,
+    /// The repository-policy translation's result on the fixture rows.
+    #[serde(default)]
+    pub(crate) result_repository: Option<String>,
+    /// Set where Snowflake's verdict on the query is not recorded yet.
+    #[serde(default)]
+    pub(crate) uncertain: bool,
 }

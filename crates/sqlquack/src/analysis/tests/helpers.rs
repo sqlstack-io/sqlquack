@@ -1,5 +1,8 @@
 use std::collections::BTreeSet;
 
+use sha2::{Digest, Sha256};
+use sqlquack_core::diagnostics::models::DiagnosticSpan;
+use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLocation};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
@@ -698,41 +701,74 @@ pub(crate) fn relying_on_utc_session(constructs: &[&str]) -> DivergenceModeOutco
     }
 }
 
-/// Each everyday corpus query whose outcome under either policy differs from the recorded one.
-pub(crate) fn everyday_outcome_mismatches(directory: &str) -> Vec<String> {
+/// A corpus's regressions against its recorded outcomes; improvements and rates are printed.
+pub(crate) fn everyday_changes(directory: &str, description: &str) -> Vec<String> {
     let (root, corpus) = everyday_corpus(directory);
     let strict = everyday_arguments(&root, true);
     let repository = everyday_arguments(&root, false);
-    corpus
+    let fixture = std::fs::read_to_string(root.join(EVERYDAY_FIXTURE)).ok();
+    let mut regressions = Vec::new();
+    let mut improvements = Vec::new();
+    let recorded: Vec<EverydayQuery> = corpus
         .query
         .iter()
-        .flat_map(|query| {
-            [
+        .map(|query| {
+            let policies = [
+                (STRICT, &strict, &query.expect, &query.result),
                 (
-                    "strict",
-                    &query.expect,
-                    everyday_outcome(&query.sql, &strict),
-                ),
-                (
-                    "repository",
+                    REPOSITORY,
+                    &repository,
                     &query.expect_repository,
-                    everyday_outcome(&query.sql, &repository),
+                    &query.result_repository,
                 ),
-            ]
-            .into_iter()
-            .filter(|(_, expected, outcome)| outcome != *expected)
-            .map(|(policy, expected, outcome)| {
-                format!(
-                    "{} under {policy}: expected {expected}, got {outcome}",
-                    query.sql
-                )
-            })
-            .collect::<Vec<String>>()
+            ];
+            let [
+                (strict_outcome, strict_result),
+                (repository_outcome, repository_result),
+            ] = policies.map(|(policy, arguments, expected, expected_result)| {
+                let (outcome, translated) = everyday_outcome(&query.sql, arguments);
+                let result = fixture
+                    .as_deref()
+                    .zip(translated.as_deref())
+                    .map(|(rows, sql)| fixture_result(rows, sql));
+                let place = format!("{} under {policy}", query.sql);
+                let changed = (outcome != *expected)
+                    .then(|| format!("{place}: expected {expected}, got {outcome}"));
+                let improved = outcome == TRANSLATED || expected == UNRECORDED;
+                improvements.extend(changed.clone().filter(|_| improved));
+                regressions.extend(changed.filter(|_| !improved));
+                regressions.extend((outcome == *expected && result != *expected_result).then(
+                    || {
+                        format!(
+                            "{place}: the result on the fixture rows was {}, is now {}",
+                            expected_result.as_deref().unwrap_or("none"),
+                            result.as_deref().unwrap_or("none")
+                        )
+                    },
+                ));
+                (outcome, result)
+            });
+            EverydayQuery {
+                expect: strict_outcome,
+                result: strict_result,
+                expect_repository: repository_outcome,
+                result_repository: repository_result,
+                ..query.clone()
+            }
         })
-        .collect()
+        .collect();
+    let rerecording = std::env::var_os(RERECORD_VARIABLE).is_some();
+    rerecording.then(|| rerecord(&root, &recorded));
+    eprintln!(
+        "{description}: {} refused statements now translate; run `{RERECORD_COMMAND}` to record them:\n{}",
+        improvements.len(),
+        improvements.join("\n")
+    );
+    eprintln!("{description}: {}", everyday_translation_rates(directory));
+    regressions.into_iter().filter(|_| !rerecording).collect()
 }
 
-/// How many valid queries, not DDL, are recorded as translated: strict, and repository policy.
+/// The rates of valid queries, not DDL, recorded as translated: strict, and repository policy.
 pub(crate) fn everyday_translation_rates(directory: &str) -> String {
     let (_, corpus) = everyday_corpus(directory);
     let valid: Vec<&EverydayQuery> = corpus
@@ -764,8 +800,9 @@ pub(crate) fn everyday_translation_rates(directory: &str) -> String {
 /// Queries Snowflake rejects that pass SQLQuack's parse and checks, once every receipt matches.
 pub(crate) fn everyday_snowflake_rejections_not_caught(directory: &str) -> Vec<String> {
     let (root, corpus) = everyday_corpus(directory);
-    let text =
-        std::fs::read_to_string(root.join("snowflake-receipts.json")).expect("receipts read");
+    let Ok(text) = std::fs::read_to_string(root.join("snowflake-receipts.json")) else {
+        return Vec::new();
+    };
     let receipts: serde_json::Value = serde_json::from_str(&text).expect("receipts parse");
     // Results are a list, or an object keyed by query id; a receipt without a verdict is skipped.
     let results: Vec<&serde_json::Value> = receipts["results"].as_array().map_or_else(
@@ -811,7 +848,7 @@ pub(crate) fn everyday_snowflake_rejections_not_caught(directory: &str) -> Vec<S
                 .is_some_and(|verdict| verdict != SNOWFLAKE_COMPILES)
         })
         .filter(|query| {
-            let outcome = everyday_outcome(&query.sql, &strict);
+            let (outcome, _) = everyday_outcome(&query.sql, &strict);
             !outcome.starts_with("parse ") && !outcome.starts_with("check ")
         })
         .map(|query| query.sql.clone())
@@ -821,10 +858,62 @@ pub(crate) fn everyday_snowflake_rejections_not_caught(directory: &str) -> Vec<S
 /// The everyday corpus directory and its queries.
 fn everyday_corpus(directory: &str) -> (std::path::PathBuf, EverydayCorpus) {
     let root = repository_root().join(directory);
-    let text = std::fs::read_to_string(root.join("queries.toml")).expect("the corpus reads");
+    let text = std::fs::read_to_string(root.join(EVERYDAY_QUERIES)).expect("the corpus reads");
     let corpus: EverydayCorpus = toml::from_str(&text).expect("the corpus parses");
     assert!(corpus.query.len() > 300, "{} queries", corpus.query.len());
     (root, corpus)
+}
+
+/// Rewrites the corpus file with `queries`' outcomes, keeping its comments.
+fn rerecord(root: &std::path::Path, queries: &[EverydayQuery]) {
+    let path = root.join(EVERYDAY_QUERIES);
+    let text = std::fs::read_to_string(&path).expect("the corpus reads");
+    let mut chunks = text.split("[[query]]");
+    let header = chunks.next().unwrap_or_default();
+    // Comment lines between queries end the previous chunk; keep them before the next query.
+    let separators: Vec<String> = chunks
+        .map(|chunk| {
+            let lines: Vec<&str> = chunk.lines().collect();
+            let kept = lines
+                .iter()
+                .rev()
+                .take_while(|line| line.is_empty() || line.starts_with('#'))
+                .count();
+            lines[lines.len() - kept..]
+                .iter()
+                .map(|line| format!("{line}\n"))
+                .collect()
+        })
+        .collect();
+    let blocks: String = queries
+        .iter()
+        .enumerate()
+        .map(|(index, query)| {
+            let optional: String = [
+                ("snowflake", &query.snowflake),
+                ("result", &query.result),
+                ("result_repository", &query.result_repository),
+            ]
+            .into_iter()
+            .filter_map(|(key, value)| value.as_ref().map(|value| format!("{key} = {value:?}\n")))
+            .collect();
+            let uncertain = query.uncertain.then_some("uncertain = true\n");
+            let separator = separators
+                .get(index)
+                .filter(|separator| !separator.is_empty())
+                .cloned()
+                .unwrap_or_else(|| "\n".repeat(usize::from(index + 1 < queries.len())));
+            format!(
+                "[[query]]\ncategory = {:?}\nsql = '''{}'''\nexpect = {:?}\nexpect_repository = {:?}\n{optional}{}{separator}",
+                query.category,
+                query.sql,
+                query.expect,
+                query.expect_repository,
+                uncertain.unwrap_or_default()
+            )
+        })
+        .collect();
+    std::fs::write(path, format!("{header}{blocks}")).expect("the corpus writes");
 }
 
 /// `convert`'s arguments: the built-in policy, or the repository's under a UTC session.
@@ -835,7 +924,7 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
         overrides: None,
         verified_overrides: Vec::new(),
         session: Vec::new(),
-        compact: false,
+        compact: true,
         output: OutputArguments {
             format: OutputFormat::Json,
             json: false,
@@ -852,26 +941,106 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
     }
 }
 
-/// What SQLQuack does with `sql`: its first check diagnostic, first refusal, or `translated`.
-fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> String {
+/// What SQLQuack does with `sql`: its first diagnostic or refusal, with span, or `translated`.
+fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> (String, Option<String>) {
     let diagnostics = check_source(sql).expect("the query holds a statement");
     diagnostics.first().map_or_else(
-        || {
-            let report = convert_report(arguments, sql).expect("the query converts or refuses");
-            report.refusals.first().map_or_else(
-                || TRANSLATED.to_owned(),
-                |refusal| {
-                    let code = refusal.diagnostic.as_ref().map_or("", |found| found.code);
-                    format!("refused {code} {}", refusal.construct)
-                },
-            )
-        },
+        || converted_outcome(sql, arguments),
         |found| {
             let stage = (found.code == PARSE_FAILURE_CODE).then_some("parse");
-            format!("{} {}", stage.unwrap_or("check"), found.code)
+            let outcome = format!("{} {}", stage.unwrap_or("check"), found.code);
+            (with_span(outcome, found.span.as_ref()), None)
         },
     )
 }
+
+/// The conversion's first refusal with its span, or `translated` with the converted SQL.
+fn converted_outcome(sql: &str, arguments: &ConvertArguments) -> (String, Option<String>) {
+    let report = convert_report(arguments, sql).expect("the query converts or refuses");
+    report.refusals.first().map_or_else(
+        || (TRANSLATED.to_owned(), Some(report.sql.clone())),
+        |refusal| {
+            let found = refusal.diagnostic.as_ref();
+            let code = found.map_or("", |found| found.code);
+            let outcome = format!("refused {code} {}", refusal.construct);
+            (
+                with_span(outcome, found.and_then(|found| found.span.as_ref())),
+                None,
+            )
+        },
+    )
+}
+
+/// `outcome` with the characters its diagnostic underlines, when it has a span.
+fn with_span(outcome: String, span: Option<&DiagnosticSpan>) -> String {
+    span.map_or_else(
+        || outcome.clone(),
+        |span| format!("{outcome} at {}..{}", span.start, span.end),
+    )
+}
+
+/// The fixture rows `sql` returns, sorted and hashed, or the Snowflake error it raises.
+fn fixture_result(fixture: &str, sql: &str) -> String {
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    connection
+        .execute_batch(fixture)
+        .expect("the fixture loads");
+    let query = format!("SELECT COLUMNS(*)::VARCHAR FROM ({sql}) AS result");
+    let rows = connection.prepare(&query).and_then(|mut statement| {
+        statement
+            .query_map([], |row| {
+                let width = row.as_ref().column_count();
+                (0..width)
+                    .map(|index| {
+                        row.get::<_, Option<String>>(index)
+                            .map(|value| value.unwrap_or_else(|| "NULL".to_owned()))
+                    })
+                    .collect::<Result<Vec<String>, _>>()
+                    .map(|values| values.join("\t"))
+            })?
+            .collect::<Result<Vec<String>, _>>()
+    });
+    rows.map_or_else(
+        |error| {
+            duckdb_failure(&error.to_string())
+                .and_then(|failure| failure.snowflake)
+                .map_or_else(
+                    || "raises a DuckDB error".to_owned(),
+                    |code| format!("raises {}", code.errno),
+                )
+        },
+        |mut rows| {
+            rows.sort();
+            let digest = Sha256::digest(rows.join("\n").as_bytes());
+            let hex: String = digest[..8]
+                .iter()
+                .map(|byte| format!("{byte:02x}"))
+                .collect();
+            format!("{} rows {hex}", rows.len())
+        },
+    )
+}
+
+/// The command that rewrites every corpus's recorded outcomes.
+pub(crate) const RERECORD_COMMAND: &str = "make corpus-rerecord";
+
+/// Set to rewrite the recorded outcomes instead of comparing with them.
+const RERECORD_VARIABLE: &str = "SQLQUACK_RERECORD";
+
+/// Each corpus directory's queries and their recorded outcomes.
+const EVERYDAY_QUERIES: &str = "queries.toml";
+
+/// DuckDB SQL creating and filling a corpus's relations, where it has one.
+const EVERYDAY_FIXTURE: &str = "fixture.sql";
+
+/// The outcome the basics generator writes, for `make corpus-rerecord` to fill in.
+const UNRECORDED: &str = "unrecorded";
+
+/// The policy each query is converted under: the built-in one.
+const STRICT: &str = "strict";
+
+/// The policy each query is converted under: the repository's, in a UTC session.
+const REPOSITORY: &str = "repository";
 
 /// The everyday corpus directory, under the repository root.
 pub(crate) const EVERYDAY_CORPUS: &str = "corpora/everyday";

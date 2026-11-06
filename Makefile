@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -73,6 +73,11 @@ polyglot-guard:
 # Rewrites cases/generated/ from the generators in scripts/case_generators/.
 generate-cases:
 	uv run python -m scripts.generate_cases
+
+# Rewrites the outcomes recorded in corpora/everyday, everyday-models and basics from the current
+# converter. Run it in the PR whose change moves an outcome, and commit the corpora with it.
+corpus-rerecord:
+	SQLQUACK_RERECORD=1 cargo test --locked -p sqlquack --lib everyday_corpus
 
 # Fails when a generated case file differs from what its generator writes.
 generated-cases:

@@ -1,5 +1,5 @@
 {
-  "schema": "the 19 relations of d150-models-capture-packet.json as empty CTEs (CAST(NULL AS type) ... WHERE FALSE) ahead of each query; for queries with their own WITH, the schema CTEs go first in the same WITH and skip names the query defines",
+  "schema": "the 19 relations the models read, typed as in corpora/everyday-models/schema.json, as empty CTEs (CAST(NULL AS type) ... WHERE FALSE) ahead of each query; for queries with their own WITH, the schema CTEs go first in the same WITH and skip names the query defines",
   "method": "EXPLAIN of each query (compile only); queries that compiled were then executed once on the empty inputs and their result columns taken from the connector metadata",
   "session": "TIMEZONE UTC, TIMESTAMP_TYPE_MAPPING TIMESTAMP_NTZ, QUOTED_IDENTIFIERS_IGNORE_CASE false, USE_CACHED_RESULT false",
   "results": {

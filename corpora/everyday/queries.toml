@@ -40,8 +40,8 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT 1 + 1'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..12"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..12"
 
 [[query]]
 category = "literals"
@@ -112,25 +112,25 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 7..19"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE AS today'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 7..19"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_TIMESTAMP AS now'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 7..24"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE()'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 7..21"
 expect_repository = "translated"
 
 [[query]]
@@ -286,8 +286,8 @@ expect_repository = "translated"
 [[query]]
 category = "select_star"
 sql = '''SELECT * RENAME (total AS order_total) FROM orders'''
-expect = "refused SQ0002 node:star"
-expect_repository = "refused SQ0002 node:star"
+expect = "refused SQ0002 node:star at 0..50"
+expect_repository = "refused SQ0002 node:star at 0..50"
 
 [[query]]
 category = "select_star"
@@ -304,21 +304,21 @@ expect_repository = "translated"
 [[query]]
 category = "select_star"
 sql = '''SELECT * FROM orders SAMPLE (10 ROWS)'''
-expect = "refused SQ0002 node:table"
-expect_repository = "refused SQ0002 node:table"
+expect = "refused SQ0002 node:table at 14..20"
+expect_repository = "refused SQ0002 node:table at 14..20"
 
 [[query]]
 category = "select_star"
 sql = '''SELECT * FROM orders TOP 5'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 21..24"
+expect_repository = "parse SQ0001 at 21..24"
 snowflake = "rejects 1003"
 
 [[query]]
 category = "select_star"
 sql = '''SELECT TOP 5 * FROM orders'''
-expect = "refused SQ0002 node:select"
-expect_repository = "refused SQ0002 node:select"
+expect = "refused SQ0002 node:select at 0..26"
+expect_repository = "refused SQ0002 node:select at 0..26"
 
 [[query]]
 category = "select_star"
@@ -486,7 +486,7 @@ expect_repository = "translated"
 [[query]]
 category = "columns"
 sql = '''SELECT email FROM customers WHERE email ILIKE '%@EXAMPLE.COM''''
-expect = "refused SQ0008 node:i_like"
+expect = "refused SQ0008 node:i_like at 34..61"
 expect_repository = "translated"
 
 [[query]]
@@ -552,8 +552,8 @@ expect_repository = "translated"
 [[query]]
 category = "columns"
 sql = '''SELECT order_id FROM orders FETCH FIRST 10 ROWS ONLY'''
-expect = "refused SQ0002 node:select"
-expect_repository = "refused SQ0002 node:select"
+expect = "refused SQ0002 node:select at 0..52"
+expect_repository = "refused SQ0002 node:select at 0..52"
 snowflake = "compiles"
 
 [[query]]
@@ -715,19 +715,19 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT category, MEDIAN(price) AS median_price FROM products GROUP BY category'''
-expect = "refused SQ0008 fn:MEDIAN"
+expect = "refused SQ0008 fn:MEDIAN at 17..30"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT SUM(quantity * unit_price) AS revenue FROM order_items'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 11..32"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id'''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 17..30"
 expect_repository = "translated"
 
 [[query]]
@@ -751,21 +751,21 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders'''
-expect = "refused SQ0002 fn:COUNT"
-expect_repository = "refused SQ0002 fn:COUNT"
+expect = "refused SQ0002 fn:COUNT at 7..49"
+expect_repository = "refused SQ0002 fn:COUNT at 7..49"
 snowflake = "rejects 1003"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT ANY_VALUE(status) AS some_status FROM orders'''
-expect = "refused SQ0008 fn:ANY_VALUE"
+expect = "refused SQ0008 fn:ANY_VALUE at 7..24"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT customer_id, LISTAGG(status, ', ') AS statuses FROM orders GROUP BY customer_id'''
-expect = "refused SQ0002 fn:LISTAGG"
-expect_repository = "refused SQ0002 fn:LISTAGG"
+expect = "refused SQ0002 fn:LISTAGG at 20..41"
+expect_repository = "refused SQ0002 fn:LISTAGG at 20..41"
 
 [[query]]
 category = "aggregates"
@@ -776,26 +776,26 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT customer_id, ARRAY_AGG(order_id) AS order_ids FROM orders GROUP BY customer_id'''
-expect = "refused SQ0008 fn:ARRAY_AGG"
+expect = "refused SQ0008 fn:ARRAY_AGG at 20..39"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT customer_id, ARRAY_AGG(order_id) WITHIN GROUP (ORDER BY ordered_at) AS order_ids FROM orders GROUP BY customer_id'''
-expect = "refused SQ0008 fn:ARRAY_AGG"
+expect = "refused SQ0008 fn:ARRAY_AGG at 30..73"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT STDDEV(total) AS sd, VARIANCE(total) AS var FROM orders'''
-expect = "refused SQ0008 fn:STDDEV"
+expect = "refused SQ0008 fn:STDDEV at 7..20"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT APPROX_COUNT_DISTINCT(customer_id) AS approx_customers FROM orders'''
-expect = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
-expect_repository = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
+expect = "refused SQ0002 fn:APPROX_COUNT_DISTINCT at 7..41"
+expect_repository = "refused SQ0002 fn:APPROX_COUNT_DISTINCT at 7..41"
 
 [[query]]
 category = "aggregates"
@@ -806,32 +806,32 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT MAX_BY(order_id, total) AS biggest_order FROM orders'''
-expect = "refused SQ0008 fn:MAX_BY"
+expect = "refused SQ0008 fn:MAX_BY at 7..30"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT MODE(status) AS common_status FROM orders'''
-expect = "refused SQ0008 fn:MODE"
+expect = "refused SQ0008 fn:MODE at 7..19"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY total) AS p90 FROM orders'''
-expect = "refused SQ0008 fn:PERCENTILE_CONT"
+expect = "refused SQ0008 fn:PERCENTILE_CONT at 51..56"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT channel, SUM(total) AS revenue FROM orders GROUP BY ROLLUP (channel)'''
-expect = "refused SQ0002 fn:ROLLUP"
-expect_repository = "refused SQ0002 fn:ROLLUP"
+expect = "refused SQ0002 fn:ROLLUP at 67..74"
+expect_repository = "refused SQ0002 fn:ROLLUP at 67..74"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT channel, status, COUNT(*) AS n FROM orders GROUP BY GROUPING SETS ((channel), (status))'''
-expect = "refused SQ0002 fn:GROUPING SETS"
-expect_repository = "refused SQ0002 fn:GROUPING SETS"
+expect = "refused SQ0002 fn:GROUPING SETS at 75..92"
+expect_repository = "refused SQ0002 fn:GROUPING SETS at 75..92"
 
 [[query]]
 category = "aggregates"
@@ -848,14 +848,14 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT DATE_TRUNC('month', ordered_at) AS month, COUNT(DISTINCT customer_id) AS active_customers FROM orders GROUP BY month'''
-expect = "refused SQ0003 node:group_by"
-expect_repository = "refused SQ0003 node:group_by"
+expect = "refused SQ0003 node:group_by at 118..123"
+expect_repository = "refused SQ0003 node:group_by at 118..123"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT YEAR(ordered_at) AS yr, SUM(total) AS revenue FROM orders GROUP BY yr ORDER BY yr'''
-expect = "refused SQ0003 node:group_by"
-expect_repository = "refused SQ0003 node:group_by"
+expect = "refused SQ0003 node:group_by at 74..76"
+expect_repository = "refused SQ0003 node:group_by at 74..76"
 
 [[query]]
 category = "aggregates"
@@ -962,8 +962,8 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT o.order_id, c.email FROM orders o NATURAL JOIN customers c'''
-expect = "refused SQ0002 join:natural"
-expect_repository = "refused SQ0002 join:natural"
+expect = "refused SQ0002 join:natural at 41..65"
+expect_repository = "refused SQ0002 join:natural at 41..65"
 
 [[query]]
 category = "joins"
@@ -998,7 +998,7 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT p.category, SUM(i.quantity * i.unit_price) AS revenue FROM order_items i JOIN products p ON p.product_id = i.product_id GROUP BY p.category ORDER BY revenue DESC'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 23..48"
 expect_repository = "translated"
 
 [[query]]
@@ -1034,7 +1034,7 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT t.ticket_id, c.email FROM tickets t JOIN customers c ON c.customer_id = t.customer_id WHERE t.closed_at IS NULL'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 33..42"
 expect_repository = "translated"
 
 [[query]]
@@ -1052,8 +1052,8 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT o.order_id, x.total_paid FROM orders o LEFT JOIN LATERAL (SELECT SUM(amount) AS total_paid FROM payments p WHERE p.order_id = o.order_id) x'''
-expect = "refused SQ0002 node:subquery"
-expect_repository = "refused SQ0002 node:subquery"
+expect = "refused SQ0002 node:subquery at 46..146"
+expect_repository = "refused SQ0002 node:subquery at 46..146"
 
 [[query]]
 category = "joins"
@@ -1101,7 +1101,7 @@ expect_repository = "translated"
 [[query]]
 category = "ctes"
 sql = '''WITH totals AS (SELECT order_id, SUM(quantity * unit_price) AS items_total FROM order_items GROUP BY order_id) SELECT o.order_id, o.total, t.items_total, o.total - t.items_total AS diff FROM orders o JOIN totals t ON t.order_id = o.order_id'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 37..58"
 expect_repository = "translated"
 
 [[query]]
@@ -1119,8 +1119,8 @@ expect_repository = "translated"
 [[query]]
 category = "ctes"
 sql = '''WITH RECURSIVE n AS (SELECT 1 AS i UNION ALL SELECT i + 1 FROM n WHERE i < 10) SELECT i FROM n'''
-expect = "refused SQ0002 node:with"
-expect_repository = "refused SQ0002 node:with"
+expect = "refused SQ0002 node:with at 0..94"
+expect_repository = "refused SQ0002 node:with at 0..94"
 
 [[query]]
 category = "ctes"
@@ -1239,14 +1239,14 @@ expect_repository = "translated"
 [[query]]
 category = "windows"
 sql = '''SELECT order_id, PERCENT_RANK() OVER (ORDER BY total) AS pr FROM orders'''
-expect = "refused SQ0002 fn:PERCENT_RANK"
-expect_repository = "refused SQ0002 fn:PERCENT_RANK"
+expect = "refused SQ0002 fn:PERCENT_RANK at 17..53"
+expect_repository = "refused SQ0002 fn:PERCENT_RANK at 17..53"
 
 [[query]]
 category = "windows"
 sql = '''SELECT order_id, CUME_DIST() OVER (ORDER BY total) AS cd FROM orders'''
-expect = "refused SQ0002 fn:CUME_DIST"
-expect_repository = "refused SQ0002 fn:CUME_DIST"
+expect = "refused SQ0002 fn:CUME_DIST at 17..50"
+expect_repository = "refused SQ0002 fn:CUME_DIST at 17..50"
 
 [[query]]
 category = "windows"
@@ -1299,8 +1299,8 @@ expect_repository = "translated"
 [[query]]
 category = "windows"
 sql = '''SELECT order_id, CONDITIONAL_TRUE_EVENT(status = 'cancelled') OVER (ORDER BY ordered_at) AS grp FROM orders'''
-expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
-expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
+expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT at 17..88"
+expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT at 17..88"
 
 [[query]]
 category = "dates"
@@ -1354,13 +1354,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT DATEADD(day, 7, ordered_at) AS due_at FROM orders'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 7..34"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT DATEADD('day', 7, ordered_at) AS due_at FROM orders'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 7..36"
 expect_repository = "translated"
 
 [[query]]
@@ -1372,7 +1372,7 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT ordered_at + INTERVAL '1 day' AS tomorrow FROM orders'''
-expect = "refused SQ0008 node:add"
+expect = "refused SQ0008 node:add at 7..36"
 expect_repository = "translated"
 
 [[query]]
@@ -1421,8 +1421,8 @@ snowflake = "compiles"
 [[query]]
 category = "dates"
 sql = '''SELECT DAYOFWEEK(ordered_at) AS dow FROM orders'''
-expect = "refused SQ0002 fn:DAYOFWEEK"
-expect_repository = "refused SQ0002 fn:DAYOFWEEK"
+expect = "refused SQ0002 fn:DAYOFWEEK at 7..28"
+expect_repository = "refused SQ0002 fn:DAYOFWEEK at 7..28"
 
 [[query]]
 category = "dates"
@@ -1433,8 +1433,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT MONTHNAME(ordered_at) AS month_name FROM orders'''
-expect = "refused SQ0002 fn:MONTHNAME"
-expect_repository = "refused SQ0002 fn:MONTHNAME"
+expect = "refused SQ0002 fn:MONTHNAME at 7..28"
+expect_repository = "refused SQ0002 fn:MONTHNAME at 7..28"
 
 [[query]]
 category = "dates"
@@ -1445,8 +1445,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT WEEKOFYEAR(ordered_at) AS w FROM orders'''
-expect = "refused SQ0002 fn:WEEKOFYEAR"
-expect_repository = "refused SQ0002 fn:WEEKOFYEAR"
+expect = "refused SQ0002 fn:WEEKOFYEAR at 7..29"
+expect_repository = "refused SQ0002 fn:WEEKOFYEAR at 7..29"
 
 [[query]]
 category = "dates"
@@ -1469,25 +1469,25 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT TO_TIMESTAMP('2024-01-15 10:00:00') AS ts'''
-expect = "refused SQ0008 fn:TO_TIMESTAMP"
+expect = "refused SQ0008 fn:TO_TIMESTAMP at 7..42"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT TO_DATE('2024-01-15') AS d'''
-expect = "refused SQ0008 fn:TO_DATE"
+expect = "refused SQ0008 fn:TO_DATE at 7..28"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT TO_DATE('15/01/2024', 'DD/MM/YYYY') AS d'''
-expect = "refused SQ0008 fn:TO_DATE"
+expect = "refused SQ0008 fn:TO_DATE at 7..42"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT TRY_TO_DATE('not a date') AS d'''
-expect = "refused SQ0008 fn:TRY_TO_DATE"
+expect = "refused SQ0008 fn:TRY_TO_DATE at 7..32"
 expect_repository = "translated"
 
 [[query]]
@@ -1499,14 +1499,14 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
-expect_repository = "refused SQ0003 node:gte"
+expect = "refused SQ0008 fn:CURRENT_DATE at 66..78"
+expect_repository = "refused SQ0003 node:gte at 34..79"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:DATEADD"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 66..85"
+expect_repository = "refused SQ0003 fn:DATEADD at 48..86"
 
 [[query]]
 category = "dates"
@@ -1517,14 +1517,14 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at::DATE = CURRENT_DATE - 1'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 53..65"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE DATE_TRUNC('month', ordered_at) = DATE_TRUNC('month', CURRENT_DATE)'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
-expect_repository = "refused SQ0003 node:eq"
+expect = "refused SQ0008 fn:CURRENT_DATE at 88..100"
+expect_repository = "refused SQ0003 node:eq at 34..101"
 
 [[query]]
 category = "dates"
@@ -1535,13 +1535,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT DATEDIFF(year, signup_date, CURRENT_DATE) AS tenure_years FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 35..47"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', ordered_at) AS local_time FROM orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 7..62"
 expect_repository = "translated"
 
 [[query]]
@@ -1553,20 +1553,20 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT TIME_SLICE(ordered_at, 15, 'MINUTE') AS slot FROM orders'''
-expect = "refused SQ0002 fn:TIME_SLICE"
-expect_repository = "refused SQ0002 fn:TIME_SLICE"
+expect = "refused SQ0002 fn:TIME_SLICE at 7..43"
+expect_repository = "refused SQ0002 fn:TIME_SLICE at 7..43"
 
 [[query]]
 category = "dates"
 sql = '''SELECT SYSDATE() AS now'''
-expect = "refused SQ0002 fn:SYSDATE"
-expect_repository = "refused SQ0002 fn:SYSDATE"
+expect = "refused SQ0002 fn:SYSDATE at 7..16"
+expect_repository = "refused SQ0002 fn:SYSDATE at 7..16"
 
 [[query]]
 category = "dates"
 sql = '''SELECT GETDATE() AS now'''
-expect = "refused SQ0002 fn:GETDATE"
-expect_repository = "refused SQ0002 fn:GETDATE"
+expect = "refused SQ0002 fn:GETDATE at 7..16"
+expect_repository = "refused SQ0002 fn:GETDATE at 7..16"
 
 [[query]]
 category = "dates"
@@ -1577,13 +1577,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT MONTHS_BETWEEN(CURRENT_DATE, signup_date) AS months FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 22..34"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, opened_at FROM tickets t JOIN orders o ON DATE_TRUNC('day', t.opened_at) = DATE_TRUNC('day', o.ordered_at)'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 32..41"
 expect_repository = "translated"
 
 [[query]]
@@ -1824,7 +1824,7 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT INITCAP(first_name) AS f FROM customers'''
-expect = "refused SQ0008 fn:INITCAP"
+expect = "refused SQ0008 fn:INITCAP at 7..26"
 expect_repository = "translated"
 
 [[query]]
@@ -1854,8 +1854,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT TO_VARCHAR(total, '999,999.00') AS formatted FROM orders'''
-expect = "refused SQ0003 fn:TO_VARCHAR"
-expect_repository = "refused SQ0003 fn:TO_VARCHAR"
+expect = "refused SQ0003 fn:TO_VARCHAR at 7..38"
+expect_repository = "refused SQ0003 fn:TO_VARCHAR at 7..38"
 
 [[query]]
 category = "strings"
@@ -1896,8 +1896,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT REVERSE(sku) AS r FROM products'''
-expect = "refused SQ0002 fn:REVERSE"
-expect_repository = "refused SQ0002 fn:REVERSE"
+expect = "refused SQ0002 fn:REVERSE at 7..19"
+expect_repository = "refused SQ0002 fn:REVERSE at 7..19"
 
 [[query]]
 category = "strings"
@@ -1920,8 +1920,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT HASH(email) AS h FROM customers'''
-expect = "refused SQ0008 fn:HASH"
-expect_repository = "refused SQ0008 fn:HASH"
+expect = "refused SQ0008 fn:HASH at 7..18"
+expect_repository = "refused SQ0008 fn:HASH at 7..18"
 
 [[query]]
 category = "strings"
@@ -1932,20 +1932,20 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT STRTOK(email, '@', 1) AS local_part FROM customers'''
-expect = "refused SQ0002 fn:STRTOK"
-expect_repository = "refused SQ0002 fn:STRTOK"
+expect = "refused SQ0002 fn:STRTOK at 7..28"
+expect_repository = "refused SQ0002 fn:STRTOK at 7..28"
 
 [[query]]
 category = "strings"
 sql = '''SELECT ASCII(first_name) AS code FROM customers'''
-expect = "refused SQ0002 fn:ASCII"
-expect_repository = "refused SQ0002 fn:ASCII"
+expect = "refused SQ0002 fn:ASCII at 7..24"
+expect_repository = "refused SQ0002 fn:ASCII at 7..24"
 
 [[query]]
 category = "strings"
 sql = '''SELECT UUID_STRING() AS id'''
-expect = "refused SQ0002 fn:UUID_STRING"
-expect_repository = "refused SQ0002 fn:UUID_STRING"
+expect = "refused SQ0002 fn:UUID_STRING at 7..20"
+expect_repository = "refused SQ0002 fn:UUID_STRING at 7..20"
 
 [[query]]
 category = "strings"
@@ -1962,8 +1962,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT COLLATE(email, 'en-ci') AS e FROM customers'''
-expect = "refused SQ0002 fn:COLLATE"
-expect_repository = "refused SQ0002 fn:COLLATE"
+expect = "refused SQ0002 fn:COLLATE at 7..30"
+expect_repository = "refused SQ0002 fn:COLLATE at 7..30"
 snowflake = "compiles"
 
 [[query]]
@@ -2017,8 +2017,8 @@ expect_repository = "translated"
 [[query]]
 category = "numeric"
 sql = '''SELECT POWER(total, 2) AS sq FROM orders'''
-expect = "refused SQ0003 fn:POWER"
-expect_repository = "refused SQ0003 fn:POWER"
+expect = "refused SQ0003 fn:POWER at 7..22"
+expect_repository = "refused SQ0003 fn:POWER at 7..22"
 
 [[query]]
 category = "numeric"
@@ -2035,13 +2035,13 @@ expect_repository = "translated"
 [[query]]
 category = "numeric"
 sql = '''SELECT LOG(10, total) AS l FROM orders WHERE total > 0'''
-expect = "refused SQ0002 fn:LOG"
-expect_repository = "refused SQ0002 fn:LOG"
+expect = "refused SQ0002 fn:LOG at 7..21"
+expect_repository = "refused SQ0002 fn:LOG at 7..21"
 
 [[query]]
 category = "numeric"
 sql = '''SELECT EXP(1) AS e'''
-expect = "refused SQ0008 fn:EXP"
+expect = "refused SQ0008 fn:EXP at 7..13"
 expect_repository = "translated"
 
 [[query]]
@@ -2095,26 +2095,26 @@ expect_repository = "translated"
 [[query]]
 category = "numeric"
 sql = '''SELECT quantity * unit_price AS line_total FROM order_items'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 7..28"
 expect_repository = "translated"
 
 [[query]]
 category = "numeric"
 sql = '''SELECT SUM(quantity) * 1.0 / COUNT(DISTINCT order_id) AS units_per_order FROM order_items'''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 7..20"
 expect_repository = "translated"
 
 [[query]]
 category = "numeric"
 sql = '''SELECT UNIFORM(1, 10, RANDOM()) AS r'''
-expect = "refused SQ0002 fn:UNIFORM"
-expect_repository = "refused SQ0002 fn:UNIFORM"
+expect = "refused SQ0002 fn:UNIFORM at 7..31"
+expect_repository = "refused SQ0002 fn:UNIFORM at 7..31"
 
 [[query]]
 category = "numeric"
 sql = '''SELECT RANDOM() AS r'''
-expect = "refused SQ0002 fn:RANDOM"
-expect_repository = "refused SQ0002 fn:RANDOM"
+expect = "refused SQ0002 fn:RANDOM at 7..15"
+expect_repository = "refused SQ0002 fn:RANDOM at 7..15"
 
 [[query]]
 category = "numeric"
@@ -2131,224 +2131,223 @@ expect_repository = "translated"
 [[query]]
 category = "numeric"
 sql = '''SELECT WIDTH_BUCKET(total, 0, 1000, 10) AS bucket FROM orders'''
-expect = "refused SQ0002 fn:WIDTH_BUCKET"
-expect_repository = "refused SQ0002 fn:WIDTH_BUCKET"
+expect = "refused SQ0002 fn:WIDTH_BUCKET at 7..39"
+expect_repository = "refused SQ0002 fn:WIDTH_BUCKET at 7..39"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page FROM events'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0008 node:column at 25..31"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 33..39"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 41..47"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::VARCHAR AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 42..48"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:device.os::STRING AS os FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 44..50"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:items[0].sku::STRING AS first_sku FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 54..60"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload['page']::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 44..50"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:"page"::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 43..49"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:amount::NUMBER(10,2) AS amount FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 51..57"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:amount::FLOAT AS amount FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 44..50"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id FROM events WHERE payload:page::STRING = '/checkout''''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 21..27"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::STRING AS page, COUNT(*) AS views FROM events WHERE event_type = 'page_view' GROUP BY 1 ORDER BY 2 DESC'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 60..66"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT GET(payload, 'page') AS page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 41..47"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT GET_PATH(payload, 'device.os') AS os FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 49..55"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TRY_PARSE_JSON('{"a": 1}') AS j'''
-expect = "refused SQ0008 fn:TRY_PARSE_JSON"
+expect = "refused SQ0008 fn:TRY_PARSE_JSON at 7..33"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT PARSE_JSON('{"a": 1}'):a::INT AS a'''
-expect = "refused SQ0008 fn:PARSE_JSON"
+expect = "refused SQ0008 fn:PARSE_JSON at 7..29"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT OBJECT_CONSTRUCT('id', order_id, 'total', total) AS o FROM orders'''
-expect = "refused SQ0008 fn:OBJECT_CONSTRUCT"
+expect = "refused SQ0008 fn:OBJECT_CONSTRUCT at 7..55"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_CONSTRUCT(1, 2, 3) AS arr'''
-expect = "refused SQ0008 fn:ARRAY_CONSTRUCT"
+expect = "refused SQ0008 fn:ARRAY_CONSTRUCT at 7..31"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_SIZE(tags) AS n FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 34..41"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_CONTAINS('urgent'::VARIANT, tags) AS urgent FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 62..69"
 expect_repository = "translated"
 snowflake = "compiles"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT tags[0]::STRING AS first_tag FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 41..48"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, f.value::STRING AS tag FROM tickets, LATERAL FLATTEN(input => tags) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 46..53"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, f.value::STRING AS tag FROM tickets t, TABLE(FLATTEN(t.tags)) f'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0002 fn:FLATTEN"
+expect = "refused SQ0008 node:column at 46..55"
+expect_repository = "refused SQ0002 fn:FLATTEN at 57..81"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT e.event_id, i.value:sku::STRING AS sku, i.value:qty::INT AS qty FROM events e, LATERAL FLATTEN(input => e.payload:items) i'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 76..84"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT e.event_id, i.index, i.value FROM events e, LATERAL FLATTEN(input => e.payload:items) i'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 41..49"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_KEYS(payload) AS keys FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 51..57"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TYPEOF(payload) AS t FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 33..39"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT IS_NULL_VALUE(payload:page) AS null_page FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 53..59"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page IS NULL AS missing FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 44..50"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id FROM events WHERE payload:amount::NUMBER > 100'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 21..27"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TO_JSON(payload) AS txt FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 36..42"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload FROM events LIMIT 10'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 20..26"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_TO_STRING(tags, ',') AS tag_list FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 51..58"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, ARRAY_AGG(DISTINCT event_type) AS types FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 65..71"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, OBJECT_AGG(event_type, payload) AS by_type FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 68..74"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with source as (
+sql = '''with source as (
     select * from orders
 ),
 renamed as (
@@ -2366,8 +2365,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with orders as (
+sql = '''with orders as (
     select * from orders
 ),
 payments as (
@@ -2388,8 +2386,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with customer_orders as (
+sql = '''with customer_orders as (
     select
         customer_id,
         min(ordered_at) as first_order_at,
@@ -2414,8 +2411,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     date_trunc('day', ordered_at) as order_date,
     channel,
     count(*) as orders,
@@ -2429,21 +2425,19 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with events_ranked as (
+sql = '''with events_ranked as (
     select
         *,
         row_number() over (partition by event_id order by occurred_at desc) as rn
     from events
 )
 select * exclude (rn) from events_ranked where rn = 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 137..143"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     order_id,
     customer_id,
     case
@@ -2453,13 +2447,12 @@ select
     end as fulfillment_state,
     datediff('day', ordered_at, coalesce(shipped_at, current_timestamp())) as age_days
 from orders'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:DATEDIFF"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 267..286"
+expect_repository = "refused SQ0003 fn:DATEDIFF at 218..288"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with daily as (
+sql = '''with daily as (
     select ordered_at::date as day, sum(total) as revenue
     from orders
     group by 1
@@ -2474,8 +2467,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     p.product_id,
     p.name,
     p.category,
@@ -2485,13 +2477,12 @@ select
 from products p
 left join order_items i on i.product_id = p.product_id
 group by 1, 2, 3'''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 57..72"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with ticket_durations as (
+sql = '''with ticket_durations as (
     select
         ticket_id,
         priority,
@@ -2502,26 +2493,24 @@ with ticket_durations as (
 select priority, avg(minutes_open) as avg_minutes, max(minutes_open) as max_minutes
 from ticket_durations
 group by priority'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 149..156"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     customer_id,
     count_if(event_type = 'page_view') as page_views,
     count_if(event_type = 'add_to_cart') as add_to_carts,
     count_if(event_type = 'purchase') as purchases
 from events
 group by customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 192..198"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with monthly as (
+sql = '''with monthly as (
     select customer_id, date_trunc('month', ordered_at) as month, sum(total) as revenue
     from orders
     group by 1, 2
@@ -2538,18 +2527,16 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     {{ dbt_utils.generate_surrogate_key(['order_id', 'line_number']) }} as order_item_key,
     order_id
 from {{ ref('stg_order_items') }}'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 76..77"
+expect_repository = "parse SQ0001 at 76..77"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     md5(cast(order_id as varchar) || '-' || cast(line_number as varchar)) as order_item_key,
     order_id,
     line_number
@@ -2559,17 +2546,15 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select *
+sql = '''select *
 from orders
 where ordered_at > (select coalesce(max(ordered_at), '1900-01-01') from orders)'''
-expect = "refused SQ0003 fn:COALESCE"
-expect_repository = "refused SQ0003 fn:COALESCE"
+expect = "refused SQ0003 fn:COALESCE at 48..87"
+expect_repository = "refused SQ0003 fn:COALESCE at 48..87"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-with spine as (
+sql = '''with spine as (
     select dateadd(day, seq4(), '2024-01-01'::date) as day
     from table(generator(rowcount => 31))
 )
@@ -2582,8 +2567,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
-sql = '''
-select
+sql = '''select
     customer_id,
     email,
     country,
@@ -2605,7 +2589,7 @@ expect_repository = "translated"
 [[query]]
 category = "set_operations"
 sql = '''SELECT customer_id FROM orders UNION ALL SELECT customer_id FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 65..72"
 expect_repository = "translated"
 
 [[query]]
@@ -2659,8 +2643,7 @@ expect_repository = "translated"
 
 [[query]]
 category = "misc"
-sql = '''
-SELECT order_id -- the id
+sql = '''SELECT order_id -- the id
 FROM orders'''
 expect = "translated"
 expect_repository = "translated"
@@ -2674,81 +2657,81 @@ expect_repository = "translated"
 [[query]]
 category = "misc"
 sql = '''SELECT COUNT(*) AS n FROM orders WHERE status ILIKE ANY ('ship%', 'deliv%')'''
-expect = "refused SQ0008 node:i_like"
+expect = "refused SQ0008 node:i_like at 39..75"
 expect_repository = "translated"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders WHERE status LIKE ANY ('ship%', 'deliv%')'''
-expect = "refused SQ0003 node:like"
-expect_repository = "refused SQ0003 node:like"
+expect = "refused SQ0003 node:like at 34..69"
+expect_repository = "refused SQ0003 node:like at 34..69"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders ORDER BY RANDOM() LIMIT 1'''
-expect = "refused SQ0002 fn:RANDOM"
-expect_repository = "refused SQ0002 fn:RANDOM"
+expect = "refused SQ0002 fn:RANDOM at 37..45"
+expect_repository = "refused SQ0002 fn:RANDOM at 37..45"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders WHERE (customer_id, status) IN (SELECT customer_id, 'shipped' FROM customers)'''
-expect = "refused SQ0002 node:tuple"
-expect_repository = "refused SQ0002 node:tuple"
+expect = "refused SQ0002 node:tuple at 35..54"
+expect_repository = "refused SQ0002 node:tuple at 35..54"
 snowflake = "compiles"
 
 [[query]]
 category = "misc"
 sql = '''SELECT o.order_id FROM orders o WHERE o.total > ALL (SELECT amount FROM payments)'''
-expect = "refused SQ0002 node:all"
-expect_repository = "refused SQ0002 node:all"
+expect = "refused SQ0002 node:all at 38..80"
+expect_repository = "refused SQ0002 node:all at 38..80"
 
 [[query]]
 category = "misc"
 sql = '''SELECT IDENTIFIER('orders') AS x'''
-expect = "refused SQ0002 fn:IDENTIFIER"
-expect_repository = "refused SQ0002 fn:IDENTIFIER"
+expect = "refused SQ0002 fn:IDENTIFIER at 7..27"
+expect_repository = "refused SQ0002 fn:IDENTIFIER at 7..27"
 
 [[query]]
 category = "misc"
 sql = '''SELECT * FROM IDENTIFIER('orders')'''
-expect = "refused SQ0002 node:table_function"
-expect_repository = "refused SQ0002 node:table_function"
+expect = "refused SQ0002 node:table_function at 14..34"
+expect_repository = "refused SQ0002 node:table_function at 14..34"
 
 [[query]]
 category = "misc"
 sql = '''SELECT CURRENT_USER() AS u'''
-expect = "refused SQ0002 fn:CURRENT_USER"
-expect_repository = "refused SQ0002 fn:CURRENT_USER"
+expect = "refused SQ0002 fn:CURRENT_USER at 7..21"
+expect_repository = "refused SQ0002 fn:CURRENT_USER at 7..21"
 
 [[query]]
 category = "misc"
 sql = '''SELECT CURRENT_WAREHOUSE() AS w'''
-expect = "refused SQ0002 fn:CURRENT_WAREHOUSE"
-expect_repository = "refused SQ0002 fn:CURRENT_WAREHOUSE"
+expect = "refused SQ0002 fn:CURRENT_WAREHOUSE at 7..26"
+expect_repository = "refused SQ0002 fn:CURRENT_WAREHOUSE at 7..26"
 
 [[query]]
 category = "misc"
 sql = '''SELECT $1 FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 0..21"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..21"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders AT(OFFSET => -60)'''
-expect = "refused SQ0002 node:table"
-expect_repository = "refused SQ0002 node:table"
+expect = "refused SQ0002 node:table at 21..44"
+expect_repository = "refused SQ0002 node:table at 21..44"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders WHERE customer_id = :customer_id'''
-expect = "refused SQ0002 node:parameter"
-expect_repository = "refused SQ0002 node:parameter"
+expect = "refused SQ0002 node:parameter at 34..60"
+expect_repository = "refused SQ0002 node:parameter at 34..60"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders WHERE customer_id = ?'''
-expect = "refused SQ0002 node:placeholder"
-expect_repository = "refused SQ0002 node:placeholder"
+expect = "refused SQ0002 node:placeholder at 34..49"
+expect_repository = "refused SQ0002 node:placeholder at 34..49"
 
 [[query]]
 category = "misc"
@@ -2759,148 +2742,148 @@ expect_repository = "translated"
 [[query]]
 category = "misc"
 sql = '''SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 28..95"
+expect_repository = "refused SQ0003 node:pivot at 28..95"
 snowflake = "rejects 904"
 
 [[query]]
 category = "misc"
 sql = '''SELECT * FROM (SELECT channel, status, total FROM orders) PIVOT (SUM(total) FOR status IN ('shipped', 'pending'))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..86"
+expect_repository = "refused SQ0003 node:pivot at 22..86"
 
 [[query]]
 category = "misc"
 sql = '''SELECT order_id, HASH_AGG(*) AS h FROM orders GROUP BY order_id'''
-expect = "refused SQ0002 fn:HASH_AGG"
-expect_repository = "refused SQ0002 fn:HASH_AGG"
+expect = "refused SQ0002 fn:HASH_AGG at 17..28"
+expect_repository = "refused SQ0002 fn:HASH_AGG at 17..28"
 snowflake = "compiles"
 
 [[query]]
 category = "misc"
 sql = '''SELECT CURRENT_ACCOUNT() AS a'''
-expect = "refused SQ0002 fn:CURRENT_ACCOUNT"
-expect_repository = "refused SQ0002 fn:CURRENT_ACCOUNT"
+expect = "refused SQ0002 fn:CURRENT_ACCOUNT at 7..24"
+expect_repository = "refused SQ0002 fn:CURRENT_ACCOUNT at 7..24"
 
 [[query]]
 category = "ddl_dml"
 sql = '''CREATE TABLE big_orders AS SELECT * FROM orders WHERE total > 1000'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 13..66"
+expect_repository = "refused SQ0002 node:create_table at 13..66"
 
 [[query]]
 category = "ddl_dml"
 sql = '''CREATE OR REPLACE TABLE big_orders AS SELECT order_id, total FROM orders WHERE total > 1000'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 24..91"
+expect_repository = "refused SQ0002 node:create_table at 24..91"
 
 [[query]]
 category = "ddl_dml"
 sql = '''CREATE VIEW v_orders AS SELECT order_id, total FROM orders'''
-expect = "refused SQ0002 node:create_view"
-expect_repository = "refused SQ0002 node:create_view"
+expect = "refused SQ0002 node:create_view at 12..58"
+expect_repository = "refused SQ0002 node:create_view at 12..58"
 
 [[query]]
 category = "ddl_dml"
 sql = '''CREATE TEMPORARY TABLE t AS SELECT 1 AS x'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 23..41"
+expect_repository = "refused SQ0002 node:create_table at 23..41"
 
 [[query]]
 category = "ddl_dml"
 sql = '''INSERT INTO orders (order_id, customer_id, status, total) VALUES (1, 1, 'new', 10.00)'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..56"
+expect_repository = "refused SQ0002 node:insert at 12..56"
 
 [[query]]
 category = "ddl_dml"
 sql = '''INSERT INTO orders SELECT * FROM orders WHERE order_id = 1'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..58"
+expect_repository = "refused SQ0002 node:insert at 12..58"
 
 [[query]]
 category = "ddl_dml"
 sql = '''UPDATE orders SET status = 'cancelled' WHERE order_id = 1'''
-expect = "refused SQ0002 node:update"
-expect_repository = "refused SQ0002 node:update"
+expect = "refused SQ0002 node:update at 7..57"
+expect_repository = "refused SQ0002 node:update at 7..57"
 
 [[query]]
 category = "ddl_dml"
 sql = '''DELETE FROM orders WHERE status = 'cancelled''''
-expect = "refused SQ0002 node:delete"
-expect_repository = "refused SQ0002 node:delete"
+expect = "refused SQ0002 node:delete at 12..45"
+expect_repository = "refused SQ0002 node:delete at 12..45"
 
 [[query]]
 category = "ddl_dml"
 sql = '''MERGE INTO orders t USING orders s ON t.order_id = s.order_id WHEN MATCHED THEN UPDATE SET t.status = s.status WHEN NOT MATCHED THEN INSERT (order_id, status) VALUES (s.order_id, s.status)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..187"
+expect_repository = "refused SQ0002 node:merge at 11..187"
 
 [[query]]
 category = "ddl_dml"
 sql = '''TRUNCATE TABLE orders'''
-expect = "refused SQ0002 node:truncate"
-expect_repository = "refused SQ0002 node:truncate"
+expect = "refused SQ0002 node:truncate at 15..21"
+expect_repository = "refused SQ0002 node:truncate at 15..21"
 
 [[query]]
 category = "ddl_dml"
 sql = '''DROP TABLE IF EXISTS big_orders'''
-expect = "refused SQ0002 node:drop_table"
-expect_repository = "refused SQ0002 node:drop_table"
+expect = "refused SQ0002 node:drop_table at 21..31"
+expect_repository = "refused SQ0002 node:drop_table at 21..31"
 
 [[query]]
 category = "ddl_dml"
 sql = '''CREATE TABLE t (id INT, name VARCHAR)'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 13..28"
+expect_repository = "refused SQ0002 node:create_table at 13..28"
 
 [[query]]
 category = "ddl_dml"
 sql = '''ALTER TABLE orders ADD COLUMN note VARCHAR'''
-expect = "refused SQ0002 node:alter_table"
-expect_repository = "refused SQ0002 node:alter_table"
+expect = "refused SQ0002 node:alter_table at 12..34"
+expect_repository = "refused SQ0002 node:alter_table at 12..34"
 
 [[query]]
 category = "ddl_dml"
 sql = '''SHOW TABLES'''
-expect = "refused SQ0002 node:show"
-expect_repository = "refused SQ0002 node:show"
+expect = "refused SQ0002 node:show at 0..11"
+expect_repository = "refused SQ0002 node:show at 0..11"
 
 [[query]]
 category = "ddl_dml"
 sql = '''DESCRIBE TABLE orders'''
-expect = "refused SQ0002 node:describe"
-expect_repository = "refused SQ0002 node:describe"
+expect = "refused SQ0002 node:describe at 15..21"
+expect_repository = "refused SQ0002 node:describe at 15..21"
 
 [[query]]
 category = "ddl_dml"
 sql = '''USE WAREHOUSE compute_wh'''
-expect = "refused SQ0002 node:use"
-expect_repository = "refused SQ0002 node:use"
+expect = "refused SQ0002 node:use at 14..24"
+expect_repository = "refused SQ0002 node:use at 14..24"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELEC 1'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 0..5"
+expect_repository = "parse SQ0001 at 0..5"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT * FORM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 9..13"
+expect_repository = "parse SQ0001 at 9..13"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT * FROM'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 9..13"
+expect_repository = "parse SQ0001 at 9..13"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id total FROM orders WHERE'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 34..39"
+expect_repository = "parse SQ0001 at 34..39"
 
 [[query]]
 category = "invalid_syntax"
@@ -2912,76 +2895,76 @@ snowflake = "compiles"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id,, total FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 16..17"
+expect_repository = "parse SQ0001 at 16..17"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE total >'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 40..41"
+expect_repository = "parse SQ0001 at 40..41"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status = 'shipped'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 43..51"
+expect_repository = "parse SQ0001 at 43..51"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE (total > 10'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 43..45"
+expect_repository = "parse SQ0001 at 43..45"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE total > 10)'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 44..45"
+expect_repository = "parse SQ0001 at 44..45"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders GROUP status'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 28..33"
+expect_repository = "parse SQ0001 at 28..33"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders ORDER total'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 28..33"
+expect_repository = "parse SQ0001 at 28..33"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders LIMIT'''
-expect = "refused SQ0003 node:limit"
-expect_repository = "refused SQ0003 node:limit"
+expect = "refused SQ0003 node:limit at 0..33"
+expect_repository = "refused SQ0003 node:limit at 0..33"
 snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT COUNT(* FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 15..19"
+expect_repository = "parse SQ0001 at 15..19"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT SUM(total)) FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 17..18"
+expect_repository = "parse SQ0001 at 17..18"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders o JOIN customers c'''
-expect = "refused SQ0002 join:inner"
-expect_repository = "refused SQ0002 join:inner"
+expect = "refused SQ0002 join:inner at 30..46"
+expect_repository = "refused SQ0002 join:inner at 30..46"
 snowflake = "compiles"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders o JOIN customers c ON'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 47..49"
+expect_repository = "parse SQ0001 at 47..49"
 
 [[query]]
 category = "invalid_syntax"
@@ -2993,87 +2976,87 @@ snowflake = "rejects 2139"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status = "shipped"'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 43..52"
+expect_repository = "refused SQ0004 statement at 43..52"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT CASE WHEN total > 1 THEN 'a' FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 36..40"
+expect_repository = "parse SQ0001 at 36..40"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT CASE total > 1 THEN 'a' END FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 22..26"
+expect_repository = "parse SQ0001 at 22..26"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE total BETWEEN 1'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 48..49"
+expect_repository = "parse SQ0001 at 48..49"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status IN 'shipped''''
-expect = "refused SQ0002 node:in"
-expect_repository = "refused SQ0002 node:in"
+expect = "refused SQ0002 node:in at 34..53"
+expect_repository = "refused SQ0002 node:in at 34..53"
 snowflake = "rejects 1003"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status IN ()'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 45..46"
+expect_repository = "parse SQ0001 at 45..46"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''WITH t AS SELECT 1 SELECT * FROM t'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 10..16"
+expect_repository = "parse SQ0001 at 10..16"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''WITH t AS (SELECT 1) SELECT * FROM'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 30..34"
+expect_repository = "parse SQ0001 at 30..34"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders UNION'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 28..33"
+expect_repository = "parse SQ0001 at 28..33"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT * FROM orders WHERE'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 21..26"
+expect_repository = "parse SQ0001 at 21..26"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders HAVING'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 28..34"
+expect_repository = "parse SQ0001 at 28..34"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT DISTINCT FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 16..20"
+expect_repository = "parse SQ0001 at 16..20"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT 1 +'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 9..10"
+expect_repository = "parse SQ0001 at 9..10"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT 'unterminated'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 7..20"
+expect_repository = "parse SQ0001 at 7..20"
 
 [[query]]
 category = "invalid_syntax"
@@ -3085,192 +3068,192 @@ snowflake = "compiles"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id AS FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 24..30"
+expect_repository = "parse SQ0001 at 24..30"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE total >> 10'''
-expect = "refused SQ0002 node:bitwise_right_shift"
-expect_repository = "refused SQ0002 node:bitwise_right_shift"
+expect = "refused SQ0002 node:bitwise_right_shift at 34..45"
+expect_repository = "refused SQ0002 node:bitwise_right_shift at 34..45"
 snowflake = "rejects 1003"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders o LEFT orders c ON 1 = 1'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 35..41"
+expect_repository = "parse SQ0001 at 35..41"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT row_number() OVER (PARTITION customer_id) FROM orders'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 26..35"
+expect_repository = "parse SQ0001 at 26..35"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders QUALIFY'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 28..35"
+expect_repository = "parse SQ0001 at 28..35"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT IFF(total > 10, 'a') AS x FROM orders'''
-expect = "refused SQ0002 fn:IFF"
-expect_repository = "refused SQ0002 fn:IFF"
+expect = "refused SQ0002 fn:IFF at 7..27"
+expect_repository = "refused SQ0002 fn:IFF at 7..27"
 
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE order_id IN (1, 2,)'''
-expect = "parse SQ0001"
-expect_repository = "parse SQ0001"
+expect = "parse SQ0001 at 52..53"
+expect_repository = "parse SQ0001 at 52..53"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT discount_code FROM orders'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..20"
+expect_repository = "refused SQ0004 statement at 7..20"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM order'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 21..26"
+expect_repository = "refused SQ0004 statement at 21..26"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orderz'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 21..27"
+expect_repository = "refused SQ0004 statement at 21..27"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT o.order_id FROM orders'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..17"
+expect_repository = "refused SQ0004 statement at 7..17"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT x.order_id FROM orders o'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..17"
+expect_repository = "refused SQ0004 statement at 7..17"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT custmer_id FROM customers'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..17"
+expect_repository = "refused SQ0004 statement at 7..17"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id, status FROM orders GROUP BY status'''
-expect = "refused SQ0002 node:statement"
-expect_repository = "refused SQ0002 node:statement"
+expect = "refused SQ0002 node:statement at 0..51"
+expect_repository = "refused SQ0002 node:statement at 0..51"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT status, total FROM orders GROUP BY status'''
-expect = "refused SQ0002 node:statement"
-expect_repository = "refused SQ0002 node:statement"
+expect = "refused SQ0002 node:statement at 0..48"
+expect_repository = "refused SQ0002 node:statement at 0..48"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT customer_id FROM orders o JOIN customers c ON o.customer_id = c.customer_id'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..18"
+expect_repository = "refused SQ0004 statement at 7..18"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders WHERE SUM(total) > 10'''
-expect = "refused SQ0003 fn:SUM"
-expect_repository = "refused SQ0003 fn:SUM"
+expect = "refused SQ0003 fn:SUM at 34..44"
+expect_repository = "refused SQ0003 fn:SUM at 34..44"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT COUNT(*) AS n FROM orders WHERE n > 1'''
-expect = "refused SQ0002 node:statement"
-expect_repository = "refused SQ0002 node:statement"
+expect = "refused SQ0002 node:statement at 0..44"
+expect_repository = "refused SQ0002 node:statement at 0..44"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT SUM(SUM(total)) AS s FROM orders'''
-expect = "refused SQ0003 fn:SUM"
-expect_repository = "refused SQ0003 fn:SUM"
+expect = "refused SQ0003 fn:SUM at 11..21"
+expect_repository = "refused SQ0003 fn:SUM at 11..21"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders ORDER BY 5'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 0..38"
+expect_repository = "refused SQ0004 statement at 0..38"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders GROUP BY 3'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 0..38"
+expect_repository = "refused SQ0004 statement at 0..38"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders WHERE ROW_NUMBER() OVER (ORDER BY total) = 1'''
-expect = "refused SQ0003 node:window_function"
-expect_repository = "refused SQ0003 node:window_function"
+expect = "refused SQ0003 node:window_function at 34..68"
+expect_repository = "refused SQ0003 node:window_function at 34..68"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id, total + 'abc' AS x FROM orders'''
-expect = "refused SQ0003 node:add"
-expect_repository = "refused SQ0003 node:add"
+expect = "refused SQ0003 node:add at 17..30"
+expect_repository = "refused SQ0003 node:add at 17..30"
 snowflake = "compiles"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT DATEADD(day, 'x', ordered_at) AS x FROM orders'''
-expect = "refused SQ0003 fn:DATEADD"
-expect_repository = "refused SQ0003 fn:DATEADD"
+expect = "refused SQ0003 fn:DATEADD at 7..36"
+expect_repository = "refused SQ0003 fn:DATEADD at 7..36"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders WHERE ordered_at > 5'''
-expect = "refused SQ0003 node:gt"
-expect_repository = "refused SQ0003 node:gt"
+expect = "refused SQ0003 node:gt at 34..48"
+expect_repository = "refused SQ0003 node:gt at 34..48"
 snowflake = "rejects 1038"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT LENGTH(order_id, 2) AS x FROM orders'''
-expect = "refused SQ0002 fn:LENGTH"
-expect_repository = "refused SQ0002 fn:LENGTH"
+expect = "refused SQ0002 fn:LENGTH at 7..26"
+expect_repository = "refused SQ0002 fn:LENGTH at 7..26"
 snowflake = "rejects 939"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT NOSUCHFUNCTION(order_id) AS x FROM orders'''
-expect = "refused SQ0002 fn:NOSUCHFUNCTION"
-expect_repository = "refused SQ0002 fn:NOSUCHFUNCTION"
+expect = "refused SQ0002 fn:NOSUCHFUNCTION at 7..31"
+expect_repository = "refused SQ0002 fn:NOSUCHFUNCTION at 7..31"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT 1 QUALIFY TRUE'''
-expect = "check SQ0203"
-expect_repository = "check SQ0203"
+expect = "check SQ0203 at 9..16"
+expect_repository = "check SQ0203 at 9..16"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT customer_id, SUM(total) AS revenue FROM orders GROUP BY customer_id QUALIFY revenue > 100'''
-expect = "check SQ0203"
-expect_repository = "check SQ0203"
+expect = "check SQ0203 at 75..96"
+expect_repository = "check SQ0203 at 75..96"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT payload:page FROM orders'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 7..14"
+expect_repository = "refused SQ0004 statement at 7..14"
 
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT order_id FROM orders o, orders o'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 0..39"
+expect_repository = "refused SQ0004 statement at 0..39"
 snowflake = "rejects 2027"
 
 # Unaliased output names over columns and expressions, recorded before #99.
@@ -3326,14 +3309,14 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE()'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 7..21"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT total::VARCHAR FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..21"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..21"
 
 [[query]]
 category = "literals"
@@ -3350,26 +3333,26 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT IFF(total > 100, 'big', 'small') FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..39"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..39"
 
 [[query]]
 category = "literals"
 sql = '''SELECT DATE_TRUNC('month', ordered_at) FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..38"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..38"
 
 [[query]]
 category = "literals"
 sql = '''SELECT 1 + 1'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..12"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..12"
 
 [[query]]
 category = "literals"
 sql = '''SELECT 'a' || 'b''''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..17"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..17"
 
 [[query]]
 category = "literals"
@@ -3392,8 +3375,8 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT order_id, total - discount FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name"
+expect = "refused SQ0009 syntax:unaliased_output_name at 17..33"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 17..33"
 
 # Round 4: analyst aggregates and statistics, numeric and string helpers, month arithmetic, array
 # and object functions, NVL2/DECODE, NATURAL and FULL joins, and window idioms.
@@ -3401,8 +3384,8 @@ expect_repository = "refused SQ0009 syntax:unaliased_output_name"
 [[query]]
 category = "aggregates"
 sql = '''SELECT channel, status, SUM(total) AS revenue FROM orders GROUP BY CUBE (channel, status)'''
-expect = "refused SQ0002 fn:CUBE"
-expect_repository = "refused SQ0002 fn:CUBE"
+expect = "refused SQ0002 fn:CUBE at 73..88"
+expect_repository = "refused SQ0002 fn:CUBE at 73..88"
 
 [[query]]
 category = "aggregates"
@@ -3413,25 +3396,25 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT CORR(total, discount) AS c, COVAR_SAMP(total, discount) AS cv FROM orders'''
-expect = "refused SQ0002 fn:CORR"
-expect_repository = "refused SQ0002 fn:CORR"
+expect = "refused SQ0002 fn:CORR at 7..28"
+expect_repository = "refused SQ0002 fn:CORR at 7..28"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT KURTOSIS(total) AS k, SKEW(total) AS s FROM orders'''
-expect = "refused SQ0002 fn:KURTOSIS"
-expect_repository = "refused SQ0002 fn:KURTOSIS"
+expect = "refused SQ0002 fn:KURTOSIS at 7..22"
+expect_repository = "refused SQ0002 fn:KURTOSIS at 7..22"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT VARIANCE(total) AS v, STDDEV_SAMP(total) AS sd FROM orders'''
-expect = "refused SQ0008 fn:VARIANCE"
+expect = "refused SQ0008 fn:VARIANCE at 7..22"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT channel, MEDIAN(total) AS median_total FROM orders GROUP BY channel'''
-expect = "refused SQ0008 fn:MEDIAN"
+expect = "refused SQ0008 fn:MEDIAN at 16..29"
 expect_repository = "translated"
 
 [[query]]
@@ -3443,7 +3426,7 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT channel, MODE(status) AS common_status FROM orders GROUP BY channel'''
-expect = "refused SQ0008 fn:MODE"
+expect = "refused SQ0008 fn:MODE at 16..28"
 expect_repository = "translated"
 
 [[query]]
@@ -3455,14 +3438,14 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT customer_id, MIN_BY(order_id, ordered_at) AS first_order, MAX_BY(order_id, ordered_at) AS last_order FROM orders GROUP BY customer_id'''
-expect = "refused SQ0008 fn:MIN_BY"
+expect = "refused SQ0008 fn:MIN_BY at 20..48"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT customer_id, ARRAY_UNIQUE_AGG(channel) AS channels FROM orders GROUP BY customer_id'''
-expect = "refused SQ0002 fn:ARRAY_UNIQUE_AGG"
-expect_repository = "refused SQ0002 fn:ARRAY_UNIQUE_AGG"
+expect = "refused SQ0002 fn:ARRAY_UNIQUE_AGG at 20..45"
+expect_repository = "refused SQ0002 fn:ARRAY_UNIQUE_AGG at 20..45"
 
 [[query]]
 category = "aggregates"
@@ -3545,13 +3528,13 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id, REGEXP_COUNT(email, '\\.') AS dots FROM customers'''
-expect = "refused SQ0008 fn:REGEXP_COUNT"
+expect = "refused SQ0008 fn:REGEXP_COUNT at 20..46"
 expect_repository = "translated"
 
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id, REGEXP_INSTR(email, '@') AS at_pos FROM customers'''
-expect = "refused SQ0008 fn:REGEXP_INSTR"
+expect = "refused SQ0008 fn:REGEXP_INSTR at 20..44"
 expect_repository = "translated"
 
 [[query]]
@@ -3563,8 +3546,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id, SOUNDEX(last_name) AS sx FROM customers'''
-expect = "refused SQ0002 fn:SOUNDEX"
-expect_repository = "refused SQ0002 fn:SOUNDEX"
+expect = "refused SQ0002 fn:SOUNDEX at 20..38"
+expect_repository = "refused SQ0002 fn:SOUNDEX at 20..38"
 
 [[query]]
 category = "strings"
@@ -3587,7 +3570,7 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id, SPLIT(email, '@')[1]::VARCHAR AS domain FROM customers'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 20..49"
 expect_repository = "translated"
 
 [[query]]
@@ -3599,8 +3582,8 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id FROM customers WHERE email LIKE ANY ('%@gmail.com', '%@yahoo.com')'''
-expect = "refused SQ0003 node:like"
-expect_repository = "refused SQ0003 node:like"
+expect = "refused SQ0003 node:like at 40..85"
+expect_repository = "refused SQ0003 node:like at 40..85"
 
 [[query]]
 category = "strings"
@@ -3629,8 +3612,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, YEAROFWEEK(ordered_at) AS iso_year, WEEKOFYEAR(ordered_at) AS week FROM orders'''
-expect = "refused SQ0002 fn:YEAROFWEEK"
-expect_repository = "refused SQ0002 fn:YEAROFWEEK"
+expect = "refused SQ0002 fn:YEAROFWEEK at 17..39"
+expect_repository = "refused SQ0002 fn:YEAROFWEEK at 17..39"
 
 [[query]]
 category = "dates"
@@ -3677,13 +3660,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, TO_DATE('2026-11-06') AS d FROM orders'''
-expect = "refused SQ0008 fn:TO_DATE"
+expect = "refused SQ0008 fn:TO_DATE at 17..38"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, TRY_TO_TIMESTAMP(channel) AS t FROM orders'''
-expect = "refused SQ0008 fn:TRY_TO_TIMESTAMP"
+expect = "refused SQ0008 fn:TRY_TO_TIMESTAMP at 17..42"
 expect_repository = "translated"
 
 [[query]]
@@ -3701,97 +3684,97 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(month, -3, DATE_TRUNC('month', CURRENT_DATE()))'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
-expect_repository = "refused SQ0003 node:gte"
+expect = "refused SQ0008 fn:CURRENT_DATE at 87..101"
+expect_repository = "refused SQ0003 node:gte at 34..103"
 
 [[query]]
 category = "dates"
 sql = '''SELECT customer_id, DATEDIFF('day', signup_date, CURRENT_DATE()) AS tenure_days FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 49..63"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, TIME_SLICE(ordered_at, 15, 'MINUTE') AS slot FROM orders'''
-expect = "refused SQ0002 fn:TIME_SLICE"
-expect_repository = "refused SQ0002 fn:TIME_SLICE"
+expect = "refused SQ0002 fn:TIME_SLICE at 17..53"
+expect_repository = "refused SQ0002 fn:TIME_SLICE at 17..53"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, LAST_DAY(ordered_at::DATE, 'week') AS week_end FROM orders'''
-expect = "refused SQ0003 fn:LAST_DAY"
-expect_repository = "refused SQ0003 fn:LAST_DAY"
+expect = "refused SQ0003 fn:LAST_DAY at 17..51"
+expect_repository = "refused SQ0003 fn:LAST_DAY at 17..51"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_SLICE(tags, 0, 2) AS first_tags FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 61..68"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_DISTINCT(tags) AS tags FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 52..59"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_APPEND(tags, 'triaged') AS tags FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 61..68"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_CAT(tags, ARRAY_CONSTRUCT('x')) AS tags FROM tickets'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 69..76"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id FROM tickets WHERE ARRAYS_OVERLAP(tags, ARRAY_CONSTRUCT('urgent', 'vip'))'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 22..29"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_INSERT(payload, 'seen', TRUE) AS payload FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 70..76"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_DELETE(payload, 'debug') AS payload FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 65..71"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, STRIP_NULL_VALUE(payload:coupon) AS coupon FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 65..71"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, IS_NULL_VALUE(payload:coupon) AS coupon_is_json_null FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 75..81"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, payload:amount::FLOAT AS amount FROM events WHERE IS_DECIMAL(payload:amount) OR IS_INTEGER(payload:amount)'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 54..60"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, TO_JSON(payload) AS payload_text FROM events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 55..61"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, ARRAY_AGG(DISTINCT event_type) WITHIN GROUP (ORDER BY event_type) AS types FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 100..106"
 expect_repository = "translated"
 
 [[query]]
@@ -3839,8 +3822,8 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT o.order_id, i.product_id FROM orders o NATURAL JOIN order_items i'''
-expect = "refused SQ0002 join:natural"
-expect_repository = "refused SQ0002 join:natural"
+expect = "refused SQ0002 join:natural at 46..72"
+expect_repository = "refused SQ0002 join:natural at 46..72"
 
 [[query]]
 category = "set_operations"
@@ -3875,7 +3858,7 @@ expect_repository = "translated"
 [[query]]
 category = "windows"
 sql = '''SELECT order_id, LISTAGG(status, ',') WITHIN GROUP (ORDER BY ordered_at) OVER (PARTITION BY customer_id) AS history FROM orders'''
-expect = "refused SQ0008 fn:LISTAGG"
+expect = "refused SQ0008 fn:LISTAGG at 17..104"
 expect_repository = "translated"
 
 [[query]]

@@ -6,7 +6,7 @@ from scripts.basics_corpus.main.generate import run_generate
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Write corpora/basics/queries.toml with each statement's recorded outcome."""
+    """Write corpora/basics/queries.toml with outcomes left for `make corpus-rerecord`."""
     return run_generate(argv)
 
 

@@ -109,7 +109,7 @@ sql = '''select
     nullif(trim(email), '') as email,
     updated_at
 from raw_customers'''
-expect = "refused SQ0008 fn:INITCAP"
+expect = "refused SQ0008 fn:INITCAP at 34..53"
 expect_repository = "translated"
 
 [[query]]
@@ -149,8 +149,8 @@ sql = '''select
     _loaded_at
 from raw_orders
 where _loaded_at >= dateadd(day, -3, current_timestamp())'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:DATEADD"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 169..188"
+expect_repository = "refused SQ0003 fn:DATEADD at 152..189"
 
 [[query]]
 category = "dbt_staging"
@@ -275,7 +275,7 @@ sql = '''select
     id as order_id,
     convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_local
 from raw_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 31..86"
 expect_repository = "translated"
 
 [[query]]
@@ -287,7 +287,7 @@ sql = '''select
     raw:occurred_at::timestamp_ntz as occurred_at,
     _loaded_at
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 192..202"
 expect_repository = "translated"
 
 [[query]]
@@ -297,7 +297,7 @@ sql = '''select
     raw:properties:page::string as page,
     raw:properties:referrer::string as referrer
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 133..143"
 expect_repository = "translated"
 
 [[query]]
@@ -306,7 +306,7 @@ sql = '''select
     raw['id']::varchar as event_id,
     raw['properties']['page']::varchar as page
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 95..105"
 expect_repository = "translated"
 
 [[query]]
@@ -315,7 +315,7 @@ sql = '''select
     get_path(raw, 'properties.page')::varchar as page,
     raw:id::varchar as event_id
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 99..109"
 expect_repository = "translated"
 
 [[query]]
@@ -324,7 +324,7 @@ sql = '''select
     raw:id::varchar as event_id,
     try_to_timestamp(raw:occurred_at::varchar) as occurred_at
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 107..117"
 expect_repository = "translated"
 
 [[query]]
@@ -333,7 +333,7 @@ sql = '''select
     raw:id::varchar as event_id,
     coalesce(raw:revenue::number(12,2), 0) as revenue
 from raw_events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 99..109"
 expect_repository = "translated"
 
 [[query]]
@@ -365,7 +365,7 @@ sql = '''select
     attributes:utm_source::varchar as utm_source,
     attributes:utm_campaign::varchar as utm_campaign
 from web_sessions'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 164..176"
 expect_repository = "translated"
 
 [[query]]
@@ -403,15 +403,15 @@ expect_repository = "translated"
 category = "dbt_staging"
 sql = '''select * rename (id as order_id, user_id as customer_id)
 from raw_orders'''
-expect = "refused SQ0002 node:star"
-expect_repository = "refused SQ0002 node:star"
+expect = "refused SQ0002 node:star at 0..72"
+expect_repository = "refused SQ0002 node:star at 0..72"
 
 [[query]]
 category = "dbt_staging"
 sql = '''select * exclude (_loaded_at) rename (id as customer_id)
 from raw_customers'''
-expect = "refused SQ0002 node:star"
-expect_repository = "refused SQ0002 node:star"
+expect = "refused SQ0002 node:star at 0..75"
+expect_repository = "refused SQ0002 node:star at 0..75"
 uncertain = true
 
 [[query]]
@@ -421,7 +421,7 @@ sql = '''select
     user_id as customer_id,
     current_timestamp() as _dbt_loaded_at
 from raw_orders'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 59..78"
 expect_repository = "translated"
 
 [[query]]
@@ -507,8 +507,8 @@ final as (
     left join customer_payments on customers.customer_id = customer_payments.customer_id
 )
 select * from final'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "refused SQ0004 statement at 448..454"
+expect_repository = "refused SQ0004 statement at 448..454"
 snowflake = "rejects 2028"
 
 [[query]]
@@ -1063,7 +1063,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 136..149"
 expect_repository = "translated"
 
 [[query]]
@@ -1087,7 +1087,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 fn:AVG"
+expect = "refused SQ0008 fn:AVG at 209..222"
 expect_repository = "translated"
 
 [[query]]
@@ -1105,7 +1105,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 143..155"
 expect_repository = "translated"
 
 [[query]]
@@ -1129,7 +1129,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 fn:AVG"
+expect = "refused SQ0008 fn:AVG at 215..227"
 expect_repository = "translated"
 
 [[query]]
@@ -1147,7 +1147,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 35..47"
 expect_repository = "translated"
 
 [[query]]
@@ -1171,7 +1171,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 35..47"
 expect_repository = "translated"
 
 [[query]]
@@ -1197,7 +1197,7 @@ final as (
 )
 select * from final
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 35..47"
 expect_repository = "translated"
 
 [[query]]
@@ -1229,7 +1229,7 @@ final as (
 )
 select * from final
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 33..45"
 expect_repository = "translated"
 
 [[query]]
@@ -1261,7 +1261,7 @@ category_revenue as (
     group by 1, 2
 )
 select * from category_revenue'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 220..253"
 expect_repository = "translated"
 
 [[query]]
@@ -1298,8 +1298,8 @@ sql = '''with recursive numbers as (
     select n + 1 from numbers where n < 10
 )
 select n from numbers'''
-expect = "refused SQ0002 node:with"
-expect_repository = "refused SQ0002 node:with"
+expect = "refused SQ0002 node:with at 0..126"
+expect_repository = "refused SQ0002 node:with at 0..126"
 
 [[query]]
 category = "dbt_cte_chain"
@@ -1387,7 +1387,7 @@ select
     median(hours_to_close) as median_hours_to_close
 from resolution
 group by priority'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 36..43"
 expect_repository = "translated"
 
 [[query]]
@@ -1403,7 +1403,7 @@ first_touch as (
     group by customer_id
 )
 select * from first_touch'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 37..49"
 expect_repository = "translated"
 
 [[query]]
@@ -1462,8 +1462,8 @@ sql = '''select
 from stg_orders
 where updated_at > (select coalesce(max(updated_at), '1900-01-01') from fct_orders)
 '''
-expect = "refused SQ0003 fn:COALESCE"
-expect_repository = "refused SQ0003 fn:COALESCE"
+expect = "refused SQ0003 fn:COALESCE at 136..175"
+expect_repository = "refused SQ0003 fn:COALESCE at 136..175"
 
 [[query]]
 category = "dbt_incremental"
@@ -1492,7 +1492,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select coalesce(max(updated_at), to_timestamp_ntz('1900-01-01')) from fct_orders)
 '''
-expect = "refused SQ0008 fn:TO_TIMESTAMP_NTZ"
+expect = "refused SQ0008 fn:TO_TIMESTAMP_NTZ at 162..192"
 expect_repository = "translated"
 
 [[query]]
@@ -1507,7 +1507,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select dateadd(hour, -3, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 136..170"
 expect_repository = "translated"
 
 [[query]]
@@ -1522,7 +1522,7 @@ sql = '''select
 from stg_orders
 where updated_at >= (select dateadd(day, -1, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 137..170"
 expect_repository = "translated"
 
 [[query]]
@@ -1537,7 +1537,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select max(updated_at) - interval '3 hours' from fct_orders)
 '''
-expect = "refused SQ0008 node:sub"
+expect = "refused SQ0008 node:sub at 136..172"
 expect_repository = "translated"
 
 [[query]]
@@ -1678,15 +1678,15 @@ category = "dbt_incremental"
 sql = '''select *
 from raw_orders
 where _loaded_at > (select coalesce(max(updated_at), '1970-01-01') from fct_orders)'''
-expect = "refused SQ0003 fn:COALESCE"
-expect_repository = "refused SQ0003 fn:COALESCE"
+expect = "refused SQ0003 fn:COALESCE at 52..91"
+expect_repository = "refused SQ0003 fn:COALESCE at 52..91"
 
 [[query]]
 category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at > (select max(occurred_at) from events)'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..20"
 expect_repository = "translated"
 
 [[query]]
@@ -1694,15 +1694,15 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at >= dateadd(day, -3, current_date())'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0003 node:gte"
+expect = "refused SQ0008 node:column at 14..20"
+expect_repository = "refused SQ0003 node:gte at 27..74"
 
 [[query]]
 category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at::date >= current_date() - 3'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..20"
 expect_repository = "translated"
 
 [[query]]
@@ -1710,7 +1710,7 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at >= dateadd(day, -3, (select max(occurred_at) from events))'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..20"
 expect_repository = "translated"
 
 [[query]]
@@ -1718,8 +1718,8 @@ category = "dbt_incremental"
 sql = '''select *
 from payments
 where paid_at between dateadd(day, -7, current_date()) and current_date()'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
-expect_repository = "refused SQ0003 node:between"
+expect = "refused SQ0008 fn:CURRENT_DATE at 62..76"
+expect_repository = "refused SQ0003 node:between at 29..96"
 
 [[query]]
 category = "dbt_incremental"
@@ -1757,7 +1757,7 @@ where updated_at > (
     from fct_orders
     where order_date >= dateadd(month, -1, current_date())
 )'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 151..165"
 expect_repository = "translated"
 
 [[query]]
@@ -1765,8 +1765,8 @@ category = "dbt_incremental"
 sql = '''select order_id, amount, updated_at
 from stg_orders
 where updated_at > ifnull((select max(updated_at) from fct_orders), '1900-01-01')'''
-expect = "refused SQ0003 fn:IFNULL"
-expect_repository = "refused SQ0003 fn:IFNULL"
+expect = "refused SQ0003 fn:IFNULL at 71..133"
+expect_repository = "refused SQ0003 fn:IFNULL at 71..133"
 
 [[query]]
 category = "dbt_incremental"
@@ -1854,7 +1854,7 @@ sql = '''select *
 from events
 qualify row_number() over (partition by event_id order by occurred_at desc) = 1
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..20"
 expect_repository = "translated"
 
 [[query]]
@@ -1863,7 +1863,7 @@ sql = '''select *
 from web_sessions
 qualify row_number() over (partition by session_id order by started_at desc) = 1
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..26"
 expect_repository = "translated"
 
 [[query]]
@@ -2035,7 +2035,7 @@ category = "dbt_dedup"
 sql = '''select id, any_value(user_id) as user_id, max(updated_at) as updated_at
 from raw_orders
 group by id'''
-expect = "refused SQ0008 fn:ANY_VALUE"
+expect = "refused SQ0008 fn:ANY_VALUE at 11..29"
 expect_repository = "translated"
 
 [[query]]
@@ -2043,7 +2043,7 @@ category = "dbt_dedup"
 sql = '''select id, max_by(status, updated_at) as status, max(updated_at) as updated_at
 from raw_orders
 group by id'''
-expect = "refused SQ0008 fn:MAX_BY"
+expect = "refused SQ0008 fn:MAX_BY at 11..37"
 expect_repository = "translated"
 
 [[query]]
@@ -2062,7 +2062,7 @@ sql = '''select
     item.value:quantity::number as quantity
 from events,
     lateral flatten(input => events.payload:items) as item'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 113..119"
 expect_repository = "translated"
 
 [[query]]
@@ -2073,7 +2073,7 @@ sql = '''select
     f.value:price::number(10,2) as price
 from events e,
     lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 101..109"
 expect_repository = "translated"
 
 [[query]]
@@ -2084,7 +2084,7 @@ sql = '''select
     f.value::varchar as tag
 from events e,
     lateral flatten(input => e.payload:tags) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 81..89"
 expect_repository = "translated"
 
 [[query]]
@@ -2094,7 +2094,7 @@ sql = '''select
     f.value::varchar as tag
 from events e,
     lateral flatten(input => e.payload:tags, outer => true) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 56..64"
 expect_repository = "translated"
 
 [[query]]
@@ -2104,7 +2104,7 @@ sql = '''select
     tag.value::varchar as tag
 from tickets t,
     lateral flatten(input => t.tags) tag'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 59..68"
 expect_repository = "translated"
 
 [[query]]
@@ -2114,8 +2114,8 @@ sql = '''select
     tag.value::varchar as tag
 from tickets t,
     table(flatten(input => t.tags)) tag'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0002 fn:FLATTEN"
+expect = "refused SQ0008 node:column at 59..68"
+expect_repository = "refused SQ0002 fn:FLATTEN at 74..109"
 
 [[query]]
 category = "dbt_flatten"
@@ -2126,7 +2126,7 @@ from tickets t,
     lateral flatten(input => t.tags) tag
 group by 1
 order by 2 desc'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 67..76"
 expect_repository = "translated"
 
 [[query]]
@@ -2137,7 +2137,7 @@ sql = '''select
     attr.value::varchar as value
 from events e,
     lateral flatten(input => e.payload:attributes) attr'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 88..96"
 expect_repository = "translated"
 
 [[query]]
@@ -2148,7 +2148,7 @@ sql = '''select
     a.value::varchar as value
 from web_sessions s,
     lateral flatten(input => s.attributes) a'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 84..98"
 expect_repository = "translated"
 
 [[query]]
@@ -2160,7 +2160,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) item,
     lateral flatten(input => item.value:options) option'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 100..108"
 expect_repository = "translated"
 
 [[query]]
@@ -2170,7 +2170,7 @@ sql = '''select
     f.value:name::varchar as product_name
 from raw_events r,
     lateral flatten(input => r.raw:products) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 89..101"
 expect_repository = "translated"
 
 [[query]]
@@ -2181,7 +2181,7 @@ sql = '''select
     f.value
 from raw_events r,
     lateral flatten(input => r.raw, recursive => true) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 71..83"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2194,7 +2194,7 @@ from events e,
     lateral flatten(input => e.payload:items) f
 where e.event_type = 'purchase'
 group by 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 88..96"
 expect_repository = "translated"
 
 [[query]]
@@ -2203,7 +2203,7 @@ sql = '''select
     e.event_id,
     array_size(e.payload:items) as item_count
 from events e'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 74..82"
 expect_repository = "translated"
 
 [[query]]
@@ -2212,7 +2212,7 @@ sql = '''select
     e.event_id,
     e.payload:items[0]:sku::varchar as first_sku
 from events e'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 77..85"
 expect_repository = "translated"
 
 [[query]]
@@ -2223,7 +2223,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) f
 group by e.event_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 104..112"
 expect_repository = "translated"
 
 [[query]]
@@ -2233,7 +2233,7 @@ sql = '''select
     object_agg(e.event_type, e.payload) as last_payload_by_type
 from events e
 group by e.customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 95..103"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2244,8 +2244,8 @@ sql = '''select
     f.value:sku::varchar as sku
 from events e
 join lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0002 node:lateral"
+expect = "refused SQ0008 node:column at 60..68"
+expect_repository = "refused SQ0002 node:lateral at 74..117"
 snowflake = "compiles"
 
 [[query]]
@@ -2255,8 +2255,8 @@ sql = '''select
     f.value:sku::varchar as sku
 from events e
 inner join lateral flatten(input => e.payload:items) f on true'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0002 node:lateral"
+expect = "refused SQ0008 node:column at 60..68"
+expect_repository = "refused SQ0002 node:lateral at 80..123"
 snowflake = "rejects 2"
 
 [[query]]
@@ -2264,16 +2264,16 @@ category = "dbt_flatten"
 sql = '''select
     f.value::varchar as tag
 from table(flatten(input => parse_json('["a", "b", "c"]'))) f'''
-expect = "refused SQ0002 fn:FLATTEN"
-expect_repository = "refused SQ0002 fn:FLATTEN"
+expect = "refused SQ0002 fn:FLATTEN at 40..96"
+expect_repository = "refused SQ0002 fn:FLATTEN at 40..96"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select
     f.value::number as n
 from table(flatten(input => array_construct(1, 2, 3))) f'''
-expect = "refused SQ0002 fn:FLATTEN"
-expect_repository = "refused SQ0002 fn:FLATTEN"
+expect = "refused SQ0002 fn:FLATTEN at 37..88"
+expect_repository = "refused SQ0002 fn:FLATTEN at 37..88"
 
 [[query]]
 category = "dbt_flatten"
@@ -2284,7 +2284,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) f
 where f.value:quantity::number > 0'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 134..142"
 expect_repository = "translated"
 
 [[query]]
@@ -2294,7 +2294,7 @@ sql = '''select
     f.this
 from events e,
     lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 39..47"
 expect_repository = "translated"
 
 [[query]]
@@ -2307,8 +2307,8 @@ sql = '''select
     f.value
 from events e,
     lateral flatten(input => e.payload) f'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0003 node:column"
+expect = "refused SQ0008 node:column at 75..83"
+expect_repository = "refused SQ0003 node:column at 27..32"
 
 [[query]]
 category = "dbt_flatten"
@@ -2317,7 +2317,7 @@ sql = '''select
     s.value::varchar as word
 from tickets t,
     lateral split_to_table(t.subject, ' ') s'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 58..67"
 expect_repository = "translated"
 
 [[query]]
@@ -2326,7 +2326,7 @@ sql = '''select
     t.ticket_id,
     array_to_string(t.tags, ', ') as tag_list
 from tickets t'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 75..84"
 expect_repository = "translated"
 
 [[query]]
@@ -2343,8 +2343,8 @@ when matched then update set
     target.updated_at = source.updated_at
 when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
     values (source.order_id, source.customer_id, source.order_date, source.status, source.amount, source.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..531"
+expect_repository = "refused SQ0002 node:merge at 11..531"
 
 [[query]]
 category = "ddl_dml"
@@ -2354,8 +2354,8 @@ on t.order_id = s.order_id
 when matched and s.status = 'deleted' then delete
 when matched then update set status = s.status, amount = s.amount, updated_at = s.updated_at
 when not matched then insert values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..323"
+expect_repository = "refused SQ0002 node:merge at 11..323"
 
 [[query]]
 category = "ddl_dml"
@@ -2364,15 +2364,15 @@ using (select * from stg_orders qualify row_number() over (partition by order_id
 on t.order_id = s.order_id
 when matched then update set t.amount = s.amount
 when not matched then insert (order_id, amount) values (s.order_id, s.amount)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..290"
+expect_repository = "refused SQ0002 node:merge at 11..290"
 
 [[query]]
 category = "ddl_dml"
 sql = '''delete from fct_orders
 where order_id in (select order_id from stg_orders where updated_at > (select max(updated_at) from fct_orders))'''
-expect = "refused SQ0002 node:delete"
-expect_repository = "refused SQ0002 node:delete"
+expect = "refused SQ0002 node:delete at 12..134"
+expect_repository = "refused SQ0002 node:delete at 12..134"
 
 [[query]]
 category = "ddl_dml"
@@ -2380,52 +2380,52 @@ sql = '''insert into fct_orders (order_id, customer_id, order_date, status, amou
 select order_id, customer_id, order_date, status, amount, updated_at
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders)'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..231"
+expect_repository = "refused SQ0002 node:insert at 12..231"
 
 [[query]]
 category = "ddl_dml"
 sql = '''insert overwrite into fct_orders
 select * from stg_orders'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 22..57"
+expect_repository = "refused SQ0002 node:insert at 22..57"
 
 [[query]]
 category = "ddl_dml"
 sql = '''create or replace table fct_orders as (
     select * from stg_orders
 )'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 24..68"
+expect_repository = "refused SQ0002 node:create_table at 24..68"
 
 [[query]]
 category = "ddl_dml"
 sql = '''create or replace transient table fct_orders as
 select * from stg_orders'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 34..72"
+expect_repository = "refused SQ0002 node:create_table at 34..72"
 
 [[query]]
 category = "ddl_dml"
 sql = '''create or replace view stg_orders_v as
 select order_id, status from stg_orders'''
-expect = "refused SQ0002 node:create_view"
-expect_repository = "refused SQ0002 node:create_view"
+expect = "refused SQ0002 node:create_view at 23..78"
+expect_repository = "refused SQ0002 node:create_view at 23..78"
 
 [[query]]
 category = "ddl_dml"
 sql = '''create or replace temporary table fct_orders__dbt_tmp as
 select * from stg_orders where updated_at > (select max(updated_at) from fct_orders)'''
-expect = "refused SQ0002 node:create_table"
-expect_repository = "refused SQ0002 node:create_table"
+expect = "refused SQ0002 node:create_table at 34..141"
+expect_repository = "refused SQ0002 node:create_table at 34..141"
 
 [[query]]
 category = "ddl_dml"
 sql = '''update fct_orders
 set status = 'archived'
 where order_date < dateadd(year, -2, current_date())'''
-expect = "refused SQ0002 node:update"
-expect_repository = "refused SQ0002 node:update"
+expect = "refused SQ0002 node:update at 7..94"
+expect_repository = "refused SQ0002 node:update at 7..94"
 
 [[query]]
 category = "ddl_dml"
@@ -2433,20 +2433,20 @@ sql = '''update fct_orders t
 set amount = s.amount
 from stg_orders s
 where t.order_id = s.order_id'''
-expect = "refused SQ0002 node:update"
-expect_repository = "refused SQ0002 node:update"
+expect = "refused SQ0002 node:update at 7..89"
+expect_repository = "refused SQ0002 node:update at 7..89"
 
 [[query]]
 category = "ddl_dml"
 sql = '''alter table fct_orders add column if not exists channel varchar'''
-expect = "refused SQ0002 node:alter_table"
-expect_repository = "refused SQ0002 node:alter_table"
+expect = "refused SQ0002 node:alter_table at 12..55"
+expect_repository = "refused SQ0002 node:alter_table at 12..55"
 
 [[query]]
 category = "ddl_dml"
 sql = '''truncate table fct_orders'''
-expect = "refused SQ0002 node:truncate"
-expect_repository = "refused SQ0002 node:truncate"
+expect = "refused SQ0002 node:truncate at 15..25"
+expect_repository = "refused SQ0002 node:truncate at 15..25"
 
 [[query]]
 category = "ddl_dml"
@@ -2454,8 +2454,8 @@ sql = '''begin;
 delete from fct_orders where order_date = current_date();
 insert into fct_orders select * from stg_orders where order_date = current_date();
 commit;'''
-expect = "refused SQ0002 node:transaction"
-expect_repository = "refused SQ0002 node:transaction"
+expect = "refused SQ0002 node:transaction at 0..155"
+expect_repository = "refused SQ0002 node:transaction at 0..155"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2478,7 +2478,7 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd('day', seq4(), to_date('2023-01-01')) as date_day
 from table(generator(rowcount => 730))'''
-expect = "refused SQ0008 fn:TO_DATE"
+expect = "refused SQ0008 fn:TO_DATE at 34..55"
 expect_repository = "translated"
 
 [[query]]
@@ -2502,8 +2502,8 @@ category = "dbt_date_spine"
 sql = '''select
     uniform(1, 100, random()) as roll
 from table(generator(rowcount => 5))'''
-expect = "refused SQ0002 fn:UNIFORM"
-expect_repository = "refused SQ0002 fn:UNIFORM"
+expect = "refused SQ0002 fn:UNIFORM at 11..36"
+expect_repository = "refused SQ0002 fn:UNIFORM at 11..36"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2514,7 +2514,7 @@ sql = '''with spine as (
 select date_day
 from spine
 where date_day <= current_date()'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 170..184"
 expect_repository = "translated"
 
 [[query]]
@@ -2553,8 +2553,8 @@ select
     weekofyear(date_day) as week_of_year,
     dayofweek(date_day) in (0, 6) as is_weekend
 from spine'''
-expect = "refused SQ0002 fn:DAYOFWEEK"
-expect_repository = "refused SQ0002 fn:DAYOFWEEK"
+expect = "refused SQ0002 fn:DAYOFWEEK at 242..261"
+expect_repository = "refused SQ0002 fn:DAYOFWEEK at 242..261"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2647,15 +2647,15 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(hour, seq4(), '2024-01-01'::timestamp_ntz) as hour_start
 from table(generator(rowcount => 24 * 7))'''
-expect = "refused SQ0003 fn:GENERATOR"
-expect_repository = "refused SQ0003 fn:GENERATOR"
+expect = "refused SQ0003 fn:GENERATOR at 81..117"
+expect_repository = "refused SQ0003 fn:GENERATOR at 81..117"
 
 [[query]]
 category = "dbt_date_spine"
 sql = '''select
     dateadd(day, seq4(), current_date() - 30) as date_day
 from table(generator(rowcount => 31))'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 32..46"
 expect_repository = "translated"
 
 [[query]]
@@ -2679,8 +2679,8 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(day, value::int, '2024-01-01'::date) as date_day
 from table(flatten(input => array_generate_range(0, 366)))'''
-expect = "refused SQ0002 fn:FLATTEN"
-expect_repository = "refused SQ0002 fn:FLATTEN"
+expect = "refused SQ0002 fn:FLATTEN at 73..126"
+expect_repository = "refused SQ0002 fn:FLATTEN at 73..126"
 snowflake = "compiles"
 
 [[query]]
@@ -2691,8 +2691,8 @@ sql = '''with recursive spine as (
     select dateadd(day, 1, date_day) from spine where date_day < '2024-12-31'
 )
 select date_day from spine'''
-expect = "refused SQ0002 node:with"
-expect_repository = "refused SQ0002 node:with"
+expect = "refused SQ0002 node:with at 0..188"
+expect_repository = "refused SQ0002 node:with at 0..188"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2709,8 +2709,8 @@ left join orders o
     and o.ordered_at < dateadd(week, 1, spine.week_start)
 group by 1
 order by 1'''
-expect = "refused SQ0003 node:gte"
-expect_repository = "refused SQ0003 node:gte"
+expect = "refused SQ0003 node:gte at 225..257"
+expect_repository = "refused SQ0003 node:gte at 225..257"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2723,15 +2723,15 @@ select
     to_char(date_day, 'YYYY-MM') as year_month,
     to_char(date_day, 'DY') as day_short
 from spine'''
-expect = "refused SQ0003 fn:TO_CHAR"
-expect_repository = "refused SQ0003 fn:TO_CHAR"
+expect = "refused SQ0003 fn:TO_CHAR at 198..221"
+expect_repository = "refused SQ0003 fn:TO_CHAR at 198..221"
 
 [[query]]
 category = "dbt_date_spine"
 sql = '''select
     dateadd(minute, 15 * seq4(), '2024-01-01'::timestamp_ntz) as slot_start
 from table(generator(rowcount => 96))'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 11..68"
 expect_repository = "translated"
 
 [[query]]
@@ -2739,7 +2739,7 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(day, seq4(), '2024-01-01') as date_day
 from table(generator(rowcount => 10))'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 11..45"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2748,8 +2748,8 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(day, seq4(), '2024-01-01'::date) as date_day
 from table(generator(timelimit => 1))'''
-expect = "refused SQ0003 fn:GENERATOR"
-expect_repository = "refused SQ0003 fn:GENERATOR"
+expect = "refused SQ0003 fn:GENERATOR at 69..101"
+expect_repository = "refused SQ0003 fn:GENERATOR at 69..101"
 snowflake = "compiles"
 
 [[query]]
@@ -2853,8 +2853,8 @@ sql = '''select
     sum(total) over (partition by customer_id order by ordered_at range between unbounded preceding and current row) as running_total_range
 from orders
 '''
-expect = "refused SQ0003 fn:SUM"
-expect_repository = "refused SQ0003 fn:SUM"
+expect = "refused SQ0003 fn:SUM at 69..181"
+expect_repository = "refused SQ0003 fn:SUM at 69..181"
 
 [[query]]
 category = "dbt_window_frames"
@@ -2996,8 +2996,8 @@ sql = '''select
     nth_value(total, 2) over (partition by customer_id order by ordered_at) as second_total
 from orders
 '''
-expect = "refused SQ0002 fn:NTH_VALUE"
-expect_repository = "refused SQ0002 fn:NTH_VALUE"
+expect = "refused SQ0002 fn:NTH_VALUE at 69..140"
+expect_repository = "refused SQ0002 fn:NTH_VALUE at 69..140"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3048,8 +3048,8 @@ sql = '''select
     percent_rank() over (order by total) as total_percentile
 from orders
 '''
-expect = "refused SQ0002 fn:PERCENT_RANK"
-expect_repository = "refused SQ0002 fn:PERCENT_RANK"
+expect = "refused SQ0002 fn:PERCENT_RANK at 69..105"
+expect_repository = "refused SQ0002 fn:PERCENT_RANK at 69..105"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3061,8 +3061,8 @@ sql = '''select
     cume_dist() over (order by total) as total_cume_dist
 from orders
 '''
-expect = "refused SQ0002 fn:CUME_DIST"
-expect_repository = "refused SQ0002 fn:CUME_DIST"
+expect = "refused SQ0002 fn:CUME_DIST at 69..102"
+expect_repository = "refused SQ0002 fn:CUME_DIST at 69..102"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3127,8 +3127,8 @@ sql = '''select
     conditional_true_event(datediff('minute', lag(ordered_at) over (partition by customer_id order by ordered_at), ordered_at) > 30) over (partition by customer_id order by ordered_at) as session_number
 from orders
 '''
-expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
-expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
+expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT at 69..249"
+expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT at 69..249"
 snowflake = "compiles"
 
 [[query]]
@@ -3141,8 +3141,8 @@ sql = '''select
     avg(total) over (partition by customer_id order by ordered_at range between interval '7 days' preceding and current row) as avg_7_days
 from orders
 '''
-expect = "refused SQ0003 fn:AVG"
-expect_repository = "refused SQ0003 fn:AVG"
+expect = "refused SQ0003 fn:AVG at 69..189"
+expect_repository = "refused SQ0003 fn:AVG at 69..189"
 snowflake = "compiles"
 
 [[query]]
@@ -3169,8 +3169,8 @@ sql = '''select
     median(total) over (partition by customer_id) as median_total
 from orders
 '''
-expect = "refused SQ0002 fn:MEDIAN"
-expect_repository = "refused SQ0002 fn:MEDIAN"
+expect = "refused SQ0002 fn:MEDIAN at 69..114"
+expect_repository = "refused SQ0002 fn:MEDIAN at 69..114"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3180,8 +3180,8 @@ sql = '''select
     avg(total) over w as running_avg
 from orders
 window w as (partition by customer_id order by ordered_at)'''
-expect = "refused SQ0002 node:select"
-expect_repository = "refused SQ0002 node:select"
+expect = "refused SQ0002 node:select at 0..168"
+expect_repository = "refused SQ0002 node:select at 0..168"
 snowflake = "rejects 1003"
 
 [[query]]
@@ -3202,7 +3202,7 @@ select
     started_at,
     sum(is_new_session) over (partition by customer_id order by started_at rows between unbounded preceding and current row) as session_index
 from sessions'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 366..378"
 expect_repository = "translated"
 
 [[query]]
@@ -3226,8 +3226,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select order_id, payment_method, amount from stg_payments)
 pivot (sum(amount) for payment_method in ('credit_card', 'coupon', 'bank_transfer', 'gift_card'))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..111"
+expect_repository = "refused SQ0003 node:pivot at 22..111"
 
 [[query]]
 category = "dbt_pivot"
@@ -3243,16 +3243,16 @@ category = "dbt_pivot"
 sql = '''select *
 from (select customer_id, channel, total from orders)
 pivot (count(total) for channel in ('web', 'store', 'phone'))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..94"
+expect_repository = "refused SQ0003 node:pivot at 22..94"
 
 [[query]]
 category = "dbt_pivot"
 sql = '''select *
 from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in (any order by channel))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..117"
+expect_repository = "refused SQ0003 node:pivot at 22..117"
 snowflake = "compiles"
 
 [[query]]
@@ -3260,8 +3260,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in (select distinct channel from orders))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..132"
+expect_repository = "refused SQ0003 node:pivot at 22..132"
 snowflake = "compiles"
 
 [[query]]
@@ -3269,8 +3269,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in ('web', 'store') default on null (0))'''
-expect = "refused SQ0002 node:pivot"
-expect_repository = "refused SQ0002 node:pivot"
+expect = "refused SQ0002 node:pivot at 22..92"
+expect_repository = "refused SQ0002 node:pivot at 22..92"
 snowflake = "compiles"
 
 [[query]]
@@ -3278,8 +3278,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select warehouse, product_id, on_hand from inventory_snapshots where snapshot_date = '2024-06-30')
 pivot (sum(on_hand) for warehouse in ('east', 'west'))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 22..147"
+expect_repository = "refused SQ0003 node:pivot at 22..147"
 
 [[query]]
 category = "dbt_pivot"
@@ -3331,8 +3331,8 @@ category = "dbt_pivot"
 sql = '''select order_id, metric, value
 from (select order_id, total, discount from orders)
 unpivot (value for metric in (total, discount))'''
-expect = "refused SQ0002 node:unpivot"
-expect_repository = "refused SQ0002 node:unpivot"
+expect = "refused SQ0002 node:unpivot at 44..128"
+expect_repository = "refused SQ0002 node:unpivot at 44..128"
 
 [[query]]
 category = "dbt_pivot"
@@ -3343,16 +3343,16 @@ from (
     group by 1
 )
 unpivot (value for metric in (revenue, discounts))'''
-expect = "refused SQ0002 node:unpivot"
-expect_repository = "refused SQ0002 node:unpivot"
+expect = "refused SQ0002 node:unpivot at 52..196"
+expect_repository = "refused SQ0002 node:unpivot at 52..196"
 
 [[query]]
 category = "dbt_pivot"
 sql = '''select order_id, metric, value
 from (select order_id, total, discount from orders)
 unpivot include nulls (value for metric in (total, discount))'''
-expect = "refused SQ0002 node:unpivot"
-expect_repository = "refused SQ0002 node:unpivot"
+expect = "refused SQ0002 node:unpivot at 44..142"
+expect_repository = "refused SQ0002 node:unpivot at 44..142"
 snowflake = "compiles"
 
 [[query]]
@@ -3381,8 +3381,8 @@ category = "dbt_pivot"
 sql = '''select customer_id, channel, total_web, total_store
 from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 65..182"
+expect_repository = "refused SQ0003 node:pivot at 65..182"
 snowflake = "rejects 904"
 
 [[query]]
@@ -3390,8 +3390,8 @@ category = "dbt_pivot"
 sql = '''select *
 from orders
 pivot (sum(total) for channel in ('web', 'store'))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "refused SQ0003 node:pivot at 14..50"
+expect_repository = "refused SQ0003 node:pivot at 14..50"
 
 [[query]]
 category = "dbt_marts"
@@ -3439,7 +3439,7 @@ sql = '''select
 from stg_customers c
 left join fct_orders o on o.customer_id = c.customer_id
 group by 1, 2'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 242..256"
 expect_repository = "translated"
 
 [[query]]
@@ -3455,7 +3455,7 @@ sql = '''select
 from stg_customers c
 left join fct_orders o on o.customer_id = c.customer_id
 group by 1'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 183..197"
 expect_repository = "translated"
 
 [[query]]
@@ -3485,7 +3485,7 @@ from order_items i
 join orders o on o.order_id = i.order_id
 join products p on p.product_id = i.product_id
 group by 1, 2'''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 75..90"
 expect_repository = "translated"
 
 [[query]]
@@ -3497,7 +3497,7 @@ sql = '''select
 from order_items i
 join products p on p.product_id = i.product_id
 group by 1'''
-expect = "refused SQ0008 node:mul"
+expect = "refused SQ0008 node:mul at 31..56"
 expect_repository = "translated"
 
 [[query]]
@@ -3533,8 +3533,8 @@ sql = '''select
     s.mrr * 12 as arr,
     datediff('month', s.started_at, coalesce(s.cancelled_at, current_timestamp())) as tenure_months
 from subscriptions s'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:DATEDIFF"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 133..152"
+expect_repository = "refused SQ0003 fn:DATEDIFF at 76..154"
 
 [[query]]
 category = "dbt_marts"
@@ -3574,7 +3574,7 @@ sql = '''select
     avg(datediff('hour', t.opened_at, t.closed_at)) as avg_hours_to_close
 from tickets t
 group by 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 178..187"
 expect_repository = "translated"
 
 [[query]]
@@ -3588,7 +3588,7 @@ from customers c
 left join tickets t on t.customer_id = c.customer_id
 left join orders o on o.customer_id = c.customer_id
 group by 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 222..231"
 expect_repository = "translated"
 
 [[query]]
@@ -3600,7 +3600,7 @@ sql = '''select
     avg(s.page_views) as avg_page_views
 from web_sessions s
 group by 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 129..143"
 expect_repository = "translated"
 
 [[query]]
@@ -3614,7 +3614,7 @@ left join orders o
     on o.customer_id = s.customer_id
     and o.ordered_at between s.started_at and dateadd(day, 7, s.started_at)
 group by 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 151..165"
 expect_repository = "translated"
 
 [[query]]
@@ -3627,7 +3627,7 @@ sql = '''select
 from inventory_snapshots i
 join products p on p.product_id = i.product_id
 group by 1, 2'''
-expect = "refused SQ0008 fn:SUM"
+expect = "refused SQ0008 fn:SUM at 49..63"
 expect_repository = "translated"
 
 [[query]]
@@ -3638,7 +3638,7 @@ sql = '''select
     on_hand,
     on_hand - lag(on_hand) over (partition by product_id, warehouse order by snapshot_date) as change
 from inventory_snapshots'''
-expect = "refused SQ0008 node:sub"
+expect = "refused SQ0008 node:sub at 59..146"
 expect_repository = "translated"
 
 [[query]]
@@ -3649,8 +3649,8 @@ sql = '''select
     count(distinct customer_id) as customers
 from orders
 group by 1'''
-expect = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
-expect_repository = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
+expect = "refused SQ0002 fn:APPROX_COUNT_DISTINCT at 61..95"
+expect_repository = "refused SQ0002 fn:APPROX_COUNT_DISTINCT at 61..95"
 
 [[query]]
 category = "dbt_marts"
@@ -3669,7 +3669,7 @@ sql = '''select
     percentile_cont(0.5) within group (order by total) as median_order
 from orders
 group by 1'''
-expect = "refused SQ0008 fn:PERCENTILE_CONT"
+expect = "refused SQ0008 fn:PERCENTILE_CONT at 72..77"
 expect_repository = "translated"
 
 [[query]]
@@ -3729,7 +3729,7 @@ sql = '''select
     array_size(array_agg(distinct channel)) as channel_count
 from orders
 group by 1'''
-expect = "refused SQ0008 fn:ARRAY_AGG"
+expect = "refused SQ0008 fn:ARRAY_AGG at 28..55"
 expect_repository = "translated"
 
 [[query]]
@@ -3747,7 +3747,7 @@ sql = '''select
     c.customer_id,
     to_json(object_construct('email', c.email)) as profile_json
 from customers c'''
-expect = "refused SQ0008 fn:TO_JSON"
+expect = "refused SQ0008 fn:TO_JSON at 30..73"
 expect_repository = "translated"
 
 [[query]]
@@ -3768,8 +3768,8 @@ sql = '''select
     count(*) as orders
 from orders o
 group by rollup (o.channel, o.status)'''
-expect = "refused SQ0002 fn:ROLLUP"
-expect_repository = "refused SQ0002 fn:ROLLUP"
+expect = "refused SQ0002 fn:ROLLUP at 90..109"
+expect_repository = "refused SQ0002 fn:ROLLUP at 90..109"
 
 [[query]]
 category = "dbt_marts"
@@ -3780,8 +3780,8 @@ sql = '''select
     grouping(o.channel) as channel_rollup
 from orders o
 group by grouping sets ((o.channel), (o.status), ())'''
-expect = "refused SQ0002 fn:GROUPING SETS"
-expect_repository = "refused SQ0002 fn:GROUPING SETS"
+expect = "refused SQ0002 fn:GROUPING SETS at 141..162"
+expect_repository = "refused SQ0002 fn:GROUPING SETS at 141..162"
 
 [[query]]
 category = "dbt_snapshot"
@@ -3804,8 +3804,8 @@ sql = '''select
     coalesce(lead(updated_at) over (partition by customer_id order by updated_at), '9999-12-31'::timestamp_ntz) as valid_to,
     lead(updated_at) over (partition by customer_id order by updated_at) is null as is_current
 from stg_customers'''
-expect = "refused SQ0003 node:cast"
-expect_repository = "refused SQ0003 node:cast"
+expect = "refused SQ0003 node:cast at 148..175"
+expect_repository = "refused SQ0003 node:cast at 148..175"
 
 [[query]]
 category = "dbt_snapshot"
@@ -3814,7 +3814,7 @@ sql = '''select
     customer_id,
     updated_at as dbt_updated_at
 from stg_customers'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 77..104"
 expect_repository = "translated"
 
 [[query]]
@@ -3898,8 +3898,8 @@ category = "dbt_snapshot"
 sql = '''select *
 from stg_customers
 at (timestamp => '2024-06-30 00:00:00'::timestamp_ltz)'''
-expect = "refused SQ0002 node:table"
-expect_repository = "refused SQ0002 node:table"
+expect = "refused SQ0002 node:table at 14..81"
+expect_repository = "refused SQ0002 node:table at 14..81"
 snowflake = "compiles"
 
 [[query]]
@@ -3908,8 +3908,8 @@ sql = '''select *
 from stg_customers
 changes (information => default)
 at (offset => -3600)'''
-expect = "refused SQ0002 node:table"
-expect_repository = "refused SQ0002 node:table"
+expect = "refused SQ0002 node:table at 14..80"
+expect_repository = "refused SQ0002 node:table at 14..80"
 snowflake = "rejects 91930"
 
 [[query]]
@@ -4065,8 +4065,8 @@ category = "dbt_tests"
 sql = '''select max(updated_at) as max_updated_at
 from stg_orders
 having max(updated_at) < dateadd(hour, -24, current_timestamp())'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:DATEADD"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 101..120"
+expect_repository = "refused SQ0003 fn:DATEADD at 82..121"
 
 [[query]]
 category = "dbt_tests"
@@ -4103,7 +4103,7 @@ sql = '''select *
 from stg_orders
 where updated_at >= (select dateadd(hour, -6, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 53..87"
 expect_repository = "translated"
 
 [[query]]
@@ -4130,7 +4130,7 @@ sql = '''select *
 from stg_payments
 where paid_at::date >= dateadd(day, -3, current_date())
 '''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 67..81"
 expect_repository = "translated"
 
 [[query]]
@@ -4139,7 +4139,7 @@ sql = '''select *
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders) - interval '1 day'
 '''
-expect = "refused SQ0008 node:sub"
+expect = "refused SQ0008 node:sub at 44..103"
 expect_repository = "translated"
 
 [[query]]
@@ -4264,7 +4264,7 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select customer_id, datediff('month', signup_date, current_date()) as tenure_months from customers
 '''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 51..65"
 expect_repository = "translated"
 
 [[query]]
@@ -4288,7 +4288,7 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', 'America/New_York', ordered_at) as ordered_at_et from orders
 '''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 17..72"
 expect_repository = "translated"
 
 [[query]]
@@ -4302,7 +4302,7 @@ expect_repository = "translated"
 category = "strings"
 sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name from customers
 '''
-expect = "refused SQ0008 fn:INITCAP"
+expect = "refused SQ0008 fn:INITCAP at 20..39"
 expect_repository = "translated"
 
 [[query]]
@@ -4351,14 +4351,14 @@ expect_repository = "translated"
 category = "strings"
 sql = '''select ticket_id, length(subject) as subject_length from tickets
 '''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 57..64"
 expect_repository = "translated"
 
 [[query]]
 category = "strings"
 sql = '''select customer_id from customers where email ilike '%@example.com'
 '''
-expect = "refused SQ0008 node:i_like"
+expect = "refused SQ0008 node:i_like at 40..67"
 expect_repository = "translated"
 
 [[query]]
@@ -4458,42 +4458,42 @@ category = "dbt_dedup"
 sql = '''select event_id, customer_id, event_type, occurred_at
 from events
 qualify row_number() over (partition by customer_id, event_type order by occurred_at desc) = 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 59..65"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload['items'][0]['sku']::varchar as first_sku
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 71..77"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload:customer.address.city::varchar as city
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 69..75"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload:"Order-Id"::number as order_id
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 61..67"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, get_path(payload, 'customer.email')::varchar as email
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 76..82"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, get(payload, 'event_type')::varchar as kind
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 66..72"
 expect_repository = "translated"
 
 [[query]]
@@ -4501,21 +4501,21 @@ category = "dbt_flatten"
 sql = '''select event_id
 from events
 where payload:type::varchar = 'checkout''''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 21..27"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, typeof(payload:amount) as amount_type
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 60..66"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, array_contains('vip'::variant, payload:tags) as is_vip
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 77..83"
 expect_repository = "translated"
 uncertain = true
 
@@ -4523,7 +4523,7 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select event_id, object_keys(payload) as keys
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 51..57"
 expect_repository = "translated"
 uncertain = true
 
@@ -4531,14 +4531,14 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, try_parse_json(r.raw:body::varchar) as body
 from raw_events r'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 87..99"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select session_id, attributes:utm_source::varchar as utm_source, attributes:utm_campaign::varchar as utm_campaign
 from web_sessions'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 119..131"
 expect_repository = "translated"
 
 [[query]]
@@ -4546,7 +4546,7 @@ category = "dbt_flatten"
 sql = '''select event_id, payload:amount::number(12,2) as amount, payload:currency::varchar as currency
 from events
 where payload:amount is not null'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 100..106"
 expect_repository = "translated"
 
 [[query]]
@@ -4554,14 +4554,14 @@ category = "dbt_flatten"
 sql = '''select customer_id, object_construct('orders', count(*), 'revenue', sum(amount)) as summary
 from stg_orders
 group by customer_id'''
-expect = "refused SQ0008 fn:OBJECT_CONSTRUCT"
+expect = "refused SQ0008 fn:OBJECT_CONSTRUCT at 20..80"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload:items[array_size(payload:items) - 1]:sku::varchar as last_sku
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 92..98"
 expect_repository = "translated"
 
 [[query]]
@@ -4569,8 +4569,8 @@ category = "dbt_window_frames"
 sql = '''select order_id, customer_id, amount,
     sum(amount) over (partition by customer_id order by order_id range between 10 preceding and current row) as nearby_amount
 from stg_orders'''
-expect = "refused SQ0003 fn:SUM"
-expect_repository = "refused SQ0003 fn:SUM"
+expect = "refused SQ0003 fn:SUM at 42..146"
+expect_repository = "refused SQ0003 fn:SUM at 42..146"
 
 [[query]]
 category = "dbt_window_frames"
@@ -4642,7 +4642,7 @@ category = "dbt_window_frames"
 sql = '''select snapshot_date, product_id, on_hand,
     on_hand - lag(on_hand, 1, on_hand) over (partition by product_id order by snapshot_date) as delta
 from inventory_snapshots'''
-expect = "refused SQ0008 node:sub"
+expect = "refused SQ0008 node:sub at 47..135"
 expect_repository = "translated"
 
 [[query]]
@@ -4703,8 +4703,8 @@ sql = '''select *
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders)
   and updated_at <= current_timestamp()'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 node:lte"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 105..124"
+expect_repository = "refused SQ0003 node:lte at 91..124"
 
 [[query]]
 category = "dbt_incremental"
@@ -4712,7 +4712,7 @@ sql = '''select *
 from events
 where occurred_at > (select coalesce(max(occurred_at), '1900-01-01'::timestamp_ntz) from events)
   and event_type in ('page_view', 'checkout')'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..20"
 expect_repository = "translated"
 
 [[query]]
@@ -4730,7 +4730,7 @@ sql = '''select
     md5(cast(coalesce(cast(event_id as varchar), '') as varchar)) as event_key,
     event_id, event_type
 from events'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 117..123"
 expect_repository = "translated"
 
 [[query]]
@@ -4749,7 +4749,7 @@ sql = '''select *,
     updated_at as dbt_valid_from,
     nullif(updated_at, updated_at) as dbt_valid_to
 from stg_orders'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 77..104"
 expect_repository = "translated"
 
 [[query]]
@@ -4782,7 +4782,7 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_ny
 from stg_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 17..72"
 expect_repository = "translated"
 
 [[query]]
@@ -4796,14 +4796,14 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, timestampdiff(hour, order_date, updated_at) as hours_to_update
 from stg_orders'''
-expect = "refused SQ0003 fn:TIMESTAMPDIFF"
-expect_repository = "refused SQ0003 fn:TIMESTAMPDIFF"
+expect = "refused SQ0003 fn:TIMESTAMPDIFF at 17..60"
+expect_repository = "refused SQ0003 fn:TIMESTAMPDIFF at 17..60"
 
 [[query]]
 category = "strings"
 sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name
 from stg_customers'''
-expect = "refused SQ0008 fn:INITCAP"
+expect = "refused SQ0008 fn:INITCAP at 20..39"
 expect_repository = "translated"
 
 [[query]]
@@ -4842,8 +4842,8 @@ on t.order_id = s.order_id
 when matched then update set t.status = s.status, t.amount = s.amount, t.updated_at = s.updated_at
 when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
     values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..347"
+expect_repository = "refused SQ0002 node:merge at 11..347"
 
 [[query]]
 category = "ddl_dml"
@@ -4853,8 +4853,8 @@ on t.order_id = s.order_id and t.order_date >= dateadd(day, -3, current_date())
 when matched and s.updated_at > t.updated_at then update set t.status = s.status
 when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
     values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..451"
+expect_repository = "refused SQ0002 node:merge at 11..451"
 
 # Launch shapes, round 3: dbt_utils and dbt_date macro output compiled by dbt-snowflake 1.12
 # (date_spine, get_date_dimension, pivot, generate_surrogate_key, deduplicate, cross-database
@@ -4943,7 +4943,7 @@ validation_errors as (
 select
   *
 from validation_errors'''
-expect = "refused SQ0008 node:div"
+expect = "refused SQ0008 node:div at 34..115"
 expect_repository = "translated"
 
 [[query]]
@@ -4971,8 +4971,8 @@ where most_recent < cast(
         )
  as timestamp)
    or most_recent is null'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 node:lt"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 194..213"
+expect_repository = "refused SQ0003 node:lt at 272..407"
 
 [[query]]
 category = "dbt_tests"
@@ -5336,7 +5336,7 @@ sql = '''with
         as date) as date) as year_end_date
     from dates_with_prior_year_dates d
     order by 1'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 1507..1624"
 expect_repository = "translated"
 
 [[query]]
@@ -5352,7 +5352,7 @@ sql = '''select * from stg_orders where order_date >= cast(
     ) as date)
         )
  as date)'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 187..206"
 expect_repository = "translated"
 
 [[query]]
@@ -5401,7 +5401,7 @@ sql = '''select order_id, datediff(
         cast(convert_timezone('UTC', current_timestamp()) as timestamp)
     )
         ) as days_since from stg_orders'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 153..172"
 expect_repository = "translated"
 
 [[query]]
@@ -5411,7 +5411,7 @@ sql = '''select order_id, convert_timezone(
         'America/New_York',
         cast(cast(order_date as timestamp) as timestamp)
     ) as order_ts_ny from stg_orders'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 91..120"
 expect_repository = "translated"
 
 [[query]]
@@ -5540,7 +5540,7 @@ category = "dbt_marts"
 sql = '''select order_id,
     ( amount ) / nullif( ( order_id ), 0)
  as ratio from fct_orders'''
-expect = "refused SQ0008 node:div"
+expect = "refused SQ0008 node:div at 21..58"
 expect_repository = "translated"
 
 [[query]]
@@ -5694,7 +5694,7 @@ sql = '''select order_id, datediff(
         order_date,
         current_date
         ) as age_days from stg_orders'''
-expect = "refused SQ0008 fn:CURRENT_DATE"
+expect = "refused SQ0008 fn:CURRENT_DATE at 68..80"
 expect_repository = "translated"
 
 [[query]]
@@ -5727,13 +5727,13 @@ sql = '''select customer_id,
         ', '
         )
         within group (order by order_date) as statuses from stg_orders group by customer_id'''
-expect = "refused SQ0008 fn:LISTAGG"
+expect = "refused SQ0008 fn:LISTAGG at 41..113"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', current_timestamp()) as loaded_at from stg_orders'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 41..60"
 expect_repository = "translated"
 
 [[query]]
@@ -5830,7 +5830,7 @@ sql = '''with snapshot_query as (
     select * from insertions
     union all
     select * from updates'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 616..644"
 expect_repository = "translated"
 
 [[query]]
@@ -5846,7 +5846,7 @@ sql = '''select *,
 from (
         select order_id, customer_id, order_date, status, amount, updated_at from stg_orders
     ) sbq'''
-expect = "refused SQ0008 node:cast"
+expect = "refused SQ0008 node:cast at 91..119"
 expect_repository = "translated"
 
 [[query]]
@@ -5860,8 +5860,8 @@ sql = '''merge into fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..694"
+expect_repository = "refused SQ0002 node:merge at 11..694"
 
 [[query]]
 category = "ddl_dml"
@@ -5874,8 +5874,8 @@ sql = '''merge into fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..763"
+expect_repository = "refused SQ0002 node:merge at 11..763"
 
 [[query]]
 category = "ddl_dml"
@@ -5892,8 +5892,8 @@ sql = '''merge into fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..838"
+expect_repository = "refused SQ0002 node:merge at 11..838"
 
 [[query]]
 category = "ddl_dml"
@@ -5902,8 +5902,8 @@ sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATU
             select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
             from fct_orders__dbt_tmp
         )'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..238"
+expect_repository = "refused SQ0002 node:insert at 12..238"
 
 [[query]]
 category = "ddl_dml"
@@ -5912,8 +5912,8 @@ sql = '''delete from fct_orders as DBT_INTERNAL_DEST
             select distinct order_id
             from fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
         )'''
-expect = "refused SQ0002 node:delete"
-expect_repository = "refused SQ0002 node:delete"
+expect = "refused SQ0002 node:delete at 12..180"
+expect_repository = "refused SQ0002 node:delete at 12..180"
 
 [[query]]
 category = "ddl_dml"
@@ -5922,8 +5922,8 @@ sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATU
         select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
         from fct_orders__dbt_tmp
     )'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..226"
+expect_repository = "refused SQ0002 node:insert at 12..226"
 
 [[query]]
 category = "ddl_dml"
@@ -5933,8 +5933,8 @@ sql = '''delete from fct_orders as DBT_INTERNAL_DEST
             from fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
         )
                 and order_date >= dateadd(day, -7, current_date)'''
-expect = "refused SQ0002 node:delete"
-expect_repository = "refused SQ0002 node:delete"
+expect = "refused SQ0002 node:delete at 12..245"
+expect_repository = "refused SQ0002 node:delete at 12..245"
 
 [[query]]
 category = "ddl_dml"
@@ -5943,8 +5943,8 @@ sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATU
         select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
         from fct_orders__dbt_tmp
     )'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..226"
+expect_repository = "refused SQ0002 node:insert at 12..226"
 
 [[query]]
 category = "ddl_dml"
@@ -5958,8 +5958,8 @@ sql = '''merge into fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..436"
+expect_repository = "refused SQ0002 node:merge at 11..436"
 
 [[query]]
 category = "ddl_dml"
@@ -5975,21 +5975,21 @@ sql = '''merge into orders_snapshot as DBT_INTERNAL_DEST
      and DBT_INTERNAL_SOURCE.dbt_change_type = 'insert'
         then insert ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT", "DBT_SCD_ID", "DBT_UPDATED_AT", "DBT_VALID_FROM", "DBT_VALID_TO")
         values ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT", "DBT_SCD_ID", "DBT_UPDATED_AT", "DBT_VALID_FROM", "DBT_VALID_TO")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..785"
+expect_repository = "refused SQ0002 node:merge at 11..785"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e, lateral flatten(input => e.payload, path => 'items') f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 52..60"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e, lateral flatten(e.payload:items) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 52..60"
 expect_repository = "translated"
 uncertain = true
 
@@ -5997,14 +5997,14 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select e.event_id, f.key as attribute
 from events e, lateral flatten(input => e.payload, mode => 'object') f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 43..51"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value['sku']::varchar as sku
 from events e, lateral flatten(input => e.payload['items']) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 55..63"
 expect_repository = "translated"
 
 [[query]]
@@ -6012,7 +6012,7 @@ category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as first_sku
 from events e, lateral flatten(input => e.payload:items) f
 where f.index = 0'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 58..66"
 expect_repository = "translated"
 
 [[query]]
@@ -6020,14 +6020,14 @@ category = "dbt_flatten"
 sql = '''select e.customer_id, count(f.value) as items
 from events e, lateral flatten(input => e.payload:items, outer => true) f
 group by e.customer_id'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 51..59"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, f.value:name::varchar as name
 from raw_events r, lateral flatten(input => parse_json(r.raw:body::varchar):products) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 73..85"
 expect_repository = "translated"
 
 [[query]]
@@ -6035,7 +6035,7 @@ category = "dbt_flatten"
 sql = '''select t.ticket_id, f.value::varchar as tag
 from tickets t, lateral flatten(input => t.tags) f
 qualify row_number() over (partition by t.ticket_id order by f.index) = 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 49..58"
 expect_repository = "translated"
 
 [[query]]
@@ -6043,7 +6043,7 @@ category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e
 cross join lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 52..60"
 expect_repository = "translated"
 
 [[query]]
@@ -6053,7 +6053,7 @@ from events e, lateral flatten(input => e.payload:items) f
 where e.event_type = 'checkout'
 group by 1
 order by buyers desc'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 81..89"
 expect_repository = "translated"
 
 # Round 5: dbt incremental models compiled by dbt-snowflake 1.12 as an incremental run ({{ this }}
@@ -6066,7 +6066,7 @@ category = "dbt_incremental"
 sql = '''select order_id, status, updated_at, convert_timezone('UTC', current_timestamp()) as loaded_at
 from analytics.dbt_dev.fct_orders
 where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_append)'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 61..80"
 expect_repository = "translated"
 
 [[query]]
@@ -6089,8 +6089,8 @@ category = "dbt_incremental"
 sql = '''select * from analytics.dbt_dev.fct_orders
 where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_event_time)
   and updated_at <= convert_timezone('UTC', current_timestamp())'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 node:lte"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 169..188"
+expect_repository = "refused SQ0003 node:lte at 131..189"
 
 [[query]]
 category = "dbt_incremental"
@@ -6105,7 +6105,7 @@ expect_repository = "translated"
 category = "dbt_incremental"
 sql = '''select * from analytics.dbt_dev.fct_orders
 where updated_at >= (select dateadd(day, -3, max(updated_at)) from analytics.dbt_dev.inc_lookback)'''
-expect = "refused SQ0008 fn:DATEADD"
+expect = "refused SQ0008 fn:DATEADD at 71..104"
 expect_repository = "translated"
 
 [[query]]
@@ -6231,8 +6231,8 @@ sql = '''with snapshot_query as (
     select * from insertions
     union all
     select * from updates'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 469..488"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 428..490"
 
 [[query]]
 category = "dbt_snapshot"
@@ -6349,8 +6349,8 @@ sql = '''with snapshot_query as (
     select * from updates
     union all
     select * from deletes'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 469..488"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 428..490"
 
 [[query]]
 category = "dbt_snapshot"
@@ -6443,8 +6443,8 @@ sql = '''with snapshot_query as (
     select * from updates
     union all
     select * from deletes'''
-expect = "refused SQ0008 node:cast"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+expect = "refused SQ0008 node:cast at 654..682"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 2154..2216"
 
 [[query]]
 category = "ddl_dml"
@@ -6457,8 +6457,8 @@ sql = '''merge into analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..845"
+expect_repository = "refused SQ0002 node:merge at 11..845"
 
 [[query]]
 category = "ddl_dml"
@@ -6471,8 +6471,8 @@ sql = '''merge into analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
     values
         ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..803"
+expect_repository = "refused SQ0002 node:merge at 11..803"
 
 [[query]]
 category = "ddl_dml"
@@ -6481,8 +6481,8 @@ sql = '''delete from analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
             select distinct order_id, customer_id
             from analytics.dbt_dev.fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
         )'''
-expect = "refused SQ0002 node:delete"
-expect_repository = "refused SQ0002 node:delete"
+expect = "refused SQ0002 node:delete at 12..242"
+expect_repository = "refused SQ0002 node:delete at 12..242"
 
 [[query]]
 category = "ddl_dml"
@@ -6491,8 +6491,8 @@ sql = '''insert into analytics.dbt_dev.fct_orders ("ORDER_ID", "CUSTOMER_ID", "O
         select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
         from analytics.dbt_dev.fct_orders__dbt_tmp
     )'''
-expect = "refused SQ0002 node:insert"
-expect_repository = "refused SQ0002 node:insert"
+expect = "refused SQ0002 node:insert at 12..262"
+expect_repository = "refused SQ0002 node:insert at 12..262"
 
 [[query]]
 category = "dbt_dedup"
@@ -6556,7 +6556,7 @@ expect_repository = "translated"
 category = "dbt_dedup"
 sql = '''select * from raw_events
 qualify row_number() over (partition by raw:id::varchar order by _loaded_at desc) = 1'''
-expect = "refused SQ0008 node:column"
+expect = "refused SQ0008 node:column at 14..24"
 expect_repository = "translated"
 
 [[query]]
@@ -6575,8 +6575,8 @@ on t.order_id = s.order_id
 when matched and s.status = 'deleted' then delete
 when matched and s.updated_at > t.updated_at then update set t.status = s.status, t.amount = s.amount, t.updated_at = s.updated_at
 when not matched and s.status != 'deleted' then insert (order_id, customer_id, order_date, status, amount, updated_at) values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..546"
+expect_repository = "refused SQ0002 node:merge at 11..546"
 
 [[query]]
 category = "ddl_dml"
@@ -6584,8 +6584,8 @@ sql = '''merge into fct_orders t
 using stg_orders s
 on t.order_id = s.order_id
 when not matched then insert values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..180"
+expect_repository = "refused SQ0002 node:merge at 11..180"
 
 [[query]]
 category = "ddl_dml"
@@ -6593,8 +6593,8 @@ sql = '''merge into fct_orders t
 using stg_orders s
 on t.order_id = s.order_id
 when matched then update set status = s.status'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..116"
+expect_repository = "refused SQ0002 node:merge at 11..116"
 
 [[query]]
 category = "ddl_dml"
@@ -6602,8 +6602,8 @@ sql = '''merge into fct_orders t
 using (select order_id, max(updated_at) as updated_at from stg_orders group by order_id) s
 on t.order_id = s.order_id
 when matched then update set t.updated_at = s.updated_at'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..198"
+expect_repository = "refused SQ0002 node:merge at 11..198"
 
 [[query]]
 category = "ddl_dml"
@@ -6611,5 +6611,5 @@ sql = '''merge into fct_orders t
 using stg_orders s
 on t.order_id = s.order_id
 when not matched by source then delete'''
-expect = "refused SQ0002 node:merge"
-expect_repository = "refused SQ0002 node:merge"
+expect = "refused SQ0002 node:merge at 11..69"
+expect_repository = "refused SQ0002 node:merge at 11..69"
