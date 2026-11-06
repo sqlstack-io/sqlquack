@@ -1,0 +1,75 @@
+category = "translation"
+construct = "sf.functions.approx-percentile.approx-percentile"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_median"
+description = "The median of five values and of one value. Catches: the percentile read as 0-100, or the whole input"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "4"],
+  ["'p'", "9"],
+  ["'p'", "3"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+]
+query = "SELECT g, APPROX_PERCENTILE(x, 0.5) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_low"
+description = "A low percentile. Catches: the percentile from the top (1 - p)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "4"],
+  ["'p'", "9"],
+  ["'p'", "3"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+]
+query = "SELECT g, APPROX_PERCENTILE(x, 0.2) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_float"
+description = "FLOAT values. Catches: a fixed-point result"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["0.25"],
+  ["4"],
+]
+query = "SELECT APPROX_PERCENTILE(x, 0.5) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_expr"
+description = "NULL values, which are ignored, and a group of only NULL. Catches: NULL counted as the lowest value"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "NULL"],
+  ["'p'", "2"],
+  ["'p'", "8"],
+  ["'p'", "4"],
+]
+query = "SELECT g, APPROX_PERCENTILE(x, 0.5) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty_input"
+description = "No rows. Catches: an error or 0 instead of NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT APPROX_PERCENTILE(x, 0.5) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

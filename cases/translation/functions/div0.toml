@@ -1,0 +1,75 @@
+category = "translation"
+construct = "sf.functions.div0"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_int"
+description = "DIV0 of integers, as / divides. Catches: integer division (3 instead of 3.500000)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["7", "2"],
+  ["-7", "2"],
+  ["5", "0"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_dec"
+description = "DIV0 of NUMBER(10,2) values. Catches: quotient scale differing from /"
+columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00", "3.00"],
+  ["-2.50", "0.00"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_float"
+description = "DIV0 of FLOAT values. Catches: infinity or NaN for a zero divisor instead of 0"
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
+rows = [
+  ["1", "3"],
+  ["-1", "0"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_a"
+description = "NULL dividend. Catches: NULL turned into 0"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "2"],
+  ["NULL", "0"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_b"
+description = "NULL divisor. Catches: a NULL divisor returning 0 (that is DIV0NULL)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["5", "NULL"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_neg_zero"
+description = "Negative dividends over zero; Snowflake returns +0 for DIV0(-5, 0) (captured at e8691b63). Catches: the sign of the dividend kept on the zero result (-0 instead of 0)"
+columns = [{ name = "a", type = "FLOAT" }, { name = "b", type = "FLOAT" }]
+rows = [
+  ["-5", "0"],
+  ["-0.01", "3"],
+]
+query = "SELECT DIV0(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

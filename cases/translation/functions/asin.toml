@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.asin"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "ASIN of FLOAT values. Catches: ACOS computed instead, or degrees returned"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.25"],
+  ["-0.6"],
+  ["1.0"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "ASIN of NUMBER(12,4), converted to FLOAT. Catches: ACOS computed instead, or degrees returned; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.5000"],
+  ["-0.1250"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "ASIN of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_odd"
+description = "Odd symmetry at negatives. Catches: absolute value taken"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["-0.5"],
+  ["-1"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t005_outside"
+description = "ASIN at or outside its domain: Snowflake raises error 100044 on every row (captured at e8691b63). Catches: NaN, NULL or a value where Snowflake raises an error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-2"],
+]
+query = "SELECT ASIN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

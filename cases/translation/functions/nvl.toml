@@ -1,0 +1,61 @@
+category = "translation"
+construct = "sf.functions.nvl"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "NVL with NULL and non-NULL first arguments. Catches: the arguments swapped"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "2"],
+  ["1", "2"],
+]
+query = "SELECT NVL(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mixed"
+description = "A numeric string and a number. Catches: a VARCHAR result ('17.50' kept as text) instead of Snowflake's numeric conversion"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'17.50'"],
+  ["NULL"],
+]
+query = "SELECT NVL(a, 1) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr1"
+description = "Both arguments NULL. Catches: a default instead of NULL"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT NVL(a, NULL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_expr2"
+description = "NULL second argument with a set first. Catches: NULL returned instead of expr1"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+  ["NULL"],
+]
+query = "SELECT NVL(a, NULL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_unconvertible"
+description = "A non-numeric string with a number. Catches: the string returned as text"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'foo'"],
+]
+query = "SELECT NVL(a, 1) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

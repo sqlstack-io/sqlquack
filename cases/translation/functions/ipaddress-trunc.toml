@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.ipaddress-trunc"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_example"
+description = "The page example: 192.168.129.255 to 17 bits and 2001:db8:abcd:1234::1 to 49 bits, with the prefix from a column. Catches: the prefix read as host bits, or rounded to a byte"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["'192.168.129.255'", "17"],
+  ["'2001:db8:abcd:1234::1'", "49"],
+]
+query = "SELECT ordinal, IPADDRESS_TRUNC(v::IPADDRESS, k)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_ends"
+description = "Prefixes 0 and 32 on an IPv4 address: all bits cleared, and the address unchanged. Catches: prefix 0 rejected, or 32 clearing the last bit"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["'192.0.2.77'", "0"],
+  ["'192.0.2.77'", "32"],
+]
+query = "SELECT ordinal, IPADDRESS_TRUNC(v::IPADDRESS, k)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_family_range"
+compile_error = true
+description = "Prefix 48 on an IPv4 address; the page says this is an error, and Snowflake refuses it when compiling (937) because the input values are constants it can fold. Catches: the prefix clamped to 32, or NULL returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["'192.0.2.1'", "48"],
+]
+query = "SELECT IPADDRESS_TRUNC(v::IPADDRESS, k)::VARCHAR AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_prefix_length"
+description = "A NULL prefix, which the page says gives NULL. Catches: the address returned unchanged, or an error"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["'192.0.2.1'", "NULL"],
+]
+query = "SELECT IPADDRESS_TRUNC(v::IPADDRESS, k) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

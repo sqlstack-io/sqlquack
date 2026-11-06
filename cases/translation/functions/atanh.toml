@@ -1,0 +1,76 @@
+category = "translation"
+construct = "sf.functions.atanh"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "ATANH of FLOAT values. Catches: TANH computed, or the odd symmetry lost"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["-0.25"],
+  ["0"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "ATANH of NUMBER(12,4), converted to FLOAT. Catches: TANH computed, or the odd symmetry lost; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.5000"],
+  ["-0.9000"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "ATANH of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_near_one"
+description = "Close to the domain edges. Catches: a naive 0.5*LN((1+x)/(1-x)): 0 instead of 1e-17 near zero, or precision lost near the asymptote"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.999999"],
+  ["-0.999999"],
+  ["0.9999999999999999"],
+  ["1e-17"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t005_edge"
+description = "ATANH at or outside its domain: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: NaN, Infinity, NULL or an error differing from Snowflake"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["-1"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t006_outside"
+description = "ATANH at or outside its domain: Snowflake raises error 100044 on every row (captured at e8691b63). Catches: NaN, NULL or a value where Snowflake raises an error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ATANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

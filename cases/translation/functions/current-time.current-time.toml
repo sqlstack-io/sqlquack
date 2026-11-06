@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.current-time.current-time"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_type"
+description = "The type, and agreement with the time of CURRENT_TIMESTAMP in the UTC session to within a minute. Catches: a timestamp returned, or the time taken in another zone"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TYPEOF(CURRENT_TIME()::VARIANT) AS t, ABS(DATEDIFF(second, CURRENT_TIME(), CURRENT_TIMESTAMP()::TIME)) < 60 AS close FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_precision"
+description = "Precision 0 and 3, whose unused fractional digits the page makes zero. Catches: the precision ignored (non-zero digits past the requested ones)"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT SUBSTR(TO_VARCHAR(CURRENT_TIME(0), 'FF9'), 1) = '000000000' AS p0, SUBSTR(TO_VARCHAR(CURRENT_TIME(3), 'FF9'), 4) = '000000' AS p3 FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_precision_range"
+compile_error = true
+description = "Precision 10, outside the valid range 0 to 9 the page states; Snowflake refuses it when compiling. Catches: the precision clamped to 9"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT CURRENT_TIME(10) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_none"
+description = "The function takes no argument; a NULL value compared with its result gives NULL. Catches: the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2026-01-01'"],
+]
+query = "SELECT ordinal, d::TIMESTAMP_NTZ::TIME < CURRENT_TIME() AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

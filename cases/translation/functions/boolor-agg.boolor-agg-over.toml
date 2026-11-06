@@ -1,0 +1,56 @@
+category = "translation"
+construct = "sf.functions.boolor-agg.boolor-agg-over"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_partition"
+description = "A partition with no TRUE value and one with three. Catches: the whole input aggregated"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'p'", "FALSE"],
+  ["'q'", "TRUE"],
+  ["'p'", "FALSE"],
+  ["'q'", "TRUE"],
+  ["'q'", "TRUE"],
+]
+query = "SELECT BOOLOR_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty_over"
+description = "An empty OVER clause. Catches: a running value"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'p'", "FALSE"],
+  ["'p'", "TRUE"],
+]
+query = "SELECT BOOLOR_AGG(b) OVER () AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL inside partitions, and a partition of only NULL. Catches: NULL read as TRUE"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'p'", "TRUE"],
+  ["'q'", "NULL"],
+]
+query = "SELECT BOOLOR_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_partition_expr"
+description = "NULL partition keys. Catches: NULL-keyed rows split or dropped"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "b", type = "BOOLEAN" }]
+rows = [
+  ["NULL", "TRUE"],
+  ["'p'", "FALSE"],
+  ["NULL", "FALSE"],
+]
+query = "SELECT BOOLOR_AGG(b) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

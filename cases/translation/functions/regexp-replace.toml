@@ -1,0 +1,146 @@
+category = "translation"
+construct = "sf.functions.regexp-replace"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Replace every match. Catches: only the first match replaced, or the pattern anchored"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["'a1b22c333'", "'#'"],
+  ["'\u00e9\u00e91'", "'x'"],
+]
+query = "SELECT REGEXP_REPLACE(a, '[0-9]+', r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default_replacement"
+description = "No replacement argument, which removes the matches. Catches: the pattern left in place or replaced with NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'a1b22c'"],
+]
+query = "SELECT REGEXP_REPLACE(a, '[0-9]') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_backreference"
+description = "A backreference to a capture group. Catches: \\1 inserted literally, or $1 syntax expected"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'john smith'"],
+]
+query = "SELECT REGEXP_REPLACE(a, '([a-z]+) ([a-z]+)', '\\\\2, \\\\1') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_position_occurrence"
+description = "Position and a single occurrence. Catches: occurrence ignored (all replaced) or counted from the string start instead of the position, or a byte offset for the position after \u00e9"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [
+  ["'aXaXaXa'", "1", "2"],
+  ["'aXaXaXa'", "3", "2"],
+  ["'aXaXaXa'", "2", "0"],
+  ["'\u00e9a\u00e9a'", "3", "1"],
+]
+query = "SELECT REGEXP_REPLACE(a, 'a', '-', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_parameters"
+description = "The i parameter. Catches: parameters ignored"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'AbAb'"],
+]
+query = "SELECT REGEXP_REPLACE(a, 'a', '_', 1, 0, 'i') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_subject"
+description = "NULL subject. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT REGEXP_REPLACE(a, 'a', 'b') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_pattern"
+description = "NULL pattern. Catches: NULL read as an empty pattern"
+columns = [{ name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT REGEXP_REPLACE('ab', p, 'x') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_null_replacement"
+description = "NULL replacement. Catches: NULL read as '' (matches removed instead of NULL)"
+columns = [{ name = "r", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["''"],
+]
+query = "SELECT REGEXP_REPLACE('ab', 'a', r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t009_null_position"
+description = "NULL position. Catches: NULL read as 1"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT REGEXP_REPLACE('aa', 'a', 'x', n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t010_null_occurrence"
+description = "NULL occurrence. Catches: NULL read as 0 (all)"
+columns = [{ name = "o", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT REGEXP_REPLACE('aa', 'a', 'x', 1, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t011_null_parameters"
+description = "NULL parameters. Catches: NULL read as c"
+columns = [{ name = "m", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'i'"],
+]
+query = "SELECT REGEXP_REPLACE('Aa', 'a', 'x', 1, 0, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t012_empty_match"
+description = "A pattern matching the empty string. Catches: empty matches skipped, or replaced twice at each position"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["''"],
+]
+query = "SELECT REGEXP_REPLACE(a, 'x*', '-') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

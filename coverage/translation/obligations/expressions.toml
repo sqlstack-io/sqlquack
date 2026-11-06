@@ -1,0 +1,739 @@
+# Translation obligations of family expressions (D151): per form, the documented type
+# combinations, NULL in each argument, boundaries and error parity, each met by its
+# cases under cases/translation. Hand-written; see coverage/translation/README.md.
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t001"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "NUMBER(38,0) + NUMBER(38,0)"
+note = "a NUMBER(38,0) + b NUMBER(38,0)."
+catches = "operands swapped for subtraction or truncated to 32 bits"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t001_num_num_380380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t002"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "NUMBER(10,2) + NUMBER(38,0)"
+note = "a NUMBER(10,2) + b NUMBER(38,0)."
+catches = "the sum losing the NUMBER(10,2) scale (4 instead of 4.25)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t002_num_num_102380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t003"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "NUMBER(10,2) + NUMBER(12,4)"
+note = "a NUMBER(10,2) + b NUMBER(12,4)."
+catches = "the result scale taken from the left operand only (1.31 instead of 1.3125)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t003_num_num_102124"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t004"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "NUMBER(38,0) + FLOAT"
+note = "a NUMBER(38,0) + b FLOAT."
+catches = "a FLOAT operand rounded to the integer side"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t004_num_float_380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t005"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "NUMBER(10,2) + FLOAT"
+note = "a NUMBER(10,2) + b FLOAT."
+catches = "the FLOAT operand cast to NUMBER(10,2) (1.00 instead of 1.001) or a fixed-point result type"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t005_num_float_102"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t006"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "type_combination"
+target = "FLOAT + FLOAT"
+note = "a FLOAT + b FLOAT."
+catches = "float addition replaced by decimal addition (0.30000000000000004 vs 0.3)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t006_float_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t007"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, the other operand set."
+catches = "NULL treated as 0 instead of propagating"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t007_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t008"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, the other operand set."
+catches = "NULL treated as 0 instead of propagating"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t008_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t009"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "38-digit integers that still fit."
+catches = "arithmetic done in 64 bits"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t009_max_38"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t010"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative fixed-point sums crossing zero."
+catches = "sign lost or magnitude added"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t010_negatives"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.add.t011"
+form = "sf.expressions.operators-arithmetic.add"
+kind = "error_parity"
+target = "error"
+note = "The sum of two 38-digit integers overflows NUMBER(38,0)."
+catches = "wrapping or a silent switch to FLOAT instead of the out-of-range error"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.add.toml#t011_overflow"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t001"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "NUMBER(38,0) / NUMBER(38,0)"
+note = "a NUMBER(38,0) / b NUMBER(38,0)."
+catches = "integer division (3 instead of 3.5) or a truncated rather than rounded scale-6 quotient (0.666666 vs 0.666667)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t001_num_num_380380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t002"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "NUMBER(10,2) / NUMBER(38,0)"
+note = "a NUMBER(10,2) / b NUMBER(38,0)."
+catches = "the quotient scale (s+6) handled wrongly"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t002_num_num_102380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t003"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "NUMBER(10,2) / NUMBER(12,4)"
+note = "a NUMBER(10,2) / b NUMBER(12,4)."
+catches = "quotient scale taken from the divisor"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t003_num_num_102124"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t004"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "NUMBER(38,0) / FLOAT"
+note = "a NUMBER(38,0) / b FLOAT."
+catches = "FLOAT divisor rounded"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t004_num_float_380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t005"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "NUMBER(10,2) / FLOAT"
+note = "a NUMBER(10,2) / b FLOAT."
+catches = "fixed-point / FLOAT result type swapped"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t005_num_float_102"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t006"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "type_combination"
+target = "FLOAT / FLOAT"
+note = "a FLOAT / b FLOAT."
+catches = "float division done in decimal"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t006_float_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t007"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, the other operand set."
+catches = "NULL treated as 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t007_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t008"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, the other operand set."
+catches = "NULL divisor turned into the division-by-zero error or 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t008_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t009"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales near the 12-digit quotient cap."
+catches = "the quotient scale not capped at 12"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t009_scale_12"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t010"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negative quotients that round at the last digit."
+catches = "rounding toward zero instead of half away from zero"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t010_neg_quotient"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.divide.t011"
+form = "sf.expressions.operators-arithmetic.divide"
+kind = "error_parity"
+target = "error"
+note = "Division by zero is an error."
+catches = "NULL, 0 or infinity instead of the division-by-zero error"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.divide.toml#t011_div_zero"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t001"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "type_combination"
+target = "NUMBER(38,0) % NUMBER(38,0)"
+note = "a NUMBER(38,0) % b NUMBER(38,0)."
+catches = "floor-based modulo (2 instead of -1): MOD truncates toward zero"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t001_num_num_380380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t002"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "type_combination"
+target = "NUMBER(10,2) % NUMBER(38,0)"
+note = "a NUMBER(10,2) % b NUMBER(38,0)."
+catches = "fractional remainder dropped"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t002_num_num_102380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t003"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "type_combination"
+target = "NUMBER(10,2) % NUMBER(12,4)"
+note = "a NUMBER(10,2) % b NUMBER(12,4)."
+catches = "result scale taken from one operand"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t003_num_num_102124"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t004"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "type_combination"
+target = "NUMBER(38,0) % FLOAT"
+note = "a NUMBER(38,0) % b FLOAT."
+catches = "FLOAT divisor rounded"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t004_num_float_380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t005"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "type_combination"
+target = "FLOAT % FLOAT"
+note = "a FLOAT % b FLOAT."
+catches = "floor-based float modulo"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t005_float_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t006"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, the other operand set."
+catches = "NULL treated as 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t006_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t007"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, the other operand set."
+catches = "NULL treated as 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t007_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t008"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Both operands negative."
+catches = "remainder made non-negative (Euclidean or ABS): 2 instead of -1 for -7 % -3, 4 instead of -1 for -1 % -5"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t008_both_negative"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t009"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "error_parity"
+target = "error"
+note = "A non-numeric string operand."
+catches = "the string silently read as 0 instead of the conversion error"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t009_mod_text"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.modulo.t010"
+form = "sf.expressions.operators-arithmetic.modulo"
+kind = "error_parity"
+target = "error"
+note = "A zero divisor: records what Snowflake returns there; re-kinded to boundary after capture if Snowflake returns a value instead of an error."
+catches = "NULL for x % 0 (DuckDB) where Snowflake raises division by zero"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.modulo.toml#t010_zero_divisor"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t001"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "NUMBER(38,0) * NUMBER(38,0)"
+note = "a NUMBER(38,0) * b NUMBER(38,0)."
+catches = "32-bit multiplication overflowing"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t001_num_num_380380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t002"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "NUMBER(10,2) * NUMBER(38,0)"
+note = "a NUMBER(10,2) * b NUMBER(38,0)."
+catches = "the NUMBER(10,2) scale lost"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t002_num_num_102380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t003"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "NUMBER(10,2) * NUMBER(12,4)"
+note = "a NUMBER(10,2) * b NUMBER(12,4)."
+catches = "the product scale capped or taken from one side (1.5625 vs 1.56)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t003_num_num_102124"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t004"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "NUMBER(38,0) * FLOAT"
+note = "a NUMBER(38,0) * b FLOAT."
+catches = "FLOAT operand truncated"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t004_num_float_380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t005"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "NUMBER(10,2) * FLOAT"
+note = "a NUMBER(10,2) * b FLOAT."
+catches = "fixed-point / FLOAT result type swapped"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t005_num_float_102"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t006"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "type_combination"
+target = "FLOAT * FLOAT"
+note = "a FLOAT * b FLOAT."
+catches = "underflow to zero handled differently"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t006_float_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t007"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, the other operand set."
+catches = "NULL treated as 1 or 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t007_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t008"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, the other operand set."
+catches = "NULL treated as 1 or 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t008_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t009"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "FLOAT products near the double range."
+catches = "overflow to infinity treated differently"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t009_float_big"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t010"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Scales adding past 12 digits."
+catches = "product scale above Snowflake's cap kept or rounded wrongly"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t010_scale_sum"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.multiply.t011"
+form = "sf.expressions.operators-arithmetic.multiply"
+kind = "error_parity"
+target = "error"
+note = "A product beyond 38 digits."
+catches = "wrapping or silent FLOAT instead of the out-of-range error"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.multiply.toml#t011_overflow"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t001"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "NUMBER(38,0) - NUMBER(38,0)"
+note = "a NUMBER(38,0) - b NUMBER(38,0)."
+catches = "operands in the wrong order (7 instead of -7)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t001_num_num_380380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t002"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "NUMBER(10,2) - NUMBER(38,0)"
+note = "a NUMBER(10,2) - b NUMBER(38,0)."
+catches = "scale of the NUMBER(10,2) side dropped"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t002_num_num_102380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t003"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "NUMBER(10,2) - NUMBER(12,4)"
+note = "a NUMBER(10,2) - b NUMBER(12,4)."
+catches = "the result scale taken from one operand only"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t003_num_num_102124"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t004"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "NUMBER(38,0) - FLOAT"
+note = "a NUMBER(38,0) - b FLOAT."
+catches = "FLOAT rounded to integer"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t004_num_float_380"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t005"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "NUMBER(10,2) - FLOAT"
+note = "a NUMBER(10,2) - b FLOAT."
+catches = "fixed-point / FLOAT result type swapped"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t005_num_float_102"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t006"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "FLOAT - FLOAT"
+note = "a FLOAT - b FLOAT."
+catches = "float subtraction done in decimal"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t006_float_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t007"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "type_combination"
+target = "DATE - DATE"
+note = "DATE minus DATE: the page says the result is an integer number of days."
+catches = "an INTERVAL instead of an integer count of days, or days counted across the leap day wrongly (29, -730)"
+reading = "operators-arithmetic: \"a - b Subtracts one date expression ( b ) from another ( a ). The result is an integer number of days.\""
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t007_date_date"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t008"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "null_argument"
+target = "a"
+note = "NULL as a, the other operand set."
+catches = "NULL treated as 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t008_null_a"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t009"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "null_argument"
+target = "b"
+note = "NULL as b, the other operand set."
+catches = "NULL treated as 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t009_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t010"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "A smaller minus a larger value."
+catches = "absolute value taken"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t010_to_negative"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.subtract.t011"
+form = "sf.expressions.operators-arithmetic.subtract"
+kind = "error_parity"
+target = "error"
+note = "The difference of the most negative and the largest 38-digit integers overflows."
+catches = "wrapping instead of the out-of-range error"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.subtract.toml#t011_overflow"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t001"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "type_combination"
+target = "NUMBER(38,0)"
+note = "Negating integers."
+catches = "the sign dropped or the value doubled"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t001_int"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t002"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "Negating NUMBER(10,2)."
+catches = "the scale lost (-1 instead of -1.25)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t002_dec"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t003"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "type_combination"
+target = "FLOAT"
+note = "Negating FLOAT."
+catches = "negative zero or exponent handling"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t003_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t004"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "null_argument"
+target = "a"
+note = "Negating NULL."
+catches = "NULL turned into 0"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t005"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Negating the largest 38-digit integer."
+catches = "a 64-bit negation that overflows"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t005_max"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-minus.t006"
+form = "sf.expressions.operators-arithmetic.unary-minus"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Negation of a negation and of a subtraction."
+catches = "precedence: - a - b read as -(a - b)"
+reading = "operators-arithmetic: a and b are numeric expressions; the page's scale and precision section covers fixed-point and floating-point operands, so the pairs are integer NUMBER, NUMBER with a scale and FLOAT"
+cases = ["cases/translation/expressions/operators-arithmetic.unary-minus.toml#t006_double_neg"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t001"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Unary plus on numeric strings converts them."
+catches = "the string returned unchanged, so ordering and arithmetic stay textual"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t001_text"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t002"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "Unary plus keeps a NUMBER(10,2) as it is."
+catches = "a cast that changes the scale"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t002_dec"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t003"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "type_combination"
+target = "FLOAT"
+note = "Unary plus on FLOAT."
+catches = "conversion to fixed-point"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t003_float"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t004"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "null_argument"
+target = "a"
+note = "Unary plus on NULL text."
+catches = "NULL replaced or converted to 0"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t005"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "error_parity"
+target = "error"
+note = "Unary plus on an empty string.: Snowflake raises error 100038 on every row (captured at e8691b63)."
+catches = "NaN, NULL or a value where Snowflake raises an error"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t005_empty"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-arithmetic.unary-plus.t006"
+form = "sf.expressions.operators-arithmetic.unary-plus"
+kind = "error_parity"
+target = "error"
+note = "Unary plus on a non-numeric string is an error."
+catches = "the string passed through unconverted"
+reading = "operators-arithmetic: \"+a Returns a, which causes implicit conversion of a to a numeric value. If a is a string, but the string can't be converted to a numeric value, an error is returned.\""
+cases = ["cases/translation/expressions/operators-arithmetic.unary-plus.toml#t006_bad_text"]
+required = true

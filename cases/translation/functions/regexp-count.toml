@@ -1,0 +1,111 @@
+category = "translation"
+construct = "sf.functions.regexp-count"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Non-overlapping matches, unanchored. Catches: overlapping matches counted (3 for aa in aaaa) or an anchored match"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abcabcab'", "'ab'"],
+  ["'aaaa'", "'aa'"],
+  ["'xyz'", "'q'"],
+  ["'\u00e9\u00e9\u00e9'", "'\u00e9'"],
+]
+query = "SELECT REGEXP_COUNT(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_position"
+description = "A start position in characters past a multi-byte character. Catches: the position ignored, read 0-based, or as a byte offset"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'abcabcab'", "'ab'", "3"],
+  ["'\u00e9ab'", "'ab'", "2"],
+  ["'\u00e9ab'", "'ab'", "3"],
+]
+query = "SELECT REGEXP_COUNT(a, p, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_parameters"
+description = "The i parameter. Catches: parameters ignored"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'AbaB'", "'ab'", "'i'"],
+  ["'AbaB'", "'ab'", "'c'"],
+]
+query = "SELECT REGEXP_COUNT(a, p, 1, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_subject"
+description = "NULL subject. Catches: NULL read as empty (0)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'a'", "'a'"],
+]
+query = "SELECT REGEXP_COUNT(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_pattern"
+description = "NULL pattern. Catches: NULL read as an empty pattern"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'ab'", "NULL"],
+]
+query = "SELECT REGEXP_COUNT(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_position"
+description = "NULL position. Catches: NULL read as 1"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'aa'", "NULL"],
+  ["'aa'", "2"],
+]
+query = "SELECT REGEXP_COUNT(a, 'a', n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_parameters"
+description = "NULL parameters. Catches: NULL read as c"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'Aa'", "NULL"],
+]
+query = "SELECT REGEXP_COUNT(a, 'a', 1, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_empty_match"
+description = "A pattern that can match the empty string. Catches: empty matches not counted, or counted twice at each position"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'x*'"],
+  ["''", "'x*'"],
+]
+query = "SELECT REGEXP_COUNT(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t009_position_zero"
+description = "Position 0, outside the documented positive range: records what Snowflake returns there; it moves to boundary if Snowflake returns a value instead of an error. Catches: position 0 read as 1"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'aa'"],
+]
+query = "SELECT REGEXP_COUNT(a, 'a', 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

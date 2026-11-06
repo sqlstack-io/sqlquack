@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.lower"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "LOWER of non-ASCII capitals. Catches: ASCII-only lowering (\u00c0 \u00c9 \u03a9 kept)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\u00c0\u00c9\u00ce \u03a9MEGA Stra\u00dfe'"],
+  ["'ABC123'"],
+]
+query = "SELECT LOWER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'A'"],
+]
+query = "SELECT LOWER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string. Catches: NULL for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT LOWER(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

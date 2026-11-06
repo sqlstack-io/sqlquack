@@ -1,0 +1,91 @@
+category = "translation"
+construct = "sf.functions.hll.hll"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Repeated values per group. Catches: duplicates counted (COUNT)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3"],
+  ["'q'", "7"],
+  ["'p'", "1"],
+  ["'q'", "7"],
+  ["'p'", "3"],
+  ["'p'", "3"],
+  ["'p'", "2"],
+]
+query = "SELECT g, HLL(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_multi"
+description = "Distinct (a, b) combinations: 4 without the NULL pair, where a alone has 3 distinct values. Catches: distinct values of a only (3), the NULL pair counted (5), or the sum of per-column counts (6)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'p'", "1", "'x'"],
+  ["'p'", "1", "'y'"],
+  ["'p'", "2", "'x'"],
+  ["'p'", "1", "'x'"],
+  ["'p'", "3", "NULL"],
+  ["'p'", "1", "'z'"],
+]
+query = "SELECT HLL(a, b) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_varchar"
+description = "Text differing only in case. Catches: case-insensitive distinctness"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["'A'"],
+  ["'a'"],
+]
+query = "SELECT HLL(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_distinct"
+description = "DISTINCT, which has no effect. Catches: DISTINCT rejected"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3"],
+  ["'q'", "7"],
+  ["'p'", "1"],
+  ["'q'", "7"],
+  ["'p'", "3"],
+  ["'p'", "3"],
+  ["'p'", "2"],
+]
+query = "SELECT g, HLL(DISTINCT x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t005_null_expr1"
+description = "NULL rows, which are not counted, and a group of only NULL. Catches: NULL counted as a value"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "1"],
+  ["'p'", "NULL"],
+]
+query = "SELECT g, HLL(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty_input"
+description = "No rows. Catches: NULL instead of 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT HLL(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.functions.map-contains-key"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_present"
+description = "A key present, one absent, and one differing only in case. Catches: a case-insensitive match"
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["'z'"],
+  ["'A'"],
+]
+query = "SELECT MAP_CONTAINS_KEY(k, MAP_CONSTRUCT('a', 1, 'b', 2)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_key"
+description = "A NULL key, which the page says gives NULL. Catches: FALSE returned"
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT MAP_CONTAINS_KEY(k, MAP_CONSTRUCT('a', 1, 'b', 2)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

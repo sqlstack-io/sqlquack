@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.encrypt"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "Text and an empty string encrypted as BINARY and decrypted, including with an empty passphrase, which the page allows. Catches: the bytes altered, or the empty passphrase rejected"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+  ["''", "''"],
+]
+query = "SELECT ordinal, TO_VARCHAR(DECRYPT(ENCRYPT(TO_BINARY(v, 'UTF-8'), p), p), 'utf-8') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_random_iv"
+description = "Two encryptions of the same value, which differ because the page says the IV is random, and the result type. Catches: a deterministic encryption (equal results), or VARCHAR returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+]
+query = "SELECT ENCRYPT(v, p) <> ENCRYPT(v, p) AS differ, TYPEOF(ENCRYPT(v, p)::VARIANT) AS t FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_aad"
+description = "Additional authenticated data passed to both functions. Catches: the AAD ignored on encryption"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+]
+query = "SELECT TO_VARCHAR(DECRYPT(ENCRYPT(v, p, 'aad'), p, 'aad'), 'utf-8') AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_value_to_encrypt"
+description = "A NULL value; the page does not say; the recording decides. Catches: an encryption of empty input returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'p'"],
+]
+query = "SELECT ENCRYPT(v, p) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

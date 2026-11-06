@@ -1,0 +1,52 @@
+category = "translation"
+construct = "sf.functions.length.length"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "LENGTH of multi-byte text and trailing blanks. Catches: a byte count (6 for h\u00e9llo) or trailing blanks trimmed"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'h\u00e9llo'"],
+  ["'ab  '"],
+  ["'\u20ac'"],
+]
+query = "SELECT LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "LENGTH of binary values. Catches: the hex text length (6 instead of 3)"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'00FF10'"],
+  ["'41'"],
+]
+query = "SELECT LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expression"
+description = "NULL next to a set value. Catches: NULL read as an empty string (0)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'x'"],
+]
+query = "SELECT LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "The empty string. Catches: NULL for an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["' '"],
+]
+query = "SELECT LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

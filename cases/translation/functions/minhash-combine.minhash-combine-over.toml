@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.minhash-combine.minhash-combine-over"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_partition"
+description = "States merged per partition, then compared with the state of the union. Catches: only one state kept"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'p'", "1", "'x'"],
+  ["'q'", "2", "'y'"],
+  ["'p'", "2", "'y'"],
+  ["'q'", "1", "'x'"],
+  ["'r'", "7", "'z'"],
+]
+query = "SELECT APPROXIMATE_SIMILARITY(m) AS r FROM (SELECT MINHASH_COMBINE(m) OVER (PARTITION BY k) AS m FROM (SELECT 1 AS k, m FROM (SELECT g, MINHASH(100, a) AS m FROM input GROUP BY g) WHERE g IN ('p', 'r')) UNION ALL SELECT MINHASH(100, a) FROM input WHERE g IN ('p', 'r'))"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr"
+description = "A NULL partition key. Catches: NULL-keyed rows split (0.0) or dropped (n 1 instead of 3)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'p'", "1", "'x'"],
+  ["'q'", "2", "'y'"],
+  ["'p'", "2", "'y'"],
+  ["'q'", "1", "'x'"],
+  ["'r'", "7", "'z'"],
+]
+query = "SELECT APPROXIMATE_SIMILARITY(m) AS r, COUNT(m) AS n FROM (SELECT MINHASH_COMBINE(m) OVER (PARTITION BY k) AS m FROM (SELECT NULL AS k, m FROM (SELECT g, MINHASH(100, a) AS m FROM input GROUP BY g) WHERE g IN ('p', 'r')) UNION ALL SELECT MINHASH(100, a) FROM input WHERE g IN ('p', 'r'))"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_two_partitions"
+description = "States merged in two partitions (q apart from p and r), q's row compared with the state of q's values. Catches: PARTITION BY ignored (the {1, 2, 7} state, below 1.0)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'p'", "1", "'x'"],
+  ["'q'", "2", "'y'"],
+  ["'p'", "2", "'y'"],
+  ["'q'", "1", "'x'"],
+  ["'r'", "7", "'z'"],
+]
+query = "SELECT APPROXIMATE_SIMILARITY(m) AS r FROM (SELECT m FROM (SELECT g, MINHASH_COMBINE(m) OVER (PARTITION BY g = 'q') AS m FROM (SELECT g, MINHASH(100, a) AS m FROM input GROUP BY g)) WHERE g = 'q' UNION ALL SELECT MINHASH(100, a) FROM input WHERE g = 'q')"
+order = "ordered"
+tags = ["type-combination"]

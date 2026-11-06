@@ -1,0 +1,76 @@
+category = "translation"
+construct = "sf.functions.object-agg.object-agg"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_pairs"
+description = "Pairs per group. Catches: keys and values swapped, or the groups merged"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "'b'", "2"],
+  ["'q'", "'a'", "7"],
+  ["'p'", "'a'", "1"],
+]
+query = "SELECT g, OBJECT_AGG(k, v::VARIANT) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_duplicate_key"
+description = "A duplicate key with different values, which the page says is an error. Catches: the last or first value kept instead of the error"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "'a'", "1"],
+  ["'p'", "'a'", "2"],
+]
+query = "SELECT OBJECT_AGG(k, v::VARIANT) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_distinct"
+description = "An identical (key, value) row twice: DISTINCT removes it and no error is raised. Catches: DISTINCT ignored (a duplicate key error)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "'a'", "1"],
+  ["'p'", "'a'", "1"],
+  ["'p'", "'b'", "2"],
+]
+query = "SELECT OBJECT_AGG(DISTINCT k, v::VARIANT) AS r FROM input"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t004_null_key"
+description = "A NULL key, which is ignored. Catches: an error, or a \"null\" key"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL", "1"],
+  ["'p'", "'a'", "2"],
+]
+query = "SELECT OBJECT_AGG(k, v::VARIANT) AS r FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_value"
+description = "A NULL value, which is ignored (the key is left out). Catches: the key kept with a null value"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "'a'", "NULL"],
+  ["'p'", "'b'", "2"],
+]
+query = "SELECT OBJECT_AGG(k, v::VARIANT) AS r FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty_input"
+description = "No rows. Catches: NULL or an error instead of the empty-input result"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "'a'", "1"],
+]
+query = "SELECT OBJECT_AGG(k, v::VARIANT) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

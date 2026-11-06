@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.array-remove-at"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_position"
+description = "Positions 0 and 1. Catches: 1-based positions"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2,3]'", "0"],
+  ["'[1,2,3]'", "1"],
+]
+query = "SELECT ARRAY_REMOVE_AT(PARSE_JSON(a), p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_negative_position"
+description = "Positions -1 and -3. Catches: the negative position read as 0, or -1 removing the second-last"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2,3]'", "-1"],
+  ["'[1,2,3]'", "-3"],
+]
+query = "SELECT ARRAY_REMOVE_AT(PARSE_JSON(a), p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_beyond"
+description = "Positions 3 and -4, just beyond each end. Catches: an error, or the last or first element removed"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2,3]'", "3"],
+  ["'[1,2,3]'", "-4"],
+]
+query = "SELECT ARRAY_REMOVE_AT(PARSE_JSON(a), p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t004_null_position"
+description = "A NULL position. Catches: NULL read as 0 (the first element removed)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2]'", "NULL"],
+]
+query = "SELECT ARRAY_REMOVE_AT(PARSE_JSON(a), p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,84 @@
+category = "translation"
+construct = "sf.functions.compress"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar_snappy"
+description = "COMPRESS of the page's example and of multi-byte text with SNAPPY. Catches: another codec or framing (the page gives 0920536E6F77666C616B65)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'"],
+  ["'h\u00e9llo h\u00e9llo h\u00e9llo'"],
+]
+query = "SELECT COMPRESS(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "COMPRESS of a BINARY value. Catches: the binary read as its hex text"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'536E6F77666C616B65'"],
+]
+query = "SELECT COMPRESS(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_methods"
+description = "Each method, with a level and lower-case names, read back through DECOMPRESS_STRING. Catches: a method name or level rejected, or compress and decompress disagreeing on the codec or its framing"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'abcabcabcabc'"],
+]
+query = "SELECT DECOMPRESS_STRING(COMPRESS(a, 'zlib(1)'), 'ZLIB') AS z, DECOMPRESS_STRING(COMPRESS(a, 'ZSTD'), 'zstd') AS d, DECOMPRESS_STRING(COMPRESS(a, 'BZ2'), 'BZ2') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_input"
+description = "NULL input next to a set one. Catches: NULL compressed as an empty value"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'ab'"],
+]
+query = "SELECT COMPRESS(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_method"
+description = "NULL method. Catches: NULL read as a default method"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'ab'", "NULL"],
+  ["'ab'", "'SNAPPY'"],
+]
+query = "SELECT COMPRESS(a, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty"
+description = "The empty string with SNAPPY. Catches: NULL for empty input instead of a length-0 block"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT COMPRESS(a, 'SNAPPY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t007_unknown_method"
+compile_error = true
+description = "An unknown method, which the page says fails; Snowflake refuses it when compiling (SQLSTATE 42P19). Catches: a fallback codec or NULL instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'ab'"],
+]
+query = "SELECT COMPRESS(a, 'LZ4') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

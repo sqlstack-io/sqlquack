@@ -1,0 +1,58 @@
+category = "translation"
+construct = "sf.functions.map-insert"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_insert"
+description = "A new key, and an update of an existing key with updateFlag TRUE. Catches: the update ignored, or a second entry added"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["9"],
+]
+query = "SELECT MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), 'c', x)::VARIANT AS ins, MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), 'a', x, TRUE)::VARIANT AS upd FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_flag_new_key"
+description = "updateFlag TRUE with a key not in the map; the page says the pair is added. Catches: an error, or the map unchanged"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["9"],
+]
+query = "SELECT MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), 'c', x, TRUE)::VARIANT AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_key"
+description = "A NULL key and a SQL NULL value in one statement; Snowflake raised 220002 because a structured map with a non-nullable value type cannot take a NULL value. Catches: the NULL value inserted into the structured map, or silently dropped"
+columns = [{ name = "k", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "NULL"],
+]
+query = "SELECT MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 3)) AS null_key, MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), 'c', x)) AS null_value FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_existing_key"
+description = "An existing key without updateFlag, which the page says is an error. Catches: the value silently updated or kept"
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+]
+query = "SELECT MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 5)::VARIANT AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_key"
+description = "A NULL key alone, whose pair the page omits. Catches: the NULL-keyed pair inserted, or an error raised"
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 3)) AS null_key FROM input"
+order = "ordered"
+tags = ["null"]
