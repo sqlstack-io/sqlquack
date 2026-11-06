@@ -1679,6 +1679,9 @@ impl Parser {
         };
 
         let mut joins = self.parse_joins()?;
+        if self.is_snowflake() && from.is_none() && !joins.is_empty() {
+            return Err(self.parse_error("Expected FROM before JOIN"));
+        }
 
         while self.check(TokenType::Pivot) || self.check(TokenType::Unpivot) {
             if !joins.is_empty() {

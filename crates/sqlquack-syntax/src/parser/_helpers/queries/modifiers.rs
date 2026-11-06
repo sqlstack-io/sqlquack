@@ -268,6 +268,9 @@ impl Parser {
             }));
         }
 
+        if self.is_snowflake() && !self.check(TokenType::Number) {
+            return Err(self.parse_error("Expected an unsigned sample size"));
+        }
         let size = self.parse_unary()?;
 
         let (method, unit_after_size, is_percent) =
@@ -299,6 +302,9 @@ impl Parser {
 
         let (seed, use_seed_keyword) = if self.match_texts(&["SEED"]) {
             self.expect_token(TokenType::LParen)?;
+            if self.is_snowflake() && !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected an unsigned sample seed"));
+            }
             let seed_value = self.parse_expression()?;
             self.expect_token(TokenType::RParen)?;
             (Some(seed_value), true)

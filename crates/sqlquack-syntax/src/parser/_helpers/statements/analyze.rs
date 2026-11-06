@@ -1038,7 +1038,7 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
-            if self.check(TokenType::RParen) {
+            if self.check(TokenType::RParen) && !self.is_snowflake() {
                 break;
             }
         }
@@ -1051,6 +1051,9 @@ impl Parser {
         let mut identifiers: Vec<Identifier> = Vec::new();
 
         loop {
+            if self.is_snowflake_reserved_keyword() {
+                return Err(self.parse_error("Expected an identifier"));
+            }
             let start = self.peek().span;
             let quoted = self.check(TokenType::QuotedIdentifier);
             let name = self.expect_identifier_or_safe_keyword()?;

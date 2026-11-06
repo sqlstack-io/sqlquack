@@ -1406,3 +1406,131 @@ fn given_a_snowflake_after_match_skip_to_when_parsing_then_a_bare_symbol_is_acce
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_from_clause_when_parsing_then_recorded_query_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an unknown call in FROM (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 ( 10 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ERROR_TABLE of a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM ERROR_TABLE ( 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty CHANGES is accepted (recorded OK)",
+            sql: "SELECT 1 FROM v1 CHANGES ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "JOIN without FROM (recorded errno 1003)",
+            sql: "SELECT 1 t1 JOIN t2 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "MATCH_CONDITION on an inner join (recorded errno 1003)",
+            sql: "SELECT * FROM t1 JOIN t2 MATCH_CONDITION ( t1.c1 >= t2.c1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a negative sample size (recorded errno 1003)",
+            sql: "SELECT * FROM t1 SAMPLE ( -1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a negative sample seed (recorded errno 1003)",
+            sql: "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( -1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps an unsigned sample seed",
+            sql: "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma in a VALUES row (recorded errno 1003)",
+            sql: "SELECT 1 FROM ( VALUES ( 1 , ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved column alias (recorded errno 1003)",
+            sql: "SELECT 1 FROM ( VALUES ( 1 ) ) v1 ( SELECT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a quoted reserved column alias",
+            sql: "SELECT 1 FROM ( VALUES ( 1 ) ) v1 ( \"SELECT\" ) ;",
+            expected_kind: Some("select"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_match_recognize_and_semantic_view_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an empty PARTITION BY takes PATTERN as its item (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( PARTITION BY PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty PATTERN (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( PATTERN ( ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed exclusion in PATTERN (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( {- a b ) DEFINE a AS TRUE , b AS TRUE ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a measure without an alias (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( MEASURES 1 PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a measure alias without AS (recorded OK)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( MEASURES 1 v1 PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SHOW EMPTY MATCHES (recorded OK)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ALL ROWS PER MATCH SHOW EMPTY MATCHES PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SEMANTIC_VIEW with no clause (recorded errno 1003)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SEMANTIC_VIEW of a string (recorded errno 1003)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( 'v1' METRICS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a SEMANTIC_VIEW alias without AS (recorded OK)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 v1 ) ;",
+            expected_kind: Some("select"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

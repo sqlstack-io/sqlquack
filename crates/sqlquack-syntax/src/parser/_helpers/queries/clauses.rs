@@ -1228,6 +1228,9 @@ impl Parser {
             return Ok(None);
         }
 
+        if self.is_snowflake() && self.check(TokenType::NoCycle) {
+            return Err(self.parse_error("Snowflake CONNECT BY takes no NOCYCLE"));
+        }
         let nocycle = self.match_token(TokenType::NoCycle);
 
         let connect = self.parse_connect_expression()?;
@@ -1310,6 +1313,18 @@ impl Parser {
 
     /// Parse primary in CONNECT BY context with PRIOR support
     pub(crate) fn parse_connect_primary(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check(TokenType::Prior) {
+            if self.check_next(TokenType::String) {
+                return Err(self.parse_error("Expected a column after PRIOR"));
+            }
+            let operand_follows = self.peek_nth(1).is_some_and(|token| {
+                !crate::parser::constants::SNOWFLAKE_PRIOR_ENDS.contains(&token.token_type)
+            });
+            if !operand_follows {
+                self.skip();
+                return Ok(Expression::column("PRIOR"));
+            }
+        }
         if self.match_token(TokenType::Prior) {
             let expr = self.parse_primary()?;
             return Ok(Expression::Prior(Box::new(Prior { this: expr })));
@@ -1387,6 +1402,9 @@ impl Parser {
             None
         };
 
+        if self.is_snowflake() && (pattern.is_none() || define.is_none()) {
+            return Err(self.parse_error("MATCH_RECOGNIZE needs PATTERN and DEFINE"));
+        }
         self.expect_token(TokenType::RParen)?;
 
         Ok(Expression::MatchRecognize(Box::new(MatchRecognize {
@@ -1420,6 +1438,20 @@ impl Parser {
 
             if self.match_token(TokenType::As) {
                 let alias = self.parse_unquoted_identifier(Self::expect_identifier)?;
+                expr = Expression::Alias(Box::new(Alias::new(expr, alias)));
+            } else if self.is_snowflake() {
+                let at_clause = self.is_at_end()
+                    || self.check(TokenType::Comma)
+                    || self.check(TokenType::RParen)
+                    || self.is_snowflake_reserved_keyword()
+                    || (!self.check(TokenType::QuotedIdentifier)
+                        && crate::parser::constants::SNOWFLAKE_MEASURES_ENDS
+                            .iter()
+                            .any(|word| self.peek_text().eq_ignore_ascii_case(word)));
+                if at_clause {
+                    return Err(self.parse_error("Expected an alias for the measure"));
+                }
+                let alias = self.expect_identifier_or_keyword_with_quoted()?;
                 expr = Expression::Alias(Box::new(Alias::new(expr, alias)));
             }
 
@@ -1465,7 +1497,9 @@ impl Parser {
                 return Err(self.parse_error("Expected MATCH after ALL ROWS PER"));
             }
 
-            if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("SHOW") {
+            if (self.check(TokenType::Var) || self.check(TokenType::Show))
+                && self.peek_text().eq_ignore_ascii_case("SHOW")
+            {
                 self.skip();
                 if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("EMPTY") {
                     self.skip();
@@ -1510,7 +1544,7 @@ impl Parser {
         Ok(None)
     }
 
-    /// Parse AFTER MATCH SKIP clause in MATCH_RECOGNIZE
+    /// Parses AFTER MATCH SKIP; Snowflake takes TO NEXT without ROW as the symbol NEXT.
     pub(crate) fn parse_match_recognize_after(&mut self) -> Result<Option<MatchRecognizeAfter>> {
         if !self.match_token(TokenType::After) {
             return Ok(None);
@@ -1559,7 +1593,6 @@ impl Parser {
             }
 
             if self.is_snowflake() {
-                // Snowflake takes NEXT without ROW as the symbol itself, though it lexes as a keyword.
                 let name = if next {
                     self.advance_text()?
                 } else {
@@ -1612,6 +1645,13 @@ impl Parser {
 
         if depth > 0 {
             return Err(self.parse_error("Unclosed parenthesis in PATTERN clause"));
+        }
+        let compact: String = pattern.chars().filter(|c| !c.is_whitespace()).collect();
+        if self.is_snowflake()
+            && (compact.is_empty()
+                || compact.matches("{-").count() != compact.matches("-}").count())
+        {
+            return Err(self.parse_error("Expected a complete PATTERN"));
         }
 
         Ok(pattern.trim().to_string())

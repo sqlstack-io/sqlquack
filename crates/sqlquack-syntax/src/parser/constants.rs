@@ -254,6 +254,44 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
 /// Snowflake types written before a string as a typed literal, beyond the shared ones.
 pub(crate) const SNOWFLAKE_LITERAL_TYPES: &[&str] = &["IPADDRESS"];
 
+/// The names Snowflake calls in FROM without TABLE( ); any other `name ( ... )` there is refused (errno 1003).
+pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
+    "DIRECTORY",
+    "DYNAMIC_TABLE_REFRESH_BOUNDARY",
+    "ERROR_TABLE",
+    "IDENTIFIER",
+    "SEMANTIC_VIEW",
+    "TABLE",
+];
+
+/// The clause words of a SEMANTIC_VIEW call, which cannot be an alias there.
+pub(crate) const SNOWFLAKE_SEMANTIC_VIEW_CLAUSES: &[&str] =
+    &["DIMENSIONS", "FACTS", "METRICS", "WHERE"];
+
+/// Words that end a MEASURES item in Snowflake, so they cannot be its alias.
+pub(crate) const SNOWFLAKE_MEASURES_ENDS: &[&str] = &["AFTER", "ALL", "DEFINE", "ONE", "PATTERN"];
+
+/// FROM calls whose one argument is an object name: none, or a string, is refused (errno 1003).
+pub(crate) const SNOWFLAKE_FROM_CALLS_OF_A_NAME: &[&str] =
+    &["DYNAMIC_TABLE_REFRESH_BOUNDARY", "ERROR_TABLE"];
+
+/// Tokens after which a Snowflake PRIOR has no operand, so the word is a name.
+pub(crate) const SNOWFLAKE_PRIOR_ENDS: &[crate::tokens::models::TokenType] = &[
+    crate::tokens::models::TokenType::Eq,
+    crate::tokens::models::TokenType::Neq,
+    crate::tokens::models::TokenType::Lt,
+    crate::tokens::models::TokenType::Lte,
+    crate::tokens::models::TokenType::Gt,
+    crate::tokens::models::TokenType::Gte,
+    crate::tokens::models::TokenType::And,
+    crate::tokens::models::TokenType::Or,
+    crate::tokens::models::TokenType::RParen,
+    crate::tokens::models::TokenType::Comma,
+    crate::tokens::models::TokenType::Semicolon,
+    crate::tokens::models::TokenType::Start,
+    crate::tokens::models::TokenType::Order,
+];
+
 /// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
 pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
 

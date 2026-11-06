@@ -650,6 +650,13 @@ impl Parser {
 
             let first_ident = self.parse_bigquery_table_part()?;
             let first_name = first_ident.name.clone();
+            if self.is_snowflake()
+                && !first_ident.quoted
+                && first_name.eq_ignore_ascii_case("ASOF")
+                && self.check(TokenType::Join)
+            {
+                return Err(self.parse_error("Expected a table before ASOF JOIN"));
+            }
 
             if self.match_token(TokenType::Dot) {
                 self.parse_table_qualified_source(first_ident, first_name)?
@@ -664,6 +671,7 @@ impl Parser {
                         self.parse_error("Expected AT, BEFORE or CHANGES before the clause")
                     );
                 }
+                self.refuse_snowflake_bare_table_call(&first_name)?;
                 self.parse_table_function_source(first_name)?
             } else {
                 let table_name = first_ident;
