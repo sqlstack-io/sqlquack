@@ -29,6 +29,14 @@ impl Parser<'_> {
             Some("copy") => self.copy_statement(),
             Some("comment") => self.comment_statement(),
             Some("security") => self.security_label_statement(),
+            Some("alter") if self.unknown_alter_kind().is_some() => {
+                self.at += self.unknown_alter_kind().unwrap_or_default();
+                Err(self.error())
+            }
+            Some("alter") if self.altered_relation().is_some() => {
+                let kind: &'static str = self.altered_relation().unwrap_or_default();
+                self.alter_relation(kind)
+            }
             Some("create") if self.creates_routine() => self.create_routine(),
             Some("create") if self.creates_table() => self.create_table(),
             Some("create") if self.creates_aggregate() => self.create_aggregate(),

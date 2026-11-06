@@ -275,9 +275,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "ALTER TABLE, which the parser keeps opaque",
+            description: "ALTER TABLE ADD COLUMN, as a structured AlterObject",
             sql: "ALTER TABLE t ADD COLUMN a int",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "MERGE_ACTION(), which the parser keeps opaque",
