@@ -8,7 +8,7 @@ use crate::dialects::constants::DUCKDB;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
-use crate::lineage::models::LineageContext;
+use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::test_types::{
     EngineTypeFixture, EngineTypeReplay, EngineTypeTally, ShopSchema, TypedShopSchema,
 };
@@ -31,6 +31,32 @@ pub(crate) fn shop_schema() -> ShopSchema {
         ("SHOP.PRODUCTS", &["SKU", "PRICE"]),
         ("EXPORTS", &["\"listingId\"", "LISTING_STATUS"]),
     ])
+}
+
+/// Each output of `sql`'s lineage: its name, transform and sources as `relation.column`.
+pub(crate) fn lineage_outputs(
+    sql: &str,
+    (dialect, profile): (Dialect, &'static dyn DialectProfile),
+    schema: &dyn LineageSchema,
+) -> Vec<(String, TransformKind, Vec<String>)> {
+    let context = LineageContext {
+        profile,
+        schema,
+        sql: None,
+    };
+    query_lineage(sql, dialect, &ParseOptions::default(), context)
+        .unwrap_or_else(|error| panic!("{sql}: {error}"))
+        .outputs
+        .iter()
+        .map(|output| {
+            let sources: Vec<String> = output
+                .sources
+                .iter()
+                .map(|source| format!("{}.{}", source.relation, source.column))
+                .collect();
+            (output.name.clone(), output.kind, sources)
+        })
+        .collect()
 }
 
 /// The same shop as DuckDB spells unquoted names, in lower case.
