@@ -36,3 +36,39 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.ddl.create-function.sql-body-return" = "aeca768d81797523291e2dd34a985c2599e280f1c149424da6f43b7cdcaa256a"
 "pg.ddl.create-procedure" = "731961bcdb3eed7b91817885ef74ae096b15356bc39ea9b437901afae9a234cd"
 "pg.ddl.create-procedure.sql-body-atomic" = "57ab38b7797d7995f7473c7eac5bc1a08b993b9fcf56a9211914caee9f2b997c"
+
+[[review]]
+id = "pg-auditor-ddl-002"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "2948a1dbc204804ff930278d67ceb485bebfbb0d"
+reviewed_utc = "2026-11-06T10:29:18Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-function",
+  "pg.ddl.create-function.sql-body-atomic",
+  "pg.ddl.create-procedure.sql-body-atomic",
+  "pg.ddl.create-table-as",
+  "pg.ddl.create-table.of",
+  "pg.ddl.create-table.partition-of",
+  "pg.ddl.create-table.table-name",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 2948a1db; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-function" = "2eecf559ff87e0813f9bf701e5b8fbc1bc3b54037f9ddb46c5b06d07b93ad8bb"
+"pg.ddl.create-function.sql-body-atomic" = "75fed97bdac57a42fb50f8ea3450e14db3047bdde6d6f56273af97e1da88ee69"
+"pg.ddl.create-procedure.sql-body-atomic" = "0010c36ac10d7a51a60af3a5c9b659277ff7dab63bb74da485677d52aeca8a56"
+"pg.ddl.create-table-as" = "42e49586a889fe0152d7ca2ec39026435a2b9a5f6140cbcdf0a0a84c4c54686f"
+"pg.ddl.create-table.of" = "5894c1ffb8ffa947bfc859730ff78aebc64fccfd757ed6f51510fb4e4cd01ae1"
+"pg.ddl.create-table.partition-of" = "5c572e46123342901848610edf2ab9d3420f49b03ab416e598eddc7a25f67c6b"
+"pg.ddl.create-table.table-name" = "80e746d9de74fc04e61fbcd2a52cee3bf1213562d05c282238d5da1e2b6669dd"
+
+[review.definitions]
+"pg.ddl.create-function" = "72fee22fac72527e98d85090f53770549ef89df013dec21e11084da5e567a1d4"
+"pg.ddl.create-function.sql-body-atomic" = "a8488ccec13c586a534947c79e49093e12d501a6a226864a812f0859dfc937ce"
+"pg.ddl.create-procedure.sql-body-atomic" = "d04b54795b861bd8c88dbf44cd137474a05b188ede805ea43c3fe18375cd46b1"
+"pg.ddl.create-table-as" = "68c73b2c22dfe0192811a574f6b43816216de054e1ab1c60f94692192794c4e1"
+"pg.ddl.create-table.of" = "5f307c609df2d16b71ecfcccaedcba0145bf89d6bd9380b9c8cdc0547839c9dd"
+"pg.ddl.create-table.partition-of" = "8a86debb8bb2f0e4bfc6cce5b93c9c96ea17107719424f680e994c24de7ad609"
+"pg.ddl.create-table.table-name" = "bd9001ff5cbf2e3a6eb346124b1345b792bedd34088f1b39eabe2f514a50b742"
