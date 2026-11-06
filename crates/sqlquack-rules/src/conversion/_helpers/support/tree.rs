@@ -47,6 +47,10 @@ pub(crate) type Payload = Map<String, Value>;
 pub(crate) const LITERAL_NUMBER: &str = "number";
 /// The parser's literal type for strings.
 pub(crate) const LITERAL_STRING: &str = "string";
+/// The parser's literal type for `DATE '...'`.
+pub(crate) const LITERAL_DATE: &str = "date";
+/// The parser's literal type for `TIMESTAMP '...'`.
+pub(crate) const LITERAL_TIMESTAMP: &str = "timestamp";
 
 /// The kind and payload of a one-key node such as `{"add": {...}}`.
 pub(crate) fn node_kind(node: &Value) -> Option<(&str, &Value)> {

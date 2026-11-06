@@ -851,7 +851,7 @@ fn subquery_source(
                 missing(construct.clone(), "a column alias has no name".to_owned())
             })?;
         }
-        require_distinct_names(&columns)?;
+        require_distinct_names(&columns, false)?;
     }
     let alias = subquery
         .get("alias")

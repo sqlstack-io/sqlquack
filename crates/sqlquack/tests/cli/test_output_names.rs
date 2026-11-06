@@ -3,6 +3,8 @@ use crate::test_types::{ColumnNameTestCase, ConvertTestCase};
 
 const UNALIASED_SCHEMA: &str = "tests/cli/fixtures/unaliased_items.json";
 const UNVERIFIED_NAME: &str = "has not verified the name Snowflake gives it";
+/// The 392-character sum's name: its first 255 characters, ending in "52 + ", as recorded.
+const LONG_NAME: &str = "X + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + ";
 
 #[test]
 fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowflakes_names() {
@@ -85,6 +87,113 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
 }
 
 #[test]
+fn given_unaliased_expressions_from_the_receipts_when_run_on_duckdb_then_they_take_snowflakes_names()
+ {
+    let test_cases = [
+        ColumnNameTestCase {
+            description: "a first query's basics: arithmetic, the clock, a cast, IFF, DATE_TRUNC and ||",
+            sql: "SELECT 1 + 1, CURRENT_DATE(), x::VARCHAR, IFF(x > 1, 'big', 'small'), \
+                  DATE_TRUNC('month', ts), a || b, total - discount FROM (SELECT 2 AS x, 'p' AS a, \
+                  'q' AS b, 10.50 AS total, 1.25 AS discount, \
+                  '2024-03-15 10:30:00'::TIMESTAMP_NTZ AS ts) AS input",
+            flags: &[],
+            expected_names: names(&[
+                "1 + 1",
+                "CURRENT_DATE()",
+                "X::VARCHAR",
+                "IFF(X > 1, 'BIG', 'SMALL')",
+                "DATE_TRUNC('MONTH', TS)",
+                "A || B",
+                "TOTAL - DISCOUNT",
+            ]),
+        },
+        ColumnNameTestCase {
+            description: "nested expressions keep their spacing, tabs and comments, upper-cased",
+            sql: "SELECT (total - discount) * 2, iff(x is null, 0, x), CAST(total - discount AS VARCHAR), \
+                  DATEADD(day, 1, d), a  ||  b, x\t+ 1, NOT x > 1, x % 2, -x, x /* note */ + 1 \
+                  FROM (SELECT 2 AS x, 'p' AS a, 'q' AS b, 10.50 AS total, 1.25 AS discount, \
+                  '2024-03-15'::DATE AS d) AS input",
+            flags: &[],
+            expected_names: names(&[
+                "(TOTAL - DISCOUNT) * 2",
+                "IFF(X IS NULL, 0, X)",
+                "CAST(TOTAL - DISCOUNT AS VARCHAR)",
+                "DATEADD(DAY, 1, D)",
+                "A  ||  B",
+                "X\t+ 1",
+                "NOT X > 1",
+                "X % 2",
+                "-X",
+                "X /* NOTE */ + 1",
+            ]),
+        },
+        ColumnNameTestCase {
+            description: "literals are named as written, numbers too, and typed literals with their keyword",
+            sql: "SELECT 1., .5, 1e3, 1E-2, -0.25, true, 'text', date '2024-01-01', \
+                  TIMESTAMP '2024-01-01 10:00:00'",
+            flags: &[],
+            expected_names: names(&[
+                "1.",
+                ".5",
+                "1E3",
+                "1E-2",
+                "-0.25",
+                "TRUE",
+                "'TEXT'",
+                "DATE '2024-01-01'",
+                "TIMESTAMP '2024-01-01 10:00:00'",
+            ]),
+        },
+        ColumnNameTestCase {
+            description: "casts to text, TRY_CAST, CASE and literal arithmetic, as recorded",
+            sql: "SELECT CAST(total AS VARCHAR), total::VARCHAR, TO_VARCHAR(total), \
+                  TRY_CAST(status AS VARCHAR), CASE WHEN total > 100 THEN 'big' ELSE 'small' END, \
+                  1 / 2, 'a' || 'b' FROM (SELECT 10.50 AS total, 'open' AS status) AS input",
+            flags: &[],
+            expected_names: names(&[
+                "CAST(TOTAL AS VARCHAR)",
+                "TOTAL::VARCHAR",
+                "TO_VARCHAR(TOTAL)",
+                "TRY_CAST(STATUS AS VARCHAR)",
+                "CASE WHEN TOTAL > 100 THEN 'BIG' ELSE 'SMALL' END",
+                "1 / 2",
+                "'A' || 'B'",
+            ]),
+        },
+        ColumnNameTestCase {
+            description: "MIN and MAX of an expression, as recorded",
+            sql: "SELECT MIN(total), max(total) - min(total) FROM (SELECT 10.50 AS total) AS input",
+            flags: &[],
+            expected_names: names(&["MIN(TOTAL)", "MAX(TOTAL) - MIN(TOTAL)"]),
+        },
+        ColumnNameTestCase {
+            description: "a name longer than 255 characters is cut there, as recorded",
+            sql: "SELECT x + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + 53 + 54 + 55 + 56 + 57 + 58 + 59 + 60 + 61 + 62 + 63 + 64 + 65 + 66 + 67 + 68 + 69 + 70 + 71 + 72 + 73 + 74 + 75 + 76 + 77 + 78 + 79 + 80 FROM (SELECT 1 AS x) AS input",
+            flags: &[],
+            expected_names: vec![LONG_NAME.to_owned()],
+        },
+        ColumnNameTestCase {
+            description: "a name repeated in the outermost query is kept twice, as Snowflake keeps it",
+            sql: "SELECT x, x FROM (SELECT 1 AS x) AS input UNION ALL SELECT 2, 3",
+            flags: &[],
+            expected_names: names(&["X", "X"]),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_column_names(test_case.sql, test_case.flags),
+            test_case.expected_names,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+fn names(names: &[&str]) -> Vec<String> {
+    names.iter().map(|name| (*name).to_owned()).collect()
+}
+
+#[test]
 fn given_avg_distinct_of_a_number_when_converting_then_it_refuses() {
     let test_cases = [ConvertTestCase {
         description: "AVG(DISTINCT) of a NUMBER, which Snowflake types NUMBER(25,5) for NUMBER(10,2), refuses",
@@ -163,20 +272,6 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "CASE refuses with SQ0009",
-            sql: "SELECT CASE WHEN n > 1 THEN 1 END FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "IFF refuses with SQ0009",
-            sql: "SELECT IFF(n > 1, 1, 0) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "a scalar subquery refuses with SQ0009",
             sql: "SELECT (SELECT 1) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
@@ -212,13 +307,6 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "IS NULL refuses with SQ0009",
-            sql: "SELECT n IS NULL FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "IS NOT DISTINCT FROM refuses with SQ0009",
             sql: "SELECT n IS NOT DISTINCT FROM 1 FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
@@ -226,71 +314,8 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "NOT refuses with SQ0009",
-            sql: "SELECT NOT TRUE FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "AND refuses with SQ0009",
-            sql: "SELECT TRUE AND FALSE FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "a window function refuses with SQ0009",
             sql: "SELECT ROW_NUMBER() OVER (ORDER BY n) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a nested call refuses with SQ0009",
-            sql: "SELECT UPPER(LOWER(g)) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a parenthesised expression refuses with SQ0009",
-            sql: "SELECT (n + 1) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a negated column refuses with SQ0009",
-            sql: "SELECT -n FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "modulo refuses with SQ0009",
-            sql: "SELECT n % 2 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a chained cast refuses with SQ0009",
-            sql: "SELECT n::INT::STRING FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a cast spelled INT refuses with SQ0009",
-            sql: "SELECT CAST(n AS INT) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "ROUND of an expression, which no receipt names, refuses with SQ0009",
-            sql: "SELECT ROUND(n + 1, 1) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
             mention: UNVERIFIED_NAME,
             expected_outcome: convert_outcome(1, false),
@@ -310,41 +335,6 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "DATEADD refuses with SQ0009",
-            sql: "SELECT DATEADD(day, 1, t) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "TRY_CAST refuses with SQ0009",
-            sql: "SELECT TRY_CAST(g AS INTEGER) FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a literal before a column refuses with SQ0009",
-            sql: "SELECT 1 + n FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a tab refuses with SQ0009",
-            sql: "SELECT n\t+ 1 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a double space refuses with SQ0009",
-            sql: "SELECT n  + 1 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "a space before the parenthesis refuses with SQ0009",
             sql: "SELECT COUNT (*) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
@@ -354,48 +344,6 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
         ConvertTestCase {
             description: "a CRLF line break refuses with SQ0009",
             sql: "SELECT n\r\n+ 1 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a decimal without a leading digit refuses with SQ0009",
-            sql: "SELECT .5 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "an integer with leading zeros refuses with SQ0009",
-            sql: "SELECT 007 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "an exponent with a fraction and a sign refuses with SQ0009",
-            sql: "SELECT 1.0e-3 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "an exponent with a plus sign refuses with SQ0009",
-            sql: "SELECT 1E+3 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a spaced negative refuses with SQ0009",
-            sql: "SELECT - 2 FROM input",
-            flags: &["--schema", UNALIASED_SCHEMA],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "a negated parenthesised number refuses with SQ0009",
-            sql: "SELECT -(2) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
             mention: UNVERIFIED_NAME,
             expected_outcome: convert_outcome(1, false),
@@ -419,6 +367,55 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             sql: "SELECT \"lc\" + 1 FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
             mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "non-ASCII text, which Snowflake upper-cases beyond ASCII, refuses with SQ0009",
+            sql: "SELECT 'café' FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "text with a doubled quote, which has another spelling, refuses with SQ0009",
+            sql: "SELECT 'it''s' FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a DATE literal spelled with two spaces, which the tree cannot show, refuses with SQ0009",
+            sql: "SELECT DATE  '2024-01-01' FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a line comment inside the item refuses with SQ0009",
+            sql: "SELECT n -- note\n+ 1 FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "an item across two line breaks refuses with SQ0009",
+            sql: "SELECT n\n+\n1 FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a function no receipt names refuses with SQ0009 and suggests the exact alias",
+            sql: "SELECT FLOOR(n) FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: "add an alias, such as `AS \"FLOOR(N)\"`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a repeated name inside a subquery, which DuckDB renames, refuses",
+            sql: "SELECT 1 AS one FROM (SELECT n, n FROM input)",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: "where DuckDB renames the second column `N_1`",
             expected_outcome: convert_outcome(1, false),
         },
     ];

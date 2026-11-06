@@ -29,8 +29,9 @@ use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    LITERAL_NUMBER, LITERAL_STRING, Payload, field, flag, function_construct, identifier_name,
-    list, node_construct, node_kind, payload_object, require_understood,
+    LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, Payload, field, flag,
+    function_construct, identifier_name, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
@@ -343,7 +344,8 @@ fn convert_select(
         })
         .collect();
     if named {
-        require_distinct_names(&columns)?;
+        let outermost = !context.free_projections && outer.is_none();
+        require_distinct_names(&columns, outermost)?;
     }
     let grouped_all = match select.get("group_by").and_then(Value::as_object) {
         Some(group) if flag(group, "all") => group_all_positions(select).unwrap_or_default(),
@@ -568,7 +570,7 @@ pub(crate) fn convert_with<'a>(
                 })?;
                 quoted.push(quoted_identifier(&column.name, context.log));
             }
-            require_distinct_names(&columns)?;
+            require_distinct_names(&columns, false)?;
             column_list = format!("({})", quoted.join(", "));
         }
         parts.push(format!(
@@ -632,9 +634,10 @@ fn convert_projection(
                 .context
                 .locator
                 .source_text(item)
-                .or_else(|| literal_text(item));
+                .or_else(|| literal_text(item, &site.context.locator.source()));
+            let text_of = |node: &Value| site.context.locator.source_text(node);
             match written
-                .filter(|text| recorded_name_shape(item, text))
+                .filter(|_| recorded_name_shape(item, &text_of))
                 .and_then(output_name)
             {
                 Some(name) => {
@@ -657,32 +660,41 @@ fn convert_projection(
     }
 }
 
-/// Snowflake's name for an unaliased item written as `text` in recorded spacing: it upper-cased.
+/// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
+const OUTPUT_NAME_MAX_CHARS: usize = 255;
+
+/// Snowflake's name for an unaliased item written as `text`: it upper-cased, cut at 255 characters.
 fn output_name(text: String) -> Option<String> {
     let recorded = !text.is_empty()
         && text.is_ascii()
         && text.trim() == text
         && !text.contains("--")
-        && !text.contains("/*")
-        && !text.contains(['\t', '\r'])
+        && !text.contains('\r')
         && !text.contains(" (")
-        && text.matches('\n').count() <= 1
-        && text
-            .split('\n')
-            .all(|line| !line.trim_start_matches(' ').contains("  "));
-    recorded.then(|| text.to_ascii_uppercase())
+        && text.matches('\n').count() <= 1;
+    recorded.then(|| {
+        text.to_ascii_uppercase()
+            .chars()
+            .take(OUTPUT_NAME_MAX_CHARS)
+            .collect()
+    })
 }
 
 /// A literal's written text: a number as parsed, a plain string quoted, NULL, TRUE or FALSE.
-fn literal_text(item: &Value) -> Option<String> {
+fn literal_text(item: &Value, source: &str) -> Option<String> {
     match node_kind(item)? {
         ("literal", payload) => {
             let value = payload.get("value")?.as_str()?;
-            match payload.get("literal_type")?.as_str()? {
-                LITERAL_NUMBER => Some(value.to_owned()),
-                LITERAL_STRING if !value.contains(['\'', '\\']) => Some(format!("'{value}'")),
-                _ => None,
-            }
+            let keyword = match payload.get("literal_type")?.as_str()? {
+                LITERAL_NUMBER => return Some(value.to_owned()),
+                LITERAL_STRING if !value.contains(['\'', '\\']) => {
+                    return Some(format!("'{value}'"));
+                }
+                LITERAL_DATE => "DATE",
+                LITERAL_TIMESTAMP => "TIMESTAMP",
+                _ => return None,
+            };
+            spelled_once(source, keyword, value).then(|| format!("{keyword} '{value}'"))
         }
         ("boolean", payload) => Some(
             match payload.get("value")?.as_bool()? {
@@ -836,17 +848,46 @@ fn hidden_column(column: &ColumnSpec) -> bool {
 }
 
 /// Refuses result columns whose names repeat, which DuckDB would rename.
-pub(crate) fn require_distinct_names(columns: &[ColumnSpec]) -> Result<(), Refusal> {
+pub(crate) fn require_distinct_names(
+    columns: &[ColumnSpec],
+    outermost: bool,
+) -> Result<(), Refusal> {
     for (index, column) in columns.iter().enumerate() {
-        if columns[..index]
+        let earlier = columns[..index]
             .iter()
-            .any(|earlier| earlier.name.eq_ignore_ascii_case(&column.name))
-        {
-            return Err(unresolved(format!(
-                "the result column name `{}` {REPEATED_RESULT_NAME}",
-                column.name
-            )));
+            .find(|earlier| earlier.name.eq_ignore_ascii_case(&column.name));
+        match earlier {
+            Some(earlier) if outermost && earlier.name == column.name => {}
+            Some(earlier) if earlier.name == column.name => {
+                return Err(unresolved(format!(
+                    "the result column name `{}` {REPEATED_RESULT_NAME} inside a subquery or CTE, \
+                     where DuckDB renames the second column `{}_1` and Snowflake keeps the name",
+                    column.name, column.name
+                )));
+            }
+            Some(_) => {
+                return Err(unresolved(format!(
+                    "the result column name `{}` {REPEATED_RESULT_NAME}",
+                    column.name
+                )));
+            }
+            None => {}
         }
     }
     Ok(())
+}
+
+/// Whether every `'value'` in `source` written after `keyword` is spelled `keyword 'value'`, in
+/// any case with one space, so a typed literal's text, which the tree does not keep, is known.
+fn spelled_once(source: &str, keyword: &str, value: &str) -> bool {
+    let quoted = format!("'{value}'");
+    !value.contains(['\'', '\\'])
+        && !source.contains("--")
+        && source.match_indices(&quoted).all(|(at, _)| {
+            let before = &source[..at];
+            let gap = before.len() - before.trim_end().len();
+            let typed = before.trim_end().to_ascii_uppercase().ends_with(keyword)
+                || before.trim_end().ends_with("*/");
+            !typed || (gap == 1 && before.ends_with(' ') && !before.trim_end().ends_with("*/"))
+        })
 }

@@ -1505,7 +1505,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
-                "  |\n  = help: add an alias, e.g. `AS one`\n",
+                "  |\n  = help: add an alias, such as `AS total`, which names the column in both engines\n",
                 "sqlquack convert: refused, 1 refusal under the built-in default\n",
             ),
             expected_json: ("SQ0009", "unaliased_output_name", 1, 18),
