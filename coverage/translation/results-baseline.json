@@ -11703,7 +11703,7 @@
     "translation/query/with.select.syntax.toml#t001_recursive": "refused",
     "translation/query/with.select.syntax.toml#t002_hierarchy": "refused",
     "translation/query/with.select.syntax.toml#t003_null_stop": "refused",
-    "translation/query/with.select.toml#t001_chained": "refused",
+    "translation/query/with.select.toml#t001_chained": "matching",
     "translation/query/with.select.toml#t002_null_group": "matching",
     "typing/array_agg.toml#array_agg_empty": "shape_only",
     "typing/array_agg.toml#array_agg_ordered": "shape_only",
