@@ -390,6 +390,7 @@ pub(crate) fn join(
         JoinConstraint::Using(columns) => (None, columns),
     };
     Join {
+        using_alias: None,
         this,
         on,
         using,
@@ -433,6 +434,7 @@ pub(crate) fn set_operation(
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
+                with_ties: false,
                 left,
                 right,
                 all,
@@ -480,6 +482,7 @@ pub(crate) fn cte(
     materialized: Option<bool>,
 ) -> Cte {
     Cte {
+        search_cycle: Vec::new(),
         alias,
         this,
         columns,
@@ -499,6 +502,7 @@ pub(crate) fn command(text: &str) -> Expression {
 
 pub(crate) fn insert(table: TableRef, columns: Vec<Identifier>) -> Insert {
     Insert {
+        column_targets: Vec::new(),
         table,
         columns,
         values: Vec::new(),
@@ -556,6 +560,8 @@ pub(crate) fn update(table: TableRef) -> Update {
 
 pub(crate) fn delete(table: TableRef) -> Delete {
     Delete {
+        using_items: Vec::new(),
+        using_joins: Vec::new(),
         table,
         hint: None,
         on_cluster: None,

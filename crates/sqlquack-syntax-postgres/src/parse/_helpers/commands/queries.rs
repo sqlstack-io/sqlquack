@@ -9,12 +9,15 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::Lock;
 
+use crate::parse::_helpers::commands::tables::clause;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_bare_label, is_col_id, is_col_label,
 };
 use crate::parse::_helpers::tree::nodes::{
-    cte, function, literal, null, set_operation, star, subquery, table, tuple, values,
+    boolean, cte, function, keyword_call, literal, null, set_operation, star, subquery, table,
+    tuple, values,
 };
+use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::MAX_QUALIFIED_NAME_PARTS;
 use crate::scan::models::TokenKind;
 
@@ -320,33 +323,51 @@ impl Parser<'_> {
         self.expect_char('(')?;
         let body: Expression = self.preparable_statement()?;
         self.expect_char(')')?;
-        let start: usize = self.offset();
+        let mut node: Cte = cte(alias, columns, body, materialized);
         if self.eat_kw("search") {
-            if !(self.eat_kw("breadth") || self.eat_kw("depth")) {
-                return Err(self.error());
-            }
+            let kind: &str = match self.keyword_at(0) {
+                Some("breadth") => "SEARCH BREADTH FIRST",
+                Some("depth") => "SEARCH DEPTH FIRST",
+                _ => return Err(self.error()),
+            };
+            self.at += 1;
             self.expect_kw("first")?;
             self.expect_kw("by")?;
-            self.comma_list(|parser| parser.name(is_col_id))?;
+            let by: Vec<Expression> = self.column_names()?;
             self.expect_kw("set")?;
-            self.name(is_col_id)?;
-            self.gap("cte_search", start);
+            let set: Expression = Expression::Identifier(self.name(is_col_id)?);
+            node.search_cycle
+                .push(keyword_call(kind, by, vec![clause("SET", vec![set])]));
         }
-        let start: usize = self.offset();
         if self.eat_kw("cycle") {
-            self.comma_list(|parser| parser.name(is_col_id))?;
+            let columns: Vec<Expression> = self.column_names()?;
             self.expect_kw("set")?;
-            self.name(is_col_id)?;
-            if self.eat_kw("to") {
-                self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?;
-                self.expect_kw("default")?;
-                self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?;
-            }
+            let mark: Expression = Expression::Identifier(self.name(is_col_id)?);
+            let (value, default) = match self.eat_kw("to") {
+                true => {
+                    let value: Expression = self.c_expr(Flavor::B)?;
+                    self.expect_kw("default")?;
+                    (value, self.c_expr(Flavor::B)?)
+                }
+                false => (boolean(true), boolean(false)),
+            };
             self.expect_kw("using")?;
-            self.name(is_col_id)?;
-            self.gap("cte_cycle", start);
+            let path: Expression = Expression::Identifier(self.name(is_col_id)?);
+            let options: Vec<Expression> = vec![
+                clause("SET", vec![mark]),
+                clause("TO", vec![value]),
+                clause("DEFAULT", vec![default]),
+                clause("USING", vec![path]),
+            ];
+            node.search_cycle
+                .push(keyword_call("CYCLE", columns, options));
         }
-        Ok(cte(alias, columns, body, materialized))
+        Ok(node)
+    }
+
+    /// `columnList`: column names, each an identifier.
+    fn column_names(&mut self) -> Parsing<Vec<Expression>> {
+        self.comma_list(|parser| Ok(Expression::Identifier(parser.name(is_col_id)?)))
     }
 
     /// The options after a query body, applied as gram.y's `insertSelectOptions` does.
@@ -448,9 +469,7 @@ impl Parser<'_> {
                         limits.position,
                     ));
                 }
-                if with_ties {
-                    self.gap("set_operation_with_ties", start);
-                }
+                node.with_ties = with_ties;
                 node.locks.extend(locking.locks);
                 if let Some(with) = with {
                     if node.with.is_some() {
