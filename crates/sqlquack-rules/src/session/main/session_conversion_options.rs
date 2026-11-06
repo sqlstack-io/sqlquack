@@ -5,8 +5,8 @@ use std::collections::BTreeMap;
 use crate::conversion::models::ConversionOptions;
 use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 use sqlquack_policy::policy::constants::{
-    DEFAULT_SESSION_PROFILE, QUOTED_IDENTIFIERS_IGNORE_CASE, RESULT_NEUTRAL_SESSION_PARAMETERS,
-    SESSION_TIME_ZONE, TIMEZONE_PARAMETER,
+    DATABASE_PARAMETER, DEFAULT_SESSION_PROFILE, QUOTED_IDENTIFIERS_IGNORE_CASE,
+    RESULT_NEUTRAL_SESSION_PARAMETERS, SCHEMA_PARAMETER, SESSION_TIME_ZONE, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::models::{Policy, SessionValue};
 
@@ -28,10 +28,13 @@ pub fn session_conversion_options(
             .filter(|name| !builtin_accepts(name))
             .collect();
         return match unknown.is_empty() {
-            true => Ok((ConversionOptions::default(), BUILTIN_PROFILE.to_owned())),
+            true => Ok((
+                with_namespace(ConversionOptions::default(), parameters),
+                BUILTIN_PROFILE.to_owned(),
+            )),
             false => Err(format!(
-                "the built-in default records no session profiles, so it takes only TIMEZONE and \
-                 the result-neutral parameters, not {}; pass --policy with a policy file whose \
+                "the built-in default records no session profiles, so it takes only TIMEZONE, \
+                 DATABASE, SCHEMA and the result-neutral parameters, not {}; pass --policy with a policy file whose \
                  session profiles cover them, such as the repository's sqlquack.toml",
                 unknown.join(", ")
             )),
@@ -58,12 +61,32 @@ pub fn session_conversion_options(
     if zone.is_some_and(|zone| zone != SESSION_TIME_ZONE) {
         options.divergences.remove(SESSION_TIMEZONE_UTC);
     }
-    Ok((options, profile))
+    Ok((with_namespace(options, parameters), profile))
+}
+
+/// `options` with the session's DATABASE and SCHEMA, upper case unless written in double quotes.
+fn with_namespace(
+    options: ConversionOptions,
+    parameters: &BTreeMap<String, String>,
+) -> ConversionOptions {
+    let resolved = |name: &str| {
+        parameters.get(name).map(|value| {
+            match value.len() > 1 && value.starts_with('"') && value.ends_with('"') {
+                true => value[1..value.len() - 1].replace("\"\"", "\""),
+                false => value.to_ascii_uppercase(),
+            }
+        })
+    };
+    ConversionOptions {
+        current_database: resolved(DATABASE_PARAMETER),
+        current_schema: resolved(SCHEMA_PARAMETER),
+        ..options
+    }
 }
 
 /// Whether the built-in default, which records no session profiles, takes parameter `name`.
 fn builtin_accepts(name: &str) -> bool {
-    name == TIMEZONE_PARAMETER
+    [TIMEZONE_PARAMETER, DATABASE_PARAMETER, SCHEMA_PARAMETER].contains(&name)
         || RESULT_NEUTRAL_SESSION_PARAMETERS
             .iter()
             .any(|(neutral, _)| *neutral == name)

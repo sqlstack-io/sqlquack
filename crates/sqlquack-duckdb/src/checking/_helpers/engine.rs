@@ -8,6 +8,7 @@ use duckdb::Connection;
 use sqlquack_core::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::quoted_identifier::quoted_identifier;
+use crate::checking::main::quoted_relation::quoted_relation;
 
 use crate::checking::constants::{DISABLE_OPTIMIZER, MACRO_PREFIX};
 use crate::checking::errors::{CheckStage, PrintedSqlFailure};
@@ -21,7 +22,7 @@ pub(crate) struct Engine {
 }
 
 impl Engine {
-    /// Creates table `name` with `statement`, replacing a table created with other columns.
+    /// Creates table `name` with `statement`, dropping only a table it made earlier under that name.
     pub(crate) fn define_table(
         &mut self,
         name: &str,
@@ -30,10 +31,15 @@ impl Engine {
         if self.tables.get(name).map(String::as_str) == Some(statement) {
             return Ok(());
         }
-        let drop = format!(
-            "DROP TABLE IF EXISTS {}",
-            quoted_identifier(name, &ProvenanceLog::default())
-        );
+        let log = ProvenanceLog::default();
+        let drop = match (
+            statement.starts_with(MACRO_PREFIX),
+            self.tables.contains_key(name),
+        ) {
+            (true, _) => format!("DROP TABLE IF EXISTS {}", quoted_identifier(name, &log)),
+            (false, true) => format!("DROP TABLE IF EXISTS {}", quoted_relation(name, &log)),
+            (false, false) => String::new(),
+        };
         self.connection
             .execute_batch(&format!("{drop}; {statement}"))
             .map_err(|error| PrintedSqlFailure {
@@ -55,12 +61,13 @@ impl Engine {
             .map(|(name, statement)| (name.clone(), statement.clone()))
             .collect();
         for (name, statement) in stale {
-            let quoted = quoted_identifier(&name, &ProvenanceLog::default());
+            let log = ProvenanceLog::default();
             let drop = match statement.starts_with(MACRO_PREFIX) {
                 true => {
+                    let quoted = quoted_identifier(&name, &log);
                     format!("DROP MACRO TABLE IF EXISTS {quoted}; DROP MACRO IF EXISTS {quoted}")
                 }
-                false => format!("DROP TABLE IF EXISTS {quoted}"),
+                false => format!("DROP TABLE IF EXISTS {}", quoted_relation(&name, &log)),
             };
             self.connection
                 .execute_batch(&drop)

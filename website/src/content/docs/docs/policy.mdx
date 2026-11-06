@@ -73,5 +73,7 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 - These are accepted and ignored, because they cannot change a result: `QUERY_TAG`,
   `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
   `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
+- `DATABASE` and `SCHEMA` set the current database and schema, which complete relation names
+  written without them. See [Schema files](/docs/schema/#naming-relations-and-columns).
 - `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
   `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.

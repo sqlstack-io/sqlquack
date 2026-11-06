@@ -203,16 +203,16 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It counts the constructs, how many convert, and which refusals block the rest.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --schema schema.json</span>
-Census of 3 snowflake SQL files
-  parsed 3 (3 statements), unparsed 0, empty 0
-  distinct constructs 15 (2 clause, 4 fn, 9 node)
+<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy</span>
+Census of 25 snowflake SQL files
+  parsed 25 (25 statements), unparsed 0, empty 0
+  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
   files refused: missing rule 0, outside type conditions 0, unresolved name 0,
-    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 1
-  convertible: strict 2 <span class="dim">…</span>, unit-testable 2 <span class="dim">…</span>
+    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
+  convertible: strict 23 <span class="dim">…</span>, unit-testable 23 <span class="dim">…</span>
 
 Refusals by category and construct (top 50)
-       1  a known divergence the policy refuses: fn:HASH</pre>
+       2  a known divergence the policy refuses: fn:SUM</pre>
 						</div>
 
 						<div class="step">

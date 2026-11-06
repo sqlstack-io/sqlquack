@@ -38,6 +38,9 @@ pub struct PendingCase {
     /// Statements creating the case's project functions, run first in a scratch schema.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub setup_sql: Vec<String>,
+    /// The case's setup statements, placeholders unsubstituted, run first in a fresh schema and session.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub setup: Vec<String>,
 }
 
 /// What `write_pending` did.

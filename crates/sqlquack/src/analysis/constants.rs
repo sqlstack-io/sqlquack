@@ -15,6 +15,8 @@ pub const SCALAR_ABI: &str = "scalar-v1";
 pub const VARIANT_ABI: &str = "variant-json-v1";
 /// The DuckDB type a `variant-json-v1` function returns its JSON text as.
 pub const VARIANT_TEXT_TYPE: &str = "VARCHAR";
+/// Why a case with setup statements refuses: DuckDB does not replay case setup yet.
+pub const CASE_SETUP_UNREPLAYED: &str = "case setup statements are not replayed on DuckDB yet";
 /// Why a case calling Python functions refuses when no interpreter is given.
 pub const PYTHON_RUNTIME_MISSING: &str =
     "a Python function, which needs a Python runtime to register it: verify with --python";

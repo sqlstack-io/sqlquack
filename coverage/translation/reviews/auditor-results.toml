@@ -50,9 +50,9 @@ reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:time-travel-and-change-tracking"
-sha256 = "c7d08cd0dc4c448898138f76de867b7511b86b6885d11f424f5da71076c2363b"
+sha256 = "49f099982437a3ecc84094ac4742db9f97ef935c67fb0657b993e7a7baabdd98"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-object-kinds"
@@ -62,9 +62,9 @@ reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:metadata-listings"
-sha256 = "2a909d8e6819146cc7979b28391c01fab8300a2813e32978f392b331371b1b5d"
+sha256 = "42ea63a9ecdb46d7a52ddd21a6f7cfa5ffa1cae465baf8d67c525ef2e5dc9dc3"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:account-context-functions"

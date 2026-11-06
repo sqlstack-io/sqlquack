@@ -6,8 +6,9 @@ use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
 use crate::diagnostics::constants::{
     CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, GUARD_PREFIX,
-    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, TYPE_CONDITION, UNPARSED_PREFIX,
-    UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
+    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, REPEATED_RESULT_NAME, REPEATED_RESULT_NAME_HELP,
+    TYPE_CONDITION, UNPARSED_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP,
+    ZONED_LOCAL_TIME_NOTE,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -24,6 +25,11 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             && refusal.reason.contains(CASE_ONLY_MATCH)
         {
             diagnostic.help = Some(CASE_ONLY_MATCH_HELP.to_owned());
+        }
+        if refusal.category == RefusalCategory::UnresolvedName
+            && refusal.reason.contains(REPEATED_RESULT_NAME)
+        {
+            diagnostic.help = Some(REPEATED_RESULT_NAME_HELP.to_owned());
         }
         if refusal.category == RefusalCategory::TypeCondition
             && refusal.reason.contains(ZONED_LOCAL_TIME)
