@@ -26,7 +26,8 @@ tags = ["boundary"]
 
 [[case]]
 id = "t003_precision_range"
-description = "Precision 10, outside the valid range 0 to 9 the page states. Catches: the precision clamped to 9"
+compile_error = true
+description = "Precision 10, outside the valid range 0 to 9 the page states; Snowflake refuses it when compiling. Catches: the precision clamped to 9"
 columns = [{ name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],

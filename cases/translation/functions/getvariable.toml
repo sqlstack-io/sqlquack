@@ -15,11 +15,11 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_null_name"
-description = "A NULL name; the page does not say; the recording decides. Catches: an error where Snowflake returns NULL, or the reverse"
+description = "A NULL name, written as a literal because Snowflake requires a constant name; the page does not say; the recording decides. Catches: an error where Snowflake returns NULL, or the reverse"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["NULL"],
 ]
-query = "SELECT GETVARIABLE(v) IS NULL AS n FROM input"
+query = "SELECT GETVARIABLE(NULL::VARCHAR) IS NULL AS n FROM input"
 order = "ordered"
 tags = ["null"]
