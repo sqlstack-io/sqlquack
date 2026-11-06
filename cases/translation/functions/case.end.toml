@@ -1,0 +1,78 @@
+category = "translation"
+construct = "sf.functions.case.end"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_first_true"
+description = "Two true conditions, where the first must win. Catches: the last true condition winning"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+  ["15"],
+  ["-1"],
+]
+query = "SELECT CASE WHEN x > 0 THEN 'pos' WHEN x > 10 THEN 'big' ELSE 'other' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_result_type"
+description = "Results of different scales. Catches: the result type taken from the first branch (2 instead of 2.50)"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT CASE WHEN x = 1 THEN 1 ELSE CAST(2.5 AS NUMBER(10,2)) END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_no_else"
+description = "No ELSE branch. Catches: a default other than NULL (0 or '')"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT CASE WHEN x = 1 THEN 'one' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_condition"
+description = "A NULL condition before a true one. Catches: a NULL condition treated as true, or the CASE returning NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["3"],
+]
+query = "SELECT CASE WHEN x > 2 THEN 'a' WHEN x IS NULL THEN 'n' ELSE 'e' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_result"
+description = "A NULL result selected. Catches: the ELSE value instead of NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT CASE WHEN x = 1 THEN NULL ELSE 'e' END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_branches"
+description = "A later true branch, a branch that would divide by zero, a NULL condition and no ELSE. Catches: eager evaluation (10/0 raising on the 0 row), the last true branch winning (0.5 for 4), a NULL condition treated as true, or a default for no ELSE"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"],
+  ["4"],
+  ["1"],
+  ["NULL"],
+]
+query = "SELECT CASE WHEN x = 0 THEN -1 WHEN x > 1 THEN 10 / x WHEN x >= 1 THEN 0.5 END AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

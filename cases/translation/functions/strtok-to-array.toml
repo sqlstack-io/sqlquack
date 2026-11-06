@@ -1,0 +1,62 @@
+category = "translation"
+construct = "sf.functions.strtok-to-array"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Tokens with a delimiter set and consecutive delimiters. Catches: empty tokens kept or the delimiter read as one string"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["'a.b@@c'", "'@.'"],
+  ["'\u00e9 b'", "' '"],
+]
+query = "SELECT STRTOK_TO_ARRAY(a, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default"
+description = "The default blank delimiter. Catches: another default delimiter"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["' x  y '"],
+]
+query = "SELECT STRTOK_TO_ARRAY(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string"
+description = "NULL string. Catches: NULL read as empty (an empty array)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT STRTOK_TO_ARRAY(a, ',') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_delimiter"
+description = "NULL delimiter. Catches: NULL read as the default"
+columns = [{ name = "d", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["' '"],
+]
+query = "SELECT STRTOK_TO_ARRAY('a b', d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_no_tokens"
+description = "Strings made only of delimiters, and the empty string. Catches: NULL or [\"\"] instead of an empty array"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["',,'"],
+  ["''"],
+]
+query = "SELECT STRTOK_TO_ARRAY(a, ',') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

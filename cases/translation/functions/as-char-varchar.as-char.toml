@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.as-char-varchar.as-char"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_match"
+description = "Strings, one holding digits and one empty. Catches: the empty string returned as NULL, or the JSON quotes kept"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\"5\"'"],
+  ["'\"\"'"],
+  ["'\"a b\"'"],
+]
+query = "SELECT AS_CHAR(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mismatch"
+description = "A number, a boolean and an object. Catches: scalars rendered as text (5 as \"5\"), or the object serialised"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'5'"],
+  ["'true'"],
+  ["'{\"a\":\"x\"}'"],
+]
+query = "SELECT AS_CHAR(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_variant_expr"
+description = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match. Catches: the JSON null passed through as a value, or an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'null'"],
+]
+query = "SELECT AS_CHAR(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

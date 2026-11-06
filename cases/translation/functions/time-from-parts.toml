@@ -1,0 +1,88 @@
+category = "translation"
+construct = "sf.functions.time-from-parts"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Normal times. Catches: hour and second swapped, or a 12-hour clock"
+columns = [{ name = "h", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["13", "4", "59"],
+  ["0", "0", "1"],
+]
+query = "SELECT TIME_FROM_PARTS(h, m, x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nanoseconds"
+description = "Nanoseconds that need all nine digits. The result is formatted with TO_VARCHAR(..., 'HH24:MI:SS.FF9') because the connector returns TIME in microseconds and the session TIME_OUTPUT_FORMAT has no fraction. Catches: nanoseconds read as milliseconds or truncated to microseconds"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["987654321"],
+  ["5"],
+]
+query = "SELECT TO_VARCHAR(TIME_FROM_PARTS(1, 2, 3, n), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_carry"
+description = "Values beyond their ranges, which carry and wrap the day. Catches: an error instead of carrying (25:70:70 is 02:11:10)"
+columns = [{ name = "h", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["25", "70", "70"],
+  ["0", "0", "3661"],
+  ["12", "-1", "0"],
+]
+query = "SELECT TIME_FROM_PARTS(h, m, x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_hour"
+description = "NULL hour. Catches: NULL read as 0"
+columns = [{ name = "h", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TIME_FROM_PARTS(h, 0, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_minute"
+description = "NULL minute. Catches: NULL read as 0"
+columns = [{ name = "m", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TIME_FROM_PARTS(0, m, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_second"
+description = "NULL second. Catches: NULL read as 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TIME_FROM_PARTS(0, 0, x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_nanoseconds"
+description = "NULL nanoseconds. The result is formatted with TO_VARCHAR(..., 'HH24:MI:SS.FF9') because the connector returns TIME in microseconds and the session TIME_OUTPUT_FORMAT has no fraction. Catches: NULL read as 0"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TO_VARCHAR(TIME_FROM_PARTS(0, 0, 0, n), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

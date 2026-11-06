@@ -1,0 +1,52 @@
+category = "translation"
+construct = "sf.functions.try-to-geography"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_formats"
+description = "The same point as WKT, WKB hex, EWKT and EWKB with SRID 4326, and GeoJSON. Catches: a format rejected or misread, or longitude and latitude swapped in one of them"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'010100000000000000000024400000000000003440'"],
+  ["'SRID=4326;POINT(10 20)'"],
+  ["'0101000020E610000000000000000024400000000000003440'"],
+  ["'{\"type\":\"Point\",\"coordinates\":[10,20]}'"],
+]
+query = "SELECT ordinal, ST_ASWKT(TRY_TO_GEOGRAPHY(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_failures"
+description = "Text in none of the formats and EWKT with SRID 3857, which the page says give NULL. Catches: an error raised, or the SRID 3857 point accepted"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'not a shape'"],
+  ["'SRID=3857;POINT(10 20)'"],
+]
+query = "SELECT ordinal, TRY_TO_GEOGRAPHY(v) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_allow_invalid"
+description = "A self-intersecting polygon with allow_invalid TRUE. Catches: NULL returned for the bow tie despite allow_invalid"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
+]
+query = "SELECT ST_ISVALID(TRY_TO_GEOGRAPHY(v, TRUE)) AS valid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_varchar_expression"
+description = "A NULL text; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_GEOGRAPHY(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

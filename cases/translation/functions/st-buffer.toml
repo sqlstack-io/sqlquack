@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.st-buffer"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_point"
+description = "A point buffered by 1: a 32-sided polygon of area 3.1214, rounded to 2 places (3.12). Catches: a true circle area (3.14), or a square"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'"],
+]
+query = "SELECT ROUND(ST_AREA(ST_BUFFER(TO_GEOMETRY(v), 1)), 2) AS a FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_negative"
+description = "A 10 by 10 square shrunk by 1, giving an 8 by 8 square (64). Catches: the sign ignored (growing it)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ROUND(ST_AREA(ST_BUFFER(TO_GEOMETRY(v), -1)), 6) AS a FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_line"
+description = "A line string of length 10 buffered by 1 on both sides with round ends: 20 plus 3.12, rounded to 1 place (23.1). Catches: one side only (10), or flat ends (20)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,10 0)'"],
+]
+query = "SELECT ROUND(ST_AREA(ST_BUFFER(TO_GEOMETRY(v), 1)), 1) AS a FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_BUFFER(TO_GEOMETRY(v), 1) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

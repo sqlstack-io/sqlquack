@@ -1,0 +1,35 @@
+category = "translation"
+construct = "sf.functions.conditional-change-event"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_changes"
+description = "Values that repeat and change. Catches: repeats counted as changes, or the counter starting at 1"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "5"],
+  ["'a'", "2", "5"],
+  ["'a'", "3", "6"],
+  ["'a'", "4", "5"],
+  ["'b'", "1", "1"],
+]
+query = "SELECT ordinal, CONDITIONAL_CHANGE_EVENT(x) OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr1"
+description = "NULL values, where the page formula compares with NULL and so counts no change, giving 0 throughout. Catches: a change to or from NULL counted, or NULLs skipped so that 10 to 40 counts as a change"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "o", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "NULL"],
+  ["'a'", "2", "10"],
+  ["'a'", "4", "NULL"],
+  ["'a'", "5", "40"],
+  ["'a'", "7", "NULL"],
+  ["'b'", "1", "7"],
+  ["'b'", "3", "9"],
+]
+query = "SELECT ordinal, CONDITIONAL_CHANGE_EVENT(x) OVER (PARTITION BY p ORDER BY o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

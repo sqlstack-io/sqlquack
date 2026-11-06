@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.transform"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_elements"
+description = "Integers and a decimal doubled. Catches: the decimal truncated, or the order changed"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2.5,-3]'"],
+]
+query = "SELECT TRANSFORM(PARSE_JSON(a), x -> x * 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_declared_type"
+description = "A lambda argument declared VARCHAR, applied to a number and text. Catches: the number written with JSON quotes, or the declared type ignored (an error)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,\"a\"]'"],
+]
+query = "SELECT TRANSFORM(PARSE_JSON(a), x VARCHAR -> x || '!') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_array"
+description = "A NULL array. Catches: an empty array returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRANSFORM(PARSE_JSON(a), x -> x * 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

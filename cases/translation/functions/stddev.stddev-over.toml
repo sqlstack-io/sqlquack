@@ -1,0 +1,138 @@
+category = "translation"
+construct = "sf.functions.stddev.stddev-over"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_partition"
+description = "Partitions of different sizes in mixed input order. Catches: the whole input aggregated instead of the partition, or a running value"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty_over"
+description = "An empty OVER clause. Catches: a running (ordered) value instead of the whole input"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT STDDEV(x) OVER () AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_order_ties"
+description = "ORDER BY with tied keys (two rows with k = 2) and no frame: with ORDER BY and no frame the page implies RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. Catches: a ROWS frame (the tied rows get different values) or the whole partition"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g ORDER BY k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_order_desc"
+description = "DESC ordering with a running ROWS frame. Catches: DESC ignored (the running value starts from the smallest key)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g ORDER BY k DESC, x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_nulls_first_frame"
+description = "A NULL ordering key placed first (not the ASC default) and a one-row-back sliding frame. Catches: NULLS FIRST ignored (the NULL-key row last), or the frame read as RANGE or reaching forward"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3", "1"],
+  ["'p'", "NULL", "4"],
+  ["'p'", "1", "10"],
+  ["'p'", "2", "6"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g ORDER BY k ASC NULLS FIRST ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_expr1"
+description = "NULL values inside partitions, and a partition with only NULL. Catches: NULL read as 0 (a different count and value) or the NULL-only partition not NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1", "NULL"],
+  ["'p'", "2", "6"],
+  ["'q'", "1", "NULL"],
+  ["'p'", "3", "2"],
+  ["'q'", "2", "NULL"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_partition_key"
+description = "NULL partition keys, which form one partition. Catches: NULL-keyed rows each in their own partition or dropped"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1", "4"],
+  ["'p'", "1", "9"],
+  ["NULL", "2", "2"],
+]
+query = "SELECT STDDEV(x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_distinct_order"
+compile_error = true
+description = "DISTINCT with ORDER BY in the OVER clause, which the page forbids. Catches: a running DISTINCT value returned instead of the compilation error"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1", "2"],
+  ["'p'", "2", "2"],
+  ["'p'", "3", "6"],
+  ["'q'", "1", "1"],
+]
+query = "SELECT STDDEV(DISTINCT x) OVER (PARTITION BY g ORDER BY k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t009_distinct_partition"
+description = "DISTINCT without ORDER BY. Catches: DISTINCT ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1", "2"],
+  ["'p'", "2", "2"],
+  ["'p'", "3", "6"],
+  ["'q'", "1", "1"],
+]
+query = "SELECT STDDEV(DISTINCT x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]

@@ -1,0 +1,64 @@
+category = "translation"
+construct = "sf.functions.acos"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "ACOS of FLOAT values. Catches: ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.25"],
+  ["-0.6"],
+  ["1.0"],
+  ["-1.0"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "ACOS of NUMBER(12,4), converted to FLOAT. Catches: ASIN computed instead (acos(0.25) differs from asin(0.25)) or degrees returned; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.5000"],
+  ["-0.1250"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "ACOS of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_edges"
+description = "The domain edges, 1 and -1. Catches: pi returned for 1 or 0 for -1 (sign of the edge)"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["-1"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t005_outside"
+description = "ACOS at or outside its domain: Snowflake raises error 100044 on every row (captured at e8691b63). Catches: NaN, NULL or a value where Snowflake raises an error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5"],
+  ["-1.0001"],
+]
+query = "SELECT ACOS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

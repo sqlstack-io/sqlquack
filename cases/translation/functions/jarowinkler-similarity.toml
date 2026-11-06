@@ -1,0 +1,54 @@
+category = "translation"
+construct = "sf.functions.jarowinkler-similarity"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "The page's example pairs. Catches: plain Jaro without the prefix bonus, a 0-1 FLOAT instead of 0-100, or a byte-based comparison (\u015bwi\u0119ta)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'", "'Oracle'"],
+  ["'\u015bwi\u0119ta'", "'swieta'"],
+  ["'Gute nacht'", "'Ich weis nicht'"],
+  ["'MARTHA'", "'MARHTA'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "text_similarity"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_string_expr1"
+description = "NULL first string. Catches: NULL read as empty (0)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'a'", "'a'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_null_string_expr2"
+description = "NULL second string. Catches: NULL read as empty (0)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'ab'", "'a'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "Two empty strings, which the example shows as 0. Catches: 100 for two identical empty strings"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["''", "''"],
+  ["''", "'a'"],
+]
+query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

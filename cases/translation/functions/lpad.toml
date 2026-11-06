@@ -1,0 +1,107 @@
+category = "translation"
+construct = "sf.functions.lpad"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "LPAD with a multi-character pad that must be cut. Catches: the pad cut from the wrong end, or the length counted in bytes (\u00e9)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "6", "'xy'"],
+  ["'\u00e9'", "4", "'ab'"],
+]
+query = "SELECT LPAD(a, n, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_truncate"
+description = "A base longer than the length. Catches: the base kept whole (abcdef), or its rightmost characters kept (def instead of abc)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'abcdef'", "3"],
+]
+query = "SELECT LPAD(a, n, 'x') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_default_pad"
+description = "No pad argument. Catches: no padding, or a pad other than a blank"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ab'", "4"],
+]
+query = "SELECT LPAD(a, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_binary"
+description = "LPAD of binary. Catches: hex text padded instead of bytes"
+columns = [{ name = "a", type = "BINARY" }, { name = "n", type = "NUMBER(38,0)" }, { name = "p", type = "BINARY" }]
+rows = [
+  ["'01'", "3", "'FF00'"],
+]
+query = "SELECT LPAD(a, n, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_base"
+description = "NULL base. Catches: NULL read as empty (pad only)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT LPAD(a, 3, '*') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_length_expr"
+description = "NULL length. Catches: NULL read as 0"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["3"],
+]
+query = "SELECT LPAD('a', n, '*') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_pad"
+description = "NULL pad. Catches: NULL read as the default blank"
+columns = [{ name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'*'"],
+]
+query = "SELECT LPAD('a', 3, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_empty_pad"
+description = "An empty pad, which adds nothing but still truncates. Catches: an infinite loop or error, or no truncation"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["'abc'", "5"],
+  ["'abcdef'", "2"],
+]
+query = "SELECT LPAD(a, n, '') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t009_negative_length"
+description = "A negative length: records what Snowflake returns. Catches: an error or the untouched base where Snowflake returns its value"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+]
+query = "SELECT LPAD(a, -1, '*') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.uuid-string"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_random"
+description = "Properties of the random UUID: length, version and variant digits, lower case, and a new value per call. Catches: a constant folded once per query, another version, or upper case"
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT LENGTH(u) AS n, SUBSTR(u, 15, 1) AS ver, SUBSTR(u, 20, 1) IN ('8', '9', 'a', 'b') AS variant, u = LOWER(u) AS lower_case, u <> UUID_STRING() AS fresh FROM (SELECT ordinal, UUID_STRING() AS u FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_named"
+description = "The page's version 5 example, and a second name. Catches: version 3 (MD5) or a random UUID, or the namespace and name swapped"
+columns = [{ name = "ns", type = "VARCHAR" }, { name = "nm", type = "VARCHAR" }]
+rows = [
+  ["'fe971b24-9572-4005-b22f-351e9c09274d'", "'foo'"],
+  ["'fe971b24-9572-4005-b22f-351e9c09274d'", "'bar'"],
+]
+query = "SELECT UUID_STRING(ns, nm) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_name"
+description = "NULL name for the version 5 form. Catches: a random UUID or the empty-name UUID instead of NULL"
+columns = [{ name = "nm", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'x'"],
+]
+query = "SELECT UUID_STRING('fe971b24-9572-4005-b22f-351e9c09274d', nm) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,31 @@
+category = "translation"
+construct = "sf.query.with.select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_chained"
+description = "A CTE with a column list, and a second CTE that reads the first. Catches: the column list ignored, or the second CTE refused"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "WITH d (dept, n) AS (SELECT department_id, COUNT(*) FROM input GROUP BY department_id), big AS (SELECT dept FROM d WHERE n > 1) SELECT dept FROM big ORDER BY dept"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_group"
+description = "The CTE groups the NULL department into its own row. Catches: the NULL group dropped"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "WITH d AS (SELECT department_id, COUNT(*) AS n FROM input GROUP BY department_id) SELECT department_id, n FROM d ORDER BY department_id NULLS LAST"
+order = "ordered"
+tags = ["null"]

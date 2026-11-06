@@ -1,0 +1,54 @@
+category = "translation"
+construct = "sf.functions.approx-top-k-estimate"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_k"
+description = "k = 2 from a state. Catches: k ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'q'", "'z'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+  ["'p'", "'c'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+]
+query = "SELECT g, APPROX_TOP_K_ESTIMATE(st, 2) AS r FROM (SELECT g, APPROX_TOP_K_ACCUMULATE(x, 10) AS st FROM input GROUP BY g) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default_k"
+description = "k omitted: the page gives 1. Catches: every tracked value returned"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'q'", "'z'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+  ["'p'", "'c'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+]
+query = "SELECT g, APPROX_TOP_K_ESTIMATE(st) AS r FROM (SELECT g, APPROX_TOP_K_ACCUMULATE(x, 10) AS st FROM input GROUP BY g) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_state"
+description = "A NULL state. Catches: an empty array instead of NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'q'", "'z'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+  ["'p'", "'c'"],
+  ["'p'", "'b'"],
+  ["'p'", "'a'"],
+]
+query = "SELECT APPROX_TOP_K_ESTIMATE(NULL, 2) AS r"
+order = "ordered"
+tags = ["null"]

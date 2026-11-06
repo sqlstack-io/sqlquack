@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.seq1.seq1"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_sequence"
+description = "SEQ1 over GENERATOR rows: starting value and count of distinct values. Catches: a sequence starting at 1, or repeated values"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT MIN(SEQ1()) AS lo, COUNT(DISTINCT SEQ1()) AS n FROM TABLE(GENERATOR(ROWCOUNT => 5))"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_wrap"
+description = "300 rows of a one-byte sequence with sign 0 and sign 1; the page says sign 0 wraps to 0 and sign 1 to the smallest one-byte value. Catches: no wrap (values up to 299), or sign 1 wrapping to 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT MIN(SEQ1(0)) AS lo0, MAX(SEQ1(0)) AS hi0, MIN(SEQ1(1)) AS lo1, MAX(SEQ1(1)) AS hi1 FROM TABLE(GENERATOR(ROWCOUNT => 300))"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_null_sign"
+description = "A NULL sign argument; the page does not say; the recording decides. Catches: the default sign used where Snowflake raises an error, or the reverse"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT MIN(SEQ1(NULL)) AS lo FROM TABLE(GENERATOR(ROWCOUNT => 3))"
+order = "ordered"
+tags = ["null"]

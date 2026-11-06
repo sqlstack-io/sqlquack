@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.check-xml.check-xml-str"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "Valid documents. Catches: a valid document reported as an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'<r><a id=\"1\">1.50</a><a>x</a><b/></r>'"],
+  ["'<a/>'"],
+]
+query = "SELECT CHECK_XML(STR => a) IS NULL AS ok FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Mismatched and unclosed tags. Catches: NULL returned for invalid XML, or an error raised instead of a message"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'<a><b></a>'"],
+  ["'<a>'"],
+]
+query = "SELECT CHECK_XML(STR => a) IS NULL AS ok FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_containing_xml"
+description = "A SQL NULL, which the page says gives NULL, as for a valid document. Catches: an error, or an error message returned for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT CHECK_XML(STR => a) IS NULL AS ok FROM input"
+order = "ordered"
+tags = ["null"]

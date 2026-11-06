@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-geompointfromgeohash"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_centre"
+description = "The centre of ezs42, (-5.60302734375, 42.60498046875), exact binary fractions. Catches: a corner returned, or longitude and latitude swapped"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42'"],
+]
+query = "SELECT ST_X(ST_GEOMPOINTFROMGEOHASH(g)) AS x, ST_Y(ST_GEOMPOINTFROMGEOHASH(g)) AS y FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geohash"
+description = "A NULL geohash; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOMPOINTFROMGEOHASH(g) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

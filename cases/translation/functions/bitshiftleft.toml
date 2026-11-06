@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.bitshiftleft"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_integers"
+description = "Shifts of positive and negative integers. Catches: a 64-bit result (bit 127 lost), or the sign kept when the high bit changes"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "3"],
+  ["1", "127"],
+  ["-1", "4"],
+]
+query = "SELECT BITSHIFTLEFT(x, y) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "Bytes shifted by four bits. Catches: the bytes read as an integer, or the shift in bytes"
+columns = [{ name = "b", type = "BINARY" }]
+rows = [
+  ["'0FF0'"],
+]
+query = "SELECT BITSHIFTLEFT(b, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr1"
+description = "A NULL value and a NULL shift. Catches: the NULL read as 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1"],
+  ["1", "NULL"],
+]
+query = "SELECT BITSHIFTLEFT(x, y) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
