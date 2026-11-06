@@ -19,6 +19,7 @@ const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
+const QUALIFIED_SCHEMA: &str = "tests/cli/fixtures/qualified_relations.json";
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -515,6 +516,121 @@ fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_clas
             test_case.expected_value,
             "{}",
             test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_qualified_table_names_when_converting_then_they_read_the_declared_relation() {
+    let staged = (
+        "{\"ANALYTICS.STAGING.STG_ORDERS\": [[\"STATUS\", \"VARCHAR\"]], \
+          \"ANALYTICS.MARTS.STG_ORDERS\": [[\"STATUS\", \"VARCHAR\"]], \
+          \"PAYMENTS\": [[\"STATUS\", \"VARCHAR\"]]}",
+        "ATTACH ':memory:' AS analytics; CREATE SCHEMA analytics.staging; \
+         CREATE SCHEMA analytics.marts; \
+         CREATE TABLE analytics.staging.stg_orders (status VARCHAR); \
+         CREATE TABLE analytics.marts.stg_orders (status VARCHAR); \
+         CREATE TABLE payments (status VARCHAR); \
+         INSERT INTO analytics.staging.stg_orders VALUES ('staged'); \
+         INSERT INTO analytics.marts.stg_orders VALUES ('marted'); \
+         INSERT INTO payments VALUES ('paid')",
+    );
+    let test_cases = [
+        ValueTestCase {
+            description: "compiled dbt's database.schema.table reads that table in the attached database",
+            sql: "with source as (select * from analytics.staging.stg_orders) select status from source",
+            expected_value: "staged",
+        },
+        ValueTestCase {
+            description: "unquoted parts fold to upper case, so a mixed-case spelling is the same table",
+            sql: "SELECT o.status FROM Analytics.Marts.Stg_Orders AS o",
+            expected_value: "marted",
+        },
+        ValueTestCase {
+            description: "a quoted upper-case name is the declared one",
+            sql: "SELECT status FROM \"ANALYTICS\".\"MARTS\".\"STG_ORDERS\"",
+            expected_value: "marted",
+        },
+        ValueTestCase {
+            description: "schema.table matches the one database that declares it",
+            sql: "SELECT stg_orders.status FROM staging.stg_orders",
+            expected_value: "staged",
+        },
+        ValueTestCase {
+            description: "a qualified name reads a relation declared without qualifiers",
+            sql: "SELECT status FROM analytics.raw.payments",
+            expected_value: "paid",
+        },
+    ];
+    for test_case in test_cases {
+        let value = converted_value_over(test_case.sql, staged);
+        assert_eq!(value, test_case.expected_value, "{}", test_case.description);
+    }
+    let refusals = [
+        ConvertTestCase {
+            description: "a name matching tables in two schemas, with no session schema, names both",
+            sql: "SELECT order_id FROM stg_orders",
+            flags: &["--schema", QUALIFIED_SCHEMA],
+            mention: "relation `STG_ORDERS` matches `ANALYTICS.MARTS.STG_ORDERS`, \
+                      `ANALYTICS.STAGING.STG_ORDERS` in the schema",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a quoted lower-case part is a different table from the declared one",
+            sql: "SELECT order_id FROM analytics.\"staging\".stg_orders",
+            flags: &["--schema", QUALIFIED_SCHEMA],
+            mention: "relation `ANALYTICS.staging.STG_ORDERS` matches `ANALYTICS.STAGING.STG_ORDERS` only without regard to case",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a database the schema does not declare refuses as unknown",
+            sql: "SELECT order_id FROM other.staging.stg_orders",
+            flags: &["--schema", QUALIFIED_SCHEMA],
+            mention: "relation `OTHER.STAGING.STG_ORDERS` has no known columns",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "two qualifiers of one undeclared-qualifier relation refuse instead of reading it twice",
+            sql: "SELECT a.order_id FROM sales.orders a JOIN archive.orders b USING (order_id)",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "`SALES.ORDERS` and `ARCHIVE.ORDERS` both read the schema relation `ORDERS`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a qualified name a CTE of the same name would capture refuses",
+            sql: "WITH orders AS (SELECT 1 AS order_id) SELECT order_id FROM sales.orders",
+            flags: &["--schema", DECLARED_SCHEMA],
+            mention: "which a CTE of the same name hides",
+            expected_outcome: convert_outcome(1, false),
+        },
+    ];
+    for test_case in refusals {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+    let sessions = [
+        (
+            &["SCHEMA=marts"][..],
+            "\"ANALYTICS\".\"MARTS\".\"STG_ORDERS\"",
+        ),
+        (
+            &["DATABASE=analytics", "SCHEMA=staging"][..],
+            "\"ANALYTICS\".\"STAGING\".\"STG_ORDERS\"",
+        ),
+    ];
+    for (parameters, expected_relation) in sessions {
+        let mut flags = vec!["--builtin-policy", "--schema", QUALIFIED_SCHEMA];
+        for parameter in parameters {
+            flags.extend(["--session", parameter]);
+        }
+        let (stdout, _) = convert_streams("SELECT order_id FROM stg_orders", &flags);
+        assert!(
+            stdout.contains(&format!("FROM {expected_relation}")),
+            "the session's {parameters:?} settles which table an unqualified name reads: {stdout}"
         );
     }
 }

@@ -3,10 +3,12 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::blocks::constants::NAME_SEPARATOR;
 use crate::blocks::main::column_type::column_type;
 use crate::blocks::main::quoted_identifier::quoted_identifier;
 use crate::checking::constants::MACRO_PREFIX;
 use crate::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
+use crate::checking::main::quoted_relation::quoted_relation;
 use crate::checking::models::{FunctionStub, StubReturns};
 use crate::checking::types::{FunctionLookup, RelationLookup};
 
@@ -24,7 +26,7 @@ pub(crate) fn table_definitions(
     definitions
 }
 
-/// `CREATE TABLE` for the columns with a DuckDB type, semi-structured ones held as `JSON`.
+/// `CREATE TABLE` for the typed columns, semi-structured as `JSON`, in its name's catalog and schema.
 fn create_table(name: &str, columns: &[(String, SnowflakeType)]) -> String {
     let log = ProvenanceLog::default();
     let definitions: Vec<String> = columns
@@ -38,9 +40,21 @@ fn create_table(name: &str, columns: &[(String, SnowflakeType)]) -> String {
             Some(format!("{} {duckdb}", quoted_identifier(column, &log)))
         })
         .collect();
+    let parts: Vec<&str> = name.split(NAME_SEPARATOR).collect();
+    let mut prelude = String::new();
+    if let [catalog, _, _] = parts.as_slice() {
+        let catalog = quoted_identifier(catalog, &log);
+        prelude.push_str(&format!("ATTACH IF NOT EXISTS ':memory:' AS {catalog}; "));
+    }
+    if let [qualifiers @ .., _] = parts.as_slice()
+        && !qualifiers.is_empty()
+    {
+        let schema = quoted_relation(&qualifiers.join(NAME_SEPARATOR), &log);
+        prelude.push_str(&format!("CREATE SCHEMA IF NOT EXISTS {schema}; "));
+    }
     format!(
-        "CREATE TABLE {} ({})",
-        quoted_identifier(name, &log),
+        "{prelude}CREATE TABLE {} ({})",
+        quoted_relation(name, &log),
         definitions.join(", ")
     )
 }

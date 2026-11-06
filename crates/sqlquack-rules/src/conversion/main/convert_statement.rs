@@ -47,6 +47,7 @@ pub fn convert_statement(
         typed: &typed,
         order: &tracks.order,
         subqueries: &tracks.subqueries,
+        qualifiers: &tracks.qualifiers,
         free_projections: false,
         fixture_body: false,
     };
