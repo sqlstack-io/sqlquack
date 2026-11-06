@@ -321,9 +321,15 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: NAIVE_LOCAL_COMPARISON,
         constructs: &[
-            "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
+            "node:eq",
+            "node:neq",
+            "node:lt",
+            "node:lte",
+            "node:gt",
+            "node:gte",
+            "node:between",
         ],
-        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it, or beside a TIMESTAMP_TZ at any offset, such as CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()): Snowflake reads the naive value in the session time zone and compares instants, as recorded, so the zoned value is read as its wall time in UTC, which relies on session_timezone_utc.",
+        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it, or beside a TIMESTAMP_TZ at any offset, such as CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()): Snowflake reads the naive value in the session time zone and compares instants, as recorded, so the zoned value is read as its wall time in UTC, which relies on session_timezone_utc, and on timestamp_range at precisions above microseconds.",
         failures: &[],
     },
     RuleSpec {

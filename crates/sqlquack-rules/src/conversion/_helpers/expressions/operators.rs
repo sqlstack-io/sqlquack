@@ -44,11 +44,11 @@ use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 use crate::catalogue::constants::NAIVE_LOCAL_COMPARISON;
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
-    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MOD_PAIR,
-    NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
+    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MICROSECOND_DIGITS,
+    MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
     VARIANT_EQUALITY,
 };
-use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC};
+use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE};
 
 /// Characters in a `YYYY-MM-DD` date.
 const ISO_DATE_LENGTH: usize = 10;
@@ -643,6 +643,9 @@ fn local_as_naive(
     let log = context.log;
     let _rule = log.rule(NAIVE_LOCAL_COMPARISON);
     diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+    if precision > MICROSECOND_DIGITS {
+        diverge(context, TIMESTAMP_RANGE, construct)?;
+    }
     let naive = SnowflakeType::TimestampNtz { precision };
     let sql = cast(&utc_wall_time(&emitted.sql, log), naive, log)
         .map_err(|reason| outside_conditions(construct.clone(), reason))?;
