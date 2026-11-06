@@ -142,7 +142,9 @@ fn given_case_file_when_loading_then_format_and_policy_rules_are_enforced() {
             description: "a setup entry holding two statements is rejected",
             replace: "order = \"ordered\"",
             with: "order = \"ordered\"\nsetup = [\"SET x = 1; DROP TABLE t\"]",
-            expected_problem: Some("setup statement `SET x = 1; DROP TABLE t` must be one statement, without `;`"),
+            expected_problem: Some(
+                "setup statement `SET x = 1; DROP TABLE t` must be one statement, without `;`",
+            ),
         },
         LoadTestCase {
             description: "an unknown placeholder is rejected",
