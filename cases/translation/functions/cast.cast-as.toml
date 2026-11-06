@@ -110,7 +110,7 @@ tags = ["error"]
 
 [[case]]
 id = "t010_binary_length"
-description = "Hex text of two and three bytes cast to BINARY(2), with its length. Catches: the excess bytes silently truncated, or the declared length ignored"
+description = "Hex text of two and three bytes cast to BINARY(2), with its length; Snowflake raises for the three-byte value, failing the query. Catches: the excess bytes silently truncated, or the declared length ignored"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'ABCD'"],
@@ -118,4 +118,4 @@ rows = [
 ]
 query = "SELECT CAST(v AS BINARY(2)) AS r, LENGTH(CAST(v AS BINARY(2))) AS l FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["boundary"]
+tags = ["error"]
