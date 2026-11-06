@@ -3,21 +3,3 @@
 # local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
 # any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
 # wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
-
-[[review]]
-id = "pg-auditor-security_admin-001"
-reviewer_lane = "auditor"
-family = "security_admin"
-parser_tree = "7627aaefa0e240e17fa4a4c04868e764a6d3c67f"
-reviewed_utc = "2026-11-06T09:05:04Z"
-verdict = "approved"
-forms = [
-  "pg.security_admin.security-label",
-]
-note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 7627aaef; every scored case agrees with its receipt."
-
-[review.fingerprints]
-"pg.security_admin.security-label" = "d50fad30e3070abc1213068ee29694970b2a74800650f4aa2ca7dde940e99546"
-
-[review.definitions]
-"pg.security_admin.security-label" = "a8b23336fef0ed2ec681532016c8c63e85c6e258ed5c5b617364c9a5f49be297"

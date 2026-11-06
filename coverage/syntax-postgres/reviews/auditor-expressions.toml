@@ -17,7 +17,6 @@ forms = [
   "pg.expressions.array.op-at-gt",
   "pg.expressions.array.op-bar-bar",
   "pg.expressions.array.op-lt-at",
-  "pg.expressions.arrays.array-type",
   "pg.expressions.binarystring.op-bar-bar",
   "pg.expressions.bitstring.op-amp",
   "pg.expressions.bitstring.op-bar-bar",
@@ -228,8 +227,6 @@ forms = [
   "pg.expressions.rangetypes.multirange-constructor",
   "pg.expressions.rangetypes.range-constructor",
   "pg.expressions.sql-expressions.array-subquery",
-  "pg.expressions.sql-expressions.cast",
-  "pg.expressions.sql-expressions.cast-double-colon",
   "pg.expressions.sql-expressions.column-reference",
   "pg.expressions.sql-expressions.field-selection",
   "pg.expressions.sql-expressions.function-call",
@@ -245,7 +242,6 @@ forms = [
   "pg.expressions.sql-syntax-lexical.binary-integer",
   "pg.expressions.sql-syntax-lexical.bit-string",
   "pg.expressions.sql-syntax-lexical.block-comment",
-  "pg.expressions.sql-syntax-lexical.cast-string",
   "pg.expressions.sql-syntax-lexical.decimal",
   "pg.expressions.sql-syntax-lexical.decimal-leading-point",
   "pg.expressions.sql-syntax-lexical.digit-separators",
@@ -261,9 +257,7 @@ forms = [
   "pg.expressions.sql-syntax-lexical.octal-integer",
   "pg.expressions.sql-syntax-lexical.quoted-identifier",
   "pg.expressions.sql-syntax-lexical.string",
-  "pg.expressions.sql-syntax-lexical.string-cast",
   "pg.expressions.sql-syntax-lexical.string-continuation",
-  "pg.expressions.sql-syntax-lexical.type-string",
   "pg.expressions.sql-syntax-lexical.unicode-identifier",
   "pg.expressions.sql-syntax-lexical.unicode-string",
   "pg.expressions.string.op-bar-bar",
@@ -285,7 +279,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.array.op-at-gt" = "9ec661963d3a3cf65e901a65dc693afa4de4b11522697bd1791c7ef729891472"
 "pg.expressions.array.op-bar-bar" = "0c859c24f03c61f8e797dd10f91b7bab519b175d7a820e5794dc8498827e7fb4"
 "pg.expressions.array.op-lt-at" = "0d72ec3f1b7019ba398f7c16c5c42277d8c6a44e9e15bd08e4ecd1a3c517858d"
-"pg.expressions.arrays.array-type" = "2bc06625ba2b32d6ed688d17b29f792a5c6c6360a862de612a7ba01226be53c2"
 "pg.expressions.binarystring.op-bar-bar" = "4cf14b077862df94ebab1530beadeb835c18ac7785aa9e00cce860cdf758f3fa"
 "pg.expressions.bitstring.op-amp" = "083bee5d19323dfc1dbaa986b8b87adf2d5d1ad86d4d15b2e15c23e15e1c9896"
 "pg.expressions.bitstring.op-bar-bar" = "0f4dc26ec3a0a16952f3d402b125a8517be7de6e32981655d8412ce34980b04e"
@@ -496,8 +489,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.rangetypes.multirange-constructor" = "b4fd5c042da695cbdeafc9363b4d35a0ad910d865394cfa6868fc2685e66658e"
 "pg.expressions.rangetypes.range-constructor" = "1dbdcc8224a3ce3ebce71f364ee068222c2d28150fde0dad9e2490e6e247397b"
 "pg.expressions.sql-expressions.array-subquery" = "92fd7aff84f0ccec7fc30c193118a9cdfd5543839d2993cdee06a44a050c8c35"
-"pg.expressions.sql-expressions.cast" = "67ff44066712ef5a2125213338bcad2045fb3419e807f1101aa3c68f270c092c"
-"pg.expressions.sql-expressions.cast-double-colon" = "4f5361591792658a0e997232543feaa50744ba3d7eed4e046ab53e36bebbea00"
 "pg.expressions.sql-expressions.column-reference" = "35f279a425f412e8e4e76cdf30a07cbf53b3b5f138f44d99f40be8dddb9e56d2"
 "pg.expressions.sql-expressions.field-selection" = "50f365ba816906886442d23aa7c892b2898c316d2210caf12f33e07a5284cd73"
 "pg.expressions.sql-expressions.function-call" = "431659bad07c6b30c5058a87df76c6e2d3e13c7f592723ac8c3902234609b23d"
@@ -513,7 +504,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.sql-syntax-lexical.binary-integer" = "5af4fe26e4807ae4d5ce96c4d45d804c86462a71ba29d5a4d88d7bcf1ee6890e"
 "pg.expressions.sql-syntax-lexical.bit-string" = "25b9dd95992b2016353d29d319445b92e3641d20f4a760f911a36417cd39cfbe"
 "pg.expressions.sql-syntax-lexical.block-comment" = "415a0871bea972a3542ec5e1bff14c7610a8de34757db99c56be0175d47ad88a"
-"pg.expressions.sql-syntax-lexical.cast-string" = "66e1135f6d0b8d622477ed15fca96cf9daee55e55e822157f0a31dfce114dd75"
 "pg.expressions.sql-syntax-lexical.decimal" = "a7f5e95bf24cc0d8517a859862f2685deb167fe6d28ac14145ee39b7b8fe4de4"
 "pg.expressions.sql-syntax-lexical.decimal-leading-point" = "81df5b0ed5bfc72c9203292363ae5ee94140ec5d1f7d5f5a30999b70b2385346"
 "pg.expressions.sql-syntax-lexical.digit-separators" = "4eecf0d2ff07be7b6130d7ce4ed91e87f5706964c111dfc08b58c4a8c8801dd3"
@@ -529,9 +519,7 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.sql-syntax-lexical.octal-integer" = "f88551741cba8124df09ed7a8727b26503b58943f5c0a38a1a7795b56e5d0d57"
 "pg.expressions.sql-syntax-lexical.quoted-identifier" = "7531bb3c2435bf5d81d6dd0b727eb92d181dc9d5c784e231746a41d7f306684f"
 "pg.expressions.sql-syntax-lexical.string" = "6ea241b2373cbe38be21bb0511d319e25f1280204ac2a495e22b71355ebadb3d"
-"pg.expressions.sql-syntax-lexical.string-cast" = "a55efcc8c75475de5068f7a3b586bc93621ad2a661aa7df309c4984ad3f4f31a"
 "pg.expressions.sql-syntax-lexical.string-continuation" = "ad4006fab4a783db67c3f2b8c02a34ccef84e4838861acf14782889f85a2fa19"
-"pg.expressions.sql-syntax-lexical.type-string" = "9787e00582c8247ef608988ebe37cc231a8914092b0d5db6b383243307c2433f"
 "pg.expressions.sql-syntax-lexical.unicode-identifier" = "d42487429f92eecb8d9b9cd18f503a3bda9cf675fc91f07f39a125ecea70eead"
 "pg.expressions.sql-syntax-lexical.unicode-string" = "818f08b79245e886afc67a50bdc5a490a66d5b44ac2cbc6ebb1a6fb79fd300b1"
 "pg.expressions.string.op-bar-bar" = "2b8afce5726673ccbc315170377cd854e328922034e09924b5e6ad8811d65cc6"
@@ -551,7 +539,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.array.op-at-gt" = "23896ca49fd34f9dcfdaed596fa4acaf3271705f7ca42545c72d119d20299a1e"
 "pg.expressions.array.op-bar-bar" = "0df641c18a4f6f6c8c7e5e7b407fd6aab7447cde90a4eedf3c6a632f44216014"
 "pg.expressions.array.op-lt-at" = "10a10195cc55d2e9eaadf948e77cc1af9d8137716bd7f6509902983daa6a97d2"
-"pg.expressions.arrays.array-type" = "3858f710f8a3c365382ba9a590cc22130523014d75d4756edb27420f023db806"
 "pg.expressions.binarystring.op-bar-bar" = "5cb36032e90676042db33bd854481d58cbf98d0cb054293be96e323d2a5cefce"
 "pg.expressions.bitstring.op-amp" = "9187cf3acee80d4a749f0ffeef1297b49c0eb376970dc81e87ff2c38acf847a8"
 "pg.expressions.bitstring.op-bar-bar" = "77b6a293c2acd14aec41dcd628e573f749a08ca7b0e2d7ee7ffff1620a3fa9a4"
@@ -762,8 +749,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.rangetypes.multirange-constructor" = "c18502a02e5c94edd0c2216d7dd8d07e991c8e8de4fb738dbb474344f5c6dfb2"
 "pg.expressions.rangetypes.range-constructor" = "5951373c42aeeff65290ef97b9c3334a193be39ec959849abca0b7ecb5b2a5fb"
 "pg.expressions.sql-expressions.array-subquery" = "757f7dba79124129e5431585f3ad4ae3e5960d1495137bb3cc317b68f8ef064c"
-"pg.expressions.sql-expressions.cast" = "d31b8492914a911885bd0216a3ed9c52b67a8d0863e005ed71be34aa0234338d"
-"pg.expressions.sql-expressions.cast-double-colon" = "50fa6ae1daed6b44cda69b22a1b28e26f693cec13d6538f6c98edd02b54b4ee7"
 "pg.expressions.sql-expressions.column-reference" = "032fe8d4abb96e26258214760df099699e8c5d5b539a8cb0bf9c7f1ec0fec03d"
 "pg.expressions.sql-expressions.field-selection" = "6f7632e1d5e97684d37c1ce6453a924e1b949c8b4fc18a5ca2eb47b0bb6721d2"
 "pg.expressions.sql-expressions.function-call" = "557ad7ad4ba1f2018d35fbbb39bc97b2484adbdbb47ff16d67e1378da30b6080"
@@ -779,7 +764,6 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.sql-syntax-lexical.binary-integer" = "29779c36fae4262d5dd4fc75e161a8e3ca58295c34b997041f9326c043083963"
 "pg.expressions.sql-syntax-lexical.bit-string" = "a859bca2f62d03db7367e814741f324f00ee085330e1a85ef02897c9dff881a2"
 "pg.expressions.sql-syntax-lexical.block-comment" = "bde72058004d9d3c65a016ae4e985da7c5f2ebd9ebf7dc7e66a2eaf1d16e64b9"
-"pg.expressions.sql-syntax-lexical.cast-string" = "a082b862baed93e5559fc95c560cfdce70287bd703aae0b674a901a33ca217e4"
 "pg.expressions.sql-syntax-lexical.decimal" = "419f2fa5799ac6f4fab95ed7f254ae104db5f71cc0bc7fcd7bd513c5a71dc296"
 "pg.expressions.sql-syntax-lexical.decimal-leading-point" = "688088221c4caade04aef5dcf988b2a7e552cbb1c9662490f774e0abbe637176"
 "pg.expressions.sql-syntax-lexical.digit-separators" = "021bbcf0af1da693d2ef3ffeefdc98c19aa282d2efb323c57c3b15e74356118f"
@@ -795,9 +779,7 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.sql-syntax-lexical.octal-integer" = "0e59b56da639117d230200988d41baeb692bda307d5380a9be3f9963b3b3edd2"
 "pg.expressions.sql-syntax-lexical.quoted-identifier" = "82be54a44573a9c681645a68bea89360f0a409328ee4564dcaccbfe5e50693d7"
 "pg.expressions.sql-syntax-lexical.string" = "b5033289f95a287f7c354be9f8272bc342ea4d6e30f33a5c9159d104dd7913a1"
-"pg.expressions.sql-syntax-lexical.string-cast" = "89cfeeaf429b9f0f4d56eeb62806f113b38b860f4d4b58e74ea9893979835a91"
 "pg.expressions.sql-syntax-lexical.string-continuation" = "7e0467eec0a49cbc02b2313d6c9d99b95a43d03d53b7b7d326fde458162f2c6d"
-"pg.expressions.sql-syntax-lexical.type-string" = "5dfa22b5cd8870a98b4477ae59f4227911f526510fe906c3bc146e7669daab57"
 "pg.expressions.sql-syntax-lexical.unicode-identifier" = "a29c42af24d5aad48e1d111ee7f44352f83bc884c84df8d3d1a725a12ee01836"
 "pg.expressions.sql-syntax-lexical.unicode-string" = "8b6b860f223595c40f6cc7f95407f0229fb59a2d4bb069b59294d674fef450ad"
 "pg.expressions.string.op-bar-bar" = "f1b643fc900c985977590d0d740d85e829931fa8eb804331ce72c1145627fcde"
