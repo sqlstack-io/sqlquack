@@ -131,6 +131,9 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             sql: "SELECT CUME_DIST() OVER (ORDER BY price) AS c, \
                   PERCENT_RANK() OVER (PARTITION BY customer_id ORDER BY price) AS p, \
                   NTH_VALUE(price, 1) OVER (ORDER BY order_id) AS n FROM orders; \
+                  SELECT NTH_VALUE(price, 2) FROM LAST IGNORE NULLS OVER (ORDER BY order_id) AS n FROM orders; \
+                  SELECT NTH_VALUE(price, 1) FROM FIRST RESPECT NULLS OVER (ORDER BY order_id) AS n FROM orders; \
+                  SELECT NTH_VALUE(price, 1) IGNORE NULLS OVER (ORDER BY order_id) AS n FROM orders; \
                   SELECT NTH_VALUE(CUME_DIST(), 1) OVER (ORDER BY order_id) AS n FROM orders",
             expected_rejections: vec!["window_without_over"],
             expected_codes: vec!["SQ0205"],

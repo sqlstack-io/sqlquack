@@ -50,7 +50,10 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
         QueryFindingsTestCase {
             description: "CUME_DIST, PERCENT_RANK and NTH_VALUE under OVER",
             sql: "SELECT CUME_DIST() OVER (ORDER BY id) AS c, PERCENT_RANK() OVER (ORDER BY id) AS p, \
-                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n FROM orders",
+                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n, \
+                  NTH_VALUE(id, 2) FROM LAST IGNORE NULLS OVER (ORDER BY id) AS l, \
+                  NTH_VALUE(id, 1) FROM FIRST RESPECT NULLS OVER (ORDER BY id) AS f, \
+                  NTH_VALUE(id, 1) IGNORE NULLS OVER (ORDER BY id) AS i FROM orders",
             expected_findings: &[],
         },
         QueryFindingsTestCase {
@@ -211,7 +214,10 @@ fn given_a_snowflake_query_when_checking_built_in_calls_and_types_then_definite_
         QueryFindingsTestCase {
             description: "CUME_DIST, PERCENT_RANK and NTH_VALUE under OVER",
             sql: "SELECT CUME_DIST() OVER (ORDER BY id) AS c, PERCENT_RANK() OVER (ORDER BY id) AS p, \
-                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n FROM orders",
+                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n, \
+                  NTH_VALUE(id, 2) FROM LAST IGNORE NULLS OVER (ORDER BY id) AS l, \
+                  NTH_VALUE(id, 1) FROM FIRST RESPECT NULLS OVER (ORDER BY id) AS f, \
+                  NTH_VALUE(id, 1) IGNORE NULLS OVER (ORDER BY id) AS i FROM orders",
             expected_findings: &[],
         },
         QueryFindingsTestCase {
