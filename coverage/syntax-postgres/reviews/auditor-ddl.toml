@@ -105,3 +105,375 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.ddl.create-function.sql-body-return" = "aeca768d81797523291e2dd34a985c2599e280f1c149424da6f43b7cdcaa256a"
 "pg.ddl.create-procedure" = "731961bcdb3eed7b91817885ef74ae096b15356bc39ea9b437901afae9a234cd"
 "pg.ddl.create-procedure.sql-body-atomic" = "d04b54795b861bd8c88dbf44cd137474a05b188ede805ea43c3fe18375cd46b1"
+
+[[review]]
+id = "pg-auditor-ddl-005"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "394fb708fa2931c460a442bb40db021ed793fe6a"
+reviewed_utc = "2026-11-06T11:32:25Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-foreign-table.add-column-collate",
+  "pg.ddl.alter-foreign-table.add-valid",
+  "pg.ddl.alter-foreign-table.alter-drop-default",
+  "pg.ddl.alter-foreign-table.alter-not-null",
+  "pg.ddl.alter-foreign-table.alter-options",
+  "pg.ddl.alter-foreign-table.alter-reset",
+  "pg.ddl.alter-foreign-table.alter-set",
+  "pg.ddl.alter-foreign-table.alter-set-default",
+  "pg.ddl.alter-foreign-table.alter-set-statistics",
+  "pg.ddl.alter-foreign-table.alter-set-storage",
+  "pg.ddl.alter-foreign-table.alter-type",
+  "pg.ddl.alter-foreign-table.disable-trigger",
+  "pg.ddl.alter-foreign-table.drop",
+  "pg.ddl.alter-foreign-table.drop-constraint",
+  "pg.ddl.alter-foreign-table.enable-always-trigger",
+  "pg.ddl.alter-foreign-table.enable-replica-trigger",
+  "pg.ddl.alter-foreign-table.enable-trigger",
+  "pg.ddl.alter-foreign-table.inherit",
+  "pg.ddl.alter-foreign-table.no-inherit",
+  "pg.ddl.alter-foreign-table.options",
+  "pg.ddl.alter-foreign-table.owner-to",
+  "pg.ddl.alter-foreign-table.rename-to",
+  "pg.ddl.alter-foreign-table.rename-to-only-column",
+  "pg.ddl.alter-foreign-table.set-schema",
+  "pg.ddl.alter-foreign-table.set-without-oids",
+  "pg.ddl.alter-foreign-table.validate-constraint",
+  "pg.ddl.alter-index.all-in-tablespace-set",
+  "pg.ddl.alter-index.alter-set-statistics",
+  "pg.ddl.alter-index.attach-partition",
+  "pg.ddl.alter-index.depends-on-extension",
+  "pg.ddl.alter-index.rename-to",
+  "pg.ddl.alter-index.reset",
+  "pg.ddl.alter-index.set",
+  "pg.ddl.alter-index.set-tablespace",
+  "pg.ddl.alter-materialized-view.all-in-tablespace-set",
+  "pg.ddl.alter-materialized-view.alter-reset",
+  "pg.ddl.alter-materialized-view.alter-set",
+  "pg.ddl.alter-materialized-view.alter-set-compression",
+  "pg.ddl.alter-materialized-view.alter-set-statistics",
+  "pg.ddl.alter-materialized-view.alter-set-storage",
+  "pg.ddl.alter-materialized-view.cluster-on",
+  "pg.ddl.alter-materialized-view.depends-on-extension",
+  "pg.ddl.alter-materialized-view.owner-to",
+  "pg.ddl.alter-materialized-view.rename-to",
+  "pg.ddl.alter-materialized-view.rename-to-column",
+  "pg.ddl.alter-materialized-view.reset",
+  "pg.ddl.alter-materialized-view.set",
+  "pg.ddl.alter-materialized-view.set-access-method",
+  "pg.ddl.alter-materialized-view.set-schema",
+  "pg.ddl.alter-materialized-view.set-tablespace",
+  "pg.ddl.alter-materialized-view.set-without-cluster",
+  "pg.ddl.alter-sequence.name",
+  "pg.ddl.alter-sequence.owner-to",
+  "pg.ddl.alter-sequence.rename-to",
+  "pg.ddl.alter-sequence.set",
+  "pg.ddl.alter-sequence.set-schema",
+  "pg.ddl.alter-table.add",
+  "pg.ddl.alter-table.add-column-not-collate",
+  "pg.ddl.alter-table.add-not-valid",
+  "pg.ddl.alter-table.all-in-tablespace-set",
+  "pg.ddl.alter-table.alter",
+  "pg.ddl.alter-table.alter-add-generated-as",
+  "pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced",
+  "pg.ddl.alter-table.alter-constraint-inherit-no",
+  "pg.ddl.alter-table.alter-drop-default",
+  "pg.ddl.alter-table.alter-drop-expression",
+  "pg.ddl.alter-table.alter-drop-identity",
+  "pg.ddl.alter-table.alter-not-null",
+  "pg.ddl.alter-table.alter-reset",
+  "pg.ddl.alter-table.alter-set",
+  "pg.ddl.alter-table.alter-set-compression",
+  "pg.ddl.alter-table.alter-set-default",
+  "pg.ddl.alter-table.alter-set-expression-as",
+  "pg.ddl.alter-table.alter-set-statistics",
+  "pg.ddl.alter-table.alter-set-storage",
+  "pg.ddl.alter-table.alter-type",
+  "pg.ddl.alter-table.attach-partition",
+  "pg.ddl.alter-table.cluster-on",
+  "pg.ddl.alter-table.detach-partition",
+  "pg.ddl.alter-table.disable-row-level-security",
+  "pg.ddl.alter-table.disable-rule",
+  "pg.ddl.alter-table.disable-trigger",
+  "pg.ddl.alter-table.drop",
+  "pg.ddl.alter-table.drop-constraint",
+  "pg.ddl.alter-table.enable-always-rule",
+  "pg.ddl.alter-table.enable-always-trigger",
+  "pg.ddl.alter-table.enable-replica-rule",
+  "pg.ddl.alter-table.enable-replica-trigger",
+  "pg.ddl.alter-table.enable-row-level-security",
+  "pg.ddl.alter-table.enable-rule",
+  "pg.ddl.alter-table.enable-trigger",
+  "pg.ddl.alter-table.force-row-level-security",
+  "pg.ddl.alter-table.inherit",
+  "pg.ddl.alter-table.no-force-row-level",
+  "pg.ddl.alter-table.no-inherit",
+  "pg.ddl.alter-table.not-of",
+  "pg.ddl.alter-table.of",
+  "pg.ddl.alter-table.owner-to",
+  "pg.ddl.alter-table.rename-constraint-to",
+  "pg.ddl.alter-table.rename-to",
+  "pg.ddl.alter-table.rename-to-only-column",
+  "pg.ddl.alter-table.replica-identity",
+  "pg.ddl.alter-table.reset",
+  "pg.ddl.alter-table.set",
+  "pg.ddl.alter-table.set-access-method",
+  "pg.ddl.alter-table.set-logged-unlogged",
+  "pg.ddl.alter-table.set-schema",
+  "pg.ddl.alter-table.set-tablespace",
+  "pg.ddl.alter-table.set-without-cluster",
+  "pg.ddl.alter-table.set-without-oids",
+  "pg.ddl.alter-table.validate-constraint",
+  "pg.ddl.alter-view.alter-drop-default",
+  "pg.ddl.alter-view.alter-set-default",
+  "pg.ddl.alter-view.owner-to",
+  "pg.ddl.alter-view.rename-to",
+  "pg.ddl.alter-view.rename-to-column",
+  "pg.ddl.alter-view.reset",
+  "pg.ddl.alter-view.set",
+  "pg.ddl.alter-view.set-schema",
+]
+note = "Read against the PostgreSQL 18.6 documentation (release SGML), every obligation with its covering case, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 394fb708, sampled within large case sets under D256; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-foreign-table.add-column-collate" = "b2bad390c776d669c487902b99dd4bec711464b5b7b083413aa2228afb9bd400"
+"pg.ddl.alter-foreign-table.add-valid" = "ea30628bdf10017ff2dbf8f047a21cf2fef2326628278bcdacfaa395caddb761"
+"pg.ddl.alter-foreign-table.alter-drop-default" = "66a4b1091bc55de5a4a0de72ed3aeb7d4ecc0dd86f1bb10631075211a7b2e3eb"
+"pg.ddl.alter-foreign-table.alter-not-null" = "6a6219438d7d6b7f7a37fcedce662575e6f89ccbd854770c609c535dc134417d"
+"pg.ddl.alter-foreign-table.alter-options" = "356d8c5b542545cec827c63ce3e260e3de2eaa078106c6e5c9d6c2e34eb720f2"
+"pg.ddl.alter-foreign-table.alter-reset" = "651d0c387f2d0c3e6281bc1b57276f7cf56f240091fcfc6270f4ed5a37eb447a"
+"pg.ddl.alter-foreign-table.alter-set" = "8a20660013899833898d16e650d186389ed9464f232745ae655fab5309d0175c"
+"pg.ddl.alter-foreign-table.alter-set-default" = "8a1a20dab336ddc1f46477fe75407195cc01a19ce896e223b31e781a543f7d6f"
+"pg.ddl.alter-foreign-table.alter-set-statistics" = "99286eab57bfc948f25d76eeab22278e8f1d73a482994a9e7677c8f33de2e0f0"
+"pg.ddl.alter-foreign-table.alter-set-storage" = "5c2f05674575671974419f7d15fdf0b0a44c4592462301adbee64acd556374de"
+"pg.ddl.alter-foreign-table.alter-type" = "b8bf7c520de0f658224af43170e73ba7ff40e75c4760519a23592b4bdf86de92"
+"pg.ddl.alter-foreign-table.disable-trigger" = "e10340d7f50c6439985900b832f1cc8cc159bda1fb7b209be703bfd0603066b9"
+"pg.ddl.alter-foreign-table.drop" = "9fd7e0c7997e736dd6307e96304f440262dc4486e8a86ccf4986058ea333c594"
+"pg.ddl.alter-foreign-table.drop-constraint" = "d3dd17f961c3ff8dec86412a43aae2900458ac9ac10078151e9581d2bb1d7d05"
+"pg.ddl.alter-foreign-table.enable-always-trigger" = "bb8a1767fc305dd9cb4ed93ddbfe67472a5a9d3bd28a4b691aad8bdad482ef8b"
+"pg.ddl.alter-foreign-table.enable-replica-trigger" = "a0f96af73393f6049d8abc0d026981e4542c9acbc181c14961250aca51286abc"
+"pg.ddl.alter-foreign-table.enable-trigger" = "5d6530df3edf40b14a65a44e924522a6c4d7a4030ee8cfd2f42cb4a3cc5558fc"
+"pg.ddl.alter-foreign-table.inherit" = "b805e53035f342779febfeb2a64d1c4c17c97eeadff52b12f05a8bd6014ee03e"
+"pg.ddl.alter-foreign-table.no-inherit" = "b2cb4d49d2990fa6db0d5cbf909686215eaa8819a73531a75b0cc8c6c1b54793"
+"pg.ddl.alter-foreign-table.options" = "431b9b289ab8256aab8dc27fd907255c14f6f6ffb4bc5afa2b6e4cf5476ee653"
+"pg.ddl.alter-foreign-table.owner-to" = "a17c6da443cbbcacb56c65bd271d651b3c6e46adbda9d451b05327991cdebfbf"
+"pg.ddl.alter-foreign-table.rename-to" = "c8e91cb801373849c3a6279c033797706006f0b35bcde92adeda18a1d607467e"
+"pg.ddl.alter-foreign-table.rename-to-only-column" = "7e2786d2b0568a52148453fb451e0c18084c9efc557d7f76fcbe71cce49d0ecb"
+"pg.ddl.alter-foreign-table.set-schema" = "87992b5db1ea69215bb1f1a3f47ba40dba8fe56c9051f9ef319a1974ea2d069f"
+"pg.ddl.alter-foreign-table.set-without-oids" = "b1e5210c4780e288ca6d635925e59e0887e198ca7d04ecece0743b7c05b2593a"
+"pg.ddl.alter-foreign-table.validate-constraint" = "a3ea61c482b8d6cce671344fdcd2c7803254ea868c8e9cf6b5c9cc57834e7c95"
+"pg.ddl.alter-index.all-in-tablespace-set" = "803dba8ff508c1818bbbffb6c9ba2c4115e6137f55fe3bdde3008ba5cf2a18e5"
+"pg.ddl.alter-index.alter-set-statistics" = "4958dc8595538656ce4c2684763901512f100ada84b5cb94ed6756b07ac23d8d"
+"pg.ddl.alter-index.attach-partition" = "60337559e66b54797e8344ac7dcabef3d43b9960831f23accf0a58c6d4bbf798"
+"pg.ddl.alter-index.depends-on-extension" = "ce159496e475f328d3459c757659e07f33f38d1874037148542db6c4335f4100"
+"pg.ddl.alter-index.rename-to" = "58499fcda015ab1379b017bcc3092afeab83f7950775f287a7ccd93af712b6a5"
+"pg.ddl.alter-index.reset" = "90963ce9a99f1ae5ca0179897e3a07263a81947841f513aa4dc31115a8b1f613"
+"pg.ddl.alter-index.set" = "df70a012d18e63238ad061d0c55c6ec03fad377b6ad0aa41d76c33771705f158"
+"pg.ddl.alter-index.set-tablespace" = "0c1cfc45e04007da44f5d9c435252b7b9bb5bd7ff755854a0fe77f5b2fd5b885"
+"pg.ddl.alter-materialized-view.all-in-tablespace-set" = "a8af42e6bc66b07208713310bac579a55efc14d1c11efef31c1cdeaf0a138f76"
+"pg.ddl.alter-materialized-view.alter-reset" = "3d083f29e19154daeba33ccc35ac5b6a6902364f731ad33431c7f0776e670e66"
+"pg.ddl.alter-materialized-view.alter-set" = "4c12c21a02147becb417ca92754f24e1c8c6c8068e3ecefea3c91894dfb1120d"
+"pg.ddl.alter-materialized-view.alter-set-compression" = "5b69c8ac26b9bcdfdccc1e9b103b461fe7d106d74c3e5f59e935a79131b3aecf"
+"pg.ddl.alter-materialized-view.alter-set-statistics" = "6d9626f8ff27e020ef68dd77204521fe02ee21ce1ca7318e3dae202279bcd5fc"
+"pg.ddl.alter-materialized-view.alter-set-storage" = "2d517fb4edbc24a09ae01b4b421b1b4b49fa7f17de450bcdcbf9acadbb94a043"
+"pg.ddl.alter-materialized-view.cluster-on" = "d92fc0f66a1f64022f5d27a32620aeef84d95e9d11cc52a26a7cb0333e1cebbf"
+"pg.ddl.alter-materialized-view.depends-on-extension" = "7fc8fde2b5c452f924307b35635b21422be34d4e99c6371cef340d5ad448f1f0"
+"pg.ddl.alter-materialized-view.owner-to" = "991ded96e365d3dfcc4315d88562e0dbe25a5e89828d40122174dcd4ef15e64c"
+"pg.ddl.alter-materialized-view.rename-to" = "729f4e2c6a731c5c9e163fe494a378ce8685189afba3f22f11b6e18060bf1d26"
+"pg.ddl.alter-materialized-view.rename-to-column" = "bc1b8c91ebdb09224c292082ed47069b83a48a0a8de9ea5317a21d34b743b74e"
+"pg.ddl.alter-materialized-view.reset" = "d289373a35e74bf4515724cf8cebd73297aaabd7334feac0320b4b2e8dcf947b"
+"pg.ddl.alter-materialized-view.set" = "e7b097ecf8abfaad2e1d4b5bca3ac1d0f4fc30ee038edbfca3e488208df1717d"
+"pg.ddl.alter-materialized-view.set-access-method" = "5602756eb1df30062149fee7ae24cbda807cb4bed5afd68c6fd8892f3bd0f442"
+"pg.ddl.alter-materialized-view.set-schema" = "faca187eb235fe293498d7659fa6a7bd783c038cb25524d840ac9ce343561479"
+"pg.ddl.alter-materialized-view.set-tablespace" = "c4de85e348f8932e7df745d2d4bedefa7c402a9474533b2b220ea4c2ee7d6c3a"
+"pg.ddl.alter-materialized-view.set-without-cluster" = "08c0df61f7d3e78304c27ee5a4fe2661a3049d4bef8de265d73d27f1eb9772c0"
+"pg.ddl.alter-sequence.name" = "e761e850860c80144fdafb2d6e87b6e3795d6c9e0e57e3dcc7c2765bc0ad47f4"
+"pg.ddl.alter-sequence.owner-to" = "b71e94c904fa7efac09b43d278a541e16333e8dbfcf816915218bd861115da1c"
+"pg.ddl.alter-sequence.rename-to" = "c2fbf5956da17ddf967ccbd6d64a7d281996e76b658cd26446b298de0451d058"
+"pg.ddl.alter-sequence.set" = "743223e80324cab64804e71c896212ed12ea0b6fd1f8636d723637edd54ad4a3"
+"pg.ddl.alter-sequence.set-schema" = "5de48eb767f8730b2bf3a2162c094668b5e9b09592c15b165ea2209ca831473c"
+"pg.ddl.alter-table.add" = "836f27a626c5ebad2786b6ee51832f399244923a38216fc4c9b13e795c02c698"
+"pg.ddl.alter-table.add-column-not-collate" = "31d860ba7f05611a7f3d19bbea9d87f4288b319b5a194a22df900a113e493eea"
+"pg.ddl.alter-table.add-not-valid" = "c585253a8c08a494356704953891a7956c15103d9059dcce3041ce9df6594d57"
+"pg.ddl.alter-table.all-in-tablespace-set" = "57eaac334155de8ebd20d9f5c076dd36b25e0d265c53612e5f704cf0575af3f0"
+"pg.ddl.alter-table.alter" = "ce2fe9ff7bbe12ce6649a6be9de4d1546dca30cce52364672013531f9ffffd42"
+"pg.ddl.alter-table.alter-add-generated-as" = "824c3c8fb357e1d7adac67e9955f30eca1b2675cc707182ee672b5ee8dbf0832"
+"pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced" = "c193b6926f2e9028231153456b62621759b3d86534782c7dcfa792f86119ed3e"
+"pg.ddl.alter-table.alter-constraint-inherit-no" = "04017e5f8a11fe0779a96b9594e03f05276377e5f95d96816b817f109125a35f"
+"pg.ddl.alter-table.alter-drop-default" = "7487b91523210212f544d7685fd6d33c9af8d36273e9e3c9a0f881f6774a956b"
+"pg.ddl.alter-table.alter-drop-expression" = "d131ecd04185c0a6ddf038ef03392a431826b82637552f07b107c4db1b8bead2"
+"pg.ddl.alter-table.alter-drop-identity" = "9432f918861223d57e4864d3197dfe2b1c03882c50b67b7db3ad3ce96869098b"
+"pg.ddl.alter-table.alter-not-null" = "769f847db37a36cd179839f55f9895e386fe28f9e27b498dfa87fe5b07acf48e"
+"pg.ddl.alter-table.alter-reset" = "650d000279f578ad9b15089f44a7da4502589469d379da58c561b9859cacb200"
+"pg.ddl.alter-table.alter-set" = "35a355d9161db31168cc5faca7cf75e734aff1c6afd1bd4ec01aec907aadde4b"
+"pg.ddl.alter-table.alter-set-compression" = "e7bff55cc7fdaf54c72669638122ea5483d7f267da6c35e3d6237375d5dfbefa"
+"pg.ddl.alter-table.alter-set-default" = "6283ee26848a8677cf735b7c96195b8f4c1bf88919113cf049c608bcdba7876e"
+"pg.ddl.alter-table.alter-set-expression-as" = "0a750747cf46d55ade771a0750fd624e2325906ce1f0b3d266516760af12fc3d"
+"pg.ddl.alter-table.alter-set-statistics" = "ec3f0dcc4480fea0d9285bf8bc7f279ad138b694a565660f05c8a3b6fae46ae7"
+"pg.ddl.alter-table.alter-set-storage" = "ecd335a91f3edddb203c9f1565f76318e3b529c3271cce14da3fc3475c52d323"
+"pg.ddl.alter-table.alter-type" = "6a58a2e63ff86b5818c5e5e10fbe1c6416fa2834b5ce2a33c748f6f4440c4833"
+"pg.ddl.alter-table.attach-partition" = "f794cda95ea317d8275bb3bebc7e8c263ce6a5e8136ce541810c72e8ab25f914"
+"pg.ddl.alter-table.cluster-on" = "58f759465f0561105b795ff29b5def8026d4bb6089e801951c985901c81ca19f"
+"pg.ddl.alter-table.detach-partition" = "65a74da237896d31e35497dfbf1d0f2d710ef480516f58dfc1d2f0eeb5910b9d"
+"pg.ddl.alter-table.disable-row-level-security" = "7cc1ad3a8dd15a993c2dcec4938e200f064d3b2f3b3f91252b0b6230174e047d"
+"pg.ddl.alter-table.disable-rule" = "58b77205d9aa2040efdc915c8125aa9d682008f895c31980732ce9fbe4a1da2b"
+"pg.ddl.alter-table.disable-trigger" = "eec68fb8df69dbe1b742ac879cf1dfcfe672f9c624551c67e5fb8f423fa4e831"
+"pg.ddl.alter-table.drop" = "ae2ae1811fcd814ea5d8f1b26dea7261a02d4077ae200d40c09346b1c9b9b15b"
+"pg.ddl.alter-table.drop-constraint" = "2c566ccf38acdbea041410cef2150b95e5d8bbdf256cae5d0424c6ae4a35dd16"
+"pg.ddl.alter-table.enable-always-rule" = "76ded66dcd1cb02ce7a3592182e207fc207c63f59d22b90d14ec7b219467cfef"
+"pg.ddl.alter-table.enable-always-trigger" = "0eff57dc5eaf36535414420ab91e4a8ae67fe94e4fd5a7f8f2243de3e9abfb8a"
+"pg.ddl.alter-table.enable-replica-rule" = "909c6b389891a8b452653add775d592468dee41cd00ce895feff8b93db68c9ab"
+"pg.ddl.alter-table.enable-replica-trigger" = "51cff2be0cda9e41e38dcc9a3cbefab9796869dce4e67676eef7627f89fc94d8"
+"pg.ddl.alter-table.enable-row-level-security" = "973f97be9c7a92c68f2a0cfd184bd4cbd73ab0e4e9b81f9f5997c87e50012f05"
+"pg.ddl.alter-table.enable-rule" = "128833b6be6cea574176df07a75e588ccd73546ff9b04e126efea6ecb226d9e3"
+"pg.ddl.alter-table.enable-trigger" = "b74ccde97d148621215d7c095e22aecc99aa438d2957d6bf2550f5e679f3ce0c"
+"pg.ddl.alter-table.force-row-level-security" = "df8e5349cd9e4c83989aaa26f65b3137c2612e0007ff57a01442c7403cedb78e"
+"pg.ddl.alter-table.inherit" = "24c365cfd65dfd01d87f8ed8fff6e8aaba31863c7bf54e2b6740fc697c58ee47"
+"pg.ddl.alter-table.no-force-row-level" = "5b4da8c07941198444c276c500f1a77d7846f0f3ddf022f5ba5b8fa260ac1f90"
+"pg.ddl.alter-table.no-inherit" = "4fb75880413ce02afaeda4ac11bda1697a56b1b50937d55540d0f3c88fb91ac6"
+"pg.ddl.alter-table.not-of" = "ed0f2c326ed80e8cdc73e2b97360c21ea178ba9583b5b6949d860cfb20fc9eaf"
+"pg.ddl.alter-table.of" = "f88883ea1204c443282423907fab1de0fb4a1820703930f7ffa05fd1c45207b3"
+"pg.ddl.alter-table.owner-to" = "22196cab4f0bb0b35c89b35b4effb9cc7bdabf31d67f02ef88160ddbbbb9c5e4"
+"pg.ddl.alter-table.rename-constraint-to" = "f182713c2a6d3e757debf042ed2de1d724ae8f7bf2b8bc5aa423fd731c94c409"
+"pg.ddl.alter-table.rename-to" = "1a452b1a4b9a917fb82c04b3a298a224a598b40c3b1f97f5f9d028bab695053d"
+"pg.ddl.alter-table.rename-to-only-column" = "3cba144abc43480594ea83ff8ce5f36b4b6021ae9346454d8f1c2d3a5432f792"
+"pg.ddl.alter-table.replica-identity" = "702b5aa72fea0902754774ea638f3a0650e138da2a6f7a92c03aee70e19d9c19"
+"pg.ddl.alter-table.reset" = "2c1a41ae4313345098e873c7aec67b3662b0a7a57779d649f3a7cc4f3936e7c9"
+"pg.ddl.alter-table.set" = "04e2d7a3277de60da148250bf060fa71d63b30e3441deb9509e3398b97ffb1da"
+"pg.ddl.alter-table.set-access-method" = "b6f8df49215bcfc942ab3a70de6c5923342d4d0bf22ee7dd44aaa23f5d4c046b"
+"pg.ddl.alter-table.set-logged-unlogged" = "fbd96419caea8ac66971b137fe0e33b01c5904b94111a89901375fa8ee717efd"
+"pg.ddl.alter-table.set-schema" = "6a8e2444834c3b11b307c71a7eb5bf84d59e43059cee84ebe1c62f00cf1eae41"
+"pg.ddl.alter-table.set-tablespace" = "fb8cbade1cf3fec7797cd1c1e132a489cc405745feabcfa590a3d0550bdfff6f"
+"pg.ddl.alter-table.set-without-cluster" = "0bf93d702e3eafa12d366c1bbf61face4ddd917694871623d1c5cc6ff78492c9"
+"pg.ddl.alter-table.set-without-oids" = "96b81744e3ff83e05b69bdf5d247488451b38e280f60a856ee683bd6e55bc1de"
+"pg.ddl.alter-table.validate-constraint" = "bd4ea5011a449eab6b97aea5590ad647886cd62b3cc47ce71f8435b3c7e5a042"
+"pg.ddl.alter-view.alter-drop-default" = "00c79419846cdb485818b57b021d9a1febe6c35ad24c2f01928759837f32989c"
+"pg.ddl.alter-view.alter-set-default" = "39281641ce5e4a73fdd2d11c5e57571e47fa535124677892d5814e7037a74b67"
+"pg.ddl.alter-view.owner-to" = "d87b058cc9a1af584d621005b737a8cd1cea9f85b4dc973ddc1fa47144ca12ab"
+"pg.ddl.alter-view.rename-to" = "c04e62e9b2f4472df951bdb8b855cb729d8cbaac77de147be03b217d9cec13f7"
+"pg.ddl.alter-view.rename-to-column" = "b7fcac611ad68d51b148379ff4ac54f1047ad5a3a2b1a07e0c69c115f6af1ddc"
+"pg.ddl.alter-view.reset" = "ed7ddecc39760df2958d3827e565254cd6cc0b3a705e86315068248b40030b96"
+"pg.ddl.alter-view.set" = "d0030590da96e0d44d824ff0c8774475861ea25dfecc5df5ed5cfc52aca97296"
+"pg.ddl.alter-view.set-schema" = "556fe889e312181ac85884bca38b46759e052882741b392cd0dc4aa5fb4779f1"
+
+[review.definitions]
+"pg.ddl.alter-foreign-table.add-column-collate" = "b7067a099ed3ffb24ab85f355127799d011a78c79b12f1d013f7a97a0c9caa63"
+"pg.ddl.alter-foreign-table.add-valid" = "44d5cffc35b12d1c1cade7aa5ab599eefb5f9b094a7ad96ce03b06580de05aa8"
+"pg.ddl.alter-foreign-table.alter-drop-default" = "e18e7ff9e473675fc10ef14e0547ecbb47c5d4dcc32058f6c7db32d6a211fa20"
+"pg.ddl.alter-foreign-table.alter-not-null" = "967302ec316068dc2ca15a1b45cf78d446ebf48383c990030cf1d1173648fc47"
+"pg.ddl.alter-foreign-table.alter-options" = "993f679cc28ebbb71e387fdc97218fb8ff7922ce10212549d592cebd557e674c"
+"pg.ddl.alter-foreign-table.alter-reset" = "12a81ea997f213623bce1b36516335447b27d5b5558f26ee71e4c421c7841dfb"
+"pg.ddl.alter-foreign-table.alter-set" = "40664a9e9ed4b677c39e31c45d37b594c9117d75dabfcad458847b6d510d9c63"
+"pg.ddl.alter-foreign-table.alter-set-default" = "2359f44642a651bca75e26727865d1db3df1dc4bb693101102973c1000d8bd05"
+"pg.ddl.alter-foreign-table.alter-set-statistics" = "83514223cfb99ae13b5818d9a11772b4707eb7bfd48f0e6f619a0176c2c784e8"
+"pg.ddl.alter-foreign-table.alter-set-storage" = "4033ff3d1df6d83402d1c3c36e07cb6ca7fa342509253a0ca433d623ff126788"
+"pg.ddl.alter-foreign-table.alter-type" = "597cfbfa8ce052daa31cc9eb4851d91d864656c8356911ddcb3eca06eebc1c42"
+"pg.ddl.alter-foreign-table.disable-trigger" = "3978fc4a86f0ae97cce487e15b7b8a44b30f2f9dff3acb25065e06f89d8da158"
+"pg.ddl.alter-foreign-table.drop" = "8f0d45a813c16043ca1b9564cd2e16d11bbce55b628e3ba314c905551923fd70"
+"pg.ddl.alter-foreign-table.drop-constraint" = "bc8e023a2cc5e129a8723860ea50cb74150edb35c544095bf6f1e95291579b55"
+"pg.ddl.alter-foreign-table.enable-always-trigger" = "3b121d93d526a02d9987fdcb9b85c2db575b2648ccff09eee5f1da228d69a16e"
+"pg.ddl.alter-foreign-table.enable-replica-trigger" = "94217ba4d7e026d1b28bb768237e5a1135356bed6b0e9e1cfeeaef2774dfa8df"
+"pg.ddl.alter-foreign-table.enable-trigger" = "f81d0a83e23b7ef63a55ae63a228a8f0d6616643ec554f736fb48db2db28bb29"
+"pg.ddl.alter-foreign-table.inherit" = "cb78067b31e74faa48972f73ae52613ec31a39b13691f0aaf7b790bb378d7f95"
+"pg.ddl.alter-foreign-table.no-inherit" = "7d43c56a3b263d2d8bc1fea7738d332699cf289c5ee0dc0d5b512d2499b7b577"
+"pg.ddl.alter-foreign-table.options" = "ba986cd53d75c52491608e44d8236a56a71a63fff724fa8861adf4a94105eff3"
+"pg.ddl.alter-foreign-table.owner-to" = "6c1b0d8ec59f1a3000a8d494f36c4a2a388c2297f8022612cfc3c92c69e38716"
+"pg.ddl.alter-foreign-table.rename-to" = "58372e57788974b2abc6ccb0351a3471b77570c82ea150bb964c14322ac3eba9"
+"pg.ddl.alter-foreign-table.rename-to-only-column" = "a885f134d45a41275bad922080ed446a9498133889172b5ecf883d47d5f1a635"
+"pg.ddl.alter-foreign-table.set-schema" = "c00ac148a222f32e1a32957b2f22834dfd2433de333e6042bea92d32f25b67de"
+"pg.ddl.alter-foreign-table.set-without-oids" = "03ffb7c30998a831032c7a193f93ab3f11662ee66ca16f9db97850cec9181145"
+"pg.ddl.alter-foreign-table.validate-constraint" = "25fa428288ef9237540db91c637f4e762fde8d35dcbf907e4f79140020cf8816"
+"pg.ddl.alter-index.all-in-tablespace-set" = "be592961f00781ff09267bb05723810064c820b6af480aba37149cd2879ab45a"
+"pg.ddl.alter-index.alter-set-statistics" = "cacecd2141c4d683f280811e18a40f67f00fe61044897fe4e5acbf0a36647ea5"
+"pg.ddl.alter-index.attach-partition" = "55b55933a8d228033bfe9596c566743a2f69439aef030353204e62670f036c3a"
+"pg.ddl.alter-index.depends-on-extension" = "56b82495c62d263221292141d96ba3f849e1b07ebd3623b9412871da7abbed64"
+"pg.ddl.alter-index.rename-to" = "d6479fb3445744a85cb776de27279468cc84fcf161effe9c3918d492e8a54ea8"
+"pg.ddl.alter-index.reset" = "43f13950ff8de3ce7fadbaf439b02235675cbc7823221abf05aab4cb132d37cf"
+"pg.ddl.alter-index.set" = "48213f42963b77d21e039a0c0a445853667c0d66f9cbe01d529cd4461698bfb4"
+"pg.ddl.alter-index.set-tablespace" = "97110b10becae22d1d59c864f27818fddcd5f8dff58b657f56bab9bb10d6e05e"
+"pg.ddl.alter-materialized-view.all-in-tablespace-set" = "de372ea76fe49e1007bc0d921ed53d5f0794f225ced56f3108351d7af5fee092"
+"pg.ddl.alter-materialized-view.alter-reset" = "72a29de5ac43ad23203d37997fe3bb19cce6610ec846fcebdaed829ab9b646ba"
+"pg.ddl.alter-materialized-view.alter-set" = "924e93b91f7c525dcde0e96b4bb0ff98e7db5729e2996170a97ca4adfe9e5326"
+"pg.ddl.alter-materialized-view.alter-set-compression" = "246228682d02360f3c948de941d0c1438641ce57b656dccca6618ae46224f284"
+"pg.ddl.alter-materialized-view.alter-set-statistics" = "321223cdcf8ed64f10a6310fcb2dd5728aa793248cde89a879e87acb6257523d"
+"pg.ddl.alter-materialized-view.alter-set-storage" = "acb259a8d2d3507ec5d28b71c951730297f1ca5cd29344929165dd559fc1f1bf"
+"pg.ddl.alter-materialized-view.cluster-on" = "c16abda56ef35682c92ad67606d38afdfc7b07d4da4b54773a887ee480b39e68"
+"pg.ddl.alter-materialized-view.depends-on-extension" = "6f81484252640a530fcd9740e926243a974c586df051e4bcbf6d96bf34fdef50"
+"pg.ddl.alter-materialized-view.owner-to" = "a798a37fa4fb3f9fad6917b578194dac838a2a783a5c3adfdf4d060788fcf128"
+"pg.ddl.alter-materialized-view.rename-to" = "4f21fe6a3ffe721f0754426dc34a6caae9cdaf79880092d8e96a19e21590d5a6"
+"pg.ddl.alter-materialized-view.rename-to-column" = "ea8d77f22f6b392fe0c6d3a8a8988c454460df4f94ca19292f2cbf0fc81d422c"
+"pg.ddl.alter-materialized-view.reset" = "f1eeb6fb5283aad98b241f7e38ef7f7886036cb650010e8a85c95f983675142d"
+"pg.ddl.alter-materialized-view.set" = "aabf5b0165576ad10fb8adfec88503aa8419dc2b0ac3bf80259132a7cca03163"
+"pg.ddl.alter-materialized-view.set-access-method" = "ea11342b7cb849e620c9d200c019364d7fb32674c23bab09f10da4e36e755076"
+"pg.ddl.alter-materialized-view.set-schema" = "fb7c8ffe320b2048a4268a13268f7e1cb9b4fbc5df29a3b8450c406ac68e52b9"
+"pg.ddl.alter-materialized-view.set-tablespace" = "689b4680f0540ac12c51d140d247106f2b5fa7743c43644ee56cb400046c8b4e"
+"pg.ddl.alter-materialized-view.set-without-cluster" = "15669bd445029e3a0b2bba8243898ed17ef7c11bd449e96d593903ee0540f061"
+"pg.ddl.alter-sequence.name" = "ffb1d1de5e05c79d04cdae0c0888de07a1adff16a58829fd762e868cca5c7063"
+"pg.ddl.alter-sequence.owner-to" = "3dcefb123f6ed185f12cb10856c0538fe13bddc48b00dfce2986e104cd88237e"
+"pg.ddl.alter-sequence.rename-to" = "9662d7b1c954287d7764036975a54ea45f963004099e8d4c65663a9a6364da52"
+"pg.ddl.alter-sequence.set" = "7e415aa882ee2ef906bac3a85c114e38e99b33deb1068df30a92944dfbba3e16"
+"pg.ddl.alter-sequence.set-schema" = "4de492960df5d87bd6841e4aeeb2ae62145fe55a9d00e3450277645590e495af"
+"pg.ddl.alter-table.add" = "cb8000f3445c5987b64ed937985007340f49014955a7cd9029db53109fb14c9a"
+"pg.ddl.alter-table.add-column-not-collate" = "9fcec48f1860a911db769e9e65c80f2eb44b01b172ce715b3db2e99f7f2f5e6d"
+"pg.ddl.alter-table.add-not-valid" = "c0543da029c925c38e6ebf232ee7cb42bc3da4de97e50b40dcfbc89735847132"
+"pg.ddl.alter-table.all-in-tablespace-set" = "3d4c6a49d24742585bff0bb9c0cd8d5760608a43fd3dce49db3493a9d78c4b79"
+"pg.ddl.alter-table.alter" = "732b1feab784542638333ebf5b1832070c857a2d8938ae57fa28aad7460838c6"
+"pg.ddl.alter-table.alter-add-generated-as" = "e70ce075034f39214c24c3b20985ca06f8714f9cdc39721274b90005b2338a94"
+"pg.ddl.alter-table.alter-constraint-deferrable-not-initially-deferred-immediate-enforced" = "0e0f197e56291c7a81694a6c7bfad1f97056bb79b6aa2903f24699097cce9a5a"
+"pg.ddl.alter-table.alter-constraint-inherit-no" = "a1974b0128f8c0b4161eaf73b24939c7809e46161318b570406466361d3f5b7f"
+"pg.ddl.alter-table.alter-drop-default" = "d5128a4517c78276faef786d7a6f4b02bef8b111d3d0089549f100870c7cca19"
+"pg.ddl.alter-table.alter-drop-expression" = "122cdbc7b536e2f9bd8310b7545b97b39d54e1b96a34310a51185026f46c4e7d"
+"pg.ddl.alter-table.alter-drop-identity" = "5e82d9a37bde59aa34f2b49f80021e2f46f41db2918400b9f0b0e6b58042aee7"
+"pg.ddl.alter-table.alter-not-null" = "05b3639c0db08a857004ab9a6821b20422fd066901f7b4265a77fcbe4483a0fc"
+"pg.ddl.alter-table.alter-reset" = "22ce7aa0f601ada4dff4aaf041eeebcd31f62c92fb31aa40ea38ce7e92c71612"
+"pg.ddl.alter-table.alter-set" = "cf7e60f5515e30cdb72d1ca072d00fec25383b78d04096c1475a4ffc811732b6"
+"pg.ddl.alter-table.alter-set-compression" = "1cbed6086d845176036bc4469a1eb149fccbfb16e9b736d882613cdc3444ba12"
+"pg.ddl.alter-table.alter-set-default" = "dd8b4eddcdf57bd5b0729a09f3c92815f4b01e1024ba132e08d1dd8075a35953"
+"pg.ddl.alter-table.alter-set-expression-as" = "f5ec8dfb665b5e6767bb8d622ad974556a104f3da9928c759746555d104eb290"
+"pg.ddl.alter-table.alter-set-statistics" = "c2b717b634f4a3a34c0d8e5f5327971d0c97423496f792556adcce3a36b75320"
+"pg.ddl.alter-table.alter-set-storage" = "a304a64f22f8e89dd34d3cac0bc3f335e007483a5f0041c24798f94696028d81"
+"pg.ddl.alter-table.alter-type" = "ec45f2e70a04aaac155381050c5d91589d39addc3fdcaff691731f5d0429e709"
+"pg.ddl.alter-table.attach-partition" = "d56c2005b30ab0fcfca0eee6a223027520a550eb7b92de6c01090efdcf334da5"
+"pg.ddl.alter-table.cluster-on" = "b50530f4134879cb16f62d20f0c1c1ded11021b399e7fef150b59675345b9b04"
+"pg.ddl.alter-table.detach-partition" = "7da56592525b5dbceac12d338c9ee8d8b7974d96fc08e3908534e5ce45aa79a7"
+"pg.ddl.alter-table.disable-row-level-security" = "ee38d64cb524f4c33898fe9d37e41903f5291d2c33049c91cbd346880fd6ce43"
+"pg.ddl.alter-table.disable-rule" = "f774ad01803b4b21f58ff313a4e0d62f75b6547a67f5907bbd74cede6571e97b"
+"pg.ddl.alter-table.disable-trigger" = "bf1d8cc7a5b97d7d2151230f575150140b95cd31d8126d2ec150e9ad9258efc9"
+"pg.ddl.alter-table.drop" = "44a096ecbf2f3a9d3dc05fa57038739d285b0930627ed022590acb1a2f88ad26"
+"pg.ddl.alter-table.drop-constraint" = "1714195d322a5b6e9aef45381562d714c31273683bfcda143a932aefb1e42fcc"
+"pg.ddl.alter-table.enable-always-rule" = "16e149744605cc53d1b567cc007e4f7254ce6fd2be76412f04d7059adb3be221"
+"pg.ddl.alter-table.enable-always-trigger" = "2ac5ecbaca84c1c988f7bd6b7f8f4382604fdf17e34de8d7c3062ac1da96bd26"
+"pg.ddl.alter-table.enable-replica-rule" = "daacbbd3aa1d8c809a9248c8abf110e2f90302d24550f1347311e08fb2fb42eb"
+"pg.ddl.alter-table.enable-replica-trigger" = "1787815ea464c04863c3bd621f179468843f4b75ec642a3867b714c2046b6e53"
+"pg.ddl.alter-table.enable-row-level-security" = "0e120c6d4fc412ccfdcb017e56d2744eff2bb8c3baf8bd7e962f0f4db7e12b43"
+"pg.ddl.alter-table.enable-rule" = "666528525d8dfef90c7411bfaf3e152cbf912546f30415b00787f4176bee0e32"
+"pg.ddl.alter-table.enable-trigger" = "39608f05a24182d6e1b38e438d89554cf2b55f3e754aa9f53e9933f288f86a50"
+"pg.ddl.alter-table.force-row-level-security" = "5da377373725340fa9b02c715b1981c41d3068b7ab892aafa2590035adb5b376"
+"pg.ddl.alter-table.inherit" = "a90e96fd511e538a38a24a75fd945d28f9dc8e80d04c2ad8612d7f5cfe54530f"
+"pg.ddl.alter-table.no-force-row-level" = "bed70ad53df9c0ac5054187f761d76a93210d1a0f6a701ba0e6bbf242e38c175"
+"pg.ddl.alter-table.no-inherit" = "37840a6072cda69013bb88da7b31c633cc4754858bfe995e1c760d08f0948931"
+"pg.ddl.alter-table.not-of" = "acfd340b7440dadf1433f47e70f888ff0fdb0e11f4ea9df1cedf72c603956331"
+"pg.ddl.alter-table.of" = "11e37f0ba8d56a919d912dc99dbaf2514210ae69bb1a863f0728f75338177ed1"
+"pg.ddl.alter-table.owner-to" = "f3b5752557c94379813d03a016f2c487653e2610a69b453ced7b3071071a17ee"
+"pg.ddl.alter-table.rename-constraint-to" = "eedd92fde487bfb52522b0ec4a22ea96476a981f2426a503920eb8b85ce23725"
+"pg.ddl.alter-table.rename-to" = "e34a01fbbc7d872a2f347f93d2571c683fbae3a45eea1b3311d419082f7e40f4"
+"pg.ddl.alter-table.rename-to-only-column" = "02c6c5a8cf3132af5af8078abaabf14f9984a564c57ab51685b02a99516512c3"
+"pg.ddl.alter-table.replica-identity" = "d7bef84ae2b8ebb4584dabbdb55733f9d6c864123ed93be14c3995da8f0c01e7"
+"pg.ddl.alter-table.reset" = "5c9c7c52343da9c1e21a7548d19ff73d96ea6da55e24c4bded85206a75d28ba4"
+"pg.ddl.alter-table.set" = "4080b37a1a619d4e5c4438efa1e590d92b46b5084e0df1b7bce2374c2b63d57a"
+"pg.ddl.alter-table.set-access-method" = "0a28006b7a5ba0d6197bb7111e47f288c4238aab14962a90bd9b639b435da52a"
+"pg.ddl.alter-table.set-logged-unlogged" = "46af56bfce7a5bc99ca97d1577c0b003dd82712124ca9f11890fa7798c43e4a5"
+"pg.ddl.alter-table.set-schema" = "2b4a489dee5f714b052d2f6e26da2f5ae2fa31c81e3b36e90ea00d7b9ff3ddbd"
+"pg.ddl.alter-table.set-tablespace" = "63d6f66ef44b6f840a1b3e0ea733043edd8c0df328f645d01ff346396802a568"
+"pg.ddl.alter-table.set-without-cluster" = "c74b53af74839f4de5c4d886609b5e03fcdf3cba31539596a2ec820410f27baf"
+"pg.ddl.alter-table.set-without-oids" = "9d8aacb47ca5edc53615a25fb730dab3d95d6311e3ca3aee78c1749ebb10ec0c"
+"pg.ddl.alter-table.validate-constraint" = "7904f43e97ec877d866085e40c036741a1f2bac9ae14479678ad594efabef02f"
+"pg.ddl.alter-view.alter-drop-default" = "173e4c2d2f26e7bf9239d92ba1c84236a041cb73176e5b42a44dd98481044504"
+"pg.ddl.alter-view.alter-set-default" = "3797ada1b3f0f8a15889e84f9b11128ecb37f8b313eacb33c270c338b5f04fea"
+"pg.ddl.alter-view.owner-to" = "227060797f334b9d3a86675b7240599a9b2f77bc22d48cff9aed6e7898a395d5"
+"pg.ddl.alter-view.rename-to" = "ac8e4b909ab3bfc3172f60dca7f4ff408e391743bd06e6b6b9f795aa73384cef"
+"pg.ddl.alter-view.rename-to-column" = "4177f3e50eeab51425b281b825a949e225ee1343adf6f9186fc9d7a2f9fc7072"
+"pg.ddl.alter-view.reset" = "4fa1ce30b7d797f46794c202d54f26559ce2ebc5ecad05b2f7fa121e7fa4fe1b"
+"pg.ddl.alter-view.set" = "a98ba021e94e9dbe3738b387904cb7e90c4dcd11a7970cc814cdd8fba6294085"
+"pg.ddl.alter-view.set-schema" = "be3ff6dda55baa136e46da4f7d946e0f08136393d1010f0c699706dc4a4248a0"
