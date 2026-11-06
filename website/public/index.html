@@ -64,8 +64,8 @@
 					</p>
 					<div class="actions">
 						<div class="install">
-							<span><span class="prompt">$</span> git clone https://github.com/sqlstack-io/sqlquack</span>
-							<button class="copy" type="button" data-copy="git clone https://github.com/sqlstack-io/sqlquack">Copy</button>
+							<span><span class="prompt">$</span> pip install sqlquack</span>
+							<button class="copy" type="button" data-copy="pip install sqlquack">Copy</button>
 						</div>
 						<span class="actions-break" aria-hidden="true"></span>
 						<a class="button primary" href="/playground/">Try the playground</a>
@@ -272,7 +272,7 @@ conversion.converted          <span class="cm"># True</span></pre>
 					<div>
 						<h2>Start in a minute</h2>
 						<p class="lede">
-							Build it from source, then check a file or convert it with a schema of your relations.
+							Install it with pip, then check a file or convert it with a schema of your relations.
 						</p>
 						<ul>
 							<li>Snowflake to DuckDB, for running warehouse SQL against small fixtures locally or in CI.</li>
@@ -281,11 +281,11 @@ conversion.converted          <span class="cm"># True</span></pre>
 							<li>Free and open source, Apache-2.0.</li>
 						</ul>
 					</div>
-<pre class="terminal"><span class="cmd">git clone https://github.com/sqlstack-io/sqlquack && cd sqlquack</span>
-<span class="cmd">echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check</span>
+<pre class="terminal"><span class="cmd">pip install sqlquack</span>
+<span class="cmd">echo "SELECT 1 QUALIFY TRUE" | sqlquack check</span>
 <span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
 <span class="dim">…</span>
-<span class="cmd">echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --builtin-policy</span>
+<span class="cmd">echo "SELECT 1 AS total" | sqlquack convert --builtin-policy</span>
 SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
 <span class="ok strong">sqlquack convert: done, converted under the built-in default</span></pre>
 				</div>

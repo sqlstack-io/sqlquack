@@ -19,10 +19,19 @@ result.sql  # 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"'
 
 ## Install
 
-The package builds from the repository with [uv](https://docs.astral.sh/uv/) and requires Python
-3.12 or newer. One wheel loads into every CPython from 3.12, and it ships DuckDB's library beside
-itself. On Linux it needs glibc 2.34 or newer. An older interpreter rejects the wheel as "not a
-supported wheel on this platform", so install it into a 3.12 environment:
+The package requires Python 3.12 or newer. One wheel loads into every CPython from 3.12, and it
+ships DuckDB's library beside itself. On Linux it needs glibc 2.34 or newer. An older interpreter
+rejects the wheel as "not a supported wheel on this platform", so install it into a 3.12
+environment:
+
+```bash
+pip install sqlquack
+python -c "import sqlquack; print(sqlquack.__version__)"
+```
+
+### Build from source
+
+The wheel also builds from the repository with [uv](https://docs.astral.sh/uv/):
 
 ```bash
 uv sync --locked --no-group recorder
