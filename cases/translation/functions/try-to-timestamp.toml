@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.try-to-timestamp"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_strings"
+description = "A timestamp with nine fractional digits, and one in a given format. Catches: the fraction truncated, or the format ignored"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:14:15.123456789'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP(v), 'YYYY-MM-DD HH24:MI:SS.FF9') AS iso, TO_VARCHAR(TRY_TO_TIMESTAMP_NTZ('29.02.2024 13:14', 'DD.MM.YYYY HH24:MI'), 'YYYY-MM-DD HH24:MI:SS.FF9') AS fmt FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_tz"
+description = "A string with an offset read by TRY_TO_TIMESTAMP_TZ and TRY_TO_TIMESTAMP_NTZ. Catches: the offset applied to the NTZ result, or dropped from the TZ result"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 23:30:00 -08:00'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP_TZ(v), 'YYYY-MM-DD HH24:MI:SS.FF9 TZH:TZM') AS tz, TO_VARCHAR(TRY_TO_TIMESTAMP_NTZ(v), 'YYYY-MM-DD HH24:MI:SS.FF9') AS ntz FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_invalid"
+description = "Hour 25 on a valid date, and text that is not a timestamp. Catches: an error raised, or the hour carried into the next day"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 25:00:00'"],
+  ["'abc'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP(v), 'YYYY-MM-DD HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_string_expr"
+description = "A NULL string. Catches: the epoch returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIMESTAMP(v), 'YYYY-MM-DD HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

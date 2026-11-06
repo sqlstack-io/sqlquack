@@ -1,11 +1,16 @@
 //! `checked_layout`: the layout of DuckDB SQL, checked to change only whitespace.
 
-use crate::layout::_helpers::tokens::tokens;
-use crate::layout::main::layout_sql::layout_sql;
+use crate::layout::_helpers::breaks::lay_out;
+use crate::layout::_helpers::tokens::{tokens, unmodelled};
 
-/// `sql` laid out by [`layout_sql`], or why that changed more than whitespace or is not idempotent.
+/// `sql` laid out, or why its text is unmodelled or its layout changes more than whitespace.
 pub fn checked_layout(sql: &str) -> Result<String, String> {
-    let laid_out = layout_sql(sql);
+    if let Some(reason) = unmodelled(&tokens(sql)) {
+        return Err(format!(
+            "it holds {reason}, which the layout does not model"
+        ));
+    }
+    let laid_out = lay_out(sql);
     let texts = |sql: &str| -> Vec<String> {
         tokens(sql)
             .iter()
@@ -19,7 +24,7 @@ pub fn checked_layout(sql: &str) -> Result<String, String> {
     if stripped(sql) != stripped(&laid_out) {
         return Err("its characters other than whitespace differ".to_owned());
     }
-    if layout_sql(&laid_out) != laid_out {
+    if lay_out(&laid_out) != laid_out {
         return Err("laying it out again changes it".to_owned());
     }
     Ok(laid_out)

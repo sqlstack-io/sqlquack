@@ -15,6 +15,17 @@ separately from syntax coverage, and every figure comes from the checker.
 - `not-translatable.toml`: forms with no meaningful DuckDB translation, in groups, each with its
   reason. A group leaves the denominator only once the auditor signs it off in
   `reviews/auditor-results.toml`, which binds its reason and forms by SHA-256.
+- `obligations/<family>.toml`: what each form must be shown to do (decision D272). Each
+  `[[obligation]]` has `id` (`<form>.t<NNN>`), `form`, `kind` (`type_combination`,
+  `null_argument`, `boundary` with a `subkind`, `error_parity`), `target`, `note`, `catches`,
+  `reading`, `cases` (references `cases/translation/<family>/<file>.toml#<case>`) and `required`.
+  Two shapes have no case:
+  - held: `required = true`, `cases = []`, `held = "<reason>"`, for a case held back (a parse gap,
+    a case waiting on another PR or a receipt). It is never met, so its form cannot match.
+  - unmeasured: `required = false`, `cases = []`, `reason = "<reason>"`, for a documented
+    alternative no case can measure. It is never met and does not block its form.
+- `retired-obligations.toml`: withdrawn obligation ids, each `[[retired]]` with `id`, `form`,
+  `reason` and `replaced_by` (live obligation ids). A retired id is never reused.
 - `results-baseline.json`: every statement's outcome and every form's state, as the checker last
   measured them.
 
@@ -41,9 +52,16 @@ forms when it names none. Any other statement counts for every form it links to.
 | `not_translatable` | Listed in a signed-off group. Outside the denominator. |
 | `differs` | Any linked statement differs. |
 | `refused` | Any linked statement is refused for it, raised a guard for it, or cannot be judged. |
-| `matching` | Otherwise, at least one linked statement returns Snowflake's rows. |
+| `no_obligations` | Otherwise, a linked statement returns Snowflake's rows, but the form declares no required obligation, so nothing shows what it must do. |
+| `unmet_obligations` | Otherwise, a linked statement returns Snowflake's rows, but a required obligation is unmet or held. |
+| `matching` | Otherwise, at least one linked statement returns Snowflake's rows, and it declares required obligations, every one met. |
 | `syntax_only` | Otherwise, linked statements exist but none returns compared rows: only types or matching errors. |
 | `unmeasured` | No recorded statement links to it. |
+
+An obligation is `met` when it cites at least one case and every cited case is `matching` or
+`matching_error`; otherwise it is `unmet`, or `held` or `unmeasured` by its shape. The report lists
+each obligation's state, the `held` and `unmeasured` obligations with their reasons, and the
+`uncited_cases`: recorded translation cases no obligation cites, which meet no obligation.
 
 ## Figures
 
@@ -63,10 +81,17 @@ syntax-coverage results target/translation-statements.json --report target/trans
 syntax-coverage results target/translation-statements.json --write-baseline
 ```
 
-The check fails on a construct that neither links nor names no form, a link to a form the catalogue
+The check fails on obligations it cannot read whole: a missing `obligations/` directory, an
+unknown key, a form the catalogue does not hold or that is absent from its source, an id that is
+not the form's or is declared or retired twice, a case outside its family's folder, cited twice,
+not recorded, or in a case file whose `construct` is another form, a boundary without a known
+subkind, a required obligation with neither cases nor a `held` reason, a blank reason, and
+a retired id that is reused or replaced by an id that is not a live obligation. It also fails on a
+construct that neither links nor names no form, a link to a form the catalogue
 does not hold, a signed-off not-translatable form with a matching statement, and any difference
 from `results-baseline.json`. Against the target branch's baseline it prints the diff and fails if a
-statement or form drops out of matching, or becomes `differs`.
+statement or form drops out of matching, a met obligation stops being met, an obligation is
+dropped without being listed in `retired-obligations.toml`, or anything becomes `differs`.
 
 The report's worklist lists differences first, then refusals by how many forms each keeps from
 matching, then forms that need a recorded result.

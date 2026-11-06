@@ -1,0 +1,99 @@
+category = "translation"
+construct = "sf.expressions.operators-expansion"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_in_numbers"
+description = "The page's example: col1 IN (** [3, 4]) keeps the rows 3 and 4. Catches: the array compared as one value (no row kept), or only its first element used"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["3"],
+  ["4"],
+  ["5"],
+]
+query = "SELECT ordinal, a FROM input WHERE a IN (** [3, 4]) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_in_strings"
+description = "The page's example: col2 IN (** ['b', 'd']) keeps the rows b and d. Catches: the strings compared with their JSON quotes, so nothing matches"
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["'b'"],
+  ["'c'"],
+  ["'d'"],
+  ["'e'"],
+]
+query = "SELECT ordinal, s FROM input WHERE s IN (** ['b', 'd']) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_in_mixed"
+description = "The page's example: a spread array beside plain values in one IN list keeps 1, 2, 4 and 5. Catches: the plain values or the spread values dropped from the list"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+  ["3"],
+  ["4"],
+  ["5"],
+]
+query = "SELECT ordinal, a FROM input WHERE a IN (** [1, 2], 4, 5) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_function_arguments"
+description = "The page's examples: COALESCE(** [NULL, NULL, 'my_string_1', 'my_string_2']) is my_string_1 and GREATEST(** [1, 2, 5, 4, 5]) is 5. Catches: the array passed as a single argument, so COALESCE returns the array or GREATEST compares one value"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, COALESCE(** [NULL, NULL, 'my_string_1', 'my_string_2']) AS first_non_null, GREATEST(** [1, 2, 5, 4, 5]) AS greatest_value FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_dates"
+description = "The page lists date and time values as supported in the array; date text in the array compared with a DATE column. The page does not say how the VARIANT elements convert; the recording decides. Catches: the elements compared as text against the date, so nothing matches"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+  ["'2024-01-02'"],
+  ["'2024-01-03'"],
+  ["'2024-01-04'"],
+]
+query = "SELECT ordinal, d FROM input WHERE d IN (** ['2024-01-02', '2024-01-04']) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_operand"
+description = "A NULL value tested with NOT (a IN (** [3, 4])); the page gives no special rule, so standard NULL handling makes the test NULL and the WHERE drops the row. Catches: NULL read as not in the list, so the NULL row is kept"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["3"],
+  ["NULL"],
+  ["5"],
+]
+query = "SELECT ordinal, a FROM input WHERE NOT (a IN (** [3, 4])) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_non_constant"
+description = "The page limits the input to an array of constant values, but Snowflake accepts an array built from a column: the recording keeps both rows, since 1 is in [1, 2] and 2 is in [2, 2]. Catches: the column array refused, or a row dropped"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM input WHERE a IN (** ARRAY_CONSTRUCT(a, 2)) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
