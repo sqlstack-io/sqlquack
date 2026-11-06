@@ -5,8 +5,18 @@
 // to load. The version in the path lets hosts cache DuckDB as immutable (public/_headers).
 // Run from website/.
 import { build } from 'esbuild';
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+// The engine is built separately by scripts/build_engine.sh and ignored by Git; without it the
+// playground never leaves "loading the engine", so refuse to build a site that lacks it.
+const missing = ['sqlquack_wasm.js', 'sqlquack_wasm_bg.wasm']
+	.map((file) => `public/playground/engine/${file}`)
+	.filter((path) => !existsSync(path));
+if (missing.length > 0) {
+	console.error(`prepare_playground: missing ${missing.join(', ')}; run ./scripts/build_engine.sh first`);
+	process.exit(1);
+}
 
 const root = 'node_modules/@duckdb/duckdb-wasm';
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
