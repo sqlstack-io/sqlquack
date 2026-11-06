@@ -175,8 +175,9 @@ pub const CODES: &[CodeEntry] = &[
             a converted query must return the same column names. SQLQuack emits Snowflake's name \
             only for the shapes recorded results verify, named by their text upper-cased as \
             written: literals, columns and COUNT, SUM, MAX, AVG, LOWER, UPPER and COALESCE of \
-            columns, a column plus, minus, times, divided by or concatenated with a literal, and \
-            a column cast to INTEGER, written with single spaces and at most one line break. \
+            columns, ROUND of a column, a column plus, minus, times, divided by or concatenated \
+            with a literal, a column cast to INTEGER, and CURRENT_DATE, CURRENT_DATE() or \
+            CURRENT_TIMESTAMP(), written with single spaces and at most one line break. \
             Other items, such as paths, CASE, nested calls or other functions, are refused \
             rather than converted with a different column name. An alias fixes the name in both \
             engines.",
