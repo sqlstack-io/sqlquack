@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.expressions.data-types-uuid"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_case"
+description = "The page: UUID values are case-insensitive; upper- and lower-case spellings are equal, and the output case is recorded. Catches: case-sensitive comparison"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'F353CA91-4FC5-49F2-9B9E-304F83D11914'", "'f353ca91-4fc5-49f2-9b9e-304f83d11914'"],
+]
+query = "SELECT ordinal, a::UUID::VARCHAR AS r, a::UUID = b::UUID AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_variant"
+description = "The page's example reads a UUID back out of a VARIANT with ::UUID. Catches: the JSON quotes kept"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"id\":\"5f4d3c2b-1a09-4e8f-8c7b-6a5d4e3f2b1a\"}'"],
+]
+query = "SELECT ordinal, PARSE_JSON(a):id::UUID::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_malformed"
+description = "Text that is not in the 8-4-4-4-12 format; the page defines only that format, so a cast is expected to fail. Catches: the text accepted unchanged"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'not-a-uuid'"],
+]
+query = "SELECT ordinal, a::UUID::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'da563283-e201-4744-b158-221dd204a61f'"],
+]
+query = "SELECT ordinal, a::UUID::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

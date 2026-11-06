@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.expressions.identifier-literal"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_from_literal"
+description = "The input relation named by a string literal; the page does not say whether IDENTIFIER() resolves a CTE name; Snowflake compiles it. Catches: the string read as a value, or the relation not found"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM IDENTIFIER('input') ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_column"
+description = "A column named by a string literal in an expression; the page names objects in general and does not say whether a column resolves; the recording decides. Catches: the literal returned as the text 'a' instead of the column's value"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, IDENTIFIER('a') + 1 AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_quoted_lowercase"
+compile_error = true
+description = "The page: a double-quoted name in the string is case-sensitive, as in IDENTIFIER('\"my_table\"'); the unquoted relation input is stored as INPUT, so \"input\" is not found. Catches: the quoted name resolved case-insensitively"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, a FROM IDENTIFIER('\"input\"') ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "A NULL value read through the named relation. Catches: the NULL replaced or the row dropped"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT ordinal, a FROM IDENTIFIER('input') ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

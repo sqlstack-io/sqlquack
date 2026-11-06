@@ -1,0 +1,129 @@
+# Lane C review of two case files from pull request 98 as translation obligations.
+# Bound to the pull request head, each file's Git blob and sha256, and the evidence commit holding their receipts.
+
+[review]
+subject = "translation cases position.empty-needle-start and regexp-substr.column-arguments"
+reviewer_lane = "C"
+branch = "fix/d215-lag-lead"
+commit = "4ce4490c68b5444e6b2dc183259d21f508fe4b0e"
+evidence_commit = "2df6cb027cb90cf3bec2190418146d87b720db4d"
+reviewed_utc = "2026-11-06T06:45:00Z"
+verdict = "approved"
+method = "Recomputed the 12 case hashes with sqlquack pending under the repository policy and matched each one to its receipt; read the rows from each receipt's Arrow file; read the POSITION and regular-expression pages."
+
+[[review.file]]
+path = "cases/translation/functions/position.empty-needle-start.toml"
+blob = "07a8df8dda8adf42b04cda92d5fb2fad0a76b0d4"
+sha256 = "ee5e64035dc2c84e7322178e7d90d5c9a33477f00376a5b25b6e8d6d06a2e301"
+
+[[review.file]]
+path = "cases/translation/functions/regexp-substr.column-arguments.toml"
+blob = "52ac923d348efa628812b7923ce24b9bff708781"
+sha256 = "6bafa3da0f88855b522f73ac59fa0b204c42ac7d42825d9da9850c54c6122cec"
+
+# Recorded outcomes, as read from the receipts.
+[[review.outcome]]
+cases = ["position.empty-needle-start.toml#t001_empty_needle_start_pos", "position.empty-needle-start.toml#t002_charindex_empty_needle_start_pos"]
+recorded = "rows 1, 2, 3, 0, 0, 0, 0, 1, 1 for starts 1, 2, 3, 4, 5, 10 over 'abc', 2 over '', 0 and -1"
+reading = "The page says an empty first argument returns 1 and a start beyond the end returns 0. The recording adds that an empty needle returns the start from 1 to the length, 0 from the length plus one, and 1 for a start of 0 or below."
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t001_position_zero", "regexp-substr.column-arguments.toml#t002_position_negative"]
+recorded = "error 100050 / 22023, Position must be positive"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t003_position_past_end", "regexp-substr.column-arguments.toml#t004_position_far_past_end"]
+recorded = "rows NULL"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t005_occurrence_zero", "regexp-substr.column-arguments.toml#t006_occurrence_negative"]
+recorded = "error 100050 / 22023, Occurrence must be positive"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t007_group_zero"]
+recorded = "rows 'k1=v22', the whole match"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t008_group_past_last"]
+recorded = "rows NULL"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t009_group_negative"]
+recorded = "error 100050 / 22023, Capture group must be non-negative"
+
+[[review.outcome]]
+cases = ["regexp-substr.column-arguments.toml#t010_anchor_after_start_position"]
+recorded = "rows '1': ^ anchors at the start position, not at the start of the text"
+
+# The obligations these cases meet, to be added to coverage/translation/obligations/functions.toml once the files are on main.
+[[proposed]]
+id = "sf.functions.position.position.t010"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty needle with a start below, at and above the end"
+catches = "the start returned at the length plus one, 1 returned for every start, or a non-positive start raising"
+cases = ["position.empty-needle-start.toml#t001_empty_needle_start_pos"]
+
+[[proposed]]
+id = "sf.functions.charindex.t010"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty needle with a start below, at and above the end"
+catches = "as for POSITION"
+cases = ["position.empty-needle-start.toml#t002_charindex_empty_needle_start_pos"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t012"
+kind = "error_parity"
+target = "position 0 and -1 from a column"
+catches = "a non-positive position read as 1, or NULL instead of the error"
+cases = ["regexp-substr.column-arguments.toml#t001_position_zero", "regexp-substr.column-arguments.toml#t002_position_negative"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t013"
+kind = "boundary"
+subkind = "magnitude"
+target = "position one and twelve past the end"
+catches = "an error or an empty string instead of NULL"
+cases = ["regexp-substr.column-arguments.toml#t003_position_past_end", "regexp-substr.column-arguments.toml#t004_position_far_past_end"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t014"
+kind = "error_parity"
+target = "occurrence 0 and -1 from a column"
+catches = "a non-positive occurrence read as 1, or NULL instead of the error"
+cases = ["regexp-substr.column-arguments.toml#t005_occurrence_zero", "regexp-substr.column-arguments.toml#t006_occurrence_negative"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t015"
+kind = "boundary"
+subkind = "magnitude"
+target = "group 0 and one past the last group with 'e'"
+catches = "group 0 read as the first group, or an error past the last group instead of NULL"
+cases = ["regexp-substr.column-arguments.toml#t007_group_zero", "regexp-substr.column-arguments.toml#t008_group_past_last"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t016"
+kind = "error_parity"
+target = "group -1 from a column"
+catches = "a negative group read as 0 or counted from the end"
+cases = ["regexp-substr.column-arguments.toml#t009_group_negative"]
+
+[[proposed]]
+id = "sf.functions.regexp-substr.t017"
+kind = "type_combination"
+target = "^ with a start position of 2"
+catches = "^ anchored at the start of the text, giving NULL"
+cases = ["regexp-substr.column-arguments.toml#t010_anchor_after_start_position"]
+
+[[note]]
+blocking = false
+text = "position.empty-needle-start t002 calls CHARINDEX, but its file names sf.functions.position.position. The proposed charindex obligation cites it across files; moving it to a file whose construct is sf.functions.charindex would be clearer."
+
+[[note]]
+blocking = false
+text = "The descriptions say what is varied and that a case may raise. Now that the outcomes are recorded, each could state the claim and a Catches: clause, as other obligation cases do. The five error cases could also carry the error tag."
+
+[[note]]
+blocking = false
+text = "regexp-substr has no case at the boundary itself: position 8, the last character of 'a1b2c3d4'. A one-row case would complete below, at and above for t013."
