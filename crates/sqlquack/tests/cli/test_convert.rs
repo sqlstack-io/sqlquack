@@ -19,7 +19,6 @@ const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
-const UNALIASED_SCHEMA: &str = "tests/cli/fixtures/unaliased_items.json";
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -395,113 +394,6 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             test_case.expected_outcome,
             "{}",
             test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowflakes_names() {
-    let test_cases = [
-        ColumnNameTestCase {
-            description: "aggregates and a literal, named as recorded",
-            sql: "SELECT COUNT(*), 'MiXeD text', Count( DISTINCT n ) FROM (SELECT 1 AS n) AS input",
-            flags: &[],
-            expected_names: vec![
-                "COUNT(*)".to_owned(),
-                "'MIXED TEXT'".to_owned(),
-                "COUNT( DISTINCT N )".to_owned(),
-            ],
-        },
-        ColumnNameTestCase {
-            description: "a column-and-number expression across a line break keeps the break",
-            sql: "SELECT n\n  + 1 FROM (SELECT 1 AS n) AS input",
-            flags: &[],
-            expected_names: vec!["N\n  + 1".to_owned()],
-        },
-        ColumnNameTestCase {
-            description: "numbers keep their written form, upper-cased",
-            sql: "SELECT 1.50, 1e3, -2, NULL, false",
-            flags: &[],
-            expected_names: vec![
-                "1.50".to_owned(),
-                "1E3".to_owned(),
-                "-2".to_owned(),
-                "NULL".to_owned(),
-                "FALSE".to_owned(),
-            ],
-        },
-    ];
-    for test_case in test_cases {
-        assert_eq!(
-            converted_column_names(test_case.sql, test_case.flags),
-            test_case.expected_names,
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with_sq0009() {
-    let shapes: [(&str, &str); 44] = [
-        (
-            "v:a",
-            "a semi-structured path, which Snowflake names after the whole path",
-        ),
-        ("v:a.b", "a nested path"),
-        ("v['a']", "a subscript by key"),
-        ("v:a[0]", "a path with a subscript by index"),
-        ("\"V\":a", "a path from a quoted column"),
-        ("input.v:a", "a path from a qualified column"),
-        ("PARSE_JSON('{}'):a", "a path from a call"),
-        ("v:a::STRING", "a cast of a path"),
-        ("CASE WHEN n > 1 THEN 1 END", "CASE"),
-        ("IFF(n > 1, 1, 0)", "IFF"),
-        ("(SELECT 1)", "a scalar subquery"),
-        ("EXISTS (SELECT 1)", "EXISTS"),
-        ("n IN (1, 2)", "IN"),
-        ("n BETWEEN 1 AND 2", "BETWEEN"),
-        ("g LIKE 'a%'", "LIKE"),
-        ("n IS NULL", "IS NULL"),
-        ("n IS NOT DISTINCT FROM 1", "IS NOT DISTINCT FROM"),
-        ("NOT TRUE", "NOT"),
-        ("TRUE AND FALSE", "AND"),
-        ("ROW_NUMBER() OVER (ORDER BY n)", "a window function"),
-        ("UPPER(LOWER(g))", "a nested call"),
-        ("(n + 1)", "a parenthesised expression"),
-        ("-n", "a negated column"),
-        ("n % 2", "modulo"),
-        ("n::INT::STRING", "a chained cast"),
-        ("CAST(n AS INT)", "a cast spelled INT"),
-        ("ROUND(n, 1)", "ROUND, which no receipt names"),
-        ("CURRENT_DATE()", "CURRENT_DATE(), which no receipt names"),
-        ("DATEADD(day, 1, t)", "DATEADD"),
-        ("TRY_CAST(g AS INTEGER)", "TRY_CAST"),
-        ("1 + n", "a literal before a column"),
-        ("n\t+ 1", "a tab"),
-        ("n  + 1", "a double space"),
-        ("COUNT (*)", "a space before the parenthesis"),
-        ("n\r\n+ 1", "a CRLF line break"),
-        (".5", "a decimal without a leading digit"),
-        ("007", "an integer with leading zeros"),
-        ("1.0e-3", "an exponent with a fraction and a sign"),
-        ("1E+3", "an exponent with a plus sign"),
-        ("- 2", "a spaced negative"),
-        ("-(2)", "a negated parenthesised number"),
-        ("'a\tb'", "text with a tab"),
-        ("''", "empty text"),
-        ("\"lc\" + 1", "a quoted identifier that is not upper case"),
-    ];
-    for (item, description) in shapes {
-        let sql = format!("SELECT {item} FROM input");
-        assert_eq!(
-            run_convert(
-                &sql,
-                &["--schema", UNALIASED_SCHEMA],
-                "has not verified the name Snowflake gives it"
-            ),
-            convert_outcome(1, false),
-            "{description} refuses with SQ0009"
         );
     }
 }

@@ -116,11 +116,12 @@ fn recorded_literal(node: &Value) -> bool {
                 None => (mantissa, None),
             };
             let digits = |text: &str| !text.is_empty() && text.bytes().all(|b| b.is_ascii_digit());
+            let leading_zero = whole.starts_with('0');
             digits(whole)
-                && (whole == "0" || !whole.starts_with('0'))
+                && (whole.len() == 1 || !leading_zero)
                 && fraction.is_none_or(digits)
                 && exponent
-                    .is_none_or(|exponent| fraction.is_none() && whole != "0" && digits(exponent))
+                    .is_none_or(|exponent| fraction.is_none() && !leading_zero && digits(exponent))
         }
         Some(LITERAL_STRING) => string_literal(node),
         _ => false,
