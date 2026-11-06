@@ -206,7 +206,13 @@ impl Parser<'_> {
         self.at += 1;
         let window: Over = match self.is_char('(') {
             true => self.window_specification()?,
-            false => over(Some(self.name(is_col_id)?), Vec::new(), Vec::new(), None),
+            false => {
+                let name: Identifier = self.name(is_col_id)?;
+                Over {
+                    alias: Some(name.clone()),
+                    ..over(Some(name), Vec::new(), Vec::new(), None)
+                }
+            }
         };
         Ok((filter, Some(window)))
     }

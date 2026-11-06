@@ -757,9 +757,160 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             pointer: "/0/truncate/extra_tables/0/table/name/name",
             expected_json: "\"b\"",
         },
+        ValueTestCase {
+            description: "COPY (FORCE_QUOTE *) keeps the star the option takes",
+            sql: "COPY t TO 'm' (FORCE_QUOTE *)",
+            pointer: "/0/copy/params/0/value/star/table",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "COPY (force_quote) has no argument",
+            sql: "COPY t TO 'm' (force_quote)",
+            pointer: "/0/copy/params/0/value",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "COPY FROM (FORCE_NULL *) keeps the star",
+            sql: "COPY t FROM 'm' (FORCE_NULL *)",
+            pointer: "/0/copy/params/0/value/star/table",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "OPERATOR(\"s.x\".<) quotes its dotted schema",
+            sql: "SELECT 1 OPERATOR(\"s.x\".<) 2",
+            pointer: "/0/select/expressions/0/operator/operator/identifier/name",
+            expected_json: "\"\\\"s.x\\\".<\"",
+        },
+        ValueTestCase {
+            description: "OPERATOR(s.x.<) is a three-part name",
+            sql: "SELECT 1 OPERATOR(s.x.<) 2",
+            pointer: "/0/select/expressions/0/operator/operator/identifier/name",
+            expected_json: "\"s.x.<\"",
+        },
+        ValueTestCase {
+            description: "ORDER BY ... USING OPERATOR(\"s.x\".<) quotes its dotted schema",
+            sql: "VALUES (1) ORDER BY 1 USING OPERATOR(\"s.x\".<)",
+            pointer: "/0/select/order_by/expressions/0/this/with_operator/op",
+            expected_json: "\"\\\"s.x\\\".<\"",
+        },
+        ValueTestCase {
+            description: "a prefix OPERATOR(schema.op) is an unquoted call of the operator",
+            sql: "SELECT OPERATOR(pg_catalog.-) 1",
+            pointer: "/0/select/expressions/0/function/name",
+            expected_json: "\"pg_catalog.-\"",
+        },
+        ValueTestCase {
+            description: "IS UNKNOWN is a boolean test, not IS NULL",
+            sql: "SELECT x IS UNKNOWN FROM t",
+            pointer: "/0/select/expressions/0/is/right/var/this",
+            expected_json: "\"UNKNOWN\"",
+        },
+        ValueTestCase {
+            description: "IS NOT UNKNOWN is a boolean test, not IS NOT NULL",
+            sql: "SELECT x IS NOT UNKNOWN FROM t",
+            pointer: "/0/select/expressions/0/is/right/var/this",
+            expected_json: "\"NOT UNKNOWN\"",
+        },
+        ValueTestCase {
+            description: "op ANY with an operator of its own keeps it",
+            sql: "SELECT 1 @> ANY (SELECT 1)",
+            pointer: "/0/select/expressions/0/any/this/with_operator/op",
+            expected_json: "\"@>\"",
+        },
+        ValueTestCase {
+            description: "OPERATOR(schema.op) ALL keeps the qualified operator",
+            sql: "SELECT 1 OPERATOR(pg_catalog.<) ALL (ARRAY[1])",
+            pointer: "/0/select/expressions/0/all/this/with_operator/op",
+            expected_json: "\"pg_catalog.<\"",
+        },
+        ValueTestCase {
+            description: "an aggregate keeps a quoted dotted name quoted",
+            sql: "SELECT \"s.f\"(1) FILTER (WHERE true)",
+            pointer: "/0/select/expressions/0/aggregate_function/name",
+            expected_json: "\"\\\"s.f\\\"\"",
+        },
+        ValueTestCase {
+            description: "an aggregate keeps a qualified name's parts",
+            sql: "SELECT s.f(*) FILTER (WHERE true)",
+            pointer: "/0/select/expressions/0/aggregate_function/name",
+            expected_json: "\"s.f\"",
+        },
+        ValueTestCase {
+            description: "COLLATE \"s.c\" is one quoted name",
+            sql: "SELECT 'a' COLLATE \"s.c\"",
+            pointer: "/0/select/expressions/0/collation/collation",
+            expected_json: "\"\\\"s.c\\\"\"",
+        },
+        ValueTestCase {
+            description: "COLLATE \"s\".\"c\" is a qualified name",
+            sql: "SELECT 'a' COLLATE \"s\".\"c\"",
+            pointer: "/0/select/expressions/0/collation/collation",
+            expected_json: "\"s.c\"",
+        },
+        ValueTestCase {
+            description: "OVER w1 names the window itself",
+            sql: "SELECT count(*) OVER w1 FROM t WINDOW w1 AS ()",
+            pointer: "/0/select/expressions/0/window_function/over/alias/name",
+            expected_json: "\"w1\"",
+        },
+        ValueTestCase {
+            description: "OVER (w1) refers to w1 without naming the window",
+            sql: "SELECT count(*) OVER (w1) FROM t WINDOW w1 AS ()",
+            pointer: "/0/select/expressions/0/window_function/over/alias",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "BIT('10') keeps a modifier that is not an integer",
+            sql: "SELECT CAST(x AS BIT('10')) FROM t",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"bit('10')\"",
+        },
+        ValueTestCase {
+            description: "BIT(10,2) keeps its second modifier",
+            sql: "SELECT CAST(x AS BIT(10,2)) FROM t",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"bit(10,2)\"",
+        },
+        ValueTestCase {
+            description: "DECIMAL(3,v1) keeps an expression modifier, named as numeric",
+            sql: "SELECT CAST(x AS DECIMAL(3,v1)) FROM t",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"numeric(3,v1)\"",
+        },
+        ValueTestCase {
+            description: "INTERVAL(3) keeps its precision",
+            sql: "SELECT CAST(x AS INTERVAL(3)) FROM t",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"interval(3)\"",
+        },
+        ValueTestCase {
+            description: "INTERVAL(3) '1' keeps its precision",
+            sql: "SELECT INTERVAL(3) '1'",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"interval(3)\"",
+        },
+        ValueTestCase {
+            description: "INTERVAL SECOND(3) keeps its precision",
+            sql: "SELECT INTERVAL '1' SECOND(3)",
+            pointer: "/0/select/expressions/0/cast/to/unit",
+            expected_json: "\"SECOND(3)\"",
+        },
+        ValueTestCase {
+            description: "INTERVAL DAY TO SECOND(3) keeps its precision",
+            sql: "SELECT CAST(x AS INTERVAL DAY TO SECOND(3)) FROM t",
+            pointer: "/0/select/expressions/0/cast/to/to",
+            expected_json: "\"SECOND(3)\"",
+        },
+        ValueTestCase {
+            description: "AT LOCAL is timezone(expr), as in PostgreSQL's raw tree",
+            sql: "SELECT ts AT LOCAL FROM t",
+            pointer: "/0/select/expressions/0/function/name",
+            expected_json: "\"pg_catalog.timezone\"",
+        },
     ];
     for test_case in test_cases {
-        let parsed = parse(test_case.sql).expect(test_case.description);
+        let parsed = parse_strict(test_case.sql).expect(test_case.description);
+        assert!(parsed.gaps.is_empty(), "{}", test_case.description);
         let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
         assert_eq!(
             tree.pointer(test_case.pointer)

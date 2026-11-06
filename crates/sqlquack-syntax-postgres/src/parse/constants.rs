@@ -211,3 +211,21 @@ pub(crate) const JSON_ENCODINGS: [&str; 3] = ["utf8", "utf16", "utf32"];
 
 /// Fields an `INTERVAL` may name, and those that may follow `TO`.
 pub(crate) const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];
+
+/// The function `expr AT LOCAL` calls, as PostgreSQL's raw tree names it with one argument.
+pub(crate) const TIMEZONE_FUNCTION: &str = "timezone";
+
+/// The right side of `IS UNKNOWN`, which PostgreSQL keeps apart from `IS NULL`.
+pub(crate) const UNKNOWN_TEST: &str = "UNKNOWN";
+
+/// The right side of `IS NOT UNKNOWN`.
+pub(crate) const NOT_UNKNOWN_TEST: &str = "NOT UNKNOWN";
+
+/// The catalogue name of `BIT`.
+pub(crate) const BIT_TYPE: &str = "bit";
+
+/// The catalogue name of `BIT VARYING`.
+pub(crate) const VARBIT_TYPE: &str = "varbit";
+
+/// The catalogue name of `INTERVAL`.
+pub(crate) const INTERVAL_TYPE: &str = "interval";
