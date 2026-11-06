@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_plain"
-description = "Text without placeholders, which should come back unchanged, and text naming the webhook secret placeholder (the page does not say; the recording decides on the exact placeholder spelling). Catches: plain text altered"
+description = "Text without placeholders, which should come back unchanged, and text with SNOWFLAKE_WEBHOOK_SECRET, a placeholder the page names and says becomes REDACTED; the page does not say; the recording decides on the exact text around it. Catches: plain text altered"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'hello world'"],
