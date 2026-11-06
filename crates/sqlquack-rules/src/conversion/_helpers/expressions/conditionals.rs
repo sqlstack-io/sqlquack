@@ -14,6 +14,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::temporal::timestamp_literal;
 use crate::conversion::_helpers::support::declared::declared_of;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
@@ -83,10 +84,17 @@ fn unified_branches(
     let read = |branch: &Emitted| {
         branch.data_type == SnowflakeType::Varchar && branch.literal.is_none() && reading.is_some()
     };
+    let read_literal = |branch: &Emitted| match (&branch.literal, reading) {
+        (Some(Literal::Text(text)), Some(ntz @ SnowflakeType::TimestampNtz { .. })) => {
+            Some((text.clone(), ntz))
+        }
+        _ => None,
+    };
     let types: Vec<SnowflakeType> = branches
         .iter()
         .map(|branch| match (read(branch), reading) {
             (true, Some(reading)) => reading,
+            _ if read_literal(branch).is_some() => reading.unwrap_or(branch.data_type),
             _ => branch.data_type,
         })
         .collect();
@@ -100,11 +108,16 @@ fn unified_branches(
     let mut cast_branches: Vec<String> = Vec::with_capacity(branches.len());
     let mut readings: Vec<String> = Vec::new();
     for branch in branches {
-        let branch = match (read(branch), reading) {
-            (true, Some(reading)) => {
+        let branch = match (read(branch), reading, read_literal(branch)) {
+            (true, Some(reading), _) => {
                 let text = read_text(branch, (reading, target), construct, context)?;
                 readings.push(text.sql.clone());
                 &text.clone()
+            }
+            (_, _, Some((text, ntz))) => {
+                let _rule = context.log.rule(TEXT_BRANCHES);
+                let sql = timestamp_literal(&text, ntz, (context, construct)).map_err(refuse)?;
+                &Emitted::new(sql, ntz)
             }
             _ => branch,
         };

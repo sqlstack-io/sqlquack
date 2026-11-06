@@ -1060,6 +1060,34 @@ fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside
 }
 
 #[test]
+fn given_a_high_water_mark_with_a_text_default_when_running_then_the_literal_reads_as_a_timestamp()
+{
+    let test_cases = [
+        ValueTestCase {
+            description: "with no rows, COALESCE of MAX and a date literal gives that midnight",
+            sql: "WITH events AS (SELECT '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS updated_at) \
+                  SELECT COALESCE(MAX(updated_at), '1900-01-01')::VARCHAR AS v FROM events \
+                  WHERE updated_at < '2000-01-01'",
+            expected_value: "1900-01-01 00:00:00.000",
+        },
+        ValueTestCase {
+            description: "with rows, NVL keeps the latest timestamp over the literal",
+            sql: "WITH events AS (SELECT '2026-01-10 08:30:00'::TIMESTAMP_NTZ AS updated_at) \
+                  SELECT NVL(MAX(updated_at), '1900-01-01 00:00:00')::VARCHAR AS v FROM events",
+            expected_value: "2026-01-10 08:30:00.000",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_connect_by_root_of_a_qualified_column_when_running_then_it_reads_the_root_value() {
     let test_cases = [ValueTestCase {
         description: "CONNECT_BY_ROOT of a qualified column reads the root row's value",

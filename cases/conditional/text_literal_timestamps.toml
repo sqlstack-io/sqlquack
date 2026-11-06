@@ -1,0 +1,31 @@
+# A string literal beside a TIMESTAMP_NTZ(9) branch, as an incremental model's high-water mark
+# writes it: the literal is read as the timestamp it spells.
+category = "conditional"
+construct = "fn:COALESCE"
+session_profile = "utc-v1"
+
+[[case]]
+id = "high_water_mark_defaults"
+description = "COALESCE, IFNULL and NVL of MAX of a TIMESTAMP_NTZ(9) and a date or timestamp literal, over rows and over none."
+columns = [{ name = "g", type = "NUMBER(38,0)" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["1", "'2026-01-10 08:30:00.123456789'"],
+  ["1", "'2026-01-02 00:00:00'"],
+  ["2", "NULL"],
+  ["3", "NULL"],
+]
+query = "SELECT g, COALESCE(MAX(t), '1900-01-01') AS c, IFNULL(MAX(t), '1900-01-01 00:00:00') AS i, NVL(MAX(t), '1970-01-01T12:00:00.5') AS n FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "mixed-types"]
+
+[[case]]
+id = "literal_branches_beside_timestamps"
+description = "A timestamp literal first, beside a column, and as an IFF or CASE branch beside a TIMESTAMP_NTZ(9)."
+columns = [{ name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2026-01-10 08:30:00.123456789'"],
+  ["NULL"],
+]
+query = "SELECT COALESCE('2000-02-29 23:59:59', t) AS first, COALESCE(t, '2262-04-10') AS last_day, IFF(t IS NULL, '1999-12-31', t) AS i, CASE WHEN t IS NULL THEN t ELSE '2001-01-01 01:01:01.000000001' END AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "mixed-types", "boundary"]
