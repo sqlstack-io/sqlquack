@@ -34,7 +34,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_position_nulls"
-description = "ORDER BY 2 DESC NULLS LAST, 1: a column position with an explicit NULL placement. Catches: the position read as a constant, or the NULLS clause ignored"
+description = "ORDER BY 2 DESC NULLS LAST, 1 NULLS FIRST: column positions with explicit NULL placements. Catches: the position read as a constant, or the NULLS clause ignored"
 columns = [{ name = "s", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
 rows = [
   ["'b'", "2"],

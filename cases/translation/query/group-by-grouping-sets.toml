@@ -38,7 +38,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_key"
-description = "The NULL group of g against the rows of the (x) set, where g is NULL because the set leaves it out. Catches: the two merged"
+description = "The NULL group of g against the row of the () set, where g is NULL because the set leaves it out. Catches: the two merged"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1"],

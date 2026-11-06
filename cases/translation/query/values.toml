@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_aliases"
-description = "Three rows with the column aliases n and s, joined to nothing. Catches: the aliases dropped (COLUMN1, COLUMN2)"
+description = "Three rows of an inline VALUES table with the table alias v and the column aliases n and s. Catches: the aliases dropped (COLUMN1, COLUMN2)"
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "1"],

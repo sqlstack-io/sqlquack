@@ -183,7 +183,7 @@ id = "sf.query.group-by-grouping-sets.t003"
 form = "sf.query.group-by-grouping-sets"
 kind = "null_argument"
 target = "NULL key"
-note = "The NULL group of g against the rows of the (x) set, where g is NULL because the set leaves it out."
+note = "The NULL group of g against the row of the () set, where g is NULL because the set leaves it out."
 catches = "the two merged"
 reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
 cases = ["cases/translation/query/group-by-grouping-sets.toml#t003_null_key"]
@@ -460,7 +460,7 @@ kind = "type_combination"
 target = "OFFSET 1 ROWS FETCH NEXT 2 ROWS ONLY"
 note = "The ANSI form for rows 2 and 3."
 catches = "OFFSET or FETCH ignored"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.fetch.toml#t001_offset_fetch"]
 required = true
 
@@ -471,7 +471,7 @@ kind = "type_combination"
 target = "FETCH FIRST 1 ROW"
 note = "FETCH FIRST 1 ROW without OFFSET or ONLY."
 catches = "the singular ROW refused"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.fetch.toml#t002_first_row"]
 required = true
 
@@ -482,7 +482,7 @@ kind = "type_combination"
 target = "FETCH 0"
 note = "FETCH FIRST 0 ROWS ONLY, which returns no rows."
 catches = "FETCH 0 read as no limit"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.fetch.toml#t003_fetch_zero"]
 required = true
 
@@ -493,7 +493,7 @@ kind = "null_argument"
 target = "NULL sort key"
 note = "FETCH FIRST 3 ROWS ONLY over x ascending with NULLS FIRST: the two NULL rows come first."
 catches = "NULLS FIRST ignored before the fetch"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.fetch.toml#t004_null_key"]
 required = true
 
@@ -504,7 +504,7 @@ kind = "type_combination"
 target = "LIMIT 2 OFFSET 1"
 note = "Rows 2 and 3 of the ordered input."
 catches = "OFFSET counted from 1, or ignored"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.limit.toml#t001_offset"]
 required = true
 
@@ -515,7 +515,7 @@ kind = "type_combination"
 target = "LIMIT 0"
 note = "LIMIT 0, which returns no rows."
 catches = "LIMIT 0 read as no limit"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.limit.toml#t002_zero"]
 required = true
 
@@ -524,10 +524,21 @@ id = "sf.query.limit.limit.t003"
 form = "sf.query.limit.limit"
 kind = "null_argument"
 target = "LIMIT NULL"
-note = "LIMIT NULL; the page does not say; the recording decides."
-catches = "an error, or no rows, where Snowflake returns every row (or the reverse)"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+note = "LIMIT NULL; the page says \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\", so every row returns."
+catches = "an error, or fewer rows than the input"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/limit.limit.toml#t003_null_count"]
+required = true
+
+[[obligation]]
+id = "sf.query.limit.limit.t004"
+form = "sf.query.limit.limit"
+kind = "null_argument"
+target = "OFFSET NULL"
+note = "LIMIT 2 OFFSET NULL; the page treats a NULL offset as 0 (its LIMIT NULL OFFSET NULL example returns every row), so rows 1 and 2 return."
+catches = "an error, or the offset applied as something other than 0"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
+cases = ["cases/translation/query/limit.limit.toml#t004_null_offset"]
 required = true
 
 [[obligation]]
@@ -766,7 +777,7 @@ id = "sf.query.order-by.orderitem.t003"
 form = "sf.query.order-by.orderitem"
 kind = "type_combination"
 target = "position and NULLS FIRST"
-note = "ORDER BY 2 DESC NULLS LAST, 1: a column position with an explicit NULL placement."
+note = "ORDER BY 2 DESC NULLS LAST, 1 NULLS FIRST: column positions with explicit NULL placements."
 catches = "the position read as a constant, or the NULLS clause ignored"
 reading = "order-by: ASC by default; without NULLS FIRST or LAST, NULLs sort last for ASC and first for DESC under the default DEFAULT_NULL_ORDERING (LAST); text sorts by the byte value of each character; ORDER BY ALL orders by every column"
 cases = ["cases/translation/query/order-by.orderitem.toml#t003_position_nulls"]
@@ -1208,7 +1219,7 @@ kind = "type_combination"
 target = "TOP 3"
 note = "TOP 3 with ORDER BY x DESC NULLS LAST."
 catches = "TOP applied before the ORDER BY"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/top-n.toml#t001_top"]
 required = true
 
@@ -1219,7 +1230,7 @@ kind = "type_combination"
 target = "TOP 0"
 note = "TOP 0, which returns no rows."
 catches = "TOP 0 read as no limit"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/top-n.toml#t002_top_zero"]
 required = true
 
@@ -1230,7 +1241,7 @@ kind = "type_combination"
 target = "DISTINCT with TOP"
 note = "SELECT DISTINCT TOP 2 g: duplicates removed before the limit."
 catches = "the limit applied before DISTINCT"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/top-n.toml#t003_top_distinct"]
 required = true
 
@@ -1241,7 +1252,7 @@ kind = "null_argument"
 target = "NULL sort key"
 note = "TOP 2 over x descending with no NULLS clause, which puts NULL first by default."
 catches = "NULL placed last, so 4 and 3 returned"
-reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
+reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant; \"The values NULL, empty string ('') and $$$$ are also accepted and are treated as \"unlimited\"\""
 cases = ["cases/translation/query/top-n.toml#t004_null_key"]
 required = true
 
@@ -1272,7 +1283,7 @@ id = "sf.query.values.t001"
 form = "sf.query.values"
 kind = "type_combination"
 target = "VALUES with column aliases"
-note = "Three rows with the column aliases n and s, joined to nothing."
+note = "Three rows of an inline VALUES table with the table alias v and the column aliases n and s."
 catches = "the aliases dropped (COLUMN1, COLUMN2)"
 reading = "values: an inline table of rows, with an optional table alias and column aliases; the columns take a common type"
 cases = ["cases/translation/query/values.toml#t001_aliases"]
