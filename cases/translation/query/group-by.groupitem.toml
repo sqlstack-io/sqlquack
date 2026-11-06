@@ -70,6 +70,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_alias_shadows_column"
+compile_error = true
 description = "A select alias spelled like an input column: the recording decides whether GROUP BY reads the column or the alias. Catches: the alias preferred where Snowflake reads the column, or the reverse"
 columns = [{ name = "ts", type = "TIMESTAMP_NTZ" }, { name = "c", type = "NUMBER(38,0)" }]
 rows = [
