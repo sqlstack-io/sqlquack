@@ -15,6 +15,21 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "ALTER with a word no statement kind allows is refused",
+            sql: "ALTER FOO t RENAME TO u",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER TABLE takes at most three name parts, as qualified_name does",
+            sql: "ALTER TABLE a.b.c.d ADD COLUMN x int",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER SEQUENCE NO CYCLE is a SeqOptList",
+            sql: "ALTER SEQUENCE s NO CYCLE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ordered-set VARIADIC types compare after folding, as equal() does",
             sql: "CREATE AGGREGATE a (VARIADIC \"foo\" ORDER BY VARIADIC foo) (sfunc = f, stype = int)",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -879,6 +894,24 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "SET STATISTICS reads a hexadecimal ICONST as its value",
+            sql: "ALTER TABLE ONLY t ALTER c SET STATISTICS 0x10",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/2/tuple/expressions/1/literal/value",
+            expected_json: "\"16\"",
+        },
+        ValueTestCase {
+            description: "ALTER TABLE ONLY keeps ONLY on the relation",
+            sql: "ALTER TABLE ONLY t ALTER c SET STATISTICS 5",
+            pointer: "/0/alter_object/name/only",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "ALTER INDEX ALL IN TABLESPACE names the move as its action",
+            sql: "ALTER INDEX ALL IN TABLESPACE a SET TABLESPACE b NOWAIT",
+            pointer: "/0/alter_object/action",
+            expected_json: "\"ALL IN TABLESPACE\"",
+        },
         ValueTestCase {
             description: "ORDER BY ... USING keeps its operator, even < which ASC also means",
             sql: "VALUES (1) ORDER BY 1 USING <",
