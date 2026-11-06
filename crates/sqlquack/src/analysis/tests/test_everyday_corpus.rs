@@ -12,9 +12,7 @@ fn given_everyday_snowflake_queries_when_checked_and_converted_then_each_keeps_i
         expected_rates: "288 of 436 strict, 357 of 436 repository",
         // SQL Snowflake rejects (snowflake-receipts.json) that SQLQuack neither fails to parse nor
         // flags in its checks; each should become a parse or check error.
-        expected_rejections_not_caught: vec![
-            "SELECT order_id FROM orders WHERE ordered_at > 5",
-        ],
+        expected_rejections_not_caught: vec!["SELECT order_id FROM orders WHERE ordered_at > 5"],
     }];
 
     for test_case in test_cases {

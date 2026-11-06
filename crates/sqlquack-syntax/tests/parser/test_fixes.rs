@@ -1764,7 +1764,8 @@ fn given_a_bare_snowflake_limit_or_offset_when_parsing_then_it_is_an_alias() {
             expected_value: json!("LIMIT"),
         },
         StatementTestCase {
-            description: "a bare LIMIT names the FROM item, which LIMIT.a reads (recorded as accepted)",
+            description:
+                "a bare LIMIT names the FROM item, which LIMIT.a reads (recorded as accepted)",
             sql: "SELECT LIMIT.a FROM ( SELECT 1 AS a ) LIMIT ;",
             pointer: "/0/select/expressions/0/column/table/name",
             expected_value: json!("LIMIT"),
