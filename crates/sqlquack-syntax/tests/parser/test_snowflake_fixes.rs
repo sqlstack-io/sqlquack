@@ -1320,6 +1320,16 @@ fn given_a_snowflake_cast_or_conversion_call_when_parsing_then_the_recorded_verd
             expected_kind: Some("select"),
         },
         SnowflakeVerdictTestCase {
+            description: "!SPCS_CANCEL_JOB with no instance, kept refused like == (recorded errno 2139, D213)",
+            sql: "SELECT !SPCS_CANCEL_JOB ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "!SPCS_WAIT_FOR with no instance, kept refused like == (recorded as parsed, errno 904, D213)",
+            sql: "SELECT !SPCS_WAIT_FOR ( v1 , v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "IDENTIFIER with no arguments (recorded errno 1003)",
             sql: "SELECT * FROM IDENTIFIER ( ) ;",
             expected_kind: None,
