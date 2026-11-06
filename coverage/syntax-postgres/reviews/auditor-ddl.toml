@@ -773,3 +773,354 @@ note = "Re-read after the batch-13 obligation-notes delta against the PostgreSQL
 "pg.ddl.alter-routine.security-invoker-security-definer" = "0070a67a5162673dd1c556a1ee9676e4f7e7322ad4611927029914ecf55b824d"
 "pg.ddl.alter-routine.set" = "836358bf59e25449fe3466527da409f993bdae439df230601935f414322b247c"
 "pg.ddl.alter-routine.set-from-current" = "b7a6ddcdb739adeadb0974ca0e3420febe0b91f6c26860616d8009bd0a198ec8"
+
+[[review]]
+id = "pg-auditor-ddl-009"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "c1fde191d0525b12d33c76afbe3684aad653d387"
+reviewed_utc = "2026-11-06T12:14:12Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-aggregate.owner-to",
+  "pg.ddl.alter-aggregate.rename-to",
+  "pg.ddl.alter-aggregate.set-schema",
+  "pg.ddl.alter-collation.owner-to",
+  "pg.ddl.alter-collation.refresh-version",
+  "pg.ddl.alter-collation.rename-to",
+  "pg.ddl.alter-collation.set-schema",
+  "pg.ddl.alter-conversion.owner-to",
+  "pg.ddl.alter-conversion.rename-to",
+  "pg.ddl.alter-conversion.set-schema",
+  "pg.ddl.alter-database.name",
+  "pg.ddl.alter-database.owner-to",
+  "pg.ddl.alter-database.refresh-collation-version",
+  "pg.ddl.alter-database.rename-to",
+  "pg.ddl.alter-database.reset",
+  "pg.ddl.alter-database.reset-all",
+  "pg.ddl.alter-database.set",
+  "pg.ddl.alter-database.set-from-current",
+  "pg.ddl.alter-database.set-tablespace",
+  "pg.ddl.alter-domain.add",
+  "pg.ddl.alter-domain.drop-constraint",
+  "pg.ddl.alter-domain.name",
+  "pg.ddl.alter-domain.not-null",
+  "pg.ddl.alter-domain.owner-to",
+  "pg.ddl.alter-domain.rename-constraint-to",
+  "pg.ddl.alter-domain.rename-to",
+  "pg.ddl.alter-domain.set-schema",
+  "pg.ddl.alter-domain.validate-constraint",
+  "pg.ddl.alter-event-trigger.disable",
+  "pg.ddl.alter-event-trigger.enable",
+  "pg.ddl.alter-event-trigger.owner-to",
+  "pg.ddl.alter-event-trigger.rename-to",
+  "pg.ddl.alter-extension.add",
+  "pg.ddl.alter-extension.drop",
+  "pg.ddl.alter-extension.set-schema",
+  "pg.ddl.alter-extension.update",
+  "pg.ddl.alter-foreign-data-wrapper.name",
+  "pg.ddl.alter-foreign-data-wrapper.owner-to",
+  "pg.ddl.alter-foreign-data-wrapper.rename-to",
+  "pg.ddl.alter-language.owner-to",
+  "pg.ddl.alter-language.rename-to",
+  "pg.ddl.alter-large-object",
+  "pg.ddl.alter-operator-class.owner-to",
+  "pg.ddl.alter-operator-class.rename-to",
+  "pg.ddl.alter-operator-class.set-schema",
+  "pg.ddl.alter-operator-family.add",
+  "pg.ddl.alter-operator-family.drop",
+  "pg.ddl.alter-operator-family.owner-to",
+  "pg.ddl.alter-operator-family.rename-to",
+  "pg.ddl.alter-operator-family.set-schema",
+  "pg.ddl.alter-operator.owner-to",
+  "pg.ddl.alter-operator.set",
+  "pg.ddl.alter-operator.set-schema",
+  "pg.ddl.alter-publication.add",
+  "pg.ddl.alter-publication.drop",
+  "pg.ddl.alter-publication.owner-to",
+  "pg.ddl.alter-publication.rename-to",
+  "pg.ddl.alter-publication.set-name-publication-object",
+  "pg.ddl.alter-publication.set-name-publication-parameter",
+  "pg.ddl.alter-rule",
+  "pg.ddl.alter-schema.owner-to",
+  "pg.ddl.alter-schema.rename-to",
+  "pg.ddl.alter-server.name",
+  "pg.ddl.alter-server.owner-to",
+  "pg.ddl.alter-server.rename-to",
+  "pg.ddl.alter-statistics.owner-to",
+  "pg.ddl.alter-statistics.rename-to",
+  "pg.ddl.alter-statistics.set-schema",
+  "pg.ddl.alter-statistics.set-statistics",
+  "pg.ddl.alter-subscription.add-publication",
+  "pg.ddl.alter-subscription.connection",
+  "pg.ddl.alter-subscription.disable",
+  "pg.ddl.alter-subscription.drop-publication",
+  "pg.ddl.alter-subscription.enable",
+  "pg.ddl.alter-subscription.owner-to",
+  "pg.ddl.alter-subscription.refresh-publication",
+  "pg.ddl.alter-subscription.rename-to",
+  "pg.ddl.alter-subscription.set",
+  "pg.ddl.alter-subscription.set-publication",
+  "pg.ddl.alter-subscription.skip",
+  "pg.ddl.alter-tablespace.owner-to",
+  "pg.ddl.alter-tablespace.rename-to",
+  "pg.ddl.alter-tablespace.reset",
+  "pg.ddl.alter-tablespace.set",
+  "pg.ddl.alter-text-search-configuration.add-mapping-for-with",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-for-with",
+  "pg.ddl.alter-text-search-configuration.alter-mapping-replace-with",
+  "pg.ddl.alter-text-search-configuration.drop-mapping-for",
+  "pg.ddl.alter-text-search-configuration.owner-to",
+  "pg.ddl.alter-text-search-configuration.rename-to",
+  "pg.ddl.alter-text-search-configuration.set-schema",
+  "pg.ddl.alter-text-search-dictionary.name-option",
+  "pg.ddl.alter-text-search-dictionary.owner-to",
+  "pg.ddl.alter-text-search-dictionary.rename-to",
+  "pg.ddl.alter-text-search-dictionary.set-schema",
+  "pg.ddl.alter-text-search-parser.rename-to",
+  "pg.ddl.alter-text-search-parser.set-schema",
+  "pg.ddl.alter-text-search-template.rename-to",
+  "pg.ddl.alter-text-search-template.set-schema",
+  "pg.ddl.alter-trigger.depends-on-extension",
+  "pg.ddl.alter-trigger.rename-to",
+  "pg.ddl.alter-type.add-attribute",
+  "pg.ddl.alter-type.add-value",
+  "pg.ddl.alter-type.alter-attribute-type",
+  "pg.ddl.alter-type.drop-attribute",
+  "pg.ddl.alter-type.owner-to",
+  "pg.ddl.alter-type.rename-attribute-to",
+  "pg.ddl.alter-type.rename-to",
+  "pg.ddl.alter-type.rename-value-to",
+  "pg.ddl.alter-type.set",
+  "pg.ddl.alter-type.set-schema",
+]
+note = "Read against the PostgreSQL 18.6 documentation (release SGML), every obligation with its covering case, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree c1fde191, sampled within large case sets under D256; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-aggregate.owner-to" = "f03361660dc1a9f33db0447b78a013d96ad0f9d6375d802f3074a588b8d73d59"
+"pg.ddl.alter-aggregate.rename-to" = "4f49af59bb9b45f8ae128524a50af5ab44186ecd480f680e3a35c12183e6aef3"
+"pg.ddl.alter-aggregate.set-schema" = "15c0fc5eacf6beedf2e26f41548dd8d3b65ba7d2774bacfdd62c90363725cbf3"
+"pg.ddl.alter-collation.owner-to" = "4a57ec3578104c2a3b32f1946a29e037066b793be4a91ebb66a5ede201f5d134"
+"pg.ddl.alter-collation.refresh-version" = "7692c17110ef3cf46a9692280ad8748b567ea4eb38e2f10c3c1d21806485cc3d"
+"pg.ddl.alter-collation.rename-to" = "c89904c5ed5f792c4f39aaaa25e70f151927b124dac1061ef0b875a3c89cc208"
+"pg.ddl.alter-collation.set-schema" = "591c9417a86df1c34993d865bf7162cecf5186a30225e1841b3df070fb530da8"
+"pg.ddl.alter-conversion.owner-to" = "35241c42f6459ea667f91ea81d1fa25250f10de156ffbfa1ec97dc3722194661"
+"pg.ddl.alter-conversion.rename-to" = "50376652568ed52cc69cc61aa468040f0f66a6f7601a70786149830a983d95e6"
+"pg.ddl.alter-conversion.set-schema" = "79fb8d30c39996ed30dd7a8cc1cb09c2132eb1539a6aff0faa0b8cc59085b17d"
+"pg.ddl.alter-database.name" = "338206632f65a2792b887799d84029e2467b51b8ca7e42bbe36bc770d6dc4a8a"
+"pg.ddl.alter-database.owner-to" = "2b369f9702c4e474c6f80b947660bdbf9c868cb7c1a8cc7902d4137dc572b271"
+"pg.ddl.alter-database.refresh-collation-version" = "7f044c1e50141c4ebac987807ac6cca3d1e241d771664931c3d839b96449dff9"
+"pg.ddl.alter-database.rename-to" = "e8b39d46cdf4f19f9658271af5e1327b731d1a4b31be73b3ee761f7ae328bc2d"
+"pg.ddl.alter-database.reset" = "5abfc87a067a4c1c6f35d647826078ac9254249c91e52244be17c64de9fd0d9e"
+"pg.ddl.alter-database.reset-all" = "5ebef96d75c2d3b1aa4e8055000ac0faafcd52041fd3914071906d689c25f97a"
+"pg.ddl.alter-database.set" = "d189981c8f2189c38ffa5d3d7325f7b1fbadade40c777a2e1948f976ca538dd2"
+"pg.ddl.alter-database.set-from-current" = "f45f08c82e7f053300c36f5709ee681abb8b77e998a6022da9a3271c182119e3"
+"pg.ddl.alter-database.set-tablespace" = "fe1e368c7beb435e6bb67ab0f8f50ae8d159dbc7615dfd98bd59cd7f08c856f1"
+"pg.ddl.alter-domain.add" = "25de0a2135597e104155189001fc5e0741ab8537a5db286229b40851def503e4"
+"pg.ddl.alter-domain.drop-constraint" = "a7f4b55aced8cc3e0adacc765449deb36a2f3f97ee6f33bbb20bcec8f63704d1"
+"pg.ddl.alter-domain.name" = "f57cdbc03d82f1b5f5a7dcb8624ff0e7a4346080e24f9d553d62075a0bc390be"
+"pg.ddl.alter-domain.not-null" = "87192d8f5904af9b121fdb9dc775056e2815290c66f23135e717971bcc110aec"
+"pg.ddl.alter-domain.owner-to" = "d2377b2f3401baba464919ea5268538cc34fafe9bf54c8a9d9054e7e7cb9da12"
+"pg.ddl.alter-domain.rename-constraint-to" = "cd929609c1eaa140c5b8973e56448f9180d29a226f9d871e9529813d011e8676"
+"pg.ddl.alter-domain.rename-to" = "80065dcbc63ae9801872f9fad552edd55171977337f7b42107fb6d1a463e67cf"
+"pg.ddl.alter-domain.set-schema" = "b089cce56027828a164720649d6991077e84cc07d1f363a16d2c4a532d7cfa58"
+"pg.ddl.alter-domain.validate-constraint" = "3a2704ca203cfc3c60ebd8cc7379c9a9646d0887dfb9a4b163496666b9046b33"
+"pg.ddl.alter-event-trigger.disable" = "9d141ac09bf27378ad9f9c40c6e81938221b8ba90d58f2999823750426664921"
+"pg.ddl.alter-event-trigger.enable" = "0b6b0d1dc266483e9b208f0ce83acb5a8176066ecd3423cd148fdb49b696738f"
+"pg.ddl.alter-event-trigger.owner-to" = "168348debca3075d442a41e5e405e754e1d9f18b88aa1180855bfc83e628602e"
+"pg.ddl.alter-event-trigger.rename-to" = "c842825a2125a6e092ab72b0200e957a5c79a608ada4810a99ffdd35e07a6cac"
+"pg.ddl.alter-extension.add" = "4cc1b7ebd9c63f2d37df9a85111bb21473ae37f7620f75835783394bda4a0abf"
+"pg.ddl.alter-extension.drop" = "1859bf9b15233afe90c759cd79a92e183d4a747235ee3fd12e47f123f897b935"
+"pg.ddl.alter-extension.set-schema" = "0e9458fb1e8ee1c64a7459865c854c73131e123fd66363d1c4d2c2f78699ff5f"
+"pg.ddl.alter-extension.update" = "7e2f3a4eba6a19ee4c2d9471a74cc84668891432f1ea9b07dbdffea961c6fdf1"
+"pg.ddl.alter-foreign-data-wrapper.name" = "0354ab372c4be02bb9d287fb873710129e99fb36990e7248bc3381e72ac32e20"
+"pg.ddl.alter-foreign-data-wrapper.owner-to" = "36c444890135d997f9921c74cb20271da4840ddca792d49ec8f62f6efd5d5727"
+"pg.ddl.alter-foreign-data-wrapper.rename-to" = "ce4a63beae0d5c2e908d9fbf983057321c2755b290788952ea18ac4f9fd0d233"
+"pg.ddl.alter-language.owner-to" = "7e16999937b0d8c3805bec821a27474c69e3504528e5f4b5c644fb905db6e77f"
+"pg.ddl.alter-language.rename-to" = "f03ac67e51fe730fb0f1079858058fde0ec42d32d34abdfe890f934eb1beae50"
+"pg.ddl.alter-large-object" = "9399a354d069cf2127349b3efd2da9eb52db487731a1a8acbcc4be95f1629e25"
+"pg.ddl.alter-operator-class.owner-to" = "fed357785b87aab98c788cdd407b18df75e138ae6dde1a581d5cb5531e92bfe7"
+"pg.ddl.alter-operator-class.rename-to" = "988b1f1324cbb945e303e904c6444b3478c24c7d007353795e31ba24f308c9a3"
+"pg.ddl.alter-operator-class.set-schema" = "668a7c9a9a8c3e73fb55fe50e996a9ac0b30143271bd382f2033cbfebd5107b0"
+"pg.ddl.alter-operator-family.add" = "61b27d03ed8694e54d35b437d1257b842fe7ca8c84650e25128c1fd2b28e4b01"
+"pg.ddl.alter-operator-family.drop" = "b9b5b1f872df9ad4896f1826115e2527e259da24d7a8d62f378ab98b4e3f532a"
+"pg.ddl.alter-operator-family.owner-to" = "f3570fc63eed4f379dc869b69119529affeb9e0fd513a785ca44331364c31da5"
+"pg.ddl.alter-operator-family.rename-to" = "b45838e3023585c4d8a35c3748d9aab578b20e33686f90105756a4efba7d3214"
+"pg.ddl.alter-operator-family.set-schema" = "c420c218c37f667240a8eca6dc44e8723113bc02e65994b72ab8b5ccbc36a5bc"
+"pg.ddl.alter-operator.owner-to" = "2eb74b7c7547bc5f6a2306a00fc8c3cc2cda6fc14e06f913c9f85403c3821240"
+"pg.ddl.alter-operator.set" = "dd1e9e3109dd62238a495448114c2fb04b0c2f8fa84bc1c6e2f2b4c7cc58b0b4"
+"pg.ddl.alter-operator.set-schema" = "93955a61d96ef1e75112b4f98dc09701993ef18268f374ffff02be0ff0331924"
+"pg.ddl.alter-publication.add" = "fe225d3eb23a4b7128f2fddafbe5109b4fb8fc7bf0dd7b3360dbbd709c869821"
+"pg.ddl.alter-publication.drop" = "88dde8335bf02f47046d37442e5af176d1b95bd027d8e00952ab9ee75259e460"
+"pg.ddl.alter-publication.owner-to" = "94ea960eb5d01fe4e48bdb028f04abc278ca3633b15e989fdc7cf921dd175501"
+"pg.ddl.alter-publication.rename-to" = "9bb7b16fa3acb8edbeee194584927b456cc3c8f569ced3edd39e4dc1a346c121"
+"pg.ddl.alter-publication.set-name-publication-object" = "f190eb4d56ef4b1b4e38433ec9c5f2fe964196424a03d258f25dce3ce654b7c2"
+"pg.ddl.alter-publication.set-name-publication-parameter" = "6c8ebcfd49dca0683be08330458f9af98ba7eb8d51194a4c6c4c58bdf10dcf2c"
+"pg.ddl.alter-rule" = "599eb8ceaa8b786bc23c6bdc3af3a98afc03f1a35cbc436ddee43714a582edfb"
+"pg.ddl.alter-schema.owner-to" = "9c9a7437db2d24a4c161bfc6244ffa9e44408044407e72dd598c6d82f9c83617"
+"pg.ddl.alter-schema.rename-to" = "8b69819c3fa30e37f3f45ee9cf5b61cdb3fd2c5beb8440f86dc8303b4142f11b"
+"pg.ddl.alter-server.name" = "418076eaa65155f8c7e4b6c3ea4146d6fe7220264ceabd91172a06cf6403f703"
+"pg.ddl.alter-server.owner-to" = "e3013565a32fe8d724470af82f2f08e412e3a0fe3c395060f734a04e520cff90"
+"pg.ddl.alter-server.rename-to" = "99f2c13be7eb49edb6d85dbc8b4951f5be38dc4cc3e3f0461df6c9b0d17fa7a6"
+"pg.ddl.alter-statistics.owner-to" = "e50f7e4fd99283c5d572c8388f7a64249f2f9d506bc4d1b6544b473eb37b2d25"
+"pg.ddl.alter-statistics.rename-to" = "e2c5e94c4696914e0fbca3e87a1b7cf3663111008dd3ee4ea8c1a2818af0b7b6"
+"pg.ddl.alter-statistics.set-schema" = "399151ff6ae83627e7f5966c271e2fe875dc18758591915e9cbfe117287a726d"
+"pg.ddl.alter-statistics.set-statistics" = "2f72953e09fb02853fe4bb3b3d66c9a3c831a0c4392fda8a2624f0ff488b116c"
+"pg.ddl.alter-subscription.add-publication" = "57d97e944800188fdeb0ae28798cdfdad7c72f038e65c54bc6923701a67a4fcd"
+"pg.ddl.alter-subscription.connection" = "f1f49230dc5e1ca0e59a7b431c3602dff1ba6404185aa36131d6021bd065373f"
+"pg.ddl.alter-subscription.disable" = "95a4f8418ed4ccb8dcdfe78fb818f1610fbb31390a1effd13a1d69776476ff4a"
+"pg.ddl.alter-subscription.drop-publication" = "7a42eff61a14f12412f10d2fa27b5a5be500725eb5b97aa734594a8e60aa78ec"
+"pg.ddl.alter-subscription.enable" = "dbce152e86f1355044f5c8b8df960a8662abb28c562dac20ac1630a943cd081d"
+"pg.ddl.alter-subscription.owner-to" = "7c3686f54fbdd8e4b8b37ab1b73aa5e4488c45782550ba126f3e0c1c16a4f808"
+"pg.ddl.alter-subscription.refresh-publication" = "5307c4a4170480f4e040da04504617bf34f43698e603679af89ad48e104c3f15"
+"pg.ddl.alter-subscription.rename-to" = "6cb46617c87c042e46eba022c76c58117becbdbed50b0d061f18d25e950a45e5"
+"pg.ddl.alter-subscription.set" = "b87b077e8ca3abd2730175643551995683b584ef43dda448f42505896980c38a"
+"pg.ddl.alter-subscription.set-publication" = "0a954cffd46740506ef7d753b8ba68e212f4e342b4628273a818a067a3fee796"
+"pg.ddl.alter-subscription.skip" = "980290a8ed87f98a061f4be419f8f4188782ca67e382fc1efb5105eaa4358154"
+"pg.ddl.alter-tablespace.owner-to" = "c590a485aefa14f79c9b9065d23ad03b9ef3a4d03fba2e194476b1d83fc32f9c"
+"pg.ddl.alter-tablespace.rename-to" = "19736a931f73a34ad85695a8ae00e4d31a8cafa16ddd592beedb57a2f5ad5fa5"
+"pg.ddl.alter-tablespace.reset" = "34f91f80a71f22e11f96aecf8767bff96a83f36ca4d87691fff2cbf67181a641"
+"pg.ddl.alter-tablespace.set" = "ffad67dbd4fafa31b679e60d6883f446d85dfdcb5ade5e657027f625b277fd08"
+"pg.ddl.alter-text-search-configuration.add-mapping-for-with" = "32936b97f4896234c0db4023f423c7e93960d0cc3f109f38caba83a7ec73708a"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-replace" = "e69b66c781d0b7604d491800cf6c2c3a2ed77b0d1c8e4ca203c5a32a97bc700c"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-with" = "cd9ed9c95f3de2337adfbaeea6fdc6c57ff91f685d8283e0b7bcec323b6d9443"
+"pg.ddl.alter-text-search-configuration.alter-mapping-replace-with" = "fa835fa73521031cfe3c10a3f28ebf5aeb797adf8674e71e20c98aa979040420"
+"pg.ddl.alter-text-search-configuration.drop-mapping-for" = "0e7cedc281c5da6e1084e9f0c7cdfab3f1a1540000e551cd2fc738fd80c94093"
+"pg.ddl.alter-text-search-configuration.owner-to" = "f5bdd02c7682222df3d1ec426dd3d8071c6a669485e7554257aa7718dac75a47"
+"pg.ddl.alter-text-search-configuration.rename-to" = "89b96826ee16210765538ba94d6ff501b5b91a1a9fdf21ebd9e878bf9791369f"
+"pg.ddl.alter-text-search-configuration.set-schema" = "2932eba0ab7c98802ab0c94e13bc45669a5ed4a4831c119753ea5093790e9673"
+"pg.ddl.alter-text-search-dictionary.name-option" = "31889d76e592f364cace6dced345b3795447ce73092df4ec41f66fbdf1e0f63d"
+"pg.ddl.alter-text-search-dictionary.owner-to" = "fba9a22390e1822c815dbb325df79b63b4df7490e7d723c281f3c4880cb577e9"
+"pg.ddl.alter-text-search-dictionary.rename-to" = "c197430398f409686b36d5d8d19be90dcb0534569778896ca65f62510cbebe7f"
+"pg.ddl.alter-text-search-dictionary.set-schema" = "d847bbdbe2cc0b1139562390d60dff1d2619a9061d6beada72b861c0d57c3aeb"
+"pg.ddl.alter-text-search-parser.rename-to" = "4d012cf333e15c514838dad8e8166a2366405d726108b47fdf26f49aef0ea3ca"
+"pg.ddl.alter-text-search-parser.set-schema" = "ed2ad4ef83a3b3f3deced1b834b356944a1479eb610154326d71779e75b25987"
+"pg.ddl.alter-text-search-template.rename-to" = "b600362f5e2f3abef397fcfce8511ab1c076bc98995bc44fef74ab5684dee52d"
+"pg.ddl.alter-text-search-template.set-schema" = "51ec36243843be41d425eed2fee826de13b9d7efda5687f76f422738a42c4af8"
+"pg.ddl.alter-trigger.depends-on-extension" = "26d695d9aafa29e04919d7fa679e739904845069d9a5bfcf03e76d6afb9463ff"
+"pg.ddl.alter-trigger.rename-to" = "5f7472955ad3c6f1e06e37380a347602b6816fa59a33a7b6ba31285e108c6e8b"
+"pg.ddl.alter-type.add-attribute" = "f04d31af58eb1394405a4b6ca81d8a1d4e39f099bb6c640f6c2831806d050495"
+"pg.ddl.alter-type.add-value" = "5ac8c01b396828bce8d1c8af6d298c6685d83b4aeca5e57352bbe9e56bd1a170"
+"pg.ddl.alter-type.alter-attribute-type" = "b9863fb68cbbf4637a2fb8ad68e07fc59e62ea7fded85346d97a68866d4b4e0e"
+"pg.ddl.alter-type.drop-attribute" = "581ad2bd01857c2c18519bc9d8677c49e8af0025d922fe455f11abb12856d7c6"
+"pg.ddl.alter-type.owner-to" = "ab48be720879c08d4c0b5479d9a7277be82f86968fbc9ff09fb5e5aef1998113"
+"pg.ddl.alter-type.rename-attribute-to" = "d4b6481fb9b319cd8bdc63f355bef2a880a95c396046a55c5ef9695215ba707a"
+"pg.ddl.alter-type.rename-to" = "5ce7d8fa0d3148a4789d07be37069d944c073b2d63d95e8663698fcf6baf4e76"
+"pg.ddl.alter-type.rename-value-to" = "f114613534fe5bb81cd5df8fecda861e7b5341cf574e4b974b3625ee2faab313"
+"pg.ddl.alter-type.set" = "b4bd5418e522e57524a2f6262840c054b5a8ee6b042936ae3aca8b4d848dd25c"
+"pg.ddl.alter-type.set-schema" = "68e7a3d9a59d829b1e286a421c1775d40fd90942fef437b07a6d1efcab5f6607"
+
+[review.definitions]
+"pg.ddl.alter-aggregate.owner-to" = "b201d6d5a96cf31dd4bb9ddcfaeb4488ebd2de6bf25663959a637b1e4cf19f5f"
+"pg.ddl.alter-aggregate.rename-to" = "9fde8f7598ca457950c05edd4f011d29c17af31cc2540b907d3ba109d2aa1177"
+"pg.ddl.alter-aggregate.set-schema" = "ebaa8ccedac18ac2a162fddd5a4dbd296fa109bb0abb971ec524ebbf04b94686"
+"pg.ddl.alter-collation.owner-to" = "d7943f50e64fd037f1d3767d3731b5b8c20cd9f345780fe3e3269f438ba31301"
+"pg.ddl.alter-collation.refresh-version" = "0baa1753055249746a5f13594bfaf2bb7aa48cd5d2abafc0dde1b27ad066a170"
+"pg.ddl.alter-collation.rename-to" = "098a4963affb39b0189b0609109205bab7f420a38f3b7da669f6da499e74188c"
+"pg.ddl.alter-collation.set-schema" = "7309c5186da81dda4e6f2a82e8329b2057f5cb9912cf1d42f059845e32a31752"
+"pg.ddl.alter-conversion.owner-to" = "97a278405c3b91d5eb96101062e93b071dd01477cfa505c52ca6345ac713a9d6"
+"pg.ddl.alter-conversion.rename-to" = "55919d482ea6e4cfb5f27f935564ac31cb29144edcee12505bf862261ce9662c"
+"pg.ddl.alter-conversion.set-schema" = "4d0ac20fc0e5c258883ce240baba7108ac504ce4eab2a0870936b66b3b0b7262"
+"pg.ddl.alter-database.name" = "9882f97e913190d0db5ef90ba0bb664fe900633f21b56bbae8668960c2c3bb3e"
+"pg.ddl.alter-database.owner-to" = "8ca158b7697d149121a1f7bf283ebf4833988d3f8fcb474931a40aa8815759a6"
+"pg.ddl.alter-database.refresh-collation-version" = "9e7d6dd21bf810f38757f737d0a7537272ec0c8085adab7f968534a5dd63f510"
+"pg.ddl.alter-database.rename-to" = "fef901ce133725c18c74a1c635ac491c54a04cbd3d61c69be418990cd8881e28"
+"pg.ddl.alter-database.reset" = "65f27f81faf364fcd040b9cc8a08ab524a6e13095661f6af4c9cf1e4803c8dcb"
+"pg.ddl.alter-database.reset-all" = "a5f7db5eb2702b55fea6b6867ebcc4020263660432477962606f2d749e9eeaaa"
+"pg.ddl.alter-database.set" = "ce21ef47e9fdd9373e731192a4eda117b1556f2eac4e6ee9b82bb66d8bfd6a10"
+"pg.ddl.alter-database.set-from-current" = "d7a3a780903ff1d7e91e555bcedbab8a4a0a125b5269cdcbb6fa878f7aa3b1ce"
+"pg.ddl.alter-database.set-tablespace" = "9e801be5c3ca8eaed65e901b546a6af860390f146b526488ef54d2be29921b52"
+"pg.ddl.alter-domain.add" = "ca6cce27d677b0619a601ec1a08db9d24ca57431e6eea545cd83f4278dae3d83"
+"pg.ddl.alter-domain.drop-constraint" = "666ba0f8792dc41bd79cb2446c805d54c8b1690eb5567bf53b0dd674cd4c456c"
+"pg.ddl.alter-domain.name" = "a5087d931f4d515c8babb8a4c380ed661e6f2dc1589fdbfcc7ef798ef392df8e"
+"pg.ddl.alter-domain.not-null" = "3dca5b0b0518c5e64518bd4d3bf2986fbe3bcb20fcd37eb46814b50426e82beb"
+"pg.ddl.alter-domain.owner-to" = "36dd5946549cd9793b28e370a6af3291e549a97e73c9c4d6d857c4f33777f3b1"
+"pg.ddl.alter-domain.rename-constraint-to" = "a1bb6bfd14b897d67836f031161a6f598bc0c8aea291daaaf6ba3a813d062e7d"
+"pg.ddl.alter-domain.rename-to" = "21e6ed948f4af7b95cc51b5d6141b03057306472029da95c296cbeb467fa2e8b"
+"pg.ddl.alter-domain.set-schema" = "5bdb67cd31a97818823c65134828ee123ce08b8e42f68dc35b180164e34aac31"
+"pg.ddl.alter-domain.validate-constraint" = "ed3e31aab1f4fa827695ebe3a9c9fa53a986c49f55ced21b7e4ce2e2173a2e54"
+"pg.ddl.alter-event-trigger.disable" = "f8149bb67032cc3cf164b3968912b7d54d16a898c46f379f2edf2accc7ab6d30"
+"pg.ddl.alter-event-trigger.enable" = "c3887d54125af9aa081aabc6e456280c018da121356d620dc08f44c002d1aa11"
+"pg.ddl.alter-event-trigger.owner-to" = "cd6766b0c53b56df6a553234cbf38432a44042f39f731f0bf78dde9db3cbaa6f"
+"pg.ddl.alter-event-trigger.rename-to" = "78229c673cfa77a4b605cdb1a0bef5e6d215c37e32aa553686b6183d99960e60"
+"pg.ddl.alter-extension.add" = "16fd8298113859a030c9198ad80f5e225e9fbd7a7a327f56719b04db702eb24d"
+"pg.ddl.alter-extension.drop" = "d5b7b52545e304a5a73ba04b58450ee4ad463e3a1949e0bd321631c3417c7408"
+"pg.ddl.alter-extension.set-schema" = "4c9e0fbefc70e839111624a16b3e6a970bc4d9ced12c374fcd1bb3502f242812"
+"pg.ddl.alter-extension.update" = "b56fc3e80c58e7bf8953f7daccd2a1497664db266094b8cb13e55b5b0cf1dfab"
+"pg.ddl.alter-foreign-data-wrapper.name" = "311f1b713f8083f609c90bc50d48a7f27c655ad3b1d3bcd6149361cf248e714f"
+"pg.ddl.alter-foreign-data-wrapper.owner-to" = "382af15c76f4be7cb8b7d632e318b43f4d0f958e192c5930685084c4f37e1bc6"
+"pg.ddl.alter-foreign-data-wrapper.rename-to" = "b211ea281b03c19391b2dc8a938d24299c8d80b91a68db08755071141f184236"
+"pg.ddl.alter-language.owner-to" = "acfbf90f78f787248bcdb3129e236be2a1edd98663405e2e532a8a0e6283b704"
+"pg.ddl.alter-language.rename-to" = "212e12c2884c2b481c458056ee5710d24cf60dc10730b0b5f528f9541afc71e8"
+"pg.ddl.alter-large-object" = "f44f700796daabce670e6e128da5c35d221ea27d6f3e38468cb0f341e5c4d5f1"
+"pg.ddl.alter-operator-class.owner-to" = "990851ba555c7522a5023a5f3ac8730f825974256a070ec5a9470485ac9a4977"
+"pg.ddl.alter-operator-class.rename-to" = "0078033da8ab0ce308e458d1c5ec196fb3ce7130d9791eccb674c779b35f58df"
+"pg.ddl.alter-operator-class.set-schema" = "639c700c9cb8c6e9885d3a040c7b5e015f7921d2c54b969e6c2bce45c971d998"
+"pg.ddl.alter-operator-family.add" = "ef3e62e3f194d69eb313e371b27cf6df73b820e5006e28c2eb765fbf1e7cc192"
+"pg.ddl.alter-operator-family.drop" = "465040d39024efb39cc6be0bcb372dda050d516f82eef7f8483aff4688f5a0ea"
+"pg.ddl.alter-operator-family.owner-to" = "e659fa0b81840c14c4e6878f8c9c44f9b88e21ae44dba7a4848ea2dd5ebc6e95"
+"pg.ddl.alter-operator-family.rename-to" = "0c5ffdc570eaf7ce4a511f2647d4f7befe76714b8f6c4f90afa9cd4cab2e4e4c"
+"pg.ddl.alter-operator-family.set-schema" = "a88cc8ce472ec46820611f99070fafa25cf8fcd7480c22497c11be8fef4dc932"
+"pg.ddl.alter-operator.owner-to" = "64ef3e8173c12ddbddb8f2bc7b5a57e4e8e0208d4c7879e46f10bc27fd6e2220"
+"pg.ddl.alter-operator.set" = "587ae01a45452d4af5485a19e3aeaab79718ced834b03b61073920215f4cd7dc"
+"pg.ddl.alter-operator.set-schema" = "de72a47c1426e82859dddd2ab7657107a79af1aa53163c4cb800a2bcf8968a70"
+"pg.ddl.alter-publication.add" = "a16514ff4f25c1194c6baed25863cdb958bed1058f602247dd572258ae21169e"
+"pg.ddl.alter-publication.drop" = "6b6d835acac3912695334efa5bf5a4a2a0a3705cc922ffaa13a6fe7147dafcb6"
+"pg.ddl.alter-publication.owner-to" = "dabc96067981d59a2d9361b52088b21cdd13d33587ce798652b15583874ec745"
+"pg.ddl.alter-publication.rename-to" = "63d9703c61bc8888579d1eb044e6f8a35426b044475e08f10d9b2203e892eef7"
+"pg.ddl.alter-publication.set-name-publication-object" = "8e28d87ce2413e05a32021e54e632f86161b106bf5be9970bdf4d7a6f71cbbda"
+"pg.ddl.alter-publication.set-name-publication-parameter" = "74b8c7f22ac5b7a9bf709285db335165f9bc886ea1a2bf841d628f6a485f1134"
+"pg.ddl.alter-rule" = "6f9bc70eaa15d312e4acacd86f75d25995e40063b70d68c23622160c57698db0"
+"pg.ddl.alter-schema.owner-to" = "ed370b07961c6da3c74fd4023d845835b9ff04643e599afabdb43179c3ba27cb"
+"pg.ddl.alter-schema.rename-to" = "2bf49104f6d29224ffb336ae9b85e8496142528fc40cf72e16034cb7b82a33f6"
+"pg.ddl.alter-server.name" = "36734fb1ed0619cb5c600e23b3fa6c4c4b9c29254de6f93c82e41acaa1a5487e"
+"pg.ddl.alter-server.owner-to" = "94b6e635588a8d97c88fb42b881ed8bc90fad08c397af669cdabd52b7deb894c"
+"pg.ddl.alter-server.rename-to" = "53fe754025e9cf38f1f013021f53b3f962cac3d7171bb79c9605841b52051758"
+"pg.ddl.alter-statistics.owner-to" = "90d3409781df4904fbebb27712f6f8925cec9f6b2346221c478fabab8b21ba8c"
+"pg.ddl.alter-statistics.rename-to" = "a55ba9ff7dfb3c3ca0a4e153b36405960665228e5b39b17c03d9eee83c0d3620"
+"pg.ddl.alter-statistics.set-schema" = "4e9c438b4c6ec65317837e74591e1cd7d4b93d864f4f132458b37c7151845a18"
+"pg.ddl.alter-statistics.set-statistics" = "b6f481fb7be3097849e4829efe343bc280ed17c170ca4578676938e4d09c434d"
+"pg.ddl.alter-subscription.add-publication" = "dafe1f8539db9220b5d5652513c704443aa3a390b0d63794688365ad66849d03"
+"pg.ddl.alter-subscription.connection" = "55dc634c04aa2b326f0ae5246bddbdd96b839aeaf46889763ab5efa727fceaf7"
+"pg.ddl.alter-subscription.disable" = "ff4ee70affa1d9d644da320f90099fd10d324428799d3a9e7d06c910f0c21a3a"
+"pg.ddl.alter-subscription.drop-publication" = "0b47ab5d54621d37b5aa046d76dd6ccdab18b2aaeddf2cc43d58bb9625256b29"
+"pg.ddl.alter-subscription.enable" = "9a1cc6316e44dd0bddbd8720e8c18039c3ddd74ac09c06980d01d56735540342"
+"pg.ddl.alter-subscription.owner-to" = "362880d4d28b8eadf15ee0cc2e4171ad8eacf1fad99c61e377d7d1e9daea224d"
+"pg.ddl.alter-subscription.refresh-publication" = "9a612f3e14f6da490cce6c8f830b1d2a9048acd01431029139d2494f631b4ef3"
+"pg.ddl.alter-subscription.rename-to" = "3b184a74b2aac0d979b2f41b6e8200150bedcbe71ac2fea0e16d20d3cc46aaae"
+"pg.ddl.alter-subscription.set" = "ca0ad5afbbbdb2355374f778e23b548d76db483a517cd3571477b2c16ff6e215"
+"pg.ddl.alter-subscription.set-publication" = "0cce08c829a33b78d6d8387dae9f2f46e15f80dfa636a1b8517f72d1a277c4c3"
+"pg.ddl.alter-subscription.skip" = "6abe5471a19afc1edb594c8bd11a329fdfde40e4871aaee72decc12627069f6f"
+"pg.ddl.alter-tablespace.owner-to" = "5f1adde87ae6f79f047199ef52f4500b92a76f9aeb82898dd4481db2de4c1e34"
+"pg.ddl.alter-tablespace.rename-to" = "83b8e517331fb3a089a7fe53e1d27d4035fc6813756296bacdd59055efca95e3"
+"pg.ddl.alter-tablespace.reset" = "0ca2769b178b8cdc94fea524aa328f1c8009988a5b7ab1bb7e300658352108b7"
+"pg.ddl.alter-tablespace.set" = "759b511755fe8b576b6194cdd44bd67516408e592f7dde7573cef48792cd1a75"
+"pg.ddl.alter-text-search-configuration.add-mapping-for-with" = "8414b19e74caf9613bd00eecc78353f9eecdc8bfd52a379167004a2e098e5c0b"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-replace" = "18649153cc2d1e5ef384651372fc418e9ac24b9252146dffcb5b23ba6f1d49bb"
+"pg.ddl.alter-text-search-configuration.alter-mapping-for-with" = "1809470efb29206c813a2761f15382d72e00b5765df7dc29a7f4aaaf5ccde377"
+"pg.ddl.alter-text-search-configuration.alter-mapping-replace-with" = "50594f5c8fbf384a1c0121f2d3aafe300d59837d2a24f46fea804e585e5ab2d8"
+"pg.ddl.alter-text-search-configuration.drop-mapping-for" = "6d2ac5b2b4354b1ede07363ca6cb054043541fd126e8aeb3579ca5bd437f6bec"
+"pg.ddl.alter-text-search-configuration.owner-to" = "9ed7bfe0e1892012359e2f643b11a14094b6a2d1241c2d47bcd2aa128ec0b34e"
+"pg.ddl.alter-text-search-configuration.rename-to" = "d2403729b6a8a237d57e77a275621fb6d6111072540b084ebe8f95e0ee05072b"
+"pg.ddl.alter-text-search-configuration.set-schema" = "d4514313d5f0e43c52037039e90f281fad682632746e24492dc9b0aeb4be4ab6"
+"pg.ddl.alter-text-search-dictionary.name-option" = "206661bbbc2548b949cf42e01644d9680002c338f42da43c72ee0f81ad1a0393"
+"pg.ddl.alter-text-search-dictionary.owner-to" = "514454cda49009534a7551d9afbdda5cf0c790d04a5cea955d7740d826cca0a6"
+"pg.ddl.alter-text-search-dictionary.rename-to" = "7893ea0ad86108ec65fa51fa26ab86276379891001b04fde9af0e04e2689fa18"
+"pg.ddl.alter-text-search-dictionary.set-schema" = "aea5b66dd9660d40bb9732418030800b3b05c36ddc1eb492db79a9f15e3678c0"
+"pg.ddl.alter-text-search-parser.rename-to" = "15f11e9311931f5e156d28618769bdbae74368b423181fd07163428d72099587"
+"pg.ddl.alter-text-search-parser.set-schema" = "f3d026dbd3423faf5f013bc050f58f49f62f6f3b3ddc51fa222bd41da1e55528"
+"pg.ddl.alter-text-search-template.rename-to" = "4dee96a5d0449b7fd07128e158016ac949e6892d51147dc46deeed7cd2503720"
+"pg.ddl.alter-text-search-template.set-schema" = "09fc2d10c25543afaeaaa87730987c548519da1b3566dddef73669852afa5631"
+"pg.ddl.alter-trigger.depends-on-extension" = "49bf1c8a943da3479d9123235f1ef676f20fc2b1446ee56a3f6cfcf2890e3fc1"
+"pg.ddl.alter-trigger.rename-to" = "f429a204765141ce130efdbbb46b8132f54c657554a79a206a8695511cf38d5a"
+"pg.ddl.alter-type.add-attribute" = "c736a0e5cc99f07359458f54b435b0b2f6f3aaa4ff2d76721b02a2e59155f1c2"
+"pg.ddl.alter-type.add-value" = "42bcf4f56de3b746acd14121fb6f1f926622299c9e16c74573225863b673402a"
+"pg.ddl.alter-type.alter-attribute-type" = "636ad5de13e5677c2d10933d1c103ecdbb4038e5a00030237b498ae992369d66"
+"pg.ddl.alter-type.drop-attribute" = "81b7e45c921fb03cb730d87717855b4df85807f3dfd443aa49996aa014ff1a48"
+"pg.ddl.alter-type.owner-to" = "c4a33113b9e60fb31ccc0a623911802047a3c9767117e076a29c4b657e2c9dfe"
+"pg.ddl.alter-type.rename-attribute-to" = "c6157363803e9a91fd3aa6f4c8e9981f9c2d75a9391de26259f3ced1a0a3eade"
+"pg.ddl.alter-type.rename-to" = "a030b7544342fda81b9054d7b0ec770e37fcdfac45302a07214c098b97d5c53a"
+"pg.ddl.alter-type.rename-value-to" = "ddd7a2e6525c60a32f42693aef6b3aec982c9a028312d9fb9db9db9b7d2e2055"
+"pg.ddl.alter-type.set" = "f9def7828dabf10f80acea7f8ea5751b9abd5b0171334b4c04b4446c66dc738c"
+"pg.ddl.alter-type.set-schema" = "0e7e48c145df00e8917acc29afd9525061ef6cc60db64edbe03f4b8acc3c6276"
