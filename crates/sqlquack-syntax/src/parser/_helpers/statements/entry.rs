@@ -1918,6 +1918,7 @@ impl Parser {
                 let procedure = self.parse_anonymous_procedure(&name)?;
                 has_procedure = true;
                 ctes.push(Cte {
+                    search_cycle: Vec::new(),
                     alias: name,
                     this: procedure,
                     columns,
@@ -1960,6 +1961,7 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
 
             ctes.push(Cte {
+                search_cycle: Vec::new(),
                 alias: name,
                 this: query,
                 columns,

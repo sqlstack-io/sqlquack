@@ -401,6 +401,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Union(Box::new(Union {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -448,6 +449,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Intersect(Box::new(Intersect {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -498,6 +500,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Except(Box::new(Except {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -999,6 +1002,7 @@ impl Parser {
         let table = if self.match_token(TokenType::Dot) {
             let second_name = self.expect_identifier_or_safe_keyword_with_quoted()?;
             TableRef {
+                sample_call: None,
                 name: second_name,
                 schema: Some(table_name),
                 catalog: None,
@@ -1060,6 +1064,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            column_targets: Vec::new(),
             table,
             columns,
             values,
@@ -1216,6 +1221,7 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 let table_name = self.expect_identifier_with_quoted()?;
                 TableRef {
+                    sample_call: None,
                     name: table_name,
                     schema: Some(second_name),
                     catalog: Some(first_name),
@@ -1238,6 +1244,7 @@ impl Parser {
                 }
             } else {
                 TableRef {
+                    sample_call: None,
                     name: second_name,
                     schema: Some(first_name),
                     catalog: None,
@@ -1273,6 +1280,7 @@ impl Parser {
                 if self.match_token(TokenType::Dot) {
                     let table_name = self.expect_identifier_with_quoted()?;
                     TableRef {
+                        sample_call: None,
                         name: table_name,
                         schema: Some(second_name),
                         catalog: Some(first_name),
@@ -1295,6 +1303,7 @@ impl Parser {
                     }
                 } else {
                     TableRef {
+                        sample_call: None,
                         name: second_name,
                         schema: Some(first_name),
                         catalog: None,
@@ -1353,6 +1362,7 @@ impl Parser {
                 None
             };
             table_joins.push(Join {
+                using_alias: None,
                 this: join_expr,
                 on: on_condition,
                 using: Vec::new(),

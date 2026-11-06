@@ -144,6 +144,8 @@ impl Parser {
         };
 
         Ok(Expression::Delete(Box::new(Delete {
+            using_items: Vec::new(),
+            using_joins: Vec::new(),
             table,
             hint,
             on_cluster,
@@ -645,6 +647,7 @@ impl Parser {
             };
 
             let insert_expr = Expression::Insert(Box::new(Insert {
+                column_targets: Vec::new(),
                 table: table_ref,
                 columns,
                 values,

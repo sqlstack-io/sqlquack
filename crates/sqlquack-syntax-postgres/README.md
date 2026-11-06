@@ -20,14 +20,7 @@ next top-level `;` is not checked further. `TREAT` is checked against the full g
 | --- | --- |
 | a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `DROP`, every `ALTER`, `GRANT` and `REVOKE`, and the utility and session statements listed under their own heading |
 | `treat` | `TREAT (… AS type)` |
-| `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
-| `set_operation_with_ties` | `FETCH … WITH TIES` on a set operation |
-| `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |
-| `tablesample` | `TABLESAMPLE method (…) [REPEATABLE (…)]` |
-| `join_using_alias`, `joined_table_column_aliases` | `USING (…) AS alias`, column aliases on a parenthesized join |
-| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` from anything but a row of as many items in `ON CONFLICT DO UPDATE` or a `MERGE` update |
-| `index_element_collate`, `index_element_opclass` | `COLLATE` and operator classes in an `ON CONFLICT` target |
-| `delete_using_non_table` | `DELETE … USING` with a join, subquery or function |
+| `joined_table_column_aliases` | column aliases on a parenthesized join |
 
 ## Lossy mappings
 
@@ -204,8 +197,26 @@ part of a `MERGE` insert. `RETURNING WITH (OLD AS o, NEW AS n)` is `returning_al
 `(OLD|NEW, alias)` in order. `WHERE CURRENT OF c` is `current_of` on `Update` and `Delete`, with no
 `where_clause`. An `UPDATE` whose `SET (a, b) = source` takes anything but a row of as many items
 keeps its whole SET list in `assignments`, each `(targets, source)` in order, and leaves `set`
-empty. `COPY … FROM … WHERE` is `CopyStmt.where_clause`. `FOR UPDATE`-style locking after a set
-operation is the operation's `locks`.
+empty. A SET target or `INSERT` column with a subfield or subscript, such as `a.b` or `a[1]`, is
+the column under its indirection; any such target sends the SET list to `assignments`, and an
+`INSERT` column list to `column_targets`, leaving `columns` empty. In `ON CONFLICT DO UPDATE` and a
+`MERGE` update the SET list is `col = value` items, or the `(targets, source)` list whenever
+`UPDATE` would use `assignments`. A conflict target column with `COLLATE` or an operator class is an
+`INDEX ELEMENT` call of the column, `(COLLATE, name)` and `(OPCLASS, name[, (options)])`.
+`DELETE … USING` holding anything but plain tables keeps the list in `using_items` and its joins in
+`using_joins`, leaving `using` empty. `COPY … FROM … WHERE` is `CopyStmt.where_clause`. `FOR
+UPDATE`-style locking after a set operation is the operation's `locks`, and `FETCH … WITH TIES` its
+`with_ties`.
+
+`TABLESAMPLE method (args) [REPEATABLE (seed)]` is the table's `sample_call`, a `TABLESAMPLE` call
+of the method name and its arguments with `(REPEATABLE, seed)`. `ROWS FROM (f(), g() AS (a int))`
+is a `ROWS FROM` call of the functions, with `WITH ORDINALITY` as its option. A column definition
+list, `f() AS x(a int)` or `f() AS (a int)`, makes the function a `COLUMN DEFINITIONS` call of the
+function and its alias, holding each `(name, type[, (COLLATE, name)])`. `WITH ORDINALITY` on a
+special call is a `WITH ORDINALITY` call of it. `JOIN … USING (c) AS j` is the join's
+`using_alias`. A CTE's `SEARCH {DEPTH|BREADTH} FIRST BY cols SET col` and `CYCLE cols SET col [TO v
+DEFAULT d] USING col` are its `search_cycle` calls, in that order; `CYCLE` without `TO` writes out
+gram.y's `TO true DEFAULT false`.
 
 `IS [NOT] JSON [VALUE|ARRAY|OBJECT|SCALAR] [WITH|WITHOUT UNIQUE [KEYS]]` is `IsJson`, with `VALUE`
 read as no type and `WITHOUT UNIQUE` as none; `IS [NOT] [form] NORMALIZED` is the `is_normalized`

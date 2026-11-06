@@ -114,6 +114,9 @@ pub struct Insert {
     /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub returning_aliases: Vec<Expression>,
+    /// PostgreSQL: the column list when a column has a subfield or subscript; `columns` is empty
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub column_targets: Vec<Expression>,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -232,6 +235,12 @@ pub struct Delete {
     /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub returning_aliases: Vec<Expression>,
+    /// PostgreSQL: the USING items when any is not a plain table; `using` is then empty
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub using_items: Vec<Expression>,
+    /// PostgreSQL: the joins of the USING list, with `using_items`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub using_joins: Vec<Join>,
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)

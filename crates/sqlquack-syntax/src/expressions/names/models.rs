@@ -277,6 +277,9 @@ pub struct TableRef {
     /// ClickHouse FINAL modifier: forces final aggregation for MergeTree tables
     #[serde(default)]
     pub final_: bool,
+    /// PostgreSQL `TABLESAMPLE method (args) [REPEATABLE (seed)]`, as a `KeywordCall`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sample_call: Option<Box<Expression>>,
     /// TABLESAMPLE clause attached to this table reference (DuckDB, BigQuery)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub table_sample: Option<Box<Sample>>,
@@ -306,6 +309,7 @@ pub struct TableRef {
 impl TableRef {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
+            sample_call: None,
             name: Identifier::new(name),
             schema: None,
             catalog: None,
@@ -350,6 +354,7 @@ impl TableRef {
     /// Create from an Identifier, preserving the quoted flag
     pub fn from_identifier(name: Identifier) -> Self {
         Self {
+            sample_call: None,
             name,
             schema: None,
             catalog: None,

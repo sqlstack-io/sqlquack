@@ -204,23 +204,6 @@ impl<'sql> Parser<'sql> {
         None
     }
 
-    /// Skips a balanced `( ... )`, for a construct recorded as a gap.
-    pub(crate) fn skip_parenthesized(&mut self) -> Parsing<()> {
-        if !self.is_char('(') {
-            return Err(self.error());
-        }
-        match self.closing(self.at) {
-            Some(close) => {
-                self.at = close + 1;
-                Ok(())
-            }
-            None => {
-                self.at = self.tokens.len();
-                Err(self.error())
-            }
-        }
-    }
-
     pub(crate) fn char_at(&self, offset: usize, character: char) -> bool {
         self.peek_at(offset)
             .is_some_and(|token| token.kind == TokenKind::Char(character))
