@@ -26,12 +26,12 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_preserve_collapsed"
-description = "A 100 m square with a 10 km tolerance and preserve_collapsed TRUE, which the page says keeps it; the page does not say; the recording decides for FALSE. Catches: the square dropped despite TRUE"
+description = "A 100 m square with a 10 km tolerance: with preserve_collapsed TRUE the page says it is retained, so it stays a polygon (dimension 2); with FALSE the page example reduces a too-small shape to a lower dimension, and the recording decides which. Catches: the square collapsed despite TRUE, or TRUE ignored"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'POLYGON((0 0,0.001 0,0.001 0.001,0 0.001,0 0))'"],
 ]
-query = "SELECT ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, TRUE) IS NOT NULL AS kept, ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, FALSE) IS NULL AS dropped FROM input"
+query = "SELECT ST_DIMENSION(ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, TRUE)) AS kept_dim, ST_DIMENSION(ST_SIMPLIFY(TO_GEOGRAPHY(v), 10000, FALSE)) AS collapsed_dim FROM input"
 order = "ordered"
 tags = ["type-combination"]
 
