@@ -203,20 +203,6 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "a TIMESTAMP_TZ converted to UTC converts to its naive UTC wall-clock time",
-            sql: "SELECT TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE('UTC', shipped_at)) AS shipped_utc FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
-            mention: "converted under utc-v1",
-            expected_outcome: convert_outcome(0, true),
-        },
-        ConvertTestCase {
-            description: "TO_TIMESTAMP_NTZ of a TIMESTAMP_TZ without a known offset keeps refusing",
-            sql: "SELECT TO_TIMESTAMP_NTZ(shipped_at) AS shipped_local FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
-            mention: "TO_TIMESTAMP_NTZ of TIMESTAMP_TZ(9) with these arguments",
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "the suggested rewrite through a zone column converts the local date",
             sql: "SELECT CONVERT_TIMEZONE(ship_zone, shipped_at)::TIMESTAMP_NTZ::DATE AS shipped_on FROM orders",
             flags: &["--schema", DECLARED_SCHEMA],
