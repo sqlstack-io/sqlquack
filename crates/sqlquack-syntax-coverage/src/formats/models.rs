@@ -312,7 +312,7 @@ pub struct Receipt {
     /// Format `/2` only: the engine's own code for the error that decided the phase, if any.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub engine_code: Option<String>,
-    /// Format `/2` only: which pass decided the syntax verdict, `do_block` or `sql_function`.
+    /// Format `/2` only: the pass deciding the syntax verdict (do_block, sql_function, whole_text).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parser_check: Option<String>,
     /// Format `/2` only: the parse-only pass's code; none when it parsed or was not judged.

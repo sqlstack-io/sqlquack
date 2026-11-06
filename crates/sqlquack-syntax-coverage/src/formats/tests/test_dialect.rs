@@ -77,6 +77,22 @@ fn given_a_dialect_file_when_loading_then_the_root_loads_as_that_dialect() {
             expected_engine_versions: &[Some("18.6")],
         },
         DialectLoadTestCase {
+            description: "a Postgres receipt judged on the whole text of a multi-statement case",
+            tree: |root| {
+                postgres_tree(root);
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"parser_check\":\"do_block\"",
+                    "\"parser_check\":\"whole_text\"",
+                );
+            },
+            expected_dialect: "postgres",
+            expected_families: &POSTGRES_FAMILIES,
+            expected_first_query_form: "pg.query.select",
+            expected_engine_versions: &[Some("18.6")],
+        },
+        DialectLoadTestCase {
             description: "a Postgres case and receipt captured in autocommit in a throwaway database",
             tree: |root| {
                 postgres_tree(root);
