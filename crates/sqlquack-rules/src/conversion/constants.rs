@@ -1981,3 +1981,12 @@ pub(crate) const CORRELATED_DERIVED: &str =
 pub(crate) const AMBIGUOUS_SUFFIX: &str = "is ambiguous";
 /// A JSON-held VARIANT as a sort key, in ARRAY_SORT's recorded order of kinds.
 pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";
+
+/// Aggregates whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_AGGREGATES: &[&str] = &["COUNT", "SUM", "MAX", "AVG"];
+/// Scalar functions whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_FUNCTIONS: &[&str] = &["LOWER", "UPPER", "COALESCE"];
+/// Arithmetic whose unaliased column names, a column then a number, receipts record.
+pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"];
+/// The cast target spellings whose unaliased column names receipts record.
+pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];

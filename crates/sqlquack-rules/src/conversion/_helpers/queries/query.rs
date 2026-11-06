@@ -2,7 +2,9 @@
 
 use serde_json::{Map, Value, json};
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::diagnostics::constants::UNALIASED_OUTPUT_NAME_CONSTRUCT;
+use sqlquack_core::diagnostics::constants::{
+    REPEATED_RESULT_NAME, UNALIASED_OUTPUT_NAME_CONSTRUCT,
+};
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::main::missing::missing;
@@ -20,6 +22,7 @@ use crate::conversion::_helpers::queries::clauses::{
 };
 use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::queries::hierarchy::hierarchy;
+use crate::conversion::_helpers::queries::output_names::recorded_name_shape;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
 use crate::conversion::_helpers::support::scope::read_column;
@@ -630,7 +633,10 @@ fn convert_projection(
                 .locator
                 .source_text(item)
                 .or_else(|| literal_text(item));
-            match written.and_then(output_name) {
+            match written
+                .filter(|text| recorded_name_shape(item, text))
+                .and_then(output_name)
+            {
                 Some(name) => {
                     let _rule = site.context.log.rule(ALIAS);
                     Ok(vec![(Some(name), emitted)])
@@ -651,13 +657,19 @@ fn convert_projection(
     }
 }
 
-/// Snowflake's name for an unaliased item written as ASCII `text` without comments: it upper-cased.
+/// Snowflake's name for an unaliased item written as `text` in recorded spacing: it upper-cased.
 fn output_name(text: String) -> Option<String> {
     let recorded = !text.is_empty()
         && text.is_ascii()
         && text.trim() == text
         && !text.contains("--")
-        && !text.contains("/*");
+        && !text.contains("/*")
+        && !text.contains(['\t', '\r'])
+        && !text.contains(" (")
+        && text.matches('\n').count() <= 1
+        && text
+            .split('\n')
+            .all(|line| !line.trim_start_matches(' ').contains("  "));
     recorded.then(|| text.to_ascii_uppercase())
 }
 
@@ -831,7 +843,7 @@ pub(crate) fn require_distinct_names(columns: &[ColumnSpec]) -> Result<(), Refus
             .any(|earlier| earlier.name.eq_ignore_ascii_case(&column.name))
         {
             return Err(unresolved(format!(
-                "the result column name `{}` repeats, possibly differing only in case",
+                "the result column name `{}` {REPEATED_RESULT_NAME}",
                 column.name
             )));
         }
