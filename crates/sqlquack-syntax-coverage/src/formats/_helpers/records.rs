@@ -59,14 +59,14 @@ fn version_problems(receipt: &Receipt) -> Vec<String> {
                 && receipt
                     .parser_check
                     .as_deref()
-                    .is_some_and(|check| ["do_block", "live_only"].contains(&check))
+                    .is_some_and(|check| ["do_block", "sql_function"].contains(&check))
         }
     };
     match valid {
         true => Vec::new(),
         false => vec![format!(
             "receipt {id}: format /1 carries warehouse_version alone; /2 carries engine, \
-             engine_version, engine_image_sha256 and parser_check (do_block or live_only) instead"
+             engine_version, engine_image_sha256 and parser_check (do_block or sql_function) instead"
         )],
     }
 }

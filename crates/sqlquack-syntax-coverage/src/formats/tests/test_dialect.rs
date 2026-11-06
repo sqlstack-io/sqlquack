@@ -45,6 +45,22 @@ fn given_a_dialect_file_when_loading_then_the_root_loads_as_that_dialect() {
             expected_engine_versions: &[Some("18.6"), Some("18.6")],
         },
         DialectLoadTestCase {
+            description: "a Postgres receipt whose parse-only pass was a SQL function body",
+            tree: |root| {
+                postgres_tree(root);
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"parser_check\":\"do_block\"",
+                    "\"parser_check\":\"sql_function\"",
+                );
+            },
+            expected_dialect: "postgres",
+            expected_families: &POSTGRES_FAMILIES,
+            expected_first_query_form: "pg.query.select",
+            expected_engine_versions: &[Some("18.6")],
+        },
+        DialectLoadTestCase {
             description: "a Postgres case and receipt captured in autocommit in a throwaway database",
             tree: |root| {
                 postgres_tree(root);
@@ -136,6 +152,17 @@ fn given_a_dialect_fault_when_loading_then_the_problem_is_named() {
             description: "a /2 receipt without its parser check",
             mutate: |root| {
                 let line = engine_receipt_line().replace("\"parser_check\":\"do_block\",", "");
+                write(root, "receipts/first.jsonl", &format!("{line}\n"));
+            },
+            expected_problem: "/2 carries engine",
+        },
+        FormatFaultTestCase {
+            description: "a /2 receipt from the retired live-only parser check",
+            mutate: |root| {
+                let line = engine_receipt_line().replace(
+                    "\"parser_check\":\"do_block\"",
+                    "\"parser_check\":\"live_only\"",
+                );
                 write(root, "receipts/first.jsonl", &format!("{line}\n"));
             },
             expected_problem: "/2 carries engine",
