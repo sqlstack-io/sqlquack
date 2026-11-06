@@ -1,0 +1,411 @@
+{
+ "schema": "corpora/everyday/schema.json @ wip/battle-corpus 6622ffec, as empty CTEs (WITH <table> AS (SELECT CAST(NULL AS <type>) AS <col>, ... WHERE FALSE)) before each query",
+ "screen": "EXPLAIN USING TEXT per query; compiling queries then executed on the empty inputs",
+ "results": [
+  {
+   "query": 1,
+   "sql": "SELECT order_id, FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 2,
+   "sql": "SELECT order_id FROM orders WHERE status == 'shipped'",
+   "compiles": false,
+   "errno": 2139,
+   "sqlstate": "02000",
+   "message": "SQL compilation error: Unknown function \"==\"."
+  },
+  {
+   "query": 3,
+   "sql": "SELECT order_id FROM orders;;",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 4,
+   "sql": "SELECT order_id FROM orders LIMIT",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 5,
+   "sql": "SELECT order_id FROM orders o JOIN customers c",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 6,
+   "sql": "SELECT order_id FROM orders WHERE status IN 'shipped'",
+   "compiles": false,
+   "errno": 1003,
+   "sqlstate": "42000",
+   "message": "SQL compilation error: syntax error line 1 at position 2,023 unexpected ''shipped''."
+  },
+  {
+   "query": 7,
+   "sql": "SELECT order_id FROM orders WHERE total >> 10",
+   "compiles": false,
+   "errno": 1003,
+   "sqlstate": "42000",
+   "message": "SQL compilation error: syntax error line 1 at position 2,019 unexpected '>>'."
+  },
+  {
+   "query": 8,
+   "sql": "SELECT * FROM orders TOP 5",
+   "compiles": false,
+   "errno": 1003,
+   "sqlstate": "42000",
+   "message": "SQL compilation error: syntax error line 1 at position 2,004 unexpected '5'."
+  },
+  {
+   "query": 9,
+   "sql": "SELECT ARRAY_CONTAINS('urgent'::VARIANT, tags) AS urgent FROM tickets",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "URGENT",
+     "nullable": true,
+     "precision": null,
+     "scale": null,
+     "type_code": 13,
+     "type_name": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "query": 10,
+   "sql": "SELECT COLLATE(email, 'en-ci') AS e FROM customers",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": 134217728,
+     "name": "E",
+     "nullable": true,
+     "precision": null,
+     "scale": null,
+     "type_code": 2,
+     "type_name": "TEXT"
+    }
+   ]
+  },
+  {
+   "query": 11,
+   "sql": "SELECT COUNT(*) FILTER (WHERE status = 'shipped') AS shipped FROM orders",
+   "compiles": false,
+   "errno": 1003,
+   "sqlstate": "42000",
+   "message": "SQL compilation error: syntax error line 1 at position 2,002 unexpected '('."
+  },
+  {
+   "query": 12,
+   "sql": "SELECT DATE_PART('dow', ordered_at) AS dow FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "DOW",
+     "nullable": true,
+     "precision": 2,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 13,
+   "sql": "SELECT DATE_TRUNC(month, ordered_at) AS month FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "MONTH",
+     "nullable": true,
+     "precision": 0,
+     "scale": 9,
+     "type_code": 8,
+     "type_name": "TIMESTAMP_NTZ"
+    }
+   ]
+  },
+  {
+   "query": 14,
+   "sql": "SELECT LENGTH(order_id, 2) AS x FROM orders",
+   "compiles": false,
+   "errno": 939,
+   "sqlstate": "22023",
+   "message": "SQL compilation error: error line 1 at position 1,986 too many arguments for function [LENGTH(ORDERS.ORDER_ID, 2)] expected 1, got 2"
+  },
+  {
+   "query": 15,
+   "sql": "SELECT customer_id, email FROM customers UNION ALL BY NAME SELECT email, customer_id FROM customers",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "CUSTOMER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    },
+    {
+     "internal_size": 134217728,
+     "name": "EMAIL",
+     "nullable": true,
+     "precision": null,
+     "scale": null,
+     "type_code": 2,
+     "type_name": "TEXT"
+    }
+   ]
+  },
+  {
+   "query": 16,
+   "sql": "SELECT o.order_id FROM orders o ASOF JOIN payments p MATCH_CONDITION (o.ordered_at >= p.paid_at) ON o.order_id = p.order_id",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 17,
+   "sql": "SELECT order_id FROM orders FETCH FIRST 10 ROWS ONLY",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 18,
+   "sql": "SELECT order_id FROM orders WHERE (customer_id, status) IN (SELECT customer_id, 'shipped' FROM customers)",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 19,
+   "sql": "SELECT order_id FROM orders WHERE ordered_at > 5",
+   "compiles": false,
+   "errno": 1038,
+   "sqlstate": "22023",
+   "message": "SQL compilation error: Can not convert parameter '5' of type [NUMBER(1,0)] into expected type [TIMESTAMP_NTZ(9)]"
+  },
+  {
+   "query": 20,
+   "sql": "SELECT order_id FROM orders o, orders o",
+   "compiles": false,
+   "errno": 2027,
+   "sqlstate": "42601",
+   "message": "SQL compilation error: duplicate alias 'O'"
+  },
+  {
+   "query": 21,
+   "sql": "SELECT order_id id, total amount FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    },
+    {
+     "internal_size": null,
+     "name": "AMOUNT",
+     "nullable": true,
+     "precision": 12,
+     "scale": 2,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 22,
+   "sql": "SELECT order_id, HASH_AGG(*) AS h FROM orders GROUP BY order_id",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    },
+    {
+     "internal_size": null,
+     "name": "H",
+     "nullable": false,
+     "precision": 19,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 23,
+   "sql": "SELECT order_id, discount IS DISTINCT FROM 0 AS has_discount FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    },
+    {
+     "internal_size": null,
+     "name": "HAS_DISCOUNT",
+     "nullable": true,
+     "precision": null,
+     "scale": null,
+     "type_code": 13,
+     "type_name": "BOOLEAN"
+    }
+   ]
+  },
+  {
+   "query": 24,
+   "sql": "SELECT order_id, total + 'abc' AS x FROM orders",
+   "compiles": true,
+   "outcome": "rows",
+   "error": null,
+   "columns": [
+    {
+     "internal_size": null,
+     "name": "ORDER_ID",
+     "nullable": true,
+     "precision": 38,
+     "scale": 0,
+     "type_code": 0,
+     "type_name": "FIXED"
+    },
+    {
+     "internal_size": null,
+     "name": "X",
+     "nullable": true,
+     "precision": 19,
+     "scale": 5,
+     "type_code": 0,
+     "type_name": "FIXED"
+    }
+   ]
+  },
+  {
+   "query": 25,
+   "sql": "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p",
+   "compiles": false,
+   "errno": 904,
+   "sqlstate": "42000",
+   "message": "SQL compilation error: error line 1 at position 1,996 invalid identifier 'TOTAL'"
+  }
+ ]
+}

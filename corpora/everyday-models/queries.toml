@@ -1,0 +1,6615 @@
+# dbt-style Snowflake models, over schema.json: staging, CTE chains, incremental filters, QUALIFY
+# deduplication, FLATTEN, MERGE and other materialization DML, date spines, window frames,
+# PIVOT/UNPIVOT, marts, snapshots and the SQL generic tests compile to. The fields are those of
+# corpora/everyday/queries.toml: `expect` under the built-in default policy, `expect_repository`
+# under the repository's sqlquack.toml with a UTC session, `snowflake` for Snowflake's recorded
+# verdict from snowflake-receipts.json, and `uncertain` for a query whose validity is not recorded.
+
+[[query]]
+category = "dbt_staging"
+sql = '''with source as (
+    select * from raw_orders
+),
+renamed as (
+    select
+        id as order_id,
+        user_id as customer_id, order_date, status
+    from source
+)
+select * from renamed
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''with source as (
+    select * from raw_customers
+),
+renamed as (
+    select
+        id as customer_id,
+        first_name, last_name, email
+    from source
+)
+select * from renamed
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''with source as (
+    select * from raw_payments
+),
+renamed as (
+    select
+        id as payment_id,
+        orderid as order_id, paymentmethod as payment_method
+    from source
+)
+select * from renamed
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as payment_id,
+    orderid as order_id,
+    paymentmethod as payment_method,
+    amount / 100 as amount
+from raw_payments'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as payment_id,
+    orderid as order_id,
+    paymentmethod as payment_method,
+    amount / 100.0 as amount,
+    created as created_at
+from raw_payments
+where status = 'success''''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    user_id as customer_id,
+    order_date,
+    lower(status) as status,
+    amount_cents / 100 as amount
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    trim(first_name) as first_name,
+    trim(last_name) as last_name,
+    lower(trim(email)) as email
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    initcap(first_name) as first_name,
+    initcap(last_name) as last_name,
+    nullif(trim(email), '') as email,
+    updated_at
+from raw_customers'''
+expect = "refused SQ0008 fn:INITCAP"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    user_id as customer_id,
+    order_date::date as order_date,
+    coalesce(status, 'unknown') as status,
+    amount_cents::number(12,2) / 100 as amount,
+    updated_at
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    user_id as customer_id,
+    cast(order_date as date) as order_date,
+    status,
+    cast(amount_cents as number(38,2)) / 100 as amount
+from raw_orders
+where status is not null'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    user_id as customer_id,
+    order_date,
+    status,
+    amount_cents,
+    _loaded_at
+from raw_orders
+where _loaded_at >= dateadd(day, -3, current_timestamp())'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 fn:DATEADD"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    status in ('returned', 'return_pending') as is_returned,
+    status = 'completed' as is_completed
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    case status
+        when 'placed' then 1
+        when 'shipped' then 2
+        when 'completed' then 3
+        when 'return_pending' then 4
+        when 'returned' then 5
+    end as status_rank
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    md5(cast(coalesce(cast(id as varchar), '_dbt_utils_surrogate_key_null_') as varchar)) as order_key,
+    id as order_id
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    md5(cast(coalesce(cast(orderid as varchar), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(paymentmethod as varchar), '_dbt_utils_surrogate_key_null_') as varchar)) as payment_key,
+    orderid as order_id,
+    paymentmethod as payment_method
+from raw_payments'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    md5(concat_ws('|', coalesce(to_varchar(id), ''), coalesce(email, ''))) as customer_key,
+    id as customer_id
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    sha2(lower(trim(email)), 256) as email_hash,
+    id as customer_id
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    split_part(email, '@', 2) as email_domain
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    regexp_replace(email, '\\s+', '') as email
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    first_name || ' ' || last_name as full_name
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as customer_id,
+    concat(first_name, ' ', last_name) as full_name
+from raw_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    try_to_number(to_varchar(amount_cents)) as amount_cents
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    to_date(order_date) as order_date,
+    to_timestamp_ntz(updated_at) as updated_at
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_local
+from raw_orders'''
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    raw:id::varchar as event_id,
+    raw:customer_id::number as customer_id,
+    raw:type::varchar as event_type,
+    raw:occurred_at::timestamp_ntz as occurred_at,
+    _loaded_at
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    raw:id::string as event_id,
+    raw:properties:page::string as page,
+    raw:properties:referrer::string as referrer
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    raw['id']::varchar as event_id,
+    raw['properties']['page']::varchar as page
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    get_path(raw, 'properties.page')::varchar as page,
+    raw:id::varchar as event_id
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    raw:id::varchar as event_id,
+    try_to_timestamp(raw:occurred_at::varchar) as occurred_at
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    raw:id::varchar as event_id,
+    coalesce(raw:revenue::number(12,2), 0) as revenue
+from raw_events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as payment_id,
+    orderid as order_id,
+    iff(paymentmethod in ('credit_card', 'debit_card'), 'card', paymentmethod) as payment_type
+from raw_payments'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as payment_id,
+    orderid as order_id,
+    decode(paymentmethod, 'credit_card', 'card', 'bank_transfer', 'bank', 'other') as payment_type
+from raw_payments'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    session_id,
+    customer_id,
+    started_at,
+    attributes:utm_source::varchar as utm_source,
+    attributes:utm_campaign::varchar as utm_campaign
+from web_sessions'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    subscription_id,
+    customer_id,
+    upper(plan) as plan,
+    mrr,
+    started_at::date as started_on,
+    cancelled_at::date as cancelled_on
+from subscriptions'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    rate_date,
+    upper(currency) as currency,
+    rate_to_usd
+from fx_rates
+where rate_to_usd > 0'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select * exclude (_loaded_at)
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select * rename (id as order_id, user_id as customer_id)
+from raw_orders'''
+expect = "refused SQ0002 node:star"
+expect_repository = "refused SQ0002 node:star"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select * exclude (_loaded_at) rename (id as customer_id)
+from raw_customers'''
+expect = "refused SQ0002 node:star"
+expect_repository = "refused SQ0002 node:star"
+uncertain = true
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    user_id as customer_id,
+    current_timestamp() as _dbt_loaded_at
+from raw_orders'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    id as order_id,
+    '{{ invocation_id }}' as invocation_id
+from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with customers as (
+    select * from stg_customers
+),
+orders as (
+    select * from stg_orders
+),
+customer_orders as (
+    select
+        customer_id,
+        min(order_date) as first_order,
+        max(order_date) as most_recent_order,
+        count(order_id) as number_of_orders
+    from orders
+    group by customer_id
+),
+final as (
+    select
+        customers.customer_id,
+        customers.first_name,
+        customers.last_name,
+        customer_orders.first_order,
+        customer_orders.most_recent_order,
+        coalesce(customer_orders.number_of_orders, 0) as number_of_orders
+    from customers
+    left join customer_orders using (customer_id)
+)
+select * from final'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with customers as (
+    select * from stg_customers
+),
+orders as (
+    select * from stg_orders
+),
+payments as (
+    select * from stg_payments
+),
+customer_orders as (
+    select
+        customer_id,
+        min(order_date) as first_order,
+        max(order_date) as most_recent_order,
+        count(order_id) as number_of_orders
+    from orders
+    group by customer_id
+),
+customer_payments as (
+    select
+        orders.customer_id,
+        sum(amount) as total_amount
+    from payments
+    left join orders on payments.order_id = orders.order_id
+    group by orders.customer_id
+),
+final as (
+    select
+        customers.customer_id,
+        customers.first_name,
+        customers.last_name,
+        customer_orders.first_order,
+        customer_orders.most_recent_order,
+        customer_orders.number_of_orders,
+        customer_payments.total_amount as customer_lifetime_value
+    from customers
+    left join customer_orders on customers.customer_id = customer_orders.customer_id
+    left join customer_payments on customers.customer_id = customer_payments.customer_id
+)
+select * from final'''
+expect = "refused SQ0004 statement"
+expect_repository = "refused SQ0004 statement"
+snowflake = "rejects 2028"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+),
+payments as (
+    select * from stg_payments
+),
+order_payments as (
+    select
+        order_id,
+        sum(case when payment_method = 'credit_card' then amount else 0 end) as credit_card_amount,
+        sum(case when payment_method = 'coupon' then amount else 0 end) as coupon_amount,
+        sum(case when payment_method = 'bank_transfer' then amount else 0 end) as bank_transfer_amount,
+        sum(case when payment_method = 'gift_card' then amount else 0 end) as gift_card_amount,
+        sum(amount) as total_amount
+    from payments
+    group by order_id
+),
+final as (
+    select
+        orders.order_id,
+        orders.customer_id,
+        orders.order_date,
+        orders.status,
+        order_payments.credit_card_amount,
+        order_payments.coupon_amount,
+        order_payments.bank_transfer_amount,
+        order_payments.gift_card_amount,
+        order_payments.total_amount as amount
+    from orders
+    left join order_payments on orders.order_id = order_payments.order_id
+)
+select * from final'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from orders
+),
+aggregated as (
+    select
+        customer_id,
+        count(*) as row_count,
+        sum(total) as total_total
+    from source
+    group by customer_id
+)
+select * from aggregated
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from orders
+),
+filtered as (
+    select * from source
+    where total is not null
+),
+aggregated as (
+    select
+        customer_id,
+        count(*) as row_count,
+        avg(total) as avg_total,
+        max(total) as max_total
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from orders
+),
+daily as (
+    select
+        date_trunc('day', ordered_at) as day,
+        customer_id,
+        sum(total) as daily_total
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        customer_id,
+        daily_total,
+        sum(daily_total) over (partition by customer_id order by day) as cumulative_total
+    from daily
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from orders
+),
+monthly as (
+    select
+        date_trunc(month, ordered_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from payments
+),
+aggregated as (
+    select
+        method,
+        count(*) as row_count,
+        sum(amount) as total_amount
+    from source
+    group by method
+)
+select * from aggregated
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from payments
+),
+filtered as (
+    select * from source
+    where amount is not null
+),
+aggregated as (
+    select
+        method,
+        count(*) as row_count,
+        avg(amount) as avg_amount,
+        max(amount) as max_amount
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from payments
+),
+daily as (
+    select
+        date_trunc('day', paid_at) as day,
+        method,
+        sum(amount) as daily_amount
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        method,
+        daily_amount,
+        sum(daily_amount) over (partition by method order by day) as cumulative_amount
+    from daily
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from payments
+),
+monthly as (
+    select
+        date_trunc(month, paid_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_orders
+),
+aggregated as (
+    select
+        status,
+        count(*) as row_count,
+        sum(amount) as total_amount
+    from source
+    group by status
+)
+select * from aggregated
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_orders
+),
+filtered as (
+    select * from source
+    where amount is not null
+),
+aggregated as (
+    select
+        status,
+        count(*) as row_count,
+        avg(amount) as avg_amount,
+        max(amount) as max_amount
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_orders
+),
+daily as (
+    select
+        date_trunc('day', updated_at) as day,
+        status,
+        sum(amount) as daily_amount
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        status,
+        daily_amount,
+        sum(daily_amount) over (partition by status order by day) as cumulative_amount
+    from daily
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from stg_orders
+),
+monthly as (
+    select
+        date_trunc(month, updated_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_payments
+),
+aggregated as (
+    select
+        payment_method,
+        count(*) as row_count,
+        sum(amount) as total_amount
+    from source
+    group by payment_method
+)
+select * from aggregated
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_payments
+),
+filtered as (
+    select * from source
+    where amount is not null
+),
+aggregated as (
+    select
+        payment_method,
+        count(*) as row_count,
+        avg(amount) as avg_amount,
+        max(amount) as max_amount
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from stg_payments
+),
+daily as (
+    select
+        date_trunc('day', paid_at) as day,
+        payment_method,
+        sum(amount) as daily_amount
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        payment_method,
+        daily_amount,
+        sum(daily_amount) over (partition by payment_method order by day) as cumulative_amount
+    from daily
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from stg_payments
+),
+monthly as (
+    select
+        date_trunc(month, paid_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from subscriptions
+),
+aggregated as (
+    select
+        plan,
+        count(*) as row_count,
+        sum(mrr) as total_mrr
+    from source
+    group by plan
+)
+select * from aggregated
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from subscriptions
+),
+filtered as (
+    select * from source
+    where mrr is not null
+),
+aggregated as (
+    select
+        plan,
+        count(*) as row_count,
+        avg(mrr) as avg_mrr,
+        max(mrr) as max_mrr
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from subscriptions
+),
+daily as (
+    select
+        date_trunc('day', started_at) as day,
+        plan,
+        sum(mrr) as daily_mrr
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        plan,
+        daily_mrr,
+        sum(daily_mrr) over (partition by plan order by day) as cumulative_mrr
+    from daily
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from subscriptions
+),
+monthly as (
+    select
+        date_trunc(month, started_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from order_items
+),
+aggregated as (
+    select
+        product_id,
+        count(*) as row_count,
+        sum(quantity) as total_quantity
+    from source
+    group by product_id
+)
+select * from aggregated
+'''
+expect = "refused SQ0008 fn:SUM"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from order_items
+),
+filtered as (
+    select * from source
+    where quantity is not null
+),
+aggregated as (
+    select
+        product_id,
+        count(*) as row_count,
+        avg(quantity) as avg_quantity,
+        max(quantity) as max_quantity
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "refused SQ0008 fn:AVG"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from inventory_snapshots
+),
+aggregated as (
+    select
+        warehouse,
+        count(*) as row_count,
+        sum(on_hand) as total_on_hand
+    from source
+    group by warehouse
+)
+select * from aggregated
+'''
+expect = "refused SQ0008 fn:SUM"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from inventory_snapshots
+),
+filtered as (
+    select * from source
+    where on_hand is not null
+),
+aggregated as (
+    select
+        warehouse,
+        count(*) as row_count,
+        avg(on_hand) as avg_on_hand,
+        max(on_hand) as max_on_hand
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "refused SQ0008 fn:AVG"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from web_sessions
+),
+aggregated as (
+    select
+        device,
+        count(*) as row_count,
+        sum(page_views) as total_page_views
+    from source
+    group by device
+)
+select * from aggregated
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from web_sessions
+),
+filtered as (
+    select * from source
+    where page_views is not null
+),
+aggregated as (
+    select
+        device,
+        count(*) as row_count,
+        avg(page_views) as avg_page_views,
+        max(page_views) as max_page_views
+    from filtered
+    group by 1
+)
+select * from aggregated
+order by row_count desc
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with source as (
+    select * from web_sessions
+),
+daily as (
+    select
+        date_trunc('day', started_at) as day,
+        device,
+        sum(page_views) as daily_page_views
+    from source
+    group by 1, 2
+),
+final as (
+    select
+        day,
+        device,
+        daily_page_views,
+        sum(daily_page_views) over (partition by device order by day) as cumulative_page_views
+    from daily
+)
+select * from final
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with base as (
+    select * from web_sessions
+),
+monthly as (
+    select
+        date_trunc(month, started_at)::date as month,
+        count(*) as row_count
+    from base
+    group by 1
+),
+with_growth as (
+    select
+        month,
+        row_count,
+        lag(row_count) over (order by month) as previous_count
+    from monthly
+),
+final as (
+    select
+        month,
+        row_count,
+        previous_count,
+        row_count - previous_count as change
+    from with_growth
+)
+select * from final
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from orders
+),
+items as (
+    select * from order_items
+),
+products as (
+    select * from products
+),
+order_lines as (
+    select
+        items.order_id,
+        products.category,
+        items.quantity * items.unit_price as line_total
+    from items
+    inner join products on items.product_id = products.product_id
+),
+category_revenue as (
+    select
+        orders.channel,
+        order_lines.category,
+        sum(order_lines.line_total) as revenue
+    from order_lines
+    inner join orders on order_lines.order_id = orders.order_id
+    group by 1, 2
+)
+select * from category_revenue'''
+expect = "refused SQ0008 node:mul"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from orders where status != 'cancelled'
+),
+customers as (
+    select * from customers where is_active
+),
+joined as (
+    select
+        customers.customer_id,
+        customers.country,
+        orders.order_id,
+        orders.total
+    from customers
+    join orders on orders.customer_id = customers.customer_id
+),
+by_country as (
+    select country, count(distinct customer_id) as customers, sum(total) as revenue
+    from joined
+    group by country
+)
+select * from by_country'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with recursive numbers as (
+    select 1 as n
+    union all
+    select n + 1 from numbers where n < 10
+)
+select n from numbers'''
+expect = "refused SQ0002 node:with"
+expect_repository = "refused SQ0002 node:with"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with
+a as (select customer_id, total from orders),
+b as (select customer_id, sum(total) as total from a group by customer_id),
+c as (select customer_id, total, rank() over (order by total desc) as rnk from b)
+select customer_id, total from c where rnk <= 10'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+),
+order_status_counts as (
+    select
+        customer_id,
+        count_if(status = 'completed') as completed_orders,
+        count_if(status = 'returned') as returned_orders
+    from orders
+    group by customer_id
+)
+select * from order_status_counts'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+),
+payments as (
+    select * from stg_payments
+),
+unpaid as (
+    select orders.order_id
+    from orders
+    left join payments on payments.order_id = orders.order_id
+    where payments.payment_id is null
+)
+select count(*) as unpaid_orders from unpaid'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+)
+select *
+from orders
+where order_id not in (select order_id from stg_payments)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+)
+select *
+from orders o
+where exists (select 1 from stg_payments p where p.order_id = o.order_id)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with tickets as (
+    select * from tickets
+),
+resolution as (
+    select
+        ticket_id,
+        priority,
+        datediff('hour', opened_at, closed_at) as hours_to_close
+    from tickets
+    where closed_at is not null
+)
+select
+    priority,
+    avg(hours_to_close) as avg_hours_to_close,
+    median(hours_to_close) as median_hours_to_close
+from resolution
+group by priority'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with sessions as (
+    select * from web_sessions
+),
+first_touch as (
+    select
+        customer_id,
+        min_by(attributes:utm_source::varchar, started_at) as first_source
+    from sessions
+    group by customer_id
+)
+select * from first_touch'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_cte_chain"
+sql = '''with orders as (
+    select * from stg_orders
+),
+union_all as (
+    select order_id, amount, 'order' as source from orders
+    union all
+    select payment_id, amount, 'payment' as source from stg_payments
+)
+select source, sum(amount) as amount from union_all group by source'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at >= (select max(updated_at) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select coalesce(max(updated_at), '1900-01-01') from fct_orders)
+'''
+expect = "refused SQ0003 fn:COALESCE"
+expect_repository = "refused SQ0003 fn:COALESCE"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select coalesce(max(updated_at), '1900-01-01'::timestamp_ntz) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select coalesce(max(updated_at), to_timestamp_ntz('1900-01-01')) from fct_orders)
+'''
+expect = "refused SQ0008 fn:TO_TIMESTAMP_NTZ"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select dateadd(hour, -3, max(updated_at)) from fct_orders)
+'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at >= (select dateadd(day, -1, max(updated_at)) from fct_orders)
+'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select max(updated_at) - interval '3 hours' from fct_orders)
+'''
+expect = "refused SQ0008 node:sub"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where order_date >= (select max(order_date) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where order_date > (select dateadd('day', -7, max(order_date)) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where order_date >= (select coalesce(max(order_date), '2000-01-01'::date) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where order_id > (select coalesce(max(order_id), 0) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select max(this.updated_at) from fct_orders as this)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    order_id,
+    customer_id,
+    order_date,
+    status,
+    amount,
+    updated_at
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders) or updated_at is null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''with new_orders as (
+    select * from stg_orders
+    where updated_at > (select max(updated_at) from fct_orders)
+)
+select * from new_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''with source as (
+    select * from stg_orders
+),
+max_loaded as (
+    select max(updated_at) as max_updated_at from fct_orders
+)
+select source.*
+from source
+cross join max_loaded
+where source.updated_at > max_loaded.max_updated_at'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select s.*
+from stg_orders s
+left join fct_orders t on s.order_id = t.order_id
+where t.order_id is null or s.updated_at > t.updated_at'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)
+qualify row_number() over (partition by order_id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from raw_orders
+where _loaded_at > (select coalesce(max(updated_at), '1970-01-01') from fct_orders)'''
+expect = "refused SQ0003 fn:COALESCE"
+expect_repository = "refused SQ0003 fn:COALESCE"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from events
+where occurred_at > (select max(occurred_at) from events)'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from events
+where occurred_at >= dateadd(day, -3, current_date())'''
+expect = "refused SQ0008 node:column"
+expect_repository = "refused SQ0003 node:gte"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from events
+where occurred_at::date >= current_date() - 3'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from events
+where occurred_at >= dateadd(day, -3, (select max(occurred_at) from events))'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from payments
+where paid_at between dateadd(day, -7, current_date()) and current_date()'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "refused SQ0003 node:between"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from inventory_snapshots
+where snapshot_date = (select max(snapshot_date) from inventory_snapshots)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from inventory_snapshots
+where snapshot_date > (select max(snapshot_date) from inventory_snapshots where warehouse = 'east')'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select
+    customer_id,
+    max(updated_at) as last_seen_at
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)
+group by customer_id'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_id, amount
+from stg_orders
+where updated_at > (
+    select max(updated_at)
+    from fct_orders
+    where order_date >= dateadd(month, -1, current_date())
+)'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_id, amount, updated_at
+from stg_orders
+where updated_at > ifnull((select max(updated_at) from fct_orders), '1900-01-01')'''
+expect = "refused SQ0003 fn:IFNULL"
+expect_repository = "refused SQ0003 fn:IFNULL"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_id, amount, updated_at
+from stg_orders
+where updated_at > nvl((select max(updated_at) from fct_orders), '1900-01-01'::timestamp_ntz)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from raw_orders
+qualify row_number() over (partition by id order by updated_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from raw_orders
+qualify row_number() over (partition by id order by _loaded_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from raw_customers
+qualify row_number() over (partition by id order by updated_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from raw_customers
+qualify row_number() over (partition by email order by _loaded_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from raw_payments
+qualify row_number() over (partition by id order by _batched_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from stg_orders
+qualify row_number() over (partition by order_id order by updated_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from stg_customers
+qualify row_number() over (partition by customer_id order by updated_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from subscriptions
+qualify row_number() over (partition by subscription_id order by updated_at desc) = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from events
+qualify row_number() over (partition by event_id order by occurred_at desc) = 1
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select *
+from web_sessions
+qualify row_number() over (partition by session_id order by started_at desc) = 1
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by id order by updated_at desc) as row_num
+    from raw_orders
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by id order by _loaded_at desc) as row_num
+    from raw_orders
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by id order by updated_at desc) as row_num
+    from raw_customers
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by email order by _loaded_at desc) as row_num
+    from raw_customers
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by id order by _batched_at desc) as row_num
+    from raw_payments
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''with ranked as (
+    select
+        *,
+        row_number() over (partition by order_id order by updated_at desc) as row_num
+    from stg_orders
+)
+select * from ranked where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * exclude (row_num)
+from (
+    select *, row_number() over (partition by id order by updated_at desc) as row_num
+    from raw_orders
+)
+where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * exclude (row_num)
+from (
+    select *, row_number() over (partition by id order by _loaded_at desc) as row_num
+    from raw_orders
+)
+where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * exclude (row_num)
+from (
+    select *, row_number() over (partition by id order by updated_at desc) as row_num
+    from raw_customers
+)
+where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * exclude (row_num)
+from (
+    select *, row_number() over (partition by email order by _loaded_at desc) as row_num
+    from raw_customers
+)
+where row_num = 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, user_id, status, updated_at
+from raw_orders
+qualify rank() over (partition by id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, user_id, status, updated_at
+from raw_orders
+qualify updated_at = max(updated_at) over (partition by id)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, user_id, status, updated_at
+from raw_orders
+qualify row_number() over (partition by id order by updated_at desc, _loaded_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, user_id, status, updated_at
+from raw_orders
+qualify row_number() over (partition by id order by updated_at desc nulls last) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select distinct id, user_id, status from raw_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, any_value(user_id) as user_id, max(updated_at) as updated_at
+from raw_orders
+group by id'''
+expect = "refused SQ0008 fn:ANY_VALUE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, max_by(status, updated_at) as status, max(updated_at) as updated_at
+from raw_orders
+group by id'''
+expect = "refused SQ0008 fn:MAX_BY"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select id, status
+from raw_orders
+qualify count(*) over (partition by id) > 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    events.event_id,
+    item.value:sku::varchar as sku,
+    item.value:quantity::number as quantity
+from events,
+    lateral flatten(input => events.payload:items) as item'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.value:sku::string as sku,
+    f.value:price::number(10,2) as price
+from events e,
+    lateral flatten(input => e.payload:items) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.index as position,
+    f.value::varchar as tag
+from events e,
+    lateral flatten(input => e.payload:tags) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.value::varchar as tag
+from events e,
+    lateral flatten(input => e.payload:tags, outer => true) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    t.ticket_id,
+    tag.value::varchar as tag
+from tickets t,
+    lateral flatten(input => t.tags) tag'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    t.ticket_id,
+    tag.value::varchar as tag
+from tickets t,
+    table(flatten(input => t.tags)) tag'''
+expect = "refused SQ0008 node:column"
+expect_repository = "refused SQ0002 fn:FLATTEN"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    tag.value::varchar as tag,
+    count(*) as tickets
+from tickets t,
+    lateral flatten(input => t.tags) tag
+group by 1
+order by 2 desc'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    attr.key as attribute,
+    attr.value::varchar as value
+from events e,
+    lateral flatten(input => e.payload:attributes) attr'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    s.session_id,
+    a.key as attribute,
+    a.value::varchar as value
+from web_sessions s,
+    lateral flatten(input => s.attributes) a'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    item.value:sku::varchar as sku,
+    option.value::varchar as option
+from events e,
+    lateral flatten(input => e.payload:items) item,
+    lateral flatten(input => item.value:options) option'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    r.raw:id::varchar as event_id,
+    f.value:name::varchar as product_name
+from raw_events r,
+    lateral flatten(input => r.raw:products) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    r.raw:id::varchar as event_id,
+    f.path,
+    f.value
+from raw_events r,
+    lateral flatten(input => r.raw, recursive => true) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    f.value:sku::varchar as sku,
+    sum(f.value:quantity::number) as units
+from events e,
+    lateral flatten(input => e.payload:items) f
+where e.event_type = 'purchase'
+group by 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    array_size(e.payload:items) as item_count
+from events e'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    e.payload:items[0]:sku::varchar as first_sku
+from events e'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    array_agg(f.value:sku::varchar) within group (order by f.index) as skus
+from events e,
+    lateral flatten(input => e.payload:items) f
+group by e.event_id'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.customer_id,
+    object_agg(e.event_type, e.payload) as last_payload_by_type
+from events e
+group by e.customer_id'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.value:sku::varchar as sku
+from events e
+join lateral flatten(input => e.payload:items) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "refused SQ0002 node:lateral"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.value:sku::varchar as sku
+from events e
+inner join lateral flatten(input => e.payload:items) f on true'''
+expect = "refused SQ0008 node:column"
+expect_repository = "refused SQ0002 node:lateral"
+snowflake = "rejects 2"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    f.value::varchar as tag
+from table(flatten(input => parse_json('["a", "b", "c"]'))) f'''
+expect = "refused SQ0002 fn:FLATTEN"
+expect_repository = "refused SQ0002 fn:FLATTEN"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    f.value::number as n
+from table(flatten(input => array_construct(1, 2, 3))) f'''
+expect = "refused SQ0002 fn:FLATTEN"
+expect_repository = "refused SQ0002 fn:FLATTEN"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.value:sku::varchar as sku,
+    f.value:quantity::number * f.value:price::number(10,2) as line_total
+from events e,
+    lateral flatten(input => e.payload:items) f
+where f.value:quantity::number > 0'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.this
+from events e,
+    lateral flatten(input => e.payload:items) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    e.event_id,
+    f.seq,
+    f.key,
+    f.index,
+    f.value
+from events e,
+    lateral flatten(input => e.payload) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "refused SQ0003 node:column"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    t.ticket_id,
+    s.value::varchar as word
+from tickets t,
+    lateral split_to_table(t.subject, ' ') s'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select
+    t.ticket_id,
+    array_to_string(t.tags, ', ') as tag_list
+from tickets t'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders as target
+using (
+    select * from stg_orders
+    where updated_at > (select max(updated_at) from fct_orders)
+) as source
+on target.order_id = source.order_id
+when matched then update set
+    target.status = source.status,
+    target.amount = source.amount,
+    target.updated_at = source.updated_at
+when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
+    values (source.order_id, source.customer_id, source.order_date, source.status, source.amount, source.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using stg_orders s
+on t.order_id = s.order_id
+when matched and s.status = 'deleted' then delete
+when matched then update set status = s.status, amount = s.amount, updated_at = s.updated_at
+when not matched then insert values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using (select * from stg_orders qualify row_number() over (partition by order_id order by updated_at desc) = 1) s
+on t.order_id = s.order_id
+when matched then update set t.amount = s.amount
+when not matched then insert (order_id, amount) values (s.order_id, s.amount)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''delete from fct_orders
+where order_id in (select order_id from stg_orders where updated_at > (select max(updated_at) from fct_orders))'''
+expect = "refused SQ0002 node:delete"
+expect_repository = "refused SQ0002 node:delete"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert into fct_orders (order_id, customer_id, order_date, status, amount, updated_at)
+select order_id, customer_id, order_date, status, amount, updated_at
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert overwrite into fct_orders
+select * from stg_orders'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "ddl_dml"
+sql = '''create or replace table fct_orders as (
+    select * from stg_orders
+)'''
+expect = "refused SQ0002 node:create_table"
+expect_repository = "refused SQ0002 node:create_table"
+
+[[query]]
+category = "ddl_dml"
+sql = '''create or replace transient table fct_orders as
+select * from stg_orders'''
+expect = "refused SQ0002 node:create_table"
+expect_repository = "refused SQ0002 node:create_table"
+
+[[query]]
+category = "ddl_dml"
+sql = '''create or replace view stg_orders_v as
+select order_id, status from stg_orders'''
+expect = "refused SQ0002 node:create_view"
+expect_repository = "refused SQ0002 node:create_view"
+
+[[query]]
+category = "ddl_dml"
+sql = '''create or replace temporary table fct_orders__dbt_tmp as
+select * from stg_orders where updated_at > (select max(updated_at) from fct_orders)'''
+expect = "refused SQ0002 node:create_table"
+expect_repository = "refused SQ0002 node:create_table"
+
+[[query]]
+category = "ddl_dml"
+sql = '''update fct_orders
+set status = 'archived'
+where order_date < dateadd(year, -2, current_date())'''
+expect = "refused SQ0002 node:update"
+expect_repository = "refused SQ0002 node:update"
+
+[[query]]
+category = "ddl_dml"
+sql = '''update fct_orders t
+set amount = s.amount
+from stg_orders s
+where t.order_id = s.order_id'''
+expect = "refused SQ0002 node:update"
+expect_repository = "refused SQ0002 node:update"
+
+[[query]]
+category = "ddl_dml"
+sql = '''alter table fct_orders add column if not exists channel varchar'''
+expect = "refused SQ0002 node:alter_table"
+expect_repository = "refused SQ0002 node:alter_table"
+
+[[query]]
+category = "ddl_dml"
+sql = '''truncate table fct_orders'''
+expect = "refused SQ0002 node:truncate"
+expect_repository = "refused SQ0002 node:truncate"
+
+[[query]]
+category = "ddl_dml"
+sql = '''begin;
+delete from fct_orders where order_date = current_date();
+insert into fct_orders select * from stg_orders where order_date = current_date();
+commit;'''
+expect = "refused SQ0002 node:transaction"
+expect_repository = "refused SQ0002 node:transaction"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, seq4(), '2024-01-01'::date) as date_day
+from table(generator(rowcount => 366))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, row_number() over (order by seq4()) - 1, '2024-01-01'::date) as date_day
+from table(generator(rowcount => 366))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd('day', seq4(), to_date('2023-01-01')) as date_day
+from table(generator(rowcount => 730))'''
+expect = "refused SQ0008 fn:TO_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(month, seq4(), '2020-01-01'::date) as month_start
+from table(generator(rowcount => 72))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    seq4() as n
+from table(generator(rowcount => 10))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    uniform(1, 100, random()) as roll
+from table(generator(rowcount => 5))'''
+expect = "refused SQ0002 fn:UNIFORM"
+expect_repository = "refused SQ0002 fn:UNIFORM"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select date_day
+from spine
+where date_day <= current_date()'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+),
+daily_orders as (
+    select ordered_at::date as order_day, sum(total) as revenue
+    from orders
+    group by 1
+)
+select
+    spine.date_day,
+    coalesce(daily_orders.revenue, 0) as revenue
+from spine
+left join daily_orders on daily_orders.order_day = spine.date_day'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select
+    date_day,
+    year(date_day) as year,
+    quarter(date_day) as quarter,
+    month(date_day) as month,
+    dayofweek(date_day) as day_of_week,
+    dayname(date_day) as day_name,
+    monthname(date_day) as month_name,
+    weekofyear(date_day) as week_of_year,
+    dayofweek(date_day) in (0, 6) as is_weekend
+from spine'''
+expect = "refused SQ0002 fn:DAYOFWEEK"
+expect_repository = "refused SQ0002 fn:DAYOFWEEK"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select
+    date_day,
+    date_trunc('week', date_day) as week_start,
+    last_day(date_day) as month_end,
+    date_day = last_day(date_day) as is_month_end
+from spine'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+),
+customers_by_day as (
+    select spine.date_day, count(c.customer_id) as active_customers
+    from spine
+    left join customers c on c.signup_date <= spine.date_day
+    group by 1
+)
+select * from customers_by_day'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select
+    spine.date_day,
+    count(s.subscription_id) as active_subscriptions,
+    sum(s.mrr) as mrr
+from spine
+left join subscriptions s
+    on s.started_at::date <= spine.date_day
+    and (s.cancelled_at is null or s.cancelled_at::date > spine.date_day)
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+),
+products_by_day as (
+    select spine.date_day, p.product_id
+    from spine
+    cross join products p
+)
+select
+    products_by_day.date_day,
+    products_by_day.product_id,
+    coalesce(i.on_hand, 0) as on_hand
+from products_by_day
+left join inventory_snapshots i
+    on i.product_id = products_by_day.product_id
+    and i.snapshot_date = products_by_day.date_day'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select
+    spine.date_day,
+    last_value(f.rate_to_usd ignore nulls) over (order by spine.date_day rows between unbounded preceding and current row) as rate_to_usd
+from spine
+left join fx_rates f on f.rate_date = spine.date_day and f.currency = 'EUR''''
+expect = "translated"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(hour, seq4(), '2024-01-01'::timestamp_ntz) as hour_start
+from table(generator(rowcount => 24 * 7))'''
+expect = "refused SQ0003 fn:GENERATOR"
+expect_repository = "refused SQ0003 fn:GENERATOR"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, seq4(), current_date() - 30) as date_day
+from table(generator(rowcount => 31))'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    row_number() over (order by null) as id
+from table(generator(rowcount => 100))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    seq8() as id
+from table(generator(rowcount => 100))'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, value::int, '2024-01-01'::date) as date_day
+from table(flatten(input => array_generate_range(0, 366)))'''
+expect = "refused SQ0002 fn:FLATTEN"
+expect_repository = "refused SQ0002 fn:FLATTEN"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with recursive spine as (
+    select '2024-01-01'::date as date_day
+    union all
+    select dateadd(day, 1, date_day) from spine where date_day < '2024-12-31'
+)
+select date_day from spine'''
+expect = "refused SQ0002 node:with"
+expect_repository = "refused SQ0002 node:with"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(week, seq4(), '2024-01-01'::date) as week_start
+    from table(generator(rowcount => 52))
+)
+select
+    spine.week_start,
+    count(o.order_id) as orders
+from spine
+left join orders o
+    on o.ordered_at >= spine.week_start
+    and o.ordered_at < dateadd(week, 1, spine.week_start)
+group by 1
+order by 1'''
+expect = "refused SQ0003 node:gte"
+expect_repository = "refused SQ0003 node:gte"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with spine as (
+    select dateadd(day, seq4(), '2024-01-01'::date) as date_day
+    from table(generator(rowcount => 366))
+)
+select
+    date_day,
+    to_char(date_day, 'YYYY-MM') as year_month,
+    to_char(date_day, 'DY') as day_short
+from spine'''
+expect = "refused SQ0003 fn:TO_CHAR"
+expect_repository = "refused SQ0003 fn:TO_CHAR"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(minute, 15 * seq4(), '2024-01-01'::timestamp_ntz) as slot_start
+from table(generator(rowcount => 96))'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, seq4(), '2024-01-01') as date_day
+from table(generator(rowcount => 10))'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''select
+    dateadd(day, seq4(), '2024-01-01'::date) as date_day
+from table(generator(timelimit => 1))'''
+expect = "refused SQ0003 fn:GENERATOR"
+expect_repository = "refused SQ0003 fn:GENERATOR"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id order by ordered_at rows between unbounded preceding and current row) as running_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    avg(total) over (partition by customer_id order by ordered_at rows between 2 preceding and current row) as moving_avg_3
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    avg(total) over (order by ordered_at rows between 6 preceding and current row) as moving_avg_7
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id order by ordered_at rows between current row and unbounded following) as remaining_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id order by ordered_at rows between 1 preceding and 1 following) as neighbour_sum
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    min(total) over (partition by customer_id order by ordered_at rows between unbounded preceding and unbounded following) as min_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    count(*) over (partition by customer_id order by ordered_at rows between unbounded preceding and 1 preceding) as prior_orders
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id order by ordered_at range between unbounded preceding and current row) as running_total_range
+from orders
+'''
+expect = "refused SQ0003 fn:SUM"
+expect_repository = "refused SQ0003 fn:SUM"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id order by ordered_at) as running_total_default
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(total) over (partition by customer_id) as customer_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    total / sum(total) over (partition by customer_id) as share_of_customer
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    ratio_to_report(total) over (partition by customer_id) as ratio
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    lag(total) over (partition by customer_id order by ordered_at) as previous_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    lag(total, 1, 0) over (partition by customer_id order by ordered_at) as previous_total_or_zero
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    lead(ordered_at) over (partition by customer_id order by ordered_at) as next_ordered_at
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    datediff('day', lag(ordered_at) over (partition by customer_id order by ordered_at), ordered_at) as days_since_previous
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    first_value(total) over (partition by customer_id order by ordered_at) as first_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    last_value(total) over (partition by customer_id order by ordered_at rows between unbounded preceding and unbounded following) as last_total
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    nth_value(total, 2) over (partition by customer_id order by ordered_at) as second_total
+from orders
+'''
+expect = "refused SQ0002 fn:NTH_VALUE"
+expect_repository = "refused SQ0002 fn:NTH_VALUE"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    row_number() over (partition by customer_id order by ordered_at) as order_sequence
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    rank() over (order by total desc) as total_rank
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    dense_rank() over (partition by channel order by total desc) as channel_rank
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    percent_rank() over (order by total) as total_percentile
+from orders
+'''
+expect = "refused SQ0002 fn:PERCENT_RANK"
+expect_repository = "refused SQ0002 fn:PERCENT_RANK"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    cume_dist() over (order by total) as total_cume_dist
+from orders
+'''
+expect = "refused SQ0002 fn:CUME_DIST"
+expect_repository = "refused SQ0002 fn:CUME_DIST"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    ntile(4) over (order by total) as total_quartile
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    count(distinct status) over (partition by customer_id) as distinct_statuses
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    max(total) over (partition by customer_id order by ordered_at rows between 3 preceding and 1 preceding) as max_prior_three
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    sum(iff(status = 'returned', 1, 0)) over (partition by customer_id order by ordered_at) as returns_so_far
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    conditional_true_event(datediff('minute', lag(ordered_at) over (partition by customer_id order by ordered_at), ordered_at) > 30) over (partition by customer_id order by ordered_at) as session_number
+from orders
+'''
+expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
+expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    avg(total) over (partition by customer_id order by ordered_at range between interval '7 days' preceding and current row) as avg_7_days
+from orders
+'''
+expect = "refused SQ0003 fn:AVG"
+expect_repository = "refused SQ0003 fn:AVG"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    lag(total) ignore nulls over (partition by customer_id order by ordered_at) as previous_non_null
+from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    customer_id,
+    ordered_at,
+    total,
+    median(total) over (partition by customer_id) as median_total
+from orders
+'''
+expect = "refused SQ0002 fn:MEDIAN"
+expect_repository = "refused SQ0002 fn:MEDIAN"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select
+    order_id,
+    sum(total) over w as running_total,
+    avg(total) over w as running_avg
+from orders
+window w as (partition by customer_id order by ordered_at)'''
+expect = "refused SQ0002 node:select"
+expect_repository = "refused SQ0002 node:select"
+snowflake = "rejects 1003"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''with sessions as (
+    select
+        customer_id,
+        started_at,
+        case
+            when datediff('minute', lag(started_at) over (partition by customer_id order by started_at), started_at) > 30
+                or lag(started_at) over (partition by customer_id order by started_at) is null
+            then 1 else 0
+        end as is_new_session
+    from web_sessions
+)
+select
+    customer_id,
+    started_at,
+    sum(is_new_session) over (partition by customer_id order by started_at rows between unbounded preceding and current row) as session_index
+from sessions'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''with daily as (
+    select ordered_at::date as day, sum(total) as revenue
+    from orders
+    group by 1
+)
+select
+    day,
+    revenue,
+    avg(revenue) over (order by day rows between 6 preceding and current row) as revenue_7d_avg,
+    sum(revenue) over (order by day rows between 27 preceding and current row) as revenue_28d
+from daily'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select order_id, payment_method, amount from stg_payments)
+pivot (sum(amount) for payment_method in ('credit_card', 'coupon', 'bank_transfer', 'gift_card'))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select order_id, payment_method, amount from stg_payments)
+pivot (sum(amount) for payment_method in ('credit_card', 'coupon', 'bank_transfer', 'gift_card'))
+    as p (order_id, credit_card_amount, coupon_amount, bank_transfer_amount, gift_card_amount)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select customer_id, channel, total from orders)
+pivot (count(total) for channel in ('web', 'store', 'phone'))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select customer_id, channel, total from orders)
+pivot (sum(total) for channel in (any order by channel))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select customer_id, channel, total from orders)
+pivot (sum(total) for channel in (select distinct channel from orders))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select customer_id, channel, total from orders)
+pivot (sum(total) for channel in ('web', 'store') default on null (0))'''
+expect = "refused SQ0002 node:pivot"
+expect_repository = "refused SQ0002 node:pivot"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from (select warehouse, product_id, on_hand from inventory_snapshots where snapshot_date = '2024-06-30')
+pivot (sum(on_hand) for warehouse in ('east', 'west'))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select
+    order_id,
+    sum(case when payment_method = 'credit_card' then amount end) as credit_card_amount,
+    sum(case when payment_method = 'coupon' then amount end) as coupon_amount
+from stg_payments
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select
+    customer_id,
+    count_if(channel = 'web') as web_orders,
+    count_if(channel = 'store') as store_orders
+from orders
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select
+    customer_id,
+    sum(iff(channel = 'web', total, 0)) as web_total,
+    sum(iff(channel = 'store', total, 0)) as store_total
+from orders
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select
+    date_trunc('month', ordered_at)::date as month,
+    sum(case when status = 'completed' then 1 else 0 end) as completed,
+    sum(case when status = 'returned' then 1 else 0 end) as returned,
+    sum(case when status = 'cancelled' then 1 else 0 end) as cancelled
+from orders
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select order_id, metric, value
+from (select order_id, total, discount from orders)
+unpivot (value for metric in (total, discount))'''
+expect = "refused SQ0002 node:unpivot"
+expect_repository = "refused SQ0002 node:unpivot"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select customer_id, metric, value
+from (
+    select customer_id, sum(total) as revenue, sum(discount) as discounts
+    from orders
+    group by 1
+)
+unpivot (value for metric in (revenue, discounts))'''
+expect = "refused SQ0002 node:unpivot"
+expect_repository = "refused SQ0002 node:unpivot"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select order_id, metric, value
+from (select order_id, total, discount from orders)
+unpivot include nulls (value for metric in (total, discount))'''
+expect = "refused SQ0002 node:unpivot"
+expect_repository = "refused SQ0002 node:unpivot"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select order_id, 'total' as metric, total as value from orders
+union all
+select order_id, 'discount' as metric, discount as value from orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select o.order_id, m.metric, m.value
+from orders o,
+    lateral (
+        select 'total' as metric, o.total as value
+        union all
+        select 'discount', o.discount
+    ) m'''
+expect = "translated"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select customer_id, channel, total_web, total_store
+from (select customer_id, channel, total from orders)
+pivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+snowflake = "rejects 904"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select *
+from orders
+pivot (sum(total) for channel in ('web', 'store'))'''
+expect = "refused SQ0003 node:pivot"
+expect_repository = "refused SQ0003 node:pivot"
+
+[[query]]
+category = "dbt_marts"
+sql = '''with orders as (
+    select * from fct_orders
+),
+customers as (
+    select * from stg_customers
+),
+cohorts as (
+    select
+        customer_id,
+        date_trunc('month', min(order_date)) as cohort_month
+    from orders
+    group by 1
+),
+activity as (
+    select
+        o.customer_id,
+        c.cohort_month,
+        datediff('month', c.cohort_month, date_trunc('month', o.order_date)) as months_since_first
+    from orders o
+    join cohorts c using (customer_id)
+)
+select
+    cohort_month,
+    months_since_first,
+    count(distinct customer_id) as active_customers
+from activity
+group by 1, 2
+order by 1, 2'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    c.customer_id,
+    c.email,
+    count(o.order_id) as lifetime_orders,
+    sum(o.amount) as lifetime_value,
+    min(o.order_date) as first_order_date,
+    max(o.order_date) as last_order_date,
+    datediff('day', max(o.order_date), current_date()) as days_since_last_order
+from stg_customers c
+left join fct_orders o on o.customer_id = c.customer_id
+group by 1, 2'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    c.customer_id,
+    case
+        when count(o.order_id) = 0 then 'prospect'
+        when count(o.order_id) = 1 then 'new'
+        when max(o.order_date) < dateadd(day, -90, current_date()) then 'lapsed'
+        else 'repeat'
+    end as lifecycle_stage
+from stg_customers c
+left join fct_orders o on o.customer_id = c.customer_id
+group by 1'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.order_id,
+    o.customer_id,
+    o.order_date,
+    o.amount,
+    o.amount * fx.rate_to_usd as amount_usd
+from fct_orders o
+left join fx_rates fx
+    on fx.rate_date = o.order_date
+    and fx.currency = 'EUR''''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    p.category,
+    date_trunc('month', o.ordered_at) as month,
+    sum(i.quantity) as units,
+    sum(i.quantity * i.unit_price) as revenue,
+    div0(sum(i.quantity * i.unit_price), sum(i.quantity)) as avg_unit_price
+from order_items i
+join orders o on o.order_id = i.order_id
+join products p on p.product_id = i.product_id
+group by 1, 2'''
+expect = "refused SQ0008 fn:SUM"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    p.category,
+    sum(i.quantity * i.unit_price) as revenue,
+    sum(i.quantity * i.unit_price) / nullif(sum(sum(i.quantity * i.unit_price)) over (), 0) as share_of_revenue
+from order_items i
+join products p on p.product_id = i.product_id
+group by 1'''
+expect = "refused SQ0008 node:mul"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    plan,
+    date_trunc('month', started_at)::date as start_month,
+    count(*) as new_subscriptions,
+    sum(mrr) as new_mrr
+from subscriptions
+group by 1, 2'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    date_trunc('month', cancelled_at)::date as churn_month,
+    count(*) as churned,
+    sum(mrr) as churned_mrr
+from subscriptions
+where cancelled_at is not null
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    s.customer_id,
+    s.plan,
+    s.mrr,
+    s.mrr * 12 as arr,
+    datediff('month', s.started_at, coalesce(s.cancelled_at, current_timestamp())) as tenure_months
+from subscriptions s'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 fn:DATEDIFF"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.channel,
+    count(distinct o.customer_id) as customers,
+    count(*) as orders,
+    sum(o.total) as revenue,
+    round(sum(o.total) / count(*), 2) as avg_order_value
+from orders o
+where o.status not in ('cancelled', 'returned')
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.order_id,
+    o.total,
+    coalesce(sum(p.amount), 0) as paid,
+    o.total - coalesce(sum(p.amount), 0) as outstanding
+from orders o
+left join payments p on p.order_id = o.order_id
+group by o.order_id, o.total
+having outstanding <> 0'''
+expect = "translated"
+expect_repository = "translated"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    t.priority,
+    count(*) as tickets,
+    count_if(t.closed_at is null) as open_tickets,
+    avg(datediff('hour', t.opened_at, t.closed_at)) as avg_hours_to_close
+from tickets t
+group by 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    c.country,
+    count(distinct t.ticket_id) as tickets,
+    count(distinct o.order_id) as orders,
+    div0(count(distinct t.ticket_id), count(distinct o.order_id)) as tickets_per_order
+from customers c
+left join tickets t on t.customer_id = c.customer_id
+left join orders o on o.customer_id = c.customer_id
+group by 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    s.device,
+    count(*) as sessions,
+    sum(s.page_views) as page_views,
+    avg(s.page_views) as avg_page_views
+from web_sessions s
+group by 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    s.attributes:utm_source::varchar as source,
+    count(distinct s.customer_id) as visitors,
+    count(distinct o.customer_id) as buyers
+from web_sessions s
+left join orders o
+    on o.customer_id = s.customer_id
+    and o.ordered_at between s.started_at and dateadd(day, 7, s.started_at)
+group by 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    i.warehouse,
+    i.snapshot_date,
+    sum(i.on_hand) as units_on_hand,
+    sum(i.on_hand * p.price) as stock_value
+from inventory_snapshots i
+join products p on p.product_id = i.product_id
+group by 1, 2'''
+expect = "refused SQ0008 fn:SUM"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    product_id,
+    snapshot_date,
+    on_hand,
+    on_hand - lag(on_hand) over (partition by product_id, warehouse order by snapshot_date) as change
+from inventory_snapshots'''
+expect = "refused SQ0008 node:sub"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    date_trunc('week', ordered_at)::date as week,
+    approx_count_distinct(customer_id) as approx_customers,
+    count(distinct customer_id) as customers
+from orders
+group by 1'''
+expect = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
+expect_repository = "refused SQ0002 fn:APPROX_COUNT_DISTINCT"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    customer_id,
+    listagg(distinct channel, ', ') within group (order by channel) as channels
+from orders
+group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    customer_id,
+    percentile_cont(0.5) within group (order by total) as median_order
+from orders
+group by 1'''
+expect = "refused SQ0008 fn:PERCENTILE_CONT"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.order_id,
+    o.customer_id,
+    o.total,
+    c.email,
+    c.country
+from orders o
+left join customers c on c.customer_id = o.customer_id
+where c.customer_id is null or c.is_active'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.order_id,
+    datediff('hour', o.ordered_at, o.shipped_at) as hours_to_ship,
+    iff(datediff('hour', o.ordered_at, o.shipped_at) <= 48, 'on_time', 'late') as shipping_sla
+from orders o
+where o.shipped_at is not null'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.customer_id,
+    o.order_id,
+    o.total,
+    sum(o.total) over (partition by o.customer_id) as customer_total,
+    o.total / nullif(sum(o.total) over (partition by o.customer_id), 0) as share
+from orders o'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    year(ordered_at) as year,
+    month(ordered_at) as month,
+    sum(total) as revenue,
+    sum(total) - lag(sum(total)) over (order by year(ordered_at), month(ordered_at)) as revenue_change
+from orders
+group by 1, 2'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    customer_id,
+    array_agg(distinct channel) as channels,
+    array_size(array_agg(distinct channel)) as channel_count
+from orders
+group by 1'''
+expect = "refused SQ0008 fn:ARRAY_AGG"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    c.customer_id,
+    object_construct('email', c.email, 'country', c.country) as profile
+from customers c'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    c.customer_id,
+    to_json(object_construct('email', c.email)) as profile_json
+from customers c'''
+expect = "refused SQ0008 fn:TO_JSON"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.customer_id,
+    sum(o.total) as revenue
+from orders o
+group by all'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.channel,
+    o.status,
+    count(*) as orders
+from orders o
+group by rollup (o.channel, o.status)'''
+expect = "refused SQ0002 fn:ROLLUP"
+expect_repository = "refused SQ0002 fn:ROLLUP"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    o.channel,
+    o.status,
+    count(*) as orders,
+    grouping(o.channel) as channel_rollup
+from orders o
+group by grouping sets ((o.channel), (o.status), ())'''
+expect = "refused SQ0002 fn:GROUPING SETS"
+expect_repository = "refused SQ0002 fn:GROUPING SETS"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    customer_id,
+    email,
+    country,
+    updated_at as dbt_valid_from,
+    lead(updated_at) over (partition by customer_id order by updated_at) as dbt_valid_to
+from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    customer_id,
+    email,
+    updated_at as valid_from,
+    coalesce(lead(updated_at) over (partition by customer_id order by updated_at), '9999-12-31'::timestamp_ntz) as valid_to,
+    lead(updated_at) over (partition by customer_id order by updated_at) is null as is_current
+from stg_customers'''
+expect = "refused SQ0003 node:cast"
+expect_repository = "refused SQ0003 node:cast"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    md5(coalesce(cast(customer_id as varchar), '') || '|' || coalesce(cast(updated_at as varchar), '')) as dbt_scd_id,
+    customer_id,
+    updated_at as dbt_updated_at
+from stg_customers'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''with history as (
+    select
+        customer_id,
+        email,
+        updated_at as valid_from,
+        lead(updated_at) over (partition by customer_id order by updated_at) as valid_to
+    from stg_customers
+)
+select *
+from history
+where '2024-06-30'::timestamp_ntz >= valid_from
+    and ('2024-06-30'::timestamp_ntz < valid_to or valid_to is null)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    o.order_id,
+    h.email as email_at_order_time
+from fct_orders o
+left join (
+    select
+        customer_id,
+        email,
+        updated_at as valid_from,
+        lead(updated_at) over (partition by customer_id order by updated_at) as valid_to
+    from stg_customers
+) h
+    on h.customer_id = o.customer_id
+    and o.updated_at >= h.valid_from
+    and (o.updated_at < h.valid_to or h.valid_to is null)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    customer_id,
+    email,
+    lag(email) over (partition by customer_id order by updated_at) as previous_email
+from stg_customers
+qualify email is distinct from previous_email'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    customer_id,
+    email,
+    updated_at
+from stg_customers
+qualify email <> lag(email) over (partition by customer_id order by updated_at)
+    or lag(email) over (partition by customer_id order by updated_at) is null'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select
+    s.customer_id,
+    s.email,
+    s.updated_at
+from stg_customers s
+where not exists (
+    select 1
+    from stg_customers newer
+    where newer.customer_id = s.customer_id
+        and newer.updated_at > s.updated_at
+)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select *
+from stg_customers
+at (timestamp => '2024-06-30 00:00:00'::timestamp_ltz)'''
+expect = "refused SQ0002 node:table"
+expect_repository = "refused SQ0002 node:table"
+snowflake = "compiles"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select *
+from stg_customers
+changes (information => default)
+at (offset => -3600)'''
+expect = "refused SQ0002 node:table"
+expect_repository = "refused SQ0002 node:table"
+snowflake = "rejects 91930"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select order_id
+from stg_orders
+where order_id is null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    order_id as unique_field,
+    count(*) as n_records
+from stg_orders
+where order_id is not null
+group by order_id
+having count(*) > 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select customer_id
+from stg_customers
+where customer_id is null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    customer_id as unique_field,
+    count(*) as n_records
+from stg_customers
+where customer_id is not null
+group by customer_id
+having count(*) > 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select payment_id
+from stg_payments
+where payment_id is null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    payment_id as unique_field,
+    count(*) as n_records
+from stg_payments
+where payment_id is not null
+group by payment_id
+having count(*) > 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select order_id
+from fct_orders
+where order_id is null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    order_id as unique_field,
+    count(*) as n_records
+from fct_orders
+where order_id is not null
+group by order_id
+having count(*) > 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with all_values as (
+    select status as value_field, count(*) as n_records
+    from stg_orders
+    group by status
+)
+select *
+from all_values
+where value_field not in ('placed', 'shipped', 'completed', 'return_pending', 'returned')'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with child as (
+    select customer_id as from_field
+    from stg_orders
+    where customer_id is not null
+),
+parent as (
+    select customer_id as to_field
+    from stg_customers
+)
+select from_field
+from child
+left join parent on child.from_field = parent.to_field
+where parent.to_field is null'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select count(*) as failures, count(*) != 0 as should_warn, count(*) != 0 as should_error
+from (
+    select order_id from stg_orders where amount < 0
+) dbt_internal_test'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select *
+from stg_orders
+where not (amount >= 0)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select *
+from (
+    select order_id, sum(amount) as payments
+    from stg_payments
+    group by 1
+)
+where payments < 0'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select max(updated_at) as max_updated_at
+from stg_orders
+having max(updated_at) < dateadd(hour, -24, current_timestamp())'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 fn:DATEADD"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    count(*) as row_count
+from stg_orders
+having count(*) = 0'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select order_id, count(*)
+from stg_payments
+group by order_id
+having count(*) > 1 and sum(amount) = 0'''
+expect = "translated"
+expect_repository = "translated"
+
+# Launch shapes: incremental filters, the dbt_utils surrogate key, and common date and string functions.
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at >= (select dateadd(hour, -6, max(updated_at)) from fct_orders)
+'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where order_date >= (select coalesce(max(order_date), '1900-01-01'::date) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at > (select coalesce(max(updated_at), '1970-01-01'::timestamp_ntz) from fct_orders)
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_payments
+where paid_at::date >= dateadd(day, -3, current_date())
+'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders) - interval '1 day'
+'''
+expect = "refused SQ0008 node:sub"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select o.*
+from stg_orders o
+left join fct_orders f on o.order_id = f.order_id
+where f.order_id is null or o.updated_at > f.updated_at
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where order_date >= dateadd(day, -7, (select max(order_date) from fct_orders))
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_staging"
+sql = '''select
+    md5(cast(coalesce(cast(order_id as varchar), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(line_number as varchar), '_dbt_utils_surrogate_key_null_') as varchar)) as order_item_key,
+    order_id,
+    line_number
+from order_items
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, date_trunc('week', ordered_at) as order_week from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, date_trunc('month', ordered_at)::date as order_month from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, datediff('day', ordered_at, shipped_at) as days_to_ship from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, datediff('hour', ordered_at, shipped_at) as hours_to_ship
+from orders
+where shipped_at is not null
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, to_char(ordered_at, 'YYYY-MM-DD') as order_day from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, year(ordered_at) as order_year, month(ordered_at) as order_month from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, extract(year from ordered_at) as order_year from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select customer_id, last_day(signup_date) as signup_month_end from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select customer_id, dayname(signup_date) as signup_day from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id
+from stg_orders
+where order_date between '2024-01-01' and '2024-03-31'
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select customer_id, date_from_parts(year(signup_date), 1, 1) as signup_year_start from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, ordered_at::date as order_date from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select customer_id, datediff('month', signup_date, current_date()) as tenure_months from customers
+'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, dateadd(month, 1, order_date) as next_month from stg_orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select date_trunc('day', ordered_at) as order_day, count(*) as orders
+from orders
+group by 1
+order by 1
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, convert_timezone('UTC', 'America/New_York', ordered_at) as ordered_at_et from orders
+'''
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, lower(trim(email)) as email from stg_customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name from customers
+'''
+expect = "refused SQ0008 fn:INITCAP"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, split_part(email, '@', 2) as email_domain from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select product_id, regexp_replace(sku, '[^A-Z0-9]', '') as sku_clean from products
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select product_id, upper(left(sku, 3)) as sku_prefix from products
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select product_id, substr(sku, 4) as sku_suffix from products
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, concat(first_name, ' ', last_name) as full_name from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, coalesce(nullif(trim(country), ''), 'unknown') as country from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select ticket_id, length(subject) as subject_length from tickets
+'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id from customers where email ilike '%@example.com'
+'''
+expect = "refused SQ0008 node:i_like"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select product_id, replace(name, '-', ' ') as product_name from products
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, md5(lower(email)) as email_hash from customers
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select order_id, iff(status = 'shipped', true, false) as is_shipped from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select status, count(*) as orders
+from orders
+group by status
+order by orders desc
+'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select order_id, round(total * 1.2, 2) as total_with_tax from orders
+'''
+expect = "translated"
+expect_repository = "translated"
+
+# Launch shapes, round 2: top-N QUALIFY, bracket and quoted JSON paths, numeric RANGE frames,
+# compiled dbt with qualified names, surrogate keys, microbatch and insert_overwrite filters, MERGE.
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select customer_id, order_id, amount
+from stg_orders
+qualify dense_rank() over (partition by customer_id order by amount desc) <= 3'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select customer_id, order_id, order_date
+from stg_orders
+where status = 'completed'
+qualify row_number() over (partition by customer_id order by order_date) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select customer_id, count(*) as orders
+from stg_orders
+group by customer_id
+qualify rank() over (order by count(*) desc) <= 10'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select order_id, customer_id, status,
+    row_number() over (partition by customer_id order by updated_at desc) as rn
+from stg_orders
+qualify rn = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select order_id, customer_id, amount
+from stg_orders
+qualify amount > avg(amount) over (partition by customer_id)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select subscription_id, plan, updated_at
+from subscriptions
+qualify lag(plan) over (partition by subscription_id order by updated_at) is distinct from plan'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select event_id, customer_id, event_type, occurred_at
+from events
+qualify row_number() over (partition by customer_id, event_type order by occurred_at desc) = 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, payload['items'][0]['sku']::varchar as first_sku
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, payload:customer.address.city::varchar as city
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, payload:"Order-Id"::number as order_id
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, get_path(payload, 'customer.email')::varchar as email
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, get(payload, 'event_type')::varchar as kind
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id
+from events
+where payload:type::varchar = 'checkout''''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, typeof(payload:amount) as amount_type
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, array_contains('vip'::variant, payload:tags) as is_vip
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+uncertain = true
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, object_keys(payload) as keys
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+uncertain = true
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select r.raw:id::varchar as event_id, try_parse_json(r.raw:body::varchar) as body
+from raw_events r'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select session_id, attributes:utm_source::varchar as utm_source, attributes:utm_campaign::varchar as utm_campaign
+from web_sessions'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, payload:amount::number(12,2) as amount, payload:currency::varchar as currency
+from events
+where payload:amount is not null'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select customer_id, object_construct('orders', count(*), 'revenue', sum(amount)) as summary
+from stg_orders
+group by customer_id'''
+expect = "refused SQ0008 fn:OBJECT_CONSTRUCT"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select event_id, payload:items[array_size(payload:items) - 1]:sku::varchar as last_sku
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    sum(amount) over (partition by customer_id order by order_id range between 10 preceding and current row) as nearby_amount
+from stg_orders'''
+expect = "refused SQ0003 fn:SUM"
+expect_repository = "refused SQ0003 fn:SUM"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_date, amount,
+    sum(amount) over (order by order_date rows unbounded preceding) as cumulative
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    first_value(status) ignore nulls over (partition by customer_id order by updated_at rows between unbounded preceding and current row) as first_status
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    last_value(status) ignore nulls over (partition by customer_id order by updated_at rows between unbounded preceding and current row) as latest_status
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id,
+    count_if(status = 'returned') over (partition by customer_id) as returns
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    lead(amount, 1, 0) over (partition by customer_id order by order_date, order_id) as next_amount
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    avg(amount) over (partition by customer_id order by order_date rows between 2 preceding and 2 following) as centred_avg
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select order_id, customer_id, amount,
+    min(order_date) over (partition by customer_id) as first_order_date,
+    datediff('day', min(order_date) over (partition by customer_id), order_date) as days_since_first
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select rate_date, currency, rate_to_usd,
+    rate_to_usd / lag(rate_to_usd) over (partition by currency order by rate_date) - 1 as daily_change
+from fx_rates'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_window_frames"
+sql = '''select snapshot_date, product_id, on_hand,
+    on_hand - lag(on_hand, 1, on_hand) over (partition by product_id order by snapshot_date) as delta
+from inventory_snapshots'''
+expect = "refused SQ0008 node:sub"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from analytics.staging.stg_orders
+where updated_at > (select max(updated_at) from analytics.marts.fct_orders)'''
+expect = "translated"
+expect_repository = "translated"
+uncertain = true
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from "ANALYTICS"."STAGING"."STG_ORDERS"
+where updated_at > (select max(updated_at) from "ANALYTICS"."MARTS"."FCT_ORDERS")'''
+expect = "translated"
+expect_repository = "translated"
+uncertain = true
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at >= '2026-11-01 00:00:00'::timestamp_ntz
+  and updated_at < '2026-11-02 00:00:00'::timestamp_ntz'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where order_date in ('2026-11-01'::date, '2026-11-02'::date)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where order_date >= dateadd(day, -3, (select max(order_date) from fct_orders))
+qualify row_number() over (partition by order_id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select s.*
+from stg_orders s
+where not exists (select 1 from fct_orders f where f.order_id = s.order_id)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from stg_orders
+where updated_at > (select max(updated_at) from fct_orders)
+  and updated_at <= current_timestamp()'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 node:lte"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select *
+from events
+where occurred_at > (select coalesce(max(occurred_at), '1900-01-01'::timestamp_ntz) from events)
+  and event_type in ('page_view', 'checkout')'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    md5(cast(coalesce(cast(order_id as varchar), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(customer_id as varchar), '_dbt_utils_surrogate_key_null_') as varchar)) as order_key,
+    order_id, customer_id, amount
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    md5(cast(coalesce(cast(event_id as varchar), '') as varchar)) as event_key,
+    event_id, event_type
+from events'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select
+    sha2(order_id::varchar || '|' || customer_id::varchar) as order_hash, order_id
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select *,
+    md5(coalesce(cast(order_id as varchar), '') || '|' || coalesce(cast(updated_at as varchar), '')) as dbt_scd_id,
+    updated_at as dbt_updated_at,
+    updated_at as dbt_valid_from,
+    nullif(updated_at, updated_at) as dbt_valid_to
+from stg_orders'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select order_id, status, dbt_valid_from, dbt_valid_to
+from (
+    select order_id, status, updated_at as dbt_valid_from,
+        lead(updated_at) over (partition by order_id order by updated_at) as dbt_valid_to
+    from stg_orders
+)
+where dbt_valid_to is null'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, date_trunc('week', order_date) as order_week, dayname(order_date) as order_day
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, last_day(order_date) as month_end, date_part(quarter, order_date) as quarter
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_ny
+from stg_orders'''
+expect = "refused SQ0008 fn:CONVERT_TIMEZONE"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, to_char(order_date, 'YYYY-MM') as order_month
+from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, timestampdiff(hour, order_date, updated_at) as hours_to_update
+from stg_orders'''
+expect = "refused SQ0003 fn:TIMESTAMPDIFF"
+expect_repository = "refused SQ0003 fn:TIMESTAMPDIFF"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name
+from stg_customers'''
+expect = "refused SQ0008 fn:INITCAP"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, split_part(email, '@', 2) as email_domain
+from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, regexp_replace(email, '[^a-z0-9@.]', '') as clean_email
+from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, left(first_name, 1) || '.' as initial, lower(trim(email)) as email
+from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, coalesce(nullif(trim(country), ''), 'unknown') as country
+from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using stg_orders s
+on t.order_id = s.order_id
+when matched then update set t.status = s.status, t.amount = s.amount, t.updated_at = s.updated_at
+when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
+    values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using (select * from stg_orders where order_date >= dateadd(day, -3, current_date())) s
+on t.order_id = s.order_id and t.order_date >= dateadd(day, -3, current_date())
+when matched and s.updated_at > t.updated_at then update set t.status = s.status
+when not matched then insert (order_id, customer_id, order_date, status, amount, updated_at)
+    values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+# Launch shapes, round 3: dbt_utils and dbt_date macro output compiled by dbt-snowflake 1.12
+# (date_spine, get_date_dimension, pivot, generate_surrogate_key, deduplicate, cross-database
+# macros, dbt_utils generic tests), dbt-snowflake's rendered snapshot SQL and incremental DML
+# (merge with incremental_predicates, delete+insert, insert_overwrite, snapshot merge), with the
+# database and schema qualifiers dropped and blank lines removed, and FLATTEN over VARIANT.
+
+[[query]]
+category = "dbt_tests"
+sql = '''with meet_condition as(
+  select *
+  from fct_orders
+),
+validation_errors as (
+  select *
+  from meet_condition
+  where
+    -- never true, defaults to an empty result set. Exists to ensure any combo of the `or` clauses below succeeds
+    1 = 2
+    -- records with a value >= min_value are permitted. The `not` flips this to find records that don't meet the rule.
+    or not amount >= 0
+)
+select *
+from validation_errors'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''select
+    1
+from fct_orders
+where not(amount >= 0)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with all_values as (
+    select distinct
+        status as value_field
+    from fct_orders
+),
+validation_errors as (
+    select
+        value_field
+    from all_values
+    where value_field in (
+        'unknown'
+        )
+)
+select *
+from validation_errors'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with
+    all_values as (
+        select
+            trim(status) as status
+        from fct_orders
+    ),
+    errors as (
+        select * from all_values
+        where status = ''
+    )
+    select * from errors'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with validation as (
+  select
+    sum(case when amount is null then 0 else 1 end) / cast(count(*) as numeric(28,6)) as not_null_proportion
+  from fct_orders
+),
+validation_errors as (
+  select
+    not_null_proportion
+  from validation
+  where not_null_proportion < 0.95 or not_null_proportion > 1
+)
+select
+  *
+from validation_errors'''
+expect = "refused SQ0008 node:div"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with recency as (
+    select
+        max(order_date) as most_recent
+    from fct_orders
+)
+select
+    most_recent,
+    cast(
+    dateadd(
+        day,
+        -3,
+        convert_timezone('UTC', current_timestamp())
+        )
+ as timestamp) as threshold
+from recency
+where most_recent < cast(
+    dateadd(
+        day,
+        -3,
+        convert_timezone('UTC', current_timestamp())
+        )
+ as timestamp)
+   or most_recent is null'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 node:lt"
+
+[[query]]
+category = "dbt_tests"
+sql = '''with validation_errors as (
+    select
+        order_id, customer_id
+    from fct_orders
+    group by order_id, customer_id
+    having count(*) > 1
+)
+select *
+from validation_errors'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with
+        base_dates as (
+    with
+        date_spine as (
+    with
+        rawdata as (
+    with
+        p as (
+            select 0 as generated_number
+            union all
+            select 1
+        ),
+        unioned as (
+            select
+                    p0.generated_number * power(2, 0)
+                     +
+                    p1.generated_number * power(2, 1)
+                     +
+                    p2.generated_number * power(2, 2)
+                     +
+                    p3.generated_number * power(2, 3)
+                     +
+                    p4.generated_number * power(2, 4)
+                     +
+                    p5.generated_number * power(2, 5)
+                     +
+                    p6.generated_number * power(2, 6)
+                     +
+                    p7.generated_number * power(2, 7)
+                     +
+                    p8.generated_number * power(2, 8)
+                + 1 as generated_number
+            from
+                    p as p0  cross join
+                    p as p1  cross join
+                    p as p2  cross join
+                    p as p3  cross join
+                    p as p4  cross join
+                    p as p5  cross join
+                    p as p6  cross join
+                    p as p7  cross join
+                    p as p8
+        )
+    select *
+    from unioned
+    where generated_number <= 364
+    order by generated_number
+        ),
+        all_periods as (
+            select
+                (
+    dateadd(
+        day,
+        (row_number() over (order by 1) - 1),
+        cast('2026-01-01' as timestamp)
+        )
+                ) as date_day
+            from rawdata
+        ),
+        filtered as (
+            select * from all_periods where date_day <= cast('2026-12-31' as timestamp)
+        )
+    select *
+    from filtered
+        )
+    select
+        cast(d.date_day as timestamp) as date_day
+    from date_spine d
+),
+        dates_with_prior_year_dates as (
+            select
+                cast(d.date_day as date) as date_day,
+                cast(
+    dateadd(
+        year,
+        -1,
+        d.date_day
+        )
+ as date
+                ) as prior_year_date_day,
+                cast(
+    dateadd(
+        day,
+        -364,
+        d.date_day
+        )
+ as date
+                ) as prior_year_over_year_date_day
+            from base_dates d
+        )
+    select
+        d.date_day,
+        cast(
+    dateadd(
+        day,
+        -1,
+        d.date_day
+        )
+ as date) as prior_date_day,
+        cast(
+    dateadd(
+        day,
+        1,
+        d.date_day
+        )
+ as date) as next_date_day,
+        d.prior_year_date_day as prior_year_date_day,
+        d.prior_year_over_year_date_day,
+        case
+            when date_part('dayofweek', d.date_day) = 7
+            then 1
+            else date_part('dayofweek', d.date_day) + 1
+        end as day_of_week,
+        date_part('dayofweekiso', d.date_day) as day_of_week_iso,
+        case
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 1
+            then
+                'Monday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 2
+            then
+                'Tuesday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 3
+            then
+                'Wednesday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 4
+            then
+                'Thursday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 5
+            then
+                'Friday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 6
+            then
+                'Saturday'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 7
+            then
+                'Sunday'
+    end as day_of_week_name,
+        case
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 1
+            then
+                'Mon'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 2
+            then
+                'Tue'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 3
+            then
+                'Wed'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 4
+            then
+                'Thu'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 5
+            then
+                'Fri'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 6
+            then
+                'Sat'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', d.date_day) = 7
+            then
+                'Sun'
+    end as day_of_week_name_short,
+        date_part('day', d.date_day) as day_of_month,
+        date_part('dayofyear', d.date_day) as day_of_year,
+    cast(
+    dateadd(
+        day,
+        -1 * (case
+            when date_part('dayofweek', d.date_day) = 7
+            then 1
+            else date_part('dayofweek', d.date_day) + 1
+        end - 1),
+        d.date_day
+        )
+ as date) as week_start_date,
+        cast(
+    dateadd(
+        day,
+        6,
+    cast(
+    dateadd(
+        day,
+        -1 * (case
+            when date_part('dayofweek', d.date_day) = 7
+            then 1
+            else date_part('dayofweek', d.date_day) + 1
+        end - 1),
+        d.date_day
+        )
+ as date)
+        )
+ as date) as week_end_date,
+    cast(
+    dateadd(
+        day,
+        -1 * (case
+            when date_part('dayofweek', d.prior_year_over_year_date_day) = 7
+            then 1
+            else date_part('dayofweek', d.prior_year_over_year_date_day) + 1
+        end - 1),
+        d.prior_year_over_year_date_day
+        )
+ as date)
+        as prior_year_week_start_date,
+        cast(
+    dateadd(
+        day,
+        6,
+    cast(
+    dateadd(
+        day,
+        -1 * (case
+            when date_part('dayofweek', d.prior_year_over_year_date_day) = 7
+            then 1
+            else date_part('dayofweek', d.prior_year_over_year_date_day) + 1
+        end - 1),
+        d.prior_year_over_year_date_day
+        )
+ as date)
+        )
+ as date)
+        as prior_year_week_end_date,
+        cast(date_part('week', d.date_day) as integer) as week_of_year,
+        cast(date_trunc('week', d.date_day) as date) as iso_week_start_date,
+        cast(
+    dateadd(
+        day,
+        6,
+        cast(date_trunc('week', d.date_day) as date)
+        )
+ as date) as iso_week_end_date,
+        cast(date_trunc('week', d.prior_year_over_year_date_day) as date)
+        as prior_year_iso_week_start_date,
+        cast(
+    dateadd(
+        day,
+        6,
+        cast(date_trunc('week', d.prior_year_over_year_date_day) as date)
+        )
+ as date)
+        as prior_year_iso_week_end_date,
+        cast(date_part('weekiso', d.date_day) as integer) as iso_week_of_year,
+        case
+        when cast(date_part('weekiso', d.date_day) as integer) = 1
+        then
+            concat(
+                date_part('year', cast(
+    dateadd(
+        day,
+        6,
+        cast(date_trunc('week', d.date_day) as date)
+        )
+ as date)),
+                '-W',
+                lpad(concat('',cast(date_part('weekiso', d.date_day) as integer)), 2, '0')
+            )
+        else
+            concat(
+                date_part('year', cast(date_trunc('week', d.date_day) as date)),
+                '-W',
+                lpad(concat('', cast(date_part('weekiso', d.date_day) as integer)), 2, '0')
+            )
+    end as iso_year_week,
+        cast(date_part('week', d.prior_year_over_year_date_day) as integer)
+        as prior_year_week_of_year,
+        cast(date_part('weekiso', d.prior_year_over_year_date_day) as integer)
+        as prior_year_iso_week_of_year,
+        cast(
+            date_part('month', d.date_day) as integer
+        ) as month_of_year,
+        to_char(d.date_day, 'MMMM') as month_name,
+        to_char(d.date_day, 'MON') as month_name_short,
+        cast(date_trunc('month', d.date_day) as date) as month_start_date,
+        cast(cast(
+    dateadd(
+        day,
+        -1,
+    dateadd(
+        month,
+        1,
+        date_trunc('month', d.date_day)
+        )
+        )
+        as date) as date) as month_end_date,
+        cast(
+            date_trunc('month', d.prior_year_date_day) as date
+        ) as prior_year_month_start_date,
+        cast(
+            cast(
+    dateadd(
+        day,
+        -1,
+    dateadd(
+        month,
+        1,
+        date_trunc('month', d.prior_year_date_day)
+        )
+        )
+        as date) as date
+        ) as prior_year_month_end_date,
+        cast(
+            date_part('quarter', d.date_day) as integer
+        ) as quarter_of_year,
+        cast(
+            date_trunc('quarter', d.date_day) as date
+        ) as quarter_start_date,
+        cast(cast(
+    dateadd(
+        day,
+        -1,
+    dateadd(
+        quarter,
+        1,
+        date_trunc('quarter', d.date_day)
+        )
+        )
+        as date) as date) as quarter_end_date,
+        cast(
+            date_part('year', d.date_day) as integer
+        ) as year_number,
+        cast(date_trunc('year', d.date_day) as date) as year_start_date,
+        cast(cast(
+    dateadd(
+        day,
+        -1,
+    dateadd(
+        year,
+        1,
+        date_trunc('year', d.date_day)
+        )
+        )
+        as date) as date) as year_end_date
+    from dates_with_prior_year_dates d
+    order by 1'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select * from stg_orders where order_date >= cast(
+    dateadd(
+        day,
+        -7,
+        cast(convert_timezone(
+        'UTC',
+        'UTC',
+        cast(convert_timezone('UTC', current_timestamp()) as timestamp)
+    ) as date)
+        )
+ as date)'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, date_part('dayofweekiso', order_date) as dow, case
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 1
+            then
+                'Mon'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 2
+            then
+                'Tue'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 3
+            then
+                'Wed'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 4
+            then
+                'Thu'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 5
+            then
+                'Fri'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 6
+            then
+                'Sat'
+          -- Similar to python, last argument is not included
+            when date_part('dayofweekiso', order_date) = 7
+            then
+                'Sun'
+    end as day_name from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, datediff(
+        day,
+        order_date,
+        convert_timezone(
+        'UTC',
+        'UTC',
+        cast(convert_timezone('UTC', current_timestamp()) as timestamp)
+    )
+        ) as days_since from stg_orders'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, convert_timezone(
+        'UTC',
+        'America/New_York',
+        cast(cast(order_date as timestamp) as timestamp)
+    ) as order_ts_ny from stg_orders'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id,
+    cast(
+    dateadd(
+        day,
+        -1 * (case
+            when date_part('dayofweek', order_date) = 7
+            then 1
+            else date_part('dayofweek', order_date) + 1
+        end - 1),
+        order_date
+        )
+ as date) as week_start, cast(date_part('weekiso', order_date) as integer) as iso_week from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select *
+    from stg_orders
+    qualify
+        row_number() over (
+            partition by customer_id
+            order by order_date desc
+        ) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select customer_id, status, count(*) as orders from stg_orders group by 1,2'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select order_id,
+    sum(
+      case
+      when payment_method = 'credit_card'
+        then amount
+      else 0
+      end
+    )
+            as "credit_card_amount"
+    ,
+    sum(
+      case
+      when payment_method = 'coupon'
+        then amount
+      else 0
+      end
+    )
+            as "coupon_amount"
+    ,
+    sum(
+      case
+      when payment_method = 'bank_transfer'
+        then amount
+      else 0
+      end
+    )
+            as "bank_transfer_amount"
+    ,
+    sum(
+      case
+      when payment_method = 'gift_card'
+        then amount
+      else 0
+      end
+    )
+            as "gift_card_amount"
+from stg_payments
+group by order_id'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_pivot"
+sql = '''select customer_id,
+    sum(
+      case
+      when status = 'placed'
+        then 1
+      else 0
+      end
+    )
+            as "placed"
+    ,
+    sum(
+      case
+      when status = 'shipped'
+        then 1
+      else 0
+      end
+    )
+            as "shipped"
+    ,
+    sum(
+      case
+      when status = 'completed'
+        then 1
+      else 0
+      end
+    )
+            as "completed"
+    ,
+    sum(
+      case
+      when status = 'returned'
+        then 1
+      else 0
+      end
+    )
+            as "returned"
+from stg_orders
+group by customer_id'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select order_id,
+    ( amount ) / nullif( ( order_id ), 0)
+ as ratio from fct_orders'''
+expect = "refused SQ0008 node:div"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select md5(cast(coalesce(cast(customer_id as TEXT), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(order_date as TEXT), '_dbt_utils_surrogate_key_null_') as TEXT)) as customer_day_key, customer_id, order_date from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select md5(cast(coalesce(cast(payment_id as TEXT), '_dbt_utils_surrogate_key_null_') as TEXT)) as payment_key, payment_id, amount from stg_payments'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select md5(cast(coalesce(cast(order_id as TEXT), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(customer_id as TEXT), '_dbt_utils_surrogate_key_null_') as TEXT)) as order_key, order_id, customer_id from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with rawdata as (
+    with p as (
+        select 0 as generated_number union all select 1
+    ), unioned as (
+    select
+    p0.generated_number * power(2, 0)
+     +
+    p1.generated_number * power(2, 1)
+     +
+    p2.generated_number * power(2, 2)
+     +
+    p3.generated_number * power(2, 3)
+     +
+    p4.generated_number * power(2, 4)
+    + 1
+    as generated_number
+    from
+    p as p0
+     cross join
+    p as p1
+     cross join
+    p as p2
+     cross join
+    p as p3
+     cross join
+    p as p4
+    )
+    select *
+    from unioned
+    where generated_number <= 31
+    order by generated_number
+),
+all_periods as (
+    select (
+    dateadd(
+        day,
+        row_number() over (order by generated_number) - 1,
+        cast('2026-01-01' as date)
+        )
+    ) as date_day
+    from rawdata
+),
+filtered as (
+    select *
+    from all_periods
+    where date_day <= cast('2026-02-01' as date)
+)
+select * from filtered'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_date_spine"
+sql = '''with rawdata as (
+    with p as (
+        select 0 as generated_number union all select 1
+    ), unioned as (
+    select
+    p0.generated_number * power(2, 0)
+     +
+    p1.generated_number * power(2, 1)
+     +
+    p2.generated_number * power(2, 2)
+     +
+    p3.generated_number * power(2, 3)
+    + 1
+    as generated_number
+    from
+    p as p0
+     cross join
+    p as p1
+     cross join
+    p as p2
+     cross join
+    p as p3
+    )
+    select *
+    from unioned
+    where generated_number <= 12
+    order by generated_number
+),
+all_periods as (
+    select (
+    dateadd(
+        month,
+        row_number() over (order by generated_number) - 1,
+        cast('2025-01-01' as date)
+        )
+    ) as date_month
+    from rawdata
+),
+filtered as (
+    select *
+    from all_periods
+    where date_month <= cast('2026-01-01' as date)
+)
+select * from filtered'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select order_id, cast(order_id as TEXT) as order_key from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id, first_name || ' ' || last_name as full_name from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id,
+    dateadd(
+        day,
+        7,
+        order_date
+        )
+ as due_date from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, datediff(
+        day,
+        order_date,
+        current_date
+        ) as age_days from stg_orders'''
+expect = "refused SQ0008 fn:CURRENT_DATE"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select order_id, md5(cast(status as TEXT)) as status_hash from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, cast(
+    dateadd(
+        day,
+        -1,
+    dateadd(
+        month,
+        1,
+        date_trunc('month', order_date)
+        )
+        )
+        as date) as month_end from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id,
+    listagg(
+        status,
+        ', '
+        )
+        within group (order by order_date) as statuses from stg_orders group by customer_id'''
+expect = "refused SQ0008 fn:LISTAGG"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select order_id, convert_timezone('UTC', current_timestamp()) as loaded_at from stg_orders'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_marts"
+sql = '''select order_id,
+        try_cast(status as integer)
+     as status_code from stg_orders'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "strings"
+sql = '''select customer_id,
+    split_part(
+        first_name,
+        ' ',
+        1
+        )
+ as first_word from stg_customers'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dates"
+sql = '''select date_trunc('month', order_date) as order_month, count(*) as orders from stg_orders group by 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''with snapshot_query as (
+        select order_id, customer_id, order_date, status, amount, updated_at from stg_orders
+    ),
+    snapshotted_data as (
+        select *,
+        order_id as dbt_unique_key
+        from orders_snapshot
+        where
+                dbt_valid_to is null
+    ),
+    insertions_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            updated_at as dbt_updated_at,
+            updated_at as dbt_valid_from,
+  coalesce(nullif(updated_at, updated_at), null)
+  as dbt_valid_to
+,
+            md5(coalesce(cast(order_id as varchar ), '')
+         || '|' || coalesce(cast(updated_at as varchar ), '')
+        ) as dbt_scd_id
+        from snapshot_query
+    ),
+    updates_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            updated_at as dbt_updated_at,
+            updated_at as dbt_valid_from,
+            updated_at as dbt_valid_to
+        from snapshot_query
+    ),
+    insertions as (
+        select
+            'insert' as dbt_change_type,
+            source_data.*
+        from insertions_source_data as source_data
+        left outer join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        snapshotted_data.dbt_unique_key is null
+            or (
+        snapshotted_data.dbt_unique_key is not null
+ and (
+               (snapshotted_data.dbt_valid_from < source_data.updated_at)
+            )
+        )
+    ),
+    updates as (
+        select
+            'update' as dbt_change_type,
+            source_data.*,
+            snapshotted_data.dbt_scd_id
+        from updates_source_data as source_data
+        join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+        where (
+            (snapshotted_data.dbt_valid_from < source_data.updated_at)
+        )
+    )
+    select * from insertions
+    union all
+    select * from updates'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''select *,
+        md5(coalesce(cast(order_id as varchar ), '')
+         || '|' || coalesce(cast(updated_at as varchar ), '')
+        ) as dbt_scd_id,
+        updated_at as dbt_updated_at,
+        updated_at as dbt_valid_from,
+  coalesce(nullif(updated_at, updated_at), null)
+  as dbt_valid_to
+from (
+        select order_id, customer_id, order_date, status, amount, updated_at from stg_orders
+    ) sbq'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "translated"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders as DBT_INTERNAL_DEST
+        using fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on ((DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id))
+    when matched then update set
+        "ORDER_ID" = DBT_INTERNAL_SOURCE."ORDER_ID","CUSTOMER_ID" = DBT_INTERNAL_SOURCE."CUSTOMER_ID","ORDER_DATE" = DBT_INTERNAL_SOURCE."ORDER_DATE","STATUS" = DBT_INTERNAL_SOURCE."STATUS","AMOUNT" = DBT_INTERNAL_SOURCE."AMOUNT","UPDATED_AT" = DBT_INTERNAL_SOURCE."UPDATED_AT"
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders as DBT_INTERNAL_DEST
+        using fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on (DBT_INTERNAL_DEST.order_date >= dateadd(day, -7, current_date)) and ((DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id))
+    when matched then update set
+        "ORDER_ID" = DBT_INTERNAL_SOURCE."ORDER_ID","CUSTOMER_ID" = DBT_INTERNAL_SOURCE."CUSTOMER_ID","ORDER_DATE" = DBT_INTERNAL_SOURCE."ORDER_DATE","STATUS" = DBT_INTERNAL_SOURCE."STATUS","AMOUNT" = DBT_INTERNAL_SOURCE."AMOUNT","UPDATED_AT" = DBT_INTERNAL_SOURCE."UPDATED_AT"
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders as DBT_INTERNAL_DEST
+        using fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on (
+                    DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id
+                ) and (
+                    DBT_INTERNAL_SOURCE.customer_id = DBT_INTERNAL_DEST.customer_id
+                )
+    when matched then update set
+        "ORDER_ID" = DBT_INTERNAL_SOURCE."ORDER_ID","CUSTOMER_ID" = DBT_INTERNAL_SOURCE."CUSTOMER_ID","ORDER_DATE" = DBT_INTERNAL_SOURCE."ORDER_DATE","STATUS" = DBT_INTERNAL_SOURCE."STATUS","AMOUNT" = DBT_INTERNAL_SOURCE."AMOUNT","UPDATED_AT" = DBT_INTERNAL_SOURCE."UPDATED_AT"
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+        (
+            select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
+            from fct_orders__dbt_tmp
+        )'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "ddl_dml"
+sql = '''delete from fct_orders as DBT_INTERNAL_DEST
+        where (order_id) in (
+            select distinct order_id
+            from fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        )'''
+expect = "refused SQ0002 node:delete"
+expect_repository = "refused SQ0002 node:delete"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    (
+        select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
+        from fct_orders__dbt_tmp
+    )'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "ddl_dml"
+sql = '''delete from fct_orders as DBT_INTERNAL_DEST
+        where (order_id) in (
+            select distinct order_id
+            from fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        )
+                and order_date >= dateadd(day, -7, current_date)'''
+expect = "refused SQ0002 node:delete"
+expect_repository = "refused SQ0002 node:delete"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert into fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    (
+        select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
+        from fct_orders__dbt_tmp
+    )'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders as DBT_INTERNAL_DEST
+        using fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on FALSE
+    when not matched by source
+         and order_date >= dateadd(day, -7, current_date)
+        then delete
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into orders_snapshot as DBT_INTERNAL_DEST
+    using orders_snapshot__dbt_tmp as DBT_INTERNAL_SOURCE
+    on DBT_INTERNAL_SOURCE.dbt_scd_id = DBT_INTERNAL_DEST.dbt_scd_id
+    when matched
+       and DBT_INTERNAL_DEST.dbt_valid_to is null
+     and DBT_INTERNAL_SOURCE.dbt_change_type in ('update', 'delete')
+        then update
+        set dbt_valid_to = DBT_INTERNAL_SOURCE.dbt_valid_to
+    when not matched
+     and DBT_INTERNAL_SOURCE.dbt_change_type = 'insert'
+        then insert ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT", "DBT_SCD_ID", "DBT_UPDATED_AT", "DBT_VALID_FROM", "DBT_VALID_TO")
+        values ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT", "DBT_SCD_ID", "DBT_UPDATED_AT", "DBT_VALID_FROM", "DBT_VALID_TO")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.value:sku::varchar as sku
+from events e, lateral flatten(input => e.payload, path => 'items') f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.value:sku::varchar as sku
+from events e, lateral flatten(e.payload:items) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+uncertain = true
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.key as attribute
+from events e, lateral flatten(input => e.payload, mode => 'object') f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.value['sku']::varchar as sku
+from events e, lateral flatten(input => e.payload['items']) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.value:sku::varchar as first_sku
+from events e, lateral flatten(input => e.payload:items) f
+where f.index = 0'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.customer_id, count(f.value) as items
+from events e, lateral flatten(input => e.payload:items, outer => true) f
+group by e.customer_id'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select r.raw:id::varchar as event_id, f.value:name::varchar as name
+from raw_events r, lateral flatten(input => parse_json(r.raw:body::varchar):products) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select t.ticket_id, f.value::varchar as tag
+from tickets t, lateral flatten(input => t.tags) f
+qualify row_number() over (partition by t.ticket_id order by f.index) = 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select e.event_id, f.value:sku::varchar as sku
+from events e
+cross join lateral flatten(input => e.payload:items) f'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_flatten"
+sql = '''select f.value:sku::varchar as sku, count(distinct e.customer_id) as buyers
+from events e, lateral flatten(input => e.payload:items) f
+where e.event_type = 'checkout'
+group by 1
+order by buyers desc'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+# Round 5: dbt incremental models compiled by dbt-snowflake 1.12 as an incremental run ({{ this }}
+# is the existing target), dbt-snowflake's snapshot staging SQL for the check and timestamp
+# strategies with hard_deletes ignore and invalidate, its MERGE and delete+insert DML with several
+# incremental predicates, QUALIFY dedup edge cases, and hand-written MERGE shapes.
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_id, status, updated_at, convert_timezone('UTC', current_timestamp()) as loaded_at
+from analytics.dbt_dev.fct_orders
+where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_append)'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select * from analytics.dbt_dev.fct_orders
+where updated_at > (select coalesce(max(updated_at), '1900-01-01'::timestamp_ntz) from analytics.dbt_dev.inc_coalesce)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select * from analytics.dbt_dev.fct_orders
+where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_dedup)
+qualify row_number() over (partition by order_id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select * from analytics.dbt_dev.fct_orders
+where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_event_time)
+  and updated_at <= convert_timezone('UTC', current_timestamp())'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 node:lte"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select s.*
+from analytics.dbt_dev.fct_orders s
+left join analytics.dbt_dev.inc_join_this t on t.order_id = s.order_id
+where t.order_id is null or s.updated_at > t.updated_at'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select * from analytics.dbt_dev.fct_orders
+where updated_at >= (select dateadd(day, -3, max(updated_at)) from analytics.dbt_dev.inc_lookback)'''
+expect = "refused SQ0008 fn:DATEADD"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_id, customer_id, order_date, status, amount, updated_at
+from analytics.dbt_dev.fct_orders
+where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_merge)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select s.* from analytics.dbt_dev.fct_orders s
+where not exists (select 1 from analytics.dbt_dev.inc_not_exists t where t.order_id = s.order_id and t.updated_at >= s.updated_at)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select order_date, count(*) as orders, sum(amount) as revenue
+from analytics.dbt_dev.fct_orders
+where order_date >= (select max(order_date) from analytics.dbt_dev.inc_partition_date) - 2
+group by order_date'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_incremental"
+sql = '''select * from analytics.dbt_dev.fct_orders
+where order_date >= '2026-11-01'::date'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''with snapshot_query as (
+        select order_id, customer_id, order_date, status, amount, updated_at from analytics.dbt_dev.stg_orders
+    ),
+    snapshotted_data as (
+        select *,
+        order_id as dbt_unique_key
+        from analytics.snapshots.orders_snapshot
+        where
+                dbt_valid_to is null
+    ),
+    insertions_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+  coalesce(nullif(to_timestamp_ntz(convert_timezone('UTC', current_timestamp())), to_timestamp_ntz(convert_timezone('UTC', current_timestamp()))), null)
+  as dbt_valid_to
+,
+            md5(coalesce(cast(order_id as varchar ), '')
+         || '|' || coalesce(cast(to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as varchar ), '')
+        ) as dbt_scd_id
+        from snapshot_query
+    ),
+    updates_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_to
+        from snapshot_query
+    ),
+    insertions as (
+        select
+            'insert' as dbt_change_type,
+            source_data.*
+        from insertions_source_data as source_data
+        left outer join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        snapshotted_data.dbt_unique_key is null
+            or (
+        snapshotted_data.dbt_unique_key is not null
+ and (
+               (snapshotted_data.status != source_data.status
+        or
+        (
+            ((snapshotted_data.status is null) and not (source_data.status is null))
+            or
+            ((not snapshotted_data.status is null) and (source_data.status is null))
+        ) or snapshotted_data.amount != source_data.amount
+        or
+        (
+            ((snapshotted_data.amount is null) and not (source_data.amount is null))
+            or
+            ((not snapshotted_data.amount is null) and (source_data.amount is null))
+        ))
+            )
+        )
+    ),
+    updates as (
+        select
+            'update' as dbt_change_type,
+            source_data.*,
+            snapshotted_data.dbt_scd_id
+        from updates_source_data as source_data
+        join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+        where (
+            (snapshotted_data.status != source_data.status
+        or
+        (
+            ((snapshotted_data.status is null) and not (source_data.status is null))
+            or
+            ((not snapshotted_data.status is null) and (source_data.status is null))
+        ) or snapshotted_data.amount != source_data.amount
+        or
+        (
+            ((snapshotted_data.amount is null) and not (source_data.amount is null))
+            or
+            ((not snapshotted_data.amount is null) and (source_data.amount is null))
+        ))
+        )
+    )
+    select * from insertions
+    union all
+    select * from updates'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''with snapshot_query as (
+        select order_id, customer_id, order_date, status, amount, updated_at from analytics.dbt_dev.stg_orders
+    ),
+    snapshotted_data as (
+        select *,
+        order_id as dbt_unique_key
+        from analytics.snapshots.orders_snapshot
+        where
+                dbt_valid_to is null
+    ),
+    insertions_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+  coalesce(nullif(to_timestamp_ntz(convert_timezone('UTC', current_timestamp())), to_timestamp_ntz(convert_timezone('UTC', current_timestamp()))), null)
+  as dbt_valid_to
+,
+            md5(coalesce(cast(order_id as varchar ), '')
+         || '|' || coalesce(cast(to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as varchar ), '')
+        ) as dbt_scd_id
+        from snapshot_query
+    ),
+    updates_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_to
+        from snapshot_query
+    ),
+    deletes_source_data as (
+        select *,
+        order_id as dbt_unique_key
+        from snapshot_query
+    ),
+    insertions as (
+        select
+            'insert' as dbt_change_type,
+            source_data.*
+        from insertions_source_data as source_data
+        left outer join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        snapshotted_data.dbt_unique_key is null
+            or (
+        snapshotted_data.dbt_unique_key is not null
+ and (
+               (snapshotted_data.status != source_data.status
+        or
+        (
+            ((snapshotted_data.status is null) and not (source_data.status is null))
+            or
+            ((not snapshotted_data.status is null) and (source_data.status is null))
+        ) or snapshotted_data.amount != source_data.amount
+        or
+        (
+            ((snapshotted_data.amount is null) and not (source_data.amount is null))
+            or
+            ((not snapshotted_data.amount is null) and (source_data.amount is null))
+        ))
+            )
+        )
+    ),
+    updates as (
+        select
+            'update' as dbt_change_type,
+            source_data.*,
+            snapshotted_data.dbt_scd_id
+        from updates_source_data as source_data
+        join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+        where (
+            (snapshotted_data.status != source_data.status
+        or
+        (
+            ((snapshotted_data.status is null) and not (source_data.status is null))
+            or
+            ((not snapshotted_data.status is null) and (source_data.status is null))
+        ) or snapshotted_data.amount != source_data.amount
+        or
+        (
+            ((snapshotted_data.amount is null) and not (source_data.amount is null))
+            or
+            ((not snapshotted_data.amount is null) and (source_data.amount is null))
+        ))
+        )
+    )
+    ,
+    deletes as (
+        select
+            'delete' as dbt_change_type,
+            source_data.*,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_to,
+            snapshotted_data.dbt_scd_id
+        from snapshotted_data
+        left join deletes_source_data as source_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        source_data.dbt_unique_key is null
+    )
+    select * from insertions
+    union all
+    select * from updates
+    union all
+    select * from deletes'''
+expect = "refused SQ0008 fn:CURRENT_TIMESTAMP"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+
+[[query]]
+category = "dbt_snapshot"
+sql = '''with snapshot_query as (
+        select order_id, customer_id, order_date, status, amount, updated_at from analytics.dbt_dev.stg_orders
+    ),
+    snapshotted_data as (
+        select *,
+        order_id as dbt_unique_key
+        from analytics.snapshots.orders_snapshot
+        where
+                dbt_valid_to is null
+    ),
+    insertions_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            updated_at as dbt_updated_at,
+            updated_at as dbt_valid_from,
+  coalesce(nullif(updated_at, updated_at), null)
+  as dbt_valid_to
+,
+            md5(coalesce(cast(order_id as varchar ), '')
+         || '|' || coalesce(cast(updated_at as varchar ), '')
+        ) as dbt_scd_id
+        from snapshot_query
+    ),
+    updates_source_data as (
+        select *,
+        order_id as dbt_unique_key
+,
+            updated_at as dbt_updated_at,
+            updated_at as dbt_valid_from,
+            updated_at as dbt_valid_to
+        from snapshot_query
+    ),
+    deletes_source_data as (
+        select *,
+        order_id as dbt_unique_key
+        from snapshot_query
+    ),
+    insertions as (
+        select
+            'insert' as dbt_change_type,
+            source_data.*
+        from insertions_source_data as source_data
+        left outer join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        snapshotted_data.dbt_unique_key is null
+            or (
+        snapshotted_data.dbt_unique_key is not null
+ and (
+               (snapshotted_data.dbt_valid_from < source_data.updated_at)
+            )
+        )
+    ),
+    updates as (
+        select
+            'update' as dbt_change_type,
+            source_data.*,
+            snapshotted_data.dbt_scd_id
+        from updates_source_data as source_data
+        join snapshotted_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+        where (
+            (snapshotted_data.dbt_valid_from < source_data.updated_at)
+        )
+    )
+    ,
+    deletes as (
+        select
+            'delete' as dbt_change_type,
+            source_data.*,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_from,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_updated_at,
+            to_timestamp_ntz(convert_timezone('UTC', current_timestamp())) as dbt_valid_to,
+            snapshotted_data.dbt_scd_id
+        from snapshotted_data
+        left join deletes_source_data as source_data
+            on
+        snapshotted_data.dbt_unique_key = source_data.dbt_unique_key
+            where
+        source_data.dbt_unique_key is null
+    )
+    select * from insertions
+    union all
+    select * from updates
+    union all
+    select * from deletes'''
+expect = "refused SQ0008 node:cast"
+expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
+        using analytics.dbt_dev.fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on (DBT_INTERNAL_DEST.order_date >= dateadd(day, -7, current_date)) and (DBT_INTERNAL_SOURCE.status != 'deleted') and ((DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id))
+    when matched then update set
+        "ORDER_ID" = DBT_INTERNAL_SOURCE."ORDER_ID","CUSTOMER_ID" = DBT_INTERNAL_SOURCE."CUSTOMER_ID","ORDER_DATE" = DBT_INTERNAL_SOURCE."ORDER_DATE","STATUS" = DBT_INTERNAL_SOURCE."STATUS","AMOUNT" = DBT_INTERNAL_SOURCE."AMOUNT","UPDATED_AT" = DBT_INTERNAL_SOURCE."UPDATED_AT"
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
+        using analytics.dbt_dev.fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        on (DBT_INTERNAL_DEST.updated_at > dateadd(day, -3, current_timestamp)) and ((DBT_INTERNAL_SOURCE.order_id = DBT_INTERNAL_DEST.order_id))
+    when matched then update set
+        "ORDER_ID" = DBT_INTERNAL_SOURCE."ORDER_ID","CUSTOMER_ID" = DBT_INTERNAL_SOURCE."CUSTOMER_ID","ORDER_DATE" = DBT_INTERNAL_SOURCE."ORDER_DATE","STATUS" = DBT_INTERNAL_SOURCE."STATUS","AMOUNT" = DBT_INTERNAL_SOURCE."AMOUNT","UPDATED_AT" = DBT_INTERNAL_SOURCE."UPDATED_AT"
+    when not matched then insert
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    values
+        ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''delete from analytics.dbt_dev.fct_orders as DBT_INTERNAL_DEST
+        where (order_id, customer_id) in (
+            select distinct order_id, customer_id
+            from analytics.dbt_dev.fct_orders__dbt_tmp as DBT_INTERNAL_SOURCE
+        )'''
+expect = "refused SQ0002 node:delete"
+expect_repository = "refused SQ0002 node:delete"
+
+[[query]]
+category = "ddl_dml"
+sql = '''insert into analytics.dbt_dev.fct_orders ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT")
+    (
+        select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "STATUS", "AMOUNT", "UPDATED_AT"
+        from analytics.dbt_dev.fct_orders__dbt_tmp
+    )'''
+expect = "refused SQ0002 node:insert"
+expect_repository = "refused SQ0002 node:insert"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify row_number() over (partition by order_id order by updated_at desc, order_date desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify row_number() over (partition by order_id order by updated_at desc nulls last) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify 1 = row_number() over (partition by order_id order by updated_at desc)'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify row_number() over (partition by order_id, customer_id order by updated_at desc) < 2'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify count(*) over (partition by order_id) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+where status != 'deleted'
+qualify row_number() over (partition by order_id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select order_id, status from stg_orders
+qualify last_value(status) over (partition by order_id order by updated_at rows between unbounded preceding and unbounded following) = status'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify updated_at = max(updated_at) over (partition by order_id)
+    and row_number() over (partition by order_id order by updated_at desc) = 1'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from raw_events
+qualify row_number() over (partition by raw:id::varchar order by _loaded_at desc) = 1'''
+expect = "refused SQ0008 node:column"
+expect_repository = "translated"
+
+[[query]]
+category = "dbt_dedup"
+sql = '''select * from stg_orders
+qualify row_number() over (partition by order_id order by updated_at desc) = 1
+order by order_id'''
+expect = "translated"
+expect_repository = "translated"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using (select * from stg_orders qualify row_number() over (partition by order_id order by updated_at desc) = 1) s
+on t.order_id = s.order_id
+when matched and s.status = 'deleted' then delete
+when matched and s.updated_at > t.updated_at then update set t.status = s.status, t.amount = s.amount, t.updated_at = s.updated_at
+when not matched and s.status != 'deleted' then insert (order_id, customer_id, order_date, status, amount, updated_at) values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using stg_orders s
+on t.order_id = s.order_id
+when not matched then insert values (s.order_id, s.customer_id, s.order_date, s.status, s.amount, s.updated_at)'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using stg_orders s
+on t.order_id = s.order_id
+when matched then update set status = s.status'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using (select order_id, max(updated_at) as updated_at from stg_orders group by order_id) s
+on t.order_id = s.order_id
+when matched then update set t.updated_at = s.updated_at'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
+
+[[query]]
+category = "ddl_dml"
+sql = '''merge into fct_orders t
+using stg_orders s
+on t.order_id = s.order_id
+when not matched by source then delete'''
+expect = "refused SQ0002 node:merge"
+expect_repository = "refused SQ0002 node:merge"
