@@ -1,0 +1,42 @@
+# The names Snowflake gives unaliased ROUND and current-time items, as a playground query writes them.
+# The recorded column names are the receipts for naming them.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_round"
+description = "Unaliased ROUND with one and two arguments, in upper and lower case and with inner spaces, over a NULL, a half and a negative."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["1.25"],
+  ["-2.55"],
+  ["NULL"],
+]
+query = "SELECT ROUND(n, 1), ROUND(n), round( n, 0 ) FROM input"
+order = "ordered"
+tags = ["null", "boundary", "duplicates"]
+
+[[case]]
+id = "unaliased_round_no_rows"
+description = "Unaliased ROUND over no rows still names its columns."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT ROUND(n, 1), ROUND(n) FROM input WHERE n > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_current_time"
+description = "Unaliased CURRENT_DATE(), CURRENT_DATE and CURRENT_TIMESTAMP(): only the column names and types are the receipt; the values read the clock."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT CURRENT_DATE(), CURRENT_DATE, CURRENT_TIMESTAMP() FROM input"
+order = "ordered"
+expected_divergence = "current_time"
+tags = ["boundary"]
