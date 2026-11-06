@@ -1655,6 +1655,36 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             expected_value: json!("v2"),
         },
         ProjectionTestCase {
+            description: "a cast to an interval type keeps its leading and trailing qualifiers",
+            sql: "SELECT a::INTERVAL DAY(2) TO SECOND(2)",
+            pointer: "/0/select/expressions/0/cast/to/unit",
+            expected_value: json!("DAY(2)"),
+        },
+        ProjectionTestCase {
+            description: "a year-month interval cast keeps its trailing qualifier",
+            sql: "SELECT a::INTERVAL YEAR(2) TO MONTH",
+            pointer: "/0/select/expressions/0/cast/to/to",
+            expected_value: json!("MONTH"),
+        },
+        ProjectionTestCase {
+            description: "an IPADDRESS literal is a cast of its string to IPADDRESS",
+            sql: "SELECT IPADDRESS '10.0.0.9'",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_value: json!("IPADDRESS"),
+        },
+        ProjectionTestCase {
+            description: "** spreads an array into an IN list",
+            sql: "SELECT 1 WHERE a IN (** [3, 4])",
+            pointer: "/0/select/where_clause/this/in/expressions/0/variadic/this/array_func/expressions/1/literal/value",
+            expected_value: json!("4"),
+        },
+        ProjectionTestCase {
+            description: "RESAMPLE keeps its USING column",
+            sql: "SELECT k FROM t1 RESAMPLE(USING k INCREMENT BY 1)",
+            pointer: "/0/select/from/expressions/0/resample/using/name",
+            expected_value: json!("k"),
+        },
+        ProjectionTestCase {
             description: "a quoted PIVOT aggregate alias stays quoted",
             sql: "SELECT * FROM t1 PIVOT ( SUM ( v1 ) \"v1 Q\" FOR v2 IN ( 1 , 2 ) )",
             pointer: "/0/select/from/expressions/0/pivot/expressions/0/alias/alias/quoted",
