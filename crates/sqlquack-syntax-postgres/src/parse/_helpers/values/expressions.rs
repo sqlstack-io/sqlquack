@@ -31,7 +31,7 @@ pub(crate) enum Flavor {
 }
 
 /// The text of an operator token: `<=`, `>=` and `<>` for their own tokens, `<>` for `!=`.
-fn operator_text(token: &Token) -> String {
+pub(crate) fn operator_text(token: &Token) -> String {
     match token.kind {
         TokenKind::LessEquals => "<=".to_owned(),
         TokenKind::GreaterEquals => ">=".to_owned(),
