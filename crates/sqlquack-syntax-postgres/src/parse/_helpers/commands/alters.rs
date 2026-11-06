@@ -176,7 +176,7 @@ pub(crate) fn alter(
 }
 
 /// The value of an `ICONST` token's text, in its decimal, hexadecimal, octal or binary spelling.
-fn iconst(text: &str) -> i64 {
+pub(crate) fn iconst(text: &str) -> i64 {
     let lower: String = text.to_ascii_lowercase();
     let (digits, radix): (&str, u32) = match lower.get(..2) {
         Some("0x") => (&lower[2..], 16),

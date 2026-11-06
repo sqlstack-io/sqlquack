@@ -49,6 +49,15 @@ impl Parser<'_> {
             Some("create") if self.creates_table() => self.create_table(),
             Some("create") if self.creates_aggregate() => self.create_aggregate(),
             Some("create") if self.kw_at(1, "database") => self.create_database(),
+            Some("create") if self.truncated_create().is_some() => {
+                self.at += self.truncated_create().unwrap_or_default();
+                Err(self.error())
+            }
+            Some("create") if self.kw_at(1, "assertion") => self.create_assertion(),
+            Some("create") if self.created_kind().is_some() => {
+                let kind: &'static str = self.created_kind().unwrap_or_default();
+                self.create_kind(kind)
+            }
             Some("create") if self.keyword_at(1).is_none() => {
                 self.at += 1;
                 Err(self.error())
