@@ -56,7 +56,7 @@ use crate::conversion::constants::{
 };
 use crate::conversion::models::RuleSpec;
 
-/// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ in the UTC session.
+/// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ or TIMESTAMP_TZ in the UTC session.
 pub const NAIVE_LOCAL_COMPARISON: &str = "rule.naive_local_comparison";
 /// Every rule.
 pub const RULES: &[RuleSpec] = &[
@@ -323,7 +323,7 @@ pub const RULES: &[RuleSpec] = &[
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte",
         ],
-        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it: the TIMESTAMP_LTZ is read as its wall time in the session time zone, which relies on session_timezone_utc, and compared with the naive value.",
+        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it, or beside a TIMESTAMP_TZ at any offset, such as CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()): Snowflake reads the naive value in the session time zone and compares instants, as recorded, so the zoned value is read as its wall time in UTC, which relies on session_timezone_utc.",
         failures: &[],
     },
     RuleSpec {

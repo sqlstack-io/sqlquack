@@ -29,7 +29,6 @@ rows = [
   ["'2024-06-01 10:00:00'", "'2024-06-01 05:00:00 -05:00'"],
 ]
 expression = "ARRAY_CONSTRUCT(n = tz, n < tz, n > tz)"
-expected_divergence = "json_fidelity"
 tags = ["boundary"]
 
 [[case]]
@@ -42,5 +41,4 @@ rows = [
   ["NULL"],
 ]
 expression = "updated_at <= CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())"
-expected_divergence = "current_time"
 tags = ["null"]

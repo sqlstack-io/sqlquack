@@ -31,7 +31,6 @@ rows = [
   ["'2024-06-01 10:00:00.124'", "'2024-06-01 10:00:00.123999 +00:00'"],
 ]
 expression = "ARRAY_CONSTRUCT(n = l, n < l, n > l)"
-expected_divergence = "json_fidelity"
 tags = ["boundary"]
 
 [[case]]
@@ -44,7 +43,6 @@ rows = [
   ["NULL"],
 ]
 expression = "updated_at <= CURRENT_TIMESTAMP()"
-expected_divergence = "current_time"
 tags = ["null"]
 
 [[case]]
@@ -57,7 +55,6 @@ rows = [
   ["NULL"],
 ]
 expression = "updated_at >= DATEADD(day, -3, CURRENT_TIMESTAMP())"
-expected_divergence = "current_time"
 tags = ["null"]
 
 [[case]]

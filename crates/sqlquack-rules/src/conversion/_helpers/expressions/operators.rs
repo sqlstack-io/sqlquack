@@ -594,11 +594,17 @@ pub(crate) fn comparable(
             let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
-        (SnowflakeType::TimestampNtz { .. }, SnowflakeType::TimestampLtz { precision }) => {
+        (
+            SnowflakeType::TimestampNtz { .. },
+            SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision },
+        ) => {
             let right = local_as_naive(right, precision, construct, context)?;
             return comparable(left, right, construct, context);
         }
-        (SnowflakeType::TimestampLtz { precision }, SnowflakeType::TimestampNtz { .. }) => {
+        (
+            SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision },
+            SnowflakeType::TimestampNtz { .. },
+        ) => {
             let left = local_as_naive(left, precision, construct, context)?;
             return comparable(left, right, construct, context);
         }
@@ -627,7 +633,7 @@ pub(crate) fn comparable(
     }
 }
 
-/// A TIMESTAMP_LTZ beside a TIMESTAMP_NTZ, as its wall time in the UTC session at its own precision.
+/// A TIMESTAMP_LTZ or TIMESTAMP_TZ beside a TIMESTAMP_NTZ, as its instant's UTC wall time.
 fn local_as_naive(
     emitted: Emitted,
     precision: u8,
