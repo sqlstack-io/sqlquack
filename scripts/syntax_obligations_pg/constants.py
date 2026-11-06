@@ -229,7 +229,14 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "pg.expressions.subquery.not-in-row": {"subquery": "SELECT 1 , 2"},
     "pg.expressions.subquery.row-comparison": {"subquery": "SELECT 1 , 2"},
     "pg.expressions.subquery.some-row": {"subquery": "SELECT 1 , 2"},
-    "pg.ddl.create-type.input-output": {"internallength": "16"},
+    "pg.ddl.create-type.input-output": {
+        "internallength": "16",
+        "alignment": "int4",
+        "storage": "plain",
+        "category": "'U'",
+        "preferred": "true",
+        "delimiter": "','",
+    },
     "pg.security_admin.alter-default-privileges": {
         "abbreviated_grant_or_revoke": "GRANT SELECT ON TABLES TO PUBLIC"
     },
@@ -371,6 +378,7 @@ PG_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
         "subgrammar",
     ),
     (re.compile(r"^token_type$"), "identifier"),
+    (re.compile(r"^send_function$"), "operand"),
     (re.compile("^(?:" + "|".join(map(re.escape, VALUE_FILLS)) + ")$"), "expression"),
     (
         re.compile(r"^\w+ (?:" + "|".join(map(re.escape, ARGUMENT_TYPES)) + r")(?:\[\])?$"),

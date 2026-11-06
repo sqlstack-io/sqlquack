@@ -2447,8 +2447,8 @@ reason = "the synopsis puts FROM and the deferral options on every trigger, but 
 [[reading]]
 form = "pg.ddl.create-collation.name"
 grammar_sha256 = "e842c361d04bb96b25a1da00089bc9ad9df0c263b68acdfac02459fe8c47144f"
-grammar = ["CREATE COLLATION [ IF NOT EXISTS ] <name> ( { LOCALE = <locale> | LC_COLLATE = <lc_collate> , LC_CTYPE = <lc_ctype> } [ , PROVIDER = <provider> ] [ , DETERMINISTIC = <boolean> ] [ , RULES = <rules> ] [ , VERSION = <version> ] )"]
-reason = "the synopsis brackets every item, each with a trailing comma, but gram.y definition needs a non-empty list without a trailing comma, and the page requires LOCALE or both LC_COLLATE and LC_CTYPE; written as that requirement with leading commas"
+grammar = ["CREATE COLLATION [ IF NOT EXISTS ] <name> ( { LOCALE = <locale> | LC_COLLATE = <lc_collate> | LC_CTYPE = <lc_ctype> | PROVIDER = <provider> | DETERMINISTIC = <boolean> | RULES = <rules> | VERSION = <version> } [ , LC_COLLATE = <lc_collate> ] [ , LC_CTYPE = <lc_ctype> ] [ , PROVIDER = <provider> ] [ , DETERMINISTIC = <boolean> ] [ , RULES = <rules> ] [ , VERSION = <version> ] )"]
+reason = "the synopsis brackets every item, each with a trailing comma, but gram.y definition ('(' def_list ')') needs a non-empty list without a trailing comma, and any item may stand alone or come first; written as a choice of the first item, then the synopsis's later items with leading commas. The page's rule that LOCALE or both LC_COLLATE and LC_CTYPE be given is DefineCollation's check (42P17, parameter must be specified), not syntax"
 
 [[reading]]
 form = "pg.ddl.alter-sequence.name"
@@ -3991,6 +3991,1301 @@ note = "TEXT SEARCH TEMPLATE member (gram.y AlterExtensionContentsStmt: object_t
 anchor = "doc.sql-alterextension / Synopsis"
 sql = "ALTER EXTENSION t1 DROP TEXT SEARCH TEMPLATE t2"
 context = "raw"
+
+# DDL: batch-19 and batch-21 coverage notes.
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+note = "the alignment char, a type name word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , ALIGNMENT = char )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+note = "the alignment int2, a type name word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , ALIGNMENT = int2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+note = "the alignment int4, a type name word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , ALIGNMENT = int4 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<alignment> in [ , ALIGNMENT = <alignment> ]"
+note = "the alignment double, a type name word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , ALIGNMENT = double )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<storage> in [ , STORAGE = <storage> ]"
+note = "the storage strategy plain, a word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , STORAGE = plain )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<storage> in [ , STORAGE = <storage> ]"
+note = "the storage strategy external, a word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , STORAGE = external )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<storage> in [ , STORAGE = <storage> ]"
+note = "the storage strategy extended, a word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , STORAGE = extended )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<storage> in [ , STORAGE = <storage> ]"
+note = "the storage strategy main, a word (gram.y def_arg: func_type)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , STORAGE = main )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<category> in [ , CATEGORY = <category> ]"
+note = "a one-character string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , CATEGORY = 'U' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<preferred> in [ , PREFERRED = <preferred> ]"
+note = "the boolean true, a reserved keyword (gram.y def_arg: reserved_keyword)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , PREFERRED = true )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<preferred> in [ , PREFERRED = <preferred> ]"
+note = "the boolean false, a reserved keyword (gram.y def_arg: reserved_keyword)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , PREFERRED = false )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+note = "the boolean true, a reserved keyword (gram.y def_arg: reserved_keyword)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , COLLATABLE = true )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<delimiter> in [ , DELIMITER = <delimiter> ]"
+note = "a one-character string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , DELIMITER = ',' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+note = "DEFERRABLE alone"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER INSERT ON t1 DEFERRABLE FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+note = "DEFERRABLE INITIALLY DEFERRED"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER INSERT ON t1 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+note = "INITIALLY DEFERRED before DEFERRABLE (gram.y ConstraintAttributeSpec takes the attributes in any order)"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER INSERT ON t1 INITIALLY DEFERRED DEFERRABLE FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event>"
+note = "UPDATE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event>"
+note = "UPDATE OF one column"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE OF c1 ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event>"
+note = "UPDATE OF a column list"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE OF c1 , c2 ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event>"
+note = "DELETE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE DELETE ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event>"
+note = "TRUNCATE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 AFTER TRUNCATE ON t1 FOR EACH STATEMENT EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "option_present"
+target = "<event>"
+note = "every event combined with OR"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE ON t1 EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "option_present"
+target = "<event>"
+note = "UPDATE OF a column list combined with OR"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE OF c1 , c2 OR INSERT ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = "<event>"
+note = "UPDATE OF with no column"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE OF ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = "<event>"
+note = "OF after an event other than UPDATE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE DELETE OF c1 ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = "<event>"
+note = "an event repeated in the OR list (gram.y TriggerEvents: duplicate trigger events, 42601)"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE UPDATE OR UPDATE OF c1 ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "negative_neighbour"
+target = "<event>"
+note = "SELECT, which is no trigger event"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE TRIGGER t1 BEFORE SELECT ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event> #2"
+note = "UPDATE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER UPDATE ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event> #2"
+note = "UPDATE OF a column list"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER UPDATE OF c1 , c2 ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "<event> #2"
+note = "DELETE"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER DELETE ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-trigger"
+kind = "option_present"
+target = "<event> #2"
+note = "INSERT, UPDATE OF and DELETE combined with OR"
+anchor = "doc.sql-createtrigger / Synopsis"
+sql = "CREATE CONSTRAINT TRIGGER t1 AFTER INSERT OR UPDATE OF c1 OR DELETE ON t1 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.as"
+kind = "option_present"
+target = "[ COLLATE <collation> ]"
+note = "COLLATE on the second attribute only (gram.y TableFuncElement: opt_collate_clause on every element)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 AS ( a1 INT , a2 TEXT COLLATE \"C\" )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.as"
+kind = "option_present"
+target = "[ COLLATE <collation> ]"
+note = "COLLATE on every attribute"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 AS ( a1 TEXT COLLATE \"C\" , a2 TEXT COLLATE \"POSIX\" , a3 TEXT COLLATE s1.k1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "NULL"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT NULL ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "NOT NULL NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT NOT NULL NO INHERIT ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "CHECK with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CHECK ( c1 > 0 ) NO INHERIT ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "DEFAULT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT DEFAULT 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) STORED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , c2 INT GENERATED ALWAYS AS ( c1 * 2 ) STORED ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) VIRTUAL"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , c2 INT GENERATED ALWAYS AS ( c1 * 2 ) VIRTUAL ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) with no kind"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , c2 INT GENERATED ALWAYS AS ( c1 * 2 ) ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "a named NOT NULL constraint"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CONSTRAINT k1 NOT NULL ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "a named CHECK constraint"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CONSTRAINT k1 CHECK ( c1 > 0 ) ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "CHECK NOT ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CHECK ( c1 > 0 ) NOT ENFORCED ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "CHECK ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CHECK ( c1 > 0 ) ENFORCED ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "several constraints on one column"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT NOT NULL DEFAULT 1 CHECK ( c1 > 0 ) ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "a named CHECK with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , CONSTRAINT k1 CHECK ( c1 > 0 ) NO INHERIT ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "NOT NULL on a column"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , NOT NULL c1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "a named NOT NULL with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , CONSTRAINT k1 NOT NULL c1 NO INHERIT ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "CHECK NOT ENFORCED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , CHECK ( c1 > 0 ) NOT ENFORCED ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "negative_neighbour"
+target = "<column_constraint>"
+note = "DEFAULT with no expression"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT DEFAULT ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "negative_neighbour"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS without parentheses"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , c2 INT GENERATED ALWAYS AS c1 * 2 STORED ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "negative_neighbour"
+target = "<column_constraint>"
+note = "CONSTRAINT with its name but no constraint body"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT CONSTRAINT k1 ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "negative_neighbour"
+target = "<column_constraint>"
+note = "NO INHERIT with no constraint before it"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT NO INHERIT ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.server"
+kind = "negative_neighbour"
+target = "<table_constraint>"
+note = "NOT NULL with no column"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 ( c1 INT , NOT NULL ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<partition_bound_spec>"
+note = "IN with several values"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES IN ( 1 , 2 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<partition_bound_spec>"
+note = "FROM ... TO ..."
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES FROM ( 1 ) TO ( 10 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<partition_bound_spec>"
+note = "FROM MINVALUE TO MAXVALUE"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES FROM ( MINVALUE ) TO ( MAXVALUE ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<partition_bound_spec>"
+note = "FROM ... TO ... over two columns"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES FROM ( 1 , MINVALUE ) TO ( 10 , MAXVALUE ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<partition_bound_spec>"
+note = "WITH ( MODULUS , REMAINDER )"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES WITH ( MODULUS 4 , REMAINDER 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "negative_neighbour"
+target = "<partition_bound_spec>"
+note = "FROM with no TO"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES FROM ( 1 ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "negative_neighbour"
+target = "<partition_bound_spec>"
+note = "IN with an empty list"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES IN ( ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "negative_neighbour"
+target = "<partition_bound_spec>"
+note = "WITH and MODULUS but no REMAINDER (gram.y PartitionBoundSpec: remainder for hash partition must be specified, 42601)"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES WITH ( MODULUS 4 ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "negative_neighbour"
+target = "<partition_bound_spec>"
+note = "WITH with an unknown word (gram.y PartitionBoundSpec: unrecognized hash partition bound specification, 42601)"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 FOR VALUES WITH ( MODULUS 4 , SEED 1 ) SERVER v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "NULL"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 NULL ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "DEFAULT, after WITH OPTIONS"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 WITH OPTIONS DEFAULT 1 ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "a named CHECK constraint"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 CONSTRAINT k1 CHECK ( c1 > 0 ) ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<column_constraint>"
+note = "GENERATED ALWAYS AS ( ... ) STORED"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( c1 GENERATED ALWAYS AS ( 1 ) STORED ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "CHECK"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( CHECK ( c1 > 0 ) ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "a named CHECK with NO INHERIT"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( CONSTRAINT k1 CHECK ( c1 > 0 ) NO INHERIT ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-foreign-table.partition-of-server"
+kind = "alternative"
+target = "<table_constraint>"
+note = "NOT NULL on a column"
+anchor = "doc.sql-createforeigntable / Synopsis"
+sql = "CREATE FOREIGN TABLE t1 PARTITION OF v1 ( NOT NULL c1 ) FOR VALUES IN ( 1 ) SERVER v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<function_name>"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = 'f1' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<left_type> in [ , LEFTARG = <left_type> ]"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = 'int4' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<right_type> in [ , RIGHTARG = <right_type> ]"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , RIGHTARG = 'int4' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-text-search-configuration"
+kind = "operand_type_class"
+target = "<parser_name>"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createtsconfig / Synopsis"
+sql = "CREATE TEXT SEARCH CONFIGURATION t1 ( PARSER = 'default' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+note = "an operator symbol (gram.y def_arg: qual_all_Op, all_Op)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , COMMUTATOR = + )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+note = "OPERATOR ( ) around a schema-qualified operator (gram.y qual_all_Op: OPERATOR ( any_operator ))"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , COMMUTATOR = OPERATOR ( s1.+ ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+note = "OPERATOR ( ) around an unqualified operator"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , COMMUTATOR = OPERATOR ( + ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+note = "a schema-qualified operator without OPERATOR ( ) (def_arg has no qualified operator)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , COMMUTATOR = s1.+ )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<com_op> in [ , COMMUTATOR = <com_op> ]"
+note = "OPERATOR ( ) with no operator"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , COMMUTATOR = OPERATOR ( ) )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+note = "an operator symbol (gram.y def_arg: qual_all_Op, all_Op)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , NEGATOR = <> )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+note = "OPERATOR ( ) around a schema-qualified operator (gram.y qual_all_Op: OPERATOR ( any_operator ))"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , NEGATOR = OPERATOR ( s1.<> ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "operand_type_class"
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+note = "OPERATOR ( ) around an unqualified operator"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , NEGATOR = OPERATOR ( <> ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+note = "a schema-qualified operator without OPERATOR ( ) (def_arg has no qualified operator)"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , NEGATOR = s1.<> )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<neg_op> in [ , NEGATOR = <neg_op> ]"
+note = "OPERATOR ( ) with no operator"
+anchor = "doc.sql-createoperator / Synopsis"
+sql = "CREATE OPERATOR + ( FUNCTION = f1 , LEFTARG = INT , RIGHTARG = INT , NEGATOR = OPERATOR ( ) )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-collation.name"
+kind = "operand_type_class"
+target = "<lc_collate>"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createcollation / Synopsis"
+sql = "CREATE COLLATION t1 ( LC_COLLATE = 'C' , LC_CTYPE = 'C' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "alternative"
+target = "<domain_constraint>"
+note = "NOT NULL"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT NOT NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "alternative"
+target = "<domain_constraint>"
+note = "NULL"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "option_present"
+target = "<domain_constraint>"
+note = "a named CHECK constraint: CONSTRAINT <constraint_name> CHECK ( <expression> )"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT CONSTRAINT k1 CHECK ( VALUE > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "option_present"
+target = "<domain_constraint>"
+note = "a named NOT NULL constraint"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT CONSTRAINT k1 NOT NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "option_present"
+target = "<domain_constraint>"
+note = "several constraints in one list"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT NOT NULL CONSTRAINT k1 CHECK ( VALUE > 0 ) CHECK ( VALUE < 10 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "required_operand_missing"
+target = "<domain_constraint>"
+note = "CONSTRAINT with its name but no constraint body"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT CONSTRAINT k1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-domain"
+kind = "negative_neighbour"
+target = "<domain_constraint>"
+note = "CHECK without parentheses"
+anchor = "doc.sql-createdomain / Synopsis"
+sql = "CREATE DOMAIN t1 AS INT CHECK VALUE > 0"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "ONLY"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE ONLY t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a trailing *"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 *"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 ( c1 , c2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a row filter"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list and a row filter"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 ( c1 ) WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema-qualified table"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE s1.t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "TABLES IN SCHEMA"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "CURRENT_SCHEMA"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN SCHEMA CURRENT_SCHEMA"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 , t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema continuation"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLES IN SCHEMA s1 , s2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-publication"
+kind = "alternative"
+target = "<publication_object>"
+note = "a table and a schema in one list"
+anchor = "doc.sql-createpublication / Synopsis"
+sql = "CREATE PUBLICATION t1 FOR TABLE t1 , TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE VIEW (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE VIEW v2 AS SELECT 1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE INDEX (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE INDEX i1 ON t2 ( c1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE SEQUENCE (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE TRIGGER (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE TRIGGER g1 BEFORE INSERT ON t2 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "alternative"
+target = "<schema_element>"
+note = "GRANT (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 GRANT SELECT ON t2 TO PUBLIC"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "option_present"
+target = "<schema_element>"
+note = "several elements of different kinds, in order"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE TABLE t2 ( c1 INT ) CREATE INDEX i1 ON t2 ( c1 ) CREATE VIEW v2 AS SELECT c1 FROM t2 CREATE SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "negative_neighbour"
+target = "<schema_element>"
+note = "CREATE FUNCTION, which gram.y schema_stmt does not take"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 CREATE FUNCTION f2 ( ) RETURNS INT RETURN 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-schema.schema-name"
+kind = "negative_neighbour"
+target = "<schema_element>"
+note = "a DML statement, which gram.y schema_stmt does not take"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA v1 INSERT INTO t2 VALUES ( 1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE VIEW (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE VIEW v2 AS SELECT 1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE INDEX (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE INDEX i1 ON t2 ( c1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE SEQUENCE (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "alternative"
+target = "<schema_element>"
+note = "CREATE TRIGGER (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE TRIGGER g1 BEFORE INSERT ON t2 FOR EACH ROW EXECUTE FUNCTION f1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "alternative"
+target = "<schema_element>"
+note = "GRANT (gram.y schema_stmt)"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 GRANT SELECT ON t2 TO PUBLIC"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "option_present"
+target = "<schema_element>"
+note = "several elements of different kinds, in order"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE TABLE t2 ( c1 INT ) CREATE INDEX i1 ON t2 ( c1 ) CREATE VIEW v2 AS SELECT c1 FROM t2 CREATE SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "negative_neighbour"
+target = "<schema_element>"
+note = "CREATE FUNCTION, which gram.y schema_stmt does not take"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 CREATE FUNCTION f2 ( ) RETURNS INT RETURN 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-schema.authorization"
+kind = "negative_neighbour"
+target = "<schema_element>"
+note = "a DML statement, which gram.y schema_stmt does not take"
+anchor = "doc.sql-createschema / Synopsis"
+sql = "CREATE SCHEMA AUTHORIZATION v1 INSERT INTO t2 VALUES ( 1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "alternative"
+target = "<event>"
+note = "SELECT"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON SELECT TO t1 DO INSTEAD SELECT * FROM t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "alternative"
+target = "<event>"
+note = "UPDATE"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO INSTEAD NOTHING"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "alternative"
+target = "<event>"
+note = "DELETE"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON DELETE TO t1 DO INSTEAD NOTHING"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "negative_neighbour"
+target = "<event>"
+note = "TRUNCATE, which is no rule event (gram.y event)"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON TRUNCATE TO t1 DO NOTHING"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "operand_type_class"
+target = "<command>"
+note = "a SELECT action"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO ALSO SELECT 1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "operand_type_class"
+target = "<command>"
+note = "an INSERT action using NEW"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO INSERT INTO t2 VALUES ( NEW.c1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "operand_type_class"
+target = "<command>"
+note = "an UPDATE action using OLD"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO UPDATE t2 SET c1 = OLD.c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "operand_type_class"
+target = "<command>"
+note = "a NOTIFY action"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO NOTIFY c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "operand_type_class"
+target = "<command>"
+note = "INSTEAD with an action"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 DO INSTEAD INSERT INTO t2 VALUES ( 1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "option_present"
+target = "<command> #2"
+note = "several actions of different kinds in parentheses"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON INSERT TO t1 DO INSTEAD ( INSERT INTO t2 VALUES ( NEW.c1 ) ; UPDATE t2 SET c1 = 1 ; DELETE FROM t2 ; NOTIFY c1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "option_present"
+target = "[ WHERE <condition> ]"
+note = "WHERE referring to NEW and OLD, with INSTEAD and an action"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON UPDATE TO t1 WHERE NEW.c1 <> OLD.c1 DO INSTEAD UPDATE t2 SET c1 = NEW.c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-rule"
+kind = "negative_neighbour"
+target = "<command>"
+note = "a statement no rule action takes (gram.y RuleActionStmt)"
+anchor = "doc.sql-createrule / Synopsis"
+sql = "CREATE RULE r1 AS ON INSERT TO t1 DO CREATE TABLE t2 ( c1 INT )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-transform"
+kind = "alternative"
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+note = "FROM SQL only (gram.y transform_element_list)"
+anchor = "doc.sql-createtransform / Synopsis"
+sql = "CREATE TRANSFORM FOR int LANGUAGE sql ( FROM SQL WITH FUNCTION f1 ( internal ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-transform"
+kind = "alternative"
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+note = "TO SQL only (gram.y transform_element_list)"
+anchor = "doc.sql-createtransform / Synopsis"
+sql = "CREATE TRANSFORM FOR int LANGUAGE sql ( TO SQL WITH FUNCTION f2 ( internal ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-transform"
+kind = "alternative"
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+note = "TO SQL before FROM SQL (gram.y transform_element_list)"
+anchor = "doc.sql-createtransform / Synopsis"
+sql = "CREATE TRANSFORM FOR int LANGUAGE sql ( TO SQL WITH FUNCTION f2 ( internal ) , FROM SQL WITH FUNCTION f1 ( internal ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-transform"
+kind = "negative_neighbour"
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+note = "an empty list"
+anchor = "doc.sql-createtransform / Synopsis"
+sql = "CREATE TRANSFORM FOR int LANGUAGE sql ( )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.create-transform"
+kind = "negative_neighbour"
+target = "FROM SQL WITH FUNCTION <from_sql_function_name> [ ( <argument_type> [ , ... ] ) ] , TO SQL WITH FUNCTION <to_sql_function_name> [ ( <argument_type> [ , ... ] ) ]"
+note = "FROM SQL twice"
+anchor = "doc.sql-createtransform / Synopsis"
+sql = "CREATE TRANSFORM FOR int LANGUAGE sql ( FROM SQL WITH FUNCTION f1 , FROM SQL WITH FUNCTION f2 )"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "pg.ddl.create-trigger"
+kind = "alternative"
+target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ]"
+reason = "the derived spelling of this alternative leaves both optional attributes out, which is the same raw node as no clause (gram.y ConstraintAttributeSpec's empty production); the alternative is written out with DEFERRABLE and INITIALLY DEFERRED below"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<function_name>"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<left_type> in [ , LEFTARG = <left_type> ]"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-operator"
+kind = "negative_neighbour"
+target = "<right_type> in [ , RIGHTARG = <right_type> ]"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-text-search-configuration"
+kind = "negative_neighbour"
+target = "<parser_name>"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-collation.name"
+kind = "negative_neighbour"
+target = "<lc_collate>"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-collation.name"
+kind = "negative_neighbour"
+target = "<lc_collate> in [ , LC_COLLATE = <lc_collate> ]"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax"
 
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 

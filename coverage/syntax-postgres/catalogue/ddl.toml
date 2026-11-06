@@ -4234,9 +4234,9 @@ source = "doc.sql-createtransform"
 anchor = "Synopsis"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] TRANSFORM FOR <type_name> LANGUAGE <lang_name> ( FROM SQL WITH FUNCTION <from_sql_function_name> [ (<argument_type> [, ...]) ], TO SQL WITH FUNCTION <to_sql_function_name> [ (<argument_type> [, ...]) ] );",
+  "CREATE [ OR REPLACE ] TRANSFORM FOR <type_name> LANGUAGE <lang_name> ( FROM SQL WITH FUNCTION <from_sql_function_name> [ (<argument_type> [, ...]) ], TO SQL WITH FUNCTION <to_sql_function_name> [ (<argument_type> [, ...]) ] )",
 ]
-grammar_sha256 = "bf03d8d8157085d4b35f8f0cb2ba6ba707dc0fdf4ded9ae14b545d443398a7d4"
+grammar_sha256 = "a29650b3eec3b3dd11c06780ca4c08537777d66192bf8a1c5aab30005cc49a66"
 uses = []
 status = "catalogued"
 
