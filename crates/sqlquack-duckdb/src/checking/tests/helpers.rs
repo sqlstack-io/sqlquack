@@ -40,3 +40,4 @@ pub(crate) fn nested_union(depth: usize) -> String {
         format!("({inner} UNION ALL (SELECT {value}))")
     })
 }
+

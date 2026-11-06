@@ -10,7 +10,7 @@ use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{Collector, collected};
 use crate::conversion::_helpers::support::depth::within_depth;
 use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, OrderTrack};
+use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
 use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
 use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
 use crate::conversion::main::convert_statement::convert_statement;
@@ -76,7 +76,7 @@ fn collected_conversion(
     let locator = Locator::new(&tree, positioned, lines);
     let log = ProvenanceLog::default();
     let typed = TypedLeaves::default();
-    let order = OrderTrack::default();
+    let tracks = StatementTracks::default();
     let context = Context {
         log: &log,
         schema,
@@ -84,7 +84,8 @@ fn collected_conversion(
         ctes: Vec::new(),
         locator: &locator,
         typed: &typed,
-        order: &order,
+        order: &tracks.order,
+        subqueries: &tracks.subqueries,
         free_projections: false,
         fixture_body: false,
     };
