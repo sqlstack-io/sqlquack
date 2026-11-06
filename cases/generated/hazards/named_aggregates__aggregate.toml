@@ -76,7 +76,7 @@ description = "fn:ANY_VALUE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'g001'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16'"],
+  ["'g002'", "'2024-05-17'"],
 ]
 query = "SELECT g, ANY_VALUE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -102,7 +102,7 @@ description = "fn:ANY_VALUE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ANY_VALUE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -115,7 +115,7 @@ description = "fn:ANY_VALUE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ANY_VALUE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -128,7 +128,7 @@ description = "fn:ANY_VALUE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'g002'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, ANY_VALUE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1098,8 +1098,10 @@ id = "fn_count_5_combination_0_integer_integer"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["'a'", "1", "2"],
+  ["'a'", "2", "12"],
+  ["'a'", "12", "1"],
   ["'a'", "1", "1"],
-  ["'a'", "2", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1164,7 +1166,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "1", "'2024-01-15'"],
-  ["'a'", "2", "'2024-01-16'"],
+  ["'a'", "2", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1190,7 +1192,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "1", "'2024-01-15 10:00:00'"],
-  ["'a'", "2", "'2024-01-16 11:30:00'"],
+  ["'a'", "2", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1203,7 +1205,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "1", "'2024-01-15 10:00:00'"],
-  ["'a'", "2", "'2024-01-16 11:30:00'"],
+  ["'a'", "2", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1216,7 +1218,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "1", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "2", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "2", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1241,8 +1243,10 @@ id = "fn_count_5_combination_0_decimal_decimal"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
   ["'a'", "1.5", "1.5"],
-  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1294,7 +1298,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15'"],
-  ["'a'", "2.25", "'2024-01-16'"],
+  ["'a'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1320,7 +1324,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1333,7 +1337,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1346,7 +1350,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1384,8 +1388,10 @@ id = "fn_count_5_combination_0_float_float"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["'a'", "1.5", "2.25"],
+  ["'a'", "2.25", "3.125"],
+  ["'a'", "3.125", "1.5"],
   ["'a'", "1.5", "1.5"],
-  ["'a'", "2.25", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1424,7 +1430,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15'"],
-  ["'a'", "2.25", "'2024-01-16'"],
+  ["'a'", "2.25", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1450,7 +1456,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1463,7 +1469,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1476,7 +1482,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "FLOAT" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "1.5", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "2.25", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "2.25", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1527,8 +1533,10 @@ id = "fn_count_5_combination_0_text_text"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
   ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1554,7 +1562,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15'"],
-  ["'a'", "'b'", "'2024-01-16'"],
+  ["'a'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1580,7 +1588,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'b'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'b'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1593,7 +1601,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'b'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'b'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1606,7 +1614,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'b'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'b'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1670,8 +1678,9 @@ id = "fn_count_5_combination_0_boolean_boolean"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["'a'", "TRUE", "FALSE"],
+  ["'a'", "FALSE", "TRUE"],
   ["'a'", "TRUE", "TRUE"],
-  ["'a'", "FALSE", "FALSE"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1684,7 +1693,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15'"],
-  ["'a'", "FALSE", "'2024-01-16'"],
+  ["'a'", "FALSE", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1710,7 +1719,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15 10:00:00'"],
-  ["'a'", "FALSE", "'2024-01-16 11:30:00'"],
+  ["'a'", "FALSE", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1723,7 +1732,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15 10:00:00'"],
-  ["'a'", "FALSE", "'2024-01-16 11:30:00'"],
+  ["'a'", "FALSE", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1736,7 +1745,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "FALSE", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "FALSE", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1749,7 +1758,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "'2024-01-15'", "1"],
-  ["'a'", "'2024-01-16'", "2"],
+  ["'a'", "'2024-05-17'", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1762,7 +1771,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "'2024-01-15'", "1.5"],
-  ["'a'", "'2024-01-16'", "2.25"],
+  ["'a'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1775,7 +1784,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "'2024-01-15'", "1.5"],
-  ["'a'", "'2024-01-16'", "2.25"],
+  ["'a'", "'2024-05-17'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1788,7 +1797,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'2024-01-15'", "'a'"],
-  ["'a'", "'2024-01-16'", "'b'"],
+  ["'a'", "'2024-05-17'", "'b'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1801,7 +1810,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["'a'", "'2024-01-15'", "TRUE"],
-  ["'a'", "'2024-01-16'", "FALSE"],
+  ["'a'", "'2024-05-17'", "FALSE"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1813,8 +1822,10 @@ id = "fn_count_5_combination_0_date_date"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'a'", "'2024-01-15'", "'2024-05-17'"],
+  ["'a'", "'2024-05-17'", "'2023-11-30'"],
+  ["'a'", "'2023-11-30'", "'2024-01-15'"],
   ["'a'", "'2024-01-15'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'", "'2024-01-16'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1827,7 +1838,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'2024-01-15'", "'10:00:00'"],
-  ["'a'", "'2024-01-16'", "'11:30:00'"],
+  ["'a'", "'2024-05-17'", "'11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1840,7 +1851,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1853,7 +1864,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1866,7 +1877,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1944,7 +1955,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'10:00:00'", "'2024-01-15'"],
-  ["'a'", "'11:30:00'", "'2024-01-16'"],
+  ["'a'", "'11:30:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1956,8 +1967,10 @@ id = "fn_count_5_combination_0_time_time"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
+  ["'a'", "'10:00:00'", "'11:30:00'"],
+  ["'a'", "'11:30:00'", "'23:15:45.5'"],
+  ["'a'", "'23:15:45.5'", "'10:00:00'"],
   ["'a'", "'10:00:00'", "'10:00:00'"],
-  ["'a'", "'11:30:00'", "'11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1970,7 +1983,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1983,7 +1996,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -1996,7 +2009,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIME(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2009,7 +2022,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1"],
-  ["'a'", "'2024-01-16 11:30:00'", "2"],
+  ["'a'", "'2024-05-17 11:30:00'", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2022,7 +2035,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2035,7 +2048,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2048,7 +2061,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'a'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'b'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'b'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2061,7 +2074,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "TRUE"],
-  ["'a'", "'2024-01-16 11:30:00'", "FALSE"],
+  ["'a'", "'2024-05-17 11:30:00'", "FALSE"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2074,7 +2087,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2087,7 +2100,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2099,8 +2112,10 @@ id = "fn_count_5_combination_0_timestamp_ntz_timestamp_ntz"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2113,7 +2128,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2126,7 +2141,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2139,7 +2154,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1"],
-  ["'a'", "'2024-01-16 11:30:00'", "2"],
+  ["'a'", "'2024-05-17 11:30:00'", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2152,7 +2167,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2165,7 +2180,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2178,7 +2193,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'a'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'b'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'b'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2191,7 +2206,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "TRUE"],
-  ["'a'", "'2024-01-16 11:30:00'", "FALSE"],
+  ["'a'", "'2024-05-17 11:30:00'", "FALSE"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2204,7 +2219,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2217,7 +2232,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2230,7 +2245,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2242,8 +2257,10 @@ id = "fn_count_5_combination_0_timestamp_ltz_timestamp_ltz"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'a'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'a'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2256,7 +2273,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2269,7 +2286,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "1"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "2"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2282,7 +2299,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2295,7 +2312,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "FLOAT" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "1.5"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "2.25"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "2.25"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2308,7 +2325,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "VARCHAR" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'a'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'b'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'b'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2321,7 +2338,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "TRUE"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "FALSE"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "FALSE"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2334,7 +2351,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2347,7 +2364,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIME(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2360,7 +2377,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2373,7 +2390,7 @@ description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -2385,8 +2402,10 @@ id = "fn_count_5_combination_0_timestamp_tz_timestamp_tz"
 description = "fn:COUNT over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'a'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'a'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -3104,7 +3123,7 @@ id = "fn_count_5_group_empty_input"
 description = "fn:COUNT over an aggregate over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "2"],
 ]
 query = "SELECT COUNT(DISTINCT x0, x1) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -3116,9 +3135,9 @@ id = "fn_count_5_group_all_null"
 description = "fn:COUNT over a group whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "NULL", "1"],
-  ["'b'", "1", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "NULL", "2"],
+  ["'b'", "1", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -3130,8 +3149,8 @@ id = "fn_count_5_group_mixed"
 description = "fn:COUNT over a group holding different values (any_value)."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
-  ["'a'", "2", "1"],
+  ["'a'", "1", "2"],
+  ["'a'", "2", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -3143,8 +3162,8 @@ id = "fn_count_5_group_null_beside_value"
 description = "fn:COUNT over a group holding null beside a value (any_value)."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "1", "1"],
+  ["'a'", "NULL", "2"],
+  ["'a'", "1", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -3156,9 +3175,9 @@ id = "fn_count_5_group_duplicates"
 description = "fn:COUNT over a group holding one value several times beside another, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
-  ["'a'", "1", "1"],
-  ["'a'", "2", "1"],
+  ["'a'", "1", "2"],
+  ["'a'", "1", "2"],
+  ["'a'", "2", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -3170,7 +3189,7 @@ id = "fn_count_5_group_single_row"
 description = "fn:COUNT over a group of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "2"],
 ]
 query = "SELECT g, COUNT(DISTINCT x0, x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"

@@ -92,6 +92,16 @@ def test_given_a_review_finding_when_reading_the_coverage_files_then_it_is_a_haz
             "json_fidelity",
         ),
         ExpectationTestCase(
+            "the equal row ties two different values of one group on the ordering key",
+            "node_within_group_1_combination_0_text_text",
+            "listagg_order",
+        ),
+        ExpectationTestCase(
+            "rows each in a group of their own never tie",
+            "node_within_group_combination_0_text_integer",
+            None,
+        ),
+        ExpectationTestCase(
             "the other hazards of the family share a case expecting nothing",
             "fn_get_1_text_hazards",
             None,
@@ -120,6 +130,26 @@ def test_given_declared_divergences_when_generating_hazards_then_cases_expect_th
             "ordering keys hold each row's number and each row has its own group",
             "node_within_group_0_text_hazards",
             (("'g001'", "''", "1"), ("'g002'", "'$.a'", "2"), ("'g003'", "'/a'", "3")),
+        ),
+        HazardTestCase(
+            "two arguments of one family differ in each order, then hold one equal row",
+            "fn_contains_combination_0_text_text",
+            (("'a'", "'b'"), ("'b'", "'ab'"), ("'ab'", "'a'"), ("'a'", "'a'")),
+        ),
+        HazardTestCase(
+            "a hazard's position uses up no value, so the others of its family differ",
+            "fn_contains_0_text_hazards",
+            (("''", "'a'"), ("'$.a'", "'a'"), ("'/a'", "'a'")),
+        ),
+        HazardTestCase(
+            "three arguments of a two-valued family each differ in a row of their own",
+            "fn_decode_combination_0_boolean_boolean_boolean",
+            (
+                ("FALSE", "TRUE", "TRUE"),
+                ("TRUE", "FALSE", "TRUE"),
+                ("TRUE", "TRUE", "FALSE"),
+                ("TRUE", "TRUE", "TRUE"),
+            ),
         ),
     ),
     ids=lambda case: case.description,

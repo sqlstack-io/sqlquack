@@ -2,8 +2,8 @@
 
 use std::collections::BTreeMap;
 
-use crate::conversion::constants::SESSION_TIMEZONE_UTC;
 use crate::conversion::models::ConversionOptions;
+use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 use sqlquack_policy::policy::constants::{
     DEFAULT_SESSION_PROFILE, QUOTED_IDENTIFIERS_IGNORE_CASE, RESULT_NEUTRAL_SESSION_PARAMETERS,
     SESSION_TIME_ZONE, TIMEZONE_PARAMETER,

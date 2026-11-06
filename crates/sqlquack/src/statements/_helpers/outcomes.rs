@@ -10,7 +10,7 @@ use sqlquack_core::refusals::models::RefusalCategory;
 use sqlquack_evidence::cases::models::{CaseRole, LoadedCase};
 use sqlquack_evidence::verify::models::{CaseVerdict, Conversion, ErrorCheck, Verdict};
 use sqlquack_evidence::verify::types::CaseConverter;
-use sqlquack_rules::conversion::constants::HASH_DIVERGENCE;
+use sqlquack_policy::policy::constants::HASH_DIVERGENCE;
 
 use crate::statements::constants::{CATEGORIES, FUNCTION_REASON_PREFIX, UNCODED};
 use crate::statements::models::Outcome;

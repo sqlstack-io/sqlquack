@@ -226,3 +226,28 @@ rows = [
 query = "SELECT g, MEDIAN(n) AS mn, MEDIAN(m) AS mm FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["null", "negative", "boundary"]
+
+[[case]]
+id = "ln_values"
+description = "LN of values above, at and below 1, a large value and NULL; catches LOG10, LOG2 or a sign error."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["2.5"],
+  ["1"],
+  ["0.5"],
+  ["700"],
+  ["NULL"],
+]
+expression = "LN(f)"
+tags = ["null", "zero", "negative", "boundary"]
+
+[[case]]
+id = "ln_zero_and_negative"
+description = "LN of zero and of a negative number, unguarded; records how Snowflake rejects them."
+columns = [{ name = "f", type = "FLOAT" }]
+rows = [
+  ["0"],
+  ["-1"],
+]
+expression = "LN(f)"
+tags = ["zero", "negative", "boundary"]

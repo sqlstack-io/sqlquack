@@ -10,8 +10,10 @@ id = "fn_equal_null_combination_0_integer_integer"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -58,8 +60,10 @@ id = "fn_equal_null_combination_0_decimal_decimal"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -106,8 +110,10 @@ id = "fn_equal_null_combination_0_float_float"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -118,8 +124,10 @@ id = "fn_equal_null_combination_1_integer_integer"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -166,8 +174,10 @@ id = "fn_equal_null_combination_1_decimal_decimal"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -214,8 +224,10 @@ id = "fn_equal_null_combination_1_float_float"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -226,8 +238,10 @@ id = "fn_equal_null_combination_2_integer_integer"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -274,8 +288,10 @@ id = "fn_equal_null_combination_2_decimal_decimal"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -322,8 +338,10 @@ id = "fn_equal_null_combination_2_float_float"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -574,8 +592,10 @@ id = "fn_equal_null_1_combination_0_text_text"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -586,8 +606,10 @@ id = "fn_equal_null_1_combination_1_text_text"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -598,8 +620,10 @@ id = "fn_equal_null_1_combination_2_text_text"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -700,8 +724,9 @@ id = "fn_equal_null_2_combination_0_boolean_boolean"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -712,8 +737,9 @@ id = "fn_equal_null_2_combination_1_boolean_boolean"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -724,8 +750,9 @@ id = "fn_equal_null_2_combination_2_boolean_boolean"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -758,8 +785,10 @@ id = "fn_equal_null_3_combination_0_date_date"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -770,8 +799,10 @@ id = "fn_equal_null_3_combination_1_date_date"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -782,8 +813,10 @@ id = "fn_equal_null_3_combination_2_date_date"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -846,8 +879,10 @@ id = "fn_equal_null_4_combination_0_timestamp_ntz_timestamp_ntz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -858,8 +893,10 @@ id = "fn_equal_null_4_combination_1_timestamp_ntz_timestamp_ntz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -870,8 +907,10 @@ id = "fn_equal_null_4_combination_2_timestamp_ntz_timestamp_ntz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -952,8 +991,10 @@ id = "fn_equal_null_5_combination_0_timestamp_tz_timestamp_tz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -965,7 +1006,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -977,7 +1018,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -988,8 +1029,10 @@ id = "fn_equal_null_5_combination_0_timestamp_ltz_timestamp_ltz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "EQUAL_NULL(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -1000,8 +1043,10 @@ id = "fn_equal_null_5_combination_1_timestamp_tz_timestamp_tz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1013,7 +1058,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1025,7 +1070,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1036,8 +1081,10 @@ id = "fn_equal_null_5_combination_1_timestamp_ltz_timestamp_ltz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 IS NOT DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1048,8 +1095,10 @@ id = "fn_equal_null_5_combination_2_timestamp_tz_timestamp_tz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1061,7 +1110,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1073,7 +1122,7 @@ description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]
@@ -1084,8 +1133,10 @@ id = "fn_equal_null_5_combination_2_timestamp_ltz_timestamp_ltz"
 description = "fn:EQUAL_NULL over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 IS DISTINCT FROM x1"
 tags = ["null", "ties", "mixed-types"]

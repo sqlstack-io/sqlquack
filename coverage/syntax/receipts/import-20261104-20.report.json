@@ -1,0 +1,1379 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM v1 . v1 CREDENTIALS = ( AWS_KEY_ID = 'm' AWS_SECRET_KEY = 'm' AWS_TOKEN = 'm' ) ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "01f31336709cb8e181b2ed2bc13ba7441e4d15a0f6198a946669d24e60f52ea1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "USE SELECT . v1 ;",
+   "sql_sha256": "064af0dc07a79294fcf3aa84aa42f670d6c8f5e053eafffaae3fd52f29bf585d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = XML COMPRESSION = AUTO IGNORE_UTF8_ERRORS = TRUE PRESERVE_SPACE = TRUE STRIP_OUTER_ELEMENT = TRUE DISABLE_AUTO_CONVERT = TRUE REPLACE_INVALID_CHARACTERS = TRUE SKIP_BYTE_ORDER_MARK = TRUE ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "06c3258215d4118cefcd414327dc643dc8779cbbf997df4821f4c1bb2059af70"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM v1 . v1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "0c67f9e36d24b16106ef6340e8be9350be0b4f9e19a3968377bbdd013e309ab6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = JSON COMPRESSION = AUTO DATE_FORMAT = 'm' TIME_FORMAT = 'm' TIMESTAMP_FORMAT = 'm' BINARY_FORMAT = HEX TRIM_SPACE = TRUE MULTI_LINE = TRUE NULL_IF = ( 'm' , 'm' ) ENABLE_OCTAL = TRUE ALLOW_DUPLICATE = TRUE STRIP_OUTER_ARRAY = TRUE STRIP_NULL_VALUES = TRUE REPLACE_INVALID_CHARACTERS = TRUE IGNORE_UTF8_ERRORS = TRUE SKIP_BYTE_ORDER_MARK = TRUE ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "0ef2e375c4d79cb9f8fc98042d7f39a466f3b7d4c9cbcc82ba39bb3997f94ccb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 's3://b1/p1/' STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "1404799adf78037a1e9e04939da78a3881d40a231d66fc605db3dddcb9c5d525"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "INSERT OVERWRITE INTO v1 ( v1 , v1 ) VALUES ( 1 , 1 ) , ( 1 , 1 ) ;",
+   "sql_sha256": "16ca82d656758a4ba38c758a943340a231d97e0e1b1a9bc55ce8de12eacd54cc"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM v1 . v1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "1842737aef20fab3b8ad8c87a565bbc9c6cbb7151499cdd492a09ee58e0a9f08"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 's3://b1/p1/' STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_KMS' KMS_KEY_ID = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "1a63f293ce8fa97d587fa9477e7f036c60b13471ec5b9e734d172e4d7a4aa0da"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = AUTO BINARY_AS_TEXT = TRUE USE_LOGICAL_TYPE = TRUE TRIM_SPACE = TRUE USE_VECTORIZED_SCANNER = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "1ab0c78ead41aca7a97360573a3cb583a301ffa4b9e19e821b81edfae7195190"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "LIST @v1.%v1/p1 PATTERN = 'm' ;",
+   "sql_sha256": "21db6e21560727881e7f682e6b9414bebeebd24b149ebaa8e6ebf3b9f6dff1eb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = XML COMPRESSION = AUTO IGNORE_UTF8_ERRORS = TRUE PRESERVE_SPACE = TRUE STRIP_OUTER_ELEMENT = TRUE DISABLE_AUTO_CONVERT = TRUE REPLACE_INVALID_CHARACTERS = TRUE SKIP_BYTE_ORDER_MARK = TRUE ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "2673ba9c4cc2ea92d1bf8bb44a65658a93a91b902b989e503ad26a1ee2c978e1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = AUTO BINARY_AS_TEXT = TRUE USE_LOGICAL_TYPE = TRUE TRIM_SPACE = TRUE USE_VECTORIZED_SCANNER = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "328416a9cd6774f83588bc3434ad85ccf6f84fdb6448fef4c7d41a0feea9b933"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 'azure://a1.blob.core.windows.net/c1/p1/' CREDENTIALS = ( AZURE_SAS_TOKEN = 'm' ) ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "3adc4c694396df266683ff6af19de6349bdf4d48c19d66ae6853f17a9a72e4ca"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = CSV COMPRESSION = AUTO RECORD_DELIMITER = 'm' FIELD_DELIMITER = 'm' MULTI_LINE = TRUE PARSE_HEADER = TRUE SKIP_HEADER = 1 SKIP_BLANK_LINES = TRUE DATE_FORMAT = 'm' TIME_FORMAT = 'm' TIMESTAMP_FORMAT = 'm' BINARY_FORMAT = HEX ESCAPE = 'm' ESCAPE_UNENCLOSED_FIELD = 'm' TRIM_SPACE = TRUE FIELD_OPTIONALLY_ENCLOSED_BY = 'm' NULL_IF = ( 'm' , 'm' ) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = TRUE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK = TRUE ENCODING = 'm' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "3c4e6396d9153533edae835905c03eabc8a446c25c406dd87201944d6e03721d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = AVRO COMPRESSION = AUTO TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "3f2dcaf607c0a893a0543bac92b8d5e7e5c99797e87a17205b6c71bdf889a70c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "USE \"SELECT\" . v1 ;",
+   "sql_sha256": "40a3921c4704f6edc5312ed5bdbf0307aded8bb333f2f5e1ba4556e69a059799"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "46dd63fd2ade6b2e56095fef276c277dcdb0fdb0a3b1977800736ae249412f20"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "REMOVE @v1.%v1/p1 PATTERN = 'm' ;",
+   "sql_sha256": "4c6555d30193212456f8f1f803a10e4a4a9e9b00ede475e28dd32f55f503a944"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 'azure://a1.blob.core.windows.net/c1/p1/' STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "4f12ae0b933ce2a02a5fde5d71725b4332bb36b54739e7c50ade5da4d669d30d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @v1.%v1/p1 FROM v1 . v1 PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "62b69704e083fa7b147d238472e2dd2d6052fbf4f37087a2f32fe8c4ed781a9f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM v1 . v1 CREDENTIALS = ( AZURE_SAS_TOKEN = 'm' ) ENCRYPTION = ( TYPE = 'AZURE_CSE' MASTER_KEY = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "6f58d215dd8e10660ac6831812176f7e3a471977668345b85db5316554a8d266"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM v1 . v1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_KMS' KMS_KEY_ID = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "789eee5f50235b35fe488e72d9570ffe9f6949d59d16454817c474183a7ea554"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = ORC TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "7de2e68bdd2bfa89400ef7040656a600d8ac63d0dfe121bd5a36d44df5bdf36b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @v1.s1/p1 FROM v1 . v1 PARTITION BY 1 FILE_FORMAT = ( TYPE = JSON COMPRESSION = AUTO FILE_EXTENSION = 'm' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "90d836d337ed9442884ce46c3eb21271727a61d743c6ad507287dbf455418560"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @~/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "90f5cd95295f8759c670cd9ca05245969116959989d08d3a9486174210bb7c13"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "USE \"v1 Q\" . v1 ;",
+   "sql_sha256": "916991fcce0bd29215630737058759d761d3998b1101fbbf711b59cb5bfe80b8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = JSON COMPRESSION = AUTO DATE_FORMAT = 'm' TIME_FORMAT = 'm' TIMESTAMP_FORMAT = 'm' BINARY_FORMAT = HEX TRIM_SPACE = TRUE MULTI_LINE = TRUE NULL_IF = ( 'm' , 'm' ) ENABLE_OCTAL = TRUE ALLOW_DUPLICATE = TRUE STRIP_OUTER_ARRAY = TRUE STRIP_NULL_VALUES = TRUE REPLACE_INVALID_CHARACTERS = TRUE IGNORE_UTF8_ERRORS = TRUE SKIP_BYTE_ORDER_MARK = TRUE ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "97de9a6235948fa5cd5b7bc91f19bf5c7db7fd8ed95898479c03a6f00ef9dc41"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SHOW PARAMETERS LIKE 'm' IN USER v1 ;",
+   "sql_sha256": "9c2a74a88b71ad5231c15c6bbd2781509f2958fffe2d7ca680b0d557abe6804c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SHOW PARAMETERS LIKE 'm' IN TABLE v1 ;",
+   "sql_sha256": "9fe58929e1767dd97a9c5b04032019250d9869acc84ddb09749a11417e51672f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 's3://b1/p1/' CREDENTIALS = ( AWS_KEY_ID = 'm' AWS_SECRET_KEY = 'm' AWS_TOKEN = 'm' ) ENCRYPTION = ( TYPE = 'AWS_CSE' MASTER_KEY = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "a6c461a22efcd76022a39085d881e0fb4d27b529ee8cdca5ab7f837b1f67950e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.s1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = CSV COMPRESSION = AUTO RECORD_DELIMITER = 'm' FIELD_DELIMITER = 'm' MULTI_LINE = TRUE PARSE_HEADER = TRUE SKIP_HEADER = 1 SKIP_BLANK_LINES = TRUE DATE_FORMAT = 'm' TIME_FORMAT = 'm' TIMESTAMP_FORMAT = 'm' BINARY_FORMAT = HEX ESCAPE = 'm' ESCAPE_UNENCLOSED_FIELD = 'm' TRIM_SPACE = TRUE FIELD_OPTIONALLY_ENCLOSED_BY = 'm' NULL_IF = ( 'm' , 'm' ) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = TRUE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK = TRUE ENCODING = 'm' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "c9932c00d05ec105061140b3b5dd3252a8edadf8c5b284bd09ecd18c277f33f7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.%v1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "cb3a4aea056d9cfe6cddf784ba688f12f2db907efa95f77daa81ae03a4fc6cc0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM @v1.%v1/p1 FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "ce9164303f63b0ba363e572b1073d0d8a30cbfecaba0f4ad8ee785811770ddc5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "LIST @~/p1 PATTERN = 'm' ;",
+   "sql_sha256": "d2d5a32f5fa27575c2684ceda76392e92dd89ea4828d6b901a4e4afcc7fe2bcf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 'gcs://b1/p1/' FROM v1 . v1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'GCS_SSE_KMS' KMS_KEY_ID = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "dbc0dec3fe2cbb9cc3341f24e22f320f67093248483a8cddf3421e99763f3517"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 FROM 'gcs://b1/p1/' STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'GCS_SSE_KMS' KMS_KEY_ID = 'm' ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE VALIDATION_MODE = RETURN_10_ROWS ;",
+   "sql_sha256": "dbd1595e377795b5ccef0040ad4b4cd45eddf25bd9c53ac4f7f46a353daacf41"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @v1.s1/p1 FROM v1 . v1 PARTITION BY 1 FILE_FORMAT = ( TYPE = CSV COMPRESSION = AUTO RECORD_DELIMITER = 'm' FIELD_DELIMITER = 'm' FILE_EXTENSION = 'm' ESCAPE = 'm' ESCAPE_UNENCLOSED_FIELD = 'm' DATE_FORMAT = 'm' TIME_FORMAT = 'm' TIMESTAMP_FORMAT = 'm' BINARY_FORMAT = HEX FIELD_OPTIONALLY_ENCLOSED_BY = 'm' NULL_IF = ( 'm' , 'm' ) EMPTY_FIELD_AS_NULL = TRUE ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "e54078935b28798774625df900be8cab1bc1fe425eef49a3b423089985eccc66"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @v1.s1/p1 FROM v1 . v1 PARTITION BY 1 FILE_FORMAT = ( TYPE = PARQUET COMPRESSION = AUTO SNAPPY_COMPRESSION = TRUE ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "e7fc2dd185a0a9a4eb72f8d7079e60acd8583abf5dbc6743c4c2fbc485bf46b5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @~/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( FORMAT_NAME = 'f1' ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "ecffcd754da768040af4dd60e2977c0931c3c7ccfb7541e57b63fec8227a922a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO v1 . v1 ( v1 , v1 ) FROM ( SELECT v1 . $1 . e1 , v1 . $1 . e1 FROM @v1.s1/p1 ) FILES = ( 'm' , 'm' , 'm' ) PATTERN = 'm' FILE_FORMAT = ( TYPE = AVRO COMPRESSION = AUTO TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = TRUE NULL_IF = ( 'm' , 'm' ) ) CLUSTER_AT_INGEST_TIME = TRUE ENFORCE_LENGTH = TRUE FORCE = TRUE INCLUDE_METADATA = ( v1 = METADATA$FILENAME , v1 = METADATA$FILENAME ) LOAD_MODE = FULL_INGEST LOAD_UNCERTAIN_FILES = TRUE MATCH_BY_COLUMN_NAME = CASE_SENSITIVE ON_ERROR = CONTINUE PURGE = TRUE RETURN_FAILED_ONLY = TRUE SIZE_LIMIT = 1 TRUNCATECOLUMNS = TRUE ;",
+   "sql_sha256": "f936ec5e0b111542c50e7b6e8c01637a5c1c93074a813b121b159bdddafba036"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @~/p1 FROM v1 . v1 PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+   "sql_sha256": "fdb532d709f9b3de4eb2fc3f995d86e2ee3c60530e9e33a5583ceb2a6f4c40cb"
+  }
+ ],
+ "receipts": 1685,
+ "receipts_file_sha256": "690be2603302e8b082f3fec04823b6bcf4b51652df35a27251edef01958b70ed",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-31fbf1fc5b6f",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 392032)",
+   "row_id": "a-ddl-2bf4338fec7e",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-0bef2b0291e9",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-s17-quoted_unicode_nested_declare",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_date",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_time",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_timestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_user",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtime",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtimestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-while",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-repeat",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-let",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-0ed73f855675",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1c0666c0ea3c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1f57ef757b7c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-209728947280",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-2a877fbbcf32",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-302455fa3bba",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-3aec89374149",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-40b513dae4ee",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4daf4294be43",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-58f0f58f5957",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-5c06310da441",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91124)",
+   "row_id": "d73-a-ddl-5ce1b8c9d30b",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-6338819436d7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-7a81ccf0c62e",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-807945a81f26",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-827d8c2cfc45",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-85036fbaf3a7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8c9591dea309",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-9bde7d855b34",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a7766f997d44",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d36-stream-at-stream-control",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-bc9a744ae8f2",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-bed862237231",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-d501e4c221ad",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-d790ef2bcd15",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d35-stream-before-stream",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-e4b602b7a478",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-ef3bc787e401",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 91413)",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.kf449d4369b4c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.break.k21f7c040141a",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.continue.ka6cb0f18b216",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k1c3b8382c3b0",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k713b3acc554b",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.ka0c2e721f5de",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf46147564dd3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf997f83cb6bb",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.k041899e81470",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.k1c2392f90eee",
+   "run_id": "d82-scripting-3-20261104T011650Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.kd8c284f355aa",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.ke9b4a198690b",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kcc18e3343634",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.case.end.syntax.k93f2857ca62c",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.if.k685d9d2a067e",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k0c9e61f79d5c",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k11068a83729d",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253005)",
+   "row_id": "sf.dml.get.k4d31e394faee",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.k3e09455c9bfe",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kb4bda3f085a1",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kd6504ed97cf6",
+   "run_id": "d91-dml-1-20261104T035640Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.k388fdac65474",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.expressions.operators-subquery.in.kee6da8eed1da",
+   "run_id": "d91-expr-1-20261104T023704Z"
+  },
+  {
+   "reason": "error phase not established (errno 394011)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k0d101c3930f8",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394011)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k3c30ef93975c",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394007)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k791bed03ca8f",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3798)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.k8cba6ab8a2fa",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3798)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.kb4188196faea",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 394007)",
+   "row_id": "sf.transaction_session.alter-session.set-sessionparams.kcc7120ed79fa",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 2126)",
+   "row_id": "sf.transaction_session.set.set.k10ced3392cd9",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 60200)",
+   "row_id": "sf.transaction_session.set.set.k5de3d69cfe96",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "error phase not established (errno 3107)",
+   "row_id": "sf.transaction_session.use-secondary-roles.k360113970753",
+   "run_id": "d91-session-1-20261104T040417Z"
+  },
+  {
+   "reason": "audit has 0 complete events, expected 1",
+   "row_id": "*",
+   "run_id": "d91-utility-1-20261104T042056Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-fn-results-1-20261104T033834Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-1-20261104T022520Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-2-20261104T023428Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-3-20261104T024428Z"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "row_id": "*",
+   "run_id": "d96-results-4-20261104T024538Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.conditional-change-event.k7ce9015b2dd5",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.k05a97c2cef84",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 93313)",
+   "row_id": "sf.functions.system-list-application-restricted-features.k882c07a731e3",
+   "run_id": "d97-fn-p3-1-20261104T035012Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.k194df305c1f4",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.k8fbc57a799f0",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.kfd42a6c4a126",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k10e7e9d6c24a",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k9eca34dbb4bc",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.kc89eec16fcd0",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values-percent.kbb56c33c63f6",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 510164)",
+   "row_id": "sf.functions.dmf-accepted-values.k925e4226f74e",
+   "run_id": "d97-fn-stmt-1-20261104T035302Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d06-task-other-session-param",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d07-task-session-no-comma",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d09-task-after-before-execute-control",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d10-task-trace-level",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d12-task-comma-between-props",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90216)",
+   "row_id": "a-ddl-6b2ce283b60a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-5166f9f77eb7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "a-ddl-fcca75747c99",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-facb192ba2f7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90080)",
+   "row_id": "a-ddl-d0e717489e81",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "a-ddl-e3a7b0ab273a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90207)",
+   "row_id": "a-ddl-909d03e593dd",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "a-ddl-fe118cb688c3",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-d841cfb9b6c2",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91471)",
+   "row_id": "a-ddl-aee0a7879f11",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_0",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_1",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "row_id": "*",
+   "run_id": "history-audit-20261103"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "4db838951496-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "b7bf01d2a39b-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  }
+ ],
+ "refused": 137,
+ "runs": [
+  {
+   "audit_sha256": "1acfcf6f1a79d2440be15f964f0bfbdcc2ab865ed88c73f4977488f70f24bae4",
+   "receipts": 94,
+   "refused_rows": 3,
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6650db4655a2b7a3b2709b670f49ed8cb59008ae3db92a7696501f729db9ac51",
+   "receipts": 32,
+   "refused_rows": 1,
+   "run_id": "b5-packet1-20261103T191328Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6e3d606d5205bcadb4c2ff1462ab5cb8389f6078ee2d21303ceabf86d51b5f7",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet2-20261103T201614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de897c46ab04353e2ce87e7ebc9cb11dff827f44fcb6a34b6ac5beecc2e154f2",
+   "receipts": 5,
+   "refused_rows": 2,
+   "run_id": "b5-packet3-20261103T214211Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "65224a8faa8839aa7d6922f336712ce64f1452d680d83f1663cd6c87cbc22f18",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "b5-packet4-20261103T224644Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a4d5f5807afe9406047e03d658836b016f4db94aa3e9930c60696cc5177fd6b",
+   "receipts": 42,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-2-20261103T204317Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "79e22c19c053689aeee5d498abd229571bc0029aee80785eca7f2f1931fc37ff",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-4-20261103T224526Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "14be5aa6758d6077334c8918ea545564106aa045bc7239010ace92b276477384",
+   "receipts": 90,
+   "refused_rows": 9,
+   "run_id": "c-audit-b5-5-20261103T232716Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5fe7f51716cc214b1a8993a65d68450354aef1b24cc03db356858e934d4fc399",
+   "receipts": 15,
+   "refused_rows": 0,
+   "run_id": "c-audit-query-6-20261103T232752Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ee188fc38fa9acdbc015a304c0eb86c7e77a0e1d2a69802cc50f35d46d65016b",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "current10-20261103T173608Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4bf1537b90134be4087efe224b3e5ecef9941cd8d2389691b3e64c8f01360c4a",
+   "receipts": 38,
+   "refused_rows": 33,
+   "run_id": "d73-missing-object-1-20261104T005826Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8e16ec44239248f4edccf3f58bdfb6e0c8189bb6d7425ec5e2d974ffaa67084c",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d73-missing-object-2-20261104T010308Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ce9ba60262beb94a711bf9af01bbc8573d24855931074ca54591a9357083d169",
+   "receipts": 16,
+   "refused_rows": 4,
+   "run_id": "d73-missing-object-3-20261104T010709Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d3b8f28a8d8e47a02b06496f9b571afe67c115abacd38d806beb4d884dc88cb0",
+   "receipts": 458,
+   "refused_rows": 9,
+   "run_id": "d82-scripting-1-20261104T005141Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b3f0d912ca7896611a8c149d68af29f026d714da41a8e65eefedebe8b808acc9",
+   "receipts": 85,
+   "refused_rows": 16,
+   "run_id": "d82-scripting-2-20261104T010552Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a7493dcca61f43dc75d8cf23e74df8e1bd5ebaf7f387197ca87481a85ed11d2",
+   "receipts": 22,
+   "refused_rows": 1,
+   "run_id": "d82-scripting-3-20261104T011650Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "73f23978534dce1831ca9226770de11132d25d491a4df5ac89e8161eb2123072",
+   "receipts": 8,
+   "refused_rows": 3,
+   "run_id": "d82-scripting-4-20261104T013200Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b252b8dc35bff6a27197060a5def1f7354a44c1cb65535dad89285124c4628b9",
+   "receipts": 9,
+   "refused_rows": 0,
+   "run_id": "d82-scripting-5-20261104T013906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fcd59014968d78e8f801d54342fcc20f598a90df849dd289d2cfc544a6204b4d",
+   "receipts": 22,
+   "refused_rows": 2,
+   "run_id": "d90-extreme-1-20261104T015457Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "83dafface5722be516d9ea99b87966ec6599613c170bf7aa1a19f0f0f2629093",
+   "receipts": 18,
+   "refused_rows": 0,
+   "run_id": "d90-extreme-2-20261104T020037Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "104159419672de23c1f5ff597ae8ae372b071440af874ce805009b9f2054bbe4",
+   "receipts": 848,
+   "refused_rows": 6,
+   "run_id": "d91-dml-1-20261104T035640Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2290776fc2467fb32b8b85a5e38fb06b16a049e2c18798b99efd7304c33580a6",
+   "receipts": 582,
+   "refused_rows": 0,
+   "run_id": "d91-dml-2-20261104T035945Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "faa42d154db408faa1f0c90df76b0f05582ec199f6853db10e9b6a541e55402d",
+   "receipts": 610,
+   "refused_rows": 2,
+   "run_id": "d91-expr-1-20261104T023704Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b113a4968e6901ec954f44d5032bf32e6b9c06d261695ddf1fb05fd241f4c187",
+   "receipts": 61,
+   "refused_rows": 0,
+   "run_id": "d91-expr-2-20261104T024216Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd1a29b07876dab099818f1e3fc1af7949ab0017f2638abe56b19e68a211fe13",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "d91-expr-3-20261104T030338Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f331100ea919f0d961b5fa91a3b4451b8502c48c65c20b67fb89016629357d5a",
+   "receipts": 13,
+   "refused_rows": 0,
+   "run_id": "d91-expr-ddl-1-20261104T024044Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b5682d95e39f4d507d07342cf2b2519c392b47bada8de5329004be0e0b3cd077",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d91-expr-flow-1-20261104T024041Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "062abd28664b4a59208cd4990283a3fa9db836ff92cc34954bc8d421498c9c48",
+   "receipts": 734,
+   "refused_rows": 0,
+   "run_id": "d91-query-1-20261104T021702Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "54b978e1616c72e9266542a3e07a7baaf8ec5fb565510979f46e63d02db8863a",
+   "receipts": 459,
+   "refused_rows": 0,
+   "run_id": "d91-query-2-20261104T022942Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fb2aa30d11c11a2a416e7cee72a929a97c86ce62f4102428c727f7640f017fa2",
+   "receipts": 179,
+   "refused_rows": 9,
+   "run_id": "d91-session-1-20261104T040417Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4a038e1c6649aebd40545107bcb292060f4de12373dd23294d2872def16987d5",
+   "receipts": 76,
+   "refused_rows": 0,
+   "run_id": "d91-session-2-20261104T041202Z",
+   "status": "imported"
+  },
+  {
+   "reason": "audit has 0 complete events, expected 1",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d91-utility-1-20261104T042056Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-fn-results-1-20261104T033834Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-1-20261104T022520Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-2-20261104T023428Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-3-20261104T024428Z",
+   "status": "refused"
+  },
+  {
+   "reason": "start event matches no known capture driver",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "d96-results-4-20261104T024538Z",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "40bfed5e233434fc1b3e6a509cd919b682d5802e56c586452c21ed6b5b8cf365",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-1-20261104T032106Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ab72ab74ff725918653866bab51b2e3fbf4d64c51b6744af1565b3b8c8469d44",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-2-20261104T032436Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "92e77b6b5a31b4cac922e6e520bd9b50c371ef8834dff7e3d5fdc32556105292",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-3-20261104T032815Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de5228461b10379ea99be1160d8388ddfa49fe4314b01758f71f344901908ec7",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-4-20261104T033149Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cabff37c4741e566cc0d3895328521ed96bf0cf16a23b6230df494c24aa504df",
+   "receipts": 966,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-1-20261104T033537Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "546e24f20e1bb4172c6438c1ede2527987954f3de85c09cd7bdb997721a1cdb8",
+   "receipts": 973,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-2-20261104T033906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6990d916ae00a41974a77fa0b9453a0e07923c1fed51e2cfe4b47138865ad3d9",
+   "receipts": 969,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-3-20261104T034242Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "170564cb4e2a3619e347f4ace53e4a5909306787a77b9009107218fd6176446f",
+   "receipts": 943,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p2-4-20261104T034614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4ba0324f90e637ee9602c2bc1e8193ba84816627b2dbec5696808024f89ea0a1",
+   "receipts": 754,
+   "refused_rows": 3,
+   "run_id": "d97-fn-p3-1-20261104T035012Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a5430695a74bb0538f7a6b05ffb9df5e5831506dbca71d23dd14ea4fe0eee9ec",
+   "receipts": 192,
+   "refused_rows": 8,
+   "run_id": "d97-fn-stmt-1-20261104T035302Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9317ee78146cb1c4162ea8e49397c8fa17903d41bc8933dfca6f8a95e0ace5f7",
+   "receipts": 567,
+   "refused_rows": 11,
+   "run_id": "ddl-sweep-1-20261103T233411Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "648a090114a56ee046928a33b00149febd0103a61958314d9488825286b144a3",
+   "receipts": 135,
+   "refused_rows": 4,
+   "run_id": "ddl-sweep-2-20261103T234049Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "27252ee02a868f9e0d355323ef880fd623549235ef14fe1ee8601988b8d2ef8b",
+   "receipts": 12,
+   "refused_rows": 2,
+   "run_id": "diagnostic-20261103T173725Z",
+   "status": "imported"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "history-audit-20261103",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "c77d3f564bca6bfb69676bce3aab16c902c4bc093b81e8f3795a84f8f2a3c4ea",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "power5-20261103T211556Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "86fdde0a1d42fef66d65138ca5ccbe0c29e623b1fe4038cfd21b6c382eeecfc6",
+   "receipts": 46,
+   "refused_rows": 0,
+   "run_id": "query-packet1-20261103T2115Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a2ebb4837e2d1fbbf3f09fbe973fe7b5b1db4d76b740b62facae298ff3f5c7fd",
+   "receipts": 19,
+   "refused_rows": 0,
+   "run_id": "query-packet2-20261103T211816Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "68221365e59ed623a6b24bdff4ed7046051de104ddbc01b4eb6bf880ab959fe1",
+   "receipts": 6,
+   "refused_rows": 0,
+   "run_id": "setop-corpus-7-20261103T232953Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "75bfeb3f8d738049474042cebf6e8307e9430a7524ff4003400dc2f60a0c6b6d",
+   "receipts": 165,
+   "refused_rows": 2,
+   "run_id": "setup-query-1-20261104T004203Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": [
+  {
+   "case_id": "a-ddl-2bf4338fec7e",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392032)",
+   "receipt_sha256": "cad0a7c63abb0c516b517b36434c00143c6e626cbcd1e26fc5145fbdf7e655cb",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "case_id": "b5-s17-quoted_unicode_nested_declare",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "111bb37d84c609af6296dc5889f412518de109038ce6eee507ee5047e95b59e8",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "case_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "5ebae0d5f11b43342ec7ce37bffa41d64ee4dd5972300c51e377c8fa7c718f2d",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "46657833a05832d8047240bc649a918c52605c1165e90a770a4154c39ac661c7",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "a-ddl-fcca75747c99",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392030)",
+   "receipt_sha256": "1cced31cba08886f447662fe699bac59f7e1ad8e0b483bde9f1dd46c7245d54e",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  }
+ ]
+}

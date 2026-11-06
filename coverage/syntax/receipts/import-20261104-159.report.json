@@ -1,0 +1,129 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS ( SELECT 1 AS n ) , RECURSIVE r ( n ) AS ( SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 3 ) SELECT n FROM r ;",
+   "sql_sha256": "000e0eac2d3c6bf658f920fc39d387a3588d46f085aa5fa843c3eb5d8b35e4e9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( PARSE_JSON ( '{\"a\":1}' ) ) : ;",
+   "sql_sha256": "0d45b52abfcb1a073abcaccf2a13da20098e6039695eb9faac74e615669b97ac"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT NULL :: PERIOD ( ) ;",
+   "sql_sha256": "19b1307c114996190c191d18191c99249c5eed18223599707b538e74ab7b0784"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SYSTEM$OPT_OUT_MALICIOUS_IP_PROTECTION_BY_CATEGORY ( ) ;",
+   "sql_sha256": "1c15c9db6ff3df0cca18ebbf1240c42dd9c47e2c1b049cadb6e138e763190026"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( FIRST_VALUE ( PARSE_JSON ( '{\"a\":{\"b\":1}}' ) ) OVER ( ORDER BY 1 ) ) : a . b ;",
+   "sql_sha256": "26666e34ccb3bc34df92879da79f22a5883f6f3b8b5f139041047f1d4fa84bba"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ( PARSE_JSON ( '{\"a\":1}' ) ) : a ;",
+   "sql_sha256": "33ad70ed4f1a0c55c4768afa07147ab22b55abe995bbf748a4edd52b0b38f20a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 AS ( SELECT 1 AS n ) , r ( n ) AS ( SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 3 ) SELECT n FROM r ;",
+   "sql_sha256": "39f62f42208596cb58822817b21b5ad77b993db1fbf0ab8a54cf136e2594027f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT NULL :: PERIOD ( DATE ) ;",
+   "sql_sha256": "6c15b13413699baa6a50cb592adb6c754263e52e710b4ed8496fefdf4a98aa2b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT s1.f1 ( 1 ) OVER ( PARTITION BY 1 ) ;",
+   "sql_sha256": "8f9626778f81cd1ab20893aef3e82ae16506461010cf5eb4d0e4a8137ec938bd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT PERIOD ( DATE ) '[2026-01-01, 2026-01-02)' ;",
+   "sql_sha256": "903e0387f31b0e59bcfe71b6a47fc9aedf8cd2dafdf2112f727d1e8ae04ae8d4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT s1.f1 ( 1 ) OVER ;",
+   "sql_sha256": "9272edbb94abf5ead27ddff074e13b13c84f87412d65207ae0eacf64c38cf1e1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT '[2026-01-01, 2026-01-02)' :: PERIOD ( DATE ) ;",
+   "sql_sha256": "9c2bef444d9f9f4b9f5b96d3633e07dec21e562acf849f936211d201b13eafd1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SYSTEM$MIGRATE_SAML_IDP_REGISTRATION ( ) ;",
+   "sql_sha256": "a161f27fae9617e5ca4364ca97bf7281da713d44ddd8c27fc65553d98c85ab71"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SYSTEM$PIPE_FORCE_RESUME ( ) ;",
+   "sql_sha256": "bff9413cd8b89a7a8489a870b6016c52ac74015a3b179b2f0dfc1e53b0276132"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT d1.s1.f1 ( 1 ) OVER ( ORDER BY 1 ) ;",
+   "sql_sha256": "fc2bb90589086df10c0517fda6275ef501455ea4ab3e9f904ea84b459e0398d9"
+  }
+ ],
+ "receipts": 185,
+ "receipts_file_sha256": "3c417fe7cb25eb48ed98bdea1425fbdb5128582d1eb7b0696ee44b2900338859",
+ "reconciled_receipts": 0,
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.conditional-change-event.k7ce9015b2dd5",
+   "run_id": "c9-ex-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.k05a97c2cef84",
+   "run_id": "c9-ex-00"
+  }
+ ],
+ "refused": 2,
+ "runs": [
+  {
+   "audit_sha256": "6ea4df28fd4c7155a49cc3198f9176bd2852b0eb390af38bb1a8480c6cafc589",
+   "receipts": 12,
+   "refused_rows": 0,
+   "run_id": "bgap-ex-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b69c4cdc937c015801f91d6761e9ba88a662fd51226927152f5f181b2ba53e07",
+   "receipts": 173,
+   "refused_rows": 2,
+   "run_id": "c9-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

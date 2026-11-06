@@ -17,7 +17,7 @@ use crate::analysis::main::assumption_id::assumption_id;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refuse_value_divergences::refuse_value_divergences;
 use crate::cli::models::{EvidencePaths, PolicyArguments};
-use sqlquack_rules::conversion::constants::{DECLARED_OFFSET, PROJECT_UDF, SESSION_TIMEZONE_UTC};
+use sqlquack_policy::policy::constants::{DECLARED_OFFSET, PROJECT_UDF, SESSION_TIMEZONE_UTC};
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 

@@ -1,0 +1,171 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "auditor-scripting-001"
+reviewer_lane = "auditor"
+family = "scripting"
+parser_tree = "359f8b8a21c50fef606f53fa3ea2ec0599fa8467"
+reviewed_utc = "2026-11-04T18:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.exception",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2fa1b9cda5fc; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.exception" = "a35bc56ed126fdbc92fc8c72e0d6fab623ad98e7321a7cbe04f9e304282c95a3"
+
+[review.definitions]
+"sf.scripting.exception" = "14125a27663d77f87b96d9b0533c6c0d07ece425022635b49cfa4761d749d3f4"
+
+[[review]]
+id = "auditor-scripting-002"
+reviewer_lane = "auditor"
+family = "scripting"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T22:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.await",
+  "sf.scripting.case.end",
+  "sf.scripting.case.end.syntax",
+  "sf.scripting.declare.cursor-declaration",
+  "sf.scripting.declare.resultset",
+  "sf.scripting.for.do-end-for",
+  "sf.scripting.for.to-do-loop-end",
+  "sf.scripting.if",
+  "sf.scripting.let.let-cursor-for",
+  "sf.scripting.let.let-default",
+  "sf.scripting.let.let-resultset-default",
+  "sf.scripting.loop",
+  "sf.scripting.repeat",
+  "sf.scripting.while",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.await" = "01b2219e6fbaf7ddb54778ed74ce3ef1c2068ea7807fa5462dca3a62876850bc"
+"sf.scripting.case.end" = "4f5eb5eaaca2e69ac23ed9c09042c81c788926c0fff761b3928df7ce2ba23560"
+"sf.scripting.case.end.syntax" = "145f5c6e72de66d74b0de10fd7282b3321931ac1e07de27f0b60a00a2a05a687"
+"sf.scripting.declare.cursor-declaration" = "f8654ccf9e7ca831243678b5494f3bc9ebf91c71e2171cefff91774dfe20c584"
+"sf.scripting.declare.resultset" = "a19a6abab8526c5c32913d9ca3ae7df780e438b0341ee13ac55daf39e20fa9cd"
+"sf.scripting.for.do-end-for" = "5c65f4f5fc7da55523dded9c0b4d29b2fd37e3495214a6a62c8f56ceb607d1ef"
+"sf.scripting.for.to-do-loop-end" = "fd0a854feab7ce11050bc31cf4d1a058a99097cf6185404274f39c5ba88df275"
+"sf.scripting.if" = "34aa23e39b5adef618ca5eb6accf9f96313a4db6b96e63551816bd021567868a"
+"sf.scripting.let.let-cursor-for" = "f74f41e8ce5837ca5012a7044579eac8b2a5ddc2973313bbbb84f070817833f4"
+"sf.scripting.let.let-default" = "ac333c9eb2f155fb4cdebd0027cc3ad326a617b5501033a940c42c4b68992784"
+"sf.scripting.let.let-resultset-default" = "eef0a7be4b937ffbe69cb76bdfdda2985859044f1e854ad29a4d957c262f5d16"
+"sf.scripting.loop" = "45fea0e6c83c162de6ad4ef3b11101e20ebcf75c0c93fad9e14170d854b6ed1f"
+"sf.scripting.repeat" = "55a8d54ae4ee886411d4f372c73b6f586c4ada3cd250eb01c0778bcf7c2cfe35"
+"sf.scripting.while" = "ea828409e1d552da24f8d7cb64ff267ba5dc78c7f38fe69db239b260dc94412d"
+
+[review.definitions]
+"sf.scripting.await" = "cc9537556d3396b2784bea6ba88aa17f93eaf07ba190681b5cb5bced495e1810"
+"sf.scripting.case.end" = "493fa45413ba3273357408f3e0e8c1a1b96b2718c18d839787fe5e800b4cbb3f"
+"sf.scripting.case.end.syntax" = "82651e6395de712aab6ecc757b8655ae16c86b1f1b65dbf90342ac16e87d9a8c"
+"sf.scripting.declare.cursor-declaration" = "0a82468449e6e3e2d9a64d68cb0c9017597ccb6716844e1ee36b638810e00399"
+"sf.scripting.declare.resultset" = "964a8ae0f7ca783b0858d847e571707f3bd08c5181d2b4dbd237038bb917b800"
+"sf.scripting.for.do-end-for" = "3779d6082660d01ea31643ae838b404e5db36e3a529a6ca5a166dc1f7efb9604"
+"sf.scripting.for.to-do-loop-end" = "2872ae7db29f6dc9eed6ab35a47df109ace26447cdf10a8a835e4b5a960255a2"
+"sf.scripting.if" = "2e2816a7401d6d47623512722d0c3e9207b4b2756a8d6d226ca19b310df87331"
+"sf.scripting.let.let-cursor-for" = "886f3940a660262e2ce564161e130dd6c8c711c9bee94985f94fe01e3467cc8c"
+"sf.scripting.let.let-default" = "fa624183cf73d33f609b8473f1fed802b2bde09180addabf4f6d645ad6223fce"
+"sf.scripting.let.let-resultset-default" = "ce48bb312c31a01c0ca36083851a038591c9c03da000288bb36e14bd9416c144"
+"sf.scripting.loop" = "abe4e6b2e2deff505fa1839f9f2ad67326de097f807230f40ef8e15639fab2ff"
+"sf.scripting.repeat" = "e6fef97eea1336093570c5a334823f0b196541dec817d35c9db027a5fcecabd0"
+"sf.scripting.while" = "de6a18f1e8612105e3a6458293e73b9a70b21c5d73a5f9e668bd45c50735ab49"
+
+[[review]]
+id = "auditor-scripting-003"
+reviewer_lane = "auditor"
+family = "scripting"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.break",
+  "sf.scripting.cancel",
+  "sf.scripting.close",
+  "sf.scripting.continue",
+  "sf.scripting.declare.exception",
+  "sf.scripting.declare.variable-declaration",
+  "sf.scripting.fetch",
+  "sf.scripting.let.let",
+  "sf.scripting.let.let-cursor-for.cursor-assignment-syntax",
+  "sf.scripting.let.let-default.variable-assignment-syntax",
+  "sf.scripting.null",
+  "sf.scripting.open",
+  "sf.scripting.raise",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.break" = "775195fe47dcef007f3963bf2237b290f7ef7197f9ea01cc523f51d26251522b"
+"sf.scripting.cancel" = "2d619a4996eb214bce4dbb02d0457795f090532c9a99dc7d8c750dc14bb771a3"
+"sf.scripting.close" = "621267246af5a2e3436cedb980e2eba7ace9e3d951d7a8d3a97ffd8296886ec1"
+"sf.scripting.continue" = "4f58c83afb9f8a79ec28d3190b319792713f5dbfdd4d0acd97061d1096afbb65"
+"sf.scripting.declare.exception" = "0d702c9c9e158da1e907e7fc820d0a290dc86da3546efc040688795a20d0c01c"
+"sf.scripting.declare.variable-declaration" = "8c3d1a6ec39e3d426b2a78dcb2e001489d12997dc4fd01dfca43099d7d118ad4"
+"sf.scripting.fetch" = "8c82c3920ec1080f28d252a8f80520751e52ccf53dab3ff7a8cfc303d173184b"
+"sf.scripting.let.let" = "a8d1a3d1bee65d199103471abdac126b71fa78191892c1ae89f8316d14503424"
+"sf.scripting.let.let-cursor-for.cursor-assignment-syntax" = "608f5f3b954c260804205724218eb0d96c46f55e9f801a6e4e0a11adfdb27421"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "b5081c56ef5d43b5f6691a132c8f50bb0961c3408ee93448aa072f1e0b60e2f9"
+"sf.scripting.null" = "c6f2139d53ad4f87fc84a50aac4b612182a6aef93b2746180985b7652c278f07"
+"sf.scripting.open" = "942a1151126f521770831aa11a9eda1c4f436c1e63b6ceb5c27ddc9ffdea8090"
+"sf.scripting.raise" = "28af85c091763714a0b269cb34c2b813db13c14123734ce2a8439ad7cd7373f1"
+
+[review.definitions]
+"sf.scripting.break" = "00d4566d1cbdcedaa8179d1139054d3b70444bd5f826da61861096193058a24a"
+"sf.scripting.cancel" = "fecb03b8de572d7e2d50304ff27670788b49a659cf32746a704e800bdf348b86"
+"sf.scripting.close" = "944621d78b910f66f9ca9f0f3840064b404dc11a8841778a7e90e4cf382361b9"
+"sf.scripting.continue" = "04b94d32486d3f40df117832d4bc6c23b0286c872266daab03a451d217f4a522"
+"sf.scripting.declare.exception" = "282c73eb660b7059c59b4ecb15edb0c5386c6fd71a7f6cee3327bc6ead9b8629"
+"sf.scripting.declare.variable-declaration" = "57f71051a213eacd501204c85db026c6011d0f8aee07ef2a366e6fafd13cb2a2"
+"sf.scripting.fetch" = "c125f56e96ad371bd9ecbf2b0235c42703cd048f9df0baabbdb039777996229f"
+"sf.scripting.let.let" = "20a52cc8089c3ebfd217683c12cf53a682176362a6945fb5c05742e59271ac27"
+"sf.scripting.let.let-cursor-for.cursor-assignment-syntax" = "24624ff9c38d9f6da07d37fecec065a0f902e82c185650bd58d2339f376cfcef"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "613907a139ae4de0c43d0a86f6459b102f55ddeab18bec46c7b8305f716f78e7"
+"sf.scripting.null" = "08cf841e41c4340a57b4e188b2ab9668ca0c232b507417f5a2ced7f71d1152d3"
+"sf.scripting.open" = "0ac1d66b3506012eb84dc4905ca1c7c2e7d967a41a21c587fb87955b341ab618"
+"sf.scripting.raise" = "60f42d7b0e529b0f63b4e9e6630879934360de5be011efa0b09e7cab8a5258a6"
+
+[[review]]
+id = "auditor-scripting-004"
+reviewer_lane = "auditor"
+family = "scripting"
+parser_tree = "464a70bb8f8057d3224c6eb8090d7ad3d7b0826f"
+reviewed_utc = "2026-11-05T11:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.begin",
+  "sf.scripting.return",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f3c75ab3a132; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.begin" = "46e6ed9d59c3a4a09f0dd7089e6bca774cc33cb068ccdbd3b42c3f03e79c2a6b"
+"sf.scripting.return" = "0d61faaf889aae1230bb81c97a8811b373c353c6be8c2e8e2074e6c8a93c16e4"
+
+[review.definitions]
+"sf.scripting.begin" = "9a5fcab650f947737da6cfcea876bb4fca95167d94368d4c00ee8c508de7f7c8"
+"sf.scripting.return" = "e37499675e520a680eb2b5a6547eb4989a94f9fd9f9391ded6b95e8da4948311"
+
+[[review]]
+id = "auditor-scripting-005"
+reviewer_lane = "auditor"
+family = "scripting"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T23:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.declare.declare",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.declare.declare" = "5dba05ba45a725e2fbc91314fcec9a9c24e9331f7b7e8e55bb4884d360ce3a71"
+
+[review.definitions]
+"sf.scripting.declare.declare" = "d1a2db11ffc5ddcaad2d03f47571b6ecfced8545b9d56406ac984f1ffed6a459"

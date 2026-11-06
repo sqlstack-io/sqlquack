@@ -137,6 +137,12 @@ pub struct FamilyHazards {
     /// A second unremarkable value, different from `benign`.
     #[serde(default)]
     pub other: Option<String>,
+    /// A third unremarkable value, different from both, for forms taking three of the family.
+    #[serde(default)]
+    pub third: Option<String>,
+    /// Further distinct unremarkable values, for forms taking more than three of the family.
+    #[serde(default)]
+    pub more: Vec<String>,
     /// The hazards.
     #[serde(default, rename = "hazard")]
     pub hazards: Vec<Hazard>,

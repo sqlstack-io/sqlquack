@@ -10,8 +10,10 @@ id = "node_between_combination_0_integer_integer_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2", "12"],
+  ["2", "12", "1"],
+  ["12", "1", "2"],
   ["1", "1", "1"],
-  ["2", "2", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -22,8 +24,10 @@ id = "node_between_combination_0_integer_integer_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
+  ["1", "2", "1.5"],
+  ["2", "12", "2.25"],
+  ["12", "1", "3.125"],
   ["1", "1", "1.5"],
-  ["2", "2", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -34,8 +38,10 @@ id = "node_between_combination_0_integer_decimal_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "1.5", "2"],
+  ["2", "2.25", "12"],
+  ["12", "3.125", "1"],
   ["1", "1.5", "1"],
-  ["2", "2.25", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -46,8 +52,10 @@ id = "node_between_combination_0_integer_decimal_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
+  ["1", "1.5", "2.25"],
+  ["2", "2.25", "3.125"],
+  ["12", "3.125", "1.5"],
   ["1", "1.5", "1.5"],
-  ["2", "2.25", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -58,8 +66,10 @@ id = "node_between_combination_0_decimal_integer_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
+  ["1.5", "1", "2"],
+  ["2.25", "2", "12"],
+  ["3.125", "12", "1"],
   ["1.5", "1", "1"],
-  ["2.25", "2", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -70,8 +80,10 @@ id = "node_between_combination_0_decimal_integer_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "1", "2.25"],
+  ["2.25", "2", "3.125"],
+  ["3.125", "12", "1.5"],
   ["1.5", "1", "1.5"],
-  ["2.25", "2", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -82,8 +94,10 @@ id = "node_between_combination_0_decimal_decimal_integer"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
+  ["1.5", "2.25", "1"],
+  ["2.25", "3.125", "2"],
+  ["3.125", "1.5", "12"],
   ["1.5", "1.5", "1"],
-  ["2.25", "2.25", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -94,8 +108,10 @@ id = "node_between_combination_0_decimal_decimal_decimal"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25", "3.125"],
+  ["2.25", "3.125", "1.5"],
+  ["3.125", "1.5", "2.25"],
   ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -106,11 +122,11 @@ id = "node_between_0_integer_hazards"
 description = "node:between with the hazards null, zero_negative, beyond_double in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
-  ["0", "1", "1"],
-  ["-1", "1", "1"],
-  ["9007199254740993", "1", "1"],
-  ["-9007199254740993", "1", "1"],
+  ["NULL", "1", "2"],
+  ["0", "1", "2"],
+  ["-1", "1", "2"],
+  ["9007199254740993", "1", "2"],
+  ["-9007199254740993", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -121,8 +137,8 @@ id = "node_between_0_integer_beyond_64_bits"
 description = "node:between with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["18446744073709551616", "1", "1"],
-  ["-9223372036854775809", "1", "1"],
+  ["18446744073709551616", "1", "2"],
+  ["-9223372036854775809", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -133,8 +149,8 @@ id = "node_between_0_integer_digits_38"
 description = "node:between with The largest 38-digit integers in argument 0, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["99999999999999999999999999999999999999", "1", "1"],
-  ["-99999999999999999999999999999999999999", "1", "1"],
+  ["99999999999999999999999999999999999999", "1", "2"],
+  ["-99999999999999999999999999999999999999", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -145,14 +161,14 @@ id = "node_between_0_decimal_hazards"
 description = "node:between with the hazards null, one_spellings, half_way, beyond_double in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
-  ["1.0000000000", "1", "1"],
-  ["-0.0000000000", "1", "1"],
-  ["2.5", "1", "1"],
-  ["-2.5", "1", "1"],
-  ["0.0000000005", "1", "1"],
-  ["1234567890123456.7", "1", "1"],
-  ["-1234567890123456.7", "1", "1"],
+  ["NULL", "1", "2"],
+  ["1.0000000000", "1", "2"],
+  ["-0.0000000000", "1", "2"],
+  ["2.5", "1", "2"],
+  ["-2.5", "1", "2"],
+  ["0.0000000005", "1", "2"],
+  ["1234567890123456.7", "1", "2"],
+  ["-1234567890123456.7", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -163,8 +179,8 @@ id = "node_between_0_decimal_digits_38"
 description = "node:between with Values using all 38 digits in argument 0, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["9999999999999999999999999999.9999999999", "1", "1"],
-  ["-9999999999999999999999999999.9999999999", "1", "1"],
+  ["9999999999999999999999999999.9999999999", "1", "2"],
+  ["-9999999999999999999999999999.9999999999", "1", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -175,11 +191,11 @@ id = "node_between_1_integer_hazards"
 description = "node:between with the hazards null, zero_negative, beyond_double in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "NULL", "1"],
-  ["1", "0", "1"],
-  ["1", "-1", "1"],
-  ["1", "9007199254740993", "1"],
-  ["1", "-9007199254740993", "1"],
+  ["1", "NULL", "2"],
+  ["1", "0", "2"],
+  ["1", "-1", "2"],
+  ["1", "9007199254740993", "2"],
+  ["1", "-9007199254740993", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -190,8 +206,8 @@ id = "node_between_1_integer_beyond_64_bits"
 description = "node:between with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "18446744073709551616", "1"],
-  ["1", "-9223372036854775809", "1"],
+  ["1", "18446744073709551616", "2"],
+  ["1", "-9223372036854775809", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -202,8 +218,8 @@ id = "node_between_1_integer_digits_38"
 description = "node:between with The largest 38-digit integers in argument 1, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "99999999999999999999999999999999999999", "1"],
-  ["1", "-99999999999999999999999999999999999999", "1"],
+  ["1", "99999999999999999999999999999999999999", "2"],
+  ["1", "-99999999999999999999999999999999999999", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -214,14 +230,14 @@ id = "node_between_1_decimal_hazards"
 description = "node:between with the hazards null, one_spellings, half_way, beyond_double in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "NULL", "1"],
-  ["1", "1.0000000000", "1"],
-  ["1", "-0.0000000000", "1"],
-  ["1", "2.5", "1"],
-  ["1", "-2.5", "1"],
-  ["1", "0.0000000005", "1"],
-  ["1", "1234567890123456.7", "1"],
-  ["1", "-1234567890123456.7", "1"],
+  ["1", "NULL", "2"],
+  ["1", "1.0000000000", "2"],
+  ["1", "-0.0000000000", "2"],
+  ["1", "2.5", "2"],
+  ["1", "-2.5", "2"],
+  ["1", "0.0000000005", "2"],
+  ["1", "1234567890123456.7", "2"],
+  ["1", "-1234567890123456.7", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -232,8 +248,8 @@ id = "node_between_1_decimal_digits_38"
 description = "node:between with Values using all 38 digits in argument 1, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "9999999999999999999999999999.9999999999", "1"],
-  ["1", "-9999999999999999999999999999.9999999999", "1"],
+  ["1", "9999999999999999999999999999.9999999999", "2"],
+  ["1", "-9999999999999999999999999999.9999999999", "2"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -244,11 +260,11 @@ id = "node_between_2_integer_hazards"
 description = "node:between with the hazards null, zero_negative, beyond_double in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "NULL"],
-  ["1", "1", "0"],
-  ["1", "1", "-1"],
-  ["1", "1", "9007199254740993"],
-  ["1", "1", "-9007199254740993"],
+  ["1", "2", "NULL"],
+  ["1", "2", "0"],
+  ["1", "2", "-1"],
+  ["1", "2", "9007199254740993"],
+  ["1", "2", "-9007199254740993"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -259,8 +275,8 @@ id = "node_between_2_integer_beyond_64_bits"
 description = "node:between with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "18446744073709551616"],
-  ["1", "1", "-9223372036854775809"],
+  ["1", "2", "18446744073709551616"],
+  ["1", "2", "-9223372036854775809"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -271,8 +287,8 @@ id = "node_between_2_integer_digits_38"
 description = "node:between with The largest 38-digit integers in argument 2, integer."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["1", "1", "99999999999999999999999999999999999999"],
-  ["1", "1", "-99999999999999999999999999999999999999"],
+  ["1", "2", "99999999999999999999999999999999999999"],
+  ["1", "2", "-99999999999999999999999999999999999999"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -283,14 +299,14 @@ id = "node_between_2_decimal_hazards"
 description = "node:between with the hazards null, one_spellings, half_way, beyond_double in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "NULL"],
-  ["1", "1", "1.0000000000"],
-  ["1", "1", "-0.0000000000"],
-  ["1", "1", "2.5"],
-  ["1", "1", "-2.5"],
-  ["1", "1", "0.0000000005"],
-  ["1", "1", "1234567890123456.7"],
-  ["1", "1", "-1234567890123456.7"],
+  ["1", "2", "NULL"],
+  ["1", "2", "1.0000000000"],
+  ["1", "2", "-0.0000000000"],
+  ["1", "2", "2.5"],
+  ["1", "2", "-2.5"],
+  ["1", "2", "0.0000000005"],
+  ["1", "2", "1234567890123456.7"],
+  ["1", "2", "-1234567890123456.7"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -301,8 +317,8 @@ id = "node_between_2_decimal_digits_38"
 description = "node:between with Values using all 38 digits in argument 2, decimal."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
-  ["1", "1", "9999999999999999999999999999.9999999999"],
-  ["1", "1", "-9999999999999999999999999999.9999999999"],
+  ["1", "2", "9999999999999999999999999999.9999999999"],
+  ["1", "2", "-9999999999999999999999999999.9999999999"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -313,8 +329,10 @@ id = "node_between_1_combination_0_float_float_float"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25", "3.125"],
+  ["2.25", "3.125", "1.5"],
+  ["3.125", "1.5", "2.25"],
   ["1.5", "1.5", "1.5"],
-  ["2.25", "2.25", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -325,19 +343,19 @@ id = "node_between_1_0_float_hazards"
 description = "node:between with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["NULL", "1.5", "1.5"],
-  ["1", "1.5", "1.5"],
-  ["1.0", "1.5", "1.5"],
-  ["1e0", "1.5", "1.5"],
-  ["'-0'", "1.5", "1.5"],
-  ["5e-324", "1.5", "1.5"],
-  ["1.7976931348623157e308", "1.5", "1.5"],
-  ["0.1", "1.5", "1.5"],
-  ["0.30000000000000004", "1.5", "1.5"],
-  ["123456789.12345678", "1.5", "1.5"],
-  ["9007199254740992", "1.5", "1.5"],
-  ["9007199254740994", "1.5", "1.5"],
-  ["1e16", "1.5", "1.5"],
+  ["NULL", "1.5", "2.25"],
+  ["1", "1.5", "2.25"],
+  ["1.0", "1.5", "2.25"],
+  ["1e0", "1.5", "2.25"],
+  ["'-0'", "1.5", "2.25"],
+  ["5e-324", "1.5", "2.25"],
+  ["1.7976931348623157e308", "1.5", "2.25"],
+  ["0.1", "1.5", "2.25"],
+  ["0.30000000000000004", "1.5", "2.25"],
+  ["123456789.12345678", "1.5", "2.25"],
+  ["9007199254740992", "1.5", "2.25"],
+  ["9007199254740994", "1.5", "2.25"],
+  ["1e16", "1.5", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -348,9 +366,9 @@ id = "node_between_1_0_float_nan_infinity"
 description = "node:between with NaN and the infinities in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["'NaN'", "1.5", "1.5"],
-  ["'inf'", "1.5", "1.5"],
-  ["'-inf'", "1.5", "1.5"],
+  ["'NaN'", "1.5", "2.25"],
+  ["'inf'", "1.5", "2.25"],
+  ["'-inf'", "1.5", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -361,11 +379,11 @@ id = "node_between_1_0_float_notation_boundaries"
 description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 0, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["100", "1.5", "1.5"],
-  ["0.0001", "1.5", "1.5"],
-  ["1e-5", "1.5", "1.5"],
-  ["1e15", "1.5", "1.5"],
-  ["1e21", "1.5", "1.5"],
+  ["100", "1.5", "2.25"],
+  ["0.0001", "1.5", "2.25"],
+  ["1e-5", "1.5", "2.25"],
+  ["1e15", "1.5", "2.25"],
+  ["1e21", "1.5", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -376,19 +394,19 @@ id = "node_between_1_1_float_hazards"
 description = "node:between with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 1, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "NULL", "1.5"],
-  ["1.5", "1", "1.5"],
-  ["1.5", "1.0", "1.5"],
-  ["1.5", "1e0", "1.5"],
-  ["1.5", "'-0'", "1.5"],
-  ["1.5", "5e-324", "1.5"],
-  ["1.5", "1.7976931348623157e308", "1.5"],
-  ["1.5", "0.1", "1.5"],
-  ["1.5", "0.30000000000000004", "1.5"],
-  ["1.5", "123456789.12345678", "1.5"],
-  ["1.5", "9007199254740992", "1.5"],
-  ["1.5", "9007199254740994", "1.5"],
-  ["1.5", "1e16", "1.5"],
+  ["1.5", "NULL", "2.25"],
+  ["1.5", "1", "2.25"],
+  ["1.5", "1.0", "2.25"],
+  ["1.5", "1e0", "2.25"],
+  ["1.5", "'-0'", "2.25"],
+  ["1.5", "5e-324", "2.25"],
+  ["1.5", "1.7976931348623157e308", "2.25"],
+  ["1.5", "0.1", "2.25"],
+  ["1.5", "0.30000000000000004", "2.25"],
+  ["1.5", "123456789.12345678", "2.25"],
+  ["1.5", "9007199254740992", "2.25"],
+  ["1.5", "9007199254740994", "2.25"],
+  ["1.5", "1e16", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -399,9 +417,9 @@ id = "node_between_1_1_float_nan_infinity"
 description = "node:between with NaN and the infinities in argument 1, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "'NaN'", "1.5"],
-  ["1.5", "'inf'", "1.5"],
-  ["1.5", "'-inf'", "1.5"],
+  ["1.5", "'NaN'", "2.25"],
+  ["1.5", "'inf'", "2.25"],
+  ["1.5", "'-inf'", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -412,11 +430,11 @@ id = "node_between_1_1_float_notation_boundaries"
 description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 1, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "100", "1.5"],
-  ["1.5", "0.0001", "1.5"],
-  ["1.5", "1e-5", "1.5"],
-  ["1.5", "1e15", "1.5"],
-  ["1.5", "1e21", "1.5"],
+  ["1.5", "100", "2.25"],
+  ["1.5", "0.0001", "2.25"],
+  ["1.5", "1e-5", "2.25"],
+  ["1.5", "1e15", "2.25"],
+  ["1.5", "1e21", "2.25"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -427,19 +445,19 @@ id = "node_between_1_2_float_hazards"
 description = "node:between with the hazards null, one_spellings, negative_zero, subnormal, binary_fractions, large_integers in argument 2, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "NULL"],
-  ["1.5", "1.5", "1"],
-  ["1.5", "1.5", "1.0"],
-  ["1.5", "1.5", "1e0"],
-  ["1.5", "1.5", "'-0'"],
-  ["1.5", "1.5", "5e-324"],
-  ["1.5", "1.5", "1.7976931348623157e308"],
-  ["1.5", "1.5", "0.1"],
-  ["1.5", "1.5", "0.30000000000000004"],
-  ["1.5", "1.5", "123456789.12345678"],
-  ["1.5", "1.5", "9007199254740992"],
-  ["1.5", "1.5", "9007199254740994"],
-  ["1.5", "1.5", "1e16"],
+  ["1.5", "2.25", "NULL"],
+  ["1.5", "2.25", "1"],
+  ["1.5", "2.25", "1.0"],
+  ["1.5", "2.25", "1e0"],
+  ["1.5", "2.25", "'-0'"],
+  ["1.5", "2.25", "5e-324"],
+  ["1.5", "2.25", "1.7976931348623157e308"],
+  ["1.5", "2.25", "0.1"],
+  ["1.5", "2.25", "0.30000000000000004"],
+  ["1.5", "2.25", "123456789.12345678"],
+  ["1.5", "2.25", "9007199254740992"],
+  ["1.5", "2.25", "9007199254740994"],
+  ["1.5", "2.25", "1e16"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -450,9 +468,9 @@ id = "node_between_1_2_float_nan_infinity"
 description = "node:between with NaN and the infinities in argument 2, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "'NaN'"],
-  ["1.5", "1.5", "'inf'"],
-  ["1.5", "1.5", "'-inf'"],
+  ["1.5", "2.25", "'NaN'"],
+  ["1.5", "2.25", "'inf'"],
+  ["1.5", "2.25", "'-inf'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -463,11 +481,11 @@ id = "node_between_1_2_float_notation_boundaries"
 description = "node:between with Doubles where text switches between plain and exponent notation, which %.15g and %.15e write differently in argument 2, float."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
-  ["1.5", "1.5", "100"],
-  ["1.5", "1.5", "0.0001"],
-  ["1.5", "1.5", "1e-5"],
-  ["1.5", "1.5", "1e15"],
-  ["1.5", "1.5", "1e21"],
+  ["1.5", "2.25", "100"],
+  ["1.5", "2.25", "0.0001"],
+  ["1.5", "2.25", "1e-5"],
+  ["1.5", "2.25", "1e15"],
+  ["1.5", "2.25", "1e21"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -478,8 +496,10 @@ id = "node_between_2_combination_0_text_text_text"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'", "'ab'"],
+  ["'b'", "'ab'", "'a'"],
+  ["'ab'", "'a'", "'b'"],
   ["'a'", "'a'", "'a'"],
-  ["'b'", "'b'", "'b'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -490,41 +510,41 @@ id = "node_between_2_0_text_hazards"
 description = "node:between with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 0, text."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["NULL", "'a'", "'a'"],
-  ["''", "'a'", "'a'"],
-  ["'$.a'", "'a'", "'a'"],
-  ["'$'", "'a'", "'a'"],
-  ["'/a'", "'a'", "'a'"],
-  ["'/'", "'a'", "'a'"],
-  ["'a.b'", "'a'", "'a'"],
-  ["'a[0]'", "'a'", "'a'"],
-  ["'*'", "'a'", "'a'"],
-  ["'it''s'", "'a'", "'a'"],
-  ["'say \"hi\"'", "'a'", "'a'"],
-  ["'a\\\\b'", "'a'", "'a'"],
-  ["'Größe'", "'a'", "'a'"],
-  ["'é'", "'a'", "'a'"],
-  ["'é'", "'a'", "'a'"],
-  ["'😀'", "'a'", "'a'"],
-  ["'ǆungla'", "'a'", "'a'"],
-  ["'ǅ'", "'a'", "'a'"],
-  ["'ǉubav'", "'a'", "'a'"],
-  ["'ǲ'", "'a'", "'a'"],
-  ["'Order'", "'a'", "'a'"],
-  ["'ORDER'", "'a'", "'a'"],
-  ["'order'", "'a'", "'a'"],
-  ["'Straße'", "'a'", "'a'"],
-  ["'STRASSE'", "'a'", "'a'"],
-  ["' a'", "'a'", "'a'"],
-  ["'a '", "'a'", "'a'"],
-  ["' '", "'a'", "'a'"],
-  ["'	'", "'a'", "'a'"],
-  ["'a\nb'", "'a'", "'a'"],
-  ["'007'", "'a'", "'a'"],
-  ["'1.0'", "'a'", "'a'"],
-  ["'1e0'", "'a'", "'a'"],
-  ["'+7'", "'a'", "'a'"],
-  ["'-0'", "'a'", "'a'"],
+  ["NULL", "'a'", "'b'"],
+  ["''", "'a'", "'b'"],
+  ["'$.a'", "'a'", "'b'"],
+  ["'$'", "'a'", "'b'"],
+  ["'/a'", "'a'", "'b'"],
+  ["'/'", "'a'", "'b'"],
+  ["'a.b'", "'a'", "'b'"],
+  ["'a[0]'", "'a'", "'b'"],
+  ["'*'", "'a'", "'b'"],
+  ["'it''s'", "'a'", "'b'"],
+  ["'say \"hi\"'", "'a'", "'b'"],
+  ["'a\\\\b'", "'a'", "'b'"],
+  ["'Größe'", "'a'", "'b'"],
+  ["'é'", "'a'", "'b'"],
+  ["'é'", "'a'", "'b'"],
+  ["'😀'", "'a'", "'b'"],
+  ["'ǆungla'", "'a'", "'b'"],
+  ["'ǅ'", "'a'", "'b'"],
+  ["'ǉubav'", "'a'", "'b'"],
+  ["'ǲ'", "'a'", "'b'"],
+  ["'Order'", "'a'", "'b'"],
+  ["'ORDER'", "'a'", "'b'"],
+  ["'order'", "'a'", "'b'"],
+  ["'Straße'", "'a'", "'b'"],
+  ["'STRASSE'", "'a'", "'b'"],
+  ["' a'", "'a'", "'b'"],
+  ["'a '", "'a'", "'b'"],
+  ["' '", "'a'", "'b'"],
+  ["'	'", "'a'", "'b'"],
+  ["'a\nb'", "'a'", "'b'"],
+  ["'007'", "'a'", "'b'"],
+  ["'1.0'", "'a'", "'b'"],
+  ["'1e0'", "'a'", "'b'"],
+  ["'+7'", "'a'", "'b'"],
+  ["'-0'", "'a'", "'b'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -535,41 +555,41 @@ id = "node_between_2_1_text_hazards"
 description = "node:between with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 1, text."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "NULL", "'a'"],
-  ["'a'", "''", "'a'"],
-  ["'a'", "'$.a'", "'a'"],
-  ["'a'", "'$'", "'a'"],
-  ["'a'", "'/a'", "'a'"],
-  ["'a'", "'/'", "'a'"],
-  ["'a'", "'a.b'", "'a'"],
-  ["'a'", "'a[0]'", "'a'"],
-  ["'a'", "'*'", "'a'"],
-  ["'a'", "'it''s'", "'a'"],
-  ["'a'", "'say \"hi\"'", "'a'"],
-  ["'a'", "'a\\\\b'", "'a'"],
-  ["'a'", "'Größe'", "'a'"],
-  ["'a'", "'é'", "'a'"],
-  ["'a'", "'é'", "'a'"],
-  ["'a'", "'😀'", "'a'"],
-  ["'a'", "'ǆungla'", "'a'"],
-  ["'a'", "'ǅ'", "'a'"],
-  ["'a'", "'ǉubav'", "'a'"],
-  ["'a'", "'ǲ'", "'a'"],
-  ["'a'", "'Order'", "'a'"],
-  ["'a'", "'ORDER'", "'a'"],
-  ["'a'", "'order'", "'a'"],
-  ["'a'", "'Straße'", "'a'"],
-  ["'a'", "'STRASSE'", "'a'"],
-  ["'a'", "' a'", "'a'"],
-  ["'a'", "'a '", "'a'"],
-  ["'a'", "' '", "'a'"],
-  ["'a'", "'	'", "'a'"],
-  ["'a'", "'a\nb'", "'a'"],
-  ["'a'", "'007'", "'a'"],
-  ["'a'", "'1.0'", "'a'"],
-  ["'a'", "'1e0'", "'a'"],
-  ["'a'", "'+7'", "'a'"],
-  ["'a'", "'-0'", "'a'"],
+  ["'a'", "NULL", "'b'"],
+  ["'a'", "''", "'b'"],
+  ["'a'", "'$.a'", "'b'"],
+  ["'a'", "'$'", "'b'"],
+  ["'a'", "'/a'", "'b'"],
+  ["'a'", "'/'", "'b'"],
+  ["'a'", "'a.b'", "'b'"],
+  ["'a'", "'a[0]'", "'b'"],
+  ["'a'", "'*'", "'b'"],
+  ["'a'", "'it''s'", "'b'"],
+  ["'a'", "'say \"hi\"'", "'b'"],
+  ["'a'", "'a\\\\b'", "'b'"],
+  ["'a'", "'Größe'", "'b'"],
+  ["'a'", "'é'", "'b'"],
+  ["'a'", "'é'", "'b'"],
+  ["'a'", "'😀'", "'b'"],
+  ["'a'", "'ǆungla'", "'b'"],
+  ["'a'", "'ǅ'", "'b'"],
+  ["'a'", "'ǉubav'", "'b'"],
+  ["'a'", "'ǲ'", "'b'"],
+  ["'a'", "'Order'", "'b'"],
+  ["'a'", "'ORDER'", "'b'"],
+  ["'a'", "'order'", "'b'"],
+  ["'a'", "'Straße'", "'b'"],
+  ["'a'", "'STRASSE'", "'b'"],
+  ["'a'", "' a'", "'b'"],
+  ["'a'", "'a '", "'b'"],
+  ["'a'", "' '", "'b'"],
+  ["'a'", "'	'", "'b'"],
+  ["'a'", "'a\nb'", "'b'"],
+  ["'a'", "'007'", "'b'"],
+  ["'a'", "'1.0'", "'b'"],
+  ["'a'", "'1e0'", "'b'"],
+  ["'a'", "'+7'", "'b'"],
+  ["'a'", "'-0'", "'b'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -580,41 +600,41 @@ id = "node_between_2_2_text_hazards"
 description = "node:between with the hazards null, empty, dollar_prefix, slash_prefix, dots_brackets, quotes_backslashes, non_ascii, title_case_digraph, case_only, whitespace, number_text in argument 2, text."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "'a'", "NULL"],
-  ["'a'", "'a'", "''"],
-  ["'a'", "'a'", "'$.a'"],
-  ["'a'", "'a'", "'$'"],
-  ["'a'", "'a'", "'/a'"],
-  ["'a'", "'a'", "'/'"],
-  ["'a'", "'a'", "'a.b'"],
-  ["'a'", "'a'", "'a[0]'"],
-  ["'a'", "'a'", "'*'"],
-  ["'a'", "'a'", "'it''s'"],
-  ["'a'", "'a'", "'say \"hi\"'"],
-  ["'a'", "'a'", "'a\\\\b'"],
-  ["'a'", "'a'", "'Größe'"],
-  ["'a'", "'a'", "'é'"],
-  ["'a'", "'a'", "'é'"],
-  ["'a'", "'a'", "'😀'"],
-  ["'a'", "'a'", "'ǆungla'"],
-  ["'a'", "'a'", "'ǅ'"],
-  ["'a'", "'a'", "'ǉubav'"],
-  ["'a'", "'a'", "'ǲ'"],
-  ["'a'", "'a'", "'Order'"],
-  ["'a'", "'a'", "'ORDER'"],
-  ["'a'", "'a'", "'order'"],
-  ["'a'", "'a'", "'Straße'"],
-  ["'a'", "'a'", "'STRASSE'"],
-  ["'a'", "'a'", "' a'"],
-  ["'a'", "'a'", "'a '"],
-  ["'a'", "'a'", "' '"],
-  ["'a'", "'a'", "'	'"],
-  ["'a'", "'a'", "'a\nb'"],
-  ["'a'", "'a'", "'007'"],
-  ["'a'", "'a'", "'1.0'"],
-  ["'a'", "'a'", "'1e0'"],
-  ["'a'", "'a'", "'+7'"],
-  ["'a'", "'a'", "'-0'"],
+  ["'a'", "'b'", "NULL"],
+  ["'a'", "'b'", "''"],
+  ["'a'", "'b'", "'$.a'"],
+  ["'a'", "'b'", "'$'"],
+  ["'a'", "'b'", "'/a'"],
+  ["'a'", "'b'", "'/'"],
+  ["'a'", "'b'", "'a.b'"],
+  ["'a'", "'b'", "'a[0]'"],
+  ["'a'", "'b'", "'*'"],
+  ["'a'", "'b'", "'it''s'"],
+  ["'a'", "'b'", "'say \"hi\"'"],
+  ["'a'", "'b'", "'a\\\\b'"],
+  ["'a'", "'b'", "'Größe'"],
+  ["'a'", "'b'", "'é'"],
+  ["'a'", "'b'", "'é'"],
+  ["'a'", "'b'", "'😀'"],
+  ["'a'", "'b'", "'ǆungla'"],
+  ["'a'", "'b'", "'ǅ'"],
+  ["'a'", "'b'", "'ǉubav'"],
+  ["'a'", "'b'", "'ǲ'"],
+  ["'a'", "'b'", "'Order'"],
+  ["'a'", "'b'", "'ORDER'"],
+  ["'a'", "'b'", "'order'"],
+  ["'a'", "'b'", "'Straße'"],
+  ["'a'", "'b'", "'STRASSE'"],
+  ["'a'", "'b'", "' a'"],
+  ["'a'", "'b'", "'a '"],
+  ["'a'", "'b'", "' '"],
+  ["'a'", "'b'", "'	'"],
+  ["'a'", "'b'", "'a\nb'"],
+  ["'a'", "'b'", "'007'"],
+  ["'a'", "'b'", "'1.0'"],
+  ["'a'", "'b'", "'1e0'"],
+  ["'a'", "'b'", "'+7'"],
+  ["'a'", "'b'", "'-0'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -625,8 +645,10 @@ id = "node_between_3_combination_0_date_date_date"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'", "'2023-11-30'"],
+  ["'2024-05-17'", "'2023-11-30'", "'2024-01-15'"],
+  ["'2023-11-30'", "'2024-01-15'", "'2024-05-17'"],
   ["'2024-01-15'", "'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -637,10 +659,10 @@ id = "node_between_3_0_date_hazards"
 description = "node:between with the hazards null, leap_day, pre_1970 in argument 0, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["NULL", "'2024-01-15'", "'2024-01-15'"],
-  ["'2024-02-29'", "'2024-01-15'", "'2024-01-15'"],
-  ["'1969-12-31'", "'2024-01-15'", "'2024-01-15'"],
-  ["'1900-03-01'", "'2024-01-15'", "'2024-01-15'"],
+  ["NULL", "'2024-01-15'", "'2024-05-17'"],
+  ["'2024-02-29'", "'2024-01-15'", "'2024-05-17'"],
+  ["'1969-12-31'", "'2024-01-15'", "'2024-05-17'"],
+  ["'1900-03-01'", "'2024-01-15'", "'2024-05-17'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -651,8 +673,8 @@ id = "node_between_3_0_date_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 0, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'0001-01-01'", "'2024-01-15'", "'2024-01-15'"],
-  ["'9999-12-31'", "'2024-01-15'", "'2024-01-15'"],
+  ["'0001-01-01'", "'2024-01-15'", "'2024-05-17'"],
+  ["'9999-12-31'", "'2024-01-15'", "'2024-05-17'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -663,10 +685,10 @@ id = "node_between_3_1_date_hazards"
 description = "node:between with the hazards null, leap_day, pre_1970 in argument 1, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "NULL", "'2024-01-15'"],
-  ["'2024-01-15'", "'2024-02-29'", "'2024-01-15'"],
-  ["'2024-01-15'", "'1969-12-31'", "'2024-01-15'"],
-  ["'2024-01-15'", "'1900-03-01'", "'2024-01-15'"],
+  ["'2024-01-15'", "NULL", "'2024-05-17'"],
+  ["'2024-01-15'", "'2024-02-29'", "'2024-05-17'"],
+  ["'2024-01-15'", "'1969-12-31'", "'2024-05-17'"],
+  ["'2024-01-15'", "'1900-03-01'", "'2024-05-17'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -677,8 +699,8 @@ id = "node_between_3_1_date_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 1, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'0001-01-01'", "'2024-01-15'"],
-  ["'2024-01-15'", "'9999-12-31'", "'2024-01-15'"],
+  ["'2024-01-15'", "'0001-01-01'", "'2024-05-17'"],
+  ["'2024-01-15'", "'9999-12-31'", "'2024-05-17'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -689,10 +711,10 @@ id = "node_between_3_2_date_hazards"
 description = "node:between with the hazards null, leap_day, pre_1970 in argument 2, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'", "NULL"],
-  ["'2024-01-15'", "'2024-01-15'", "'2024-02-29'"],
-  ["'2024-01-15'", "'2024-01-15'", "'1969-12-31'"],
-  ["'2024-01-15'", "'2024-01-15'", "'1900-03-01'"],
+  ["'2024-01-15'", "'2024-05-17'", "NULL"],
+  ["'2024-01-15'", "'2024-05-17'", "'2024-02-29'"],
+  ["'2024-01-15'", "'2024-05-17'", "'1969-12-31'"],
+  ["'2024-01-15'", "'2024-05-17'", "'1900-03-01'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -703,8 +725,8 @@ id = "node_between_3_2_date_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 2, date."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["'2024-01-15'", "'2024-01-15'", "'0001-01-01'"],
-  ["'2024-01-15'", "'2024-01-15'", "'9999-12-31'"],
+  ["'2024-01-15'", "'2024-05-17'", "'0001-01-01'"],
+  ["'2024-01-15'", "'2024-05-17'", "'9999-12-31'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -715,8 +737,10 @@ id = "node_between_4_combination_0_timestamp_ntz_timestamp_ntz_timestamp_ntz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -727,18 +751,18 @@ id = "node_between_4_0_timestamp_ntz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, leap_day, sub_microsecond, half_millisecond, pre_1970 in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["NULL", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-03-10 02:30:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-03-31 02:30:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-11-03 01:30:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-10-27 02:30:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-02-29 23:59:59'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00.0005'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00.9996'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 23:59:59.9999999'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'1900-03-01 00:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["NULL", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-03-10 02:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-03-31 02:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-11-03 01:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-10-27 02:30:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-02-29 23:59:59'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00.0005'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00.9996'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 23:59:59.9999999'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'1900-03-01 00:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -749,8 +773,8 @@ id = "node_between_4_0_timestamp_ntz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts, beyond DuckDB's nanosecond range in argument 0, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'0001-01-01 00:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["'0001-01-01 00:00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -762,18 +786,18 @@ id = "node_between_4_1_timestamp_ntz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, leap_day, sub_microsecond, half_millisecond, pre_1970 in argument 1, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "NULL", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-03-10 02:30:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-03-31 02:30:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-11-03 01:30:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-10-27 02:30:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-02-29 23:59:59'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.0005'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.9996'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 23:59:59.9999999'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'1900-03-01 00:00:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "NULL", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-03-10 02:30:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-03-31 02:30:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-11-03 01:30:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-10-27 02:30:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-02-29 23:59:59'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.123456789'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.0005'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.9996'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-01-15 23:59:59.9999999'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'1969-12-31 23:59:59.999'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'1900-03-01 00:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -784,8 +808,8 @@ id = "node_between_4_1_timestamp_ntz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts, beyond DuckDB's nanosecond range in argument 1, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'0001-01-01 00:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-15 10:00:00'", "'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00'"],
+  ["'2024-01-15 10:00:00'", "'0001-01-01 00:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-01-15 10:00:00'", "'9999-12-31 23:59:59.999999'", "'2024-05-17 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -797,18 +821,18 @@ id = "node_between_4_2_timestamp_ntz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, leap_day, sub_microsecond, half_millisecond, pre_1970 in argument 2, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "NULL"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-03-10 02:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-03-31 02:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-11-03 01:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-10-27 02:30:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-02-29 23:59:59'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.123456789'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.0005'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00.9996'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 23:59:59.9999999'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'1969-12-31 23:59:59.999'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'1900-03-01 00:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "NULL"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-03-10 02:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-03-31 02:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-11-03 01:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-10-27 02:30:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-02-29 23:59:59'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00.123456789'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00.0005'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00.9996'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 23:59:59.9999999'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'1969-12-31 23:59:59.999'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'1900-03-01 00:00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -819,8 +843,8 @@ id = "node_between_4_2_timestamp_ntz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts, beyond DuckDB's nanosecond range in argument 2, timestamp_ntz."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'0001-01-01 00:00:00'"],
-  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'9999-12-31 23:59:59.999999'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'0001-01-01 00:00:00'"],
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'9999-12-31 23:59:59.999999'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -832,8 +856,10 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_tz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -844,8 +870,10 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_tz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-05-17 11:30:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2023-11-30 23:15:45.5'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -856,8 +884,10 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_ltz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -868,8 +898,10 @@ id = "node_between_5_combination_0_timestamp_tz_timestamp_ltz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -880,8 +912,10 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_tz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -892,8 +926,10 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_tz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -904,8 +940,10 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_ltz_timestamp_tz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -916,8 +954,10 @@ id = "node_between_5_combination_0_timestamp_ltz_timestamp_ltz_timestamp_ltz"
 description = "node:between over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -928,12 +968,12 @@ id = "node_between_5_0_timestamp_tz_hazards"
 description = "node:between with the hazards null, offsets, dst_boundary in argument 0, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["NULL", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +05:45'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 04:15:00 -00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 -09:30'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-11-03 01:30:00 -04:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-11-03 01:30:00 -05:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["NULL", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +05:45'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 04:15:00 -00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 -09:30'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-11-03 01:30:00 -04:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-11-03 01:30:00 -05:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -944,7 +984,7 @@ id = "node_between_5_0_timestamp_tz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 0, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00.123456789 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00.123456789 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -956,8 +996,8 @@ id = "node_between_5_0_timestamp_tz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 0, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'0001-01-01 00:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'9999-12-31 23:59:59.999999 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'0001-01-01 00:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'9999-12-31 23:59:59.999999 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -968,12 +1008,12 @@ id = "node_between_5_0_timestamp_ltz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, pre_1970 in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["NULL", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-03-10 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-03-31 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-11-03 01:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-10-27 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["NULL", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-03-10 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-03-31 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-11-03 01:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-10-27 02:30:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -984,7 +1024,7 @@ id = "node_between_5_0_timestamp_ltz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -996,8 +1036,8 @@ id = "node_between_5_0_timestamp_ltz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 0, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'0001-01-01 00:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'0001-01-01 00:00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1008,12 +1048,12 @@ id = "node_between_5_1_timestamp_tz_hazards"
 description = "node:between with the hazards null, offsets, dst_boundary in argument 1, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "NULL", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +05:45'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 04:15:00 -00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 -09:30'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -04:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -05:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "NULL", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +05:45'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 04:15:00 -00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 -09:30'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -04:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -05:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1024,7 +1064,7 @@ id = "node_between_5_1_timestamp_tz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 1, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1036,8 +1076,8 @@ id = "node_between_5_1_timestamp_tz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 1, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1048,12 +1088,12 @@ id = "node_between_5_1_timestamp_ltz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, pre_1970 in argument 1, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "NULL", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-03-10 02:30:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-03-31 02:30:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-10-27 02:30:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'1969-12-31 23:59:59.999'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "NULL", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-03-10 02:30:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-03-31 02:30:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-10-27 02:30:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'1969-12-31 23:59:59.999'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1064,7 +1104,7 @@ id = "node_between_5_1_timestamp_ltz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 1, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1076,8 +1116,8 @@ id = "node_between_5_1_timestamp_ltz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 1, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999'", "'2024-01-15 10:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1088,12 +1128,12 @@ id = "node_between_5_2_timestamp_tz_hazards"
 description = "node:between with the hazards null, offsets, dst_boundary in argument 2, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "NULL"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +05:45'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 04:15:00 -00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 -09:30'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -04:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00 -05:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "NULL"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 +05:45'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 04:15:00 -00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00 -09:30'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-11-03 01:30:00 -04:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-11-03 01:30:00 -05:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1104,7 +1144,7 @@ id = "node_between_5_2_timestamp_tz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 2, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00.123456789 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1116,8 +1156,8 @@ id = "node_between_5_2_timestamp_tz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 2, timestamp_tz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00 +00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'0001-01-01 00:00:00 +00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'9999-12-31 23:59:59.999999 +00:00'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1128,12 +1168,12 @@ id = "node_between_5_2_timestamp_ltz_hazards"
 description = "node:between with the hazards null, dst_gap, dst_overlap, pre_1970 in argument 2, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "NULL"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-03-10 02:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-03-31 02:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-11-03 01:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-10-27 02:30:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'1969-12-31 23:59:59.999'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "NULL"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-03-10 02:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-03-31 02:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-11-03 01:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-10-27 02:30:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'1969-12-31 23:59:59.999'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1144,7 +1184,7 @@ id = "node_between_5_2_timestamp_ltz_sub_microsecond"
 description = "node:between with Nanosecond fractions, beyond microseconds in argument 2, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00.123456789'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'2024-01-15 10:00:00.123456789'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]
@@ -1156,8 +1196,8 @@ id = "node_between_5_2_timestamp_ltz_extreme_years"
 description = "node:between with The first and last years Snowflake accepts in argument 2, timestamp_ltz."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'0001-01-01 00:00:00'"],
-  ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'", "'9999-12-31 23:59:59.999999'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'0001-01-01 00:00:00'"],
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'", "'9999-12-31 23:59:59.999999'"],
 ]
 expression = "x0 BETWEEN x1 AND x2"
 tags = ["null", "ties", "mixed-types"]

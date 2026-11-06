@@ -1,0 +1,1966 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , , GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "0048d0fd6d49c47e9831f41af6c09d73b00413d8b96f42f74e6a090e1367422c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ALL TOP 1 v1 . $1 AS v1 , v1 ;",
+   "sql_sha256": "03aaf5d62965bcaf6bec210e061aac706d305a830eaf155779716464c1c2a461"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY SELECT = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "04615cee9527487fa7d1759313e4086f3e118596f9f7f4496744adafb23ce630"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( SELECT ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "0472373ce479c59bd28f6973b2bda97b72345213c4ab7ab3dbca9926f449bfd4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INTO :\"SELECT\" FROM t1 WHERE TRUE ;",
+   "sql_sha256": "053117a5f349dc846f7c0a00c711f76e9d710fa6fdd1ad4980306da972280ce4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 WHERE TRUE ;",
+   "sql_sha256": "07d0f53e963ec55cd1ad349640de87f8884b33a20c78e1de6932128799f530c1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "07ef5187052b4d5c148c3fc694a37aa134cdea5ee4f936804d8e71aa6804374b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 GROUP BY c1 ;",
+   "sql_sha256": "085ea7c968ac3e6bc50496128449fd69b5420257672415b033211ea5eb6abcf1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 LIMIT 1 ;",
+   "sql_sha256": "08f1d6fddb492885ed1955c6d3645d98f44188fa48243a02fbef8c1ab6e2d382"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BY CUBE ( c1 ) ;",
+   "sql_sha256": "092a93e38ee2e9811ed9b392b9960cf1b5694ab4e7afdc0a17e363bda7b515ca"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ORDER BY c1 , c1 ;",
+   "sql_sha256": "09df94f66be03c231b0269544d7c4ba9cdd7f74201420325a1a68daee36cdc1a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 MATCH_RECOGNIZE ( PATTERN ( m1 ) DEFINE a AS 1 ) ;",
+   "sql_sha256": "0a215c594bf37fc801dab075e5a826a9683b8480111c73dd563d3542711e1f0d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "0c755a3d2ee4320011ad87d7533e774f6488f36704378bd24e2eb67cf858dddd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "0d72643553ec50e75c06158cf2ecbb64b8b7550f52a0343ef3d66cc7420cb9ae"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( SELECT 1 UNION ALL ) SELECT 1 ;",
+   "sql_sha256": "0f10af19b2c321acf97e342c3740728174c2f81fbda5ba8050a3afd7dfbaa6f4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY \"SELECT\" = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "10ce7cd724e0368113d91ae442802bf069f9d6512e46025336235d72ed047f45"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 MATCH_RECOGNIZE ( PARTITION BY 1 , 1 ORDER BY 1 , 1 MEASURES 1 AS v1 , v1 ONE ROW PER MATCH AFTER MATCH SKIP PAST LAST ROW PATTERN ( a ) DEFINE a AS 1 , 1 ) ;",
+   "sql_sha256": "119ce1cb9a3764c6ff3cfd48499760f46850d90fb116842f82e5bcf41e9d6c69"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 t2 ;",
+   "sql_sha256": "12e5f696984c478a6d82f84b904bf1d8f59eabfbd0f1c3452c476de816083950"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY , CUBE ( c1 ) ;",
+   "sql_sha256": "12ef20cb6968263091d2fae5e1efa9e44240ef68db075a3b08281154adb1e72a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 ORDER BY c1 ;",
+   "sql_sha256": "134156fdae85c904245c5414f493a9d291f941d9df0f762a116793f510822276"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( 'v1' ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "13476e4e0575eccb1d5386f520058ea8efee76ed5a4c3fdcdc9831b4cfc17c8e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , CUBE ( c1 ) ;",
+   "sql_sha256": "16e8aed0ebbc50957b3833d5fa8b743ae8b10da092f67282ae1512567f430498"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "170049b1d0c9e600405a9557b0175bfa9d668aa936092e9264ce716d58322a43"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( \"v1 Q\" ) ;",
+   "sql_sha256": "170929af45a5a2bf9a267bd5f35c1a77b4b5585cf843b8ef96090e09a0eefc48"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "17db75181b01b11ab1a9ca77839f44d803856799a5326a7350a82e2f1a0d3b47"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , c1 ;",
+   "sql_sha256": "1811605638c654dd76544ac39766884dc673bedfa09110884985d16dffc374e7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 GROUP BY ROLLUP ( c1 ) ;",
+   "sql_sha256": "193c2fd8e9d75aa9d818b5729f047abddc7f6358f44717be203487d1ee817026"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( SELECT ) ;",
+   "sql_sha256": "1b90642f868267d86dc907d008c21f64c7b685459236ed6a46282410f2746c81"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 SAMPLE ;",
+   "sql_sha256": "1bc1b3f81fb691a89ce05c8cff6648805de5fb40be7d5ab6f700eaa8497086aa"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "1fd23b8df28e0f0882b03a29769668ed42ef49e86aaf468a205fb9c6198e8f2c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , ;",
+   "sql_sha256": "20ab04c272e6b5b4fce8c72b22eb0beb7311ece591ff9d0ad102dd3bea331a04"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , :SELECT FROM t1 WHERE TRUE ;",
+   "sql_sha256": "21bd0eb9d44feeb6283220a872bb2002ec31340399995efae96290fff36fa8f8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 LIMIT ;",
+   "sql_sha256": "21f9758c76d35891aaa2388e18587879690a881568af0fd2f3abb9d21365d55d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ROLLUP ( c1 , ) ;",
+   "sql_sha256": "22f8d40798b8e9383ef0fd9aa0bd50b0b74b84cf9571c57a4fe9a1af736136b9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , CUBE ( c1 ) ;",
+   "sql_sha256": "23adea9f2f515accd4476175d6dffc104e4dbfc9181b4a535ea0a6909ee921ef"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY CUBE ( c1 ;",
+   "sql_sha256": "26c6a8495387b58496002f88e1a2e8b19aacbd89cae53e17c12d27f11295c767"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "285baed7ffe5930d249a7503f8e06e0d3336d48c9df01db8071a2f59772ade70"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT $SELECT ;",
+   "sql_sha256": "2883fa0226662c06006cfa45e7a1585b6e8ce441eb83b63f4aeb44774f77fc80"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , c1 , ROLLUP ( c1 , c1 , c1 ) ;",
+   "sql_sha256": "2aa3e46eb865c5e30d2c7269e2ae3b5a099c2d6ecca2817ec8c5a38b9e3a3970"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 FETCH ;",
+   "sql_sha256": "2ad0a3337ed146a6a0ad3eefc44f14744d3ac5ecd2b1b5dbad6ca1f79897613d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 BY v1 = v1 ;",
+   "sql_sha256": "2c27d4788a06ec268a567909f4ff181a4d8abd7ab02a849794e589776ecb1cc0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 TABLESAMPLE ;",
+   "sql_sha256": "2d974572bfe706e3637c4f41e8eb1d043e42d5743447406e22a827bb24a60369"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( 'v1' ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "2e6806df46f50cbb25e693d061e545776f33bbd4f1d3d8aab960e251e1b42ebe"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "317001fc803c48d3d563f1edb7e54422d6ed2edf34d0ad9d0b295cdc77fdd3e3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 GROUP BY CUBE ( c1 ) ;",
+   "sql_sha256": "32679f970bc274a6c8d73f2c1234501bcf01f9e06ff663c12790ef445a51ae6c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT \"v1 Q\" FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "358909053b494e26e454ecd0d01a24bffe88e43cff31cdb11d4a87d3f0817d8f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ROLLUP ( c1 ;",
+   "sql_sha256": "36688ab53023003131c97c8abc9afdc31eecea82332cac7b3f617f3197db3a48"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , :'v1' FROM t1 WHERE TRUE ;",
+   "sql_sha256": "3839e445e389cd9f4ad80ad9bb49c18762af6a90344455c7108f2e63fb2f787d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ROWS FETCH 1 ;",
+   "sql_sha256": "3abc6dbe0a854e7a55ad0aa65e45d915fe8fd4e931be45ffb7ffe2afcd987846"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , \"v1 Q\" ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "3d7aeec20e59d512a1cd6978ff5d7636ada929f8ef9a4bd90e380072abde6f29"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "3f1781a8cb5e52f83050e62ac442b2dbf2f30761472d8346a3e7736e987b08a7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "3f8d392612e50d5fa778a8fdd14f69c7c73925e941b10c20aacdd25d657fd895"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 UNPIVOT INCLUDE NULLS ( c1 FOR v1 IN ( v1 AS v1 ) ) ;",
+   "sql_sha256": "400c699c28ff4d0a2d2f1e50ec5da621efac664f0a1235084c10755f1d35f582"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BY GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "43bac4dcfcf8c7c215054f81542997a04780f028fd6c17b0cf7479498a75718d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW v1 ) ;",
+   "sql_sha256": "45e41cff7d4cdcf30befa1031d5da431aebc70b2b762d24e2e7a1a972e4e57b7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP ROLLUP ( c1 ) ;",
+   "sql_sha256": "4733182620e15bd14580eef90e328982810c2084da6546f791d1d3ee3177a631"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , \"SELECT\" ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "476172d7bf0017a1dbb7e2889ee623fea2c784393b98e34245155c03e535fb37"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 SEMANTIC_VIEW ( sv1 ;",
+   "sql_sha256": "487297a846993c91cdf7e50ce6865655015420a6358097f2ff36393d27de6cfb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "48fd4585a7c86cc893d85ff11f687149e5c2af9ef0fb9d9bc17f00e0e6f9cb75"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 t1 QUALIFY 1 ;",
+   "sql_sha256": "4941b2bcb686148dd98904ad4896fa6a34720c9a72e68204e6e758ab64251554"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 SEMANTIC_VIEW sv1 ) ;",
+   "sql_sha256": "4a28a0fbd0a2105c170a4cb4742fa18a734e805199d3938af79d18856252ce73"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , \"v1 Q\" = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "4c41fa5ebd1d379f1b8c5fac32aa22ada47071e3d13fa4f4e0d62ea12335feaf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ORDER c1 ;",
+   "sql_sha256": "4c8d1d52b35e5546aeffeda2ba42582ce762b197941eaee15dfac4b50a47e52f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 , LEVEL FROM t1 START WITH 1 CONNECT BY PRIOR v1 = PRIOR v1 , PRIOR v1 = PRIOR v1 ;",
+   "sql_sha256": "4df04f5d976b3445de1eea2ef9d17df1a346d68c70fafa9ee32323f0af1a5ee3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ORDER BY c1 ;",
+   "sql_sha256": "4f33be8bad88da29849635933a56f8530eabc6af57dc558be28ffeaf0bd45fc8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INTO :SELECT FROM t1 WHERE TRUE ;",
+   "sql_sha256": "516f956ab430dbf394f9fa7ce6f34a8c5a84e25120a846da6928becedfea6eaf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY CUBE c1 ) ;",
+   "sql_sha256": "5369b82a5bb3974dfbfd257952d320028fa52a0e996bf0bacaad5bbe8acb9c8d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT \"SELECT\" FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "547a507a7f03732c0af25ef98120395295903e9af024528968fdda01cdf6eee9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , :FROM t1 WHERE TRUE ;",
+   "sql_sha256": "54d2abadb73718ad5c8c7466b73b4bc666340a103131f2af66dc8a055ff519bb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT $\"SELECT\" ;",
+   "sql_sha256": "55f777334a7d1fc07d1e94c315e727f8a3e6463a580de5fb0a88e260b6c13b95"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , FROM t1 WHERE TRUE ;",
+   "sql_sha256": "56a7824277aa7895731a1369c926f9221713654b0768c688819f5396f95bd4e4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( . v1 ) ;",
+   "sql_sha256": "592e4288d5e57314c951b19332125f3ef564f6b48757a979563017fcbda9e21f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 EXCEPT ;",
+   "sql_sha256": "5a8b5eec36433bee90fb3a207b6b0b9802efd88cee174603b264d3659d2c888b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP CUBE ( c1 ) ;",
+   "sql_sha256": "5b0099af6b3a7d267f58f4a4ba32e2405f6bd0d0cb9fa618040b15f8a32e98e0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = SELECT PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "5b1b1a2477f7fdc7a8af17ad9ba1657ff5c404bee2adb1839d9e50de6f9839b3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "5b53e47e423e78e0a0e4a6e6ed59019914a5b6af6243298d241a09353abb4f79"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 AT ( STREAM => m1 ) ;",
+   "sql_sha256": "5e6899e9326225857ffb53311ca2ab82c8bc40ad89a9d0d4a3827a9d7171682e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 CHANGES ( INFORMATION => DEFAULT ) AT ( STREAM => m1 ) ;",
+   "sql_sha256": "5fd77cad418ef7b32eebc8c653b90ae911cf2dab8707dfb945cf3d2ef3b7e0e3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH SELECT ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "60fb841cfdbb67adf44fb10111c7a8f7c9fed9c71c0e28b12ee55326229633a4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INTO :\"v1 Q\" FROM t1 WHERE TRUE ;",
+   "sql_sha256": "6194a0137b20efdad68bd1f775dd8f30969a5608f51cb20a7a54fe09b7708d9b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH \"v1 Q\" ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "62b267fa76d6871e3150d772c9f224d0ced00676e1c10870f7e2832e7ab873f9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "64504281d7ddaa29632ef072477bb992407c8367b473292f232a4b76b84b47aa"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , ROLLUP ( c1 ) ;",
+   "sql_sha256": "660f96a4cee49fe8f8171f07c968943e63a6854841b70b0d6f07e7b992a472e4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "68ae09dc5f1c7f2e4801c78c92502db86c8b87844acd8643b349a5d72c0a25c8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = \"v1 Q\" PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "6ca7dc7d25a52452c82f5619b0c4863ae7cc7019791587921112361db73d1dc5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( \"SELECT\" ) ;",
+   "sql_sha256": "6ee0d64d51c4824196199ce8c0fc0ee1f6e61e89dfab9df0a3756855e0480f86"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , ROLLUP ( c1 ) ;",
+   "sql_sha256": "7351c7511c5ad13bb18e766283443b6e2561c231d26da23b6696951035d162e1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TOP v1 ;",
+   "sql_sha256": "79a9c5c28b829e3e145525639f2b39b09e746d5adde6bc377537b7b31baf9912"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY 'v1' = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "79ad71ba7d0d3fc7343003c2d7f19c2757c0c24823921c50f2a9565589275739"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP c1 ;",
+   "sql_sha256": "7b2e170441ba77a225f0371325ff66829a7cdda4d1d5021990c3b192109b2188"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ALL TOP 1 v1 . v1 AS v1 , v1 ;",
+   "sql_sha256": "7d33653e41b313e73532fa2be30c3c20ff5868105f9b730ddf1e3d907e7a8cc6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "7ffbeee56f33c0e8790aedf617611753c1cd810715bb41fcd0c9abe43cf8153d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 OFFSET FETCH 1 ;",
+   "sql_sha256": "80465529ad6bd97bb9fafc88d14fcde708d8243afddfb082a66b073455c232fa"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 CHANGES ( INFORMATION => DEFAULT ) ;",
+   "sql_sha256": "8046f13e6ea04d4d2b15d10327d9565aee898644c3819ee4a23b5f7ab6c3bef5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING SETS ( ( c1 ) , ) ;",
+   "sql_sha256": "80d6aa2534f1443daf45146dad26f39a8069896229d675a902b039efd8a726e0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ROLLUP c1 ) ;",
+   "sql_sha256": "82be16999293041de903351b0820710218743bfa2e814c05abc2214cfef616f7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "82f7ebb58c011dd6e6a02092a05d7d068c0ca5432a02f481429f9782dfd7d34e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "84fb858347a5f356a085cb29d93ddf9bf729e81eb7c3666b405c16c0aaf0fc3a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 t1 ;",
+   "sql_sha256": "8507abad5a2ea45f0246aa39bdd7a20032225d7ae6816346f052370d65b61f60"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "86718f438c1854409c6f3a9724b35a81029ff5652824eac65fdf0498587f71b4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( v1 ;",
+   "sql_sha256": "877bfd3b702cb4acd01b858f17f3466046874effd313b168b1a10d3962ece191"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 'v1' FROM t1 QUALIFY 1 ;",
+   "sql_sha256": "87c2eb63b743e0f9f435b0068a51ad2150f39d10f943dc1b70a03b0dc3d51bf9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( SELECT . v1 ) ;",
+   "sql_sha256": "891ccba647345409532325cd8f48cace88f549a1be6b4c178bf6ac53c6ffc842"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "893c3288cac36936ae38271a04805e03381e46d7fcb1fa308077610c5c5fc6b2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = \"SELECT\" PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "8c3b4e551df56e3fede98a6946eb05118ee35a1548ddb4949e1570c28c051152"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY \"v1 Q\" = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "8c9096a77b0b62ea3339fbcbb8b6acaa94daf1ef6977d63d7db8a635f157135d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , 'v1' ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "8cf3808ce0fe74ad8e550987beef588db46dd6890ed9bc41351dc27dbc44bb37"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( \"v1 Q\" . v1 ) ;",
+   "sql_sha256": "8e31d641066ce90edfa9848ac4264dc5a6e74e4f481f4d12137d0ce92bf85834"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , :\"SELECT\" FROM t1 WHERE TRUE ;",
+   "sql_sha256": "9003965a1dd70daefba1fdc812beb5501ea74c963d138f87b00ee55be86625b6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT $\"1 Q\" ;",
+   "sql_sha256": "91c6eb89f8e0b4eed0fdf8e90bb3e7f0b28c6a346bb702988d58cd5cd4abf89d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "928a5c100440f228ee712a390db8a187faa9b31c20767147a6030cd14e98e987"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 , FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "92a4e3ff7ac02d424736b18f5e6ee70081e976c323e1ea095823a5469cc684c0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 'v1' ;",
+   "sql_sha256": "934d1484c6b316a2ec570b4688c9e421e8ef75fd84239aaf65b0a3736168e4af"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH RECURSIVE v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "953e0192346ec87b3ccdf3226312943a036a0e3c8c376a55ab884ddc63426a88"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( ) ;",
+   "sql_sha256": "9739b0054f9cda486e7a4a3b86460368472a0013b2d5f951b24188bd880ff1e6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = \"v1 Q\" PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "9a434c5234282bcf0520b97baf7b2c5935d2335bccf99f62267b2bcf379f10ec"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING SETS ( ( c1 ) ;",
+   "sql_sha256": "9b64676eab5c0e4ec47c3c53fc1131121872acf8bad6b5aca4b6409e8a907ce7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( \"SELECT\" ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "9c5de1a321a6f73e80e2b7363437b51aa08508c8c5c766766375c910c6426dd5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ( c1 ) ;",
+   "sql_sha256": "9dacace8408ae18f4aabff5f76148eb82ca11b25de76fd46d2eef443824845b8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING ( ( c1 ) ) ;",
+   "sql_sha256": "9f038f63ecc451ad4f5e709d74850b1b9dd73462aaa44af6329f214d1c772ad6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , c1 , CUBE ( c1 , c1 , c1 ) ;",
+   "sql_sha256": "9fd790df8c514ede45d2e9936ec4273f51888df5810676b8e40ec32b74eb9bae"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING SETS ( ( c1 ) , ( c1 ) ) ;",
+   "sql_sha256": "a06f7ff77730ab2cc453a547ab35f46f6d83123b646aaa267f37ac5dfe474b32"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "a225e5926bbd7f20fe554efcbff8cfb7f97a2c99269e6d2743d7b63bfe97845f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ROW FETCH 1 ;",
+   "sql_sha256": "a53efec40e6bbcc47f7e97c36ce4011901ebdb1d6ffc24df9f6b6a6bccc077eb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "a6344afb12bc7f1078da3555518a8c5ca4f77b5cce2f40f409c82e3f368d487e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 t1 ;",
+   "sql_sha256": "a906e18663bc01d2753ee19a0992bfca2f91e28941a02b8bae0876678c9784c6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = \"SELECT\" PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "a9dd0ffba8814a8e3e509de60015562fcdb3cd47154a1800a5e87c5f7c1f5669"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "aaceb4fff4dcabb70cab5b198da2521a7a94b40ffba1d44ebf1db2f0154543c4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "ab37779337bfabd6c8205eb34dea28d04c522de1c9a806a513c96f44814ff400"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( SELECT 1 ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "ab866fceb212361278647d94e226db7ee4e12b83d36402773e1e82b220baa1ee"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , , ROLLUP ( c1 ) ;",
+   "sql_sha256": "ac5a42e9dec33273772e091fa612e0279e3654221f30190e22dd3044a3bd0e2a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( SELECT 1 UNION SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "b3485935c95323623ea71c04f2f9dea1a29a2eb88b920b5467d865a1d6a06777"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 'v1' FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "b4594f500eca32111ff1932d575c4f2239b716460ea55a36a3f75d6786fb8a64"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BY ROLLUP ( c1 ) ;",
+   "sql_sha256": "b7b6626add6a0db6d6e46498a03dd16d0ddb681ffaba849fcf429fa890dcd73e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , SELECT ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "b8b45f02e8af9668fa182ebfae71d3f9916726591eb7b854da7be9d34fc84c44"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( \"SELECT\" . v1 ) ;",
+   "sql_sha256": "b9aed553dc02177e5b82dff99ce67d43f38cf9936ce9a6b0c97e2f9ad77d3b6b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY SETS ( ( c1 ) ) ;",
+   "sql_sha256": "bd0c2c9b84a35ee762af80b18a321403428c5b1de9b4f7280eceefae0174ec0d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 , c1 , GROUPING SETS ( ( c1 ) , ( c1 ) , ( c1 ) ) ;",
+   "sql_sha256": "bd965b1b13e45f26d453d49a4a2f4035bd3411dbb18cbd70bafdd2948e3f3d94"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 1 GROUP BY GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "bdca3b2e6b7980f9e24dce22b1d72f4851fa879a62522ccf77fa6b7a9639901e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 t2 ;",
+   "sql_sha256": "bdce970b3270e5822c16a5d1d0a3c4215d85dd81b12139d70ca1729fcbefbf97"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = 'v1' PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "be4245084e9fffcb4cd294ac122c38e060926f95ee8bac79bbf06798b406fa07"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , , CUBE ( c1 ) ;",
+   "sql_sha256": "be804702cba8a751133f6b110fdebff6f943ca031b07096f68c27be7a26e1d29"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ROLLUP ( c1 , c1 ) ;",
+   "sql_sha256": "c192d85fafe45b3a0c9ae1ee229d9b2ab07824e726dbe3a9d1d2652b238009b9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY CUBE ( c1 , ) ;",
+   "sql_sha256": "c22866d9e360c527dabd996e3bad8c4b42e816b9743cefc20b24f3bdaa93607d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ALL TOP 1 v1 . * ILIKE 'm' EXCLUDE v1 REPLACE ( 1 AS v1 , 1 AS v1 ) RENAME v1 AS v1 ;",
+   "sql_sha256": "c232d680f85d1139156c4e2bee794015fb830068f07953a6405a089621d95832"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "c4eddb4296550495c190acb10e82dcbaf5a49cd931da1e2921b68552dc437391"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "c6dc7f93e7f5534d8a46d818ac89a50e7a665fc3dab80e88e90b22ee8dfdf056"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( 'v1' ) ;",
+   "sql_sha256": "cd3e520fc2cb61f391a1256ca0b05b5838c81aaaa341e90c6adfc438146d8b3d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = 'v1' PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "d107f50e1014ab6a6cf45d42b6868a9b2f1e36f79484aeea89f7e69e698e42ce"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' PARTITION BY 'v1' ) ;",
+   "sql_sha256": "d211b7ccb908bb7baebdb3c9edfc685b932355276c09fee6fe47912af1a6dc3c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 ;",
+   "sql_sha256": "d2fb1bf1237c5fbddbdd53abc972dc4181611f2c49120cf3c85e2275c33b5f93"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "d49700954f209265688246ce40130ee459119f58a10d44948facac1b7258072d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( 'v1' . v1 ) ;",
+   "sql_sha256": "d7de4cd881388b0ce5fbc9ee257bcec4a0b09e0b150532355db0c00a5250c5c7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH 'v1' ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "d96fb030b56998ff741b07141aa1bc9b0e3ad6248dc8cf74a030cd1e31fe2a69"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY CUBE ( c1 ) ;",
+   "sql_sha256": "da6fbb7933dffbf72530212f5d67d576bcd7a25c6be47322b829ea811c33a652"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , v1 = SELECT PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "db209aace28a96ff264fffc74d3c1eb58479f6a81bf96fd4cbe8f0b11058c3f7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "dc41585a3d77d2e496ec06fc0be8a19f4aa0de432e409567e67ce95d406e2e55"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , 'v1' = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "e13637282df3e1f33e06cd12ba3b5fe881948de574626eaed8433363a6723bb6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY , GROUPING SETS ( ( c1 ) ) ;",
+   "sql_sha256": "e1741d90388b7d2727c8ccc29c3afe591d94b2cdfe0a2010807197a09a4022b4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH \"SELECT\" ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "e21af746f491dfde4aeeb7548a4848fb464179ddf3eaea43fea91c2e1cf3b1c8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( \"v1 Q\" ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "e311af0663ffe4d360a561cb7938f9d2516a8c2ea8863b67b90e8da5863760a6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "e408edbd9a762af08a73ea079f3dd9e64d8fa979d6260384f13e92e5fd5d03c8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT $'v1' ;",
+   "sql_sha256": "e4310b6fe4df6f386812a6918c3248934423bb297b1bc2e162357d7f5171b4e1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 t1 , LATERAL ( SELECT 1 ) ;",
+   "sql_sha256": "e73a564a4f594b174e4da82ec3db2a1991ad40b8ce8148efea636e0fdc07d3bb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ALL TOP 1 v1 . * ILIKE 'm' EXCLUDE v1 REPLACE ( 1 AS v1 , 1 AS v1 ) RENAME ( v1 AS v1 , v1 AS v1 ) ;",
+   "sql_sha256": "e7887719228dbb258a2cc1cc3ba1d31ad30d640aabe55c0fc9e9498e15693554"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT v1 = v1 ;",
+   "sql_sha256": "e7f986748b2c16520568dea34109dce5c637151d06bb3a5b6b9e620a75621aca"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL ) SELECT 1 ;",
+   "sql_sha256": "e951933f92c1cde4e2a3b76ae506b0aa30936626ebdafda94b617cf6a59662f8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY ROLLUP ( c1 ) ;",
+   "sql_sha256": "ea731b027b04efee35663b1eb6ff4172e2547dd84cadb472f3b019bd9addcf8f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 MATCH_RECOGNIZE ( PARTITION BY 1 , 1 ORDER BY 1 , 1 MEASURES 1 AS v1 , v1 ALL ROWS PER MATCH SHOW EMPTY MATCHES AFTER MATCH SKIP PAST LAST ROW PATTERN ( a ) DEFINE a AS 1 , 1 ) ;",
+   "sql_sha256": "eb971728c827c9ee85ae0ef3641a8cab7055ec5a257ba9f0151f3d7d8529f149"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BY c1 ;",
+   "sql_sha256": "ed92e025c72e6c723ed023c3a44cd9e705e6ce7c45e50241edde56f47f863152"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 JOIN t1 ;",
+   "sql_sha256": "ee7a957ecf95adb2b3c677c13fb37045afcc6e92a7fd5d6c2fe51b036202223b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 , ( SELECT 1 ) ;",
+   "sql_sha256": "f20c2a2bd76b1e6e3ea87c16ed11f465e8c0d9136f2f0e853e298cb3156c349c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY c1 , c1 ;",
+   "sql_sha256": "f3dd8db0b5f77f7d4c17db81afe980272c9bb17de52154ebdb545c646d190e42"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY CUBE ( c1 , c1 ) ;",
+   "sql_sha256": "f5f158fc54343b9692215e17cd88b5637672ff0abce6f0191d017b7919d71891"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 'v1' ;",
+   "sql_sha256": "f64d4aed19df080f1aa1ef0b698b6bc62ed17d5d3f4f755d480aa782d7d6bdeb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM SEMANTIC_VIEW ( v1 WHERE ) ;",
+   "sql_sha256": "f652ebcdc00e470e919ce6e57aed0811e5906afd297aa9f016c17c51c0ff350a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , \"SELECT\" = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "f70376138034a5558436197386d2ff80314ef1e043bd9674876d9fc6ffb5677c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) , v1 ( v1 ) AS ( UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "f71d321ce329d05cc553ed56e78667a6d84bf5ff4954f270e7e777837ef0cdf3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t1 MATCH_RECOGNIZE ( PARTITION BY 1 , 1 ORDER BY 1 , 1 MEASURES 1 AS v1 , v1 ONE ROW PER MATCH AFTER MATCH SKIP TO FIRST a PATTERN ( a ) DEFINE a AS 1 , 1 ) ;",
+   "sql_sha256": "f8fe7e16f307815242e8032aa55d6ed3991975052f2a8b52c30cc93e570c5431"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SELECT FROM t1 START WITH 1 CONNECT BY v1 = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "f9bb79fd544368c11e6e0c6647e338f55fd0c50c26b8ac01489c92f6f054eeb4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 , :\"v1 Q\" FROM t1 WHERE TRUE ;",
+   "sql_sha256": "fa1ea8f3e3c8068444c2d38fb27339ae998ba573e9cd9a33130a334386a667a0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "WITH v1 ( v1 ) AS ( SELECT 1 UNION ALL SELECT 1 FROM v1 ) SELECT 1 ;",
+   "sql_sha256": "fbe369efa29cc51dc2d583ce35f2519a4639ec1e8cc2403302b3bb89dc242b48"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY GROUPING SETS ( c1 ) ) ;",
+   "sql_sha256": "fc832a5c9b5966ff620675c1129de9d461fdcf445fed283823be868b16c760f0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT ALL TOP 1 v1 . * ILIKE 'm' EXCLUDE ( v1 , v1 ) REPLACE ( 1 AS v1 , 1 AS v1 ) RENAME v1 AS v1 ;",
+   "sql_sha256": "fd22214947518df2f18f915cdfd77e68f92a86a23d40dd9bc1f2ae5c0f98bdcf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 , SELECT = v1 PRIOR c1 = c2 PRIOR c1 = c2 ;",
+   "sql_sha256": "fe066bdfa347ed8a66e3cb8aeac1fa035fcbb8cb31cc77b0688f4d4b1fe27a32"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP BY , ROLLUP ( c1 ) ;",
+   "sql_sha256": "febd618e0a42e8e88b18b5678bb5f4f57f0b8c8f6d38a60211cc38c9e8c2f9f1"
+  }
+ ],
+ "receipts": 723,
+ "receipts_file_sha256": "838cb32c9622b76e06ba7bfa4cc40cdde46b5c3e232a5f9272310fe589321ea7",
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-31fbf1fc5b6f",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 392032)",
+   "row_id": "a-ddl-2bf4338fec7e",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-0bef2b0291e9",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-s17-quoted_unicode_nested_declare",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 1003)",
+   "row_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_date",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_time",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_timestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-current_user",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtime",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-localtimestamp",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-while",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-repeat",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "c-b5p5-p5-block-end-let",
+   "run_id": "c-audit-b5-5-20261103T232716Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-0ed73f855675",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1c0666c0ea3c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-1f57ef757b7c",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-209728947280",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-2a877fbbcf32",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-302455fa3bba",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-3aec89374149",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-40b513dae4ee",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-4daf4294be43",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-58f0f58f5957",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-a-ddl-5c06310da441",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91124)",
+   "row_id": "d73-a-ddl-5ce1b8c9d30b",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-6338819436d7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "d73-a-ddl-737e503e04e5",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-7a81ccf0c62e",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-807945a81f26",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-827d8c2cfc45",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-85036fbaf3a7",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-8c9591dea309",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-9bde7d855b34",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-a7766f997d44",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d36-stream-at-stream-control",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-bc9a744ae8f2",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-bed862237231",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-d501e4c221ad",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-d790ef2bcd15",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 91111)",
+   "row_id": "d73-c-ddl-d35-stream-before-stream",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "d73-a-ddl-e4b602b7a478",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-ef3bc787e401",
+   "run_id": "d73-missing-object-1-20261104T005826Z"
+  },
+  {
+   "reason": "error phase not established (errno 1506)",
+   "row_id": "d73-a-ddl-4c9a76fb5a85",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 91413)",
+   "row_id": "d73-a-ddl-801e56fe592a",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "d73-a-ddl-8783dea67cea",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "d73-a-ddl-a57b1bd7135d",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "d73-a-ddl-b45ccb83f9fd",
+   "run_id": "d73-missing-object-3-20261104T010709Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.kf449d4369b4c",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-1-20261104T005141Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.break.k21f7c040141a",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.continue.ka6cb0f18b216",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k767a5fbd099c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k1c3b8382c3b0",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.k713b3acc554b",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.ka0c2e721f5de",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf46147564dd3",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92201)",
+   "row_id": "sf.scripting.fetch.kf997f83cb6bb",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.k041899e81470",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kd9ec4cbfbd26",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.loop.k692ce5bbf93d",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.repeat.ke79c2a9583a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.while.k5d4068fb44a6",
+   "run_id": "d82-scripting-2-20261104T010552Z"
+  },
+  {
+   "reason": "error phase not established (errno 92234)",
+   "row_id": "sf.scripting.for.do-end-for.k1c2392f90eee",
+   "run_id": "d82-scripting-3-20261104T011650Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.declare.procedure-returns-table-as.kd8c284f355aa",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.do-end-for.ke9b4a198690b",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.for.to-do-loop-end.kcc18e3343634",
+   "run_id": "d82-scripting-4-20261104T013200Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.case.end.syntax.k93f2857ca62c",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.scripting.if.k685d9d2a067e",
+   "run_id": "d90-extreme-1-20261104T015457Z"
+  },
+  {
+   "reason": "error phase not established (errno 1002)",
+   "row_id": "sf.query.resample.k4e58beb65718",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 921)",
+   "row_id": "sf.query.resample.kd16f1735a58f",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.k17ea8ce89fac",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.k1e7f0904d652",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.k3e295dfbe368",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.k6250b7148e36",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.k821fe6d260a6",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.kbc7fd8c10c8a",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.kcfdd9dfd0aa8",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.kdde5c4650270",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 90105)",
+   "row_id": "sf.query.semantic-view.kfec9e9301e66",
+   "run_id": "d91-query-1-20261104T021702Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d06-task-other-session-param",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d07-task-session-no-comma",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d09-task-after-before-execute-control",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d10-task-trace-level",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "c-ddl-d12-task-comma-between-props",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90216)",
+   "row_id": "a-ddl-6b2ce283b60a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-5166f9f77eb7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 392030)",
+   "row_id": "a-ddl-fcca75747c99",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 91085)",
+   "row_id": "a-ddl-facb192ba2f7",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "a-ddl-7ae2bc8dcb0f",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90080)",
+   "row_id": "a-ddl-d0e717489e81",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "a-ddl-e3a7b0ab273a",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  },
+  {
+   "reason": "error phase not established (errno 90207)",
+   "row_id": "a-ddl-909d03e593dd",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 90201)",
+   "row_id": "a-ddl-fe118cb688c3",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91083)",
+   "row_id": "a-ddl-d841cfb9b6c2",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "error phase not established (errno 91471)",
+   "row_id": "a-ddl-aee0a7879f11",
+   "run_id": "ddl-sweep-2-20261103T234049Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_0",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "controller metadata request, not a syntax case",
+   "row_id": "metadata_1",
+   "run_id": "diagnostic-20261103T173725Z"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "row_id": "*",
+   "run_id": "history-audit-20261103"
+  },
+  {
+   "reason": "fixture setup failed; the statement was not submitted",
+   "row_id": "4db838951496-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 709)",
+   "row_id": "5ce226a4219f-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  },
+  {
+   "reason": "error phase not established (errno 707)",
+   "row_id": "b7bf01d2a39b-0",
+   "run_id": "setup-query-1-20261104T004203Z"
+  }
+ ],
+ "refused": 118,
+ "runs": [
+  {
+   "audit_sha256": "1acfcf6f1a79d2440be15f964f0bfbdcc2ab865ed88c73f4977488f70f24bae4",
+   "receipts": 94,
+   "refused_rows": 3,
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6650db4655a2b7a3b2709b670f49ed8cb59008ae3db92a7696501f729db9ac51",
+   "receipts": 32,
+   "refused_rows": 1,
+   "run_id": "b5-packet1-20261103T191328Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6e3d606d5205bcadb4c2ff1462ab5cb8389f6078ee2d21303ceabf86d51b5f7",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "b5-packet2-20261103T201614Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de897c46ab04353e2ce87e7ebc9cb11dff827f44fcb6a34b6ac5beecc2e154f2",
+   "receipts": 5,
+   "refused_rows": 2,
+   "run_id": "b5-packet3-20261103T214211Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "65224a8faa8839aa7d6922f336712ce64f1452d680d83f1663cd6c87cbc22f18",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "b5-packet4-20261103T224644Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a4d5f5807afe9406047e03d658836b016f4db94aa3e9930c60696cc5177fd6b",
+   "receipts": 42,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-2-20261103T204317Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "79e22c19c053689aeee5d498abd229571bc0029aee80785eca7f2f1931fc37ff",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "c-audit-b5-4-20261103T224526Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "14be5aa6758d6077334c8918ea545564106aa045bc7239010ace92b276477384",
+   "receipts": 90,
+   "refused_rows": 9,
+   "run_id": "c-audit-b5-5-20261103T232716Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5fe7f51716cc214b1a8993a65d68450354aef1b24cc03db356858e934d4fc399",
+   "receipts": 15,
+   "refused_rows": 0,
+   "run_id": "c-audit-query-6-20261103T232752Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ee188fc38fa9acdbc015a304c0eb86c7e77a0e1d2a69802cc50f35d46d65016b",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "current10-20261103T173608Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4bf1537b90134be4087efe224b3e5ecef9941cd8d2389691b3e64c8f01360c4a",
+   "receipts": 37,
+   "refused_rows": 34,
+   "run_id": "d73-missing-object-1-20261104T005826Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8e16ec44239248f4edccf3f58bdfb6e0c8189bb6d7425ec5e2d974ffaa67084c",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d73-missing-object-2-20261104T010308Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ce9ba60262beb94a711bf9af01bbc8573d24855931074ca54591a9357083d169",
+   "receipts": 15,
+   "refused_rows": 5,
+   "run_id": "d73-missing-object-3-20261104T010709Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d3b8f28a8d8e47a02b06496f9b571afe67c115abacd38d806beb4d884dc88cb0",
+   "receipts": 458,
+   "refused_rows": 9,
+   "run_id": "d82-scripting-1-20261104T005141Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b3f0d912ca7896611a8c149d68af29f026d714da41a8e65eefedebe8b808acc9",
+   "receipts": 85,
+   "refused_rows": 16,
+   "run_id": "d82-scripting-2-20261104T010552Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a7493dcca61f43dc75d8cf23e74df8e1bd5ebaf7f387197ca87481a85ed11d2",
+   "receipts": 22,
+   "refused_rows": 1,
+   "run_id": "d82-scripting-3-20261104T011650Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "73f23978534dce1831ca9226770de11132d25d491a4df5ac89e8161eb2123072",
+   "receipts": 8,
+   "refused_rows": 3,
+   "run_id": "d82-scripting-4-20261104T013200Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b252b8dc35bff6a27197060a5def1f7354a44c1cb65535dad89285124c4628b9",
+   "receipts": 9,
+   "refused_rows": 0,
+   "run_id": "d82-scripting-5-20261104T013906Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fcd59014968d78e8f801d54342fcc20f598a90df849dd289d2cfc544a6204b4d",
+   "receipts": 22,
+   "refused_rows": 2,
+   "run_id": "d90-extreme-1-20261104T015457Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "83dafface5722be516d9ea99b87966ec6599613c170bf7aa1a19f0f0f2629093",
+   "receipts": 18,
+   "refused_rows": 0,
+   "run_id": "d90-extreme-2-20261104T020037Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "062abd28664b4a59208cd4990283a3fa9db836ff92cc34954bc8d421498c9c48",
+   "receipts": 723,
+   "refused_rows": 11,
+   "run_id": "d91-query-1-20261104T021702Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9317ee78146cb1c4162ea8e49397c8fa17903d41bc8933dfca6f8a95e0ace5f7",
+   "receipts": 566,
+   "refused_rows": 12,
+   "run_id": "ddl-sweep-1-20261103T233411Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "648a090114a56ee046928a33b00149febd0103a61958314d9488825286b144a3",
+   "receipts": 135,
+   "refused_rows": 4,
+   "run_id": "ddl-sweep-2-20261103T234049Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "27252ee02a868f9e0d355323ef880fd623549235ef14fe1ee8601988b8d2ef8b",
+   "receipts": 12,
+   "refused_rows": 2,
+   "run_id": "diagnostic-20261103T173725Z",
+   "status": "imported"
+  },
+  {
+   "reason": "no audit.jsonl, not a capture run",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "history-audit-20261103",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "c77d3f564bca6bfb69676bce3aab16c902c4bc093b81e8f3795a84f8f2a3c4ea",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "power5-20261103T211556Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "86fdde0a1d42fef66d65138ca5ccbe0c29e623b1fe4038cfd21b6c382eeecfc6",
+   "receipts": 46,
+   "refused_rows": 0,
+   "run_id": "query-packet1-20261103T2115Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a2ebb4837e2d1fbbf3f09fbe973fe7b5b1db4d76b740b62facae298ff3f5c7fd",
+   "receipts": 19,
+   "refused_rows": 0,
+   "run_id": "query-packet2-20261103T211816Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "68221365e59ed623a6b24bdff4ed7046051de104ddbc01b4eb6bf880ab959fe1",
+   "receipts": 6,
+   "refused_rows": 0,
+   "run_id": "setop-corpus-7-20261103T232953Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "75bfeb3f8d738049474042cebf6e8307e9430a7524ff4003400dc2f60a0c6b6d",
+   "receipts": 164,
+   "refused_rows": 3,
+   "run_id": "setup-query-1-20261104T004203Z",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": [
+  {
+   "case_id": "a-ddl-2bf4338fec7e",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392032)",
+   "receipt_sha256": "cad0a7c63abb0c516b517b36434c00143c6e626cbcd1e26fc5145fbdf7e655cb",
+   "run_id": "admin-ddl-sweep-1-20261104T002921Z"
+  },
+  {
+   "case_id": "b5-s17-quoted_unicode_nested_declare",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "111bb37d84c609af6296dc5889f412518de109038ce6eee507ee5047e95b59e8",
+   "run_id": "b5-packet1-20261103T191328Z"
+  },
+  {
+   "case_id": "b5-p3-05-quoted_unicode_variable_in_arithmetic",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "5ebae0d5f11b43342ec7ce37bffa41d64ee4dd5972300c51e377c8fa7c718f2d",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "b5-p3-06-quoted_unicode_variable_plain_read_in_assignment",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 1003)",
+   "receipt_sha256": "46657833a05832d8047240bc649a918c52605c1165e90a770a4154c39ac661c7",
+   "run_id": "b5-packet3-20261103T214211Z"
+  },
+  {
+   "case_id": "a-ddl-fcca75747c99",
+   "phase": "runtime_error",
+   "reason": "error phase not established (errno 392030)",
+   "receipt_sha256": "1cced31cba08886f447662fe699bac59f7e1ad8e0b483bde9f1dd46c7245d54e",
+   "run_id": "ddl-sweep-1-20261103T233411Z"
+  }
+ ]
+}

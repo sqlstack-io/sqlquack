@@ -11,7 +11,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE('America/New_York', 'Europe/London', x2)"
 tags = ["null", "boundary"]
@@ -58,7 +58,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE('Europe/London', x1)"
 tags = ["null", "boundary"]
@@ -70,7 +70,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "CONVERT_TIMEZONE('Europe/London', x1)"
 tags = ["null", "boundary"]
@@ -82,7 +82,7 @@ description = "fn:CONVERT_TIMEZONE over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "CONVERT_TIMEZONE('Europe/London', x1)"
 tags = ["null", "boundary"]

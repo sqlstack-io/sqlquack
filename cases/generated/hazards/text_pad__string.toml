@@ -118,8 +118,10 @@ id = "fn_lpad_1_combination_0_text_integer_text"
 description = "fn:LPAD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "VARCHAR" }]
 rows = [
+  ["'a'", "3", "'b'"],
+  ["'b'", "3", "'ab'"],
+  ["'ab'", "3", "'a'"],
   ["'a'", "3", "'a'"],
-  ["'b'", "3", "'b'"],
 ]
 expression = "RPAD(x0, x1, x2)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -175,11 +177,11 @@ id = "fn_lpad_1_1_integer_hazards"
 description = "fn:LPAD with the hazards null, zero_negative, beyond_double in argument 1, integer."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "NULL", "'a'"],
-  ["'a'", "0", "'a'"],
-  ["'a'", "-1", "'a'"],
-  ["'a'", "9007199254740993", "'a'"],
-  ["'a'", "-9007199254740993", "'a'"],
+  ["'a'", "NULL", "'b'"],
+  ["'a'", "0", "'b'"],
+  ["'a'", "-1", "'b'"],
+  ["'a'", "9007199254740993", "'b'"],
+  ["'a'", "-9007199254740993", "'b'"],
 ]
 expression = "RPAD(x0, x1, x2)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -190,8 +192,8 @@ id = "fn_lpad_1_1_integer_beyond_64_bits"
 description = "fn:LPAD with Integers beyond the 64-bit range, which BIGINT arithmetic overflows in argument 1, integer."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "18446744073709551616", "'a'"],
-  ["'a'", "-9223372036854775809", "'a'"],
+  ["'a'", "18446744073709551616", "'b'"],
+  ["'a'", "-9223372036854775809", "'b'"],
 ]
 expression = "RPAD(x0, x1, x2)"
 tags = ["null", "empty", "whitespace", "unicode"]
@@ -202,8 +204,8 @@ id = "fn_lpad_1_1_integer_digits_38"
 description = "fn:LPAD with The largest 38-digit integers in argument 1, integer."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["'a'", "99999999999999999999999999999999999999", "'a'"],
-  ["'a'", "-99999999999999999999999999999999999999", "'a'"],
+  ["'a'", "99999999999999999999999999999999999999", "'b'"],
+  ["'a'", "-99999999999999999999999999999999999999", "'b'"],
 ]
 expression = "RPAD(x0, x1, x2)"
 tags = ["null", "empty", "whitespace", "unicode"]

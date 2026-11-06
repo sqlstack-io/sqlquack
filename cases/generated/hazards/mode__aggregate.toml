@@ -76,7 +76,7 @@ description = "fn:MODE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'g001'", "'2024-01-15'"],
-  ["'g002'", "'2024-01-16'"],
+  ["'g002'", "'2024-05-17'"],
 ]
 query = "SELECT g, MODE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -89,7 +89,7 @@ description = "fn:MODE over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'g001'", "'2024-01-15 10:00:00'"],
-  ["'g002'", "'2024-01-16 11:30:00'"],
+  ["'g002'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MODE(x0) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
