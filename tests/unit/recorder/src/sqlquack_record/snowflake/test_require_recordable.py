@@ -34,7 +34,7 @@ def test_given_a_case_outcome_error_when_checking_recordable_then_it_passes(
     error: ProgrammingError = ProgrammingError(
         msg="failed", errno=test_case.errno, sqlstate=test_case.sqlstate
     )
-    require_recordable(error)
+    require_recordable(error=error)
     assert test_case.expected_recordable, test_case.description
 
 
@@ -63,7 +63,7 @@ def test_given_a_session_or_wrapper_error_when_checking_recordable_then_it_stops
         msg="failed", errno=test_case.errno, sqlstate=test_case.sqlstate
     )
     with pytest.raises(RecorderError) as raised:
-        require_recordable(error)
+        require_recordable(error=error)
     assert "is not a case outcome" in str(raised.value), test_case.description
     assert not test_case.expected_recordable, test_case.description
 
@@ -78,6 +78,22 @@ def test_given_a_session_or_wrapper_error_when_checking_recordable_then_it_stops
             expected_recordable=True,
             expected_error=True,
         ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_listed_p0000_error_on_a_case_expecting_an_error_when_checking_then_it_passes(
+    test_case: RecordableErrorTestCase,
+) -> None:
+    error: ProgrammingError = ProgrammingError(
+        msg="failed", errno=test_case.errno, sqlstate=test_case.sqlstate
+    )
+    require_recordable(error=error, expected_error=test_case.expected_error)
+    assert test_case.expected_recordable, test_case.description
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
         RecordableErrorTestCase(
             description="the same error stops a case expecting success",
             errno=100344,
@@ -101,14 +117,12 @@ def test_given_a_session_or_wrapper_error_when_checking_recordable_then_it_stops
     ),
     ids=lambda case: case.description,
 )
-def test_given_a_p0000_error_when_checking_recordable_then_only_listed_expected_errors_pass(
+def test_given_a_p0000_error_not_listed_for_the_case_when_checking_then_it_stops_the_run(
     test_case: RecordableErrorTestCase,
 ) -> None:
     error: ProgrammingError = ProgrammingError(
         msg="failed", errno=test_case.errno, sqlstate=test_case.sqlstate
     )
-    if test_case.expected_recordable:
-        require_recordable(error, expected_error=test_case.expected_error)
-        return
     with pytest.raises(RecorderError, match="is not a case outcome"):
-        require_recordable(error, expected_error=test_case.expected_error)
+        require_recordable(error=error, expected_error=test_case.expected_error)
+    assert not test_case.expected_recordable, test_case.description

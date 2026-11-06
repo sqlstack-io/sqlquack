@@ -100,7 +100,7 @@ class FakeSession:
         }
         return answers[self._batch_fails]
 
-    def run_one(self, statement: str, *, expected_error: bool = False) -> StatementResult:
+    def run_one(self, *, statement: str, expected_error: bool = False) -> StatementResult:
         self._log.append("one")
         for _ in self.broken.intersection({statement}):
             raise StatementNotRecordableError("Snowflake error 2139 is not a case outcome")

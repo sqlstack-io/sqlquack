@@ -74,7 +74,7 @@ class SnowflakeSession:
             cursor.close()
         return results
 
-    def run_one(self, statement: str, *, expected_error: bool = False) -> StatementResult:
+    def run_one(self, *, statement: str, expected_error: bool = False) -> StatementResult:
         """Run one statement; a recordable SQL error becomes the result."""
         cursor: Any = self._connection.cursor()
         try:
@@ -87,7 +87,7 @@ class SnowflakeSession:
                 query_id=cursor.sfqid, columns=(), table=None, failure=None, refusal=str(error)
             )
         except ProgrammingError as error:
-            require_recordable(error, expected_error=expected_error)
+            require_recordable(error=error, expected_error=expected_error)
             return StatementResult(
                 query_id=error.sfqid,
                 columns=(),

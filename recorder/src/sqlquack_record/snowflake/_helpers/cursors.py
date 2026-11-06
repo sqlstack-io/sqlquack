@@ -111,12 +111,8 @@ def _whole_count(value: object) -> int | None:
     return None
 
 
-def require_recordable(error: ProgrammingError, *, expected_error: bool = False) -> None:
-    """Raise unless `error` is a SQL error that belongs to the case rather than the session.
-
-    A listed built-in function error (SQLSTATE P0000) belongs to the case only when the case
-    expects an error.
-    """
+def require_recordable(*, error: ProgrammingError, expected_error: bool = False) -> None:
+    """Raise unless `error` belongs to the case; listed P0000 errors only when it expects one."""
     sqlstate: str = str(error.sqlstate or "")
     if sqlstate[:2] in RECORDABLE_SQLSTATE_CLASSES and sqlstate not in SESSION_DEPENDENT_SQLSTATES:
         return
@@ -134,8 +130,7 @@ def require_recordable(error: ProgrammingError, *, expected_error: bool = False)
 
 
 def error_message(error: ProgrammingError) -> str | None:
-    """A data exception's or listed built-in function error's message, without its errno and
-    SQLSTATE prefix or any query ID."""
+    """A data exception's or listed function error's message, without prefix or query ID."""
     sqlstate: str = str(error.sqlstate or "")
     if sqlstate[:2] not in DATA_EXCEPTION_SQLSTATE_CLASSES and (
         (error.errno, sqlstate) not in EXPECTED_FUNCTION_ERRORS
@@ -169,7 +164,7 @@ def compile_message(error: ProgrammingError) -> str:
 def require_batch_recordable(error: ProgrammingError) -> None:
     """Accept a multi-statement wrapper error as a batch failure; otherwise `require_recordable`."""
     if (error.errno, error.sqlstate) != MULTI_STATEMENT_FAILURE:
-        require_recordable(error)
+        require_recordable(error=error)
 
 
 def _require_exact_units(
