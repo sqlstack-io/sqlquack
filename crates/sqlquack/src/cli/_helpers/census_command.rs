@@ -55,6 +55,9 @@ pub(crate) fn census_command(
             return ExitCode::from(2);
         }
     };
+    for warning in &project.warnings {
+        let _ = writeln!(stderr, "sqlquack census: warning: {warning}");
+    }
     let schema = project.schema;
     let conversion = match with_overrides(
         divergence_options(policy.as_ref(), &project.conversion),

@@ -13,13 +13,13 @@ use crate::project::_helpers::declarations::{
 };
 use crate::project::constants::{FUNCTION_KIND, TABLE_KIND};
 
-/// The schema of the project at `root` merged with `file`'s; one name declared twice is an error.
+/// The project's schema merged with `file`'s, and warnings; a name declared twice is an error.
 pub fn project_schema(
     root: &Path,
     project: &ProjectPolicy,
     file: Option<(&Path, Schema)>,
-) -> Result<Schema, String> {
-    let (tables, mut declarations) = source_tables(root, project)?;
+) -> Result<(Schema, Vec<String>), String> {
+    let ((tables, mut declarations), warnings) = source_tables(root, project)?;
     let (functions, function_declarations) = project_functions(root, project)?;
     declarations.extend(function_declarations);
     let declared = json!({ "relations": tables, "functions": functions }).to_string();
@@ -43,5 +43,5 @@ pub fn project_schema(
         schema.functions.extend(file.functions);
     }
     no_clash(&declarations)?;
-    Ok(schema)
+    Ok((schema, warnings))
 }

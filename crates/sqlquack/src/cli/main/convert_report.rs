@@ -27,6 +27,7 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
         ),
     )?;
     let schema = project.schema;
+    let warnings = project.warnings;
     let arguments = &ConvertArguments {
         session: project.session,
         overrides: project.overrides,
@@ -41,7 +42,12 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     let (options, profile) = match session_conversion_options(policy.as_ref(), session, &parameters)
     {
         Ok(matched) => matched,
-        Err(reason) => return Ok(refused_session(reason)),
+        Err(reason) => {
+            return Ok(ConvertReport {
+                warnings,
+                ..refused_session(reason)
+            });
+        }
     };
     let options = chosen_options(arguments, policy.as_ref(), options)?;
     let catalogue = builtin_catalogue();
@@ -54,10 +60,11 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     if analysis.parsed && analysis.statements == 0 {
         return Err("the input holds no SQL statement".to_owned());
     }
-    analysis_report(
+    let report = analysis_report(
         &analysis,
         (sql, arguments.compact),
         (&schema, &options, policy.as_ref()),
         (&arguments.conversion, &parameters, profile),
-    )
+    )?;
+    Ok(ConvertReport { warnings, ..report })
 }

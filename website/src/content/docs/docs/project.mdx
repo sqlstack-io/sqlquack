@@ -41,8 +41,18 @@ sources:
 ```
 
 Names are unquoted, so `orders` declares the table `ORDERS`, as Snowflake folds it. A source with
-an `expression` is an inline query, not a table, and is not declared. A source with a column
-without a type is left out, as a [schema file](/docs/schema/) leaves out an unknown type.
+an `expression` is an inline query, not a table, and is not declared.
+
+A source with a column without a `type` is left out whole, so `SELECT *` never misses a column.
+`convert` and `census` warn, naming the file, the source and the column:
+
+```console
+$ sqlquack convert customers.sql
+sqlquack convert: converting…
+sqlquack convert: warning: ./sources/raw.yml: the source customers is left out, because its column email has no type
+```
+
+The report's `warnings` lists the same messages.
 
 ## Declaring functions
 

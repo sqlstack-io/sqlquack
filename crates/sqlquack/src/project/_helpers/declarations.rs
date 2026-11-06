@@ -19,19 +19,24 @@ use crate::project::models::Declaration;
 /// Declarations as the schema file writes them, by name, and where each came from.
 pub(crate) type Declared = (Map<String, Value>, Vec<Declaration>);
 
-/// The tables of the project's source files.
-pub(crate) fn source_tables(root: &Path, project: &ProjectPolicy) -> Result<Declared, String> {
-    let (mut tables, mut declarations) = (Map::new(), Vec::new());
+/// The tables of the project's source files, and a warning for each source left out.
+pub(crate) fn source_tables(
+    root: &Path,
+    project: &ProjectPolicy,
+) -> Result<(Declared, Vec<String>), String> {
+    let (mut tables, mut declarations, mut warnings) = (Map::new(), Vec::new(), Vec::new());
     let Some(folder) = project_folder(root, project.sources.as_deref(), SOURCES_FOLDER)? else {
-        return Ok((tables, declarations));
+        return Ok(((tables, declarations), warnings));
     };
     for path in files(&folder, SOURCE_EXTENSIONS) {
-        for (name, columns) in source_relations(&path)? {
+        let found = source_relations(&path)?;
+        warnings.extend(found.warnings);
+        for (name, columns) in found.tables {
             declarations.push(declaration(TABLE_KIND, &name, &path));
             tables.insert(name, columns);
         }
     }
-    Ok((tables, declarations))
+    Ok(((tables, declarations), warnings))
 }
 
 /// The functions of the project's SQL and Python function files, named after their files.

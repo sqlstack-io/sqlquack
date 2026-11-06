@@ -26,6 +26,7 @@ pub(crate) fn project_choices(
             session: session.to_vec(),
             overrides: overrides.map(Path::to_path_buf),
             conversion,
+            warnings: Vec::new(),
         });
     };
     let root = conversion
@@ -54,8 +55,10 @@ pub(crate) fn project_choices(
         Some(path) => Some(path.to_path_buf()),
         None => project_folder(&root, project.overrides.as_deref(), OVERRIDES_FOLDER)?,
     };
+    let (schema, warnings) = project_schema(&root, project, file)?;
     Ok(ProjectChoices {
-        schema: project_schema(&root, project, file)?,
+        schema,
+        warnings,
         session,
         overrides,
         conversion,
