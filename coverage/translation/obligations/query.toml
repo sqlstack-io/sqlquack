@@ -3,6 +3,94 @@
 # cases under cases/translation. Hand-written; see coverage/translation/README.md.
 
 [[obligation]]
+id = "sf.query.asof-join.t001"
+form = "sf.query.asof-join"
+kind = "type_combination"
+target = "MATCH_CONDITION (l.ts >= r.ts) ON sym"
+note = "Each trade with the latest quote at or before it, per symbol; the trade at time 1 has none."
+catches = "the closest quote after the trade taken, or symbols mixed"
+reading = "asof-join: for each left row, the right row with the closest time satisfying MATCH_CONDITION, within the ON keys; no match gives NULLs"
+cases = ["cases/translation/query/asof-join.toml#t001_ge"]
+required = true
+
+[[obligation]]
+id = "sf.query.asof-join.t002"
+form = "sf.query.asof-join"
+kind = "type_combination"
+target = "MATCH_CONDITION (l.ts < r.ts)"
+note = "The first quote strictly after each trade; an equal time does not match."
+catches = "a non-strict comparison (B at 7 matching the quote at 7)"
+reading = "asof-join: for each left row, the right row with the closest time satisfying MATCH_CONDITION, within the ON keys; no match gives NULLs"
+cases = ["cases/translation/query/asof-join.toml#t002_lt"]
+required = true
+
+[[obligation]]
+id = "sf.query.asof-join.t003"
+form = "sf.query.asof-join"
+kind = "null_argument"
+target = "NULL right value"
+note = "The matched quote for B at 8 is not reachable from 7 with >=, so B at 7 takes the quote at 7; a NULL price passes through when matched."
+catches = "NULL rows skipped when matching"
+reading = "asof-join: for each left row, the right row with the closest time satisfying MATCH_CONDITION, within the ON keys; no match gives NULLs"
+cases = ["cases/translation/query/asof-join.toml#t003_null_value"]
+required = true
+
+[[obligation]]
+id = "sf.query.connect-by.t001"
+form = "sf.query.connect-by"
+kind = "type_combination"
+target = "START WITH \u2026 CONNECT BY PRIOR"
+note = "The tree from the root with LEVEL; the orphan is not reached."
+catches = "PRIOR on the wrong side (walking up), or the orphan included"
+reading = "connect-by: a hierarchy from START WITH rows, joining each row to its children by CONNECT BY PRIOR; LEVEL gives the depth"
+cases = ["cases/translation/query/connect-by.toml#t001_tree"]
+required = true
+
+[[obligation]]
+id = "sf.query.connect-by.t002"
+form = "sf.query.connect-by"
+kind = "type_combination"
+target = "START WITH a node"
+note = "The subtree of node 2."
+catches = "the whole tree returned"
+reading = "connect-by: a hierarchy from START WITH rows, joining each row to its children by CONNECT BY PRIOR; LEVEL gives the depth"
+cases = ["cases/translation/query/connect-by.toml#t002_subtree"]
+required = true
+
+[[obligation]]
+id = "sf.query.connect-by.t003"
+form = "sf.query.connect-by"
+kind = "null_argument"
+target = "NULL parent"
+note = "The root's NULL parent matches no PRIOR id, so it appears only as a start row."
+catches = "the root repeated as a child"
+reading = "connect-by: a hierarchy from START WITH rows, joining each row to its children by CONNECT BY PRIOR; LEVEL gives the depth"
+cases = ["cases/translation/query/connect-by.toml#t003_null_parent"]
+required = true
+
+[[obligation]]
+id = "sf.query.from.t001"
+form = "sf.query.from"
+kind = "type_combination"
+target = "subquery with an alias"
+note = "A derived table with a column alias list."
+catches = "the column aliases ignored"
+reading = "from: rows from tables, views, subqueries and table functions, with aliases"
+cases = ["cases/translation/query/from.toml#t001_subquery"]
+required = true
+
+[[obligation]]
+id = "sf.query.from.t002"
+form = "sf.query.from"
+kind = "null_argument"
+target = "NULL values"
+note = "A derived table that filters to the NULL department."
+catches = "the NULL row dropped"
+reading = "from: rows from tables, views, subqueries and table functions, with aliases"
+cases = ["cases/translation/query/from.toml#t002_null_values"]
+required = true
+
+[[obligation]]
 id = "sf.query.group-by.t001"
 form = "sf.query.group-by"
 kind = "type_combination"
@@ -220,6 +308,149 @@ note = "Groups holding a NULL x, found by COUNT(x) < COUNT(*): b and the NULL gr
 catches = "COUNT(x) counting NULLs, so no group qualifies"
 reading = "having: filters the groups of a GROUP BY by a predicate over aggregates"
 cases = ["cases/translation/query/having.toml#t003_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.t001"
+form = "sf.query.join"
+kind = "type_combination"
+target = "self-join"
+note = "Pairs of employees in the same department, each pair once."
+catches = "the NULL department paired with itself"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.toml#t001_self_join"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.t002"
+form = "sf.query.join"
+kind = "null_argument"
+target = "NULL key"
+note = "A LEFT JOIN on a condition that compares to NULL."
+catches = "NULL = NULL treated as a match"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.toml#t002_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.join-lateral.t001"
+form = "sf.query.join-lateral"
+kind = "type_combination"
+target = "LATERAL"
+note = "For each employee, the count of colleagues in the same department, from a LATERAL subquery."
+catches = "the subquery evaluated once, uncorrelated"
+reading = "join-lateral: LATERAL ( inline view ) evaluated for each row of the table to its left, which it may reference"
+cases = ["cases/translation/query/join-lateral.toml#t001_lateral"]
+required = true
+
+[[obligation]]
+id = "sf.query.join-lateral.t002"
+form = "sf.query.join-lateral"
+kind = "null_argument"
+target = "NULL key"
+note = "Row 104 counts no colleagues, since its key is NULL."
+catches = "the NULL key counted as matching itself"
+reading = "join-lateral: LATERAL ( inline view ) evaluated for each row of the table to its left, which it may reference"
+cases = ["cases/translation/query/join-lateral.toml#t002_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t001"
+form = "sf.query.join.join"
+kind = "type_combination"
+target = "INNER JOIN \u2026 ON"
+note = "Employees with their departments; row 104 has no department and drops out."
+catches = "the NULL key matched"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t001_inner"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t002"
+form = "sf.query.join.join"
+kind = "type_combination"
+target = "LEFT OUTER JOIN"
+note = "Every employee; row 104 with a NULL department name."
+catches = "row 104 dropped"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t002_left"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t003"
+form = "sf.query.join.join"
+kind = "type_combination"
+target = "FULL OUTER JOIN"
+note = "Every employee and every department: row 104 unmatched and Finance unmatched."
+catches = "one side's unmatched rows dropped"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t003_full"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.t004"
+form = "sf.query.join.join"
+kind = "null_argument"
+target = "NULL key"
+note = "RIGHT JOIN: every department; the NULL employee key matches nothing."
+catches = "the NULL key matched to a department"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join-2.t001"
+form = "sf.query.join.join-2"
+kind = "type_combination"
+target = "NATURAL JOIN"
+note = "NATURAL JOIN on the one shared column, department_id, which appears once."
+catches = "the column duplicated, or a cross product"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join-2.toml#t001_natural"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join-2.t002"
+form = "sf.query.join.join-2"
+kind = "type_combination"
+target = "CROSS JOIN"
+note = "Every employee with every department: 12 rows."
+catches = "a join on department_id"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join-2.toml#t002_cross"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join-2.t003"
+form = "sf.query.join.join-2"
+kind = "null_argument"
+target = "NULL key"
+note = "NATURAL LEFT JOIN: row 104 kept with a NULL department name."
+catches = "row 104 dropped"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join-2.toml#t003_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.syntax.t001"
+form = "sf.query.join.join.syntax"
+kind = "type_combination"
+target = "JOIN \u2026 USING"
+note = "USING (department_id) with SELECT *: the joined column once, first."
+catches = "the column returned twice"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.syntax.toml#t001_using"]
+required = true
+
+[[obligation]]
+id = "sf.query.join.join.syntax.t002"
+form = "sf.query.join.join.syntax"
+kind = "null_argument"
+target = "NULL key"
+note = "FULL JOIN USING: the column holds the value from whichever side has it."
+catches = "the column NULL for the department-only row"
+reading = "join: INNER, LEFT, RIGHT and FULL [OUTER] JOIN with ON or USING; NATURAL joins on all same-named columns; CROSS JOIN pairs every row; rows with a NULL key never match; USING returns the joined column once under SELECT *"
+cases = ["cases/translation/query/join.join.syntax.toml#t002_null_key"]
 required = true
 
 [[obligation]]
@@ -553,6 +784,39 @@ cases = ["cases/translation/query/order-by.orderitem.toml#t004_null_key"]
 required = true
 
 [[obligation]]
+id = "sf.query.pivot.t001"
+form = "sf.query.pivot"
+kind = "type_combination"
+target = "PIVOT (SUM \u2026 FOR \u2026 IN (\u2026))"
+note = "Sums of x by month for jan and feb, per group; mar is not listed and drops out."
+catches = "unlisted values kept, or the aggregate ignored"
+reading = "pivot: rotates the values of a column into columns, aggregating a second column for each listed value; unlisted values are dropped"
+cases = ["cases/translation/query/pivot.toml#t001_sum"]
+required = true
+
+[[obligation]]
+id = "sf.query.pivot.t002"
+form = "sf.query.pivot"
+kind = "type_combination"
+target = "value aliases"
+note = "The listed values given aliases with AS."
+catches = "the aliases ignored"
+reading = "pivot: rotates the values of a column into columns, aggregating a second column for each listed value; unlisted values are dropped"
+cases = ["cases/translation/query/pivot.toml#t002_aliases"]
+required = true
+
+[[obligation]]
+id = "sf.query.pivot.t003"
+form = "sf.query.pivot"
+kind = "null_argument"
+target = "NULL values"
+note = "Group b's jan holds only NULL, so its sum is NULL; a missing month is NULL too."
+catches = "NULL read as 0"
+reading = "pivot: rotates the values of a column into columns, aggregating a second column for each listed value; unlisted values are dropped"
+cases = ["cases/translation/query/pivot.toml#t003_null_values"]
+required = true
+
+[[obligation]]
 id = "sf.query.qualify.t001"
 form = "sf.query.qualify"
 kind = "type_combination"
@@ -652,6 +916,292 @@ cases = ["cases/translation/query/qualify.select-from-qualify.toml#t003_null_win
 required = true
 
 [[obligation]]
+id = "sf.query.sample.t001"
+form = "sf.query.sample"
+kind = "type_combination"
+target = "SAMPLE (100)"
+note = "SAMPLE (100), which returns every row."
+catches = "rows dropped"
+reading = "sample: a random subset of rows by percentage (BERNOULLI or ROW) or by block; 100 returns every row and 0 none"
+cases = ["cases/translation/query/sample.toml#t001_all"]
+required = true
+
+[[obligation]]
+id = "sf.query.sample.t002"
+form = "sf.query.sample"
+kind = "type_combination"
+target = "TABLESAMPLE BERNOULLI (0)"
+note = "TABLESAMPLE BERNOULLI (0), which returns no rows."
+catches = "every row returned"
+reading = "sample: a random subset of rows by percentage (BERNOULLI or ROW) or by block; 100 returns every row and 0 none"
+cases = ["cases/translation/query/sample.toml#t002_none"]
+required = true
+
+[[obligation]]
+id = "sf.query.sample.t003"
+form = "sf.query.sample"
+kind = "null_argument"
+target = "NULL values"
+note = "SAMPLE ROW (100) keeps the row with NULL columns."
+catches = "NULL rows dropped"
+reading = "sample: a random subset of rows by percentage (BERNOULLI or ROW) or by block; 100 returns every row and 0 none"
+cases = ["cases/translation/query/sample.toml#t003_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.t001"
+form = "sf.query.select.select"
+kind = "type_combination"
+target = "SELECT *"
+note = "Every column in table order."
+catches = "columns reordered or the ordinal column exposed"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select.toml#t001_star"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.t002"
+form = "sf.query.select.select"
+kind = "type_combination"
+target = "* ILIKE '%name'"
+note = "Only the columns whose names end in name, matched case-insensitively."
+catches = "a case-sensitive match (no columns, as the names are upper case)"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select.toml#t002_ilike"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.t003"
+form = "sf.query.select.select"
+kind = "type_combination"
+target = "* EXCLUDE (a, b)"
+note = "Two columns excluded."
+catches = "only the first exclusion applied"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select.toml#t003_exclude_two"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.t004"
+form = "sf.query.select.select"
+kind = "type_combination"
+target = "alias.*"
+note = "A table alias star over a join with the departments, which takes only that table's columns."
+catches = "both tables' columns returned"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select.toml#t004_alias_star"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.t005"
+form = "sf.query.select.select"
+kind = "null_argument"
+target = "NULL values"
+note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
+catches = "NULL rows dropped by *"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select.toml#t005_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-rename.t001"
+form = "sf.query.select.select-exclude-rename"
+kind = "type_combination"
+target = "* EXCLUDE \u2026 RENAME \u2026"
+note = "department_id excluded and first_name renamed fn."
+catches = "RENAME applied before EXCLUDE, or the renamed column moved"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-rename.toml#t001_exclude_rename"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-rename.t002"
+form = "sf.query.select.select-exclude-rename"
+kind = "null_argument"
+target = "NULL values"
+note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
+catches = "the NULL first name dropped with the rename"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-rename.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-replace.t001"
+form = "sf.query.select.select-exclude-replace"
+kind = "type_combination"
+target = "* EXCLUDE \u2026 REPLACE \u2026"
+note = "department_id excluded and last_name replaced by its upper case, in place."
+catches = "the replaced column moved to the end, or added twice"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-replace.toml#t001_exclude_replace"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-replace.t002"
+form = "sf.query.select.select-exclude-replace"
+kind = "null_argument"
+target = "NULL values"
+note = "REPLACE over the NULL first name: the expression gets NULL."
+catches = "NULL replaced by an empty string"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-replace.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-replace-rename.t001"
+form = "sf.query.select.select-exclude-replace-rename"
+kind = "type_combination"
+target = "* EXCLUDE \u2026 REPLACE \u2026 RENAME \u2026"
+note = "All three modifiers: department_id excluded, employee_id plus 1000 replaced, then last_name renamed."
+catches = "the modifiers applied in another order"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-replace-rename.toml#t001_all_three"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-exclude-replace-rename.t002"
+form = "sf.query.select.select-exclude-replace-rename"
+kind = "null_argument"
+target = "NULL values"
+note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
+catches = "the NULL row dropped"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-exclude-replace-rename.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-rename.t001"
+form = "sf.query.select.select-ilike-rename"
+kind = "type_combination"
+target = "* ILIKE \u2026 RENAME \u2026"
+note = "Columns matching '%name', with last_name renamed ln."
+catches = "RENAME applied to a column the pattern dropped, or before the pattern"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-rename.toml#t001_ilike_rename"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-rename.t002"
+form = "sf.query.select.select-ilike-rename"
+kind = "null_argument"
+target = "NULL values"
+note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
+catches = "the NULL first name dropped"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-rename.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-replace.t001"
+form = "sf.query.select.select-ilike-replace"
+kind = "type_combination"
+target = "* ILIKE \u2026 REPLACE \u2026"
+note = "Columns matching '%name', with first_name replaced by its length."
+catches = "the replaced column moved"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-replace.toml#t001_ilike_replace"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-replace.t002"
+form = "sf.query.select.select-ilike-replace"
+kind = "null_argument"
+target = "NULL values"
+note = "LENGTH of the NULL first name is NULL."
+catches = "NULL read as length 0"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-replace.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-replace-rename.t001"
+form = "sf.query.select.select-ilike-replace-rename"
+kind = "type_combination"
+target = "* ILIKE \u2026 REPLACE \u2026 RENAME \u2026"
+note = "ILIKE '%name', last_name upper-cased, then renamed."
+catches = "RENAME applied before REPLACE (the replacement lost)"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-replace-rename.toml#t001_ilike_replace_rename"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-ilike-replace-rename.t002"
+form = "sf.query.select.select-ilike-replace-rename"
+kind = "null_argument"
+target = "NULL values"
+note = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged."
+catches = "the NULL row dropped"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-ilike-replace-rename.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-replace-rename.t001"
+form = "sf.query.select.select-replace-rename"
+kind = "type_combination"
+target = "* REPLACE \u2026 RENAME \u2026"
+note = "department_id doubled, then employee_id renamed id."
+catches = "the modifiers swapped"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-replace-rename.toml#t001_replace_rename"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select-replace-rename.t002"
+form = "sf.query.select.select-replace-rename"
+kind = "null_argument"
+target = "NULL values"
+note = "The NULL department plus 1 stays NULL; first_name renamed."
+catches = "NULL read as 0"
+reading = "select: SELECT * may take ILIKE (a case-insensitive pattern on column names) or EXCLUDE, then REPLACE (expr AS col, keeping the position), then RENAME (col AS new); the modifiers apply in that order"
+cases = ["cases/translation/query/select.select-replace-rename.toml#t002_null_values"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.t001"
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "type_combination"
+target = "columns and expressions"
+note = "Two columns, an expression and an alias in double quotes, which keeps its case."
+catches = "the quoted alias upper-cased"
+reading = "select: named columns, expressions with aliases, DISTINCT, and $n positions over a subquery of VALUES"
+cases = ["cases/translation/query/select.select.selecting-specific-columns.toml#t001_expressions"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.t002"
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "type_combination"
+target = "DISTINCT"
+note = "DISTINCT department_id, with the NULL department as one row."
+catches = "DISTINCT ignored, or NULL dropped"
+reading = "select: named columns, expressions with aliases, DISTINCT, and $n positions over a subquery of VALUES"
+cases = ["cases/translation/query/select.select.selecting-specific-columns.toml#t002_distinct"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.t003"
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "type_combination"
+target = "$1 and $2"
+note = "Positional references over an inline VALUES subquery."
+catches = "the positions read as literals"
+reading = "select: named columns, expressions with aliases, DISTINCT, and $n positions over a subquery of VALUES"
+cases = ["cases/translation/query/select.select.selecting-specific-columns.toml#t003_positions"]
+required = true
+
+[[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.t004"
+form = "sf.query.select.select.selecting-specific-columns"
+kind = "null_argument"
+target = "NULL in an expression"
+note = "first_name concatenated: NULL for row 104."
+catches = "NULL read as an empty string"
+reading = "select: named columns, expressions with aliases, DISTINCT, and $n positions over a subquery of VALUES"
+cases = ["cases/translation/query/select.select.selecting-specific-columns.toml#t004_null_expression"]
+required = true
+
+[[obligation]]
 id = "sf.query.top-n.t001"
 form = "sf.query.top-n"
 kind = "type_combination"
@@ -693,6 +1243,28 @@ note = "TOP 2 over x descending with no NULLS clause, which puts NULL first by d
 catches = "NULL placed last, so 4 and 3 returned"
 reading = "limit: LIMIT count [OFFSET start] and the ANSI OFFSET ... FETCH; TOP n and LIMIT count are equivalent; n must be a non-negative integer constant"
 cases = ["cases/translation/query/top-n.toml#t004_null_key"]
+required = true
+
+[[obligation]]
+id = "sf.query.unpivot.t001"
+form = "sf.query.unpivot"
+kind = "type_combination"
+target = "UNPIVOT (v FOR k IN (\u2026))"
+note = "Two quarter columns into rows; the NULL q1 of id 2 is left out."
+catches = "NULL values kept by default"
+reading = "unpivot: rotates columns into rows of a name column and a value column; NULL values are excluded unless INCLUDE NULLS is given"
+cases = ["cases/translation/query/unpivot.toml#t001_basic"]
+required = true
+
+[[obligation]]
+id = "sf.query.unpivot.t002"
+form = "sf.query.unpivot"
+kind = "null_argument"
+target = "INCLUDE NULLS"
+note = "INCLUDE NULLS keeps the NULL q1 row."
+catches = "INCLUDE NULLS ignored"
+reading = "unpivot: rotates columns into rows of a name column and a value column; NULL values are excluded unless INCLUDE NULLS is given"
+cases = ["cases/translation/query/unpivot.toml#t002_include_nulls"]
 required = true
 
 [[obligation]]
@@ -748,4 +1320,59 @@ note = "x = NULL, which is never TRUE, and x IS NULL, which is."
 catches = "x = NULL treated as IS NULL"
 reading = "where: rows for which the predicate is TRUE; a NULL predicate drops the row"
 cases = ["cases/translation/query/where.toml#t002_null_predicate"]
+required = true
+
+[[obligation]]
+id = "sf.query.with.select.t001"
+form = "sf.query.with.select"
+kind = "type_combination"
+target = "two CTEs"
+note = "A CTE with a column list, and a second CTE that reads the first."
+catches = "the column list ignored, or the second CTE refused"
+reading = "with: named subqueries with optional column lists, each visible to the later ones and the main query"
+cases = ["cases/translation/query/with.select.toml#t001_chained"]
+required = true
+
+[[obligation]]
+id = "sf.query.with.select.t002"
+form = "sf.query.with.select"
+kind = "null_argument"
+target = "NULL group"
+note = "The CTE groups the NULL department into its own row."
+catches = "the NULL group dropped"
+reading = "with: named subqueries with optional column lists, each visible to the later ones and the main query"
+cases = ["cases/translation/query/with.select.toml#t002_null_group"]
+required = true
+
+[[obligation]]
+id = "sf.query.with.select.syntax.t001"
+form = "sf.query.with.select.syntax"
+kind = "type_combination"
+target = "WITH RECURSIVE"
+note = "Numbers 1 to 5 from a recursive CTE."
+catches = "the recursion stopping after one step, or running past 5"
+reading = "with: WITH RECURSIVE cte (cols) AS (anchor UNION ALL recursive) repeats the recursive clause until it returns no rows"
+cases = ["cases/translation/query/with.select.syntax.toml#t001_recursive"]
+required = true
+
+[[obligation]]
+id = "sf.query.with.select.syntax.t002"
+form = "sf.query.with.select.syntax"
+kind = "type_combination"
+target = "recursive over the data"
+note = "A recursive walk over the data from employee 102 to the next id in department 2, reaching 103 at depth 2."
+catches = "the anchor repeated"
+reading = "with: WITH RECURSIVE cte (cols) AS (anchor UNION ALL recursive) repeats the recursive clause until it returns no rows"
+cases = ["cases/translation/query/with.select.syntax.toml#t002_hierarchy"]
+required = true
+
+[[obligation]]
+id = "sf.query.with.select.syntax.t003"
+form = "sf.query.with.select.syntax"
+kind = "null_argument"
+target = "NULL ends the recursion"
+note = "A recursive clause whose condition becomes NULL stops adding rows."
+catches = "NULL treated as TRUE, recursing forever"
+reading = "with: WITH RECURSIVE cte (cols) AS (anchor UNION ALL recursive) repeats the recursive clause until it returns no rows"
+cases = ["cases/translation/query/with.select.syntax.toml#t003_null_stop"]
 required = true
