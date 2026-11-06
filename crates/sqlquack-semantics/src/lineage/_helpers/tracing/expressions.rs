@@ -134,15 +134,12 @@ pub(crate) fn expression_lineage(
             expression_lineage(&lambda.body, &inner, context)
         }
         Expression::WindowFunction(window) => {
-            let function: Lineage =
-                children_lineage(&window.this, scope, context, TransformKind::Window);
-            let value_type: ValueType = (function.data_type.clone(), function.nullability);
-            let mut parts: Vec<Lineage> = vec![function];
-            for child in expression.children() {
-                if !std::ptr::eq(child, &window.this) {
-                    parts.push(expression_lineage(child, scope, context));
-                }
-            }
+            let mut parts: Vec<Lineage> = vec![children_lineage(
+                expression,
+                scope,
+                context,
+                TransformKind::Expression,
+            )];
             if let Some(name) = &window.over.window_name {
                 let name: String = key(name, context);
                 let named: Option<&Lineage> = scope
@@ -152,7 +149,9 @@ pub(crate) fn expression_lineage(
                     .map(|(_, lineage)| lineage);
                 parts.push(named.cloned().unwrap_or_else(unresolved));
             }
-            typed(combined(parts, TransformKind::Window), value_type)
+            let floor: TransformKind = parts[0].kind.max(TransformKind::Expression);
+            let value_type: ValueType = (parts[0].data_type.clone(), parts[0].nullability);
+            typed(combined(parts, floor), value_type)
         }
         _ if is_aggregate(expression) => {
             children_lineage(expression, scope, context, TransformKind::Aggregation)
@@ -171,9 +170,7 @@ fn children_lineage(
         .children()
         .into_iter()
         .map(|child| match (child, floor) {
-            (Expression::Star(_), TransformKind::Aggregation | TransformKind::Window) => {
-                (child, constant())
-            }
+            (Expression::Star(_), TransformKind::Aggregation) => (child, constant()),
             _ if date_part_argument(expression, child) => (child, constant()),
             _ => (child, expression_lineage(child, scope, context)),
         })

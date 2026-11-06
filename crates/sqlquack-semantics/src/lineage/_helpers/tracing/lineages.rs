@@ -56,25 +56,19 @@ pub(crate) fn traced_if(lineage: Lineage, traced: bool) -> Lineage {
     }
 }
 
-/// The most significant kind among parts that read a column or aggregate or window; none when none does.
-fn strongest_step(parts: &[Lineage]) -> Option<TransformKind> {
-    parts
-        .iter()
-        .filter(|part| !part.sources.is_empty() || part.kind >= TransformKind::Window)
-        .map(|part| part.kind)
-        .max()
-}
-
 /// The parts read together into one value derived at least as `floor`.
 pub(crate) fn combined(parts: Vec<Lineage>, floor: TransformKind) -> Lineage {
     let resolved = parts.iter().all(|part| part.resolved);
     let lost: bool = parts.iter().any(|part| part.lost);
     let rows_lost: bool = parts.iter().any(|part| part.rows_lost);
-    let strongest: Option<TransformKind> = strongest_step(&parts);
+    let strongest = parts
+        .iter()
+        .filter(|part| !part.sources.is_empty() || part.kind == TransformKind::Aggregation)
+        .map(|part| part.kind)
+        .max();
     let (sources, rows) = unions(parts);
-    let kind: TransformKind = match (strongest, floor) {
+    let kind = match (strongest, floor) {
         (_, TransformKind::Aggregation) => TransformKind::Aggregation,
-        (None, TransformKind::Window) => TransformKind::Window,
         (None, _) => TransformKind::Constant,
         (Some(strongest), floor) => strongest.max(floor),
     };
@@ -124,14 +118,6 @@ fn untyped_null(part: &Lineage) -> bool {
         && part.sources.is_empty()
 }
 
-/// Whether a branch that reads a column has a known type other than the set operation's.
-fn implicitly_cast(branch: &Lineage, merged: Option<&str>, profile: &dyn DialectProfile) -> bool {
-    let (Some(own), Some(merged)) = (branch.data_type.as_deref(), merged) else {
-        return false;
-    };
-    !branch.sources.is_empty() && !profile.same_type(own, merged)
-}
-
 /// A set operation's branches merged, typed as the dialect types set operations.
 pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Lineage {
     let branches: Vec<Lineage> = parts
@@ -148,16 +134,10 @@ pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> L
     if profile.name() == POSTGRES_PROFILE {
         lineage.data_type = postgres_set_type(&parts_typed).unwrap_or(lineage.data_type);
     }
-    let coerced: bool = parts_typed
-        .iter()
-        .any(|branch| implicitly_cast(branch, lineage.data_type.as_deref(), profile));
-    if coerced {
-        lineage.kind = lineage.kind.max(TransformKind::Cast);
-    }
     lineage
 }
 
-/// Alternative branches merged into one column, which takes the most significant branch's kind.
+/// Alternative branches merged into one column: direct only when each is one same source unchanged.
 pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Lineage {
     let resolved = parts.iter().all(|part| part.resolved);
     let lost: bool = parts.iter().any(|part| part.lost);
@@ -181,8 +161,20 @@ pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Linea
         (_, true) => Nullability::Nullable,
         _ => Nullability::Unknown,
     };
-    let kind: TransformKind = strongest_step(&parts).unwrap_or(TransformKind::Constant);
+    let aggregated = parts
+        .iter()
+        .any(|part| part.kind == TransformKind::Aggregation);
+    let all_direct = parts.iter().all(|part| part.kind == TransformKind::Direct);
+    let strongest = parts.iter().map(|part| part.kind).max();
     let (sources, rows) = unions(parts);
+    let kind = match (sources.len(), all_direct, aggregated, strongest) {
+        (_, _, true, _) => TransformKind::Aggregation,
+        (0, _, _, _) => TransformKind::Constant,
+        (1, true, _, _) => TransformKind::Direct,
+        (_, _, _, strongest) => strongest
+            .unwrap_or(TransformKind::Expression)
+            .max(TransformKind::Expression),
+    };
     Lineage {
         sources,
         kind,
