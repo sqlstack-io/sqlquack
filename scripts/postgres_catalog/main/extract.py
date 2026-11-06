@@ -1,4 +1,4 @@
-"""Catalogue extract entry point: pg_proc, pg_cast, pg_type and pg_operator as CSV, plus a manifest."""
+"""Catalogue extract entry point: four pg_catalog tables as CSV, and a manifest."""
 
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ def run_catalog_extract(argv: list[str] | None = None) -> int:
         'engine = "postgres"\n'
         f'engine_version = "{version}"\n'
         f'engine_image_sha256 = "{image}"\n'
-        'method = "pg_catalog read with format_type; written by scripts/extract_postgres_catalog.py"\n'
+        'method = "pg_catalog read with format_type; '
+        'written by scripts/extract_postgres_catalog.py"\n'
     )
     return 0
