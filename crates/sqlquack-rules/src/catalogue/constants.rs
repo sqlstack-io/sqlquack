@@ -1235,7 +1235,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: COUNT,
         constructs: &["fn:COUNT"],
-        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused.",
+        conditions: "COUNT(*), COUNT(x) or COUNT(DISTINCT x); typed NUMBER(18,0). COUNT of a VARIANT skips JSON null as well as NULL; COUNT(DISTINCT) of a VARIANT is refused. COUNT over a qualified star (t.*) or a star with EXCLUDE, ILIKE, RENAME or REPLACE is refused, as it counts other rows than COUNT(*).",
         failures: &[],
     },
     RuleSpec {

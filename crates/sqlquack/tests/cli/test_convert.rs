@@ -14,6 +14,7 @@ use crate::test_types::{
 use sha2::{Digest, Sha256};
 
 const OTHER_BODY_SHA256: &str = "0000000000000000000000000000000000000000000000000000000000000000";
+const COUNT_STAR_REFUSAL: &str = "COUNT over a qualified star or a star with";
 const COUNTING_HANDLER: &str = "import itertools\nTICKETS = itertools.count(1)\ndef handle(*arguments):\n    return next(TICKETS)\n";
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
@@ -1139,6 +1140,55 @@ fn given_recorded_shapes_when_converting_then_they_convert_or_refuse_as_recorded
             description: "a lower-case IANA zone literal",
             sql: "SELECT CONVERT_TIMEZONE('UTC', 'europe/london', '2024-07-01 12:00:00'::TIMESTAMP_NTZ) AS c",
             expected_mention: "no recording shows Snowflake accepting",
+        },
+    ];
+    for test_case in test_cases {
+        let refusals = python_report(test_case.sql, &[])["refusals"].to_string();
+        assert!(
+            refusals.contains(test_case.expected_mention),
+            "{}: {refusals}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_count_over_a_qualified_or_modified_star_when_converting_then_it_refuses() {
+    let test_cases = [
+        PythonRefusalTestCase {
+            description: "a qualified star counts rows where some column is not NULL, not every row",
+            sql: "SELECT COUNT(t.*) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "EXCLUDE narrows the columns a star counts over",
+            sql: "SELECT COUNT(* EXCLUDE b) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "ILIKE narrows the columns a star counts over",
+            sql: "SELECT COUNT(* ILIKE 'a%') AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "RENAME on a counted star",
+            sql: "SELECT COUNT(* RENAME a AS z) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "a qualified star with EXCLUDE",
+            sql: "SELECT COUNT(t.* EXCLUDE b) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "DISTINCT over a qualified star",
+            sql: "SELECT COUNT(DISTINCT t.*) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "a qualified star over a window",
+            sql: "SELECT COUNT(t.*) OVER () AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
         },
     ];
     for test_case in test_cases {
