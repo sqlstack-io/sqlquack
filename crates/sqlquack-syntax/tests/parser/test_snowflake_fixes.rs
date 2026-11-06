@@ -1885,3 +1885,57 @@ fn given_snowflake_function_properties_when_parsing_then_recorded_verdicts_hold(
         );
     }
 }
+
+#[test]
+fn given_snowflake_database_and_schema_properties_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a word comment on a schema (recorded OK)",
+            sql: "CREATE SCHEMA v1 COMMENT = m1 ;",
+            expected_kind: Some("create_schema"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a linked catalog with namespace lists (recorded OK)",
+            sql: "CREATE DATABASE v1 LINKED_CATALOG = ( CATALOG = 'm' ALLOWED_NAMESPACES = ( 'm' , m1 ) ) ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a contact with a quoted steward (recorded OK)",
+            sql: "CREATE DATABASE v1 WITH CONTACT ( STEWARD = \"v1 Q\" ) ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a database from a listing named by a string (recorded OK)",
+            sql: "CREATE DATABASE v1 FROM LISTING 'm' ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value (recorded errno 1003)",
+            sql: "CREATE SCHEMA v1 COMMENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a contact whose steward is a string (recorded errno 1003)",
+            sql: "CREATE DATABASE v1 WITH CONTACT ( STEWARD = 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized property list after WITH (recorded errno 1003)",
+            sql: "CREATE DATABASE v1 WITH ( STEWARD = v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "properties after TAG and CONTACT (recorded errno 1003)",
+            sql: "CREATE OR REPLACE TRANSIENT DATABASE IF NOT EXISTS v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) IGNORE TABLES WITH INSUFFICIENT DATA RETENTION IGNORE HYBRID TABLES DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 STAGE_UNDROP_RETENTION_TIME_IN_DAYS = 1 EXTERNAL_VOLUME = v1 CATALOG = v1 ICEBERG_DEFAULT_DDL_COLLATION = 'm' ICEBERG_VERSION_DEFAULT = 1 ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE REPLACE_INVALID_CHARACTERS = TRUE DEFAULT_DDL_COLLATION = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE COMMENT = 'm' CATALOG_SYNC = 'm' CATALOG_SYNC_NAMESPACE_MODE = NEST CATALOG_SYNC_NAMESPACE_FLATTEN_DELIMITER = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) OBJECT_VISIBILITY = $$m: 1$$ ENABLE_DATA_COMPACTION = TRUE OAUTH_AUTHORIZATION_SERVER = i1 OAUTH_SCOPES_SUPPORTED = 'm' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -1200,6 +1200,9 @@ impl Parser {
         };
 
         let mut properties = self.parse_clone_container_properties(clone_from.is_some())?;
+        if self.is_snowflake() {
+            properties.extend(self.parse_snowflake_container_properties(false)?);
+        }
 
         if self.match_token(TokenType::With) {
             self.expect_token(TokenType::LParen)?;
@@ -1290,7 +1293,10 @@ impl Parser {
 
         let _on_cluster = self.parse_on_cluster_clause()?;
 
-        let properties = self.parse_clone_container_properties(clone_from.is_some())?;
+        let mut properties = self.parse_clone_container_properties(clone_from.is_some())?;
+        if self.is_snowflake() {
+            properties.extend(self.parse_snowflake_container_properties(true)?);
+        }
         let mut options: Vec<DatabaseOption> = Vec::new();
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
