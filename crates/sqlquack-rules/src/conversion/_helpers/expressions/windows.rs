@@ -34,11 +34,11 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::{
-    CALL_KIND, DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, NTILE_NAME,
-    PARTITION_FACET, RATIO_TO_REPORT_NAME, SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES,
-    VARIANT_EQUALITY_BY_TEXT, VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE,
-    WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
-    WINDOWED_NAMED_AGGREGATES,
+    CALL_KIND, DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NEGATE_KIND, NO_PARTITION,
+    NTILE_NAME, PARTITION_FACET, RATIO_TO_REPORT_NAME, SEVERAL_PARTITION_KEYS,
+    UNORDERED_WINDOW_AGGREGATES, VARIANT_EQUALITY_BY_TEXT, VARIANT_ORDER_KEY, VARIANT_PARTITION,
+    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_KEYS_CONSTRUCT, WINDOW_OFFSET, WINDOW_RANKING,
+    WINDOW_VALUE_FRAME, WINDOWED_NAMED_AGGREGATES,
 };
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
@@ -386,6 +386,14 @@ fn ignoring_nulls_offset(
     offset_window((function, true), &inner, over, site)
 }
 
+/// An integer literal offset, and whether a minus sign before it turns LAG into LEAD and back.
+fn signed_offset(offset: &Value) -> Option<(u64, bool)> {
+    match node_kind(offset)? {
+        (NEGATE_KIND, payload) => integer_literal(payload.get("this")?).map(|size| (size, true)),
+        _ => integer_literal(offset).map(|size| (size, false)),
+    }
+}
+
 fn offset_window(
     (function, ignore_nulls): (&str, bool),
     payload: &Value,
@@ -403,12 +411,17 @@ fn offset_window(
         ));
     }
     let value = convert_expression(field(inner, "this", &construct)?, site)?;
-    let offset = match inner.get("offset").filter(|offset| !offset.is_null()) {
-        Some(offset) => integer_literal(offset)
+    let (offset, flipped) = match inner.get("offset").filter(|offset| !offset.is_null()) {
+        Some(offset) => signed_offset(offset)
             .ok_or_else(|| refuse("the offset must be an integer literal".to_owned()))?,
-        None => 1,
+        None => (1, false),
     };
-    if ignore_nulls && offset < 1 {
+    let function = match (flipped, function) {
+        (true, "lag") => "lead",
+        (true, _) => "lag",
+        (false, function) => function,
+    };
+    if ignore_nulls && (offset < 1 || flipped) {
         return Err(refuse(
             "IGNORE NULLS is recorded only with an offset of 1 or more".to_owned(),
         ));
