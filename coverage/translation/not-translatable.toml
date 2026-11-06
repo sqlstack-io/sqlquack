@@ -1002,7 +1002,7 @@ forms = [
 
 [[group]]
 id = "snowflake-object-kinds"
-reason = "Object kinds DuckDB does not have: pipelines (pipes, tasks, alerts), applications, services, compute pools, integrations, sharing, listings, replication, backups, tags, data metric objects and schema variables, among others. Iceberg tables are listed as a whole: each is defined by an external volume or catalogue integration and its files, which DuckDB SQL cannot create; a plain table with the same rows is the counted CREATE TABLE form. Creating or altering these objects has no DuckDB translation. AGG returns a metric of a semantic view, one of these objects, so it has nothing to read without one."
+reason = "Object kinds DuckDB does not have: pipelines (pipes, tasks, alerts), applications, services, compute pools, integrations, sharing, listings, replication, backups, tags, data metric objects and schema variables, among others. Iceberg tables are listed as a whole: each is defined by an external volume or catalogue integration and its files, which DuckDB SQL cannot create; a plain table with the same rows is the counted CREATE TABLE form. Creating or altering these objects has no DuckDB translation. AGG returns a metric of a semantic view, one of these objects, so it has nothing to read without one. The UNKNOWN data type exists only in Iceberg tables of format version 3 and always reads as NULL, so it is listed with them."
 forms = [
   "sf.ddl.alter-agent.modify-live-version-set",
   "sf.ddl.alter-agent.set",
@@ -1474,6 +1474,7 @@ forms = [
   "sf.ddl.experiment.show-experiments",
   "sf.ddl.experiment.show-runs-in-experiment",
   "sf.ddl.truncate-materialized-view",
+  "sf.expressions.data-types-unknown",
   "sf.expressions.schema-variables",
   "sf.functions.agg",
 ]
