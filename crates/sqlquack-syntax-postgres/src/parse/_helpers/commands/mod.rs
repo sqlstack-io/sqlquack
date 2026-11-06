@@ -10,6 +10,7 @@ pub(crate) mod from;
 pub(crate) mod object_alters;
 pub(crate) mod objects;
 pub(crate) mod queries;
+pub(crate) mod role_alters;
 pub(crate) mod role_creates;
 pub(crate) mod routine_alters;
 pub(crate) mod routines;

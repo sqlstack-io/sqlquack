@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::statements::models::{
     CopyParameter, CopyStmt, Schema, Truncate, TruncateIdentity, TruncateTableEntry, TruncateTarget,
 };
 
+use crate::parse::_helpers::commands::role_alters::RoleAlter;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_col_id, is_col_label, is_non_reserved_word,
 };
@@ -32,6 +33,10 @@ impl Parser<'_> {
             Some("alter") if self.unknown_alter_kind().is_some() => {
                 self.at += self.unknown_alter_kind().unwrap_or_default();
                 Err(self.error())
+            }
+            Some("alter") if self.altered_role().is_some() => {
+                let which = self.altered_role().unwrap_or(RoleAlter::System);
+                self.alter_role_object(which)
             }
             Some("alter") if self.altered_object().is_some() => {
                 let (kind, words) = self.altered_object().unwrap_or_default();
