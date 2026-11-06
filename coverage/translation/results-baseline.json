@@ -14431,7 +14431,7 @@
     "sf.query.select.select": "refused",
     "sf.query.select.select.selecting-specific-columns": "matching",
     "sf.query.semantic-view": "unmeasured",
-    "sf.query.top-n": "unmeasured",
+    "sf.query.top-n": "refused",
     "sf.query.unpivot": "refused",
     "sf.query.values": "refused",
     "sf.query.where": "refused",
