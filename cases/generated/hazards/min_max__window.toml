@@ -76,7 +76,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -89,7 +89,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -102,7 +102,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -115,7 +115,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -193,7 +193,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -206,7 +206,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -219,7 +219,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -232,7 +232,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -310,7 +310,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -323,7 +323,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -336,7 +336,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -349,7 +349,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -427,7 +427,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -440,7 +440,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -453,7 +453,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -466,7 +466,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -544,7 +544,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -557,7 +557,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -570,7 +570,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -583,7 +583,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -661,7 +661,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -674,7 +674,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -687,7 +687,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -700,7 +700,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -778,7 +778,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -791,7 +791,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -804,7 +804,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -817,7 +817,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -895,7 +895,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -908,7 +908,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -921,7 +921,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -934,7 +934,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1032,7 +1032,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,0)" }
 rows = [
   ["'2024-01-15'", "1"],
   ["'2024-01-15'", "2"],
-  ["'2024-01-16'", "1"],
+  ["'2024-05-17'", "1"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1060,7 +1060,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1074,7 +1074,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1088,7 +1088,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMB
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1"],
   ["'2024-01-15 10:00:00 +00:00'", "2"],
-  ["'2024-01-16 11:30:00 +00:00'", "1"],
+  ["'2024-05-17 11:30:00 +00:00'", "1"],
 ]
 query = "SELECT g, MAX(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"

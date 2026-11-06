@@ -28,6 +28,7 @@ class BatchRecordingTestCase:
     expected_single_runs: tuple[str, ...]
     expected_files_written: int
     expected_message: str
+    expected_errors: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,7 @@ class ErrorMessageTestCase:
     sqlstate: str
     query_id: str | None
     expected_message: str | None
+    errno: int = 100038
 
 
 @dataclass(frozen=True)
@@ -45,6 +47,7 @@ class RecordableErrorTestCase:
     errno: int
     sqlstate: str
     expected_recordable: bool
+    expected_error: bool = False
 
 
 @dataclass(frozen=True)

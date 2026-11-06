@@ -1,0 +1,107 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT POSITION ( ) ;",
+   "sql_sha256": "012123ff6026d0c95bf81a54dd39e8621fbf03662137368d18a347525f9c671e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT OVERLAY ( ) ;",
+   "sql_sha256": "08458760827b5350a9ecf9e17702a47987c8d4a592921bc32e679bdae13cda5c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SUBSTR ( ) ;",
+   "sql_sha256": "258c8d80e1b1ee437f71af4dc376add107ae29b0612aa8563dc8a760e91ff0fd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CONVERT ( ) ;",
+   "sql_sha256": "4af9ad644853f6bb4181e10ec9e49447b06e34bfcde15b6377a162b197231fc4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT NORMALIZE ( ) ;",
+   "sql_sha256": "502ce7e7ae5f54e43e7505e95f1455c155e2806d22ecc23bd40853d2a5fef1d1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT LTRIM ( ) ;",
+   "sql_sha256": "613a5aeeb0f5b645d6dc12cc9619505c80fb93f5360c1b72d6131d0d81998cdc"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT SUBSTRING ( ) ;",
+   "sql_sha256": "65232676812e2f2f2e805550d728012290640fdf0d34a3c8c56eda16bd48a06d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TRY_CAST ( ) ;",
+   "sql_sha256": "72e2f29cc00a5f6807eece565a41f66218593be88a1509a2767a4fc86a5efb61"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT EXTRACT ( ) ;",
+   "sql_sha256": "740b81fe69e7ba34d00fae5184658cd9e60d1ad62e35ea434e1c41cb3be22b72"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( ) ;",
+   "sql_sha256": "7f11bad13af297165c5beef0987e805ccab53b561abb51eb093efddc3c06fd8c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT CAST ( NULL AS CHARACTER VARYING ) ;",
+   "sql_sha256": "c5b7a61f3e580464fe50ca0dfcb436c354153bcd0b294e00c1ae5f7c79c7eb2a"
+  }
+ ],
+ "receipts": 27,
+ "receipts_file_sha256": "7e3a73c3415136fbec99dcd7fc6131b878cc4b74ac863f8ec777184505479e9d",
+ "reconciled_receipts": 0,
+ "refusals": [
+  {
+   "reason": "audit has 0 complete events, expected 1",
+   "row_id": "*",
+   "run_id": "c9-ex-00r"
+  }
+ ],
+ "refused": 1,
+ "runs": [
+  {
+   "audit_sha256": "970a654391e26b8a2c727bec934f4cba10bd7b40dfa05ed6313e6ea41623d2df",
+   "receipts": 12,
+   "refused_rows": 0,
+   "run_id": "bgap2-ex-00",
+   "status": "imported"
+  },
+  {
+   "reason": "audit has 0 complete events, expected 1",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "c9-ex-00r",
+   "status": "refused"
+  },
+  {
+   "audit_sha256": "fc49cec15f83e7690bc44f9eda2d8c9eb68ef41bb528f4bc762da19b07e81e36",
+   "receipts": 15,
+   "refused_rows": 0,
+   "run_id": "c9-ex-00s",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

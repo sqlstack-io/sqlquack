@@ -20,6 +20,7 @@ use crate::analysis::main::analyze_function::analyze_function;
 use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::chosen_policy;
+use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::_helpers::schema::load_schema;
 use crate::cli::models::FunctionArguments;
 use sqlquack_rules::session::main::parse_session::parse_session;
@@ -173,7 +174,11 @@ fn convert(
         (&schema, &options),
     )
     .map_err(|refusals| Failure::Refused {
-        diagnostics: diagnose(&refusals, &body),
+        diagnostics: with_divergence_help(
+            &refusals,
+            diagnose(&refusals, &body),
+            (policy.as_ref(), &arguments.conversion, parameters),
+        ),
         body,
     })
 }

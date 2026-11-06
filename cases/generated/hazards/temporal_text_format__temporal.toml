@@ -11,7 +11,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "TO_VARCHAR(x1, 'YYYY-MM-DD')"
 tags = ["null", "boundary"]
@@ -23,7 +23,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "TO_VARCHAR(x1, 'YYYY-MM-DD')"
 tags = ["null", "boundary"]
@@ -35,7 +35,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "TO_CHAR(x1, 'YYYY-MM-DD')"
 tags = ["null", "boundary"]
@@ -47,7 +47,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "TO_CHAR(x1, 'YYYY-MM-DD')"
 tags = ["null", "boundary"]

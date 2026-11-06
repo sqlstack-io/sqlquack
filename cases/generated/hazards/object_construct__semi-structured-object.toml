@@ -22,8 +22,10 @@ id = "fn_object_construct_1_combination_0_text_text"
 description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, x0, 1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -448,8 +450,10 @@ id = "fn_object_construct_2_combination_0_text_literal_float_text_literal_float"
 description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "OBJECT_CONSTRUCT('k', x1, 'K', x3)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -508,8 +512,10 @@ id = "fn_object_construct_2_combination_1_text_literal_float_text_literal_float"
 description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "FLOAT" }, { name = "x3", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1, 'K', x3)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -805,7 +811,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "OBJECT_CONSTRUCT('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -817,7 +823,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "OBJECT_CONSTRUCT('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -829,7 +835,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "OBJECT_CONSTRUCT('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -841,7 +847,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -853,7 +859,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]
@@ -865,7 +871,7 @@ description = "fn:OBJECT_CONSTRUCT over benign values of each declared argument 
 columns = [{ name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "OBJECT_CONSTRUCT_KEEP_NULL('k', x1)"
 tags = ["null", "json-null", "missing-key", "invalid"]

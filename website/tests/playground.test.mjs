@@ -1,13 +1,13 @@
 // The playground engine and its span handling, under Node's test runner: `npm run test:engine`.
-// Needs the engine built into public/playground/engine (scripts/build_engine.sh).
+// Needs the engine built into wasm/pkg (scripts/build_engine.sh).
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { initSync, analyze } from '../public/playground/engine/sqlquack_wasm.js';
+import { initSync, analyze } from '../wasm/pkg/sqlquack_wasm.js';
 import { rendered, underlined } from '../public/playground/spans.js';
 
-initSync({ module: readFileSync(new URL('../public/playground/engine/sqlquack_wasm_bg.wasm', import.meta.url)) });
+initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
 const SCHEMA = JSON.stringify({ ORDERS: [['ORDER_ID', 'NUMBER(38,0)'], ['NOTE', 'VARCHAR']] });
 
@@ -66,8 +66,9 @@ test('the policy and session parameters choose the profile, or refuse, as on the
 	assert.equal(monday.status, 'fail');
 	assert.deepEqual(monday.diagnostics.map((d) => d.code), ['SQ0007']);
 	assert.equal(monday.statements, undefined);
-	// The built-in default records no profiles, so any session parameter is refused.
-	assert.deepEqual(translate({ session: 'TIMEZONE=UTC' }).diagnostics.map((d) => d.code), ['SQ0007']);
+	// The built-in default records no profiles: it takes TIMEZONE and result-neutral parameters only.
+	assert.equal(translate({ session: 'TIMEZONE=UTC' }).profile, 'the built-in default');
+	assert.deepEqual(translate({ session: 'WEEK_START=1' }).diagnostics.map((d) => d.code), ['SQ0007']);
 	assert.match(translate({ policy: 'schema_version = 1\nnot_a_key = 2' }).error, /^policy: /);
 	assert.match(translate({ session: 'TIMEZONE' }).error, /NAME=VALUE/);
 });

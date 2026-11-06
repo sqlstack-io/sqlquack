@@ -249,6 +249,7 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
         &site.context.projecting(false),
         false,
     )?;
+    let sql = format!("({sql})");
     match columns.as_slice() {
         [column] => Ok(Emitted {
             held: column.holding,
@@ -256,7 +257,7 @@ pub(crate) fn scalar_subquery(payload: &Value, site: Site<'_>) -> Result<Emitted
             sourced: column.sourced,
             utc_offset: column.utc_offset,
             declared: column.declared_offsets.clone(),
-            ..Emitted::new(format!("({sql})"), column.data_type)
+            ..Emitted::new(sql, column.data_type)
         }),
         _ => Err(outside_conditions(
             construct,

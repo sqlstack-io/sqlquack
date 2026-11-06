@@ -15,7 +15,7 @@ sqlquack census [OPTIONS] <PATHS>...
 ```
 
 ```bash
-sqlquack census models --schema schema.json
+sqlquack census target/compiled/my_project/models --schema schema.json
 sqlquack census target/compiled --schema schema.json --chain-models --json
 ```
 
@@ -24,7 +24,7 @@ Each `.sql` file is one query, or one model compiled by
 A directory is searched for `.sql` files.
 
 ```console
-$ sqlquack census models --schema schema.json
+$ sqlquack census target/compiled/my_project/models --schema schema.json
 Census of 3 snowflake SQL files
   parsed 3 (3 statements), unparsed 0, empty 0
   distinct constructs 15 (2 clause, 4 fn, 9 node)

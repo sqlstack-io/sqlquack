@@ -70,10 +70,11 @@ use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
-    LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF, NUMERIC_RANGE,
+    LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF,
     PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT,
     TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
+use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
 fn generator_sequence(

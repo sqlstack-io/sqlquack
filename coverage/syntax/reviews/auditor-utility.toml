@@ -1,0 +1,93 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "auditor-utility-001"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-alert",
+  "sf.utility.execute-dcm-project.test-all",
+  "sf.utility.execute-task.task-retry-graph-run",
+  "sf.utility.execute-task.task-retry-last",
+  "sf.utility.explain",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-alert" = "29237d6c7a060ef9489317fe883af146cb71a225f2ae1b9ad815b741991cfe57"
+"sf.utility.execute-dcm-project.test-all" = "6537c1fd7288cbc33cc4648195fa8a921483915701755abc9eef25667a2ed6bb"
+"sf.utility.execute-task.task-retry-graph-run" = "5607f76c0a5d4e3304edf1243cb9e7ae24f49e298b3a218bc4033cda0af532c6"
+"sf.utility.execute-task.task-retry-last" = "de9911e5e03a0b747679aa2771e8255ace9e33fc8b7bf44f9f439ce6c9b8576d"
+"sf.utility.explain" = "5824d4291f91a272ac141e2ebad08873dfea4c143ad85590f52f2b4b477b162c"
+
+[review.definitions]
+"sf.utility.execute-alert" = "8e95792bafdcfa6f8efb05ee69f238b5ba8696cccc1639f67ed76a5b0f680b00"
+"sf.utility.execute-dcm-project.test-all" = "35c5e8df0c1b1466742ffe97e4961ac93e5ccc5f7cbff9c79bc6474499061e5d"
+"sf.utility.execute-task.task-retry-graph-run" = "e7fe9238ac8d31a527171dcf12189db7311b6284c6eb9a93e0368517f54dd2d4"
+"sf.utility.execute-task.task-retry-last" = "aed2a06fd050574f75bf4d2075d7b0023b4c739287aa3ee8df6a5373e86b4984"
+"sf.utility.explain" = "adef967d56411996bc47f55d5d607768e45c0bdc74c708b11b0a5fe287b7cc3a"
+
+[[review]]
+id = "auditor-utility-002"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "a8d9cb164ed163f3c02fff0e18aedb62c1dde5be"
+reviewed_utc = "2026-11-05T10:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-task.task",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-task.task" = "a70399d53e6167f1068b77bf91fc249db62a7d7cfc18558f684102c32fddaed0"
+
+[review.definitions]
+"sf.utility.execute-task.task" = "7767464e993edc3b3c39d2168e5cd3c79879415648c6c3972ab53ddf5ed6e3d7"
+
+[[review]]
+id = "auditor-utility-003"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "e792d6e8f27909ce93bc04d35d415b3fd2c288cb"
+reviewed_utc = "2026-11-05T16:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-dcm-project.purge",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-dcm-project.purge" = "7db11b83c456be2b15894b2770c9c615c60828377aedca84da3b922bc4d04f72"
+
+[review.definitions]
+"sf.utility.execute-dcm-project.purge" = "d6ed3e88a606d462dcc79381e11336dec8a40afbad2541fb38892c3879b6cc1c"
+
+[[review]]
+id = "auditor-utility-004"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-code-bundle",
+  "sf.utility.execute-notebook",
+  "sf.utility.execute-task-graph.graph-retry-last",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-code-bundle" = "dde5582ad606fd5d3606c1b176014c24c43c7c77df39c1563bb909f19bc8d63e"
+"sf.utility.execute-notebook" = "3ea105b906e4f7991f6e8b84dbf134a5283aa99ba13eaff68de4a08b5425bb73"
+"sf.utility.execute-task-graph.graph-retry-last" = "3cb93c674ff0b194cbb15ea343c0f637717afb14dfb5d71c24f463553d23c8f4"
+
+[review.definitions]
+"sf.utility.execute-code-bundle" = "c16d88e8ce02a60b39760b47133af578be1993fe286d20de7791dee02a2c45bc"
+"sf.utility.execute-notebook" = "efda46598201cea03a4d64af6e20a5865ef4cd68049ba5b3ae44b1047bf76126"
+"sf.utility.execute-task-graph.graph-retry-last" = "5d3899caa702d4ec1b99cca9d3b4bd764b601fa2c7b151d18262de5d6fa7a99c"
