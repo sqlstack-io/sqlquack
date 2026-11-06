@@ -1,0 +1,2 @@
+{"relations": {"EVENTS": [["EVENT_ID", "NUMBER(38,0)"], ["OCCURRED_AT", "TIMESTAMP_NTZ(9)"]]},
+ "functions": {"LOOKBACK": {"language": "sql", "arguments": [], "returns": "NUMBER(1,0)"}}}

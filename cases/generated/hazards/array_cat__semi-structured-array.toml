@@ -10,8 +10,10 @@ id = "fn_array_cat_combination_0_variant_variant"
 description = "fn:ARRAY_CAT over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARIANT" }, { name = "x1", type = "VARIANT" }]
 rows = [
+  ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
   ["PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "ARRAY_CAT(x0, x1)"
 tags = ["null", "duplicates", "empty", "invalid"]

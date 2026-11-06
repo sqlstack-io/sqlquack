@@ -10,8 +10,10 @@ id = "fn_least_combination_0_integer_integer"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -46,8 +48,10 @@ id = "fn_least_combination_0_decimal_decimal"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -58,8 +62,10 @@ id = "fn_least_combination_1_integer_integer"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["1", "2"],
+  ["2", "12"],
+  ["12", "1"],
   ["1", "1"],
-  ["2", "2"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -94,8 +100,10 @@ id = "fn_least_combination_1_decimal_decimal"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,10)" }, { name = "x1", type = "NUMBER(38,10)" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -244,8 +252,10 @@ id = "fn_least_1_combination_0_float_float"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -256,8 +266,10 @@ id = "fn_least_1_combination_1_float_float"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "FLOAT" }, { name = "x1", type = "FLOAT" }]
 rows = [
+  ["1.5", "2.25"],
+  ["2.25", "3.125"],
+  ["3.125", "1.5"],
   ["1.5", "1.5"],
-  ["2.25", "2.25"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -370,8 +382,10 @@ id = "fn_least_2_combination_0_text_text"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -382,8 +396,10 @@ id = "fn_least_2_combination_1_text_text"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'b'"],
+  ["'b'", "'ab'"],
+  ["'ab'", "'a'"],
   ["'a'", "'a'"],
-  ["'b'", "'b'"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -484,8 +500,9 @@ id = "fn_least_3_combination_0_boolean_boolean"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -496,8 +513,9 @@ id = "fn_least_3_combination_1_boolean_boolean"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -530,8 +548,10 @@ id = "fn_least_4_combination_0_date_date"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -542,8 +562,10 @@ id = "fn_least_4_combination_1_date_date"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -606,8 +628,10 @@ id = "fn_least_5_combination_0_timestamp_ntz_timestamp_ntz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -618,8 +642,10 @@ id = "fn_least_5_combination_1_timestamp_ntz_timestamp_ntz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -700,8 +726,10 @@ id = "fn_least_6_combination_0_timestamp_tz_timestamp_tz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -712,8 +740,10 @@ id = "fn_least_6_combination_1_timestamp_tz_timestamp_tz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -804,8 +834,10 @@ id = "fn_least_7_combination_0_timestamp_ltz_timestamp_ltz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "LEAST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]
@@ -816,8 +848,10 @@ id = "fn_least_7_combination_1_timestamp_ltz_timestamp_ltz"
 description = "fn:LEAST over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "GREATEST(x0, x1)"
 tags = ["null", "ties", "mixed-types"]

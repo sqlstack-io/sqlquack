@@ -24,7 +24,7 @@ fn given_session_dependent_statements_when_converting_then_they_rely_on_a_utc_se
             expected_outcome: DivergenceModeOutcome {
                 converted: false,
                 divergences: vec![],
-                categories: vec![RefusalCategory::TypeCondition],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         SessionTimeZoneTestCase {

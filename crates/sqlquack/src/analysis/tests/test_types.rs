@@ -81,7 +81,8 @@ pub(crate) struct CompositionTestCase {
     pub(crate) description: &'static str,
     pub(crate) columns: usize,
     pub(crate) depths: [usize; 3],
-    pub(crate) expected_budget_seconds: u64,
+    /// How many times the time at the first depth the last depth may take: linear, with room for noise.
+    pub(crate) expected_max_time_ratio: u32,
 }
 
 pub(crate) struct BudgetTestCase {

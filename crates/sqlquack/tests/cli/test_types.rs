@@ -91,7 +91,7 @@ pub(crate) struct CoverageOutcome {
 
 pub(crate) struct PendingFlagsTestCase {
     pub(crate) description: &'static str,
-    pub(crate) expected_flags: Vec<(String, Option<bool>)>,
+    pub(crate) expected_flags: Vec<(String, Option<bool>, Option<bool>)>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -277,4 +277,19 @@ pub(crate) struct DeepChainTestCase {
     pub(crate) expected_exit: Option<i32>,
     /// Text standard error must hold, such as the refusal's code.
     pub(crate) expected_mention: &'static str,
+}
+
+/// A statement refused for a divergence under some flags, and the help it must give.
+pub(crate) struct DivergenceHelpTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_help: &'static str,
+}
+
+/// A malformed schema file and the words its error must use.
+pub(crate) struct SchemaErrorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) schema: &'static str,
+    pub(crate) expected_error: &'static str,
 }

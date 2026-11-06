@@ -62,6 +62,34 @@ query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
 row_groups = true
+divergences = { tied = "listagg_order" }
+
+[[rule.form]]
+construct = "node:within_group"
+arguments = [{ families = ["text"] }, { families = ["text"], grammar = true }]
+template = "LISTAGG({0}, ',') WITHIN GROUP (ORDER BY {1})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+ordinal = ["1"]
+divergences = { tied = "listagg_order" }
+
+[[rule]]
+id = "rule.text_pair"
+
+[[rule.form]]
+construct = "fn:CONTAINS"
+arguments = [{ families = ["text"], kinds = ["value"] }, { families = ["text"], kinds = ["value"] }]
+template = "CONTAINS({0}, {1})"
+category = "semi-structured"
+
+[[rule]]
+id = "rule.boolean_triple"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [{ families = ["boolean"] }, { families = ["boolean"] }, { families = ["boolean"] }]
+template = "DECODE({0}, {1}, {2})"
+category = "semi-structured"
 """
 
 HAZARD_CATALOGUE: str = """version = 1
@@ -70,6 +98,7 @@ HAZARD_CATALOGUE: str = """version = 1
 sql_type = "VARCHAR"
 benign = "'a'"
 other = "'b'"
+third = "'ab'"
 
 [[families.text.hazard]]
 id = "empty"
@@ -118,6 +147,11 @@ unrecordable = "The connector cannot convert it."
 sql_type = "NUMBER(38,0)"
 benign = "1"
 other = "2"
+
+[families.boolean]
+sql_type = "BOOLEAN"
+benign = "TRUE"
+other = "FALSE"
 """
 
 HAZARD_POLICY: str = """[edge_cases.semi-structured]

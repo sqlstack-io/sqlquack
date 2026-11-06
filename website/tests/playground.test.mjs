@@ -66,8 +66,9 @@ test('the policy and session parameters choose the profile, or refuse, as on the
 	assert.equal(monday.status, 'fail');
 	assert.deepEqual(monday.diagnostics.map((d) => d.code), ['SQ0007']);
 	assert.equal(monday.statements, undefined);
-	// The built-in default records no profiles, so any session parameter is refused.
-	assert.deepEqual(translate({ session: 'TIMEZONE=UTC' }).diagnostics.map((d) => d.code), ['SQ0007']);
+	// The built-in default records no profiles: it takes TIMEZONE and result-neutral parameters only.
+	assert.equal(translate({ session: 'TIMEZONE=UTC' }).profile, 'the built-in default');
+	assert.deepEqual(translate({ session: 'WEEK_START=1' }).diagnostics.map((d) => d.code), ['SQ0007']);
 	assert.match(translate({ policy: 'schema_version = 1\nnot_a_key = 2' }).error, /^policy: /);
 	assert.match(translate({ session: 'TIMEZONE' }).error, /NAME=VALUE/);
 });

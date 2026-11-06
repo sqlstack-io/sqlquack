@@ -6,6 +6,7 @@ use serde::Serialize;
 
 use crate::classification::models::Construct;
 use crate::parsing::models::SourceLocation;
+use crate::refusals::constants::NEEDS_DIVERGENCE;
 
 /// Why a construct or statement is refused.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
@@ -62,6 +63,17 @@ pub struct Refusal {
     pub category: RefusalCategory,
     /// The specific reason, such as the differing tree path.
     pub reason: String,
+}
+
+impl Refusal {
+    /// The id of the known divergence a refused divergence needs; none for other refusals.
+    pub fn divergence(&self) -> Option<&str> {
+        if self.category != RefusalCategory::DivergenceRefused {
+            return None;
+        }
+        let (_, rest) = self.reason.split_once(NEEDS_DIVERGENCE)?;
+        rest.split_once('`').map(|(id, _)| id)
+    }
 }
 
 /// What the rule catalogue says about one construct.

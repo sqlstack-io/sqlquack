@@ -1,14 +1,15 @@
 use crate::helpers::{
     convert_outcome, convert_streams, converted_column_names, converted_first_value,
-    converted_run_error, converted_value_over, override_failure, override_outcome,
-    policy_free_exit_code, python_outcome, python_report, python_rows, run_convert, run_with_input,
+    converted_run_error, converted_value_over, first_refusal_help, override_failure,
+    override_outcome, policy_free_exit_code, python_outcome, python_report, python_rows,
+    run_convert, run_with_input, schema_failure,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
-    DeepChainTestCase, FailureKindTestCase, OutputFormatTestCase, OverrideFailureTestCase,
-    OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase, PythonRunTestCase,
-    RunErrorTestCase, ValueTestCase,
+    DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, OutputFormatTestCase,
+    OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase,
+    PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -317,6 +318,41 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             ],
             mention: "gives QUOTED_IDENTIFIERS_IGNORE_CASE twice",
             expected_outcome: convert_outcome(2, false),
+        },
+        ConvertTestCase {
+            description: "the built-in default takes a UTC TIMEZONE and result-neutral parameters",
+            sql: "SELECT 1 AS total",
+            flags: &[
+                "--builtin-policy",
+                "--session",
+                "TIMEZONE=UTC",
+                "--session",
+                "query_tag=nightly",
+            ],
+            mention: "converted under the built-in default",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "the built-in default refuses a parameter that can change a result, by name",
+            sql: "SELECT 1 AS total",
+            flags: &["--builtin-policy", "--session", "WEEK_START=1"],
+            mention: "not WEEK_START; pass --policy",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a subquery reading a lambda's parameter refuses: it cannot be bound outside",
+            sql: "SELECT TRANSFORM(SPLIT('a,b', ','), x VARCHAR -> (SELECT UPPER(x))) AS t",
+            flags: &[],
+            mention: "a subquery that reads a lambda's parameter",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a subquery calling a volatile function refuses where a lambda wraps it",
+            sql: "SELECT DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events \
+                  WHERE event_id > LOOKBACK())) AS d",
+            flags: &["--schema", "tests/cli/fixtures/volatile_lookback.json"],
+            mention: "a subquery calling a function whose result can change between calls",
+            expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "comment-only input is a usage error",
@@ -993,6 +1029,37 @@ fn given_recorded_shapes_when_converting_then_they_convert_or_refuse_as_recorded
 }
 
 #[test]
+fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside_lambdas() {
+    let test_cases = [
+        ValueTestCase {
+            description: "an incremental lookback from the latest row keeps the last three days",
+            sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
+                  occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
+                  WHERE occurred_at >= DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events))",
+            expected_value: "2",
+        },
+        ValueTestCase {
+            description: "a DATEADD of a DATEADD of a subquery binds it once, outside both",
+            sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
+                  occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
+                  WHERE occurred_at >= \
+                  DATEADD(hour, 37, DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events)))",
+            expected_value: "1",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_connect_by_root_of_a_qualified_column_when_running_then_it_reads_the_root_value() {
     let test_cases = [ValueTestCase {
         description: "CONNECT_BY_ROOT of a qualified column reads the root row's value",
@@ -1323,10 +1390,8 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
                 `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
                 needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
-                --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
-                --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every \
-                one\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                --builtin-policy refuses every known divergence; pass --policy with a policy \
+                file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
@@ -1448,7 +1513,10 @@ fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_list
         );
         assert!(
             test_case.arguments != ["--help"]
-                || stdout.contains("Exit status of convert, function, census and index:\n  0  the command succeeded"),
+                || stdout.contains(
+                    "census and index exit 0 when they finish, refused files included, and 2 \
+                     when they cannot run.",
+                ),
             "{}",
             test_case.description
         );
@@ -1603,6 +1671,91 @@ fn given_a_long_flat_chain_when_converting_then_it_converts_or_is_refused_within
             "{}: took {:?}",
             test_case.description,
             started.elapsed()
+        );
+    }
+}
+
+#[test]
+fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fixes_that_work() {
+    let test_cases = [
+        DivergenceHelpTestCase {
+            description: "strict mode refusing what the default allows: --utc-session cannot help",
+            sql: "SELECT CURRENT_TIMESTAMP AS t",
+            flags: &["--strict", "--utc-session"],
+            expected_help: "to rely on `current_time`: drop --strict, or set strict = \"warn\" \
+                under [divergences.current_time] in <policy>",
+        },
+        DivergenceHelpTestCase {
+            description: "refused by default: only the policy file can allow it",
+            sql: "SELECT HASH(1) AS h",
+            flags: &[],
+            expected_help: "to rely on `hash`: set default = \"warn\" under [divergences.hash] in \
+                <policy>",
+        },
+        DivergenceHelpTestCase {
+            description: "refused in both modes under --strict: dropping --strict is not enough",
+            sql: "SELECT HASH(1) AS h",
+            flags: &["--strict"],
+            expected_help: "to rely on `hash`: set default and strict = \"warn\" under \
+                [divergences.hash] in <policy>",
+        },
+        DivergenceHelpTestCase {
+            description: "a divergence a rule's type check needs is still SQ0008, with policy help",
+            sql: "SELECT CAST(1 AS NUMBER(38,0)) - CAST(1 AS NUMBER(38,2)) AS d",
+            flags: &["--strict"],
+            expected_help: "to rely on `numeric_range`: drop --strict, or set strict = \"warn\" \
+                under [divergences.numeric_range] in <policy>",
+        },
+        DivergenceHelpTestCase {
+            description: "a value divergence under --loud-divergences-only",
+            sql: "SELECT CURRENT_TIMESTAMP AS t",
+            flags: &["--loud-divergences-only"],
+            expected_help: "`current_time` can return a different value rather than raise, which \
+                --loud-divergences-only refuses; drop that flag",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            first_refusal_help(test_case.sql, test_case.flags),
+            test_case.expected_help,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_in_schema_terms() {
+    let test_cases = [
+        SchemaErrorTestCase {
+            description: "a column without a type",
+            schema: r#"{"ORDERS": [["A"]]}"#,
+            expected_error: "relation ORDERS, column 1 (A) has no type",
+        },
+        SchemaErrorTestCase {
+            description: "an unknown key beside the sections",
+            schema: r#"{"relations": {}, "tables": {}}"#,
+            expected_error: "unknown top-level key `tables`",
+        },
+        SchemaErrorTestCase {
+            description: "an unknown key in a column object",
+            schema: r#"{"ORDERS": [{"name": "A", "type": "NUMBER", "nullable": true}]}"#,
+            expected_error: "relation ORDERS, column 1 has unknown key `nullable`",
+        },
+        SchemaErrorTestCase {
+            description: "relations not listed as columns",
+            schema: r#"{"ORDERS": {"A": "NUMBER"}}"#,
+            expected_error: "relation ORDERS must list its columns",
+        },
+    ];
+    for test_case in test_cases {
+        let (exit_code, stderr) = schema_failure(test_case.schema);
+
+        assert_eq!(exit_code, Some(2), "{}: {stderr}", test_case.description);
+        assert!(
+            stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
+            "{}: {stderr}",
+            test_case.description
         );
     }
 }

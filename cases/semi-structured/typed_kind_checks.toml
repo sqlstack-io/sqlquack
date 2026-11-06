@@ -1,0 +1,22 @@
+# IS_BINARY, IS_TIME and IS_TIMESTAMP_TZ of VARIANTs holding each typed value, so every check has a TRUE row.
+category = "semi-structured-check"
+construct = "fn:IS_BINARY"
+session_profile = "utc-v1"
+
+[[case]]
+id = "typed_kind_checks"
+description = "IS_BINARY, IS_TIME and IS_TIMESTAMP_TZ of VARIANTs holding binary, a time, timestamps of each kind and text; each check is TRUE on exactly one row, which catches a constant FALSE or a check that accepts a neighbouring type."
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["TO_VARIANT(TO_BINARY('6162', 'HEX'))"],
+  ["TO_VARIANT('10:00:00'::TIME)"],
+  ["TO_VARIANT('2024-01-15 10:00:00 +00:00'::TIMESTAMP_TZ)"],
+  ["TO_VARIANT('2024-01-15 10:00:00'::TIMESTAMP_NTZ)"],
+  ["TO_VARIANT('2024-01-15 10:00:00'::TIMESTAMP_LTZ)"],
+  ["TO_VARIANT('6162')"],
+  ["PARSE_JSON('null')"],
+  ["NULL"],
+]
+query = "SELECT IS_BINARY(v) AS b, IS_TIME(v) AS t, IS_TIMESTAMP_TZ(v) AS tz, IS_BINARY(v:missing) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "json-null", "missing-key"]

@@ -8,7 +8,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::Context;
 
-use crate::conversion::constants::NUMERIC_RANGE;
+use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
 /// Records the divergence at `construct` when the policy allows it here; refuses otherwise.
 pub(crate) fn diverge(

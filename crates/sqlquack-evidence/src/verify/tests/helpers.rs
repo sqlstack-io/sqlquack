@@ -476,6 +476,7 @@ pub(crate) fn undeclared_compile_error_for(
         expected_divergence: None,
         values: true,
         compile_error: declared,
+        expected_error: false,
         functions: Vec::new(),
         overrides: Vec::new(),
         setup_sql: [String::from(
