@@ -3554,6 +3554,84 @@ cases = ["cases/translation/functions/atanh.toml#t006_outside"]
 required = true
 
 [[obligation]]
+id = "sf.functions.avg.avg.t001"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "NUMBER"
+note = "Integer groups whose average is not whole."
+catches = "integer division (1 instead of 1.666667)"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.avg.avg.t002"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "NUMBER(10,2)"
+note = "Fixed-point values with two decimals."
+catches = "a FLOAT average or the input scale kept (2 digits instead of the widened scale)"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t002_decimal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.avg.avg.t003"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "FLOAT"
+note = "Binary fractions that do not add exactly."
+catches = "a summation that differs from Snowflake's on these values (naive left-to-right gives 0.20000000000000004, exact or compensated 0.19999999999999998)"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t003_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.avg.avg.t004"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Numeric text, which the page says is cast to FLOAT."
+catches = "text rejected, or read as NUMBER (a fixed-point result type)"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t004_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.avg.avg.t005"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "DISTINCT"
+note = "DISTINCT on groups with duplicates."
+catches = "DISTINCT ignored (2 counted twice)"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = []
+required = true
+held = "differs from Snowflake: AVG(DISTINCT) of a NUMBER gives DECIMAL(38,6) where Snowflake gives NUMBER(38,3); it refuses once #122 lands"
+
+[[obligation]]
+id = "sf.functions.avg.avg.t006"
+form = "sf.functions.avg.avg"
+kind = "null_argument"
+target = "expr1"
+note = "NULL rows beside values, and a group of only NULL."
+catches = "NULL read as 0 (a different average) or the all-NULL group giving 0"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t006_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.avg.avg.t007"
+form = "sf.functions.avg.avg"
+kind = "type_combination"
+target = "no rows"
+note = "No rows."
+catches = "an empty input giving 0 instead of NULL"
+reading = "the page: the average of the non-NULL values; VARCHAR input is cast to FLOAT; an empty or all-NULL input gives NULL"
+cases = ["cases/translation/functions/avg.avg.toml#t007_empty_input"]
+required = true
+
+[[obligation]]
 id = "sf.functions.avg.avg-over.t001"
 form = "sf.functions.avg.avg-over"
 kind = "type_combination"
@@ -7152,6 +7230,97 @@ cases = ["cases/translation/functions/count-if.count-if-over.toml#t007_null_part
 required = true
 
 [[obligation]]
+id = "sf.functions.count.count.t001"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "one column"
+note = "COUNT of a column with a NULL beside COUNT(*)."
+catches = "COUNT(x) counting NULL rows, or COUNT(*) skipping them"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = ["cases/translation/functions/count.count.toml#t001_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.count.count.t002"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "several columns"
+note = "COUNT(a, b), which skips a row where either is NULL."
+catches = "only the first column checked (4), or rows counted (5)"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = ["cases/translation/functions/count.count.toml#t002_multi"]
+required = true
+
+[[obligation]]
+id = "sf.functions.count.count.t003"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "DISTINCT a, b"
+note = "DISTINCT over the combination with a repeated (1, x) pair."
+catches = "DISTINCT applied to the first column only (2 instead of 3), or rows with a NULL counted as a combination"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = ["cases/translation/functions/count.count.toml#t003_distinct_multi"]
+required = true
+
+[[obligation]]
+id = "sf.functions.count.count.t004"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "alias.*"
+note = "input.* counts only rows with no NULL column, unlike *."
+catches = "alias.* read as * (every row counted)"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = []
+required = true
+held = "refuses: COUNT over a qualified star; conversion waits on #100 after launch"
+
+[[obligation]]
+id = "sf.functions.count.count.t005"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "* EXCLUDE"
+note = "A wildcard with EXCLUDE counts rows whose remaining columns are all non-NULL."
+catches = "EXCLUDE ignored, or the filtered wildcard read as unfiltered * (every row counted)"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = []
+required = true
+held = "refuses: COUNT over a star with EXCLUDE; conversion waits on #100 after launch"
+
+[[obligation]]
+id = "sf.functions.count.count.t006"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "* ILIKE"
+note = "A wildcard with a lower-case ILIKE pattern keeps the matching columns only."
+catches = "ILIKE ignored (b, with its NULL, also checked) or matched case-sensitively"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = []
+required = true
+held = "refuses: COUNT over a star with ILIKE; conversion waits on #100 after launch"
+
+[[obligation]]
+id = "sf.functions.count.count.t007"
+form = "sf.functions.count.count"
+kind = "null_argument"
+target = "expr1"
+note = "JSON null in a VARIANT beside SQL NULL and a value; the page says JSON null counts as NULL."
+catches = "JSON null counted as a value"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = ["cases/translation/functions/count.count.toml#t007_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.count.count.t008"
+form = "sf.functions.count.count"
+kind = "type_combination"
+target = "no rows"
+note = "No rows."
+catches = "NULL instead of 0 for an empty input"
+reading = "the page: COUNT(expr, ...) counts rows where every expression is non-NULL; DISTINCT applies to the combination of all expressions; * counts every row; alias.* and a wildcard with ILIKE or EXCLUDE count rows with no NULL column; JSON null in a VARIANT counts as NULL"
+cases = ["cases/translation/functions/count.count.toml#t008_empty_input"]
+required = true
+
+[[obligation]]
 id = "sf.functions.count.count-over.t001"
 form = "sf.functions.count.count-over"
 kind = "type_combination"
@@ -9409,6 +9578,97 @@ cases = ["cases/translation/functions/extract.extract.toml#t008_pre_epoch"]
 required = true
 
 [[obligation]]
+id = "sf.functions.extract.extract-from.t001"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "DATE"
+note = "Calendar and week parts of dates at year and ISO-week boundaries."
+catches = "dayofweek on another numbering, week by calendar year, or dayofyear 0-based, or ISO numbering for dayofweek (7 instead of 0 on the Sunday row)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t001_date_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t002"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ"
+note = "Time parts with fractional seconds."
+catches = "seconds rounded, or nanosecond scaled to milliseconds"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t002_time_parts"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t003"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIMESTAMP_TZ"
+note = "Parts of a TIMESTAMP_TZ, including its offset and epoch."
+catches = "parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t003_timestamp_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t004"
+form = "sf.functions.extract.extract-from"
+kind = "type_combination"
+target = "TIME"
+note = "Parts of a TIME."
+catches = "an error for a TIME, or seconds rounded (46)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t004_time"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t005"
+form = "sf.functions.extract.extract-from"
+kind = "error_parity"
+target = "error"
+note = "The part given as a string literal in the FROM form: Snowflake rejects it at parse time (1003, unexpected FROM), unlike the two-argument form."
+catches = "the quoted part accepted (a value returned where Snowflake refuses the statement)"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse a quoted date part in EXTRACT ... FROM"
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t006"
+form = "sf.functions.extract.extract-from"
+kind = "null_argument"
+target = "date_interval_time_or_timestamp_expr"
+note = "NULL next to a set date."
+catches = "NULL read as a default date"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t006_null_date_interval_time_or_timestamp_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t007"
+form = "sf.functions.extract.extract-from"
+kind = "boundary"
+subkind = "leap_day"
+target = "leap_day"
+note = "Day of year around 29 February."
+catches = "a 365-day year in 2024"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t007_leap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.extract.extract-from.t008"
+form = "sf.functions.extract.extract-from"
+kind = "boundary"
+subkind = "negative"
+target = "negative"
+note = "Epoch parts before 1970."
+catches = "a truncation toward zero instead of floor for negative epochs"
+reading = "the page: a part from Supported date and time parts, quoted or unquoted; a date, an interval, a time or a timestamp; returns NUMBER"
+cases = ["cases/translation/functions/extract.extract-from.toml#t008_pre_epoch"]
+required = true
+
+[[obligation]]
 id = "sf.functions.factorial.t001"
 form = "sf.functions.factorial"
 kind = "type_combination"
@@ -9619,6 +9879,39 @@ cases = ["cases/translation/functions/flatten.toml#t006_null_input"]
 required = true
 
 [[obligation]]
+id = "sf.functions.flatten.t007"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH reaching an object"
+note = "PATH reaching an object: one row per key, with KEY, VALUE and a PATH prefixed with the given path, for a plain key and one with a space."
+catches = "the prefix joined without a dot, or a quoted key written as a plain one"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t001_object_under_path"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t008"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH key case"
+note = "PATH keys match case-sensitively: 'Items' finds nothing where the key is items, and one-step 'items' reaches the array."
+catches = "keys matched ignoring case"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t002_path_key_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t009"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH reaching a scalar, a JSON null or an empty array"
+note = "PATH reaching a scalar, a JSON null and an empty array gives no rows."
+catches = "a scalar flattened into one row, or a JSON null giving a row"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t003_scalar_and_null_at_path"]
+required = true
+
+[[obligation]]
 id = "sf.functions.floor.t001"
 form = "sf.functions.floor"
 kind = "type_combination"
@@ -9713,8 +10006,8 @@ id = "sf.functions.format-string-template.t001"
 form = "sf.functions.format-string-template"
 kind = "type_combination"
 target = "VARCHAR with VARCHAR and NUMBER"
-note = "The page's examples: one value, two values in order, and {:.2f} on 3.14159."
-catches = "the values substituted in reverse, or the precision ignored"
+note = "The page's examples with plain placeholders: one value, and two values in order. Its {:.2f} example is the t006 case, since Snowflake raises an error for it."
+catches = "the values substituted in reverse"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t001_examples"]
 required = true
@@ -9724,8 +10017,8 @@ id = "sf.functions.format-string-template.t002"
 form = "sf.functions.format-string-template"
 kind = "type_combination"
 target = "VARCHAR, NUMBER(10,2), NUMBER"
-note = "The page's table example, with values from columns."
-catches = "the decimal printed without two places"
+note = "The page's table example with values from columns and plain placeholders, since Snowflake raises an error for its {:.2f}."
+catches = "the NUMBER(10,2) value printed without its scale, or the values out of order"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t002_columns"]
 required = true
@@ -9761,6 +10054,17 @@ note = "A NULL value; the page does not say; the recording decides."
 catches = "an error, or an empty substitution where Snowflake prints something else"
 reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
 cases = ["cases/translation/functions/format-string-template.toml#t005_null_value1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t006"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "The page's {:.2f} example on 3.14159; Snowflake raises 100572 (invalid format specifier) where the page shows 3.14."
+catches = "the value formatted to two places where Snowflake raises an error"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t006_precision_spec"]
 required = true
 
 [[obligation]]
@@ -9973,6 +10277,18 @@ cases = ["cases/translation/functions/get-path.colon.toml#t003_null_column_ident
 required = true
 
 [[obligation]]
+id = "sf.functions.get-path.colon.syntax.t001"
+form = "sf.functions.get-path.colon.syntax"
+kind = "error_parity"
+target = ":(v, 'a.b[1]') as documented"
+note = "Snowflake refuses the documented spelling at parse time with 1003 (42000), unexpected '(' right after the colon, with or without spaces; only a quoted function name, \":\"(v, 'path'), compiles, and the page does not document that. The obligation is to refuse it as Snowflake does."
+catches = "the spelling accepted and translated as GET_PATH"
+reading = "the GET_PATH page: GET_PATH( <column_identifier> , '<path_name>' ), <column_identifier>:<path_name> and :( <column_identifier> , '<path_name>' ) are listed as three spellings of one extraction; the page gives no example of the third"
+cases = []
+required = true
+held = "parse gap: SQLQuack does not parse the documented :(v, 'a.b[1]') spelling, which Snowflake also rejects"
+
+[[obligation]]
 id = "sf.functions.get-path.get-path.t001"
 form = "sf.functions.get-path.get-path"
 kind = "type_combination"
@@ -10100,7 +10416,7 @@ kind = "type_combination"
 target = "NUMBER, NUMBER(10,2), FLOAT"
 note = "GREATEST across numeric types, with a negative."
 catches = "the result type taken from one argument (scale lost)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/greatest.toml#t001_number"]
 required = true
 
@@ -10109,9 +10425,9 @@ id = "sf.functions.greatest.t002"
 form = "sf.functions.greatest"
 kind = "type_combination"
 target = "VARCHAR, NUMBER"
-note = "A string first, so the numbers compare as strings."
-catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+note = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result, so the string converts to a number."
+catches = "string comparison ('9' for GREATEST('10', 9), '2' for GREATEST('2', 11)) or a VARCHAR result"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/greatest.toml#t002_first_type"]
 required = true
 
@@ -10122,7 +10438,7 @@ kind = "type_combination"
 target = "VARCHAR"
 note = "Strings in binary order."
 catches = "case-insensitive order"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/greatest.toml#t003_varchar"]
 required = true
 
@@ -10133,7 +10449,7 @@ kind = "type_combination"
 target = "DATE"
 note = "Dates."
 catches = "string order of another format"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/greatest.toml#t004_date"]
 required = true
 
@@ -10144,7 +10460,7 @@ kind = "null_argument"
 target = "expr"
 note = "NULL beside larger and smaller values."
 catches = "NULL skipped (DuckDB and Postgres ignore NULLs) instead of returning NULL"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/greatest.toml#t005_null_expr"]
 required = true
 
@@ -10155,7 +10471,7 @@ kind = "type_combination"
 target = "NUMBER, NUMBER(10,2), FLOAT"
 note = "GREATEST_IGNORE_NULLS across numeric types, with a negative."
 catches = "the result type taken from one argument (scale lost)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t001_number"]
 required = true
 
@@ -10164,9 +10480,9 @@ id = "sf.functions.greatest-ignore-nulls.t002"
 form = "sf.functions.greatest-ignore-nulls"
 kind = "type_combination"
 target = "VARCHAR, NUMBER"
-note = "A string first, so the numbers compare as strings."
-catches = "numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+note = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result, so the string converts to a number."
+catches = "string comparison ('9' for GREATEST_IGNORE_NULLS('10', 9), '2' for GREATEST_IGNORE_NULLS('2', 11)) or a VARCHAR result"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t002_first_type"]
 required = true
 
@@ -10177,7 +10493,7 @@ kind = "type_combination"
 target = "VARCHAR"
 note = "Strings in binary order."
 catches = "case-insensitive order"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t003_varchar"]
 required = true
 
@@ -10188,7 +10504,7 @@ kind = "type_combination"
 target = "DATE"
 note = "Dates."
 catches = "string order of another format"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t004_date"]
 required = true
 
@@ -10199,8 +10515,98 @@ kind = "null_argument"
 target = "expr"
 note = "NULL beside values, and every argument NULL."
 catches = "NULL returned when any argument is NULL (plain GREATEST/LEAST)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/greatest-ignore-nulls.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping.t001"
+form = "sf.functions.grouping"
+kind = "type_combination"
+target = "GROUPING SETS"
+note = "GROUPING SETS ((a), (b), ()), so a-only rows give 1 and b-only rows give 2."
+catches = "the bits reversed (the last expression most significant)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.functions.grouping.t002"
+form = "sf.functions.grouping"
+kind = "type_combination"
+target = "ROLLUP"
+note = "ROLLUP (a, b) with three expressions in the call, not a palindrome."
+catches = "the bits reversed (the last expression most significant: 1 instead of 4)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping.toml#t002_rollup"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping.t003"
+form = "sf.functions.grouping"
+kind = "type_combination"
+target = "CUBE"
+note = "CUBE (a, b)."
+catches = "grouping read from NULL in the column"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping.toml#t003_cube"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping.t004"
+form = "sf.functions.grouping"
+kind = "null_argument"
+target = "expr1"
+note = "A real NULL in the data next to the NULL of a super-aggregate row."
+catches = "the bit computed as \"column IS NULL\" (1 for the data row whose a is NULL)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping-id.t001"
+form = "sf.functions.grouping-id"
+kind = "type_combination"
+target = "GROUPING SETS"
+note = "GROUPING SETS ((a), (b), ()), so a-only rows give 1 and b-only rows give 2."
+catches = "the bits reversed (the last expression most significant)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.functions.grouping-id.t002"
+form = "sf.functions.grouping-id"
+kind = "type_combination"
+target = "ROLLUP"
+note = "ROLLUP (a, b) with three expressions in the call, not a palindrome."
+catches = "the bits reversed (the last expression most significant: 1 instead of 4)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping-id.toml#t002_rollup"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping-id.t003"
+form = "sf.functions.grouping-id"
+kind = "type_combination"
+target = "CUBE"
+note = "CUBE (a, b)."
+catches = "grouping read from NULL in the column"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping-id.toml#t003_cube"]
+required = true
+
+[[obligation]]
+id = "sf.functions.grouping-id.t004"
+form = "sf.functions.grouping-id"
+kind = "null_argument"
+target = "expr1"
+note = "A real NULL in the data next to the NULL of a super-aggregate row."
+catches = "the bit computed as \"column IS NULL\" (1 for the data row whose a is NULL)"
+reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
+cases = ["cases/translation/functions/grouping-id.toml#t004_null_expr1"]
 required = true
 
 [[obligation]]
@@ -10393,10 +10799,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-compact-cells.t002"
 form = "sf.functions.h3-compact-cells"
-kind = "error_parity"
-target = "error"
-note = "Cells of two resolutions, which the page says the input must not contain."
-catches = "the cells compacted anyway"
+kind = "type_combination"
+target = "ARRAY of INTEGER of two resolutions"
+note = "Cells of two resolutions, which the page says the input must not contain; Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or a different array"
 reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
 cases = ["cases/translation/functions/h3-compact-cells.toml#t002_mixed_resolution"]
 required = true
@@ -10404,10 +10810,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-compact-cells.t003"
 form = "sf.functions.h3-compact-cells"
-kind = "error_parity"
-target = "error"
-note = "A repeated cell, which the page says is not allowed."
-catches = "the duplicate removed silently"
+kind = "type_combination"
+target = "ARRAY of INTEGER with a repeated cell"
+note = "A repeated cell, which the page says is not allowed; Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or a different array"
 reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
 cases = ["cases/translation/functions/h3-compact-cells.toml#t003_duplicate"]
 required = true
@@ -10437,10 +10843,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-compact-cells-strings.t002"
 form = "sf.functions.h3-compact-cells-strings"
-kind = "error_parity"
-target = "error"
-note = "Cells of two resolutions, which the page says the input must not contain."
-catches = "the cells compacted anyway"
+kind = "type_combination"
+target = "ARRAY of VARCHAR of two resolutions"
+note = "Cells of two resolutions, which the page says the input must not contain; Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or a different array"
 reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
 cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t002_mixed_resolution"]
 required = true
@@ -10448,10 +10854,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-compact-cells-strings.t003"
 form = "sf.functions.h3-compact-cells-strings"
-kind = "error_parity"
-target = "error"
-note = "A repeated cell, which the page says is not allowed."
-catches = "the duplicate removed silently"
+kind = "type_combination"
+target = "ARRAY of VARCHAR with a repeated cell"
+note = "A repeated cell, which the page says is not allowed; Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or a different array"
 reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
 cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t003_duplicate"]
 required = true
@@ -11119,10 +11525,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-try-coverage.t004"
 form = "sf.functions.h3-try-coverage"
-kind = "error_parity"
-target = "error"
-note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
-catches = "the resolution clamped to 15, or NULL returned"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER 16"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too, but Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or the resolution clamped to 15"
 reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
 cases = ["cases/translation/functions/h3-try-coverage.toml#t004_resolution_range"]
 required = true
@@ -11174,10 +11580,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-try-coverage-strings.t004"
 form = "sf.functions.h3-try-coverage-strings"
-kind = "error_parity"
-target = "error"
-note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
-catches = "the resolution clamped to 15, or NULL returned"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER 16"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too, but Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or the resolution clamped to 15"
 reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
 cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t004_resolution_range"]
 required = true
@@ -11295,10 +11701,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-try-polygon-to-cells.t002"
 form = "sf.functions.h3-try-polygon-to-cells"
-kind = "error_parity"
-target = "error"
-note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
-catches = "the resolution clamped to 15, or NULL returned"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER 16"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too, but Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or the resolution clamped to 15"
 reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
 cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t002_resolution_range"]
 required = true
@@ -11328,10 +11734,10 @@ required = true
 [[obligation]]
 id = "sf.functions.h3-try-polygon-to-cells-strings.t002"
 form = "sf.functions.h3-try-polygon-to-cells-strings"
-kind = "error_parity"
-target = "error"
-note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
-catches = "the resolution clamped to 15, or NULL returned"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER 16"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too, but Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or the resolution clamped to 15"
 reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
 cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t002_resolution_range"]
 required = true
@@ -11433,6 +11839,61 @@ note = "A NULL array, which the page says gives NULL without an error."
 catches = "an empty array returned"
 reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
 cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t001"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "NUMBER"
+note = "HASH of integers against an equal and an unequal partner; no hash value is returned."
+catches = "equal integers hashing differently, unequal ones alike, or a result outside the signed 64-bit range"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t002"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "HASH of strings, including multi-byte and trailing blanks, against equal and unequal partners; no hash value is returned."
+catches = "multi-byte or blank-padded text hashed alike, equal text hashed differently, or a result outside the signed 64-bit range"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t003"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "NUMBER(10,2), FLOAT"
+note = "HASH of 10 as NUMBER(38,0), NUMBER(10,2) and FLOAT, which the page says agree; no hash value is returned."
+catches = "the scale or the FLOAT bits hashed (FALSE)"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t003_scale_stable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t004"
+form = "sf.functions.hash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "HASH of two arguments in both orders, and of the same arguments again; no hash value is returned. The page does not say whether order matters, so the recording decides."
+catches = "two calls with the same arguments hashing differently, or a swapped-order result other than the recorded one"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t004_multi"]
+required = true
+
+[[obligation]]
+id = "sf.functions.hash.t005"
+form = "sf.functions.hash"
+kind = "null_argument"
+target = "expr"
+note = "NULL input, which the page says still hashes; no hash value is returned."
+catches = "NULL propagated instead of a hash value"
+reading = "the page: HASH takes expressions of any type and returns NUMBER(19,0); it never returns NULL; equal NUMBERs hash equally across precision and scale, and so do FLOATs exactly convertible to NUMBER(38,0)"
+cases = ["cases/translation/functions/hash.toml#t005_null_expr"]
 required = true
 
 [[obligation]]
@@ -14259,7 +14720,7 @@ kind = "type_combination"
 target = "NUMBER, NUMBER(10,2), FLOAT"
 note = "LEAST across numeric types, with a negative."
 catches = "the result type taken from one argument (scale lost)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/least.toml#t001_number"]
 required = true
 
@@ -14268,9 +14729,9 @@ id = "sf.functions.least.t002"
 form = "sf.functions.least"
 kind = "type_combination"
 target = "VARCHAR, NUMBER"
-note = "A string first, so the numbers compare as strings."
-catches = "numeric comparison (LEAST('10', 9) gives 9 instead of '10')"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+note = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result, so the string converts to a number."
+catches = "string comparison ('10' for LEAST('10', 9), '11' for LEAST('2', 11)) or a VARCHAR result"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/least.toml#t002_first_type"]
 required = true
 
@@ -14281,7 +14742,7 @@ kind = "type_combination"
 target = "VARCHAR"
 note = "Strings in binary order."
 catches = "case-insensitive order"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/least.toml#t003_varchar"]
 required = true
 
@@ -14292,7 +14753,7 @@ kind = "type_combination"
 target = "DATE"
 note = "Dates."
 catches = "string order of another format"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/least.toml#t004_date"]
 required = true
 
@@ -14303,7 +14764,7 @@ kind = "null_argument"
 target = "expr"
 note = "NULL beside larger and smaller values."
 catches = "NULL skipped (DuckDB and Postgres ignore NULLs) instead of returning NULL"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; any NULL gives NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); any NULL gives NULL"
 cases = ["cases/translation/functions/least.toml#t005_null_expr"]
 required = true
 
@@ -14314,7 +14775,7 @@ kind = "type_combination"
 target = "NUMBER, NUMBER(10,2), FLOAT"
 note = "LEAST_IGNORE_NULLS across numeric types, with a negative."
 catches = "the result type taken from one argument (scale lost)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/least-ignore-nulls.toml#t001_number"]
 required = true
 
@@ -14323,9 +14784,9 @@ id = "sf.functions.least-ignore-nulls.t002"
 form = "sf.functions.least-ignore-nulls"
 kind = "type_combination"
 target = "VARCHAR, NUMBER"
-note = "A string first, so the numbers compare as strings."
-catches = "numeric comparison (LEAST('10', 9) gives 9 instead of '10')"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+note = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result, so the string converts to a number."
+catches = "string comparison ('10' for LEAST_IGNORE_NULLS('10', 9), '11' for LEAST_IGNORE_NULLS('2', 11)) or a VARCHAR result"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/least-ignore-nulls.toml#t002_first_type"]
 required = true
 
@@ -14336,7 +14797,7 @@ kind = "type_combination"
 target = "VARCHAR"
 note = "Strings in binary order."
 catches = "case-insensitive order"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/least-ignore-nulls.toml#t003_varchar"]
 required = true
 
@@ -14347,7 +14808,7 @@ kind = "type_combination"
 target = "DATE"
 note = "Dates."
 catches = "string order of another format"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/least-ignore-nulls.toml#t004_date"]
 required = true
 
@@ -14358,7 +14819,7 @@ kind = "null_argument"
 target = "expr"
 note = "NULL beside values, and every argument NULL."
 catches = "NULL returned when any argument is NULL (plain GREATEST/LEAST)"
-reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; NULL only when every argument is NULL"
+reading = "the page: the first argument's type decides: numeric widens over all arguments; otherwise the rest convert to the first type; the recording shows a string first beside a number giving NUMBER(38,5); NULL only when every argument is NULL"
 cases = ["cases/translation/functions/least-ignore-nulls.toml#t005_null_expr"]
 required = true
 
@@ -17126,6 +17587,51 @@ cases = ["cases/translation/functions/ntile.toml#t004_null_order_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.nullif.t001"
+form = "sf.functions.nullif"
+kind = "type_combination"
+target = "NUMBER, NUMBER"
+note = "Equal and unequal values, across scales."
+catches = "expr2 returned, or scale compared"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t001_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t002"
+form = "sf.functions.nullif"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Strings differing only in case."
+catches = "case-insensitive equality"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.nullif.t003"
+form = "sf.functions.nullif"
+kind = "null_argument"
+target = "expr1"
+note = "NULL first argument against NULL and a value."
+catches = "a value instead of NULL"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = []
+required = true
+held = "differs from Snowflake: SQLQuack's result for a NULL first argument does not match the receipt; the fix is on the product lane's post-launch list"
+
+[[obligation]]
+id = "sf.functions.nullif.t004"
+form = "sf.functions.nullif"
+kind = "null_argument"
+target = "expr2"
+note = "NULL second argument."
+catches = "NULL returned (NULL treated as equal)"
+reading = "the page: NULLIF(expr1, expr2) is NULL when they are equal, otherwise expr1, in expr1's type"
+cases = ["cases/translation/functions/nullif.toml#t004_null_expr2"]
+required = true
+
+[[obligation]]
 id = "sf.functions.nullifzero.t001"
 form = "sf.functions.nullifzero"
 kind = "type_combination"
@@ -18931,6 +19437,63 @@ cases = ["cases/translation/functions/pow.power.toml#t009_neg_frac"]
 required = true
 
 [[obligation]]
+id = "sf.functions.pow.power.t010"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "POWER(2, n) for whole n"
+note = "POWER(2, n) for whole exponents from -52 to 64, as dbt_utils.date_spine writes it for each bit."
+catches = "an inexact power of two, an integer result, or a lost low bit past 2^53"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t001_whole_exponents"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t011"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "NUMBER times POWER(2, k) for literal k"
+note = "The dbt_utils.date_spine shape: a NUMBER times POWER(2, k) for literal k, summed, plus 1."
+catches = "the result typed NUMBER instead of FLOAT, or a power other than 2^k"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t002_literal_exponents_in_a_sum"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t012"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "magnitude"
+target = "POWER(2, n) at the edges of the double range"
+note = "The largest and smallest finite powers of two in a double, 2^1023 and 2^-1074, and 2^-1075 below the smallest."
+catches = "2^1023 overflowing, or the subnormal 2^-1074 flushed to 0"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t003_range_edges"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t013"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "overflow"
+target = "POWER(2, 1024)"
+note = "2^1024, past the largest double."
+catches = "a finite value or an error where Snowflake gives its overflow result"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t004_overflow"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t014"
+form = "sf.functions.pow.power"
+kind = "null_argument"
+target = "y, with x = 2"
+note = "POWER(2, NULL)."
+catches = "1 or 2 returned instead of NULL"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t005_null_exponent"]
+required = true
+
+[[obligation]]
 id = "sf.functions.previous-day.t001"
 form = "sf.functions.previous-day"
 kind = "type_combination"
@@ -19937,6 +20500,17 @@ note = "An empty subject."
 catches = "'' instead of NULL for an empty subject"
 reading = "the pages: POSIX extended regular expressions; parameters c, i, m, e, s (default c); positions are 1-based; NULL if any argument is NULL; REGEXP_SUBSTR returns the matching part; with e, group 1 by default"
 cases = ["cases/translation/functions/regexp-substr.toml#t011_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regexp-substr.t012"
+form = "sf.functions.regexp-substr"
+kind = "type_combination"
+target = "position at and past the end, with a pattern matching the empty string"
+note = "REGEXP_SUBSTR(a, 'x*', n) on 'abc' with n at the last character, one past it and two past it, where 'x*' matches the empty string."
+catches = "'' where Snowflake gives NULL, or an error past the end where Snowflake answers"
+reading = "the pages: POSIX extended regular expressions; parameters c, i, m, e, s (default c); positions are 1-based; NULL if any argument is NULL; REGEXP_SUBSTR returns the matching part; with e, group 1 by default"
+cases = ["cases/translation/functions/regexp-substr.empty-match-position.toml#t001_empty_match_at_and_past_the_end"]
 required = true
 
 [[obligation]]
@@ -25764,10 +26338,10 @@ required = true
 [[obligation]]
 id = "sf.functions.st-makepolygon.t003"
 form = "sf.functions.st-makepolygon"
-kind = "error_parity"
-target = "error"
-note = "A line string whose last point differs from the first, which the page says must form a loop."
-catches = "the loop closed silently"
+kind = "type_combination"
+target = "GEOMETRY open line string"
+note = "A line string whose last point differs from the first, which the page says must form a loop; Snowflake returns rows rather than an error, so the recording decides."
+catches = "an error raised where Snowflake returns rows, or the loop closed differently"
 reading = "the page: a polygon from a closed line string; the last point must equal the first; GEOMETRY keeps its SRID"
 cases = ["cases/translation/functions/st-makepolygon.toml#t003_open_loop"]
 required = true
@@ -29158,6 +29732,61 @@ cases = ["cases/translation/functions/to-char.to-char.toml#t005_null_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-char.to-char.t006"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MON'"
+note = "TO_CHAR(date, 'MON') for a date in every month, as dbt_date.get_date_dimension writes month_name_short."
+catches = "the month number written, the wrong letter case, or a locale's abbreviation"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t001_mon_every_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t007"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MMMM'"
+note = "TO_CHAR(date, 'MMMM') for a date in every month, as dbt_date.get_date_dimension writes month_name."
+catches = "MMMM read as MM twice ('0101'), the wrong letter case, or an abbreviation"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t002_mmmm_every_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t008"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE and TIMESTAMP, MON and MMMM beside other fields"
+note = "MON and MMMM beside other fields and on a timestamp."
+catches = "a field next to the name misread, or the timestamp's time leaking into the name"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t003_month_names_in_a_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t009"
+form = "sf.functions.to-char.to-char"
+kind = "null_argument"
+target = "expr, with 'MON' and 'MMMM'"
+note = "A NULL date."
+catches = "a month name for NULL"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t010"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MONMM' and 'MMMMDD'"
+note = "MONMM and MMMMDD, a name directly before another field."
+catches = "the name's letters read as part of the next field"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t007_names_beside_month_and_day"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-char.to-varchar.t001"
 form = "sf.functions.to-char.to-varchar"
 kind = "type_combination"
@@ -31610,6 +32239,63 @@ note = "A NULL string."
 catches = "midnight returned"
 reading = "the page: a TIME from a string, with an optional format (default AUTO); an integer string is read by the same magnitude rule as TRY_TO_DATE; NULL where the conversion fails"
 cases = ["cases/translation/functions/try-to-time.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t001"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR, format"
+note = "A timestamp with nine fractional digits, and one in a given format."
+catches = "the fraction truncated, or the format ignored"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t001_strings"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t002"
+form = "sf.functions.try-to-timestamp"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Integer strings on each side of the milliseconds, microseconds and nanoseconds boundaries."
+catches = "every integer read as seconds"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = []
+required = true
+held = "differs from Snowflake: DuckDB overflows on the epoch-unit input where Snowflake returns rows; the fix is on the product lane's post-launch list"
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t003"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR with an offset"
+note = "A string with an offset read by TRY_TO_TIMESTAMP_TZ and TRY_TO_TIMESTAMP_NTZ."
+catches = "the offset applied to the NTZ result, or dropped from the TZ result"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t003_tz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t004"
+form = "sf.functions.try-to-timestamp"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Hour 25 on a valid date, and text that is not a timestamp."
+catches = "an error raised, or the hour carried into the next day"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t004_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-timestamp.t005"
+form = "sf.functions.try-to-timestamp"
+kind = "null_argument"
+target = "string-expr"
+note = "A NULL string."
+catches = "the epoch returned"
+reading = "the page: TRY_TO_TIMESTAMP and its _NTZ, _LTZ and _TZ variants give a timestamp from a string, with an optional format; the plain function follows TIMESTAMP_TYPE_MAPPING (TIMESTAMP_NTZ here); integer strings follow the magnitude rule; NULL where the conversion fails"
+cases = ["cases/translation/functions/try-to-timestamp.toml#t005_null_string_expr"]
 required = true
 
 [[obligation]]

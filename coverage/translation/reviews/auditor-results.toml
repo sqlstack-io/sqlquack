@@ -26,9 +26,9 @@ reviewed_utc = "2026-11-05T22:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:warehouses-sessions-and-query-history"
-sha256 = "ead94d8bac2a2be129879c934cc0738d5a8651b89cbcd98979fd1f94115878c8"
+sha256 = "1a816cea78160bf5f6d89d023abce593d09ffca94bb914f61238a9e81bec5d53"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-06T06:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:system-functions"
@@ -38,9 +38,9 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:ai-and-ml-functions"
-sha256 = "9bb46908426611b1cfbf42bdbf253274f70c61583f00e857ce675d1876f5188d"
+sha256 = "333dad6473ec9aecc7673abe5156a77778d4eff22bb8bb5d247da64539a9ffd6"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-06T06:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:stages-and-files"
@@ -50,21 +50,21 @@ reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:time-travel-and-change-tracking"
-sha256 = "c7d08cd0dc4c448898138f76de867b7511b86b6885d11f424f5da71076c2363b"
+sha256 = "49f099982437a3ecc84094ac4742db9f97ef935c67fb0657b993e7a7baabdd98"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-object-kinds"
-sha256 = "dc834bd5598c7568ea89318b10bbc534f3a8b522e1eefdbb9e2f1d073ba8b7ff"
+sha256 = "de95c45bb32327aa019e94a94f4402e680b3d642f2b358d8322a862066708aeb"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T06:12:29Z"
 
 [[signoff]]
 subject = "not-translatable:metadata-listings"
-sha256 = "2a909d8e6819146cc7979b28391c01fab8300a2813e32978f392b331371b1b5d"
+sha256 = "42ea63a9ecdb46d7a52ddd21a6f7cfa5ffa1cae465baf8d67c525ef2e5dc9dc3"
 scope = "full"
-reviewed_utc = "2026-11-06T02:32:18Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:account-context-functions"
@@ -110,6 +110,6 @@ reviewed_utc = "2026-11-06T01:52:45Z"
 
 [[signoff]]
 subject = "form-links"
-sha256 = "bd474c2b292ecea6a0a0167c15e9a08de9ff93b1f59667a2f9827263f5eec2b7"
+sha256 = "a8c9dd7f4df15cd3465f583655b6bf8ca2feea86718de389ffaf13cedf2d515b"
 scope = "full"
-reviewed_utc = "2026-11-05T16:45:00Z"
+reviewed_utc = "2026-11-06T11:37:40Z"

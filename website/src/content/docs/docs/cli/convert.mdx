@@ -15,17 +15,23 @@ sqlquack convert [OPTIONS] [PATH]
 ```
 
 ```bash
-sqlquack convert query.sql --schema schema.json
+sqlquack convert query.sql --schema schema.json --builtin-policy
 echo "SELECT 1 AS total" | sqlquack convert --builtin-policy --json
 ```
 
 `PATH` is a SQL file. Without one, or with `-`, `convert` reads standard input. The DuckDB SQL goes
-to standard output. Progress, the known divergences and assumptions it relies on, and refusals go
-to standard error.
+to standard output, laid out with each clause on its own line, select items one per line, and
+nested queries and long `CASE` expressions indented; short statements stay on one line. Progress,
+the known divergences and assumptions it relies on, and refusals go to standard error.
 
 ```console
 $ sqlquack convert revenue.sql --schema schema.json --builtin-policy
-SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID", CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE" FROM "ORDERS" AS "ORDERS" WHERE ("ORDERS"."STATUS" = 'shipped') GROUP BY "ORDERS"."CUSTOMER_ID"
+SELECT
+    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+WHERE ("ORDERS"."STATUS" = 'shipped')
+GROUP BY "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted under the built-in default
 ```
 
@@ -56,6 +62,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 | `--session NAME=VALUE` | A Snowflake session parameter of your session. Repeatable. See [Sessions](/docs/policy/#sessions). |
 | `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. |
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
+| `--compact` | Print each statement on one line instead, in the JSON report too. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 
 `convert` also takes the policy flags: `--policy`, `--builtin-policy`, `--strict`,
@@ -82,7 +89,8 @@ With `--json`, `convert` prints one object:
 }
 ```
 
-A refusal in `refusals` carries the same [diagnostic fields](/docs/diagnostics/overview/#json-output).
+`sql` is laid out as the text output prints it, or on one line with `--compact`. A refusal in
+`refusals` carries the same [diagnostic fields](/docs/diagnostics/overview/#json-output).
 
 ## Exit status
 
@@ -90,4 +98,4 @@ A refusal in `refusals` carries the same [diagnostic fields](/docs/diagnostics/o
 |------|---------|
 | `0` | Converted. |
 | `1` | Something was refused; the reasons are on standard error. |
-| `2` | It could not run: bad arguments, an unreadable file, no policy file, or input without SQL. |
+| `2` | It could not run: bad arguments, an unreadable file, a missing `--policy` file or an invalid policy file, or input without SQL. |

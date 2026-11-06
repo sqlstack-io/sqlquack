@@ -216,6 +216,12 @@ polyglot joins into one name; the container kind of `SHOW ... IN a.b`, which pol
 SCHEMA; and the cast target of `TIMESTAMP WITHOUT TIME ZONE`, which Snowflake documents as
 TIMESTAMP_NTZ and polyglot reads as bare TIMESTAMP.
 
+A clause whose `ALL` SQLQuack keeps apart from its keys, where polyglot reads `ALL` as a key named
+ALL, is a `[[kept_all]]` entry: an id, a marker, the clause and a reason. The check counts it with the
+kept fields only when the marker appears, the trees differ, and they are equal once SQLQuack's
+clause with no keys and an `all` is rewritten as polyglot's one key `ALL` with the same DESC and
+NULLS options. The only entry: `ORDER BY ALL`.
+
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
 reads as two keys. The check compares variant paths written flat, so this bracketing is the only

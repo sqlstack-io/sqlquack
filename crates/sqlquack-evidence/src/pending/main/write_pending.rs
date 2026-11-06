@@ -37,6 +37,7 @@ pub fn write_pending(
             compile_error: case.compile_error.then_some(true),
             expected_error: case.expected_error.then_some(true),
             setup_sql: case.setup_sql.clone(),
+            setup: case.setup.clone(),
         };
         let name = format!("{}.json", case.hash);
         let text = serde_json::to_string_pretty(&pending)

@@ -217,10 +217,22 @@ fn converted_value_with_macros(report: &serde_json::Value) -> String {
         .expect("the converted statement returns a text value")
 }
 
-/// The exit code of `arguments` run where no policy file is, over a one-statement file.
-pub(crate) fn policy_free_exit_code(arguments: &[&str]) -> Option<i32> {
+/// The exit code of `arguments` beside a copy of the repository's `policy_file`, over two SQL files.
+pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str>) -> Option<i32> {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::write(directory.path().join("query.sql"), "SELECT 1 AS total").expect("query written");
+    std::fs::write(
+        directory.path().join("now.sql"),
+        "SELECT CURRENT_TIMESTAMP() AS t",
+    )
+    .expect("query written");
+    policy_file.iter().for_each(|path| {
+        std::fs::copy(
+            repository_root().join(path),
+            directory.path().join("sqlquack.toml"),
+        )
+        .expect("policy copied");
+    });
     std::fs::write(
         directory.path().join("schema.json"),
         "{\"functions\": {\"TOTAL\": {\"language\": \"sql\", \"arguments\": [], \"returns\": \"NUMBER(1,0)\"}}}",

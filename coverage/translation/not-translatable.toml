@@ -859,7 +859,7 @@ forms = [
 
 [[group]]
 id = "warehouses-sessions-and-query-history"
-reason = "Virtual warehouses, roles in use, locks, transactions in the account, account parameters, query results by query id and query plans. These describe Snowflake's compute and account state, which DuckDB does not have, so a matching result is not meaningful."
+reason = "Virtual warehouses, roles in use, locks, transactions in the account, account parameters, query results by query id and query plans. These describe Snowflake's compute and account state, which DuckDB does not have, so a matching result is not meaningful. SELECT ... FOR UPDATE is listed with them: it works on hybrid tables only, never under AUTOCOMMIT, and its only effect is to lock the selected rows until the transaction ends."
 forms = [
   "sf.ddl.alter-warehouse.abort-all-queries",
   "sf.ddl.alter-warehouse.add-tables",
@@ -876,6 +876,7 @@ forms = [
   "sf.ddl.create-warehouse.create-warehouse",
   "sf.ddl.create-warehouse.define-warehouse",
   "sf.ddl.drop-warehouse",
+  "sf.query.for-update",
   "sf.transaction_session.desc-result",
   "sf.transaction_session.show-locks",
   "sf.transaction_session.show-parameters",
@@ -991,7 +992,6 @@ forms = [
   "sf.ddl.undrop-notebook",
   "sf.ddl.undrop-schema",
   "sf.ddl.undrop-snapshot",
-  "sf.ddl.undrop-stage",
   "sf.ddl.undrop-streamlit",
   "sf.ddl.undrop-table",
   "sf.ddl.undrop-tag",
@@ -1003,7 +1003,7 @@ forms = [
 
 [[group]]
 id = "snowflake-object-kinds"
-reason = "Object kinds DuckDB does not have: pipelines (pipes, tasks, alerts), applications, services, compute pools, integrations, sharing, listings, replication, backups, tags, data metric objects and schema variables, among others. Iceberg tables are listed as a whole: each is defined by an external volume or catalogue integration and its files, which DuckDB SQL cannot create; a plain table with the same rows is the counted CREATE TABLE form. Creating or altering these objects has no DuckDB translation. AGG returns a metric of a semantic view, one of these objects, so it has nothing to read without one."
+reason = "Object kinds DuckDB does not have: pipelines (pipes, tasks, alerts), applications, services, compute pools, integrations, sharing, listings, replication, backups, tags, data metric objects and schema variables, among others. Iceberg tables are listed as a whole: each is defined by an external volume or catalogue integration and its files, which DuckDB SQL cannot create; a plain table with the same rows is the counted CREATE TABLE form. Creating or altering these objects has no DuckDB translation. AGG returns a metric of a semantic view, one of these objects, so it has nothing to read without one. The UNKNOWN data type exists only in Iceberg tables of format version 3 and always reads as NULL, so it is listed with them."
 forms = [
   "sf.ddl.alter-agent.modify-live-version-set",
   "sf.ddl.alter-agent.set",
@@ -1475,13 +1475,14 @@ forms = [
   "sf.ddl.experiment.show-experiments",
   "sf.ddl.experiment.show-runs-in-experiment",
   "sf.ddl.truncate-materialized-view",
+  "sf.expressions.data-types-unknown",
   "sf.expressions.schema-variables",
   "sf.functions.agg",
 ]
 
 [[group]]
 id = "metadata-listings"
-reason = "SHOW and DESCRIBE commands other than those with a DuckDB catalogue counterpart (databases, schemas, tables, views, objects, sequences, primary keys, functions and indexes, and dynamic and external tables), which are counted. Their result columns are Snowflake catalogue metadata (owners, creation and update times, account settings, object properties) with no DuckDB equivalent, so results cannot match."
+reason = "SHOW and DESCRIBE commands, other than those counted: the listings with a DuckDB catalogue counterpart (databases, schemas, tables, views, objects, sequences, primary keys, functions and indexes) and the listings of the counted object kinds (dynamic and external tables, stages and file formats). Their result columns are Snowflake catalogue metadata (owners, creation and update times, account settings, object properties) with no DuckDB equivalent, so results cannot match."
 forms = [
   "sf.ddl.desc-agent",
   "sf.ddl.desc-alert",
@@ -1502,7 +1503,6 @@ forms = [
   "sf.ddl.desc-external-agent",
   "sf.ddl.desc-external-consumer",
   "sf.ddl.desc-external-volume",
-  "sf.ddl.desc-file-format",
   "sf.ddl.desc-function-dmf",
   "sf.ddl.desc-function-spcs",
   "sf.ddl.desc-gateway",
@@ -1527,7 +1527,6 @@ forms = [
   "sf.ddl.desc-snapshot",
   "sf.ddl.desc-snapshot-set",
   "sf.ddl.desc-specification",
-  "sf.ddl.desc-stage",
   "sf.ddl.desc-stream",
   "sf.ddl.desc-streamlit",
   "sf.ddl.desc-task",
@@ -1581,7 +1580,6 @@ forms = [
   "sf.ddl.show-external-consumers",
   "sf.ddl.show-external-functions",
   "sf.ddl.show-external-volumes",
-  "sf.ddl.show-file-formats",
   "sf.ddl.show-files-in-artifact-repository",
   "sf.ddl.show-functions-in-model",
   "sf.ddl.show-gateways",
@@ -1644,7 +1642,6 @@ forms = [
   "sf.ddl.show-snapshots",
   "sf.ddl.show-snapshots-in-snapshot-set",
   "sf.ddl.show-specifications",
-  "sf.ddl.show-stages",
   "sf.ddl.show-streamlits",
   "sf.ddl.show-streams",
   "sf.ddl.show-tags",
@@ -2165,6 +2162,8 @@ forms = [
   "sf.functions.ai-translate",
   "sf.functions.classify-text-snowflake-cortex",
   "sf.functions.complete-snowflake-cortex",
+  "sf.functions.complete-snowflake-cortex-multimodal.from",
+  "sf.functions.complete-snowflake-cortex-multimodal.from.syntax",
   "sf.functions.cortex-search-batch",
   "sf.functions.cortex-search-data-scan",
   "sf.functions.cortex-search-refresh-history",

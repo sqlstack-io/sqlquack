@@ -10,6 +10,7 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_core::refusals::models::Refusal;
+use sqlquack_duckdb::layout::main::checked_layout::checked_layout;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay};
@@ -23,7 +24,9 @@ use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::_helpers::override_definition::load_override;
-use crate::analysis::constants::{PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL};
+use crate::analysis::constants::{
+    CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL,
+};
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
@@ -67,6 +70,12 @@ pub struct CaseFunctions {
 
 impl CaseConverter for PipelineConverter {
     fn convert(&self, case: &LoadedCase) -> Conversion {
+        if !case.setup.is_empty() {
+            return Conversion::Refused {
+                reasons: vec![CASE_SETUP_UNREPLAYED.to_owned()],
+                constructs: vec![STATEMENT_REFUSAL.to_owned()],
+            };
+        }
         let mut options = ConversionOptions {
             fixture: Some(Fixture {
                 relation: INPUT_RELATION.to_owned(),
@@ -155,6 +164,10 @@ impl CaseConverter for PipelineConverter {
                 constructs: constructs.into_iter().collect(),
             },
         }
+    }
+
+    fn laid_out(&self, sql: &str) -> Result<String, String> {
+        checked_layout(sql)
     }
 }
 

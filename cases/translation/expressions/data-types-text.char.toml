@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.expressions.data-types-text.char"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_no_padding"
+description = "The page: Snowflake does not space-pad shorter strings, so 'ab' as CHAR(5) has length 2. Catches: blank padding to the declared length (length 5)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'ab'"],
+  ["'abcde'"],
+]
+query = "SELECT ordinal, CAST(a AS CHAR(5)) AS r, LENGTH(CAST(a AS CHAR(5))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_spellings"
+description = "The page: CHAR, CHARACTER and NCHAR are synonyms; NCHAR stores the same Unicode. Catches: NCHAR treated differently, or one spelling padded"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\u00e9'"],
+  ["'xy'"],
+]
+query = "SELECT ordinal, CAST(a AS CHARACTER(3)) AS c, CAST(a AS NCHAR(3)) AS n, CAST(a AS CHARACTER(3)) = CAST(a AS NCHAR(3)) AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_default_1"
+description = "The page: CHAR without a length is CHAR(1); casting a longer string to it shows whether the value is cut or rejected, which the page does not say, so the recording decides. Catches: CHAR without a length read as an unlimited VARCHAR"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'z'"],
+  ["'xyz'"],
+]
+query = "SELECT ordinal, CAST(a AS CHAR) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t004_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT ordinal, CAST(a AS CHAR(2)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

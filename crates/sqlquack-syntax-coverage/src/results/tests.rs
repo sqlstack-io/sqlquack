@@ -4,5 +4,7 @@ pub(crate) mod helpers;
 mod test_diff_results;
 #[path = "tests/test_measure_results.rs"]
 mod test_measure_results;
+#[path = "tests/test_obligations.rs"]
+mod test_obligations;
 #[path = "tests/test_types.rs"]
 mod test_types;

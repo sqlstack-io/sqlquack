@@ -12,6 +12,12 @@ pub const TIMEZONE_PARAMETER: &str = "TIMEZONE";
 /// The Snowflake session parameter making quoted identifiers resolve to upper case too.
 pub const QUOTED_IDENTIFIERS_IGNORE_CASE: &str = "QUOTED_IDENTIFIERS_IGNORE_CASE";
 
+/// The session's current database, which completes a relation name written without one.
+pub const DATABASE_PARAMETER: &str = "DATABASE";
+
+/// The session's current schema, which completes a relation name written without one.
+pub const SCHEMA_PARAMETER: &str = "SCHEMA";
+
 /// Session parameters that cannot change a result, accepted and ignored, each with why.
 pub const RESULT_NEUTRAL_SESSION_PARAMETERS: &[(&str, &str)] = &[
     ("QUERY_TAG", "a label recorded in query history"),

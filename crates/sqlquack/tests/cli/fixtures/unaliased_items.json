@@ -1,0 +1,11 @@
+{
+  "relations": {
+    "INPUT": [
+      ["N", "NUMBER(10,2)"],
+      ["G", "VARCHAR"],
+      ["V", "VARIANT"],
+      ["T", "TIMESTAMP_NTZ(9)"],
+      ["lc", "NUMBER(10,0)"]
+    ]
+  }
+}
