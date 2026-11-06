@@ -1,6 +1,5 @@
 //! `load_results_files`: the link, list and review files, checked against the catalogue.
 
-use std::collections::BTreeSet;
 use std::path::Path;
 
 use crate::formats::models::SyntaxCoverage;
@@ -13,6 +12,5 @@ pub fn load_results_files(
     directory: &Path,
     coverage: &SyntaxCoverage,
 ) -> Result<ResultsFiles, Vec<String>> {
-    let catalogued: BTreeSet<&str> = catalogued_forms(coverage, None).into_keys().collect();
-    load_files(directory, &catalogued)
+    load_files(directory, &catalogued_forms(coverage, None))
 }

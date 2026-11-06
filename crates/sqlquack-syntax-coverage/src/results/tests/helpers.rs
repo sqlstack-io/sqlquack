@@ -174,3 +174,43 @@ pub(crate) fn form_state(
         .expect("form");
     (form.state, form.statements, report.forms.translatable)
 }
+
+/// The cited case of the COUNT_IF obligations, as a statement reference and as a case path.
+pub(crate) const COUNT_IF_CASE: &str = "translation/functions/count-if.toml#t001";
+
+/// One COUNT_IF obligation numbered `number`, with `fields` after its descriptive keys.
+pub(crate) fn obligation(number: u32, fields: &str) -> String {
+    format!(
+        "[[obligation]]\nid = \"sf.functions.count-if.t{number:03}\"\nform = \"sf.functions.count-if\"\n\
+         kind = \"type_combination\"\ntarget = \"BOOLEAN\"\nnote = \"n\"\ncatches = \"c\"\n\
+         reading = \"r\"\n{fields}\n"
+    )
+}
+
+/// The fields of a required obligation citing `reference` under `cases/`.
+pub(crate) fn citing(reference: &str) -> String {
+    format!("cases = [\"cases/{reference}\"]\nrequired = true")
+}
+
+/// The measure of `statements` over the fixture tree, with `obligations` as the functions file.
+pub(crate) fn measure_obligations(
+    statements: Vec<RecordedStatement>,
+    (obligations, retired): (&str, &str),
+) -> Result<ResultsReport, Vec<String>> {
+    let directory = tempfile::tempdir().expect("directory");
+    let root = tree(directory.path());
+    let translation = directory.path().join("translation");
+    write(&translation, "form-links.toml", LINKS);
+    write(&translation, "obligations/functions.toml", obligations);
+    write(&translation, "retired-obligations.toml", retired);
+    let coverage = load_coverage(&root).expect("coverage loads");
+    let files = load_results_files(&translation, &coverage)?;
+    measure_results(
+        &coverage,
+        &files,
+        &StatementsFile {
+            format: STATEMENTS_FORMAT.to_owned(),
+            statements,
+        },
+    )
+}

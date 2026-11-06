@@ -1,4 +1,6 @@
-use crate::results::models::{ResultState, StatementOutcome};
+use std::process::ExitCode;
+
+use crate::results::models::{ObligationState, ResultState, StatementOutcome};
 
 /// The outcomes of the statements calling COUNT_IF, and the state its form must take.
 pub(crate) struct FormStateTestCase {
@@ -58,4 +60,40 @@ pub(crate) struct CallShapeTestCase {
     pub(crate) description: &'static str,
     pub(crate) constructs: &'static [&'static str],
     pub(crate) expected_forms: &'static [&'static str],
+}
+
+/// An obligation file the loader must refuse, and a fragment of the problem it reports.
+pub(crate) struct ObligationLoadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) obligations: String,
+    /// The retired-obligations file, or nothing.
+    pub(crate) retired: &'static str,
+    pub(crate) expected_problem: &'static str,
+}
+
+/// COUNT_IF's obligations, its cited case's outcome beside a matching statement, and the states.
+pub(crate) struct ObligationStateTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) cited_outcome: StatementOutcome,
+    pub(crate) obligations: String,
+    pub(crate) expected_form: ResultState,
+    /// Each obligation's state, in id order.
+    pub(crate) expected_states: Vec<ObligationState>,
+}
+
+/// The results command over an obligation file, and its exit and JSON buckets.
+pub(crate) struct ObligationsCliTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) obligations: String,
+    pub(crate) expected_exit: ExitCode,
+    /// Met, held and unmeasured obligations in the report, and obligations in the baseline.
+    pub(crate) expected_buckets: Option<(u64, u64, u64, u64)>,
+}
+
+/// One obligation's state before and after, and how many regressions the diff reports.
+pub(crate) struct ObligationDiffTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) before: ObligationState,
+    pub(crate) after: ObligationState,
+    pub(crate) expected_regressions: usize,
 }

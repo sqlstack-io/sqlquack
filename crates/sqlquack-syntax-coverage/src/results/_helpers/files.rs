@@ -7,6 +7,7 @@ use serde::de::DeserializeOwned;
 
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::main::is_utc_timestamp::is_utc_timestamp;
+use crate::results::_helpers::obligations::load_obligations;
 use crate::results::constants::{
     FORM_LINKS_SUBJECT, FUNCTION_LINKS_SUBJECT, LINKS_FILE, NOT_TRANSLATABLE_FILE,
     NOT_TRANSLATABLE_SUBJECT, RESULTS_REVIEW_FILE,
@@ -149,8 +150,9 @@ fn check_review(review: &ResultsReviewFile) -> Vec<String> {
 /// The files under `directory`, or every problem with them; ids must be catalogued forms.
 pub(crate) fn load_files(
     directory: &Path,
-    catalogued: &BTreeSet<&str>,
+    families: &BTreeMap<&str, &str>,
 ) -> Result<ResultsFiles, Vec<String>> {
+    let catalogued: &BTreeSet<&str> = &families.keys().copied().collect();
     let read = |name: &str| {
         let path = directory.join(name);
         read_text(&path).map(|text| (path, text))
@@ -182,11 +184,13 @@ pub(crate) fn load_files(
     if !problems.is_empty() {
         return Err(problems);
     }
+    let obligations = load_obligations(directory, families)?;
     Ok(ResultsFiles {
         links,
         not_translatable,
         review,
         links_sha256: content_sha256(links_text.as_bytes()),
+        obligations,
     })
 }
 

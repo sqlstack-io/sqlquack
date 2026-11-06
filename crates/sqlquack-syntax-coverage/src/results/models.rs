@@ -131,6 +131,93 @@ pub struct ResultsSignoff {
     pub reviewed_utc: String,
 }
 
+/// `obligations/<family>.toml`: what a family's forms must show before they count as matching.
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ObligationsFile {
+    #[serde(default, rename = "obligation")]
+    pub obligations: Vec<TranslationObligation>,
+}
+
+/// One documented behaviour of a form, met only by a cited case whose replay matches Snowflake.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct TranslationObligation {
+    /// `<form>.t<digits>`.
+    pub id: String,
+    pub form: String,
+    pub kind: ObligationKind,
+    /// The boundary's kind, on boundary obligations only.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub subkind: Option<String>,
+    pub target: String,
+    pub note: String,
+    pub catches: String,
+    pub reading: String,
+    /// `cases/translation/<family>/<file>.toml#<case id>`.
+    pub cases: Vec<String>,
+    pub required: bool,
+    /// Why a required obligation has no case yet; it is never met.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub held: Option<String>,
+    /// Why an obligation that is not required no case can measure; it is never met.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+}
+
+/// `retired-obligations.toml`: obligation ids withdrawn, never to be reused.
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RetiredFile {
+    #[serde(default, rename = "retired")]
+    pub retired: Vec<RetiredObligation>,
+}
+
+/// One withdrawn obligation id, why, and the live obligations that carry its cases now.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RetiredObligation {
+    pub id: String,
+    pub form: String,
+    pub reason: String,
+    #[serde(default)]
+    pub replaced_by: Vec<String>,
+}
+
+/// What a translation obligation checks.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ObligationKind {
+    TypeCombination,
+    NullArgument,
+    Boundary,
+    ErrorParity,
+}
+
+/// Whether an obligation is met: only `met` lets its form count as matching.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ObligationState {
+    /// A cited case translates with results matching Snowflake.
+    Met,
+    /// Required, and no cited case matches: refused, differing, unrecorded or only shaped.
+    Unmet,
+    /// Required, with no case yet and a `held` reason.
+    Held,
+    /// Not required: a documented alternative no case can measure, with its reason.
+    Unmeasured,
+}
+
+/// Obligation counts by state.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
+pub struct ObligationTally {
+    pub declared: usize,
+    pub met: usize,
+    pub unmet: usize,
+    pub held: usize,
+    pub unmeasured: usize,
+}
+
 /// The loaded link and list files, checked against the catalogue.
 #[derive(Clone, Debug)]
 pub struct ResultsFiles {
@@ -139,6 +226,8 @@ pub struct ResultsFiles {
     pub review: ResultsReviewFile,
     /// SHA-256 of `form-links.toml`'s text.
     pub links_sha256: String,
+    /// Every family's obligations, in file then declaration order.
+    pub obligations: Vec<TranslationObligation>,
 }
 
 /// A form's state over the recorded statements linked to it.
@@ -153,6 +242,8 @@ pub enum ResultState {
     SyntaxOnly,
     /// A statement's refusal or guard raise names it, or a statement linked to it cannot be judged.
     Refused,
+    /// Its statements would match, but a required obligation is unmet or held.
+    UnmetObligations,
     /// At least one linked statement's replay differs from Snowflake's result: a bug.
     Differs,
     /// No recorded statement links to it.
@@ -167,6 +258,9 @@ pub struct FormResult {
     pub state: ResultState,
     pub statements: usize,
     pub matching_statements: usize,
+    /// Its required obligations that are not met, by id.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub unmet_obligations: Vec<String>,
     /// The refusal codes of its statements, sorted and distinct.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub codes: Vec<String>,
@@ -182,6 +276,7 @@ pub struct FormTally {
     pub matching: usize,
     pub syntax_only: usize,
     pub refused: usize,
+    pub unmet_obligations: usize,
     pub differs: usize,
     pub unmeasured: usize,
 }
@@ -237,6 +332,14 @@ pub struct ResultsReport {
     pub function_links_sha256: String,
     pub form_results: Vec<FormResult>,
     pub statement_outcomes: BTreeMap<String, StatementOutcome>,
+    pub obligations: ObligationTally,
+    /// Each obligation's state, by id.
+    pub obligation_states: BTreeMap<String, ObligationState>,
+    /// Each held obligation's reason, and each unmeasured one's.
+    pub held: BTreeMap<String, String>,
+    pub unmeasured: BTreeMap<String, String>,
+    /// Recorded translation cases no obligation cites; they can make no form match.
+    pub uncited_cases: Vec<String>,
 }
 
 /// `results-baseline.json`: every statement's outcome and every form's state.
@@ -246,6 +349,9 @@ pub struct ResultsBaseline {
     pub format: String,
     pub statements: BTreeMap<String, StatementOutcome>,
     pub forms: BTreeMap<String, ResultState>,
+    /// Absent from baselines written before obligations were read.
+    #[serde(default)]
+    pub obligations: BTreeMap<String, ObligationState>,
 }
 
 /// How a report differs from the baseline.

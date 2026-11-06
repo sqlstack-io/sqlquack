@@ -6,8 +6,12 @@ use crate::results::models::{
     FormResult, FormTally, RecordedStatement, ResultState, StatementOutcome, StatementTally,
 };
 
-/// A form's state: listed, then any statement that differs, then any refused, then matching rows.
-pub(crate) fn form_state(listed: bool, outcomes: &[StatementOutcome]) -> ResultState {
+/// A form's state: listed, differs, refused, then matching only with every obligation met.
+pub(crate) fn form_state(
+    listed: bool,
+    outcomes: &[StatementOutcome],
+    obligations_met: bool,
+) -> ResultState {
     if listed {
         return ResultState::NotTranslatable;
     }
@@ -20,9 +24,13 @@ pub(crate) fn form_state(listed: bool, outcomes: &[StatementOutcome]) -> ResultS
     if outcomes.iter().any(|outcome| outcome.refused()) {
         return ResultState::Refused;
     }
-    match outcomes.contains(&StatementOutcome::Matching) {
-        true => ResultState::Matching,
-        false => ResultState::SyntaxOnly,
+    match (
+        outcomes.contains(&StatementOutcome::Matching),
+        obligations_met,
+    ) {
+        (true, true) => ResultState::Matching,
+        (true, false) => ResultState::UnmetObligations,
+        (false, _) => ResultState::SyntaxOnly,
     }
 }
 
@@ -31,6 +39,7 @@ pub(crate) fn form_result(
     (id, family): (&str, &str),
     listed: bool,
     linked: &[&RecordedStatement],
+    unmet_obligations: Vec<String>,
 ) -> FormResult {
     let outcomes: Vec<StatementOutcome> =
         linked.iter().map(|statement| statement.outcome).collect();
@@ -42,9 +51,10 @@ pub(crate) fn form_result(
     FormResult {
         id: id.to_owned(),
         family: family.to_owned(),
-        state: form_state(listed, &outcomes),
+        state: form_state(listed, &outcomes, unmet_obligations.is_empty()),
         statements: linked.len(),
         matching_statements: outcomes.iter().filter(|outcome| outcome.matches()).count(),
+        unmet_obligations,
         codes: codes.into_iter().collect(),
     }
 }
@@ -59,6 +69,7 @@ pub(crate) fn tally<'a>(forms: impl Iterator<Item = &'a FormResult>) -> FormTall
             ResultState::Matching => &mut tally.matching,
             ResultState::SyntaxOnly => &mut tally.syntax_only,
             ResultState::Refused => &mut tally.refused,
+            ResultState::UnmetObligations => &mut tally.unmet_obligations,
             ResultState::Differs => &mut tally.differs,
             ResultState::Unmeasured => &mut tally.unmeasured,
         };
