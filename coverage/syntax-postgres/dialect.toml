@@ -1,0 +1,8 @@
+format = "sqlquack-syntax-dialect/1"
+name = "postgres"
+form_prefix = "pg"
+families = ["query", "dml", "ddl", "transaction_session", "security_admin", "utility", "functions", "expressions"]
+receipt_format = "sqlquack-syntax-receipt/2"
+parser_path = "crates/sqlquack-syntax-postgres"
+local_parser = "none"
+syntax_codes = ["42601"]
