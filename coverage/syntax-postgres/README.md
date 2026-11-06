@@ -151,7 +151,7 @@ receipt's later stage, and an observed case its receipt's outcome.
 
 `baseline.json` is the claims snapshot (`syntax-coverage snapshot --root
 coverage/syntax-postgres`), bound to catalogue commit b71461e6 and to the Postgres parser's tree
-on `wip/pg-integration` 7e9fc99b (tree 4825006a), where `local_parser = "postgres"` runs that
+on `wip/pg-integration` a78d1d3f (tree 9138a8de), where `local_parser = "postgres"` runs that
 parser's strict entry point in the checker's isolated worker: any parser error rejects the case.
 It claims 10,009 of 22,231 obligations and the 1,038 forms the reviewers' first ten batches
 approved, less batch 9's withdrawals; a statement the parser keeps as an opaque command is never verified. It holds the 4,668
