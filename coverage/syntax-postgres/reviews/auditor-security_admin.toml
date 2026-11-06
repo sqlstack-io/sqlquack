@@ -21,3 +21,39 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 
 [review.definitions]
 "pg.security_admin.security-label" = "a8b23336fef0ed2ec681532016c8c63e85c6e258ed5c5b617364c9a5f49be297"
+
+[[review]]
+id = "pg-auditor-security_admin-003"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "416dd30e4b1b200b4dcc847aa57658e837c592b5"
+reviewed_utc = "2026-11-06T13:57:40Z"
+verdict = "approved"
+forms = [
+  "pg.security_admin.create-role",
+  "pg.security_admin.create-role.in-group",
+  "pg.security_admin.create-role.with-user",
+  "pg.security_admin.create-user",
+  "pg.security_admin.create-group",
+  "pg.security_admin.create-policy",
+  "pg.security_admin.create-user-mapping",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 416dd30e; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.security_admin.create-role" = "2338c5d585d5398242b6ed8d96686c34edfd6282b0a960b07a5bbc6e6e30e3d9"
+"pg.security_admin.create-role.in-group" = "127ee61b762674a3fcadb66eb08047964fefc5479f945521bea497f537dc2a2a"
+"pg.security_admin.create-role.with-user" = "7e08d74315139b902aca37c0c447a6e01d1c21f478e03453ec005a7bd5234b2c"
+"pg.security_admin.create-user" = "febb3dba0b5baa70e0b5df158ef73e3ff189279b61bad42e2feca7ac279c1b86"
+"pg.security_admin.create-group" = "beb44ded9787d55f00688ea3d87d8208db1d67bb7384b20c322b0398e044b60a"
+"pg.security_admin.create-policy" = "3218d5e08e762eb6efab5456c0f5a988c3d8c1ca873247ebb8ccc925eead8b76"
+"pg.security_admin.create-user-mapping" = "916682a50a9f7fc8c0f0b010f249b879b10824535a29de6b08b8cdf23c8e99fc"
+
+[review.definitions]
+"pg.security_admin.create-role" = "c62a1e391d94bf9ad5f8b22d1439ae77ae060e9537298504aba68dcfe2d30f8e"
+"pg.security_admin.create-role.in-group" = "4a24058299840da83f49512c6cb05c62d831074c1201b406478cc6d415139def"
+"pg.security_admin.create-role.with-user" = "d545a25054d687c2a18941b0acf9d4665af95b716deffff08b8710de0d8ef083"
+"pg.security_admin.create-user" = "1cb71826929dd712162a8731fcf82cd6dcb171d47b61d49fbd8e6fd9429a405e"
+"pg.security_admin.create-group" = "d7469acd1cd29c17efa242815682a2f4022765ac9b96c88352d3d412f414db4a"
+"pg.security_admin.create-policy" = "e7f3ecbb38b76a7f535c490dd236c1dbd52dcfacaa7c66a1a342d004fae97b4d"
+"pg.security_admin.create-user-mapping" = "7c19988b23bdba36a7ece030f4966ef48c081cf26b60cee3f179441ec8da3e47"
