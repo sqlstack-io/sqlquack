@@ -16,6 +16,7 @@ pub fn load_expected(path: &Path) -> Result<ExpectedDifferences, String> {
         kept_quotings: file.kept_quotings,
         kept_nodes: file.kept_nodes,
         kept_fields: file.kept_fields,
+        kept_alls: file.kept_alls,
         structured: file.structured,
         ..ExpectedDifferences::default()
     };

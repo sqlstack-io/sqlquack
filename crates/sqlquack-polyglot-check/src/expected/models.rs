@@ -1,7 +1,7 @@
 //! Expected differences.
 
 use crate::expected::_helpers::nodes::{
-    differ_only_by_kept_field, differ_only_by_kept_node, is_opaque,
+    differ_only_by_kept_all, differ_only_by_kept_field, differ_only_by_kept_node, is_opaque,
 };
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
 use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
@@ -31,6 +31,9 @@ pub struct ExpectedFile {
     /// One entry per reviewed field SQLQuack keeps as written where polyglot drops or infers it.
     #[serde(default, rename = "kept_field")]
     pub kept_fields: Vec<KeptField>,
+    /// One entry per reviewed clause whose ALL SQLQuack keeps apart where polyglot reads it as a key.
+    #[serde(default, rename = "kept_all")]
+    pub kept_alls: Vec<KeptAll>,
     /// One entry per reviewed statement polyglot keeps as a command and SQLQuack structures.
     #[serde(default, rename = "structured")]
     pub structured: Vec<StructuredStatement>,
@@ -59,6 +62,20 @@ pub struct KeptQuoting {
     /// Text the statement contains, with whitespace removed and ignoring case, such as `EXCLUDE("`.
     pub marker: String,
     /// Why SQLQuack's quoting is right; the trees may differ in nothing else.
+    pub note: String,
+}
+
+/// A statement both parsers parse, where SQLQuack keeps a clause's ALL apart and polyglot reads it as a key.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct KeptAll {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `ORDERBYALL`.
+    pub marker: String,
+    /// The clause holding the ALL, such as `order_by`.
+    pub clause: String,
+    /// Why SQLQuack keeps ALL apart; folded into polyglot's key the trees may differ in nothing.
     pub note: String,
 }
 
@@ -147,6 +164,8 @@ pub struct ExpectedDifferences {
     pub kept_nodes: Vec<KeptNode>,
     /// The reviewed fields SQLQuack keeps as written where polyglot drops or infers them.
     pub kept_fields: Vec<KeptField>,
+    /// The reviewed clauses whose ALL SQLQuack keeps apart where polyglot reads it as a key.
+    pub kept_alls: Vec<KeptAll>,
     /// The reviewed statements polyglot keeps as a command and SQLQuack structures.
     pub structured: Vec<StructuredStatement>,
 }
@@ -215,6 +234,15 @@ impl ExpectedDifferences {
         self.kept_fields.iter().find(|entry| {
             compact.contains(&entry.marker.to_ascii_uppercase())
                 && differ_only_by_kept_field(polyglot, sqlquack, &entry.field)
+        })
+    }
+
+    /// The entry explaining where SQLQuack keeps a clause's ALL apart that polyglot reads as a key.
+    pub fn kept_all_for(&self, sql: &str, polyglot: &str, sqlquack: &str) -> Option<&KeptAll> {
+        let compact = compact(sql);
+        self.kept_alls.iter().find(|entry| {
+            compact.contains(&entry.marker.to_ascii_uppercase())
+                && differ_only_by_kept_all(polyglot, sqlquack, &entry.clause)
         })
     }
 

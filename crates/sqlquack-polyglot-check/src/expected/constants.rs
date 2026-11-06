@@ -14,3 +14,11 @@ pub const NAME_KEY: &str = "name";
 pub const THIS_KEY: &str = "this";
 /// The field recording whether an identifier was quoted.
 pub const QUOTED_KEY: &str = "quoted";
+/// The field of a clause SQLQuack sets for ALL, beside an empty `expressions`.
+pub const ALL_KEY: &str = "all";
+/// The field listing a clause's keys.
+pub const EXPRESSIONS_KEY: &str = "expressions";
+/// The text polyglot gives ALL when it reads ALL as a key.
+pub const ALL_TEXT: &str = "ALL";
+/// The node polyglot reads a bare word such as ALL into.
+pub const VAR_KEY: &str = "var";
