@@ -9619,6 +9619,39 @@ cases = ["cases/translation/functions/flatten.toml#t006_null_input"]
 required = true
 
 [[obligation]]
+id = "sf.functions.flatten.t007"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH reaching an object"
+note = "PATH reaching an object: one row per key, with KEY, VALUE and a PATH prefixed with the given path, for a plain key and one with a space."
+catches = "the prefix joined without a dot, or a quoted key written as a plain one"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t001_object_under_path"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t008"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH key case"
+note = "PATH keys match case-sensitively: 'Items' finds nothing where the key is items, and one-step 'items' reaches the array."
+catches = "keys matched ignoring case"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t002_path_key_case"]
+required = true
+
+[[obligation]]
+id = "sf.functions.flatten.t009"
+form = "sf.functions.flatten"
+kind = "type_combination"
+target = "VARIANT, PATH reaching a scalar, a JSON null or an empty array"
+note = "PATH reaching a scalar, a JSON null and an empty array gives no rows."
+catches = "a scalar flattened into one row, or a JSON null giving a row"
+reading = "the page: one row per element of the array or object at PATH (default the outer value); OUTER TRUE gives one row of NULLs for a zero-row expansion; RECURSIVE TRUE expands all sub-elements; MODE limits expansion to objects, arrays or both (default)"
+cases = ["cases/translation/functions/flatten.path.toml#t003_scalar_and_null_at_path"]
+required = true
+
+[[obligation]]
 id = "sf.functions.floor.t001"
 form = "sf.functions.floor"
 kind = "type_combination"
@@ -18942,6 +18975,63 @@ cases = ["cases/translation/functions/pow.power.toml#t009_neg_frac"]
 required = true
 
 [[obligation]]
+id = "sf.functions.pow.power.t010"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "POWER(2, n) for whole n"
+note = "POWER(2, n) for whole exponents from -52 to 64, as dbt_utils.date_spine writes it for each bit."
+catches = "an inexact power of two, an integer result, or a lost low bit past 2^53"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t001_whole_exponents"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t011"
+form = "sf.functions.pow.power"
+kind = "type_combination"
+target = "NUMBER times POWER(2, k) for literal k"
+note = "The dbt_utils.date_spine shape: a NUMBER times POWER(2, k) for literal k, summed, plus 1."
+catches = "the result typed NUMBER instead of FLOAT, or a power other than 2^k"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t002_literal_exponents_in_a_sum"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t012"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "magnitude"
+target = "POWER(2, n) at the edges of the double range"
+note = "The largest and smallest finite powers of two in a double, 2^1023 and 2^-1074, and 2^-1075 below the smallest."
+catches = "2^1023 overflowing, or the subnormal 2^-1074 flushed to 0"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t003_range_edges"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t013"
+form = "sf.functions.pow.power"
+kind = "boundary"
+subkind = "overflow"
+target = "POWER(2, 1024)"
+note = "2^1024, past the largest double."
+catches = "a finite value or an error where Snowflake gives its overflow result"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t004_overflow"]
+required = true
+
+[[obligation]]
+id = "sf.functions.pow.power.t014"
+form = "sf.functions.pow.power"
+kind = "null_argument"
+target = "y, with x = 2"
+note = "POWER(2, NULL)."
+catches = "1 or 2 returned instead of NULL"
+reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; x and y numeric (the numeric category gives NUMBER and FLOAT)"
+cases = ["cases/translation/functions/pow.power-of-two.toml#t005_null_exponent"]
+required = true
+
+[[obligation]]
 id = "sf.functions.previous-day.t001"
 form = "sf.functions.previous-day"
 kind = "type_combination"
@@ -19948,6 +20038,17 @@ note = "An empty subject."
 catches = "'' instead of NULL for an empty subject"
 reading = "the pages: POSIX extended regular expressions; parameters c, i, m, e, s (default c); positions are 1-based; NULL if any argument is NULL; REGEXP_SUBSTR returns the matching part; with e, group 1 by default"
 cases = ["cases/translation/functions/regexp-substr.toml#t011_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.regexp-substr.t012"
+form = "sf.functions.regexp-substr"
+kind = "type_combination"
+target = "position at and past the end, with a pattern matching the empty string"
+note = "REGEXP_SUBSTR(a, 'x*', n) on 'abc' with n at the last character, one past it and two past it, where 'x*' matches the empty string."
+catches = "'' where Snowflake gives NULL, or an error past the end where Snowflake answers"
+reading = "the pages: POSIX extended regular expressions; parameters c, i, m, e, s (default c); positions are 1-based; NULL if any argument is NULL; REGEXP_SUBSTR returns the matching part; with e, group 1 by default"
+cases = ["cases/translation/functions/regexp-substr.empty-match-position.toml#t001_empty_match_at_and_past_the_end"]
 required = true
 
 [[obligation]]
@@ -29166,6 +29267,61 @@ note = "A NULL value."
 catches = "the text null returned"
 reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
 cases = ["cases/translation/functions/to-char.to-char.toml#t005_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t006"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MON'"
+note = "TO_CHAR(date, 'MON') for a date in every month, as dbt_date.get_date_dimension writes month_name_short."
+catches = "the month number written, the wrong letter case, or a locale's abbreviation"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t001_mon_every_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t007"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MMMM'"
+note = "TO_CHAR(date, 'MMMM') for a date in every month, as dbt_date.get_date_dimension writes month_name."
+catches = "MMMM read as MM twice ('0101'), the wrong letter case, or an abbreviation"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t002_mmmm_every_month"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t008"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE and TIMESTAMP, MON and MMMM beside other fields"
+note = "MON and MMMM beside other fields and on a timestamp."
+catches = "a field next to the name misread, or the timestamp's time leaking into the name"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t003_month_names_in_a_format"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t009"
+form = "sf.functions.to-char.to-char"
+kind = "null_argument"
+target = "expr, with 'MON' and 'MMMM'"
+note = "A NULL date."
+catches = "a month name for NULL"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-char.to-char.t010"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "DATE, 'MONMM' and 'MMMMDD'"
+note = "MONMM and MMMMDD, a name directly before another field."
+catches = "the name's letters read as part of the next field"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.month-names.toml#t007_names_beside_month_and_day"]
 required = true
 
 [[obligation]]
