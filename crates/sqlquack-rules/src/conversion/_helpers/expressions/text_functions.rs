@@ -672,10 +672,12 @@ fn regexp_substr_computed(
             &format!("{INVALID_PARAMETER_MESSAGE} {reason}"),
         ))
     };
+    let empty_match = empty_match_guard("REGEXP_SUBSTR", &pattern, (construct, site))?;
     Ok(Emitted::new(
         format!(
             "list_transform([struct_pack(t := {text}, p := {position}, o := {occurrence}, \
-             g := {group})], lambda r: CASE WHEN r['t'] IS NULL OR r['p'] IS NULL \
+             g := {group})], lambda r: CASE WHEN {empty_match} THEN CAST(NULL AS VARCHAR) \
+             WHEN r['t'] IS NULL OR r['p'] IS NULL \
              OR r['o'] IS NULL OR r['g'] IS NULL THEN NULL \
              WHEN r['p'] < 1 THEN CAST({} AS VARCHAR) WHEN r['o'] < 1 THEN CAST({} AS VARCHAR) \
              WHEN r['g'] < 0 THEN CAST({} AS VARCHAR) \
