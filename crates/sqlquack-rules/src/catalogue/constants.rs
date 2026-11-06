@@ -384,7 +384,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:DATE_PART",
             "node:extract",
         ],
-        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, or as the operand of DATE_PART, EXTRACT and the single-part functions: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
+        conditions: "Every branch an untyped NULL, in a conditional, in every branch of a set operation, as the operand of DATE_PART, EXTRACT and the single-part functions, or as a result column of the statement: the result is NULL of Snowflake's untyped NULL type, described as VARCHAR(0), held as a DuckDB VARCHAR, as recorded.",
         failures: &[],
     },
     RuleSpec {
