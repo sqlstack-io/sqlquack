@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.st-aswkb.st-aswkb"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "A point read back with TO_GEOMETRY, which gives SRID 0 for WKB even when the GEOMETRY had SRID 3857. Catches: EWKB returned (the SRID carried over), or the coordinates swapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_X(TO_GEOMETRY(ST_ASWKB(TO_GEOGRAPHY(v)))) AS x, ST_Y(TO_GEOMETRY(ST_ASWKB(TO_GEOGRAPHY(v)))) AS y, ST_SRID(TO_GEOMETRY(ST_ASWKB(TO_GEOMETRY(v, 3857)))) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_type"
+description = "The result type. Catches: hexadecimal text returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT TYPEOF(ST_ASWKB(TO_GEOMETRY(v))::VARIANT) AS t FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_ASWKB(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

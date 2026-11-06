@@ -1,0 +1,29 @@
+category = "translation"
+construct = "sf.functions.dmf-string-length-max"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_max"
+description = "'abc', 'hello' and the multi-byte '\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9' (7 characters, 14 bytes), and a NULL. Catches: bytes counted instead of characters (14)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'hello'"],
+  ["'\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9'"],
+  ["NULL"],
+]
+query = "SELECT SNOWFLAKE.CORE.STRING_LENGTH_MAX(SELECT v FROM input) AS r"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_query"
+description = "Only NULLs; the page does not say; the recording decides. Catches: 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["NULL"],
+]
+query = "SELECT SNOWFLAKE.CORE.STRING_LENGTH_MAX(SELECT v FROM input) AS r"
+order = "ordered"
+tags = ["null"]

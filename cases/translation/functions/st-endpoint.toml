@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.st-endpoint"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_line"
+description = "The last point of a 3-point line string, as GEOGRAPHY and GEOMETRY. Catches: the other end returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 2,3 4)'"],
+]
+query = "SELECT ST_X(ST_ENDPOINT(TO_GEOGRAPHY(v))) AS x, ST_Y(ST_ENDPOINT(TO_GEOGRAPHY(v))) AS y, ST_X(ST_ENDPOINT(TO_GEOMETRY(v))) AS mx FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_not_line"
+description = "A polygon, which the page says is an error. Catches: a vertex of the ring returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ST_ASWKT(ST_ENDPOINT(TO_GEOGRAPHY(v))) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_geography_or_geometry_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_ENDPOINT(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

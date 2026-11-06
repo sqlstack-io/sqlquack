@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.functions.st-hausdorffdistance"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_example"
+description = "The page's examples, rounded to 6 places, with one pair reversed. Catches: the minimum distance returned (0 for overlapping polygons), metres returned, or a direction-dependent result"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'", "'POINT(0 1)'"],
+  ["'POLYGON((-1 0,0 1,1 0,0 -1,-1 0))'", "'POLYGON((-1 0,0 1,2 0,0 -1,-1 0))'"],
+  ["'POLYGON((-1 0,0 3,1 0,0 -1,-1 0))'", "'POLYGON((-1 0,0 1,1 0,0 -1,-1 0))'"],
+]
+query = "SELECT ordinal, ROUND(ST_HAUSDORFFDISTANCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)), 6) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_expression_1"
+description = "A NULL shape, which the page says gives NULL. Catches: an error, or 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_HAUSDORFFDISTANCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

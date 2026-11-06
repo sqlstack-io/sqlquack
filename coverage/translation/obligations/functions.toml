@@ -59,6 +59,39 @@ cases = ["cases/translation/functions/abs.toml#t005_extremes"]
 required = true
 
 [[obligation]]
+id = "sf.functions.accumulate.t001"
+form = "sf.functions.accumulate"
+kind = "type_combination"
+target = "INT with INT state"
+note = "The page's sum example over 3, 4 and 10, with a NULL row the page says is skipped (17)."
+catches = "the NULL row breaking the sum, or only the last row kept"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t001_sum"]
+required = true
+
+[[obligation]]
+id = "sf.functions.accumulate.t002"
+form = "sf.functions.accumulate"
+kind = "type_combination"
+target = "INT with ARRAY state"
+note = "The page's mean example over 3, 4 and 11, tracking the sum and the count in an ARRAY (6)."
+catches = "the count taken from all rows including NULL, or integer division"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t002_mean"]
+required = true
+
+[[obligation]]
+id = "sf.functions.accumulate.t003"
+form = "sf.functions.accumulate"
+kind = "null_argument"
+target = "input-expr"
+note = "Only NULL rows, which the page says give NULL."
+catches = "0 returned"
+reading = "the page: a user-defined aggregate built from initialize, accumulate, combine and terminate lambdas; NULL rows are skipped; NULL if all rows are NULL or there are none"
+cases = ["cases/translation/functions/accumulate.toml#t003_null_input_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.acos.t001"
 form = "sf.functions.acos"
 kind = "type_combination"
@@ -4112,7 +4145,7 @@ id = "sf.functions.bitand.t006"
 form = "sf.functions.bitand"
 kind = "null_argument"
 target = "expr1"
-note = "A NULL on either side alone; the page does not say; the recording decides."
+note = "A NULL on either side alone; the BITAND page, which also covers BITOR and BITXOR, says either NULL input gives NULL."
 catches = "the NULL read as 0"
 reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitand.toml#t006_null_expr1"]
@@ -4662,7 +4695,7 @@ id = "sf.functions.bitor.t006"
 form = "sf.functions.bitor"
 kind = "null_argument"
 target = "expr1"
-note = "A NULL on either side alone; the page does not say; the recording decides."
+note = "A NULL on either side alone; the BITAND page, which also covers BITOR and BITXOR, says either NULL input gives NULL."
 catches = "the NULL read as 0"
 reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitor.toml#t006_null_expr1"]
@@ -4915,7 +4948,7 @@ id = "sf.functions.bitxor.t006"
 form = "sf.functions.bitxor"
 kind = "null_argument"
 target = "expr1"
-note = "A NULL on either side alone; the page does not say; the recording decides."
+note = "A NULL on either side alone; the BITAND page, which also covers BITOR and BITXOR, says either NULL input gives NULL."
 catches = "the NULL read as 0"
 reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitxor.toml#t006_null_expr1"]
@@ -9229,6 +9262,237 @@ cases = ["cases/translation/functions/div0null.toml#t006_neg_zero"]
 required = true
 
 [[obligation]]
+id = "sf.functions.dmf-avg.t001"
+form = "sf.functions.dmf-avg"
+kind = "type_combination"
+target = "NUMBER"
+note = "The values 1, 2 and 6 and a NULL: average 3."
+catches = "the NULL counted as 0 (2.25)"
+reading = "the page: the average of a FLOAT or NUMBER column"
+cases = ["cases/translation/functions/dmf-avg.toml#t001_average"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-avg.t002"
+form = "sf.functions.dmf-avg"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the average of a FLOAT or NUMBER column"
+cases = ["cases/translation/functions/dmf-avg.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-blank-count.t001"
+form = "sf.functions.dmf-blank-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "An empty string, three spaces, ' a ' and a NULL: 2 blank."
+catches = "spaces not counted, or NULL counted"
+reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
+cases = ["cases/translation/functions/dmf-blank-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-blank-count.t002"
+form = "sf.functions.dmf-blank-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are not blank."
+catches = "NULL counted as blank"
+reading = "the page: the number of values that are an empty string or contain only spaces (TRIM(column) = ''); NULL is not blank"
+cases = ["cases/translation/functions/dmf-blank-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-duplicate-count.t001"
+form = "sf.functions.dmf-duplicate-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "a three times, b once and NULL twice; the page does not say; the recording decides whether repeated values count once, every copy, or every extra copy."
+catches = "the NULL pair left out"
+reading = "the page: the count of column values that have duplicates, including NULL values"
+cases = ["cases/translation/functions/dmf-duplicate-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-duplicate-count.t002"
+form = "sf.functions.dmf-duplicate-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are counted as duplicates."
+catches = "0 returned"
+reading = "the page: the count of column values that have duplicates, including NULL values"
+cases = ["cases/translation/functions/dmf-duplicate-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-invalid-email-count.t001"
+form = "sf.functions.dmf-invalid-email-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Valid a.b@example.com and x+y@sub.example.org; invalid no-at, a..b@example.com (empty segment) and a@example.c (one-letter final label); and a NULL: 3 invalid."
+catches = "NULL counted, empty local segments accepted, or a one-letter final label accepted"
+reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
+cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-invalid-email-count.t002"
+form = "sf.functions.dmf-invalid-email-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which the page says are not counted."
+catches = "NULL counted as invalid"
+reading = "the page: the number of values that fail its whole-string email format check; NULL values are not counted"
+cases = ["cases/translation/functions/dmf-invalid-email-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t001"
+form = "sf.functions.dmf-null-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Two NULLs among four values, one of them an empty string."
+catches = "the empty string counted as NULL, or non-NULL values counted"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t002"
+form = "sf.functions.dmf-null-count"
+kind = "type_combination"
+target = "NUMBER"
+note = "One NULL among three numbers."
+catches = "NUMBER columns rejected"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t002_number"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-count.t003"
+form = "sf.functions.dmf-null-count"
+kind = "null_argument"
+target = "query"
+note = "A column of only NULLs, all counted."
+catches = "0 returned"
+reading = "the page: the number of NULL values in the one column the query projects"
+cases = ["cases/translation/functions/dmf-null-count.toml#t003_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-percent.t001"
+form = "sf.functions.dmf-null-percent"
+kind = "type_combination"
+target = "VARCHAR"
+note = "One NULL among four values; the page does not say; the recording decides whether this reads 25 or 0.25."
+catches = "the NULL left out (0), or NULLs over non-NULLs (one third)"
+reading = "the page: the percentage of the column values that are NULL"
+cases = ["cases/translation/functions/dmf-null-percent.toml#t001_percent"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-null-percent.t002"
+form = "sf.functions.dmf-null-percent"
+kind = "null_argument"
+target = "query"
+note = "A column of only NULLs."
+catches = "0 returned"
+reading = "the page: the percentage of the column values that are NULL"
+cases = ["cases/translation/functions/dmf-null-percent.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-string-length-max.t001"
+form = "sf.functions.dmf-string-length-max"
+kind = "type_combination"
+target = "VARCHAR"
+note = "'abc', 'hello' and the multi-byte '\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9\u00e9' (7 characters, 14 bytes), and a NULL."
+catches = "bytes counted instead of characters (14)"
+reading = "the page: the maximum string length of the non-NULL values"
+cases = ["cases/translation/functions/dmf-string-length-max.toml#t001_max"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-string-length-max.t002"
+form = "sf.functions.dmf-string-length-max"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs; the page does not say; the recording decides."
+catches = "0 returned"
+reading = "the page: the maximum string length of the non-NULL values"
+cases = ["cases/translation/functions/dmf-string-length-max.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-true-count.t001"
+form = "sf.functions.dmf-true-count"
+kind = "type_combination"
+target = "BOOLEAN"
+note = "TRUE twice, FALSE once and a NULL: 2."
+catches = "FALSE or NULL counted"
+reading = "the page: the count of non-NULL values that are TRUE"
+cases = ["cases/translation/functions/dmf-true-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-true-count.t002"
+form = "sf.functions.dmf-true-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which are not TRUE."
+catches = "NULL counted as TRUE"
+reading = "the page: the count of non-NULL values that are TRUE"
+cases = ["cases/translation/functions/dmf-true-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-unique-count.t001"
+form = "sf.functions.dmf-unique-count"
+kind = "type_combination"
+target = "VARCHAR"
+note = "a twice, b, c and two NULLs: 3 unique non-NULL values."
+catches = "NULL counted as a value (4), or only values occurring once counted (2)"
+reading = "the page: the number of unique non-NULL values"
+cases = ["cases/translation/functions/dmf-unique-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-unique-count.t002"
+form = "sf.functions.dmf-unique-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which leave no unique non-NULL value."
+catches = "NULL counted as one value"
+reading = "the page: the number of unique non-NULL values"
+cases = ["cases/translation/functions/dmf-unique-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-zero-count.t001"
+form = "sf.functions.dmf-zero-count"
+kind = "type_combination"
+target = "NUMBER(38,3)"
+note = "Zero, 0.000 written with a scale, a small non-zero 0.001 and a NULL: 2."
+catches = "the NULL counted as zero, or 0.001 rounded to zero"
+reading = "the page: the count of column values equal to zero"
+cases = ["cases/translation/functions/dmf-zero-count.toml#t001_count"]
+required = true
+
+[[obligation]]
+id = "sf.functions.dmf-zero-count.t002"
+form = "sf.functions.dmf-zero-count"
+kind = "null_argument"
+target = "query"
+note = "Only NULLs, which are not zero."
+catches = "NULL counted as zero"
+reading = "the page: the count of column values equal to zero"
+cases = ["cases/translation/functions/dmf-zero-count.toml#t002_null_query"]
+required = true
+
+[[obligation]]
 id = "sf.functions.editdistance.t001"
 form = "sf.functions.editdistance"
 kind = "type_combination"
@@ -10021,6 +10285,127 @@ cases = ["cases/translation/functions/floor.toml#t008_negatives"]
 required = true
 
 [[obligation]]
+id = "sf.functions.format-string-template.t001"
+form = "sf.functions.format-string-template"
+kind = "type_combination"
+target = "VARCHAR with VARCHAR and NUMBER"
+note = "The page's examples: one value, two values in order, and {:.2f} on 3.14159."
+catches = "the values substituted in reverse, or the precision ignored"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t001_examples"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t002"
+form = "sf.functions.format-string-template"
+kind = "type_combination"
+target = "VARCHAR, NUMBER(10,2), NUMBER"
+note = "The page's table example, with values from columns."
+catches = "the decimal printed without two places"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t002_columns"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t003"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "Two placeholders and one value, which the page says is an error."
+catches = "the missing value left empty, or the placeholder kept"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t003_count_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t004"
+form = "sf.functions.format-string-template"
+kind = "error_parity"
+target = "error"
+note = "The {:L} flag, which the page says is an error."
+catches = "the flag ignored"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t004_locale_flag"]
+required = true
+
+[[obligation]]
+id = "sf.functions.format-string-template.t005"
+form = "sf.functions.format-string-template"
+kind = "null_argument"
+target = "value1"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an error, or an empty substitution where Snowflake prints something else"
+reading = "the page: the template with each {} placeholder replaced in order, with optional format specifications; {:L} is an error; a placeholder count that differs from the values is an error"
+cases = ["cases/translation/functions/format-string-template.toml#t005_null_value1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t001"
+form = "sf.functions.generator.generator"
+kind = "type_combination"
+target = "none"
+note = "GENERATOR() with no arguments, which the page says gives 0 rows."
+catches = "an error, or one row"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t001_no_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t002"
+form = "sf.functions.generator.generator"
+kind = "type_combination"
+target = "TIMELIMIT"
+note = "TIMELIMIT 1, which generates some rows; only their existence is measured."
+catches = "TIMELIMIT ignored (0 rows)"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t002_timelimit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator.t003"
+form = "sf.functions.generator.generator"
+kind = "null_argument"
+target = "sec"
+note = "A NULL TIMELIMIT, which the page says is ignored, leaving no argument and 0 rows."
+catches = "an error"
+reading = "the page: with only TIMELIMIT, as many rows as fit in the time; with neither argument, 0 rows; a NULL argument is ignored"
+cases = ["cases/translation/functions/generator.generator.toml#t003_null_sec"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t001"
+form = "sf.functions.generator.generator-rowcount"
+kind = "type_combination"
+target = "ROWCOUNT"
+note = "ROWCOUNT 5 and 0, and 5 with a generous TIMELIMIT."
+catches = "an off-by-one count, or TIMELIMIT taking precedence"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t001_rowcount"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t002"
+form = "sf.functions.generator.generator-rowcount"
+kind = "error_parity"
+target = "error"
+note = "ROWCOUNT -1, which the page says must be non-negative."
+catches = "0 rows returned"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t002_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.generator.generator-rowcount.t003"
+form = "sf.functions.generator.generator-rowcount"
+kind = "null_argument"
+target = "count"
+note = "A NULL ROWCOUNT, which the page says is ignored and gives 0 rows."
+catches = "an error"
+reading = "the page: a table of ROWCOUNT rows (or fewer if TIMELIMIT is reached first); count and sec must be non-negative integer constants; a NULL ROWCOUNT is ignored, giving 0 rows"
+cases = ["cases/translation/functions/generator.generator-rowcount.toml#t003_null_count"]
+required = true
+
+[[obligation]]
 id = "sf.functions.get.t001"
 form = "sf.functions.get"
 kind = "type_combination"
@@ -10498,7 +10883,7 @@ id = "sf.functions.h3-cell-to-boundary.t002"
 form = "sf.functions.h3-cell-to-boundary"
 kind = "type_combination"
 target = "VARCHAR"
-note = "The hexadecimal ID of the same hexagon, equal to the INTEGER result."
+note = "The hexadecimal ID of the same hexagon, whose WKT equals that of the INTEGER result."
 catches = "the text read as a decimal number"
 reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
 cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t002_varchar"]
@@ -10641,7 +11026,7 @@ id = "sf.functions.h3-cell-to-point.t002"
 form = "sf.functions.h3-cell-to-point"
 kind = "type_combination"
 target = "VARCHAR"
-note = "The hexadecimal ID of the same cell, equal to the INTEGER result."
+note = "The hexadecimal ID of the same cell, whose WKT equals that of the INTEGER result."
 catches = "the text read as a decimal number"
 reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
 cases = ["cases/translation/functions/h3-cell-to-point.toml#t002_varchar"]
@@ -11878,6 +12263,28 @@ note = "NULL partition key."
 catches = "NULL-keyed rows dropped or merged with another partition"
 reading = "the page: HASH_AGG hashes rows with HASH, does not ignore NULLs, is order-insensitive across rows but sensitive to column order, and never returns NULL; HASH_AGG(*) hashes every column of the row"
 cases = ["cases/translation/functions/hash-agg.hash-agg-over.syntax.toml#t002_null_expr3"]
+required = true
+
+[[obligation]]
+id = "sf.functions.haversine.t001"
+form = "sf.functions.haversine"
+kind = "type_combination"
+target = "FLOAT x 4"
+note = "The page example, both ways and with a point to itself, rounded to 2 places (3936.39)."
+catches = "latitude and longitude swapped, metres returned, or a direction-dependent result"
+reading = "the page: the great-circle distance in kilometres between two latitude/longitude points, as FLOAT; its example gives 3936.385096389 for New York and Los Angeles"
+cases = ["cases/translation/functions/haversine.toml#t001_example"]
+required = true
+
+[[obligation]]
+id = "sf.functions.haversine.t002"
+form = "sf.functions.haversine"
+kind = "null_argument"
+target = "lat1"
+note = "A NULL latitude; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the great-circle distance in kilometres between two latitude/longitude points, as FLOAT; its example gives 3936.385096389 for New York and Los Angeles"
+cases = ["cases/translation/functions/haversine.toml#t002_null_lat1"]
 required = true
 
 [[obligation]]
@@ -13504,6 +13911,50 @@ note = "A partition whose values are all NULL, which stay NULL."
 catches = "values taken from another partition, or 0"
 reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
 cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t004_null_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t001"
+form = "sf.functions.ipaddress-trunc"
+kind = "type_combination"
+target = "IPADDRESS, INTEGER"
+note = "The page example: 192.168.129.255 to 17 bits and 2001:db8:abcd:1234::1 to 49 bits, with the prefix from a column."
+catches = "the prefix read as host bits, or rounded to a byte"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t001_example"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t002"
+form = "sf.functions.ipaddress-trunc"
+kind = "type_combination"
+target = "IPADDRESS, INTEGER"
+note = "Prefixes 0 and 32 on an IPv4 address: all bits cleared, and the address unchanged."
+catches = "prefix 0 rejected, or 32 clearing the last bit"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t002_ends"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t003"
+form = "sf.functions.ipaddress-trunc"
+kind = "error_parity"
+target = "error"
+note = "Prefix 48 on an IPv4 address from a column, which the page says raises an error when it runs."
+catches = "the prefix clamped to 32, or NULL returned"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t003_family_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.ipaddress-trunc.t004"
+form = "sf.functions.ipaddress-trunc"
+kind = "null_argument"
+target = "prefix-length"
+note = "A NULL prefix, which the page says gives NULL."
+catches = "the address returned unchanged, or an error"
+reading = "the page: the IPADDRESS with only its leading prefix_length bits kept (0 to 32 for IPv4, 0 to 128 for IPv6); a prefix outside the range of the address family is an error; NULL if either argument is NULL"
+cases = ["cases/translation/functions/ipaddress-trunc.toml#t004_null_prefix_length"]
 required = true
 
 [[obligation]]
@@ -16271,6 +16722,39 @@ note = "The empty string, which has a defined digest."
 catches = "NULL for the empty string"
 reading = "the page: <msg> is a string; returns a 16-byte BINARY"
 cases = ["cases/translation/functions/md5-binary.toml#t003_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t001"
+form = "sf.functions.md5-number"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The page example (negative) and two strings whose digests read as positive and negative 128-bit integers within 38 digits."
+catches = "the digest read as unsigned, or as the first 64 bits"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t001_signed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t002"
+form = "sf.functions.md5-number"
+kind = "type_combination"
+target = "VARCHAR"
+note = "abc, whose digest as a signed integer has 39 digits, outside NUMBER(38,0) as the page warns; the page does not say; the recording decides whether this errors."
+catches = "the value truncated to 38 digits"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t002_out_of_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.md5-number.t003"
+form = "sf.functions.md5-number"
+kind = "null_argument"
+target = "msg"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "the digest of an empty string returned"
+reading = "the page: the MD5 digest of the string as a signed integer; it can fall outside NUMBER(38,0); its example gives -24002618010294540563082926240470284066 for Snowflake"
+cases = ["cases/translation/functions/md5-number.toml#t003_null_msg"]
 required = true
 
 [[obligation]]
@@ -22369,6 +22853,28 @@ cases = ["cases/translation/functions/rtrimmed-length.toml#t003_blanks_only"]
 required = true
 
 [[obligation]]
+id = "sf.functions.sanitize-webhook-content.t001"
+form = "sf.functions.sanitize-webhook-content"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text without placeholders, which should come back unchanged, and text naming the webhook secret placeholder (the page does not say; the recording decides on the exact placeholder spelling)."
+catches = "plain text altered"
+reading = "the page: the message with its secret placeholders replaced by REDACTED"
+cases = ["cases/translation/functions/sanitize-webhook-content.toml#t001_plain"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sanitize-webhook-content.t002"
+form = "sf.functions.sanitize-webhook-content"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or an empty string"
+reading = "the page: the message with its secret placeholders replaced by REDACTED"
+cases = ["cases/translation/functions/sanitize-webhook-content.toml#t002_null_message"]
+required = true
+
+[[obligation]]
 id = "sf.functions.search.t001"
 form = "sf.functions.search"
 kind = "type_combination"
@@ -23522,6 +24028,765 @@ cases = ["cases/translation/functions/square.toml#t006_overflow_inf"]
 required = true
 
 [[obligation]]
+id = "sf.functions.st-area.t001"
+form = "sf.functions.st-area"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A 10 by 10 square, a line string, and a collection of a triangle (area 6) and a point."
+catches = "a line string given its length, or the collection area ignoring the triangle"
+reading = "the page: the area, in square metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for shapes without polygons; the sum of the polygons in a collection"
+cases = ["cases/translation/functions/st-area.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-area.t002"
+form = "sf.functions.st-area"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A 1-degree square at the equator in units of 1e9 square metres, rounded (12 on any earth model)."
+catches = "square degrees returned (1)"
+reading = "the page: the area, in square metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for shapes without polygons; the sum of the polygons in a collection"
+cases = ["cases/translation/functions/st-area.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-area.t003"
+form = "sf.functions.st-area"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the area, in square metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for shapes without polygons; the sum of the polygons in a collection"
+cases = ["cases/translation/functions/st-area.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asewkb.t001"
+form = "sf.functions.st-asewkb"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "The SRID carried in the EWKB, read back with TO_GEOMETRY: 4326 for a GEOGRAPHY, 3857 for a GEOMETRY with that SRID."
+catches = "plain WKB returned (SRID 0), or the GEOMETRY SRID replaced by 4326"
+reading = "the page: the shape as EWKB BINARY; for GEOGRAPHY the SRID is always 4326"
+cases = ["cases/translation/functions/st-asewkb.toml#t001_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asewkb.t002"
+form = "sf.functions.st-asewkb"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as EWKB BINARY; for GEOGRAPHY the SRID is always 4326"
+cases = ["cases/translation/functions/st-asewkb.toml#t002_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asewkt.t001"
+form = "sf.functions.st-asewkt"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A GEOGRAPHY point, whose text starts with SRID=4326."
+catches = "the SRID prefix left out, or longitude and latitude swapped"
+reading = "the page: the shape as EWKT text; for GEOGRAPHY the SRID is always 4326"
+cases = ["cases/translation/functions/st-asewkt.toml#t001_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asewkt.t002"
+form = "sf.functions.st-asewkt"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A GEOMETRY with SRID 3857, whose text carries that SRID."
+catches = "SRID 4326 written for every shape"
+reading = "the page: the shape as EWKT text; for GEOGRAPHY the SRID is always 4326"
+cases = ["cases/translation/functions/st-asewkt.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asewkt.t003"
+form = "sf.functions.st-asewkt"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as EWKT text; for GEOGRAPHY the SRID is always 4326"
+cases = ["cases/translation/functions/st-asewkt.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asgeojson.t001"
+form = "sf.functions.st-asgeojson"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "The type and coordinates of a point, longitude first, and no crs key for a GEOMETRY with SRID 3857."
+catches = "latitude first, or a crs member added"
+reading = "the page: the shape as a GeoJSON OBJECT; no SRID or other CRS information is added"
+cases = ["cases/translation/functions/st-asgeojson.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asgeojson.t002"
+form = "sf.functions.st-asgeojson"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "The GeoJSON type names of a line string and a polygon."
+catches = "WKT type names (LINESTRING) returned"
+reading = "the page: the shape as a GeoJSON OBJECT; no SRID or other CRS information is added"
+cases = ["cases/translation/functions/st-asgeojson.toml#t002_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-asgeojson.t003"
+form = "sf.functions.st-asgeojson"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as a GeoJSON OBJECT; no SRID or other CRS information is added"
+cases = ["cases/translation/functions/st-asgeojson.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-asbinary.t001"
+form = "sf.functions.st-aswkb.st-asbinary"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point read back with TO_GEOMETRY, which gives SRID 0 for WKB even when the GEOMETRY had SRID 3857."
+catches = "EWKB returned (the SRID carried over), or the coordinates swapped"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-asbinary.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-asbinary.t002"
+form = "sf.functions.st-aswkb.st-asbinary"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "The result type."
+catches = "hexadecimal text returned"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-asbinary.toml#t002_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-asbinary.t003"
+form = "sf.functions.st-aswkb.st-asbinary"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-asbinary.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-aswkb.t001"
+form = "sf.functions.st-aswkb.st-aswkb"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point read back with TO_GEOMETRY, which gives SRID 0 for WKB even when the GEOMETRY had SRID 3857."
+catches = "EWKB returned (the SRID carried over), or the coordinates swapped"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-aswkb.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-aswkb.t002"
+form = "sf.functions.st-aswkb.st-aswkb"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "The result type."
+catches = "hexadecimal text returned"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-aswkb.toml#t002_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkb.st-aswkb.t003"
+form = "sf.functions.st-aswkb.st-aswkb"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as WKB BINARY (without an SRID; ST_ASEWKB adds one)"
+cases = ["cases/translation/functions/st-aswkb.st-aswkb.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-astext.t001"
+form = "sf.functions.st-aswkt.st-astext"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A point and a line string, longitude first."
+catches = "latitude written first, or an SRID prefix added"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-astext.toml#t001_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-astext.t002"
+form = "sf.functions.st-aswkt.st-astext"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A GEOMETRY with SRID 3857, whose text has no SRID prefix."
+catches = "EWKT returned"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-astext.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-astext.t003"
+form = "sf.functions.st-aswkt.st-astext"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-astext.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-aswkt.t001"
+form = "sf.functions.st-aswkt.st-aswkt"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A point and a line string, longitude first."
+catches = "latitude written first, or an SRID prefix added"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-aswkt.toml#t001_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-aswkt.t002"
+form = "sf.functions.st-aswkt.st-aswkt"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A GEOMETRY with SRID 3857, whose text has no SRID prefix."
+catches = "EWKT returned"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-aswkt.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-aswkt.st-aswkt.t003"
+form = "sf.functions.st-aswkt.st-aswkt"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shape as WKT text (without an SRID; ST_ASEWKT adds one)"
+cases = ["cases/translation/functions/st-aswkt.st-aswkt.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-azimuth.t001"
+form = "sf.functions.st-azimuth"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "The page's examples: due south is pi (3.141593), and (0 1) to (1 2) is 44.978182941 degrees (44.978)."
+catches = "the angle measured from east, or degrees returned"
+reading = "the page: the azimuth in radians from the origin point to the target point, clockwise from north; an error if an input is not a point; NULL if a point is NULL"
+cases = ["cases/translation/functions/st-azimuth.toml#t001_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-azimuth.t002"
+form = "sf.functions.st-azimuth"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "Planar azimuths: north-east is pi/4 and west is 3*pi/2."
+catches = "counter-clockwise angles, or negative angles for the west"
+reading = "the page: the azimuth in radians from the origin point to the target point, clockwise from north; an error if an input is not a point; NULL if a point is NULL"
+cases = ["cases/translation/functions/st-azimuth.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-azimuth.t003"
+form = "sf.functions.st-azimuth"
+kind = "error_parity"
+target = "error"
+note = "A line string as the origin, which the page says is an error."
+catches = "the first vertex used"
+reading = "the page: the azimuth in radians from the origin point to the target point, clockwise from north; an error if an input is not a point; NULL if a point is NULL"
+cases = ["cases/translation/functions/st-azimuth.toml#t003_not_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-azimuth.t004"
+form = "sf.functions.st-azimuth"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL point, which the page says gives NULL."
+catches = "an error, or 0 returned"
+reading = "the page: the azimuth in radians from the origin point to the target point, clockwise from north; an error if an input is not a point; NULL if a point is NULL"
+cases = ["cases/translation/functions/st-azimuth.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-buffer.t001"
+form = "sf.functions.st-buffer"
+kind = "type_combination"
+target = "GEOMETRY, REAL"
+note = "A point buffered by 1: a 32-sided polygon of area 3.1214, rounded to 2 places (3.12)."
+catches = "a true circle area (3.14), or a square"
+reading = "the page: the GEOMETRY grown by the distance in SRID units, or shrunk for a negative distance; eight segments per quarter circle; line strings are buffered on both sides with round ends"
+cases = ["cases/translation/functions/st-buffer.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-buffer.t002"
+form = "sf.functions.st-buffer"
+kind = "type_combination"
+target = "GEOMETRY, REAL"
+note = "A 10 by 10 square shrunk by 1, giving an 8 by 8 square (64)."
+catches = "the sign ignored (growing it)"
+reading = "the page: the GEOMETRY grown by the distance in SRID units, or shrunk for a negative distance; eight segments per quarter circle; line strings are buffered on both sides with round ends"
+cases = ["cases/translation/functions/st-buffer.toml#t002_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-buffer.t003"
+form = "sf.functions.st-buffer"
+kind = "type_combination"
+target = "GEOMETRY, REAL"
+note = "A line string of length 10 buffered by 1 on both sides with round ends: 20 plus 3.12, rounded to 1 place (23.1)."
+catches = "one side only (10), or flat ends (20)"
+reading = "the page: the GEOMETRY grown by the distance in SRID units, or shrunk for a negative distance; eight segments per quarter circle; line strings are buffered on both sides with round ends"
+cases = ["cases/translation/functions/st-buffer.toml#t003_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-buffer.t004"
+form = "sf.functions.st-buffer"
+kind = "null_argument"
+target = "geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: the GEOMETRY grown by the distance in SRID units, or shrunk for a negative distance; eight segments per quarter circle; line strings are buffered on both sides with round ends"
+cases = ["cases/translation/functions/st-buffer.toml#t004_null_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-centroid.t001"
+form = "sf.functions.st-centroid"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A square, and a collection of the square and a far point, whose point the page says is ignored; the SRID is kept."
+catches = "the point averaged in, or the SRID dropped"
+reading = "the page: the geometric centre; a collection uses only its highest-dimension members; GEOMETRY keeps its SRID; NULL gives NULL"
+cases = ["cases/translation/functions/st-centroid.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-centroid.t002"
+form = "sf.functions.st-centroid"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A line string along the equator, whose centre is (5 0), rounded to 6 places."
+catches = "the first vertex returned"
+reading = "the page: the geometric centre; a collection uses only its highest-dimension members; GEOMETRY keeps its SRID; NULL gives NULL"
+cases = ["cases/translation/functions/st-centroid.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-centroid.t003"
+form = "sf.functions.st-centroid"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape, which the page says gives NULL."
+catches = "an error, or an empty point returned"
+reading = "the page: the geometric centre; a collection uses only its highest-dimension members; GEOMETRY keeps its SRID; NULL gives NULL"
+cases = ["cases/translation/functions/st-centroid.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-collect.st-collect.t001"
+form = "sf.functions.st-collect.st-collect"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Two points, two line strings, and a point with a line string, measured by GeoJSON type and point count."
+catches = "a GeometryCollection for matching types, or the second shape dropped"
+reading = "the page: two points give a MultiPoint and two line strings a MultiLineString; different types or a collection input give a GeometryCollection"
+cases = ["cases/translation/functions/st-collect.st-collect.toml#t001_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-collect.st-collect.t002"
+form = "sf.functions.st-collect.st-collect"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: two points give a MultiPoint and two line strings a MultiLineString; different types or a collection input give a GeometryCollection"
+cases = ["cases/translation/functions/st-collect.st-collect.toml#t002_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-contains.t001"
+form = "sf.functions.st-contains"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (TRUE, FALSE, FALSE)."
+catches = "a boundary point counted as contained (as ST_COVERS does)"
+reading = "the page: TRUE if the second shape lies in the first with no point on its boundary only; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-contains.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-contains.t002"
+form = "sf.functions.st-contains"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if the second shape lies in the first with no point on its boundary only; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-contains.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-contains.t003"
+form = "sf.functions.st-contains"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: TRUE if the second shape lies in the first with no point on its boundary only; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-contains.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-contains.t004"
+form = "sf.functions.st-contains"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if the second shape lies in the first with no point on its boundary only; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-contains.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-coveredby.t001"
+form = "sf.functions.st-coveredby"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (TRUE, TRUE, FALSE)."
+catches = "the arguments read the other way round, or a boundary point excluded"
+reading = "the page: TRUE if no point of the first shape lies outside the second; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-coveredby.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-coveredby.t002"
+form = "sf.functions.st-coveredby"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if no point of the first shape lies outside the second; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-coveredby.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-coveredby.t003"
+form = "sf.functions.st-coveredby"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: TRUE if no point of the first shape lies outside the second; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-coveredby.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-coveredby.t004"
+form = "sf.functions.st-coveredby"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if no point of the first shape lies outside the second; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-coveredby.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-covers.t001"
+form = "sf.functions.st-covers"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (TRUE, TRUE, FALSE)."
+catches = "a boundary point excluded (as ST_CONTAINS does)"
+reading = "the page: TRUE if no point of the second shape lies outside the first; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-covers.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-covers.t002"
+form = "sf.functions.st-covers"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if no point of the second shape lies outside the first; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-covers.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-covers.t003"
+form = "sf.functions.st-covers"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: TRUE if no point of the second shape lies outside the first; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-covers.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-covers.t004"
+form = "sf.functions.st-covers"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if no point of the second shape lies outside the first; neither shape may be a collection; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-covers.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-difference.t001"
+form = "sf.functions.st-difference"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Bands over longitudes 0-2 and 1-3: the difference is half the first (0.5), and the reverse difference half the second."
+catches = "the symmetric difference returned (1.0), or the arguments swapped"
+reading = "the page: the points of the first GEOGRAPHY not in the second; NULL when the difference is empty"
+cases = ["cases/translation/functions/st-difference.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-difference.t002"
+form = "sf.functions.st-difference"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "A band inside another, whose empty difference the page says is NULL."
+catches = "an empty collection returned instead of NULL"
+reading = "the page: the points of the first GEOGRAPHY not in the second; NULL when the difference is empty"
+cases = ["cases/translation/functions/st-difference.toml#t002_covered"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-difference.t003"
+form = "sf.functions.st-difference"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the points of the first GEOGRAPHY not in the second; NULL when the difference is empty"
+cases = ["cases/translation/functions/st-difference.toml#t003_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-dimension.t001"
+form = "sf.functions.st-dimension"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point, a line string and a polygon, as GEOGRAPHY and GEOMETRY."
+catches = "the number of coordinates, or a fixed value"
+reading = "the page: the dimension as INTEGER (0 for points, 1 for lines, 2 for polygons); NULL gives NULL"
+cases = ["cases/translation/functions/st-dimension.toml#t001_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-dimension.t002"
+form = "sf.functions.st-dimension"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape, which the page says gives NULL."
+catches = "0 returned"
+reading = "the page: the dimension as INTEGER (0 for points, 1 for lines, 2 for polygons); NULL gives NULL"
+cases = ["cases/translation/functions/st-dimension.toml#t002_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-disjoint.t001"
+form = "sf.functions.st-disjoint"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (FALSE, FALSE, TRUE)."
+catches = "a touching point treated as disjoint"
+reading = "the page: TRUE if the shapes share no point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-disjoint.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-disjoint.t002"
+form = "sf.functions.st-disjoint"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if the shapes share no point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-disjoint.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-disjoint.t003"
+form = "sf.functions.st-disjoint"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: TRUE if the shapes share no point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-disjoint.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-disjoint.t004"
+form = "sf.functions.st-disjoint"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if the shapes share no point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-disjoint.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-distance.t001"
+form = "sf.functions.st-distance"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A 3-4-5 pair of points, and a point inside a polygon (0)."
+catches = "the squared distance, or the distance to the boundary"
+reading = "the page: the minimum distance, in metres for GEOGRAPHY and coordinate units for GEOMETRY; NULL if an input is NULL; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-distance.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-distance.t002"
+form = "sf.functions.st-distance"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "One degree of latitude in kilometres, rounded (111 on any earth model)."
+catches = "degrees returned"
+reading = "the page: the minimum distance, in metres for GEOGRAPHY and coordinate units for GEOMETRY; NULL if an input is NULL; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-distance.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-distance.t003"
+form = "sf.functions.st-distance"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: the minimum distance, in metres for GEOGRAPHY and coordinate units for GEOMETRY; NULL if an input is NULL; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-distance.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-distance.t004"
+form = "sf.functions.st-distance"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL point, which the page says gives NULL."
+catches = "an error, or 0 returned"
+reading = "the page: the minimum distance, in metres for GEOGRAPHY and coordinate units for GEOMETRY; NULL if an input is NULL; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-distance.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-dwithin.t001"
+form = "sf.functions.st-dwithin"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY, REAL"
+note = "Points one degree of latitude apart (110.6 to 111.3 km) against 100 km and 120 km, and a point with itself at distance 0."
+catches = "degrees used, or a strict comparison at distance 0"
+reading = "the page: TRUE if two GEOGRAPHY objects are within the distance in metres; NULL if any input is NULL"
+cases = ["cases/translation/functions/st-dwithin.toml#t001_distance"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-dwithin.t002"
+form = "sf.functions.st-dwithin"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape with a distance, which the page says gives NULL: \"Returns NULL if any input is NULL\"."
+catches = "FALSE returned"
+reading = "the page: TRUE if two GEOGRAPHY objects are within the distance in metres; NULL if any input is NULL"
+cases = ["cases/translation/functions/st-dwithin.toml#t002_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-endpoint.t001"
+form = "sf.functions.st-endpoint"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "The last point of a 3-point line string, as GEOGRAPHY and GEOMETRY."
+catches = "the other end returned"
+reading = "the page: the last point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-endpoint.toml#t001_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-endpoint.t002"
+form = "sf.functions.st-endpoint"
+kind = "error_parity"
+target = "error"
+note = "A polygon, which the page says is an error."
+catches = "a vertex of the ring returned"
+reading = "the page: the last point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-endpoint.toml#t002_not_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-endpoint.t003"
+form = "sf.functions.st-endpoint"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the last point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-endpoint.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-envelope.t001"
+form = "sf.functions.st-envelope"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "The box of a triangle: x from 0 to 4, y from 0 to 3, area 12, with the SRID kept."
+catches = "the convex hull returned (area 6), or the SRID dropped"
+reading = "the page: the minimum bounding box; for GEOGRAPHY a single point gives that point; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-envelope.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-envelope.t002"
+form = "sf.functions.st-envelope"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A single GEOGRAPHY point, which the page says gives that point."
+catches = "a degenerate polygon returned"
+reading = "the page: the minimum bounding box; for GEOGRAPHY a single point gives that point; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-envelope.toml#t002_geography_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-envelope.t003"
+form = "sf.functions.st-envelope"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the minimum bounding box; for GEOGRAPHY a single point gives that point; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-envelope.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.st-geogfromgeohash.t001"
 form = "sf.functions.st-geogfromgeohash"
 kind = "type_combination"
@@ -23537,7 +24802,7 @@ id = "sf.functions.st-geogfromgeohash.t002"
 form = "sf.functions.st-geogfromgeohash"
 kind = "type_combination"
 target = "VARCHAR, NUMBER"
-note = "A longer geohash cut to 5 characters equals the 5-character cell, and differs from it uncut."
+note = "A longer geohash cut to 5 characters gives the WKT of the 5-character cell, and uncut gives other WKT."
 catches = "the precision ignored, or counted from the end"
 reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
 cases = ["cases/translation/functions/st-geogfromgeohash.toml#t002_precision"]
@@ -23548,7 +24813,7 @@ id = "sf.functions.st-geogfromgeohash.t003"
 form = "sf.functions.st-geogfromgeohash"
 kind = "type_combination"
 target = "VARCHAR, NUMBER 1"
-note = "Precision 1, the smallest the page allows, gives the one-character cell."
+note = "Precision 1, the smallest the page allows, gives the WKT of the one-character cell."
 catches = "precision 1 rejected, or read as the whole hash"
 reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
 cases = ["cases/translation/functions/st-geogfromgeohash.toml#t003_precision_min"]
@@ -24259,6 +25524,50 @@ cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.to
 required = true
 
 [[obligation]]
+id = "sf.functions.st-geohash.t001"
+form = "sf.functions.st-geohash"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A point inside cell ezs42 at precisions 5 and 1, and the default length (20)."
+catches = "latitude encoded first, or the precision ignored"
+reading = "the page: the geohash of the shape, with precision 1 to 20 characters (default 20); GEOMETRY must have SRID 4326"
+cases = ["cases/translation/functions/st-geohash.toml#t001_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geohash.t002"
+form = "sf.functions.st-geohash"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "The same point as a GEOMETRY with SRID 4326."
+catches = "the GEOMETRY rejected"
+reading = "the page: the geohash of the shape, with precision 1 to 20 characters (default 20); GEOMETRY must have SRID 4326"
+cases = ["cases/translation/functions/st-geohash.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geohash.t003"
+form = "sf.functions.st-geohash"
+kind = "error_parity"
+target = "error"
+note = "Precision 0, below the range of 1 to 20 that the page allows."
+catches = "an empty string returned"
+reading = "the page: the geohash of the shape, with precision 1 to 20 characters (default 20); GEOMETRY must have SRID 4326"
+cases = ["cases/translation/functions/st-geohash.toml#t003_precision_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geohash.t004"
+form = "sf.functions.st-geohash"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the geohash of the shape, with precision 1 to 20 characters (default 20); GEOMETRY must have SRID 4326"
+cases = ["cases/translation/functions/st-geohash.toml#t004_null_geography_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t001"
 form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
 kind = "type_combination"
@@ -24916,6 +26225,996 @@ note = "A NULL text; the page does not say; the recording decides."
 catches = "an error, or an empty shape returned"
 reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
 cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geomfromgeohash.t001"
+form = "sf.functions.st-geomfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The box of ezs42: longitude -5.625 to -5.5810546875 and latitude 42.5830078125 to 42.626953125, exact binary fractions."
+catches = "longitude and latitude swapped, or a point returned"
+reading = "the page: a GEOMETRY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geomfromgeohash.toml#t001_cell"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geomfromgeohash.t002"
+form = "sf.functions.st-geomfromgeohash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A longer geohash cut to 5 and to 1 characters."
+catches = "the precision ignored"
+reading = "the page: a GEOMETRY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geomfromgeohash.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geomfromgeohash.t003"
+form = "sf.functions.st-geomfromgeohash"
+kind = "error_parity"
+target = "error"
+note = "Precision 0, below the range of 1 to 20 that the page allows."
+catches = "an empty or whole-world shape returned"
+reading = "the page: a GEOMETRY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geomfromgeohash.toml#t003_precision_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geomfromgeohash.t004"
+form = "sf.functions.st-geomfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geomfromgeohash.toml#t004_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geompointfromgeohash.t001"
+form = "sf.functions.st-geompointfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The centre of ezs42, (-5.60302734375, 42.60498046875), exact binary fractions."
+catches = "a corner returned, or longitude and latitude swapped"
+reading = "the page: a GEOMETRY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geompointfromgeohash.toml#t001_centre"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geompointfromgeohash.t002"
+form = "sf.functions.st-geompointfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: a GEOMETRY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geompointfromgeohash.toml#t002_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-hausdorffdistance.t001"
+form = "sf.functions.st-hausdorffdistance"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The page's examples, rounded to 6 places, with one pair reversed."
+catches = "the minimum distance returned (0 for overlapping polygons), metres returned, or a direction-dependent result"
+reading = "the page: the discrete Hausdorff distance in degrees; NULL if an input is NULL; its examples give 1 for POINT(0 0) and POINT(0 1), and 1 and 2 for its three polygons"
+cases = ["cases/translation/functions/st-hausdorffdistance.toml#t001_example"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-hausdorffdistance.t002"
+form = "sf.functions.st-hausdorffdistance"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL shape, which the page says gives NULL."
+catches = "an error, or 0 returned"
+reading = "the page: the discrete Hausdorff distance in degrees; NULL if an input is NULL; its examples give 1 for POINT(0 0) and POINT(0 1), and 1 and 2 for its three polygons"
+cases = ["cases/translation/functions/st-hausdorffdistance.toml#t002_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-interpolate.t001"
+form = "sf.functions.st-interpolate"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOGRAPHY, REAL"
+note = "A line string along latitude 60, whose great-circle edge is far from its Mercator line: points are added, more with the default 10 m than with 10 km, and the ends are kept."
+catches = "no points added, or the tolerance ignored"
+reading = "the page: the GEOGRAPHY with points added so that its planar (Mercator) projection is within the tolerance in metres (default 10)"
+cases = ["cases/translation/functions/st-interpolate.toml#t001_tolerance"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-interpolate.t002"
+form = "sf.functions.st-interpolate"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the GEOGRAPHY with points added so that its planar (Mercator) projection is within the tolerance in metres (default 10)"
+cases = ["cases/translation/functions/st-interpolate.toml#t002_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersection.t001"
+form = "sf.functions.st-intersection"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Bands over longitudes 0-2 and 1-3, whose intersection is half the first (0.5)."
+catches = "the union returned (1.5), or the first shape returned"
+reading = "the page: the shared part of two GEOGRAPHY objects; an empty result is represented by NULL"
+cases = ["cases/translation/functions/st-intersection.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersection.t002"
+form = "sf.functions.st-intersection"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Disjoint bands, whose empty intersection the page represents as NULL."
+catches = "an empty collection returned instead of NULL"
+reading = "the page: the shared part of two GEOGRAPHY objects; an empty result is represented by NULL"
+cases = ["cases/translation/functions/st-intersection.toml#t002_disjoint"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersection.t003"
+form = "sf.functions.st-intersection"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the shared part of two GEOGRAPHY objects; an empty result is represented by NULL"
+cases = ["cases/translation/functions/st-intersection.toml#t003_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersection-agg.t001"
+form = "sf.functions.st-intersection-agg"
+kind = "type_combination"
+target = "GEOGRAPHY column"
+note = "Bands over longitudes 0-2, 1-3 and 1.5-4, whose intersection is a quarter of the first (0.25)."
+catches = "the union returned, or only two rows intersected (0.5)"
+reading = "the page: the intersection of the GEOGRAPHY objects in a column"
+cases = ["cases/translation/functions/st-intersection-agg.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersection-agg.t002"
+form = "sf.functions.st-intersection-agg"
+kind = "null_argument"
+target = "geography-column"
+note = "A NULL row next to two bands; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the intersection of the GEOGRAPHY objects in a column"
+cases = ["cases/translation/functions/st-intersection-agg.toml#t002_null_geography_column"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersects.t001"
+form = "sf.functions.st-intersects"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (TRUE, TRUE, FALSE)."
+catches = "a touching point treated as apart"
+reading = "the page: TRUE if the shapes share a point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-intersects.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersects.t002"
+form = "sf.functions.st-intersects"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if the shapes share a point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-intersects.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersects.t003"
+form = "sf.functions.st-intersects"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error."
+catches = "a result computed as if the SRIDs matched"
+reading = "the page: TRUE if the shapes share a point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-intersects.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-intersects.t004"
+form = "sf.functions.st-intersects"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if the shapes share a point; an error for GEOMETRY with different SRIDs"
+cases = ["cases/translation/functions/st-intersects.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-isvalid.t001"
+form = "sf.functions.st-isvalid"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A self-intersecting polygon loaded with allow_invalid, and a valid square."
+catches = "every loaded shape reported valid"
+reading = "the page: TRUE if the shape is valid; it only checks and does not modify the shape"
+cases = ["cases/translation/functions/st-isvalid.toml#t001_shapes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-isvalid.t002"
+form = "sf.functions.st-isvalid"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if the shape is valid; it only checks and does not modify the shape"
+cases = ["cases/translation/functions/st-isvalid.toml#t002_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-length.t001"
+form = "sf.functions.st-length"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A 3-4-5 line string, a polygon, and a collection of two line strings (5 and 1)."
+catches = "a polygon given its perimeter"
+reading = "the page: the length of line strings, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes; the sum of the line strings in a collection"
+cases = ["cases/translation/functions/st-length.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-length.t002"
+form = "sf.functions.st-length"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "One degree along the equator in kilometres, rounded (111 on any earth model)."
+catches = "degrees returned (1)"
+reading = "the page: the length of line strings, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes; the sum of the line strings in a collection"
+cases = ["cases/translation/functions/st-length.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-length.t003"
+form = "sf.functions.st-length"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the length of line strings, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes; the sum of the line strings in a collection"
+cases = ["cases/translation/functions/st-length.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makegeompoint.t001"
+form = "sf.functions.st-makegeompoint"
+kind = "type_combination"
+target = "REAL, REAL"
+note = "A point with distinct coordinates, its type and SRID (the page does not say; the recording decides on the SRID)."
+catches = "latitude taken first"
+reading = "the page: a GEOMETRY point from a longitude and a latitude, in that order"
+cases = ["cases/translation/functions/st-makegeompoint.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makegeompoint.t002"
+form = "sf.functions.st-makegeompoint"
+kind = "null_argument"
+target = "longitude"
+note = "A NULL longitude; the page does not say; the recording decides."
+catches = "an error, or 0 used"
+reading = "the page: a GEOMETRY point from a longitude and a latitude, in that order"
+cases = ["cases/translation/functions/st-makegeompoint.toml#t002_null_longitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makeline.t001"
+form = "sf.functions.st-makeline"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Two points, and a MultiPoint followed by a point, in order."
+catches = "the points sorted, or the MultiPoint reduced to one point"
+reading = "the page: a line string through the points of two Points, MultiPoints or LineStrings, in input order; an error for GEOMETRY with different SRIDs; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makeline.toml#t001_points"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makeline.t002"
+form = "sf.functions.st-makeline"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point and a line string as GEOMETRY with SRID 3857, which the result keeps."
+catches = "the SRID dropped"
+reading = "the page: a line string through the points of two Points, MultiPoints or LineStrings, in input order; an error for GEOMETRY with different SRIDs; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makeline.toml#t002_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makeline.t003"
+form = "sf.functions.st-makeline"
+kind = "error_parity"
+target = "error"
+note = "GEOMETRY points with SRIDs 0 and 3857, which the page says is an error."
+catches = "a line string built anyway"
+reading = "the page: a line string through the points of two Points, MultiPoints or LineStrings, in input order; an error for GEOMETRY with different SRIDs; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makeline.toml#t003_srid_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makeline.t004"
+form = "sf.functions.st-makeline"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: a line string through the points of two Points, MultiPoints or LineStrings, in input order; an error for GEOMETRY with different SRIDs; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makeline.toml#t004_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepoint.t001"
+form = "sf.functions.st-makepoint"
+kind = "type_combination"
+target = "REAL, REAL"
+note = "A point with distinct coordinates, its type and SRID."
+catches = "latitude taken first"
+reading = "the page: a GEOGRAPHY point from a longitude and a latitude, in that order"
+cases = ["cases/translation/functions/st-makepoint.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepoint.t002"
+form = "sf.functions.st-makepoint"
+kind = "null_argument"
+target = "longitude"
+note = "A NULL longitude; the page does not say; the recording decides."
+catches = "an error, or 0 used"
+reading = "the page: a GEOGRAPHY point from a longitude and a latitude, in that order"
+cases = ["cases/translation/functions/st-makepoint.toml#t002_null_longitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygon.t001"
+form = "sf.functions.st-makepolygon"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A closed 10 by 10 loop, giving area 100, with the SRID kept."
+catches = "the line string returned (area 0), or the SRID dropped"
+reading = "the page: a polygon from a closed line string; the last point must equal the first; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makepolygon.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygon.t002"
+form = "sf.functions.st-makepolygon"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A closed loop as GEOGRAPHY, measured by its dimension and point count."
+catches = "the loop left open"
+reading = "the page: a polygon from a closed line string; the last point must equal the first; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makepolygon.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygon.t003"
+form = "sf.functions.st-makepolygon"
+kind = "error_parity"
+target = "error"
+note = "A line string whose last point differs from the first, which the page says must form a loop."
+catches = "the loop closed silently"
+reading = "the page: a polygon from a closed line string; the last point must equal the first; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makepolygon.toml#t003_open_loop"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygon.t004"
+form = "sf.functions.st-makepolygon"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: a polygon from a closed line string; the last point must equal the first; GEOMETRY keeps its SRID"
+cases = ["cases/translation/functions/st-makepolygon.toml#t004_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygonoriented.t001"
+form = "sf.functions.st-makepolygonoriented"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "The same square traced anticlockwise and clockwise: clockwise puts the rest of the globe inside, so its area is far larger."
+catches = "the smaller side taken whatever the orientation, as ST_MAKEPOLYGON does"
+reading = "the page: a GEOGRAPHY polygon from a closed line string, with the inside on the left of the loop"
+cases = ["cases/translation/functions/st-makepolygonoriented.toml#t001_orientation"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-makepolygonoriented.t002"
+form = "sf.functions.st-makepolygonoriented"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: a GEOGRAPHY polygon from a closed line string, with the inside on the left of the loop"
+cases = ["cases/translation/functions/st-makepolygonoriented.toml#t002_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-npoints.t001"
+form = "sf.functions.st-npoints"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point, a 3-point line string and a triangle."
+catches = "the closing point of the loop left out (3)"
+reading = "the page: the number of points as INTEGER; a polygon loop counts its starting point twice (a triangle gives 4)"
+cases = ["cases/translation/functions/st-npoints.toml#t001_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-npoints.t002"
+form = "sf.functions.st-npoints"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the number of points as INTEGER; a polygon loop counts its starting point twice (a triangle gives 4)"
+cases = ["cases/translation/functions/st-npoints.toml#t002_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-perimeter.t001"
+form = "sf.functions.st-perimeter"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A 10 by 10 square, a line string, and a collection of the square and a triangle (40 + 11.4049), rounded to 1 place (51.4)."
+catches = "a line string given its length"
+reading = "the page: the perimeter of polygons, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes"
+cases = ["cases/translation/functions/st-perimeter.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-perimeter.t002"
+form = "sf.functions.st-perimeter"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A 1-degree square at the equator in kilometres, rounded (443 to 445 on any earth model)."
+catches = "degrees returned (4)"
+reading = "the page: the perimeter of polygons, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes"
+cases = ["cases/translation/functions/st-perimeter.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-perimeter.t003"
+form = "sf.functions.st-perimeter"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the perimeter of polygons, in metres for GEOGRAPHY and coordinate units for GEOMETRY; 0 for other shapes"
+cases = ["cases/translation/functions/st-perimeter.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-pointn.t001"
+form = "sf.functions.st-pointn"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER; GEOMETRY, INTEGER"
+note = "Index 2, and -1 for the last point."
+catches = "a 0-based index, or -1 read as the first point"
+reading = "the page: the point at a 1-based index of a line string; a negative index counts from the end (-1 is the last); an error if the argument is not a line string or the index is out of bounds"
+cases = ["cases/translation/functions/st-pointn.toml#t001_index"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-pointn.t002"
+form = "sf.functions.st-pointn"
+kind = "error_parity"
+target = "error"
+note = "Index 4 of a 3-point line string, which the page says is an error."
+catches = "NULL returned, or the index wrapped"
+reading = "the page: the point at a 1-based index of a line string; a negative index counts from the end (-1 is the last); an error if the argument is not a line string or the index is out of bounds"
+cases = ["cases/translation/functions/st-pointn.toml#t002_out_of_bounds"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-pointn.t003"
+form = "sf.functions.st-pointn"
+kind = "error_parity"
+target = "error"
+note = "A polygon, which the page says is an error."
+catches = "a vertex of the ring returned"
+reading = "the page: the point at a 1-based index of a line string; a negative index counts from the end (-1 is the last); an error if the argument is not a line string or the index is out of bounds"
+cases = ["cases/translation/functions/st-pointn.toml#t003_not_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-pointn.t004"
+form = "sf.functions.st-pointn"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the point at a 1-based index of a line string; a negative index counts from the end (-1 is the last); an error if the argument is not a line string or the index is out of bounds"
+cases = ["cases/translation/functions/st-pointn.toml#t004_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-setsrid.t001"
+form = "sf.functions.st-setsrid"
+kind = "type_combination"
+target = "GEOMETRY, INTEGER"
+note = "The page example: SRID 4326 set and the coordinates unchanged."
+catches = "the coordinates transformed"
+reading = "the page: the GEOMETRY with its SRID set, coordinates unchanged; its example sets 4326 on POINT(13 51)"
+cases = ["cases/translation/functions/st-setsrid.toml#t001_example"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-setsrid.t002"
+form = "sf.functions.st-setsrid"
+kind = "null_argument"
+target = "geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the GEOMETRY with its SRID set, coordinates unchanged; its example sets 4326 on POINT(13 51)"
+cases = ["cases/translation/functions/st-setsrid.toml#t002_null_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-simplify.t001"
+form = "sf.functions.st-simplify"
+kind = "type_combination"
+target = "GEOMETRY, REAL"
+note = "A line string with a bump of 0.001: tolerance 0.1 removes it, 0.0001 keeps it; a point is unchanged."
+catches = "the tolerance compared the wrong way"
+reading = "the page: line strings and polygons simplified with the tolerance (metres for GEOGRAPHY, SRID units for GEOMETRY); points are unchanged; preserve_collapsed TRUE keeps GEOGRAPHY objects too small for the tolerance"
+cases = ["cases/translation/functions/st-simplify.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-simplify.t002"
+form = "sf.functions.st-simplify"
+kind = "type_combination"
+target = "GEOGRAPHY, REAL"
+note = "The same line string as GEOGRAPHY (the bump is about 110 m) with tolerances of 1000 m and 1 m."
+catches = "degrees used for the tolerance"
+reading = "the page: line strings and polygons simplified with the tolerance (metres for GEOGRAPHY, SRID units for GEOMETRY); points are unchanged; preserve_collapsed TRUE keeps GEOGRAPHY objects too small for the tolerance"
+cases = ["cases/translation/functions/st-simplify.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-simplify.t003"
+form = "sf.functions.st-simplify"
+kind = "type_combination"
+target = "GEOGRAPHY, REAL, BOOLEAN"
+note = "A 100 m square with a 10 km tolerance: with preserve_collapsed TRUE the page says it is retained, so it stays a polygon (dimension 2); with FALSE the page example reduces a too-small shape to a lower dimension, and the recording decides which."
+catches = "the square collapsed despite TRUE, or TRUE ignored"
+reading = "the page: line strings and polygons simplified with the tolerance (metres for GEOGRAPHY, SRID units for GEOMETRY); points are unchanged; preserve_collapsed TRUE keeps GEOGRAPHY objects too small for the tolerance"
+cases = ["cases/translation/functions/st-simplify.toml#t003_preserve_collapsed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-simplify.t004"
+form = "sf.functions.st-simplify"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: line strings and polygons simplified with the tolerance (metres for GEOGRAPHY, SRID units for GEOMETRY); points are unchanged; preserve_collapsed TRUE keeps GEOGRAPHY objects too small for the tolerance"
+cases = ["cases/translation/functions/st-simplify.toml#t004_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-srid.t001"
+form = "sf.functions.st-srid"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A GEOGRAPHY (4326), a GEOMETRY without an SRID (0) and one with 3857."
+catches = "NULL for SRID 0, or 4326 for every shape"
+reading = "the page: the SRID as NUMBER(4,0); NULL gives NULL"
+cases = ["cases/translation/functions/st-srid.toml#t001_types"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-srid.t002"
+form = "sf.functions.st-srid"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape, which the page says gives NULL."
+catches = "0 returned"
+reading = "the page: the SRID as NUMBER(4,0); NULL gives NULL"
+cases = ["cases/translation/functions/st-srid.toml#t002_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-startpoint.t001"
+form = "sf.functions.st-startpoint"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "The first point of a 3-point line string, as GEOGRAPHY and GEOMETRY."
+catches = "the other end returned"
+reading = "the page: the first point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-startpoint.toml#t001_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-startpoint.t002"
+form = "sf.functions.st-startpoint"
+kind = "error_parity"
+target = "error"
+note = "A polygon, which the page says is an error."
+catches = "a vertex of the ring returned"
+reading = "the page: the first point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-startpoint.toml#t002_not_line"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-startpoint.t003"
+form = "sf.functions.st-startpoint"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the first point of a line string; an error if the argument is not a line string"
+cases = ["cases/translation/functions/st-startpoint.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-symdifference.t001"
+form = "sf.functions.st-symdifference"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Bands over longitudes 0-2 and 1-3: the symmetric difference has the area of the first (1.0)."
+catches = "the one-sided difference returned (0.5), or the union (1.5)"
+reading = "the page: the points in exactly one of two GEOGRAPHY objects; NULL when they are equal"
+cases = ["cases/translation/functions/st-symdifference.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-symdifference.t002"
+form = "sf.functions.st-symdifference"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Equal bands, whose empty symmetric difference the page says is NULL."
+catches = "an empty collection returned instead of NULL"
+reading = "the page: the points in exactly one of two GEOGRAPHY objects; NULL when they are equal"
+cases = ["cases/translation/functions/st-symdifference.toml#t002_equal"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-symdifference.t003"
+form = "sf.functions.st-symdifference"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the points in exactly one of two GEOGRAPHY objects; NULL when they are equal"
+cases = ["cases/translation/functions/st-symdifference.toml#t003_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-transform.t001"
+form = "sf.functions.st-transform"
+kind = "type_combination"
+target = "GEOMETRY, INTEGER"
+note = "Points 1 degree east and 1 degree north of (0 0) in SRID 4326 transformed to 3857, rounded to whole metres (111319 and 111325)."
+catches = "the coordinates kept (only the SRID changed), or x and y swapped"
+reading = "the page: the GEOMETRY transformed to the SRS of to_srid, from the SRID of the input or from_srid; NULL if any argument is NULL; an error if an SRID cannot be resolved"
+cases = ["cases/translation/functions/st-transform.toml#t001_to_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-transform.t002"
+form = "sf.functions.st-transform"
+kind = "type_combination"
+target = "GEOMETRY, INTEGER, INTEGER"
+note = "A GEOMETRY without an SRID, with from_srid 4326 given."
+catches = "from_srid ignored"
+reading = "the page: the GEOMETRY transformed to the SRS of to_srid, from the SRID of the input or from_srid; NULL if any argument is NULL; an error if an SRID cannot be resolved"
+cases = ["cases/translation/functions/st-transform.toml#t002_from_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-transform.t003"
+form = "sf.functions.st-transform"
+kind = "error_parity"
+target = "error"
+note = "An SRID that cannot be resolved (999999), which the page says is an error."
+catches = "the coordinates returned unchanged"
+reading = "the page: the GEOMETRY transformed to the SRS of to_srid, from the SRID of the input or from_srid; NULL if any argument is NULL; an error if an SRID cannot be resolved"
+cases = ["cases/translation/functions/st-transform.toml#t003_invalid_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-transform.t004"
+form = "sf.functions.st-transform"
+kind = "null_argument"
+target = "to-srid"
+note = "A NULL to_srid, which the page says gives NULL."
+catches = "an error"
+reading = "the page: the GEOMETRY transformed to the SRS of to_srid, from the SRID of the input or from_srid; NULL if any argument is NULL; an error if an SRID cannot be resolved"
+cases = ["cases/translation/functions/st-transform.toml#t004_null_to_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-union.t001"
+form = "sf.functions.st-union"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "Bands over longitudes 0-2 and 1-3, whose union is 1.5 times the first."
+catches = "the areas added (2.0), or the intersection returned (0.5)"
+reading = "the page: the points of either GEOGRAPHY object"
+cases = ["cases/translation/functions/st-union.toml#t001_overlap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-union.t002"
+form = "sf.functions.st-union"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the points of either GEOGRAPHY object"
+cases = ["cases/translation/functions/st-union.toml#t002_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-union-agg.t001"
+form = "sf.functions.st-union-agg"
+kind = "type_combination"
+target = "GEOGRAPHY column"
+note = "Bands over longitudes 0-2, 1-3 and 3-4, whose union is 4 times a 1-degree band (adding the areas would give 5)."
+catches = "only the first or last row kept, or the overlap counted twice"
+reading = "the page: the union of the GEOGRAPHY objects in a column"
+cases = ["cases/translation/functions/st-union-agg.toml#t001_rows"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-union-agg.t002"
+form = "sf.functions.st-union-agg"
+kind = "null_argument"
+target = "geography-column"
+note = "A NULL row next to a band; the page does not say; the recording decides."
+catches = "NULL returned for the whole column, or an error"
+reading = "the page: the union of the GEOGRAPHY objects in a column"
+cases = ["cases/translation/functions/st-union-agg.toml#t002_null_geography_column"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-within.t001"
+form = "sf.functions.st-within"
+kind = "type_combination"
+target = "GEOMETRY, GEOMETRY"
+note = "A point inside a square, on its edge and outside (TRUE, FALSE, FALSE)."
+catches = "the arguments read the other way round, or a boundary point counted"
+reading = "the page: TRUE if the first shape lies in the second with no point on its boundary only; neither shape may be a collection"
+cases = ["cases/translation/functions/st-within.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-within.t002"
+form = "sf.functions.st-within"
+kind = "type_combination"
+target = "GEOGRAPHY, GEOGRAPHY"
+note = "The inside and outside points as GEOGRAPHY."
+catches = "GEOGRAPHY rejected"
+reading = "the page: TRUE if the first shape lies in the second with no point on its boundary only; neither shape may be a collection"
+cases = ["cases/translation/functions/st-within.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-within.t003"
+form = "sf.functions.st-within"
+kind = "null_argument"
+target = "geography-expression-1"
+note = "A NULL first shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: TRUE if the first shape lies in the second with no point on its boundary only; neither shape may be a collection"
+cases = ["cases/translation/functions/st-within.toml#t003_null_geography_expression_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-x.t001"
+form = "sf.functions.st-x"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point with distinct coordinates, as GEOGRAPHY and GEOMETRY."
+catches = "the other coordinate returned"
+reading = "the page: the x coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-x.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-x.t002"
+form = "sf.functions.st-x"
+kind = "error_parity"
+target = "error"
+note = "A line string, which the page says is an error."
+catches = "the first vertex used"
+reading = "the page: the x coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-x.toml#t002_not_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-x.t003"
+form = "sf.functions.st-x"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the x coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-x.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmax.t001"
+form = "sf.functions.st-xmax"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A triangle with vertices (0 0), (4 0) and (1 3)."
+catches = "another bound returned"
+reading = "the page: the largest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmax.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmax.t002"
+form = "sf.functions.st-xmax"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A line string crossing the antimeridian, which the page says gives 180."
+catches = "planar bounds of the vertices"
+reading = "the page: the largest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmax.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmax.t003"
+form = "sf.functions.st-xmax"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the largest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmax.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmin.t001"
+form = "sf.functions.st-xmin"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A triangle with vertices (0 0), (4 0) and (1 3)."
+catches = "another bound returned"
+reading = "the page: the smallest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmin.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmin.t002"
+form = "sf.functions.st-xmin"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A line string crossing the antimeridian, which the page says gives -180."
+catches = "planar bounds of the vertices"
+reading = "the page: the smallest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmin.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-xmin.t003"
+form = "sf.functions.st-xmin"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the smallest x coordinate of the shape as REAL; 180 or -180 for a shape on or across the antimeridian"
+cases = ["cases/translation/functions/st-xmin.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-y.t001"
+form = "sf.functions.st-y"
+kind = "type_combination"
+target = "GEOGRAPHY; GEOMETRY"
+note = "A point with distinct coordinates, as GEOGRAPHY and GEOMETRY."
+catches = "the other coordinate returned"
+reading = "the page: the y coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-y.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-y.t002"
+form = "sf.functions.st-y"
+kind = "error_parity"
+target = "error"
+note = "A line string, which the page says is an error."
+catches = "the first vertex used"
+reading = "the page: the y coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-y.toml#t002_not_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-y.t003"
+form = "sf.functions.st-y"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the y coordinate of a point as REAL; an error if the argument is not a point"
+cases = ["cases/translation/functions/st-y.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymax.t001"
+form = "sf.functions.st-ymax"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A triangle with vertices (0 0), (4 0) and (1 3)."
+catches = "another bound returned"
+reading = "the page: the largest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymax.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymax.t002"
+form = "sf.functions.st-ymax"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A line string between two points at latitude 60, whose great-circle edge bulges toward the pole, as the page says it accounts for (above 60)."
+catches = "planar bounds of the vertices"
+reading = "the page: the largest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymax.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymax.t003"
+form = "sf.functions.st-ymax"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the largest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymax.toml#t003_null_geography_or_geometry_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymin.t001"
+form = "sf.functions.st-ymin"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A triangle with vertices (0 0), (4 0) and (1 3)."
+catches = "another bound returned"
+reading = "the page: the smallest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymin.toml#t001_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymin.t002"
+form = "sf.functions.st-ymin"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "The same line string, whose lowest points are its ends at latitude 60."
+catches = "planar bounds of the vertices"
+reading = "the page: the smallest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymin.toml#t002_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-ymin.t003"
+form = "sf.functions.st-ymin"
+kind = "null_argument"
+target = "geography-or-geometry-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or a value returned"
+reading = "the page: the smallest y coordinate of the shape as REAL; the curvature of edges toward the poles is taken into account"
+cases = ["cases/translation/functions/st-ymin.toml#t003_null_geography_or_geometry_expression"]
 required = true
 
 [[obligation]]
@@ -26094,6 +28393,39 @@ cases = ["cases/translation/functions/sysdate.toml#t003_null_none"]
 required = true
 
 [[obligation]]
+id = "sf.functions.system-typeof.t001"
+form = "sf.functions.system-typeof"
+kind = "type_combination"
+target = "literals"
+note = "The page's examples: 1, 1e10, 10000 and 'something'."
+catches = "the TYPEOF names returned (INTEGER, VARCHAR), or the storage suffix left out"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t001_examples"]
+required = true
+
+[[obligation]]
+id = "sf.functions.system-typeof.t002"
+form = "sf.functions.system-typeof"
+kind = "type_combination"
+target = "expression"
+note = "The page's CONCAT example, typed by its result length."
+catches = "the type of the first argument returned"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t002_concat"]
+required = true
+
+[[obligation]]
+id = "sf.functions.system-typeof.t003"
+form = "sf.functions.system-typeof"
+kind = "null_argument"
+target = "expr"
+note = "A NULL literal, which the page example types as NULL[LOB]."
+catches = "NULL returned instead of a type name"
+reading = "the page: the internal data type of the expression as text, for example NUMBER(1,0)[SB1] for 1 and VARCHAR(9)[LOB] for 'something'; it differs from TYPEOF"
+cases = ["cases/translation/functions/system-typeof.toml#t003_null_expr"]
+required = true
+
+[[obligation]]
 id = "sf.functions.systimestamp.t001"
 form = "sf.functions.systimestamp"
 kind = "type_combination"
@@ -26214,6 +28546,72 @@ note = "Large arguments saturate to 1 and -1."
 catches = "NaN from exp overflow"
 reading = "the page: \"The data type must be FLOAT.\" Returns FLOAT; a fixed-point argument reaches it by implicit conversion"
 cases = ["cases/translation/functions/tanh.toml#t004_saturate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t001"
+form = "sf.functions.text-html"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "The page's example message, measured by its key and value once parsed."
+catches = "another key used, or the message returned bare"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t001_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t002"
+form = "sf.functions.text-html"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "A message with a double quote, which the JSON must escape so that it parses back."
+catches = "the quote left unescaped"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t002_quotes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-html.t003"
+form = "sf.functions.text-html"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or the text null"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/html key, for example '{\"text/html\":\"<p>A message</p>\"}'"
+cases = ["cases/translation/functions/text-html.toml#t003_null_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t001"
+form = "sf.functions.text-plain"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "The page's example message, measured by its key and value once parsed."
+catches = "another key used, or the message returned bare"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t001_message"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t002"
+form = "sf.functions.text-plain"
+kind = "type_combination"
+target = "VARCHAR literal"
+note = "A message with a double quote, which the JSON must escape so that it parses back."
+catches = "the quote left unescaped"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t002_quotes"]
+required = true
+
+[[obligation]]
+id = "sf.functions.text-plain.t003"
+form = "sf.functions.text-plain"
+kind = "null_argument"
+target = "message"
+note = "A NULL message; the page does not say; the recording decides."
+catches = "an error, or the text null"
+reading = "the page: a JSON string for SYSTEM$SEND_SNOWFLAKE_NOTIFICATION holding the message under the text/plain key, for example '{\"text/plain\":\"A message\"}'"
+cases = ["cases/translation/functions/text-plain.toml#t003_null_message"]
 required = true
 
 [[obligation]]
@@ -28383,6 +30781,39 @@ note = "A VARIANT holding the text {}. The page says any input other than an OBJ
 catches = "the error the page describes raised, or the string returned unchanged"
 reading = "the page: <expr> evaluates to a VARIANT holding an OBJECT; the result is that OBJECT; any other input reports an error (the recording shows a string holding object text parsed instead)"
 cases = ["cases/translation/functions/to-object.toml#t004_string"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t001"
+form = "sf.functions.to-query"
+kind = "type_combination"
+target = "SQL string"
+note = "A query text with two columns, read back from the FROM clause."
+catches = "the text returned as a string"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t001_query"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t002"
+form = "sf.functions.to-query"
+kind = "type_combination"
+target = "SQL string with a bind variable"
+note = "A bind variable converted with TO_NUMBER, as in the page example."
+catches = "the bind variable left unsubstituted"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t002_bind"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-query.t003"
+form = "sf.functions.to-query"
+kind = "null_argument"
+target = "sql"
+note = "A NULL bind value, which the page says makes the function return NULL without an error; the page does not say; the recording decides on how a NULL result set reads."
+catches = "an error raised"
+reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
+cases = ["cases/translation/functions/to-query.toml#t003_null_sql"]
 required = true
 
 [[obligation]]
