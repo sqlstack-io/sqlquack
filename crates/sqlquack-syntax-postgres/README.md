@@ -14,28 +14,18 @@ as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stac
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the
 statement's text, and `Parsed.gaps` names each construct with its byte range. A gap statement is
 accepted as opaque, never as parsed. For a statement gap (its first keyword), the text up to the
-next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREAT`, `XMLTABLE` and
-`JSON_TABLE` are checked against the full grammar, including gram.y's own errors: an unknown
-`FORMAT JSON ENCODING` (22023), a non-constant `JSON_TABLE` path (0A000), and repeated or unknown
-`XMLTABLE` column options (42601).
+next top-level `;` is not checked further. `TREAT` is checked against the full grammar.
 
 | Gap | Construct |
 | --- | --- |
 | a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `ALTER`, `GRANT` and `REVOKE`, and the utility and session statements listed under their own heading |
-| `copy_where` | `COPY … FROM … WHERE condition` |
-| `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
-| `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
-| `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
-| `is_json`, `is_document`, `is_normalized` | `IS [NOT] JSON …`, `IS [NOT] DOCUMENT`, `IS [NOT] [form] NORMALIZED` |
+| `treat` | `TREAT (… AS type)` |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
-| `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |
+| `set_operation_with_ties` | `FETCH … WITH TIES` on a set operation |
 | `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |
 | `tablesample` | `TABLESAMPLE method (…) [REPEATABLE (…)]` |
 | `join_using_alias`, `joined_table_column_aliases` | `USING (…) AS alias`, column aliases on a parenthesized join |
-| `returning_with` | `RETURNING WITH (OLD AS …, NEW AS …)` |
-| `overriding` | `OVERRIDING {USER \| SYSTEM} VALUE` in `INSERT` or a `MERGE` insert |
-| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` from anything but a row of as many items, which is split into one assignment each |
-| `where_current_of` | `WHERE CURRENT OF cursor` |
+| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` from anything but a row of as many items in `ON CONFLICT DO UPDATE` or a `MERGE` update |
 | `index_element_collate`, `index_element_opclass` | `COLLATE` and operator classes in an `ON CONFLICT` target |
 | `delete_using_non_table` | `DELETE … USING` with a join, subquery or function |
 
@@ -197,3 +187,29 @@ lock mode is always written out, `ACCESS EXCLUSIVE` by default. `DECLARE`'s curs
 `FETCH` and `MOVE` write out the direction and count: `NEXT` and a bare cursor are `FORWARD 1`, `FIRST`
 and `LAST` are `ABSOLUTE 1` and `-1`. `CALL` keeps the call whole. `PREPARE` and `EXECUTE` become
 `PrepareStatement` and `ExecuteStatement`.
+
+## DML clauses, SQL/JSON and SQL/XML
+
+`OVERRIDING USER|SYSTEM VALUE` is `Insert.overriding` (`USER` or `SYSTEM`), or an `(OVERRIDING, kind)`
+part of a `MERGE` insert. `RETURNING WITH (OLD AS o, NEW AS n)` is `returning_aliases`, each
+`(OLD|NEW, alias)` in order. `WHERE CURRENT OF c` is `current_of` on `Update` and `Delete`, with no
+`where_clause`. An `UPDATE` whose `SET (a, b) = source` takes anything but a row of as many items
+keeps its whole SET list in `assignments`, each `(targets, source)` in order, and leaves `set`
+empty. `COPY … FROM … WHERE` is `CopyStmt.where_clause`. `FOR UPDATE`-style locking after a set
+operation is the operation's `locks`.
+
+`IS [NOT] JSON [VALUE|ARRAY|OBJECT|SCALAR] [WITH|WITHOUT UNIQUE [KEYS]]` is `IsJson`, with `VALUE`
+read as no type and `WITHOUT UNIQUE` as none; `IS [NOT] [form] NORMALIZED` is the `is_normalized`
+call gram.y makes, with the form as a string; `IS NOT` becomes `NOT`, as `makeNotExpr` makes it.
+
+The other SQL/JSON and SQL/XML calls, `XMLTABLE`, `JSON_TABLE`, `MERGE_ACTION()` and
+`x IS DOCUMENT` become `KeywordCall { kind, operands, options }`: the call's keywords, its operands
+in order, and each clause as a tuple led by its keywords, such as `(RETURNING, type)`,
+`(ON ERROR, NULL)`, `(PASSING, (value, name), …)` or `(NAME, label)`. They hold what gram.y's raw
+tree holds: a default gram.y fills in reads as written out (`JSON_ARRAY` without a null clause is
+`ABSENT ON NULL`), noise words leave no trace (`ARRAY` in a wrapper, `ON SCALAR STRING`, `KEYS`,
+`BY REF`), `FORMAT JSON` is a `FORMAT JSON` call around its value, and `XMLTABLE` columns keep
+`PATH`, `DEFAULT` and `NOT NULL` in that order whatever order they were written in. `XMLEXISTS` is
+the `xmlexists(row, document)` call gram.y makes, and the old `JSON_OBJECT(a, b)` the
+`json_object` call. gram.y's own errors are kept: an unknown `FORMAT JSON ENCODING` (22023), a
+non-constant `JSON_TABLE` path (0A000), and repeated or unknown `XMLTABLE` column options (42601).

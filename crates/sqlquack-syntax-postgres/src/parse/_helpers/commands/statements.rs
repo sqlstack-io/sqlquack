@@ -227,14 +227,18 @@ impl Parser<'_> {
         let (options, with_wrapped) = self.copy_options()?;
         params.extend(options);
         let where_start: usize = self.offset();
+        let mut condition: Option<Box<Expression>> = None;
         if self.eat_kw("where") {
-            self.a_expr()?;
+            condition = Some(Box::new(self.a_expr()?));
             if !from {
                 return Err(self.error_with("WHERE clause not allowed with COPY TO", where_start));
             }
-            self.gap("copy_where", where_start);
         }
-        Ok(copy(target, from, file, (params, with_wrapped)))
+        let mut node: Expression = copy(target, from, file, (params, with_wrapped));
+        if let Expression::Copy(statement) = &mut node {
+            statement.where_clause = condition;
+        }
+        Ok(node)
     }
 
     /// `opt_program copy_file_name`; `PROGRAM` takes a string only.
@@ -409,5 +413,6 @@ fn copy(
         credentials: None,
         is_into: false,
         with_wrapped,
+        where_clause: None,
     }))
 }

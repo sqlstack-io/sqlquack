@@ -26,6 +26,16 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "OVERRIDING comes only before a query, never before DEFAULT VALUES",
+            sql: "INSERT INTO t OVERRIDING USER VALUE DEFAULT VALUES",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "FORMAT JSON after a JSON_ARRAY query is no column label",
+            sql: "SELECT JSON_ARRAY(SELECT 1 FORMAT JSON)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ALTER TEXT SEARCH needs its object kind",
             sql: "ALTER TEXT SEARCH t1 RENAME TO v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -506,9 +516,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "MERGE_ACTION(), which the parser keeps opaque",
+            description: "MERGE_ACTION(), as a keyword call",
             sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE RETURNING merge_action()",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a comparison chained",
@@ -656,9 +666,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "SQL/JSON query options, which the parser checks and keeps opaque",
+            description: "SQL/JSON query options, each a clause of the keyword call",
             sql: "SELECT json_query(js, '$' RETURNING text WITH CONDITIONAL ARRAY WRAPPER KEEP QUOTES DEFAULT 1 ON EMPTY ERROR ON ERROR)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ON ERROR before ON EMPTY in a SQL/JSON query",
@@ -688,7 +698,7 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
         VerdictTestCase {
             description: "XMLTABLE after LATERAL",
             sql: "SELECT * FROM LATERAL xmltable('/r' PASSING x COLUMNS a int) t",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "GROUP BY DISTINCT, held as the group's quantifier",
@@ -701,9 +711,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a sub-SELECT assigned across several UPDATE targets, kept opaque",
+            description: "a sub-SELECT assigned across several UPDATE targets, as one assignment",
             sql: "UPDATE t SET (a, b) = (SELECT 1, 2)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
     ];
     for test_case in test_cases {
@@ -1218,6 +1228,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "ABORT",
             pointer: "/0/utility_statement/kind",
             expected_json: "\"ROLLBACK\"",
+        },
+        ValueTestCase {
+            description: "JSON_ARRAY of values without a null clause absents nulls, as gram.y defaults",
+            sql: "SELECT JSON_ARRAY(1, 2)",
+            pointer: "/0/select/expressions/0/keyword_call/options/0/var/this",
+            expected_json: "\"ABSENT ON NULL\"",
+        },
+        ValueTestCase {
+            description: "IS NOT DOCUMENT is the NOT of IS DOCUMENT, as makeNotExpr makes it",
+            sql: "SELECT x IS NOT DOCUMENT",
+            pointer: "/0/select/expressions/0/not/this/keyword_call/kind",
+            expected_json: "\"IS DOCUMENT\"",
+        },
+        ValueTestCase {
+            description: "RETURNING WITH keeps each alias with OLD or NEW",
+            sql: "DELETE FROM t RETURNING WITH (OLD AS o) o.a",
+            pointer: "/0/delete/returning_aliases/0/tuple/expressions/1/identifier/name",
+            expected_json: "\"o\"",
+        },
+        ValueTestCase {
+            description: "SET (a, b) from a subquery keeps the whole SET list as assignments",
+            sql: "UPDATE t SET (a, b) = (SELECT 1, 2), c = 3",
+            pointer: "/0/update/assignments/1/tuple/expressions/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"c\"",
         },
         ValueTestCase {
             description: "SAVEPOINT as the last word is the savepoint's name",
