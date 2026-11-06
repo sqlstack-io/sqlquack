@@ -213,6 +213,8 @@ pub const TIME_CAST: &str = "rule.time_cast";
 pub const TIME_ARITHMETIC: &str = "rule.time_arithmetic";
 /// GROUP BY ALL.
 pub const GROUP_BY_ALL_RULE: &str = "rule.group_by_all";
+/// GROUP BY a select alias that names no FROM column.
+pub const GROUP_BY_ALIAS_RULE: &str = "rule.group_by_alias";
 /// A DATE or naive timestamp plus or minus an interval literal.
 pub const INTERVAL_ARITHMETIC: &str = "rule.interval_arithmetic";
 /// Why GROUP BY ALL with every SELECT item an aggregate is refused: no recording shows its rows.

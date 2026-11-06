@@ -603,10 +603,20 @@ pub(crate) fn comparable(
             let left = zoned_literal(left, construct, context)?;
             return Ok((left, right));
         }
-        (SnowflakeType::Date, SnowflakeType::TimestampNtz { .. }) => {
+        (
+            SnowflakeType::Date,
+            SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. },
+        ) => {
             return date_timestamp(left, right, construct, context);
         }
-        (SnowflakeType::TimestampNtz { .. }, SnowflakeType::Date) => {
+        (
+            SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. },
+            SnowflakeType::Date,
+        ) => {
             let (right, left) = date_timestamp(right, left, construct, context)?;
             return Ok((left, right));
         }
@@ -635,42 +645,38 @@ pub(crate) fn comparable(
     }
 }
 
-/// A DATE and a TIMESTAMP_NTZ(9) as order keys, the DATE read as its midnight, as recorded.
+/// A DATE beside a timestamp, read as its midnight in the session time zone, as recorded.
 fn date_timestamp(
     date: Emitted,
     timestamp: Emitted,
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<(Emitted, Emitted), Refusal> {
-    let ntz = timestamp.data_type;
+    let other = timestamp.data_type;
     if !DATE_TIMESTAMP_SITES.contains(&construct.key().as_str()) {
         return Err(outside_conditions(
             construct.clone(),
-            format!("comparing DATE with {ntz} is recorded only in a comparison or BETWEEN"),
-        ));
-    }
-    if ntz
-        != (SnowflakeType::TimestampNtz {
-            precision: NANOSECOND_DIGITS,
-        })
-    {
-        return Err(outside_conditions(
-            construct.clone(),
-            format!("comparing DATE with {ntz} is recorded only for TIMESTAMP_NTZ(9)"),
+            format!("comparing DATE with {other} is recorded only in a comparison or BETWEEN"),
         ));
     }
     let log = context.log;
     let _rule = log.rule(DATE_TIMESTAMP_COMPARISON);
-    let key = |emitted: &Emitted, is_timestamp: bool| {
+    let SnowflakeType::TimestampNtz { precision } = other else {
+        diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+        let midnight = cast(&date.sql, other, log)
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+        return Ok((Emitted::new(midnight, other), timestamp));
+    };
+    let key = |emitted: &Emitted, clock: Option<u8>| {
         Emitted::new(
-            date_timestamp_key(&emitted.sql, is_timestamp, log),
+            date_timestamp_key(&emitted.sql, clock, log),
             SnowflakeType::Number {
                 precision: MAX_PRECISION,
                 scale: 0,
             },
         )
     };
-    Ok((key(&date, false), key(&timestamp, true)))
+    Ok((key(&date, None), key(&timestamp, Some(precision))))
 }
 
 /// A NUMBER compared with text, raising where Snowflake's comparison overflows.

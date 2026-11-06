@@ -161,6 +161,22 @@ arguments = [
 template = "{0} BETWEEN {1} AND {2}"
 category = "comparison"
 
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["date"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["date"] },
+]
+
 [[rule]]
 id = "rule.decimal_arithmetic"
 
