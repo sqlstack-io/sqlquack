@@ -35,9 +35,8 @@ fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly()
             "{}: each level must add the same SQL: {low}, {middle}, {high}",
             test_case.description
         );
-        let allowed = low_time.max(TIMING_FLOOR) * test_case.expected_max_time_ratio;
         assert!(
-            high_time <= allowed,
+            high_time <= low_time.max(TIMING_FLOOR) * test_case.expected_max_time_ratio,
             "{}: depth {third} took {high_time:?} against {low_time:?} at depth {first}",
             test_case.description
         );

@@ -74,7 +74,10 @@ fn given_a_subquery_in_a_lambda_body_when_bound_outside_lambdas_then_duckdb_bind
     for test_case in test_cases {
         let binding = bound_outside_lambdas(test_case.sql, test_case.value, "subquery_value_1");
         assert_eq!(
-            binding.as_ref().map(Option::is_some).map_err(String::as_str),
+            binding
+                .as_ref()
+                .map(Option::is_some)
+                .map_err(String::as_str),
             test_case.expected_binding,
             "{}",
             test_case.description

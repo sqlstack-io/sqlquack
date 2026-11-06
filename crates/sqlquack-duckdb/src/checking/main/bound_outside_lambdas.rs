@@ -4,7 +4,11 @@ use crate::checking::_helpers::lambda_bodies::{Body, bodies_around, lambda_bodie
 use crate::checking::constants::LAMBDA_KEYWORD;
 
 /// `sql` with `value` bound outside the lambdas holding it, if any; or the lambda parameter it reads.
-pub fn bound_outside_lambdas(sql: &str, value: &str, parameter: &str) -> Result<Option<String>, String> {
+pub fn bound_outside_lambdas(
+    sql: &str,
+    value: &str,
+    parameter: &str,
+) -> Result<Option<String>, String> {
     let bodies = lambda_bodies(sql);
     let starts: Vec<usize> = sql.match_indices(value).map(|(at, _)| at).collect();
     let enclosing: Vec<&Body> = starts

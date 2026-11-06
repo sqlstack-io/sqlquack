@@ -19,4 +19,3 @@ pub struct FunctionStub {
     /// What it returns.
     pub returns: StubReturns,
 }
-

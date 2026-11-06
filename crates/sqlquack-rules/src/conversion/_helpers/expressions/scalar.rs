@@ -124,7 +124,9 @@ fn bound_subqueries(
             match bound_outside_lambdas(&sql, &value.sql, &subqueries.parameter()) {
                 Ok(None) => Ok(sql),
                 Err(_parameter) => Err(refused(SUBQUERY_READS_LAMBDA.to_owned())),
-                Ok(Some(_)) if value.volatile => Err(refused(VOLATILE_SUBQUERY_IN_LAMBDA.to_owned())),
+                Ok(Some(_)) if value.volatile => {
+                    Err(refused(VOLATILE_SUBQUERY_IN_LAMBDA.to_owned()))
+                }
                 Ok(Some(bound)) => Ok(bound),
             }
         })

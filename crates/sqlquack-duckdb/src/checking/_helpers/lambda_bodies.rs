@@ -12,7 +12,10 @@ pub(crate) struct Body {
 
 /// The lambda bodies in `sql` holding byte `at`.
 pub(crate) fn bodies_around(bodies: &[Body], at: usize) -> Vec<&Body> {
-    bodies.iter().filter(|body| body.range.contains(&at)).collect()
+    bodies
+        .iter()
+        .filter(|body| body.range.contains(&at))
+        .collect()
 }
 
 /// Whether `name` stands as a whole word in `sql`, outside string literals and quoted identifiers.
