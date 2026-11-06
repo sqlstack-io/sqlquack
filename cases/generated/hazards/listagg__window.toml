@@ -23,13 +23,16 @@ id = "node_window_function_2_combination_0_text_literal_text_text"
 description = "node:window_function over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
   ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "ties", "single-row-partition"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_window_function_2_combination_0_text_literal_text_decimal"
@@ -50,7 +53,7 @@ description = "node:window_function over benign values of each declared argument
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "DATE" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15'"],
-  ["'a'", "'b'", "'2024-01-16'"],
+  ["'a'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -148,7 +151,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x1", type = "VARCHAR" }, { n
 rows = [
   ["'2024-01-15'", "'a'", "1"],
   ["'2024-01-15'", "'b'", "2"],
-  ["'2024-01-16'", "'a'", "1"],
+  ["'2024-05-17'", "'a'", "1"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -176,7 +179,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "VAR
 rows = [
   ["'2024-01-15 10:00:00'", "'a'", "1"],
   ["'2024-01-15 10:00:00'", "'b'", "2"],
-  ["'2024-01-16 11:30:00'", "'a'", "1"],
+  ["'2024-05-17 11:30:00'", "'a'", "1"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -190,7 +193,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x1", type = "VAR
 rows = [
   ["'2024-01-15 10:00:00'", "'a'", "1"],
   ["'2024-01-15 10:00:00'", "'b'", "2"],
-  ["'2024-01-16 11:30:00'", "'a'", "1"],
+  ["'2024-05-17 11:30:00'", "'a'", "1"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -204,7 +207,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x1", type = "VARC
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "'a'", "1"],
   ["'2024-01-15 10:00:00 +00:00'", "'b'", "2"],
-  ["'2024-01-16 11:30:00 +00:00'", "'a'", "1"],
+  ["'2024-05-17 11:30:00 +00:00'", "'a'", "1"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -408,7 +411,7 @@ id = "node_window_function_2_window_empty_input"
 description = "node:window_function over a window over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -420,9 +423,9 @@ id = "node_window_function_2_window_all_null"
 description = "node:window_function over a partition whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
-  ["'b'", "'a'", "3"],
+  ["'a'", "'a'", "30"],
+  ["'a'", "'a'", "20"],
+  ["'b'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -434,9 +437,9 @@ id = "node_window_function_2_window_null_beside_value"
 description = "node:window_function over a partition holding null beside values."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
-  ["'a'", "'a'", "3"],
+  ["'a'", "'a'", "30"],
+  ["'a'", "'a'", "20"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -448,7 +451,7 @@ id = "node_window_function_2_window_single_row"
 description = "node:window_function over a partition of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"

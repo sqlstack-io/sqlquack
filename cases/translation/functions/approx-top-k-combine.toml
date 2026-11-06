@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.approx-top-k-combine"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_merge"
+description = "States where b is second in p and first in q: merged, b (3) beats a (2). Catches: the first state only, or per-state ranks merged"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'p'", "'a'"],
+  ["'p'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'c'"],
+]
+query = "SELECT APPROX_TOP_K_ESTIMATE(APPROX_TOP_K_COMBINE(st), 2) AS r FROM (SELECT g, APPROX_TOP_K_ACCUMULATE(x, 10) AS st FROM input GROUP BY g)"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_counters"
+description = "An explicit number of counters. Catches: the explicit counters argument rejected, or the states not merged"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'p'", "'a'"],
+  ["'p'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'c'"],
+]
+query = "SELECT APPROX_TOP_K_ESTIMATE(APPROX_TOP_K_COMBINE(st, 10), 3) AS r FROM (SELECT g, APPROX_TOP_K_ACCUMULATE(x, 10) AS st FROM input GROUP BY g)"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_state"
+description = "A NULL state beside states. Catches: the result NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'a'"],
+  ["'p'", "'a'"],
+  ["'p'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'b'"],
+  ["'q'", "'c'"],
+]
+query = "SELECT APPROX_TOP_K_ESTIMATE(APPROX_TOP_K_COMBINE(st), 2) AS r FROM (SELECT st FROM (SELECT g, APPROX_TOP_K_ACCUMULATE(x, 10) AS st FROM input GROUP BY g) UNION ALL SELECT NULL)"
+order = "ordered"
+tags = ["null"]

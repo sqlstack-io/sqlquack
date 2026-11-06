@@ -11,7 +11,7 @@ description = "node:sub over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "x0 - INTERVAL '1 day'"
 tags = ["null", "boundary"]
@@ -23,7 +23,7 @@ description = "node:sub over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "x0 - INTERVAL '1 day'"
 tags = ["null", "boundary"]
@@ -35,7 +35,7 @@ description = "node:sub over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "x0 + INTERVAL '1 day'"
 tags = ["null", "boundary"]
@@ -47,7 +47,7 @@ description = "node:sub over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "x0 + INTERVAL '1 day'"
 tags = ["null", "boundary"]
@@ -107,7 +107,7 @@ description = "node:sub over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "x0 + INTERVAL '2 hours'"
 tags = ["null", "boundary"]

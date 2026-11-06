@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.reduce"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_order"
+description = "A fold that depends on the order of the elements. Catches: the elements folded from the end (321 instead of 123)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,3]'"],
+]
+query = "SELECT REDUCE(PARSE_JSON(a), 0, (acc, v) -> acc * 10 + v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty"
+description = "An empty array gives the initial value. Catches: NULL or 0 instead of the initial value"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[]'"],
+]
+query = "SELECT REDUCE(PARSE_JSON(a), 7, (acc, v) -> acc + v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "t003_null_element"
+description = "A JSON null element, which makes the lambda return NULL. Catches: the null element skipped (4 instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,null,3]'"],
+]
+query = "SELECT REDUCE(PARSE_JSON(a), 0, (acc, v) -> acc + v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_init"
+description = "A NULL initial value and a NULL array. Catches: a NULL initial value read as 0"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "i", type = "NUMBER(38,0)" }]
+rows = [
+  ["'[1,2]'", "NULL"],
+  ["NULL", "0"],
+]
+query = "SELECT REDUCE(PARSE_JSON(a), i, (acc, v) -> acc + v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

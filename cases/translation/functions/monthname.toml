@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.monthname"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "MONTHNAME of several dates. Catches: full names (January) or upper case"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-01'"],
+  ["'2024-09-15'"],
+  ["'2024-02-29'"],
+]
+query = "SELECT MONTHNAME(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp_tz"
+description = "MONTHNAME of a TIMESTAMP_TZ whose UTC instant is a day later. Catches: the month of the UTC instant (Jan) instead of the wall clock (Dec)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT MONTHNAME(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_date_or_timestamp_expr"
+description = "NULL next to a set date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-03-03'"],
+]
+query = "SELECT MONTHNAME(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

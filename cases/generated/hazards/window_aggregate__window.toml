@@ -96,7 +96,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "BOOLEAN" }]
 rows = [
   ["'2024-01-15'", "TRUE"],
   ["'2024-01-15'", "FALSE"],
-  ["'2024-01-16'", "TRUE"],
+  ["'2024-05-17'", "TRUE"],
 ]
 query = "SELECT g, COUNT_IF(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -124,7 +124,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "BOO
 rows = [
   ["'2024-01-15 10:00:00'", "TRUE"],
   ["'2024-01-15 10:00:00'", "FALSE"],
-  ["'2024-01-16 11:30:00'", "TRUE"],
+  ["'2024-05-17 11:30:00'", "TRUE"],
 ]
 query = "SELECT g, COUNT_IF(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -138,7 +138,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "BOO
 rows = [
   ["'2024-01-15 10:00:00'", "TRUE"],
   ["'2024-01-15 10:00:00'", "FALSE"],
-  ["'2024-01-16 11:30:00'", "TRUE"],
+  ["'2024-05-17 11:30:00'", "TRUE"],
 ]
 query = "SELECT g, COUNT_IF(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -152,7 +152,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "BOOL
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "TRUE"],
   ["'2024-01-15 10:00:00 +00:00'", "FALSE"],
-  ["'2024-01-16 11:30:00 +00:00'", "TRUE"],
+  ["'2024-05-17 11:30:00 +00:00'", "TRUE"],
 ]
 query = "SELECT g, COUNT_IF(x0) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -342,7 +342,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,0)" }
 rows = [
   ["'2024-01-15'", "1"],
   ["'2024-01-15'", "2"],
-  ["'2024-01-16'", "1"],
+  ["'2024-05-17'", "1"],
 ]
 query = "SELECT g, COUNT(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -370,7 +370,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, COUNT(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -384,7 +384,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, COUNT(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -398,7 +398,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMB
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1"],
   ["'2024-01-15 10:00:00 +00:00'", "2"],
-  ["'2024-01-16 11:30:00 +00:00'", "1"],
+  ["'2024-05-17 11:30:00 +00:00'", "1"],
 ]
 query = "SELECT g, COUNT(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -982,7 +982,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,0)" }
 rows = [
   ["'2024-01-15'", "1"],
   ["'2024-01-15'", "2"],
-  ["'2024-01-16'", "1"],
+  ["'2024-05-17'", "1"],
 ]
 query = "SELECT g, SUM(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1010,7 +1010,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, SUM(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1024,7 +1024,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, SUM(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1038,7 +1038,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMB
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1"],
   ["'2024-01-15 10:00:00 +00:00'", "2"],
-  ["'2024-01-16 11:30:00 +00:00'", "1"],
+  ["'2024-05-17 11:30:00 +00:00'", "1"],
 ]
 query = "SELECT g, SUM(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1290,7 +1290,7 @@ columns = [{ name = "g", type = "DATE" }, { name = "x0", type = "NUMBER(38,0)" }
 rows = [
   ["'2024-01-15'", "1"],
   ["'2024-01-15'", "2"],
-  ["'2024-01-16'", "1"],
+  ["'2024-05-17'", "1"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1318,7 +1318,7 @@ columns = [{ name = "g", type = "TIMESTAMP_NTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1332,7 +1332,7 @@ columns = [{ name = "g", type = "TIMESTAMP_LTZ(9)" }, { name = "x0", type = "NUM
 rows = [
   ["'2024-01-15 10:00:00'", "1"],
   ["'2024-01-15 10:00:00'", "2"],
-  ["'2024-01-16 11:30:00'", "1"],
+  ["'2024-05-17 11:30:00'", "1"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -1346,7 +1346,7 @@ columns = [{ name = "g", type = "TIMESTAMP_TZ(9)" }, { name = "x0", type = "NUMB
 rows = [
   ["'2024-01-15 10:00:00 +00:00'", "1"],
   ["'2024-01-15 10:00:00 +00:00'", "2"],
-  ["'2024-01-16 11:30:00 +00:00'", "1"],
+  ["'2024-05-17 11:30:00 +00:00'", "1"],
 ]
 query = "SELECT g, MIN(x0) OVER (PARTITION BY g ORDER BY ordinal) AS r FROM input ORDER BY ordinal"
 order = "ordered"

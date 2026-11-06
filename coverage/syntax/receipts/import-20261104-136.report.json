@@ -1,0 +1,46 @@
+{
+ "capture_method": "dcm_definition_file",
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [],
+ "receipts": 300,
+ "repositioned_by_import": [
+  {
+   "case_id": "sf.ddl.create-function.define-function.k9d84543bbb10",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-function.define-function.kad71f147ff04",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  },
+  {
+   "case_id": "sf.ddl.create-function.define-function.kd6902b1272ec",
+   "from": [
+    1,
+    0
+   ],
+   "to": [
+    1,
+    1
+   ]
+  }
+ ],
+ "runs": [
+  "define-def-05"
+ ]
+}

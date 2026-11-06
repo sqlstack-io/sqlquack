@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-makepoint"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_point"
+description = "A point with distinct coordinates, its type and SRID. Catches: latitude taken first"
+columns = [{ name = "x", type = "DOUBLE" }, { name = "y", type = "DOUBLE" }]
+rows = [
+  ["10", "20"],
+]
+query = "SELECT ST_X(ST_MAKEPOINT(x, y)) AS lon, ST_Y(ST_MAKEPOINT(x, y)) AS lat, ST_SRID(ST_MAKEPOINT(x, y)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_longitude"
+description = "A NULL longitude; the page does not say; the recording decides. Catches: an error, or 0 used"
+columns = [{ name = "x", type = "DOUBLE" }, { name = "y", type = "DOUBLE" }]
+rows = [
+  ["NULL", "20"],
+]
+query = "SELECT ST_MAKEPOINT(x, y) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

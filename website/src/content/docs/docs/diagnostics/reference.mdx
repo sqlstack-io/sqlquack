@@ -21,6 +21,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0006`](#sq0006) | `conversion_budget` | conversion exceeded its budget |
 | [`SQ0007`](#sq0007) | `session_parameters` | the session parameters match no recorded session profile |
 | [`SQ0008`](#sq0008) | `divergence_refused` | the conversion needs a known divergence the policy refuses |
+| [`SQ0009`](#sq0009) | `unaliased_output_name` | this column has no alias, and SQLQuack has not verified the name Snowflake gives it |
 | [`SQ0101`](#sq0101) | `input_too_large` | the input is larger than the parser accepts |
 | [`SQ0102`](#sq0102) | `token_budget_exceeded` | the input has more tokens than the parser accepts |
 | [`SQ0103`](#sq0103) | `nesting_depth_exceeded` | brackets nest deeper than the parser accepts |
@@ -127,12 +128,26 @@ echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=
 
 The construct at the span converts only by relying on the known divergence the label names, where DuckDB may raise or differ from Snowflake as the policy file describes. The policy refuses that divergence in the current mode, so the statement is refused. Allow it in the policy file, use a mode that allows it, or confirm the assumption it rests on; otherwise rewrite the statement without the construct.
 
-**Help:** allow the divergence under [divergences.&lt;id>] in the policy file (--policy), drop --strict or --loud-divergences-only, or confirm its assumption (--utc-session, --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every one
+**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; --builtin-policy refuses every one
 
 **Example:**
 
 ```sh
 echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy
+```
+
+### SQ0009
+
+**this column has no alias, and SQLQuack has not verified the name Snowflake gives it** (`unaliased_output_name`)
+
+Snowflake names an unaliased select item after the expression's text, and a converted query must return the same column names. SQLQuack emits Snowflake's name only for the shapes recorded results verify, named by their text upper-cased as written: literals, columns and COUNT, SUM, MAX, AVG, LOWER, UPPER and COALESCE of columns, a column plus, minus, times, divided by or concatenated with a literal, and a column cast to INTEGER, written with single spaces and at most one line break. Other items, such as paths, CASE, nested calls or other functions, are refused rather than converted with a different column name. An alias fixes the name in both engines.
+
+**Help:** add an alias, e.g. `AS one`
+
+**Example:**
+
+```sh
+echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy
 ```
 
 ## Input limits

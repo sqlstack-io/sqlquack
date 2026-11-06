@@ -113,9 +113,12 @@ forms, and is reported as a finding.
   `<family>.<id>` or `<id>`, the most specific first. An empty value says the case expects none:
   Snowflake raises too, or DuckDB never reads the value. Fill it in once a recording, or a DuckDB
   run of the converted case, shows the guard raising; `expected_divergence` is not hashed, so
-  setting it needs no re-recording. A mapped hazard gets a case of its own.
+  setting it needs no re-recording. A mapped hazard gets a case of its own. The key `tied` names
+  the divergence a combination case expects when two rows of one group hold equal `ordinal`
+  arguments but different other values, as the equal row of a repeated family can make them.
 - `ordinal`: positions filled with each row's number in hazard cases, such as WITHIN GROUP order
-  keys, so rows never tie: Snowflake's order of tied rows is no contract.
+  keys, so rows never tie: Snowflake's order of tied rows is no contract. Combination cases keep
+  their values, so their ties are real and `tied` declares the guard they meet.
 - `row_groups = true`: grouped cases give each row its own group, for aggregates such as ANY_VALUE
   whose result over a group of different values is Snowflake's choice.
 

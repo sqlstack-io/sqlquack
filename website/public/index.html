@@ -3,12 +3,12 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>SQLQuack · Snowflake SQL on DuckDB, or a clear no</title>
+		<title>SQLQuack · Run Snowflake SQL locally. Verified results, or a clear no</title>
 		<meta
 			name="description"
 			content="SQLQuack is a Snowflake SQL compiler written in Rust. It parses Snowflake SQL, reports what Snowflake would reject with rustc-style diagnostics, and translates the rest into DuckDB SQL, or refuses it with a code, a span and a reason."
 		/>
-		<meta property="og:title" content="SQLQuack · Snowflake SQL on DuckDB, or a clear no" />
+		<meta property="og:title" content="SQLQuack · Run Snowflake SQL locally. Verified results, or a clear no" />
 		<meta property="og:description" content="A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer." />
 		<meta property="og:type" content="website" />
 		<meta property="og:image" content="/assets/og-sqlquack.png" />
@@ -56,17 +56,16 @@
 			<div class="hero wrap">
 				<div class="hero-text">
 					<p class="eyebrow">Rust-powered · Free and open source · Apache-2.0</p>
-					<h1>Same answer, or a clear no</h1>
-					<p class="tagline">A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer.</p>
+					<h1>Run Snowflake SQL locally.</h1>
+					<p class="tagline">Verified results, or a clear no.</p>
 					<p class="lede">
-						SQLQuack checks Snowflake SQL with Rust-style diagnostics and converts it to DuckDB only where rules
-						checked against recorded Snowflake results cover the types involved. Everything else is refused, with
-						the exact span and the reason.
+						SQLQuack converts only where rules checked against recorded Snowflake results cover the types
+						involved. Everything else is refused, with the exact span and the reason.
 					</p>
 					<div class="actions">
 						<div class="install">
-							<span><span class="prompt">$</span> git clone https://github.com/sqlstack-io/sqlquack</span>
-							<button class="copy" type="button" data-copy="git clone https://github.com/sqlstack-io/sqlquack">Copy</button>
+							<span><span class="prompt">$</span> pip install sqlquack</span>
+							<button class="copy" type="button" data-copy="pip install sqlquack">Copy</button>
 						</div>
 						<span class="actions-break" aria-hidden="true"></span>
 						<a class="button primary" href="/playground/">Try the playground</a>
@@ -100,20 +99,20 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 					</div>
 					<div class="problem">
 						<div class="card">
-							<h3>It transpiles, runs, and differs</h3>
-							<p>NULL handling, decimal arithmetic and implicit casts behave differently on DuckDB, with no error.</p>
+							<h3>Snowflake rejects it at runtime</h3>
+							<p>Invalid Snowflake SQL only shows up when the query runs on the warehouse, often mid-pipeline.</p>
 						</div>
 						<div class="card">
 							<h3>Tests pass for the wrong engine</h3>
-							<p>Local tests pass for behaviour your warehouse doesn't have.</p>
+							<p>On DuckDB, NULLs, decimals and casts behave differently, with no error. Your tests go green locally and the numbers differ in production.</p>
 						</div>
 						<div class="card">
-							<h3>"Supported" isn't one fact</h3>
-							<p>A function can convert for one precision and overflow on another. Support depends on the types involved.</p>
+							<h3>Support depends on the types</h3>
+							<p>A function can convert for one precision and overflow on another. "Supported" means nothing without the types involved.</p>
 						</div>
 						<div class="card">
-							<h3>Two kinds of error, mixed up</h3>
-							<p>SQL that is invalid on Snowflake and valid SQL that can't be translated safely need different fixes.</p>
+							<h3>Best effort means guessing</h3>
+							<p>Most transpilers rewrite what they don't understand and hope. There's no way to tell which parts are guesses.</p>
 						</div>
 					</div>
 				</div>
@@ -131,10 +130,7 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 							<div class="step-text">
 								<span class="num">01 · Check</span>
 								<h3>Catch what Snowflake would reject</h3>
-								<p>
-									<code>sqlquack check</code> parses Snowflake SQL and reports what Snowflake rejects, without a schema
-									or a conversion. Each problem has an <code>SQ</code> code, the exact span and a fix.
-								</p>
+								<p>Parses Snowflake SQL and reports the syntax Snowflake would reject. No schema needed. Each error has a code and the exact span; rejections also come with a fix.</p>
 								<p class="more"><a href="/docs/cli/check/">How checking works →</a></p>
 							</div>
 <pre class="terminal"><span class="cmd">sqlquack check</span>
@@ -151,22 +147,15 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 							<div class="step-text">
 								<span class="num">02 · Convert</span>
 								<h3>DuckDB SQL that keeps Snowflake's meaning</h3>
-								<p>
-									<code>sqlquack convert</code> types every expression from your schema and applies only verified
-									rules. Here a NUMBER(12,2) divided by 3 keeps Snowflake's scale of 8, and division by zero still raises.
-									DuckDB parses and binds every converted statement before it is printed.
-								</p>
+								<p>Uses your schema's types and only verified rules. NUMBER(12,2) / 3 keeps Snowflake's 8 decimal places.</p>
 								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert div.sql --schema schema.json</span>
+<pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in schema.json</span>
+SELECT order_id, total / 3 AS third FROM orders
+
+<span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
 SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID",
-  (CASE WHEN "ORDERS"."TOTAL" IS NULL OR … THEN NULL
-        WHEN CAST(3 AS DECIMAL(1,0)) = 0
-        THEN CAST(CAST('sqlquack:100051#e539322555ff: Division by zero' AS INTEGER) AS "NULL")
-        ELSE CAST(… AS DECIMAL(18,8)) END) AS "THIRD",
-  (CASE WHEN ("ORDERS"."STATUS" = 'shipped')
-        THEN CAST(CAST(1 AS DECIMAL(1,0)) AS DECIMAL(1,0))
-        ELSE CAST(CAST(0 AS DECIMAL(1,0)) AS DECIMAL(1,0)) END) AS "SHIPPED"
+  (CASE <span class="dim">…</span> ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8)) END) AS "THIRD"
 FROM "ORDERS" AS "ORDERS"
 <span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
 						</div>
@@ -175,13 +164,10 @@ FROM "ORDERS" AS "ORDERS"
 							<div class="step-text">
 								<span class="num">03 · Refuse precisely</span>
 								<h3>A refusal you can act on</h3>
-								<p>
-									When no verified rule covers a construct, or DuckDB would only approximate it, SQLQuack refuses the
-									statement instead of guessing. The refusal names the construct, underlines it and says what to change.
-								</p>
+								<p>No verified rule, no conversion. The refusal underlines the construct and says what to change.</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json</span>
+<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json --builtin-policy</span>
 <span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --&gt; due.sql:2:8
   |
@@ -197,11 +183,7 @@ sqlquack convert: refused, 1 refusal under the built-in default</pre>
 							<div class="step-text">
 								<span class="num">04 · Decide what to accept</span>
 								<h3>Known divergences are opt-in</h3>
-								<p>
-									Some conversions are exact except for a documented difference, such as <code>HASH</code>, which
-									DuckDB computes with its own function. The policy file lists each one, and nothing that relies on
-									one converts until you allow it.
-								</p>
+								<p>Some conversions differ in one documented way, like <code>HASH</code>. The policy file lists each one and whether it's allowed; the built-in default refuses them all.</p>
 								<p class="more"><a href="/docs/policy/">Configure the policy →</a></p>
 							</div>
 <pre class="terminal"><span class="cm"># sqlquack.toml (excerpt)</span>
@@ -218,32 +200,26 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 							<div class="step-text">
 								<span class="num">05 · Measure a project</span>
 								<h3>See what a whole project needs</h3>
-								<p>
-									<code>sqlquack census</code> reads a directory of SQL files or compiled models, counts the constructs
-									they use and reports how many convert, which refusals block the rest, and what to support next.
-								</p>
+								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It counts the constructs, how many convert, and which refusals block the rest.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census models --schema schema.json</span>
-Census of 3 snowflake SQL files
-  parsed 3 (3 statements), unparsed 0, empty 0
-  distinct constructs 15 (2 clause, 4 fn, 9 node)
+<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy</span>
+Census of 25 snowflake SQL files
+  parsed 25 (25 statements), unparsed 0, empty 0
+  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
   files refused: missing rule 0, outside type conditions 0, unresolved name 0,
-    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 1
-  convertible: strict 2 <span class="dim">…</span>, unit-testable 2 <span class="dim">…</span>
+    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
+  convertible: strict 23 <span class="dim">…</span>, unit-testable 23 <span class="dim">…</span>
 
 Refusals by category and construct (top 50)
-       1  a known divergence the policy refuses: fn:HASH</pre>
+       2  a known divergence the policy refuses: fn:SUM</pre>
 						</div>
 
 						<div class="step">
 							<div class="step-text">
 								<span class="num">06 · Use it from Python</span>
 								<h3>The same engine, as a library</h3>
-								<p>
-									The <code>sqlquack</code> Python package runs the same code as the command line and returns frozen
-									results with typed diagnostics.
-								</p>
+								<p>The same engine as the CLI, with typed results and diagnostics.</p>
 								<p class="more"><a href="/docs/python/">Python API →</a></p>
 							</div>
 <pre class="terminal"><span class="kw">import</span> sqlquack
@@ -265,21 +241,27 @@ conversion.converted          <span class="cm"># True</span></pre>
 			<section>
 				<div class="wrap">
 					<div class="section-head">
-						<h2>Checked under stated conditions</h2>
-						<p>"Checked under these conditions" or "we don't know", never "every input is proven". <a href="/docs/coverage/">How each figure is measured →</a></p>
+						<h2>Measured against real Snowflake</h2>
+						<p>Every number comes from SQL run on real Snowflake. <a href="/docs/coverage/">How we measure →</a></p>
 					</div>
 					<div class="grid">
 						<div class="item">
-							<h3>{{TRANSLATION_PCT}} of Snowflake statements translate</h3>
-							<p>{{TRANSLATION_BASIS}} The rest are refused with a reason, never translated by guesswork.</p>
+							<h3>{{SYNTAX_PCT_WHOLE}} of Snowflake syntax verified</h3>
+							<p>{{SYNTAX_VERIFIED}} of {{SYNTAX_FORMS}} documented forms, checked against real Snowflake.</p>
+						</div>
+						<!-- figure:TRANSLATION_PCT -->
+						<div class="item">
+							<h3>{{TRANSLATION_PCT_WHOLE}} of tested statements match exactly</h3>
+							<p>{{TRANSLATION_STATEMENTS}} statements run on Snowflake and replayed on DuckDB.</p>
 						</div>
 						<div class="item">
-							<h3>{{SYNTAX_PCT}} of documented syntax verified</h3>
-							<p>Out of {{SYNTAX_FORMS}} documented Snowflake syntax forms. {{SYNTAX_BASIS}}</p>
+							<h3>Zero wrong answers</h3>
+							<p>No tested statement returned different rows.</p>
 						</div>
+						<!-- /figure:TRANSLATION_PCT -->
 						<div class="item">
 							<h3>Rules checked against Snowflake</h3>
-							<p>Each rule converts only the shapes that cases recorded on Snowflake and replayed on DuckDB cover. Everything else is refused.</p>
+							<p>A rule converts only what real Snowflake results back. Anything else gets a clear no.</p>
 						</div>
 					</div>
 				</div>
@@ -290,20 +272,20 @@ conversion.converted          <span class="cm"># True</span></pre>
 					<div>
 						<h2>Start in a minute</h2>
 						<p class="lede">
-							Build it from source, then check a file or convert it with a schema of your relations.
+							Install it with pip, then check a file or convert it with a schema of your relations.
 						</p>
 						<ul>
 							<li>Snowflake to DuckDB, for running warehouse SQL against small fixtures locally or in CI.</li>
-							<li>No account, server or Snowflake connection needed. SQLBuild isn't required.</li>
+							<li>No account, server or Snowflake connection needed.</li>
 							<li>One binary for the command line, and a Python package with the same engine.</li>
 							<li>Free and open source, Apache-2.0.</li>
 						</ul>
 					</div>
-<pre class="terminal"><span class="cmd">git clone https://github.com/sqlstack-io/sqlquack && cd sqlquack</span>
-<span class="cmd">echo "SELECT 1 QUALIFY TRUE" | cargo run --release -p sqlquack -- check</span>
+<pre class="terminal"><span class="cmd">pip install sqlquack</span>
+<span class="cmd">echo "SELECT 1 QUALIFY TRUE" | sqlquack check</span>
 <span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
 <span class="dim">…</span>
-<span class="cmd">echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --builtin-policy</span>
+<span class="cmd">echo "SELECT 1 AS total" | sqlquack convert --builtin-policy</span>
 SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
 <span class="ok strong">sqlquack convert: done, converted under the built-in default</span></pre>
 				</div>

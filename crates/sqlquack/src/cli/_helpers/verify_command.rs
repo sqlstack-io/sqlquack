@@ -25,10 +25,10 @@ use sqlquack_evidence::verify::models::{
     CaseVerdict, Conversion, ErrorCheck, Verdict, VerifyInputs, VerifyReport,
 };
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_policy::policy::constants::{HASH_DIVERGENCE, PROJECT_UDF};
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::constants::RULES;
-use sqlquack_rules::conversion::constants::{HASH_DIVERGENCE, PROJECT_UDF};
 use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::analysis::main::builtin_claims::builtin_claims;

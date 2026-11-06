@@ -23,13 +23,16 @@ id = "node_within_group_combination_0_text_literal_text_text"
 description = "node:within_group over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
   ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_within_group_combination_0_text_literal_text_decimal"
@@ -50,7 +53,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "DATE" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15'"],
-  ["'a'", "'b'", "'2024-01-16'"],
+  ["'a'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -240,7 +243,7 @@ id = "node_within_group_group_empty_input"
 description = "node:within_group over an aggregate over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -252,9 +255,9 @@ id = "node_within_group_group_all_null"
 description = "node:within_group over a group whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
-  ["'b'", "'a'", "3"],
+  ["'a'", "'a'", "30"],
+  ["'a'", "'a'", "20"],
+  ["'b'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -266,8 +269,8 @@ id = "node_within_group_group_mixed"
 description = "node:within_group over a group holding different values (any_value)."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
+  ["'a'", "'a'", "20"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -279,9 +282,9 @@ id = "node_within_group_group_duplicates"
 description = "node:within_group over a group holding one value several times beside another, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
-  ["'a'", "'a'", "3"],
+  ["'a'", "'a'", "30"],
+  ["'a'", "'a'", "20"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -293,7 +296,7 @@ id = "node_within_group_group_single_row"
 description = "node:within_group over a group of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x1, ',') WITHIN GROUP (ORDER BY x2) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -318,13 +321,16 @@ id = "node_within_group_1_combination_0_text_text"
 description = "node:within_group over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
   ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "listagg_order"
 
 [[case]]
 id = "node_within_group_1_combination_0_text_decimal"
@@ -345,7 +351,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15'"],
-  ["'a'", "'b'", "'2024-01-16'"],
+  ["'a'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -403,7 +409,7 @@ id = "node_within_group_1_group_empty_input"
 description = "node:within_group over an aggregate over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -415,9 +421,22 @@ id = "node_within_group_1_group_all_null"
 description = "node:within_group over a group whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "NULL", "2"],
-  ["'b'", "'a'", "3"],
+  ["'a'", "NULL", "30"],
+  ["'a'", "NULL", "20"],
+  ["'b'", "'a'", "10"],
+]
+query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_within_group_1_group_mixed"
+description = "node:within_group over a group holding different values (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'a'", "20"],
+  ["'a'", "'b'", "10"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -429,8 +448,8 @@ id = "node_within_group_1_group_null_beside_value"
 description = "node:within_group over a group holding null beside a value (any_value)."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "'a'", "2"],
+  ["'a'", "NULL", "20"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -442,9 +461,9 @@ id = "node_within_group_1_group_duplicates"
 description = "node:within_group over a group holding one value several times beside another, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
-  ["'a'", "'a'", "2"],
-  ["'a'", "'b'", "3"],
+  ["'a'", "'a'", "30"],
+  ["'a'", "'a'", "20"],
+  ["'a'", "'b'", "10"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -456,7 +475,7 @@ id = "node_within_group_1_group_single_row"
 description = "node:within_group over a group of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "'a'", "1"],
+  ["'a'", "'a'", "10"],
 ]
 query = "SELECT g, LISTAGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"

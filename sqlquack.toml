@@ -197,6 +197,10 @@ STRICT_JSON_OUTPUT = false
 GEOGRAPHY_OUTPUT_FORMAT = "GeoJSON"
 GEOMETRY_OUTPUT_FORMAT = "GeoJSON"
 
+[edge_cases.translation]
+description = "Per-form translation obligations: each documented form's cases, measured against Snowflake's recorded results."
+required = ["type-combination"]
+
 [edge_cases.numeric]
 description = "Arithmetic, rounding and numeric conversion."
 required = ["null", "zero", "negative", "boundary"]
@@ -485,6 +489,13 @@ default = "warn"
 strict = "refuse"
 failure = "loud"
 reason = "ARRAY_AGG without WITHIN GROUP returns its values in an order neither engine defines, as WITHIN GROUP does among rows tied on its keys. The converted SQL returns the array where it holds at most one distinct value, or where tied rows hold equal values, and raises otherwise; an unordered ARRAY_AGG of scalars passes sorted where its order cannot show (through CTE and FROM-subquery columns, UNION ALL, IFF and searched CASE, into ARRAY_SIZE, ARRAY_SORT, ARRAY_MAX, ARRAY_MIN, ARRAY_CONTAINS, ARRAYS_OVERLAP, the array set functions and FLATTEN's VALUE), since rows compare as unordered sets; anywhere its order can show, including as an ORDER BY or GROUP BY key, it raises. The failure is loud, never a wrong value."
+
+[divergences.listagg_order]
+constructs = ["fn:LISTAGG"]
+default = "warn"
+strict = "refuse"
+failure = "loud"
+reason = "LISTAGG WITHIN GROUP concatenates rows tied on every ORDER BY key in an order neither engine defines, so the two may join tied values differently. The converted SQL returns the string where tied rows hold equal values, or where the value itself is the only key, and raises where tied rows hold different non-NULL values. The failure is loud, never a wrong value."
 
 [divergences.text_number_scale]
 constructs = ["node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in", "fn:EQUAL_NULL", "node:null_safe_eq", "node:null_safe_neq"]

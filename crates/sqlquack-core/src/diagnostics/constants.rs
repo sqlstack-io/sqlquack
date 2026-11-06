@@ -10,6 +10,11 @@ pub const CASE_ONLY_MATCH: &str = "only without regard to case";
 pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper case, so declare \
     the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
+/// The words of an unresolved name's reason when two result columns share a name.
+pub const REPEATED_RESULT_NAME: &str = "repeats, possibly differing only in case";
+/// The help for such a name, replacing SQ0004's own.
+pub const REPEATED_RESULT_NAME_HELP: &str =
+    "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";
 /// The words of a refusal reading a TIMESTAMP_TZ's local time, which needs the offset DuckDB drops.
 pub const ZONED_LOCAL_TIME: &str =
     "which reads the local time of an offset DuckDB's TIMESTAMPTZ drops";
@@ -45,6 +50,10 @@ pub const CONVERSION_BUDGET: &str = "SQ0006";
 pub const SESSION_PARAMETERS: &str = "SQ0007";
 /// The conversion needs a known divergence the policy refuses in this mode.
 pub const DIVERGENCE_REFUSED: &str = "SQ0008";
+/// An unaliased select item's Snowflake-generated column name is not verified.
+pub const UNALIASED_OUTPUT_NAME: &str = "SQ0009";
+/// The construct name of that refusal, which its code is registered under.
+pub const UNALIASED_OUTPUT_NAME_CONSTRUCT: &str = "unaliased_output_name";
 
 /// Every diagnostic code, in the order issued.
 pub const CODES: &[CodeEntry] = &[
@@ -144,9 +153,9 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "the conversion needs a known divergence the policy refuses",
         help: Some(
-            "allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
-             --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
-             --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every one",
+            "the help names the divergence and the fixes that work in the current mode: allow \
+             it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
+             assumption; --builtin-policy refuses every one",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \
@@ -155,6 +164,23 @@ pub const CODES: &[CodeEntry] = &[
             or confirm the assumption it rests on; otherwise rewrite the statement without the \
             construct.",
         example: r#"echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy"#,
+    },
+    CodeEntry {
+        code: UNALIASED_OUTPUT_NAME,
+        name: UNALIASED_OUTPUT_NAME_CONSTRUCT,
+        alias: None,
+        title: "this column has no alias, and SQLQuack has not verified the name Snowflake gives it",
+        help: Some("add an alias, e.g. `AS one`"),
+        explanation: "Snowflake names an unaliased select item after the expression's text, and \
+            a converted query must return the same column names. SQLQuack emits Snowflake's name \
+            only for the shapes recorded results verify, named by their text upper-cased as \
+            written: literals, columns and COUNT, SUM, MAX, AVG, LOWER, UPPER and COALESCE of \
+            columns, a column plus, minus, times, divided by or concatenated with a literal, and \
+            a column cast to INTEGER, written with single spaces and at most one line break. \
+            Other items, such as paths, CASE, nested calls or other functions, are refused \
+            rather than converted with a different column name. An alias fixes the name in both \
+            engines.",
+        example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: "SQ0101",

@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.as-decimal-number.as-number"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_match"
+description = "Decimals with the default precision and scale (38, 0), which the page says round. Catches: the fraction truncated (12 and -12) instead of rounded, or the scale of the input kept"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'12.5'"],
+  ["'-12.5'"],
+  ["'7'"],
+]
+query = "SELECT AS_NUMBER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mismatch"
+description = "A string holding digits and an exponent number. Catches: text parsed as a number, or a floating-point value converted"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\"12\"'"],
+  ["'1.5e0'"],
+]
+query = "SELECT AS_NUMBER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_scale"
+description = "An explicit precision 10 and scale 2 on a value with three fractional digits. Catches: the third digit truncated (12.34) instead of rounded (12.35), or the arguments ignored"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'12.345'"],
+  ["'-0.005'"],
+]
+query = "SELECT AS_NUMBER(PARSE_JSON(a), 10, 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_out_of_range"
+description = "A value that needs more digits than the precision after rounding; the page says reducing scale can cause out-of-range errors. Catches: NULL returned, or the digits silently dropped"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'123.456'"],
+]
+query = "SELECT AS_NUMBER(PARSE_JSON(a), 4, 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_variant_expr"
+description = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match. Catches: the JSON null passed through as a value, or an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'null'"],
+]
+query = "SELECT AS_NUMBER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.decrypt-raw"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "ENCRYPT_RAW output decrypted with its own fields. Catches: the ciphertext returned unchanged"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT TO_VARCHAR(DECRYPT_RAW(AS_BINARY(GET(e, 'ciphertext')), k, AS_BINARY(GET(e, 'iv')), a, 'AES-GCM', AS_BINARY(GET(e, 'tag'))), 'HEX') AS r FROM (SELECT ordinal, k, a, ENCRYPT_RAW(v, k, iv, a, 'AES-GCM') AS e FROM input)"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_wrong_aad"
+description = "A different AAD, which the page says makes decryption fail. Catches: the bytes returned anyway"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT DECRYPT_RAW(AS_BINARY(GET(e, 'ciphertext')), k, AS_BINARY(GET(e, 'iv')), 'BB'::BINARY, 'AES-GCM', AS_BINARY(GET(e, 'tag'))) AS r FROM (SELECT ordinal, k, a, ENCRYPT_RAW(v, k, iv, a, 'AES-GCM') AS e FROM input)"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_value_to_decrypt"
+description = "A NULL ciphertext; the page does not say; the recording decides. Catches: an error where Snowflake returns NULL, or the reverse"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT DECRYPT_RAW(NULL::BINARY, k, AS_BINARY(GET(e, 'iv')), a, 'AES-GCM', AS_BINARY(GET(e, 'tag'))) IS NULL AS n FROM (SELECT ordinal, k, a, ENCRYPT_RAW(v, k, iv, a, 'AES-GCM') AS e FROM input)"
+order = "ordered"
+tags = ["null"]

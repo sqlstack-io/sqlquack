@@ -88,7 +88,7 @@ FOLD_IDENTICAL_REASON: str = (
 DECISION_PROSE: str = "syntax heading '{heading}' has no syntax block; catalogued from prose"
 
 HAND_BASES: frozenset[str] = frozenset(
-    {"html_parsed_literal", "table", "prose", "heading", "inline_code", "example"}
+    {"html_parsed_literal", "table", "prose", "heading", "inline_code", "example", "code_block"}
 )
 
 LEADING_EXTRA: frozenset[str] = frozenset(
@@ -167,6 +167,8 @@ WORD: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_$]*")
 ELISION_LINE: re.Pattern[str] = re.compile(r"^\s*(\[\s*)?\.\.\.(\s*\])?\s*$")
 QUOTED_OR_PLACEHOLDER: re.Pattern[str] = re.compile(r"<[^<>]*>|'[^']*'|\"[^\"]*\"")
 QUOTED_OR_ANGLE: re.Pattern[str] = re.compile(r"'[^']*'|<[^<>]*>")
+DEFINITION_QUALIFIER: re.Pattern[str] = re.compile(r"\S+ (\([^()]*\)) ::=")
+SQL_LINE_COMMENT: re.Pattern[str] = re.compile(r"(^|\s)--(?=(?:[^']*'[^']*')*[^']*$).*$")
 CALL_START: re.Pattern[str] = re.compile(r"^\s*([A-Za-z_][\w$.]*)\s*\(")
 NAME_ALTERNATION: re.Pattern[str] = re.compile(
     r"^\s*\{\s*([A-Za-z_][\w$.]*(?:\s*\|\s*[A-Za-z_][\w$.]*)+)\s*\}\s*(?=\()"
@@ -178,7 +180,8 @@ BULLET_CHUNK: re.Pattern[str] = re.compile(r"^\s*[-*]\s")
 SYNTAX_HEADING: re.Pattern[str] = re.compile(r"syntax", re.I)
 NON_FORM_SECTIONS: re.Pattern[str] = re.compile(
     r"^(parameters|required parameters|optional parameters|arguments|returns|usage notes|"
-    r"examples?|output|access control.*|.*\bparameters\b.*|.*\bexamples?\b.*|.*usage notes.*|"
+    r"examples?|output|access control.*|(?-i:.*\b[Pp]arameters\b.*|.*\b[Ee]xamples?\b.*)|"
+    r".*usage notes.*|"
     r"collation details|error handling|.*\bactions\b.*\(`.*`\))$",
     re.I,
 )

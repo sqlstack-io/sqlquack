@@ -20,8 +20,10 @@ use crate::conversion::_helpers::support::scope::{Context, Literal};
 use crate::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTE_TEXT_LENGTH,
     MINUTES_PER_HOUR, NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON,
-    OFFSET_WITHOUT_COLON, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
-    ZERO_OFFSETS,
+    OFFSET_WITHOUT_COLON, ZERO_OFFSETS,
+};
+use sqlquack_policy::policy::constants::{
+    SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
 };
 
 /// A timestamp literal in the recorded ISO form: `YYYY-MM-DD[ HH:MI:SS[.f]][ ±HH:MM]`.

@@ -1,0 +1,108 @@
+category = "translation"
+construct = "sf.functions.timestampdiff"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "Year, month, day and week boundaries crossed by one day. Catches: elapsed whole units (0 years for 31 Dec to 1 Jan) instead of crossed boundaries, or the sign reversed"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2023-12-31'", "'2024-01-01'"],
+  ["'2024-01-31'", "'2024-02-01'"],
+  ["'2024-03-10'", "'2024-03-04'"],
+]
+query = "SELECT TIMESTAMPDIFF(year, a, b) AS y, TIMESTAMPDIFF(month, a, b) AS m, TIMESTAMPDIFF(day, a, b) AS d, TIMESTAMPDIFF(week, a, b) AS w FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp_ntz"
+description = "Hour, minute and millisecond counts. Catches: elapsed time (0 hours for 10:59 to 11:00) instead of crossed boundaries, or seconds counted in milliseconds"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-01 10:59:59.999'", "'2024-01-01 11:00:00.001'"],
+]
+query = "SELECT TIMESTAMPDIFF(hour, a, b) AS h, TIMESTAMPDIFF(second, a, b) AS s, TIMESTAMPDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_time"
+description = "Differences between TIMEs. Catches: an error for TIME arguments"
+columns = [{ name = "a", type = "TIME" }, { name = "b", type = "TIME" }]
+rows = [
+  ["'23:00:00'", "'01:30:00'"],
+]
+query = "SELECT TIMESTAMPDIFF(minute, a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_mixed"
+description = "A DATE against a TIMESTAMP. Catches: an error, or the date read as end of day"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01 05:00:00'"],
+]
+query = "SELECT TIMESTAMPDIFF(hour, a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_date_or_time_expr1"
+description = "NULL first expression. Catches: NULL read as a default date"
+columns = [{ name = "a", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT TIMESTAMPDIFF(day, a, '2024-01-10'::DATE) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_date_or_time_expr2"
+description = "NULL second expression. Catches: NULL read as a default date"
+columns = [{ name = "b", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT TIMESTAMPDIFF(day, '2024-01-10'::DATE, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_leap"
+description = "Day counts across 29 February. Catches: a 365-day year"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-02-28'", "'2024-03-01'"],
+  ["'2023-02-28'", "'2024-02-28'"],
+]
+query = "SELECT TIMESTAMPDIFF(day, a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_dst"
+description = "Hours between TIMESTAMP_TZ values across a DST change. Catches: wall-clock difference (2) instead of elapsed hours (1)"
+columns = [{ name = "a", type = "TIMESTAMP_TZ" }, { name = "b", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-03-10 01:00:00 -0500'", "'2024-03-10 03:00:00 -0400'"],
+  ["'2024-11-03 01:00:00 -0400'", "'2024-11-03 01:00:00 -0500'"],
+]
+query = "SELECT TIMESTAMPDIFF(hour, a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t009_negative"
+description = "A later first argument. Catches: an absolute value"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-06-01'", "'2023-01-15'"],
+]
+query = "SELECT TIMESTAMPDIFF(month, a, b) AS m, TIMESTAMPDIFF(day, a, b) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

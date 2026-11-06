@@ -1,0 +1,43 @@
+category = "translation"
+construct = "sf.functions.soundex"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "SOUNDEX of names that exercise the H/W and same-code rules. Catches: the H/W rule missed (A226 instead of A261 for Ashcraft), adjacent same codes not merged, or no zero padding"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Robert'"],
+  ["'Ashcraft'"],
+  ["'Tymczak'"],
+  ["'Pfister'"],
+  ["'Lloyd'"],
+  ["'Lee'"],
+]
+query = "SELECT SOUNDEX(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_varchar_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'Ann'"],
+]
+query = "SELECT SOUNDEX(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string and a string with no letters: records what Snowflake returns. Catches: a padded 000 code or an error where Snowflake returns empty, or the reverse"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'123'"],
+]
+query = "SELECT SOUNDEX(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

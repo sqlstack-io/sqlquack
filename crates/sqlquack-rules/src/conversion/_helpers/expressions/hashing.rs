@@ -13,7 +13,8 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 
-use crate::conversion::constants::{HASH_DIVERGENCE, HASH_RESULT_PRECISION, HASH_RULE};
+use crate::conversion::constants::{HASH_RESULT_PRECISION, HASH_RULE};
+use sqlquack_policy::policy::constants::HASH_DIVERGENCE;
 
 /// HASH of one or more values, each held so that values Snowflake finds equal hash equally.
 pub(crate) fn hash_call(

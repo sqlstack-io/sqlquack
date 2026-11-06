@@ -1,0 +1,97 @@
+category = "translation"
+construct = "sf.functions.base64-encode"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "BASE64_ENCODE of UTF-8 text of lengths 1, 2 and 3 modulo 3. Catches: Latin-1 instead of UTF-8 bytes (\u00e9 as one byte), or missing padding"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\u00e9'"],
+  ["'ab'"],
+  ["'Snowflake'"],
+  ["'a'"],
+]
+query = "SELECT BASE64_ENCODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "BASE64_ENCODE of bytes that use indexes 62 and 63. Catches: the binary read as its hex text (encoding 'FBFF' as characters)"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'FBFF'"],
+  ["'000102'"],
+]
+query = "SELECT BASE64_ENCODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_max_line_length"
+description = "A line length shorter than the output. The constant argument is a literal per call, as Snowflake requires. Catches: max_line_length ignored (no line breaks) or applied to the input length"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
+rows = [
+  ["'Hello World Hello World'", "'Hello World'"],
+]
+query = "SELECT BASE64_ENCODE(a1, 8) AS r1, BASE64_ENCODE(a2, 0) AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_alphabet"
+description = "A custom alphabet with a custom padding character. The constant argument is a literal per call, as Snowflake requires. Catches: the alphabet argument ignored (+/ and = in the output)"
+columns = [{ name = "a1", type = "BINARY" }, { name = "a2", type = "BINARY" }]
+rows = [
+  ["'FBFF'", "'7E7E7E3F'"],
+]
+query = "SELECT BASE64_ENCODE(a1, 0, '-_~') AS r1, BASE64_ENCODE(a2, 0, '*!') AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_input"
+description = "NULL input next to a set one. Catches: NULL encoded as an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT BASE64_ENCODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_max_line_length"
+description = "NULL line length next to a set one. The constant argument is a literal per call, as Snowflake requires. Catches: NULL read as 0 (no line breaks) instead of NULL"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'abc'"],
+]
+query = "SELECT BASE64_ENCODE(a1, NULL) AS r1, BASE64_ENCODE(a2, 2) AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_alphabet"
+description = "NULL alphabet next to a set one. The constant argument is a literal per call, as Snowflake requires. Catches: NULL read as the default alphabet"
+columns = [{ name = "a1", type = "BINARY" }, { name = "a2", type = "BINARY" }]
+rows = [
+  ["'FBFF'", "'FBFF'"],
+]
+query = "SELECT BASE64_ENCODE(a1, 0, NULL) AS r1, BASE64_ENCODE(a2, 0, '-_') AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_empty"
+description = "The empty string encodes to an empty string. Catches: NULL or padding for empty input"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'x'"],
+]
+query = "SELECT BASE64_ENCODE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -76,7 +76,7 @@ description = "node:in over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "DATE" }]
 rows = [
   ["'a'", "'2024-01-15'"],
-  ["'a'", "'2024-01-16'"],
+  ["'a'", "'2024-05-17'"],
 ]
 query = "SELECT x0 FROM input WHERE x0 NOT IN (SELECT x0 FROM input WHERE ordinal = 1) ORDER BY ordinal"
 order = "ordered"
@@ -89,7 +89,7 @@ description = "node:in over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT x0 FROM input WHERE x0 NOT IN (SELECT x0 FROM input WHERE ordinal = 1) ORDER BY ordinal"
 order = "ordered"
@@ -102,7 +102,7 @@ description = "node:in over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT x0 FROM input WHERE x0 NOT IN (SELECT x0 FROM input WHERE ordinal = 1) ORDER BY ordinal"
 order = "ordered"
@@ -115,7 +115,7 @@ description = "node:in over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["'a'", "'2024-01-15 10:00:00 +00:00'"],
-  ["'a'", "'2024-01-16 11:30:00 +00:00'"],
+  ["'a'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 query = "SELECT x0 FROM input WHERE x0 NOT IN (SELECT x0 FROM input WHERE ordinal = 1) ORDER BY ordinal"
 order = "ordered"

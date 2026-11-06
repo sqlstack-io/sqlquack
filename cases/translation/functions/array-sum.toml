@@ -1,0 +1,52 @@
+category = "translation"
+construct = "sf.functions.array-sum"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "Element-wise sums per group. Catches: a scalar total of every element, or concatenation"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1.5,2,-1]'"],
+  ["'q'", "'[1,1,1]'"],
+  ["'p'", "'[0.25,-2,4]'"],
+]
+query = "SELECT g, ARRAY_SUM(CAST(PARSE_JSON(a) AS ARRAY(FLOAT))) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mismatched"
+description = "Arrays of different lengths, which the page says is an error. Catches: padding the short array with 0 or NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1,2]'"],
+  ["'p'", "'[1,2,3]'"],
+]
+query = "SELECT ARRAY_SUM(CAST(PARSE_JSON(a) AS ARRAY(FLOAT))) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_array"
+description = "A NULL array beside arrays, and NULL elements: one position NULL in every array. Catches: NULL elements read as 0 (0 instead of NULL at the third position) or the NULL array making the result NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'p'", "'[1,null,null]'"],
+  ["'p'", "'[2,5,null]'"],
+]
+query = "SELECT ARRAY_SUM(CAST(PARSE_JSON(a) AS ARRAY(FLOAT))) AS r FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty_input"
+description = "No rows. Catches: an empty array instead of NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'[1]'"],
+]
+query = "SELECT ARRAY_SUM(CAST(PARSE_JSON(a) AS ARRAY(FLOAT))) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

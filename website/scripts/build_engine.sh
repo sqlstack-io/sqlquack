@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Builds the playground's engine (website/wasm) into public/playground/engine/ and prints its size.
+# Builds the playground's engine (website/wasm) into wasm/pkg/, which `npm run build` serves under
+# public/playground/engine/<hash>/ (scripts/prepare_playground.mjs), and prints its size.
 # Needs the wasm32-unknown-unknown target, wasm-bindgen-cli at the crate's wasm-bindgen version,
 # and Node (for binaryen's wasm-opt). Run from website/.
 set -euo pipefail
 here="$(cd "$(dirname "$0")/.." && pwd)"
-out="$here/public/playground/engine"
+out="$here/wasm/pkg"
 cd "$here/wasm"
 cargo build --release --target wasm32-unknown-unknown
 raw=target/wasm32-unknown-unknown/release/sqlquack_wasm.wasm

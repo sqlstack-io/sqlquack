@@ -1,0 +1,70 @@
+category = "translation"
+construct = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_hex"
+description = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID). Catches: longitude and latitude swapped, or the byte order misread"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'010100000000000000000024400000000000003440'"],
+  ["'0101000020110F000000000000000024400000000000003440'"],
+]
+query = "SELECT ordinal, ST_ASWKT(ST_GEOMFROMEWKB(v)) AS r, ST_SRID(ST_GEOMFROMEWKB(v)) AS srid FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "The same WKB as BINARY. Catches: BINARY input rejected, or read as hex text"
+columns = [{ name = "b", type = "BINARY" }]
+rows = [
+  ["'010100000000000000000024400000000000003440'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOMFROMEWKB(b)) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_srid"
+description = "WKB with an srid argument. Catches: the srid argument ignored (SRID 0)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'010100000000000000000024400000000000003440'"],
+]
+query = "SELECT ST_SRID(ST_GEOMFROMEWKB(v, 3857)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_unparsable"
+description = "Hex text too short to be WKB, which the page says is an error. Catches: NULL returned, or the text read as an empty shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'0101000000'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOMFROMEWKB(v)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_allow_invalid"
+description = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid. Catches: the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'010300000001000000050000000000000000000000000000000000000000000000000024400000000000002440000000000000244000000000000000000000000000000000000000000000244000000000000000000000000000000000'"],
+]
+query = "SELECT ST_ISVALID(ST_GEOMFROMEWKB(v, TRUE)) AS valid, ST_ISVALID(ST_GEOMFROMEWKB(v, 3857, TRUE)) AS valid_srid, ST_SRID(ST_GEOMFROMEWKB(v, 3857, TRUE)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_varchar_or_binary_expression"
+description = "A NULL input; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOMFROMEWKB(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

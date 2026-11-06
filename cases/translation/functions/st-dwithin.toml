@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-dwithin"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_distance"
+description = "Points one degree of latitude apart (110.6 to 111.3 km) against 100 km and 120 km, and a point with itself at distance 0. Catches: degrees used, or a strict comparison at distance 0"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'", "'POINT(0 1)'"],
+]
+query = "SELECT ST_DWITHIN(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w), 100000) AS d100, ST_DWITHIN(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w), 120000) AS d120, ST_DWITHIN(TO_GEOGRAPHY(v), TO_GEOGRAPHY(v), 0) AS self FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_expression_1"
+description = "A NULL first shape with a distance, which the page says gives NULL: \"Returns NULL if any input is NULL\". Catches: FALSE returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_DWITHIN(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w), 100000) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

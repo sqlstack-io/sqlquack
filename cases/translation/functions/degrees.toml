@@ -1,0 +1,62 @@
+category = "translation"
+construct = "sf.functions.degrees"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "DEGREES of FLOAT values. Catches: RADIANS computed (the reverse conversion)"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["3.141592653589793"],
+  ["-1"],
+  ["0.5"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "DEGREES of NUMBER(12,4), converted to FLOAT. Catches: RADIANS computed (the reverse conversion); or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["1.0000"],
+  ["-0.5000"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "DEGREES of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_large"
+description = "Large radian values. Catches: x*180 computed before dividing by pi, overflowing where the result is finite"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e306"],
+  ["-1e306"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t005_overflow"
+description = "A result past the double range: records what Snowflake returns there (NaN, Infinity, NULL or an error); re-kinded to error_parity after capture if Snowflake raises an error. Catches: Infinity versus an error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e307"],
+]
+query = "SELECT DEGREES(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

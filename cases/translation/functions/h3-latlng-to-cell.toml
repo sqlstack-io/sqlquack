@@ -1,0 +1,58 @@
+category = "translation"
+construct = "sf.functions.h3-latlng-to-cell"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_resolutions"
+description = "A point in San Francisco at resolutions 0, 9 and 15, the ends of the range and between. Catches: latitude and longitude swapped, or the resolution range cut short"
+columns = [{ name = "lat", type = "DOUBLE" }, { name = "lng", type = "DOUBLE" }]
+rows = [
+  ["37.7749", "-122.4194"],
+]
+query = "SELECT H3_LATLNG_TO_CELL(lat, lng, 0) AS r0, H3_LATLNG_TO_CELL(lat, lng, 9) AS r9, H3_LATLNG_TO_CELL(lat, lng, 15) AS r15 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_wrap"
+description = "The same point with 360 added to the longitude, which the page says is wrapped into range. Catches: an error for a longitude out of range, or another cell"
+columns = [{ name = "lat", type = "DOUBLE" }, { name = "lng", type = "DOUBLE" }]
+rows = [
+  ["37.7749", "237.5806"],
+]
+query = "SELECT H3_LATLNG_TO_CELL(lat, lng, 9) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_resolution_range"
+description = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. Catches: the resolution clamped to 15, or NULL returned"
+columns = [{ name = "lat", type = "DOUBLE" }, { name = "lng", type = "DOUBLE" }]
+rows = [
+  ["37.7749", "-122.4194"],
+]
+query = "SELECT H3_LATLNG_TO_CELL(lat, lng, 16) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_nan"
+description = "A NaN latitude, which the page says is an error. Catches: NULL or a cell returned"
+columns = [{ name = "lat", type = "DOUBLE" }, { name = "lng", type = "DOUBLE" }]
+rows = [
+  ["'NaN'", "-122.4194"],
+]
+query = "SELECT H3_LATLNG_TO_CELL(lat, lng, 9) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_latitude"
+description = "A NULL latitude; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "lat", type = "DOUBLE" }, { name = "lng", type = "DOUBLE" }]
+rows = [
+  ["NULL", "-122.4194"],
+]
+query = "SELECT H3_LATLNG_TO_CELL(lat, lng, 9) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

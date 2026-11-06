@@ -1,0 +1,38 @@
+category = "translation"
+construct = "sf.functions.array-repeat"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_element_types"
+description = "Text, a number and an array repeated three times. Catches: text repeated as one concatenated string, or the array flattened"
+columns = [{ name = "t", type = "VARCHAR" }, { name = "a", type = "VARCHAR" }]
+rows = [
+  ["'ab'", "'[1,2]'"],
+]
+query = "SELECT ARRAY_REPEAT(t, 3) AS r1, ARRAY_REPEAT(7, 3) AS r2, ARRAY_REPEAT(PARSE_JSON(a), 2) AS r3 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_non_positive_count"
+description = "Counts 0 and -2. Catches: an error or NULL instead of an empty array"
+columns = [{ name = "c", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"],
+  ["-2"],
+]
+query = "SELECT ARRAY_REPEAT('x', c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_null_count"
+description = "A NULL count, and a NULL element repeated twice. Catches: NULL returned for the NULL element, or the count read as 0"
+columns = [{ name = "c", type = "NUMBER(38,0)" }, { name = "e", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1"],
+  ["2", "NULL"],
+]
+query = "SELECT ARRAY_REPEAT(e, c) AS r, ARRAY_SIZE(ARRAY_REPEAT(e, c)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

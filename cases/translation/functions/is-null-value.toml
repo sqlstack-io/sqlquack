@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.is-null-value"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_variant"
+description = "JSON null, a missing field and set values. Catches: a missing field treated as JSON null, or JSON null as SQL NULL"
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["PARSE_JSON('{\"a\": null, \"b\": 0}')"],
+]
+query = "SELECT IS_NULL_VALUE(v:a) AS a, IS_NULL_VALUE(v:b) AS b, IS_NULL_VALUE(v:c) AS c, IS_NULL_VALUE(v) AS whole FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_variant_expr"
+description = "SQL NULL. Catches: TRUE for SQL NULL"
+columns = [{ name = "v", type = "VARIANT" }]
+rows = [
+  ["NULL"],
+  ["PARSE_JSON('null')"],
+]
+query = "SELECT IS_NULL_VALUE(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

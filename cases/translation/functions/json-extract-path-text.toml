@@ -1,0 +1,52 @@
+category = "translation"
+construct = "sf.functions.json-extract-path-text"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_scalars"
+description = "A string, a number and a boolean extracted as text. Catches: the string returned with its JSON quotes, or the number reformatted"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":{\"b\":\"x\"}}'", "'a.b'"],
+  ["'{\"a\":[1,2.50]}'", "'a[1]'"],
+  ["'{\"a\":true}'", "'a'"],
+]
+query = "SELECT JSON_EXTRACT_PATH_TEXT(a, k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_container"
+description = "A path ending at an array and at an object. Catches: NULL for a container, or only its first element"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":[1,2]}'", "'a'"],
+  ["'{\"a\":{\"b\":1}}'", "'a'"],
+]
+query = "SELECT JSON_EXTRACT_PATH_TEXT(a, k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_missing"
+description = "A path that matches nothing, and a JSON null at the path; the page gives NULL for the first and does not say for the second, so the recording decides that row. Catches: an empty string for the missing path"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1}'", "'b'"],
+  ["'{\"a\":null}'", "'a'"],
+]
+query = "SELECT JSON_EXTRACT_PATH_TEXT(a, k) AS r, JSON_EXTRACT_PATH_TEXT(a, k) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_column_identifier"
+description = "NULL text and a NULL path; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'{\"a\":1}'", "NULL"],
+]
+query = "SELECT JSON_EXTRACT_PATH_TEXT(a, k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

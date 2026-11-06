@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.split-to-table"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Parts with an empty one and a multi-character delimiter. Catches: empty parts dropped, a 0-based INDEX, or the delimiter read as a set"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["'a,,b'", "','"],
+  ["'x<>y<z'", "'<>'"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(SPLIT_TO_TABLE(input.a, input.d)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_string"
+description = "NULL string, which the page says gives no rows. Catches: one row (NULL or empty) for the NULL input"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'p,q'"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(SPLIT_TO_TABLE(input.a, ',')) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_null_delimiter"
+description = "NULL delimiter. Catches: NULL read as no delimiter"
+columns = [{ name = "d", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["','"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(SPLIT_TO_TABLE('a,b', input.d)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "The empty string, which the page says gives one empty row. Catches: no rows for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'z'"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(SPLIT_TO_TABLE(input.a, ',')) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.octet-length"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "OCTET_LENGTH of multi-byte text. Catches: the character count instead of UTF-8 bytes (5 characters, 6 bytes)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'h\u00e9llo'"],
+  ["'\u20ac'"],
+  ["'ab'"],
+]
+query = "SELECT OCTET_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "OCTET_LENGTH of binary. Catches: the hex text length instead of the byte length"
+columns = [{ name = "a", type = "BINARY" }]
+rows = [
+  ["'00FF10'"],
+]
+query = "SELECT OCTET_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_or_binary"
+description = "NULL next to a set value. Catches: NULL read as 0"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT OCTET_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "The empty string. Catches: NULL for an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'x'"],
+]
+query = "SELECT OCTET_LENGTH(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

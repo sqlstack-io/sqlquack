@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-srid"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_types"
+description = "A GEOGRAPHY (4326), a GEOMETRY without an SRID (0) and one with 3857. Catches: NULL for SRID 0, or 4326 for every shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_SRID(TO_GEOGRAPHY(v)) AS g, ST_SRID(TO_GEOMETRY(v)) AS m0, ST_SRID(TO_GEOMETRY(v, 3857)) AS m FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_or_geometry_expression"
+description = "A NULL shape, which the page says gives NULL. Catches: 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_SRID(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

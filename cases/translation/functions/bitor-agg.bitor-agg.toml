@@ -1,0 +1,93 @@
+category = "translation"
+construct = "sf.functions.bitor-agg.bitor-agg"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "12, 10 and 14 per group (1100, 1010, 1110). Catches: another bitwise operator"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "12"],
+  ["'q'", "6"],
+  ["'p'", "10"],
+  ["'q'", "3"],
+  ["'p'", "14"],
+]
+query = "SELECT g, BITOR_AGG(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_negative"
+description = "A negative value in two's complement. Catches: the sign dropped (abs value) or a NUMBER(38) treated as unsigned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["-6"],
+  ["13"],
+]
+query = "SELECT BITOR_AGG(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_decimal"
+description = "Halves, rounded to the nearest integer (half away from zero) before the operation. Catches: truncation (2.5 to 2) or half-to-even rounding"
+columns = [{ name = "x", type = "NUMBER(10,1)" }]
+rows = [
+  ["2.5"],
+  ["4.5"],
+]
+query = "SELECT BITOR_AGG(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_float"
+description = "FLOAT values just below and above a half. Catches: truncation instead of rounding"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["6.7"],
+  ["2.2"],
+]
+query = "SELECT BITOR_AGG(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_varchar"
+description = "Numeric text, and text that cannot be cast, alone in group q. The page says such text is treated as NULL, while its example raises an error; the recording decides. Catches: uncastable text treated the opposite way to Snowflake (NULL against an error), or read as 0 (q giving 0 instead of NULL)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'6.6'"],
+  ["'q'", "'x'"],
+  ["'p'", "'x'"],
+  ["'p'", "'3'"],
+]
+query = "SELECT g, BITOR_AGG(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_expr1"
+description = "NULL rows beside values, and a group of only NULL. Catches: NULL read as 0 (changing AND), or the NULL group 0"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "7"],
+  ["'p'", "5"],
+]
+query = "SELECT g, BITOR_AGG(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_empty_input"
+description = "No rows. Catches: 0 or -1 instead of NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT BITOR_AGG(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

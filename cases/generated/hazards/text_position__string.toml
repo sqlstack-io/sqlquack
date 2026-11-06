@@ -319,7 +319,7 @@ rows = [
   ["'+7'", "1"],
   ["'-0'", "1"],
 ]
-expression = "SUBSTR(x0, x1, 1)"
+expression = "SUBSTR(x0, x1, 2)"
 tags = ["null", "empty", "whitespace", "unicode"]
 origin = "generated: hazards@1"
 

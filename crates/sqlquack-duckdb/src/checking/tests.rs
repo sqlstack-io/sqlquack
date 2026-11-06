@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_bound_outside_lambdas.rs"]
+mod test_bound_outside_lambdas;
 #[path = "tests/test_check_printed.rs"]
 mod test_check_printed;
 #[path = "tests/test_types.rs"]

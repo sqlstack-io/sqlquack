@@ -227,6 +227,7 @@ def record_with_fake_connection(
     overflow_results: frozenset[str],
     truncated_results: frozenset[str],
     null_results: frozenset[str],
+    expected_errors: frozenset[str] = frozenset(),
 ) -> tuple[tuple[str, ...] | None, tuple[str, ...], int, str]:
     """Outcomes (`None` when the run stopped), single runs, files written and the report."""
     behaviours: defaultdict[str, Callable[[], None]] = defaultdict(lambda: _succeed)
@@ -266,6 +267,7 @@ def record_with_fake_connection(
             session_parameters=(),
             source_sql=statement,
             duckdb_version="v2.0.0",
+            expected_error=statement in expected_errors,
         )
         for index, statement in enumerate(statements)
     ]
@@ -331,7 +333,7 @@ def microsecond_arrow_type(type_name: str) -> pa.DataType:
 
 
 def _sub_microsecond_count(values: tuple[int | None, ...]) -> int:
-    present: list[int] = list(filter(lambda value: value is not None, values))
+    present: list[int] = list(filter(None, values))
     return sum(value % 1000 != 0 for value in present)
 
 

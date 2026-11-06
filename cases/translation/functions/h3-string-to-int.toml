@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.h3-string-to-int"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Hexadecimal IDs at resolutions 9 and 0. Catches: the text read as a decimal number, or a value beyond 63 bits truncated"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["'89283082803ffff'"],
+  ["'8009fffffffffff'"],
+]
+query = "SELECT ordinal, H3_STRING_TO_INT(c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_cell_id"
+description = "A NULL ID; the page does not say; the recording decides. Catches: an error, or 0 returned"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT H3_STRING_TO_INT(c) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

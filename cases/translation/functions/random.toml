@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.random"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_same_row"
+description = "Two calls with the same seed in each of 1000 rows. Catches: the two calls differing within a row, or every row given the same value"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT COUNT_IF(RANDOM(42) = RANDOM(42)) AS same_in_row, COUNT(DISTINCT RANDOM(42)) > 990 AS varies FROM TABLE(GENERATOR(ROWCOUNT => 1000))"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_type"
+description = "The type and range of an unseeded value. Catches: a floating-point value in [0, 1) returned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TYPEOF(RANDOM()::VARIANT) AS t, RANDOM(7) = ROUND(RANDOM(7)) AS integral FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_seed"
+description = "A NULL seed; the page does not say; the recording decides. Catches: an error where Snowflake returns a value, or the reverse"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT RANDOM(NULL) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,1466 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE GRANT OPTION FOR ADD SEARCH OPTIMIZATION , OPTIMIZATION ON FUTURE SCHEMAS IN DATABASE v1 FROM APPLICATION ROLE v1 RESTRICT ;",
+   "sql_sha256": "02edcbc20c74da27ea5cb1d9aaa7eb398885e0763152cec6fdbc0393c9521473"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE MODIFY , MODIFY ON USER v1 FROM APPLICATION v1 ;",
+   "sql_sha256": "0ac00118e00eb11eb6c88d17974d5b1bae4614c29f2c838ae8610d2510c5179e"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE GRANT OPTION FOR MONITOR , MONITOR ON TABLE v1 FROM APPLICATION ROLE v1 RESTRICT ;",
+   "sql_sha256": "4f46d09b8eedf3442105e02a6da21355019447dbded777395b8c5b97e6940d86"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE CALLER USAGE ON 'INT' v1 FROM ROLE v1 ;",
+   "sql_sha256": "5f437cc12d0107477131ab430048cfa64f572aa07b8db0c4dafb03b81fc4a02f"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE GRANT OPTION FOR MONITOR , MONITOR ON FUTURE TABLES IN DATABASE v1 FROM APPLICATION ROLE v1 RESTRICT ;",
+   "sql_sha256": "ad43909f1d0e19b8ee9d7ff0382a03a5d32b31b1926353d36cecd260a91a0d75"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE MONITOR ON 'INT' v1 FROM APPLICATION ROLE v1 ;",
+   "sql_sha256": "dc1042ffb3112659177dbbcb36c20344d4b6fe203bfc7dcd8fab174c5cbb5b03"
+  },
+  {
+   "setup": [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack d103 sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>"
+   ],
+   "setup_sha256": "dce8638abaea401ada5d04d08af1c767fcef7652712fad7cf7cb87ccf6d3b60f",
+   "sql": "REVOKE GRANT OPTION FOR ADD SEARCH OPTIMIZATION , OPTIMIZATION ON SCHEMA v1 FROM APPLICATION ROLE v1 RESTRICT ;",
+   "sql_sha256": "f3e10db9a52953cdbe33c1cb6c5a9335c8d5569f2997d20c6897be557467499a"
+  }
+ ],
+ "receipts": 300,
+ "receipts_file_sha256": "88c8dcbc04ab8c70310a19389ea7bf119e9a4973f3e3fbb9fd1d07db1f7f0e4f",
+ "reconciled_receipts": 0,
+ "refusals": [
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "alt-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "alt-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "alt-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "alt-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "alt-00r"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "alt-00r"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "alt-00r"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "alt-00r"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.k1a83a51f82b1",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.k66198ba8496f",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.kd8fa792d9395",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.dml.copy-into-location.kf738ec73125a",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.k3e09455c9bfe",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kb4bda3f085a1",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 253006)",
+   "row_id": "sf.dml.put.kd6504ed97cf6",
+   "run_id": "d103h-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k012366a62e88",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k0d647ec8521c",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k3141cde5afe3",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k4c96b51269b8",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k662e7b5626b5",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.k6ac017df1d98",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.kf5b51733f997",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k0a3251f0f0a6",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.k14efa4154bd8",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc0fb4749f47b",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kc1a67643ae08",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kea1fde4a0dbf",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kefe569e91ee3",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.utility.call-with.table-language-python-runtime-version.python.kf2045f4990bc",
+   "run_id": "d113b-utility-00"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.resume-discovery.k55ecc27f1316",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-database-catalog-linked.suspend-discovery.k8f5efb6ea749",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.clusteringaction.kd7e6398c7b24",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.k9109a4aed2ae",
+   "run_id": "ddl-510fb2fd-p1-01"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-iceberg-table.clusteringaction.kcfd30145649d",
+   "run_id": "ddl-510fb2fd-p1-02"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.set-comment-max-staleness.ka405a658d50e",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-semantic-view.unset-comment-max-staleness.k1ab62cc8923a",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.alter-table.clusteringaction.k4766deb8b18b",
+   "run_id": "ddl-510fb2fd-p1-04"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.k3631b5db7233",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 630)",
+   "row_id": "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.kfa5204185967",
+   "run_id": "ddl-510fb2fd-p1-11"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-backups-in-backup-set.kb9855fb78979",
+   "run_id": "ddl-510fb2fd-p1-13b"
+  },
+  {
+   "reason": "error phase not established (errno 511829)",
+   "row_id": "sf.ddl.show-snapshots-in-snapshot-set.ke9163e3b7b28",
+   "run_id": "ddl-510fb2fd-p1-15a"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.ddl.create-function.create-function-returns-table.java-handler.kcc6de9b401f3",
+   "run_id": "ddl-510fb2fd-p2-09a"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.security_admin.alter-connection.primary.k5d6f321077ba",
+   "run_id": "sa-03"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.security_admin.alter-connection.primary.k5d6f321077ba",
+   "run_id": "sa-03r"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.security_admin.alter-organization-profile.as.kb32771e97d35",
+   "run_id": "sa-08"
+  },
+  {
+   "reason": "error phase not established (errno 603)",
+   "row_id": "sf.security_admin.alter-organization-profile.publish.ka3317c22f658",
+   "run_id": "sa-08"
+  }
+ ],
+ "refused": 46,
+ "runs": [
+  {
+   "audit_sha256": "653f4820d6cfc6d13e7a5d81fb6a782f2bc1d53fdc7ace099a5f529f67d1f564",
+   "receipts": 286,
+   "refused_rows": 4,
+   "run_id": "alt-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f75667f599b61f30c1ae3b75cbccde72f6a42d3b2ce0f1278736405324664e31",
+   "receipts": 0,
+   "refused_rows": 4,
+   "run_id": "alt-00r",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "69efacde8760b8f18b34603c4470a88b095d96f7b7acaeec9f3538b70c7c6094",
+   "receipts": 136,
+   "refused_rows": 0,
+   "run_id": "b5-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "22ad8d282d58d0afebdeca04bf0b26fd6fae8bb789dfd4cfc2c22a119c39a1bb",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "b5-dml",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "0a57199f558b22e56c49f144a35502158d23d94182e00b1b8abd80c6e94af386",
+   "receipts": 10,
+   "refused_rows": 0,
+   "run_id": "b5-fnstmt",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b76d185c77c46b02ab3185f7c1499e4f999147bea5a43aa91e58bd9f934d1ec4",
+   "receipts": 184,
+   "refused_rows": 0,
+   "run_id": "b5-functions",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3e74e6150939fab93d56c809af2dbf567ba7ac46a063743aeb552d54ace47451",
+   "receipts": 22,
+   "refused_rows": 0,
+   "run_id": "b5-query",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "0b9ae31ff015b241491b5dd3401f154af37b5d7b8ed8adbe802ae59640c3f284",
+   "receipts": 62,
+   "refused_rows": 0,
+   "run_id": "b5-sa",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ef1b393c784f6f84efed0ba29d29f7f394242a03639dce5b74fc20244231694d",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "b5-session",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ab110c3268d513665c25c08c0b30c60625db54cef766b22c372dad686f08d906",
+   "receipts": 234,
+   "refused_rows": 0,
+   "run_id": "classes-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9ff49df51086b1a26491935f6040dadefd6b11820af317f4c4d4743d5d739b72",
+   "receipts": 206,
+   "refused_rows": 0,
+   "run_id": "classes-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "03061a2f9ea00478f28251d664ef3565240ebeafc93e25a3d8cfe4ef4d24a37b",
+   "receipts": 275,
+   "refused_rows": 0,
+   "run_id": "classes-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7aa0f2a6db6623045e0ed76351050d3f3fb9896442a38e9840b099e757ba1ce7",
+   "receipts": 161,
+   "refused_rows": 0,
+   "run_id": "classes-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4cda9333e88aa43c7ac272c6c508601efa4e4ff1320243f65de28432ccded3e3",
+   "receipts": 210,
+   "refused_rows": 0,
+   "run_id": "classes-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "89eb234bb2e858624c4202a1a548b4ceb266de4f70e7da2261adfdfec08b0126",
+   "receipts": 21,
+   "refused_rows": 0,
+   "run_id": "classes-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3213df7088e1c2adcde00edb2d2b32e46c75302fca6424588bbafd25f6294594",
+   "receipts": 289,
+   "refused_rows": 7,
+   "run_id": "d103h-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a7179d880b5a408f783064a7510d4aa782e51b69c7326d3ebc050695aefd6639",
+   "receipts": 16,
+   "refused_rows": 0,
+   "run_id": "d103h-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c08938585499c27ad5e0617fe6b295338230141c56f6b632d2f4d52ffe7ad09b",
+   "receipts": 22,
+   "refused_rows": 0,
+   "run_id": "d104-warehouses-20261104T072915Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "43a55c5c4ef2f5922b4ba2cc334e84c015c1e0a45c158c46e57c6c0c518c658d",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "acfe06dc7907c6a24076d522af94addd576ab587e472cfdfa858771ee8f20369",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "427a5c0fa8b32c4668d41e0efadcca97bea149413e41f97fe738e6d2e8001088",
+   "receipts": 297,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "bf180fe9fa4e4a753abbfb1c260989b90e56b85d3b3aa24e7403c451f8e77813",
+   "receipts": 297,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd45ae02b91e0befe65e0bbe9753f9d579cff399e38b91826aa78ebf850a99b6",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "52b2163580a628c3d1cead479da853815161d61bfbb3e5c72f81a4662898541d",
+   "receipts": 293,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "23c8601758b9cfc904a18e6af61f521a5d4a0457dc5935967a5764805fe01580",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1e3775ed641688263954966225febeb4d137aaf0be2c89e632cc4d5f3916d6d9",
+   "receipts": 68,
+   "refused_rows": 0,
+   "run_id": "d113b-ddl-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8b601fa3efa3d197a79b27c6e19dda43da7bb2e6ccfc507aa3f2a7d7c42d848f",
+   "receipts": 91,
+   "refused_rows": 0,
+   "run_id": "d113b-dml-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5f61d5b0c6187af1b86f1aabcc3ae1e1c57b6681f57fcfd4d6196c26c7556aa9",
+   "receipts": 54,
+   "refused_rows": 0,
+   "run_id": "d113b-functions-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "402cb73c1862029cadf26d77249a4320ab504d8faf26207050c72b66777256e0",
+   "receipts": 27,
+   "refused_rows": 0,
+   "run_id": "d113b-query-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8afc780db41afc45cb1891789d30150e822aa62cf53459ce993fa641c5d438d5",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d113b-session-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cfcfeb81aa46e7485d0d4ad741ef20cc17b2c069a2bc967b61fc1c75e577e7b8",
+   "receipts": 47,
+   "refused_rows": 14,
+   "run_id": "d113b-utility-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "28d783c9dd239da5d2486213befd8ca4c6e6b76b9fbea2ba37836692d6d02806",
+   "receipts": 1,
+   "refused_rows": 0,
+   "run_id": "d113c-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "adcf05eedc26cefec9bf896db2ccf7bf3b848db0d980a0a5a64df40d8852eb25",
+   "receipts": 171,
+   "refused_rows": 0,
+   "run_id": "d113e-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8f6f9239c7e8795fb2196716671b903dcafd1c2593f2bdb316f1b2431cbf9e72",
+   "receipts": 20,
+   "refused_rows": 0,
+   "run_id": "d113f-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a81982d83d1c81eadcd8d493cb5a960be83d7d1c916538dabe602776ed9fc40",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "d118b2-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cf01de61c40f91741cfc229fe5d3439e9a7457eac16b5836a90b7e98bdd02b72",
+   "receipts": 57,
+   "refused_rows": 0,
+   "run_id": "d118b2-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "abfe80cbae6cbed359fd510ad430bc66065da073c8eca52588aa99e41d02e2b2",
+   "receipts": 8,
+   "refused_rows": 0,
+   "run_id": "d118c-cls",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "914100c848fb5a5c7adf4366d95b1d1c5d8a74110a2a90bf771d5edc0d148bf2",
+   "receipts": 68,
+   "refused_rows": 0,
+   "run_id": "d118c-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d96209052a6f72cafa1fa8fc972699d4b418fa706d5d24e851a6964b49a7b52f",
+   "receipts": 68,
+   "refused_rows": 0,
+   "run_id": "d118c-fn2",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a725596dd24945b054a1ebd8e6d4ed05a65d228b0a470acd401b48b851f71815",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d118c-scr2",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "84d17c2e40a0cbce6652b9dd67065ee143ec02d8fb91338d9d74016ffdbfbb73",
+   "receipts": 14,
+   "refused_rows": 0,
+   "run_id": "d118c-ses2",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1693efd39381b2d2f963aaf1db446a5ae644115fd91abf8bfe393fafc139db1b",
+   "receipts": 6,
+   "refused_rows": 0,
+   "run_id": "d118c-util",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2a620054b52a930e79d334be9694b68f28480c90d1d25065856a9f7fc9ed75d3",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "d118d-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "871cc46f7cc515b8496453c8cb02f5ddd0a80adedfc99bbc25b8d03d75ba92c2",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "d118d-ddl2",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "e167fbb5b7aae2f1e98592a7e3d30ff5244f5fcb993f0c0d61bb667b18330392",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d118d-util",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a693ffe34f1c8d5dd70d782b5d709b3c1b6cbd1313836f1d2a78df32e5c9ab8e",
+   "receipts": 31,
+   "refused_rows": 0,
+   "run_id": "d118e-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "97adc040df0629c0058aa66f3b8c436f0453c5061433d388b320f48ee3916968",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d118e-expr",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "56f398e4b793ebe88c4049927cdfc9ae2cd8818a8d4a14f5d06096ff3f6bea25",
+   "receipts": 13,
+   "refused_rows": 0,
+   "run_id": "d118e-fn",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "996385c522a7a3acd5edc9e5bb1d59121c19aef387119957fc176b0aa7496d4e",
+   "receipts": 40,
+   "refused_rows": 0,
+   "run_id": "d118e-sa",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "254ba51f1952ade901daa192ccefa20d38f897e06251e042b2d181bd220b6134",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "d118e-util",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f4e9f2a7a8a9df0efe81a4b3c69691b37c27280b6484e9b5f50b328a2c46fc18",
+   "receipts": 54,
+   "refused_rows": 0,
+   "run_id": "d118fn-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "13b8e23ecd0ed96f98c4cf2de6f6bb3e0281dcfb80a0e73b3b9f9cef7986f337",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "d118fn-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "13628b8c1ab446916f013eebc59746bb978460e3dba9125787f707d85ed68d56",
+   "receipts": 65,
+   "refused_rows": 0,
+   "run_id": "d118mm-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3f68dae6074644d8e69e4ee9944b03a6a742c62ec1ad8774e56c240e7f9bdfc4",
+   "receipts": 17,
+   "refused_rows": 0,
+   "run_id": "d40-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c458b61483bab8644b3c7d179057135837f63c0a9c37335df034104f1ee14d13",
+   "receipts": 113,
+   "refused_rows": 0,
+   "run_id": "d40b-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "de5228461b10379ea99be1160d8388ddfa49fe4314b01758f71f344901908ec7",
+   "receipts": 986,
+   "refused_rows": 0,
+   "run_id": "d97-fn-p1-4-20261104T033149Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "20e1884c63aba41c80b93ec45256be555928d3675fd8d600c2d07b6398c58610",
+   "receipts": 145,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-followup",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "3b334629b5095667437676a5b82b1edef9222af8352eb931150a58f531de2e61",
+   "receipts": 692,
+   "refused_rows": 4,
+   "run_id": "ddl-510fb2fd-p1-01",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1c28f1968df46d5109ea76c3457d2a373cebd011220acfd50d86060f2b244de2",
+   "receipts": 791,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7c0eb30ded2a011394b3f7fde8c4b6f147b8605fa1bb60ead22396a150d14bd0",
+   "receipts": 481,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "c0af7097170f282d614bf15acd73c5255fdbe888928c0fefc269d57f485230c2",
+   "receipts": 790,
+   "refused_rows": 3,
+   "run_id": "ddl-510fb2fd-p1-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6f31fac0f2265b133d808b63cad71625263e6f062f5ec42c43f8db3aac742d2f",
+   "receipts": 704,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b5ad38c2fd780e3d8f0df1a69e770aa671a239e9cc043c690b62265d6b653a1",
+   "receipts": 594,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a1ad43fe8fe22d9dd908ea9ff8ad1d4de86a3ef08b9595fc1708659fe0d5b61f",
+   "receipts": 652,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "33372268130f80a1f61a435a906040ec279404238c5ffe44a77e1d0550603a8e",
+   "receipts": 774,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-08",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d5697c57fb0b9a72e7ab4abdb1c0d76d8be862fe466a064e924044b7ff6fa503",
+   "receipts": 568,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-09",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da32649b026d8c1f8776e5919490251f63c44ed035bb23dcf34396147cc489f2",
+   "receipts": 756,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-10",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4fe2e477bc3396ef27c8c53dd25f6bd5ea6e325151d44ebb897f70e143a6e2da",
+   "receipts": 796,
+   "refused_rows": 2,
+   "run_id": "ddl-510fb2fd-p1-11",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "20995017191ccc91f3393a3536cdfa2f316469ac7c3958aecd9857be72055ed8",
+   "receipts": 138,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-12b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cc5a5d360555b15c70561c681f3e5607df962ebeab955aa46a088124e09a08ab",
+   "receipts": 555,
+   "reconciliation_sha256": "e8abcdef140cf524505cf026a2492965d045a71b62175e5f99c1e03f89f329e2",
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-13",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "47fb3688a30ee235417ad915da0e9b9eb7dd8acac75773c65720f6faee9509d9",
+   "receipts": 127,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-13b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a438b439f5e4a83e4f346a9d472c97c655df1e3db69ad911380cf758cf33c195",
+   "receipts": 732,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-14",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "468c175b68b93bf1875e77d0e427c2b5a7b9376cebc49ac28e45eacad8bfa145",
+   "receipts": 275,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p1-15a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6dda9b6ef5b085d3a99a3df2adfdc58e4b243fd5e2e5052bdc4343083c275368",
+   "receipts": 206,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p1-15b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "51818d7a91781492c50f0be10271a253f11a4a6be40d8679a72ae93a55d2d98a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cd2c002b710d1fa281315f919c471806a1d4a0ea5aa2097cf20d62fae6097e97",
+   "receipts": 183,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b6b1bb3976edbacc958d93640855bb9c337a2d1a8c9bba4fbae9ff8dee9b8fd5",
+   "receipts": 171,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-00d",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8f2eb30b1e4dc86a98b3a17d73e40a02bf6512dda687cd38fa56682a67288432",
+   "receipts": 268,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0daee47ccd248bcc3069e710d8251a81ebb16be9b60efe0aba00aea7f1fc231",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-01b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cb0b8ae1ee9e68840b0fb75c330d09f92b024e42358011440879de1f64d8aecc",
+   "receipts": 192,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "10163701716884b1ca7a54fbf890a93ca47f0304ad0c354bb53ddbb170ddfd11",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0db2f4259c16000e6fc0caccb2757fac42e7996fb14b9fb42cb0657e89d5aef",
+   "receipts": 195,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-02c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a0dec04ba9b3873c1cc1869b360196bc63d342bfd7e97be10c4a3a58640b8a97",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a8385966e256baf4f8edb6007a9c9d4c88554325c01943a5bbf47a79a8547bad",
+   "receipts": 260,
+   "reconciliation_sha256": "7631c98835673c90840453559f549ce80c8cb130a3353d2b621cbc306d89a13c",
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03b",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "9ddb37641f33143d3f8ccdf52a07a5f8ab6b3fed1b605c8dcacca4f91e31de01",
+   "receipts": 54,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-03c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cdac6bb9d3d2a95948293121b7424f04ef1cc022c1b8ebd9c56433bb4657675d",
+   "receipts": 237,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5daa6ed9d1428b14ab4b002abd681dd55451eaec88dd34ddb79e41d7508f77b0",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "869b1991d5d768db2a552490a134b4c41b155915e146660f7088c1934828db9f",
+   "receipts": 175,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-04c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "40bb2e06768be42fa4e7f2b027b09351ef4865751d6b796e80011b2292f7236e",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "18ca659c756c9d6cb82c073d8bc2f442d3f66364332af4c3232275f61babd39f",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d24e54fa0f9d21d235654b65126e1a01677944020a55b338c640a09f71b14205",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-05c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d7854d193f85c9e5b7192f14c19b13f2eb36d40d090eef80be68a989bb8af1f1",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2b075562fc323a4b82a4eb3ce66caa3c7931eccd9db8828af9675af54adf8e6a",
+   "receipts": 191,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7e34478011b01b034321ffec13b9af9d171ac4255ee3f56b575042cbbd7efcbd",
+   "receipts": 81,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-06c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "bbe3da4594b36f79f68b2059d3d0076db304ae8345973862f4ef71b4615f40d5",
+   "receipts": 249,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "754715b117ed24683789048d3a5796c9ac8a53f9338fb92c019867f107338b9a",
+   "receipts": 249,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "11b43b76bbc902609e7b7073b6f05694c0511a808bb44fc83f19bb61d48e464a",
+   "receipts": 178,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-07c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da668470dd6bd60ec2b8114fcaeab0185f47c54eb452bd68fb8e2453a19105e3",
+   "receipts": 253,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4e2fdd2f573eab8c1a4afc0749b6f627619bbd5c02ebc34d1323abd94bece96c",
+   "receipts": 261,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "02c05589a3d42cd143fb9d4fd91485862a2a91a718e4ee18ce14e185bbcf6b27",
+   "receipts": 197,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-08c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "317f2cf397c7893c2b70beeeb6a05509de388df1a9ea2d7be5a594ae2dc772f7",
+   "receipts": 276,
+   "refused_rows": 1,
+   "run_id": "ddl-510fb2fd-p2-09a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2859f7b1003322fb06a0872942c2ad70388face4b69f4b2f17001f19d11e5270",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-09b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a6d61987847f1860745d596b72b52f101e78bb064394e0b94166420b66f608ef",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-09c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "15fde65fdc7f7cd84bfca21694f3c0dd2bc0a96e8cee59a0935b8b43d25fdb2c",
+   "receipts": 258,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6852240df14894336d19276e26e882ba3fa4519cec82a69cd9473153362ff8e8",
+   "receipts": 263,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "564ebcde8fd8dd20e30ad4e1b38badece29a2d79647d708714a88755fc2c09dc",
+   "receipts": 67,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-10c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "53faea5e58f6d90a71556d1ad42f94c62d76755943a0941c789be9283f29dd08",
+   "receipts": 280,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1e44b822d3adc8fdae2f86d50d468dddec919efa8c92543c6d57173a5e039925",
+   "receipts": 266,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ad807efc6ff31e84330461d96e0d4e7b106a91ad4cdc5a5b13d22e048a16791c",
+   "receipts": 199,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-11c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "60c1765b8df79eb612261f10a54093e06ebbb2df232213c4d6bfcd3c4763be95",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5b7a0302b95ae5b4ffabad2e29ebfb764dc8cfefeb6f1304cf774ebeb75fa664",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "0d43f600812c749fa5e07e694b795d7e6bb191958f0e78c23db5ce558e2cbcd6",
+   "receipts": 199,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-12c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d11d435b89304d46f32a1f1e29093e8e125b8dec50c75207328c8c4bb2ff7673",
+   "receipts": 295,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ab8b36f1a86f2a6822a81aa8a420ca7d36688a92f03f71004660a33de82c3108",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "d512ffe35735ce67bfb10bb65c844ea032ea9ffbb0f2581996acc494a5f1da8f",
+   "receipts": 195,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-13c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "09f0bbd37c020b13dc4be79ba21e7576246c550d10ac996f5cfd9868f6696ce0",
+   "receipts": 263,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "b4e1f9673cc292befe88bb7600eacad431cc5c00e70fe9713149b55be0af523d",
+   "receipts": 262,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "30943889dd796462ffd7f8e1c6ef5682b74693e2818700158b37e37e7d095778",
+   "receipts": 190,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-14c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "590d019deeda1c1acfc57175226944c1c1d72b23059e97d1fef3277ea31b5c5e",
+   "receipts": 293,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6a51943c2b3deb5aa71502f8812864d6cef950aaaad7fb1fb839890dfa0cf222",
+   "receipts": 298,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "43e7969731c52873b701c8c80746f82613f78f95824a8548386f07b7b4923829",
+   "receipts": 200,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-15c",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "34fee2bb4ee0a108c4fbcdd2af98de15c4a367057105ea7fac2032982b3746ec",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-16a",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "57104edcd81aa2b1df8265c3809bccc08faa5952ac0f19bc49cad725ab6eaa7e",
+   "receipts": 27,
+   "refused_rows": 0,
+   "run_id": "ddl-510fb2fd-p2-16b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8a1a8958cc0c4ecbb7edbe761ee76bcac5f9d11049989a1b2c877d04df1e5302",
+   "receipts": 791,
+   "refused_rows": 0,
+   "run_id": "ddl-sweep-20261104T053447Z",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9fb4b7a2aa4841db9600618f9ac95b8bbf77a35638655bac2e4b30f03c14c232",
+   "receipts": 50,
+   "refused_rows": 0,
+   "run_id": "rm-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "42bc0db1defdc19fee6be42cedd2a89ef708d16b485e30c2afa3b193a36c7a1f",
+   "receipts": 64,
+   "refused_rows": 0,
+   "run_id": "rmu-ddl",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "31334aae7eb54ab867e783cb2f9f4261dc3bc1ad559629e2d47758a66db5a28e",
+   "receipts": 153,
+   "refused_rows": 0,
+   "run_id": "rmu-sa",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "db26c613c9c72983a102799abf8516c9edf11113e3cff1d0bc127295904df161",
+   "receipts": 43,
+   "refused_rows": 0,
+   "run_id": "rr-sa",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "0494c414bb01fe57e41fe5af9dbbd79309a5692204e75bda17f3e6f58999d149",
+   "receipts": 118,
+   "refused_rows": 0,
+   "run_id": "sa-00",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1958ce46f802bf19714a78e849cbc16f6e3d58198ed3a368a5e7bd9a0db355d8",
+   "receipts": 59,
+   "reconciliation_sha256": "6b1ed4b9a33f8cb0b4c3a791f56c8598a01402ad9ea527f4270f5afd501757ae",
+   "refused_rows": 0,
+   "run_id": "sa-01",
+   "status": "reconciled"
+  },
+  {
+   "audit_sha256": "976a8c421d5659cc1a8ae74d9a71b4d2df9ba85efff5c3f1276ba0a11c0d0b0f",
+   "receipts": 142,
+   "refused_rows": 0,
+   "run_id": "sa-01b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6d4dfa24a83129deb1a3fda2d2f19953360fc67d345a11fce0820983bdb45241",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "sa-02",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7a3165d4e830ac4b853228e394d1acd8d6f22f81fe61eff1b10d0480cea25a99",
+   "receipts": 299,
+   "refused_rows": 1,
+   "run_id": "sa-03",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "31d4a274b95313732bda59fd94a1099136a7cf1129970ff058eb2e5c2eb07214",
+   "receipts": 0,
+   "refused_rows": 1,
+   "run_id": "sa-03r",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "82dd92d589a9046c5d09db8417afdd13ac53b45cecc45d770a307eb538fd5b1e",
+   "receipts": 299,
+   "refused_rows": 0,
+   "run_id": "sa-04",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "f5d0051ff7eccae567cdc54fa617031386c5b98d12b02bf99279dee0b3b23f0d",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-05",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "cb37b90d40355b9e107c3d1156fbed16a30838f80c95f5fb48d3718f639dfe19",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-06",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "1e6d41bfd175af1f1ebe916cdee84791a84cc948191a73dec1d37ee667fd71ad",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-07",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "2ec7e5e424bdd7bfd1bebd0b950318651471674c8a8a754595056112f3c1f466",
+   "receipts": 298,
+   "refused_rows": 2,
+   "run_id": "sa-08",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "741ed15ed0cfce8a8036fb95be7a6f093dace2a95005ce0bc7cd9fb9d4dbeb38",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-09",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ba711303ebe461611c2a2b6290fb31da74f11b51bb1b914903db931b8cdc7e44",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-13",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "595e16f39df7775f5973a18ccac356be9a32667c88c98b0eb35fa98007ce281a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-14",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9ce69a074386bf374fb75cdc11ad9930a124c2538d6f50f6a310f3323acc0de0",
+   "receipts": 131,
+   "refused_rows": 0,
+   "run_id": "sa-16",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "ba1758f8fe40aacd82f7b2933a63e41e697e7a559a04cf95fb5d54fff90f61e4",
+   "receipts": 88,
+   "refused_rows": 0,
+   "run_id": "sa-17",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4a676ee1fd5b1003703681d91afea95eff19bb5da365261bb5c44937c4ca14ff",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-18",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "5aae58475ca82e2937e9f79a38268983fd07e0595fbb77a3cb992200beb6e54f",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-19",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "bc6040af1364d57e39a4a84d8c4cd2466be9c320ba1ba7183f025512f8d1e32b",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-20",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "35e4bba1002b6c05448679d1d6b3b7b2cfa228e266aeca88c91b65a986a29206",
+   "receipts": 161,
+   "refused_rows": 0,
+   "run_id": "sa-21",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "89dc13985f1e4c3ddcb83520f67ff835f8d07fd1d633183f498bd7f3a9983c32",
+   "receipts": 150,
+   "refused_rows": 0,
+   "run_id": "sa-24",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "a762650b14c458cb23dc5c730bf974de26a4341d13a24eda88542f1020f943e5",
+   "receipts": 277,
+   "refused_rows": 0,
+   "run_id": "sa-25",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "e8f52ad7cfc1efea3b6c759b659b3e498d340bf30d88072920abefdabd8e8bac",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-26",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "794c86ac8e6ea50587c76320f266e3e55ed85aef87d8a9296a9267a3309cbc1a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-27",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "7420491bf9b722e9302be5b9f6abae4aa27ecab387084b681032e5e75c0d312c",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-28",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "8e80585c7a84fd08753319efe4799313ec5c43071477b581aeb94b9774546139",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-29",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "4f42a8db97ce7bdc59b84b16acf618e269854f1a0a2b17f59244fef7cc9bc886",
+   "receipts": 284,
+   "refused_rows": 0,
+   "run_id": "sa-30",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "9b016e6526d0c2edff3df1785e85f8efac07dcb6c0fe2f044318eb9185489bfc",
+   "receipts": 293,
+   "refused_rows": 0,
+   "run_id": "sa-31",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "14fd9432cb7051c5b3e7f4af57e85ecfab3350ad85a273ee9bd39a1e6c869d9a",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-32",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "fb418e0467923036402ed60cf2e413a46d690dae1577097f63c418651b7c1a04",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-33",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "da516510ff9c907a19c648ac2254b9ec72ca7d0a76cfe869504db349d05a9af7",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-34",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "6745a08bad7b3a4813668665694740702aec7120f383ceeaf25a4a2b2aef7c8f",
+   "receipts": 300,
+   "refused_rows": 0,
+   "run_id": "sa-37",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "921c25f3b7c9ad650df99b9fb0812feff5af956e33ff8b67cc042037e3437570",
+   "receipts": 47,
+   "refused_rows": 0,
+   "run_id": "sa-72b",
+   "status": "imported"
+  },
+  {
+   "audit_sha256": "360bd806d2ec8935271545f0ccc22059b160a8bb79f5125e7f6f444776106d70",
+   "receipts": 24,
+   "refused_rows": 0,
+   "run_id": "semi-fn-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

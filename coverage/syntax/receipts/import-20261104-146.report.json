@@ -1,0 +1,102 @@
+{
+ "capture_method": "dcm_definition_file",
+ "echoed_case_literals_replaced": [
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k0f0f79a244fa",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k0f0f79a244fa",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k137093b200f9",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k137093b200f9",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k13791c3f93f3",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k13791c3f93f3",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k2158b776d542",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k2158b776d542",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k5e329a46b47e",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k5e329a46b47e",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k709bdc1e872d",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.k709bdc1e872d",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.ka45a326faa4d",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.ka45a326faa4d",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kb484d772fb26",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kb484d772fb26",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kbd3c84686a4b",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kbd3c84686a4b",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kd95a74d046f2",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kd95a74d046f2",
+   "field": "message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kf17853d8e491",
+   "field": "inner_message"
+  },
+  {
+   "case_id": "sf.ddl.create-code-bundle.define-code-bundle.kf17853d8e491",
+   "field": "message"
+  }
+ ],
+ "held_by_import": [],
+ "inputs": [],
+ "messages_redacted": 0,
+ "not_submitted_or_held_by_runner": [],
+ "receipts": 11,
+ "repositioned_by_import": [],
+ "runs": [
+  "define-def-02"
+ ]
+}

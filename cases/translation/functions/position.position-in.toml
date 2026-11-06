@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.position.position-in"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Search for a substring after multi-byte characters. Catches: arguments swapped (searching the needle in the haystack), a 0-based result, or a byte offset (5 instead of 3 for \u00e9\u00e9l)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'an'", "'banana'"],
+  ["'l'", "'\u00e9\u00e9l'"],
+  ["'x'", "'abc'"],
+]
+query = "SELECT POSITION(a IN b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "Search in binary values. Catches: a hex-text offset (3 instead of 2)"
+columns = [{ name = "a", type = "BINARY" }, { name = "b", type = "BINARY" }]
+rows = [
+  ["'FF'", "'00FF'"],
+]
+query = "SELECT POSITION(a IN b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr1"
+description = "NULL needle next to a set one. Catches: NULL read as an empty needle (1 instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'abc'"],
+  ["'c'", "'abc'"],
+]
+query = "SELECT POSITION(a IN b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_expr2"
+description = "NULL haystack next to a set one. Catches: NULL read as an empty string (0 instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL"],
+  ["'a'", "'ba'"],
+]
+query = "SELECT POSITION(a IN b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty_needle"
+description = "An empty needle, which the page says gives 1. Catches: NULL or 0 for an empty needle"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["''", "'abc'"],
+  ["''", "''"],
+]
+query = "SELECT POSITION(a IN b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -2,9 +2,9 @@
 
 [[signoff]]
 subject = "not-translatable:access-control-and-account-administration"
-sha256 = "a6d523e6dc63ebd5898f965b53b6155fe5a8327506651fb06e4b9c504ca8ab1d"
+sha256 = "0ff7ba0d2d4e424f703f62465451b9b9319e0bfd9d85194dee774ed03c132590"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-hosted-classes-and-ml"
@@ -20,9 +20,9 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:stored-procedures-and-hosted-execution"
-sha256 = "e457970e1fa4bb59c243dad019fba2905260a8fd12f36cf3e25ca8bb99d1b536"
+sha256 = "176c3851685bb0024bfb4b4a6a24fdf5b5fd094dda79248bd3fd7c4058d292a0"
 scope = "full"
-reviewed_utc = "2026-11-05T14:58:16Z"
+reviewed_utc = "2026-11-05T22:50:00Z"
 
 [[signoff]]
 subject = "not-translatable:warehouses-sessions-and-query-history"
@@ -44,27 +44,27 @@ reviewed_utc = "2026-11-05T14:58:16Z"
 
 [[signoff]]
 subject = "not-translatable:stages-and-files"
-sha256 = "b9199df8df3891cd07949257523db030589d2461b1eb71e0047a2d901d278824"
+sha256 = "1b4d33a6d2c76a3a3038534bba6f1c404d8eca3ab8958d8a2b278c4149f1efad"
 scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
+reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:time-travel-and-change-tracking"
-sha256 = "bd6472179059d00e19c165ec9f331b3fb0ea14f0fe859784483735877411603b"
+sha256 = "49f099982437a3ecc84094ac4742db9f97ef935c67fb0657b993e7a7baabdd98"
 scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:snowflake-object-kinds"
-sha256 = "d423d5cde3cad9d35a5404006d72a1e7cfa7ff4d72449a4e628eb8cd2ba29aa2"
+sha256 = "dc834bd5598c7568ea89318b10bbc534f3a8b522e1eefdbb9e2f1d073ba8b7ff"
 scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
+reviewed_utc = "2026-11-06T02:32:18Z"
 
 [[signoff]]
 subject = "not-translatable:metadata-listings"
-sha256 = "803d5ab344a459c6652c4e07c140f37428274889993ffccbeab073035e223bd5"
+sha256 = "42ea63a9ecdb46d7a52ddd21a6f7cfa5ffa1cae465baf8d67c525ef2e5dc9dc3"
 scope = "full"
-reviewed_utc = "2026-11-05T15:51:05Z"
+reviewed_utc = "2026-11-06T02:53:01Z"
 
 [[signoff]]
 subject = "not-translatable:account-context-functions"
@@ -101,6 +101,12 @@ subject = "function-links"
 sha256 = "dec5f7f2b0b775bca605e1a5913294263df46ec07df5c6ee4e6db8566ab13da7"
 scope = "full"
 reviewed_utc = "2026-11-05T15:59:28Z"
+
+[[signoff]]
+subject = "not-translatable:obsoleted-functions"
+sha256 = "b81f8213c521f5d034ef39a1f3899be016b12f1509c9b241b30ef1c46f283104"
+scope = "full"
+reviewed_utc = "2026-11-06T01:52:45Z"
 
 [[signoff]]
 subject = "form-links"

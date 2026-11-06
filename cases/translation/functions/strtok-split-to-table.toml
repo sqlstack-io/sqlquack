@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.strtok-split-to-table"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Tokens with a delimiter set and consecutive delimiters. Catches: empty tokens kept, a 0-based INDEX, or the delimiter list read as one string"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["'a.b@@c'", "'@.'"],
+  ["'\u00e9  b'", "' '"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(STRTOK_SPLIT_TO_TABLE(input.a, input.d)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default"
+description = "The default blank delimiter. Catches: another default"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["' x y '"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(STRTOK_SPLIT_TO_TABLE(input.a)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string"
+description = "NULL string. Catches: a row for NULL input"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'p q'"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(STRTOK_SPLIT_TO_TABLE(input.a)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_delimiter_list"
+description = "NULL delimiter list. Catches: NULL read as the default"
+columns = [{ name = "d", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["' '"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(STRTOK_SPLIT_TO_TABLE('a b', input.d)) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_no_tokens"
+description = "Empty and delimiter-only strings, which give no rows. Catches: one empty row (SPLIT_TO_TABLE semantics)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["',,'"],
+  ["'k'"],
+]
+query = "SELECT input.ordinal, t.index AS i, t.value AS v FROM input, TABLE(STRTOK_SPLIT_TO_TABLE(input.a, ',')) t ORDER BY input.ordinal, t.index"
+order = "ordered"
+tags = ["boundary", "empty"]

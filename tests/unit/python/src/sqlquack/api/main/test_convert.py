@@ -10,6 +10,7 @@ import sqlquack
 from sqlquack import Conversion, ConvertOptions, Diagnostic
 from tests.unit.python.src.sqlquack.api.main._test_types import (
     CommandLineTestCase,
+    DeepChainTestCase,
     FailureTestCase,
     TypedDiagnosticTestCase,
 )
@@ -138,3 +139,37 @@ def test_given_input_the_command_line_exits_2_on_when_converting_then_sqlquack_e
     monkeypatch.chdir(tmp_path)
     with pytest.raises(sqlquack.SqlQuackError, match=test_case.expected_message):
         sqlquack.convert(sql=test_case.sql, options=test_case.options)
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        DeepChainTestCase(
+            description="a long chain of additions is refused, not a crash of the interpreter",
+            sql="SELECT " + " + ".join(["x"] * 3_000) + " AS y FROM (SELECT 1 AS x)",
+            expected_converted=False,
+            expected_codes=("SQ0006",),
+        ),
+        DeepChainTestCase(
+            description="a long chain of || is refused, not a crash of the interpreter",
+            sql="SELECT " + " || ".join(["s"] * 3_000) + " AS y FROM (SELECT 'a' AS s)",
+            expected_converted=False,
+            expected_codes=("SQ0006",),
+        ),
+        DeepChainTestCase(
+            description="a || chain within the depth limit converts",
+            sql="SELECT " + " || ".join(["s"] * 400) + " AS y FROM (SELECT 'a' AS s)",
+            expected_converted=True,
+            expected_codes=(),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_long_flat_chain_when_converting_then_the_interpreter_survives(
+    test_case: DeepChainTestCase,
+) -> None:
+    conversion: Conversion = sqlquack.convert(
+        sql=test_case.sql, options=ConvertOptions(builtin_policy=True)
+    )
+    assert conversion.converted is test_case.expected_converted
+    assert tuple(found.code for found in conversion.diagnostics) == test_case.expected_codes

@@ -1,0 +1,59 @@
+category = "translation"
+construct = "sf.functions.h3-coverage-strings"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_cover"
+description = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone. Catches: only cells whose centroid is inside counted, which leaves the triangle uncovered"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((-122.4185 37.7726,-122.4180 37.7726,-122.4182 37.7729,-122.4185 37.7726))'"],
+  ["'POLYGON((-122.418571 37.773215,-122.417971 37.773215,-122.417971 37.773815,-122.418571 37.773815,-122.418571 37.773215))'"],
+]
+query = "SELECT ordinal, ARRAY_SIZE(H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g), 9)) AS n, ARRAY_CONTAINS('89283082803ffff'::VARIANT, H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g), 9)) AS cell FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one. Catches: NULL where Snowflake computes a coverage, or the reverse"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
+]
+query = "SELECT H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g, TRUE), 3) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_limit"
+description = "A 20-degree square at resolution 15, more cells than the limit, which the page says is an error. Catches: NULL returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((-10 -10,10 -10,10 10,-10 10,-10 -10))'"],
+]
+query = "SELECT H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g), 15) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_resolution_range"
+description = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. Catches: the resolution clamped to 15, or NULL returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((-122.418571 37.773215,-122.417971 37.773215,-122.417971 37.773815,-122.418571 37.773815,-122.418571 37.773215))'"],
+]
+query = "SELECT H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g), 16) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_geography_expression"
+description = "A NULL shape; the page does not say; the recording decides. Catches: an error, or an empty array returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT H3_COVERAGE_STRINGS(TO_GEOGRAPHY(g), 9) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

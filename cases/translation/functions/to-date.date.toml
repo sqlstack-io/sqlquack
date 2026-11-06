@@ -1,0 +1,109 @@
+category = "translation"
+construct = "sf.functions.to-date.date"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "DATE of ISO strings. Catches: a timestamp result, or month and day swapped"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'2024-01-31'"],
+  ["'1999-12-01'"],
+]
+query = "SELECT DATE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_format"
+description = "An explicit day-first format. Catches: the format ignored (2024-01-12, or an error on 31/01/2024)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'01/12/2024'"],
+  ["'31/01/2024'"],
+]
+query = "SELECT DATE(a, 'DD/MM/YYYY') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp"
+description = "A timestamp late in the day. Catches: the date rounded to the next day"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-29 23:59:59.999'"],
+]
+query = "SELECT DATE(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_timestamp_tz"
+description = "A TIMESTAMP_TZ whose UTC date is the next day. Catches: the date of the UTC instant (2025-01-01)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT DATE(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_integer_string"
+description = "Integer strings of seconds and milliseconds. Catches: every integer read as seconds, or as days since the epoch"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'1700000000'"],
+  ["'1700000000123'"],
+  ["'86399'"],
+]
+query = "SELECT DATE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_string_expr"
+description = "NULL string. Catches: NULL read as an empty string (an error)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT DATE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_format"
+description = "NULL format. Catches: NULL read as AUTO"
+columns = [{ name = "f", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'YYYY-MM-DD'"],
+]
+query = "SELECT DATE('2024-02-03', f) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_leap"
+description = "29 February in a leap year. Catches: a rejected leap day"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2000-02-29'"],
+]
+query = "SELECT DATE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t009_not_a_date"
+description = "29 February in a common year. Catches: a carry to 1 March or NULL instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'2023-02-29'"],
+]
+query = "SELECT DATE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

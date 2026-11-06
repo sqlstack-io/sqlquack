@@ -117,6 +117,7 @@ arguments = [
 ]
 rows = "group"
 template = "ARRAY_AGG({0}) WITHIN GROUP (ORDER BY {1})"
+divergences = { tied = "array_agg_order" }
 query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
@@ -178,6 +179,7 @@ arguments = [
 repeat = true
 rows = "group"
 template = "LISTAGG({1}, {0}) WITHIN GROUP (ORDER BY {2})"
+divergences = { tied = "listagg_order" }
 query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 benign = { "0" = "','" }
@@ -191,6 +193,7 @@ arguments = [
 ]
 rows = "group"
 template = "LISTAGG({0}) WITHIN GROUP (ORDER BY {1})"
+divergences = { tied = "listagg_order" }
 query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
 category = "aggregate"
 ordinal = ["1"]
@@ -207,6 +210,7 @@ facets = { function = ["WITHIN_GROUP"], frame = ["unordered"] }
 each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
 rows = "window"
 template = "LISTAGG({1}, {0}) WITHIN GROUP (ORDER BY {2}) OVER (PARTITION BY g)"
+divergences = { tied = "listagg_order" }
 query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
 category = "window"
 benign = { "0" = "','" }

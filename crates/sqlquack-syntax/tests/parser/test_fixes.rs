@@ -136,6 +136,12 @@ fn given_a_parenthesized_typed_lambda_when_parsing_then_it_keeps_names_and_types
             expected_value: json!("var_char"),
         },
         ProjectionTestCase {
+            description: "an INT parameter's type",
+            sql: "SELECT ACCUMULATE(a, 0, (v INT) -> v) FROM t",
+            pointer: "/function/args/2/lambda/parameter_types/0/data_type",
+            expected_value: json!("int"),
+        },
+        ProjectionTestCase {
             description: "the second of two typed parameters' name",
             sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i::INT) FROM t",
             pointer: "/function/args/2/lambda/parameters/1/name",
@@ -451,16 +457,18 @@ fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_wha
             expected_value: json!("DAY"),
         },
         ProjectionTestCase {
-            description: "TRUNC's date part is a date part",
-            sql: "SELECT TRUNC(1, DAY)",
-            pointer: "/function/args/1/var/this",
+            description:
+                "TRUNC's bare second argument stays a column, a date part only by the first's type",
+            sql: "SELECT TRUNC(x, DAY)",
+            pointer: "/function/args/1/column/name/name",
             expected_value: json!("DAY"),
         },
         ProjectionTestCase {
-            description: "TRUNC's numeric scale column stays a column",
-            sql: "SELECT TRUNC(1, c1)",
+            description:
+                "TRUNCATE's scale column named like a date part abbreviation stays a column",
+            sql: "SELECT TRUNCATE(x, s)",
             pointer: "/function/args/1/column/name/name",
-            expected_value: json!("c1"),
+            expected_value: json!("s"),
         },
         ProjectionTestCase {
             description: "unary plus keeps its operator",
@@ -1633,6 +1641,18 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             sql: "SELECT * RENAME v1 AS \"v1 Q\" FROM t1",
             pointer: "/0/select/expressions/0/star/rename/0/1/quoted",
             expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a star keeps its ILIKE pattern before REPLACE and RENAME",
+            sql: "SELECT * ILIKE '%v' REPLACE (1 AS v1) RENAME (v1 AS v2) FROM t1",
+            pointer: "/0/select/expressions/0/star/ilike",
+            expected_value: json!("%v"),
+        },
+        ProjectionTestCase {
+            description: "RENAME after a star's ILIKE keeps its new name",
+            sql: "SELECT * ILIKE '%v' REPLACE (1 AS v1) RENAME (v1 AS v2) FROM t1",
+            pointer: "/0/select/expressions/0/star/rename/0/1/name",
+            expected_value: json!("v2"),
         },
         ProjectionTestCase {
             description: "a quoted PIVOT aggregate alias stays quoted",

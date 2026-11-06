@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import re
 import tomllib
 from pathlib import Path
 
@@ -25,6 +26,7 @@ from scripts.syntax_catalogue.constants import (
     DECISION_HAND,
     DECISION_MERGED_HEADINGS,
     DECISION_PROSE,
+    DEFINITION_QUALIFIER,
     FAMILIES,
     FORMAT_HTML,
     FORMAT_MARKDOWN,
@@ -138,12 +140,29 @@ def page_groups(
     )
     prose, prose_decisions = prose_groups(page=page, hand_list=hand_list)
     hand_decisions: set[str] = {DECISION_HAND.format(basis=form.basis) for form in hand}
-    definitions: dict[str, str] = {p.name: p.grammar for p in prods if p.kind == KIND_DEFINITION}
+    definitions: dict[str, str] = {}
+    for prod in prods:
+        if prod.kind == KIND_DEFINITION:
+            definitions[definition_key(name=prod.name, grammar=prod.grammar, taken=definitions)] = (
+                prod.grammar
+            )
     return PageResult(
         groups=groups + prose + hand_list,
         definitions=list(definitions.items()),
         decisions=decisions | grouping | prose_decisions | hand_decisions,
     )
+
+
+def definition_key(*, name: str, grammar: str, taken: dict[str, str]) -> str:
+    """The name, with its `(for ...)` qualifier when the page gives one, unique on the page."""
+    qualifier: re.Match[str] | None = DEFINITION_QUALIFIER.match(grammar)
+    key: str = f"{name} {qualifier[1]}" if qualifier else name
+    number: int = 1
+    unique: str = key
+    while unique in taken:
+        number += 1
+        unique = f"{key} #{number}"
+    return unique
 
 
 def source_row(
@@ -205,10 +224,10 @@ def build_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
         if family is None or not result.groups:
             continue
         catalogue.definitions[family].extend(
-            {"id": f"{sid}::{name}", "source": sid, "name": name, "grammar": grammar}
-            for name, grammar in result.definitions
+            {"id": f"{sid}::{key}", "source": sid, "name": key, "grammar": grammar}
+            for key, grammar in result.definitions
         )
-        names: tuple[str, ...] = tuple(name for name, _ in result.definitions)
+        names: tuple[str, ...] = tuple(k for k, _ in result.definitions)
         context: PageContext = PageContext(
             f"sf.{family}.{page_slug(record.path)}", family, sid, names
         )

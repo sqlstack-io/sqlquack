@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.functions.haversine"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_example"
+description = "The page example, both ways and with a point to itself, rounded to 2 places (3936.39). Catches: latitude and longitude swapped, metres returned, or a direction-dependent result"
+columns = [{ name = "a", type = "DOUBLE" }, { name = "b", type = "DOUBLE" }, { name = "c", type = "DOUBLE" }, { name = "d", type = "DOUBLE" }]
+rows = [
+  ["40.7127", "-74.0059", "34.05", "-118.25"],
+  ["34.05", "-118.25", "40.7127", "-74.0059"],
+  ["40.7127", "-74.0059", "40.7127", "-74.0059"],
+]
+query = "SELECT ordinal, ROUND(HAVERSINE(a, b, c, d), 2) AS km FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_lat1"
+description = "A NULL latitude; the page does not say; the recording decides. Catches: an error, or 0 returned"
+columns = [{ name = "a", type = "DOUBLE" }, { name = "b", type = "DOUBLE" }]
+rows = [
+  ["NULL", "0"],
+]
+query = "SELECT HAVERSINE(a, b, 0, 0) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]
