@@ -847,15 +847,26 @@ pub(crate) fn everyday_translation_rates(directory: &str) -> String {
 }
 
 /// Queries Snowflake rejects that pass SQLQuack's parse and checks, once every receipt matches.
-pub(crate) fn everyday_snowflake_rejections_not_caught() -> Vec<String> {
-    let (root, corpus) = everyday_corpus(EVERYDAY_CORPUS);
+pub(crate) fn everyday_snowflake_rejections_not_caught(directory: &str) -> Vec<String> {
+    let (root, corpus) = everyday_corpus(directory);
     let text =
         std::fs::read_to_string(root.join("snowflake-receipts.json")).expect("receipts read");
     let receipts: serde_json::Value = serde_json::from_str(&text).expect("receipts parse");
-    let results = receipts["results"]
-        .as_array()
-        .expect("receipts hold results");
-    for receipt in results {
+    // Results are a list, or an object keyed by query id; a receipt without a verdict is skipped.
+    let results: Vec<&serde_json::Value> = receipts["results"].as_array().map_or_else(
+        || {
+            receipts["results"]
+                .as_object()
+                .into_iter()
+                .flat_map(|by_id| by_id.values())
+                .collect()
+        },
+        |list| list.iter().collect(),
+    );
+    for receipt in results
+        .into_iter()
+        .filter(|receipt| receipt["compiles"].is_boolean())
+    {
         let sql = receipt["sql"]
             .as_str()
             .expect("a receipt names its SQL")

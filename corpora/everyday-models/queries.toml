@@ -2,8 +2,8 @@
 # deduplication, FLATTEN, MERGE and other materialization DML, date spines, window frames,
 # PIVOT/UNPIVOT, marts, snapshots and the SQL generic tests compile to. The fields are those of
 # corpora/everyday/queries.toml: `expect` under the built-in default policy, `expect_repository`
-# under the repository's sqlquack.toml with a UTC session, and `uncertain` for a query whose
-# Snowflake validity is not yet recorded.
+# under the repository's sqlquack.toml with a UTC session, `snowflake` for Snowflake's recorded
+# verdict from snowflake-receipts.json, and `uncertain` for a query whose validity is not recorded.
 
 [[query]]
 category = "dbt_staging"
@@ -509,7 +509,7 @@ final as (
 select * from final'''
 expect = "refused SQ0004 statement"
 expect_repository = "refused SQ0004 statement"
-uncertain = true
+snowflake = "rejects 2028"
 
 [[query]]
 category = "dbt_cte_chain"
@@ -2183,7 +2183,7 @@ from raw_events r,
     lateral flatten(input => r.raw, recursive => true) f'''
 expect = "refused SQ0008 node:column"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_flatten"
@@ -2235,7 +2235,7 @@ from events e
 group by e.customer_id'''
 expect = "refused SQ0008 node:column"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_flatten"
@@ -2246,7 +2246,7 @@ from events e
 join lateral flatten(input => e.payload:items) f'''
 expect = "refused SQ0008 node:column"
 expect_repository = "refused SQ0002 node:lateral"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_flatten"
@@ -2257,7 +2257,7 @@ from events e
 inner join lateral flatten(input => e.payload:items) f on true'''
 expect = "refused SQ0008 node:column"
 expect_repository = "refused SQ0002 node:lateral"
-uncertain = true
+snowflake = "rejects 2"
 
 [[query]]
 category = "dbt_flatten"
@@ -2640,7 +2640,7 @@ from spine
 left join fx_rates f on f.rate_date = spine.date_day and f.currency = 'EUR''''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2681,7 +2681,7 @@ sql = '''select
 from table(flatten(input => array_generate_range(0, 366)))'''
 expect = "refused SQ0002 fn:FLATTEN"
 expect_repository = "refused SQ0002 fn:FLATTEN"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2741,7 +2741,7 @@ sql = '''select
 from table(generator(rowcount => 10))'''
 expect = "refused SQ0008 fn:DATEADD"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2750,7 +2750,7 @@ sql = '''select
 from table(generator(timelimit => 1))'''
 expect = "refused SQ0003 fn:GENERATOR"
 expect_repository = "refused SQ0003 fn:GENERATOR"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3089,7 +3089,7 @@ from orders
 '''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3129,7 +3129,7 @@ from orders
 '''
 expect = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
 expect_repository = "refused SQ0002 fn:CONDITIONAL_TRUE_EVENT"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3143,7 +3143,7 @@ from orders
 '''
 expect = "refused SQ0003 fn:AVG"
 expect_repository = "refused SQ0003 fn:AVG"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3157,7 +3157,7 @@ from orders
 '''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3182,7 +3182,7 @@ from orders
 window w as (partition by customer_id order by ordered_at)'''
 expect = "refused SQ0002 node:select"
 expect_repository = "refused SQ0002 node:select"
-uncertain = true
+snowflake = "rejects 1003"
 
 [[query]]
 category = "dbt_window_frames"
@@ -3253,7 +3253,7 @@ from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in (any order by channel))'''
 expect = "refused SQ0003 node:pivot"
 expect_repository = "refused SQ0003 node:pivot"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_pivot"
@@ -3262,7 +3262,7 @@ from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in (select distinct channel from orders))'''
 expect = "refused SQ0003 node:pivot"
 expect_repository = "refused SQ0003 node:pivot"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_pivot"
@@ -3271,7 +3271,7 @@ from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in ('web', 'store') default on null (0))'''
 expect = "refused SQ0002 node:pivot"
 expect_repository = "refused SQ0002 node:pivot"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_pivot"
@@ -3353,7 +3353,7 @@ from (select order_id, total, discount from orders)
 unpivot include nulls (value for metric in (total, discount))'''
 expect = "refused SQ0002 node:unpivot"
 expect_repository = "refused SQ0002 node:unpivot"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_pivot"
@@ -3374,7 +3374,7 @@ from orders o,
     ) m'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_pivot"
@@ -3383,7 +3383,7 @@ from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))'''
 expect = "refused SQ0003 node:pivot"
 expect_repository = "refused SQ0003 node:pivot"
-uncertain = true
+snowflake = "rejects 904"
 
 [[query]]
 category = "dbt_pivot"
@@ -3563,7 +3563,7 @@ group by o.order_id, o.total
 having outstanding <> 0'''
 expect = "translated"
 expect_repository = "translated"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_marts"
@@ -3900,7 +3900,7 @@ from stg_customers
 at (timestamp => '2024-06-30 00:00:00'::timestamp_ltz)'''
 expect = "refused SQ0002 node:table"
 expect_repository = "refused SQ0002 node:table"
-uncertain = true
+snowflake = "compiles"
 
 [[query]]
 category = "dbt_snapshot"
@@ -3910,7 +3910,7 @@ changes (information => default)
 at (offset => -3600)'''
 expect = "refused SQ0002 node:table"
 expect_repository = "refused SQ0002 node:table"
-uncertain = true
+snowflake = "rejects 91930"
 
 [[query]]
 category = "dbt_tests"
