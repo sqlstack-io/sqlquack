@@ -108,6 +108,12 @@ pub struct Insert {
     /// ClickHouse: SETTINGS key = val, ...
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub settings: Vec<Expression>,
+    /// PostgreSQL `OVERRIDING USER VALUE` or `OVERRIDING SYSTEM VALUE`: "USER" or "SYSTEM"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub overriding: Option<String>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -159,6 +165,16 @@ pub struct Update {
     /// Whether FROM clause appears before SET (Snowflake syntax)
     #[serde(default)]
     pub from_before_set: bool,
+    /// PostgreSQL: the whole SET list in order, each `(targets, source)`, when it holds
+    /// `(a, b) = source` from anything but a row of as many items; `set` is then empty
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub assignments: Vec<Expression>,
+    /// PostgreSQL `WHERE CURRENT OF cursor`, which stands in place of a WHERE condition
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_of: Option<Identifier>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// DELETE statement
@@ -211,6 +227,12 @@ pub struct Delete {
     /// BigQuery-style DELETE without FROM keyword: DELETE table WHERE ...
     #[serde(default)]
     pub no_from: bool,
+    /// PostgreSQL `WHERE CURRENT OF cursor`, which stands in place of a WHERE condition
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_of: Option<Identifier>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)
@@ -234,6 +256,9 @@ pub struct CopyStmt {
     /// Whether parameters are wrapped in WITH (...) syntax
     #[serde(default)]
     pub with_wrapped: bool,
+    /// PostgreSQL `COPY ... FROM ... WHERE condition`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_clause: Option<Box<Expression>>,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -1286,6 +1311,9 @@ pub struct Merge {
     pub with_: Option<Box<Expression>>,
     #[serde(default)]
     pub returning: Option<Box<Expression>>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// When

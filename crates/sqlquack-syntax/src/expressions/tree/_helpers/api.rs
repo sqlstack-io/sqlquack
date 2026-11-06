@@ -87,6 +87,7 @@ impl Expression {
             Expression::IsTrue(_) => "is_true",
             Expression::IsFalse(_) => "is_false",
             Expression::IsJson(_) => "is_json",
+            Expression::KeywordCall(_) => "keyword_call",
             Expression::Is(_) => "is",
             Expression::Exists(_) => "exists",
             Expression::MemberOf(_) => "member_of",

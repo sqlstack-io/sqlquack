@@ -279,6 +279,9 @@ pub struct Union {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -343,6 +346,9 @@ pub struct Intersect {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -406,6 +412,9 @@ pub struct Except {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]

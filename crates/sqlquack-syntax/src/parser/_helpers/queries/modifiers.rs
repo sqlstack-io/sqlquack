@@ -419,6 +419,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Intersect) {
@@ -465,6 +466,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
                     result = Self::snowflake_intersect_precedence(result);
@@ -514,6 +516,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if side.is_some() || kind.is_some() {
@@ -1084,6 +1087,8 @@ impl Parser {
             function_target: None,
             partition_by: None,
             settings: Vec::new(),
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -1199,6 +1204,9 @@ impl Parser {
             limit,
             order_by,
             from_before_set,
+            assignments: Vec::new(),
+            current_of: None,
+            returning_aliases: Vec::new(),
         })))
     }
 

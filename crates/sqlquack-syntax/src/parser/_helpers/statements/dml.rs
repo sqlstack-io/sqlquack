@@ -162,6 +162,8 @@ impl Parser {
             joins,
             force_index,
             no_from: !_has_from,
+            current_of: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -670,6 +672,8 @@ impl Parser {
                 function_target: None,
                 partition_by: None,
                 settings: Vec::new(),
+                overriding: None,
+                returning_aliases: Vec::new(),
             }));
 
             let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {

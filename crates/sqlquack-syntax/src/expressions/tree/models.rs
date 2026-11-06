@@ -264,6 +264,7 @@ use crate::expressions::operators::models::IsJson;
 use crate::expressions::operators::models::IsNull;
 use crate::expressions::operators::models::IsTrueFalse;
 use crate::expressions::operators::models::JoinHint;
+use crate::expressions::operators::models::KeywordCall;
 use crate::expressions::operators::models::LambdaExpr;
 use crate::expressions::operators::models::Lateral;
 use crate::expressions::operators::models::LikeOp;
@@ -826,6 +827,7 @@ pub enum Expression {
     IsTrue(Box<IsTrueFalse>),
     IsFalse(Box<IsTrueFalse>),
     IsJson(Box<IsJson>),
+    KeywordCall(Box<KeywordCall>),
     Is(Box<BinaryOp>),
     Exists(Box<Exists>),
     /// MySQL MEMBER OF operator: expr MEMBER OF(json_array)
