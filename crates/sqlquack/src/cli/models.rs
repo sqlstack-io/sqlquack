@@ -314,10 +314,10 @@ pub struct CensusArguments {
 /// The policy conversion relies on, and what the caller confirms about its sessions.
 #[derive(Debug, Args)]
 pub struct PolicyArguments {
-    /// The policy file whose known divergences conversion may rely on.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
-    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    /// The policy file; by default `sqlquack.toml` here, or the built-in policy without one.
+    #[arg(long)]
+    pub policy: Option<PathBuf>,
+    /// Use the built-in policy even where a policy file exists: every known divergence is refused.
     #[arg(long, conflicts_with = "policy")]
     pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.

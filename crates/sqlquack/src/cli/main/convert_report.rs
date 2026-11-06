@@ -20,7 +20,7 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
         .transpose()?
         .unwrap_or_default();
     let policy = chosen_policy(
-        &arguments.conversion.policy,
+        arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     )?;
     let parameters = parse_session(&arguments.session)?;

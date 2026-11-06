@@ -104,7 +104,7 @@ fn function_inputs(
     arguments: &FunctionArguments,
 ) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
     let policy = chosen_policy(
-        &arguments.conversion.policy,
+        arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     )?;
     Ok((policy, parse_session(&arguments.session)?))
