@@ -293,3 +293,9 @@ pub(crate) struct SchemaErrorTestCase {
     pub(crate) schema: &'static str,
     pub(crate) expected_error: &'static str,
 }
+
+pub(crate) struct ReadColumnTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_json_fidelity: bool,
+}

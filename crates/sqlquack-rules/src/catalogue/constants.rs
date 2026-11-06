@@ -85,7 +85,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_RELATION,
         constructs: &["node:table"],
-        conditions: "The relation is a CTE or has typed columns in the schema.",
+        conditions: "The relation is a CTE or has typed columns in the schema. A base table's VARIANT, OBJECT or ARRAY column the statement may read, by name, through a star other than COUNT(*)'s, or by a NATURAL join, is guarded as PARSE_JSON's result is and needs json_fidelity; a column it never reads needs nothing.",
         failures: &[],
     },
     RuleSpec {

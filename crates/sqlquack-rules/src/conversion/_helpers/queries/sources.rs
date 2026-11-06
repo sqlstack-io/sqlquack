@@ -24,8 +24,8 @@ use crate::conversion::_helpers::support::collecting::{
 use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, integer_literal, list, node_construct,
-    node_kind, payload_object, require_understood,
+    Payload, field, function_construct, identifier_name, integer_literal, list, may_read_column,
+    node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
@@ -559,10 +559,12 @@ fn table_source(
         .unwrap_or_else(|| name.clone());
     let is_cte = context.ctes.iter().any(|(cte, _)| cte == &name);
     let mut guarded: Vec<String> = Vec::new();
-    for column in columns
-        .iter()
-        .filter(|column| !is_cte && column.data_type == SnowflakeType::SemiStructured)
-    {
+    let statement = context.locator.tree();
+    for column in columns.iter().filter(|column| {
+        !is_cte
+            && column.data_type == SnowflakeType::SemiStructured
+            && may_read_column(statement, &column.name)
+    }) {
         let quoted = quoted_identifier(&column.name, log);
         guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, context)?));
     }

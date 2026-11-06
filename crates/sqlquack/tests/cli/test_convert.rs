@@ -9,7 +9,7 @@ use crate::test_types::{
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
     DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, OutputFormatTestCase,
     OverrideFailureTestCase, OverrideTestCase, PolicyFreeTestCase, PythonRefusalTestCase,
-    PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
+    PythonRunTestCase, ReadColumnTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -1754,6 +1754,67 @@ fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_i
         assert_eq!(exit_code, Some(2), "{}: {stderr}", test_case.description);
         assert!(
             stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
+            "{}: {stderr}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_table_with_an_unread_variant_column_when_converting_strictly_then_json_fidelity_is_not_needed()
+ {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(
+        &schema,
+        r#"{"relations": {"TICKETS": [["TICKET_ID", "NUMBER(38,0)"], ["SUBJECT", "VARCHAR"], ["TAGS", "ARRAY"]], "ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]}}"#,
+    )
+    .expect("schema written");
+    let schema = schema.to_string_lossy().into_owned();
+    let test_cases = [
+        ReadColumnTestCase {
+            description: "a scalar column of a table with an unread ARRAY column",
+            sql: "SELECT ticket_id FROM tickets",
+            expected_json_fidelity: false,
+        },
+        ReadColumnTestCase {
+            description: "a UNION ALL whose branch reads only scalar columns",
+            sql: "SELECT order_id FROM orders UNION ALL SELECT ticket_id FROM tickets",
+            expected_json_fidelity: false,
+        },
+        ReadColumnTestCase {
+            description: "the ARRAY column named in the select list",
+            sql: "SELECT ticket_id, tags FROM tickets",
+            expected_json_fidelity: true,
+        },
+        ReadColumnTestCase {
+            description: "the ARRAY column read only in WHERE",
+            sql: "SELECT subject FROM tickets WHERE ARRAY_SIZE(tags) > 0",
+            expected_json_fidelity: true,
+        },
+        ReadColumnTestCase {
+            description: "a star, which reads every column",
+            sql: "SELECT * FROM tickets",
+            expected_json_fidelity: true,
+        },
+        ReadColumnTestCase {
+            description: "a NATURAL join, which compares columns without naming them",
+            sql: "SELECT t.ticket_id FROM tickets t NATURAL JOIN orders o",
+            expected_json_fidelity: true,
+        },
+    ];
+    for test_case in test_cases {
+        let (stdout, stderr) =
+            convert_streams(test_case.sql, &["--builtin-policy", "--schema", &schema]);
+        assert_eq!(
+            (
+                stderr.contains("json_fidelity"),
+                stdout.trim_start().starts_with(['S', '('])
+            ),
+            (
+                test_case.expected_json_fidelity,
+                !test_case.expected_json_fidelity
+            ),
             "{}: {stderr}",
             test_case.description
         );

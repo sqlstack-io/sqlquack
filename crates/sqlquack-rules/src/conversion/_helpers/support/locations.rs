@@ -52,6 +52,11 @@ impl<'a> Locator<'a> {
         }
     }
 
+    /// The statement tree the conversion reads.
+    pub(crate) fn tree(&self) -> &'a Value {
+        self.tree
+    }
+
     /// `sql`, converted from `node`, with its unidentified raises identified and located at `node`.
     pub(crate) fn identified(&self, sql: &str, node: &Value) -> String {
         let (sql, ids) = identify_raises(sql);

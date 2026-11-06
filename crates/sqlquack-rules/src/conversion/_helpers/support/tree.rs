@@ -47,6 +47,12 @@ pub(crate) type Payload = Map<String, Value>;
 pub(crate) const LITERAL_NUMBER: &str = "number";
 /// The parser's literal type for strings.
 pub(crate) const LITERAL_STRING: &str = "string";
+/// The join kind prefix of NATURAL joins, which compare every column the two sides share.
+const NATURAL_JOIN_KIND: &str = "Natural";
+/// The fields of an identifier node: its name and whether it was quoted.
+const IDENTIFIER_FIELDS: [&str; 2] = ["name", "quoted"];
+/// The field holding a call's arguments.
+const ARGUMENTS_FIELD: &str = "args";
 
 /// The kind and payload of a one-key node such as `{"add": {...}}`.
 pub(crate) fn node_kind(node: &Value) -> Option<(&str, &Value)> {
@@ -236,4 +242,63 @@ pub(crate) fn strip_positions(value: &Value) -> Value {
         Value::Array(items) => Value::Array(items.iter().map(strip_positions).collect()),
         other => other.clone(),
     }
+}
+
+/// Whether `tree` may read column `name`: by name, by a star other than COUNT(*)'s, or by NATURAL.
+pub(crate) fn may_read_column(tree: &Value, name: &str) -> bool {
+    match tree {
+        Value::Array(items) => items.iter().any(|item| may_read_column(item, name)),
+        Value::Object(fields) => {
+            if fields.len() == IDENTIFIER_FIELDS.len()
+                && IDENTIFIER_FIELDS
+                    .iter()
+                    .all(|field| fields.contains_key(*field))
+            {
+                return identifier_name(tree).is_some_and(|resolved| resolved == name);
+            }
+            match node_kind(tree) {
+                Some(("star", _)) => return true,
+                Some(("aggregate_function", payload)) if counts_rows(payload) => {
+                    return payload.as_object().is_some_and(|call| {
+                        call.iter().any(|(field, value)| {
+                            field != ARGUMENTS_FIELD && may_read_column(value, name)
+                        })
+                    });
+                }
+                _ => {}
+            }
+            if fields
+                .get("kind")
+                .and_then(Value::as_str)
+                .is_some_and(|kind| kind.starts_with(NATURAL_JOIN_KIND))
+                && fields.contains_key("using")
+            {
+                return true;
+            }
+            fields.values().any(|value| may_read_column(value, name))
+        }
+        _ => false,
+    }
+}
+
+/// Whether an aggregate call is COUNT(*) with a bare star, which counts rows and reads no column.
+fn counts_rows(payload: &Value) -> bool {
+    let named_count = payload
+        .get("name")
+        .and_then(Value::as_str)
+        .is_some_and(|called| called.eq_ignore_ascii_case("count"));
+    let bare_star = match payload
+        .get("args")
+        .and_then(Value::as_array)
+        .map(Vec::as_slice)
+    {
+        Some([argument]) => match node_kind(argument) {
+            Some(("star", star)) => star
+                .as_object()
+                .is_some_and(|star| star.values().all(Value::is_null)),
+            _ => false,
+        },
+        _ => false,
+    };
+    named_count && bare_star
 }
