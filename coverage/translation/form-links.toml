@@ -113,6 +113,11 @@ forms = ["sf.query.limit.fetch"]
 constructs = ["clause:top"]
 forms = ["sf.query.top-n"]
 
+# The converter refuses TOP at its SELECT node, so a refusal there names TOP's form too.
+[[link]]
+constructs = ["node:select", "clause:top"]
+forms = ["sf.query.top-n"]
+
 [[link]]
 constructs = ["clause:union_distinct"]
 forms = ["sf.query.operators-query.union", "sf.query.operators-query.intersect-minus-except-union"]
