@@ -75,8 +75,8 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
 `schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
-`confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides` and
-`verified_overrides`. `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
+`confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides`,
+`verified_overrides` and `compact`. `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
 the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings. With `policy` and
 `builtin_policy` both unset, `convert` reads `sqlquack.toml` from the current directory and raises

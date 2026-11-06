@@ -69,6 +69,7 @@ use crate::conversion::constants::{
     ZONED_PARTS,
 };
 use sqlquack_duckdb::raises::main::raised::raised;
+use sqlquack_duckdb::temporal::constants::{DUCKDB_CURRENT_DATE, DUCKDB_CURRENT_TIMESTAMP};
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIME_ZONE_SPELLING, TIMESTAMP_RANGE,
 };
@@ -1189,9 +1190,9 @@ pub(crate) fn current_time(
     diverge(site.context, CURRENT_TIME, construct)?;
     diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
     Ok(match name {
-        "CURRENT_DATE" => Emitted::new("current_date".to_owned(), SnowflakeType::Date),
+        "CURRENT_DATE" => Emitted::new(DUCKDB_CURRENT_DATE.to_owned(), SnowflakeType::Date),
         _ => Emitted::new(
-            "current_timestamp".to_owned(),
+            DUCKDB_CURRENT_TIMESTAMP.to_owned(),
             SnowflakeType::TimestampLtz { precision: 9 },
         ),
     })

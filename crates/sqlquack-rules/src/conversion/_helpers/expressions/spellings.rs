@@ -100,7 +100,11 @@ fn shaped(spelling: &SpellingRule, arguments: &[Value], payload: &Payload) -> Op
             json!({ "this": end, "expression": start, "unit": unit_var(unit)? })
         }
         (CallShape::Count, [argument]) => {
-            let star = argument.get("star").is_some();
+            let star = argument.get("star").is_some_and(|star| {
+                ["table", "ilike", "except", "replace", "rename"]
+                    .iter()
+                    .all(|field| star.get(*field).is_none_or(Value::is_null))
+            });
             json!({
                 "this": if star { Value::Null } else { argument.clone() },
                 "star": star,

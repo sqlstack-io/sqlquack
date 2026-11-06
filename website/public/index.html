@@ -84,12 +84,13 @@
   <span class="dim">= help:</span> move the condition to WHERE or HAVING
 
 <span class="cmd">sqlquack convert revenue.sql --schema schema.json</span>
-SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
-  CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+SELECT
+    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
 FROM "ORDERS" AS "ORDERS"
 WHERE ("ORDERS"."STATUS" = 'shipped')
 GROUP BY "ORDERS"."CUSTOMER_ID"
-<span class="ok">sqlquack convert: done</span></pre>
+<span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
 			</div>
 
 			<section>
@@ -154,8 +155,12 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 SELECT order_id, total / 3 AS third FROM orders
 
 <span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
-SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID",
-  (CASE <span class="dim">…</span> ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8)) END) AS "THIRD"
+SELECT
+    "ORDERS"."ORDER_ID" AS "ORDER_ID",
+    (CASE
+        <span class="dim">…</span>
+        ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8))
+    END) AS "THIRD"
 FROM "ORDERS" AS "ORDERS"
 <span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
 						</div>
@@ -175,7 +180,8 @@ FROM "ORDERS" AS "ORDERS"
   |        <span class="bad">^^^^^^^^^^^^^^^^^</span> fn:HASH needs known divergence `hash`,
   |          which the policy refuses in this mode
   |
-  <span class="dim">= help:</span> allow the divergence under [divergences.&lt;id&gt;] in the policy file <span class="dim">…</span>
+  <span class="dim">= help:</span> the built-in policy refuses every known divergence;
+          pass --policy with a policy file that allows `hash` <span class="dim">…</span>
 sqlquack convert: refused, 1 refusal under the built-in default</pre>
 						</div>
 
@@ -191,7 +197,10 @@ sqlquack convert: refused, 1 refusal under the built-in default</pre>
 <span class="arg">default</span> = <span class="str">&quot;warn&quot;</span>
 
 <span class="cmd">sqlquack convert due.sql --schema schema.json</span>
-SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID", <span class="dim">…</span> AS "BUCKET" FROM "ORDERS" AS "ORDERS"
+SELECT
+    "ORDERS"."ORDER_ID" AS "ORDER_ID",
+    <span class="dim">…</span> AS "BUCKET"
+FROM "ORDERS" AS "ORDERS"
 sqlquack convert: relies on known divergence hash at fn:HASH
 <span class="ok">sqlquack convert: done, converted under utc-v1</span></pre>
 						</div>

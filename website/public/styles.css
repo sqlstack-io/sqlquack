@@ -1264,6 +1264,8 @@ footer a {
 	padding: 0;
 	border: 1px solid var(--inner-line);
 	background: var(--panel);
+	/* A grid item: lets the translated SQL scroll inside the stage instead of widening the page. */
+	min-width: 0;
 }
 
 .pg-stage header {
@@ -1371,6 +1373,12 @@ footer a {
 	padding: 14px 16px;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
+}
+
+.pg-body .terminal.sql {
+	white-space: pre;
+	overflow-wrap: normal;
+	overflow-x: auto;
 }
 
 .pg-body .terminal + .terminal {
