@@ -71,6 +71,11 @@ pub(crate) fn is_non_reserved_word(token: &Token) -> bool {
         )
 }
 
+/// A reserved keyword, which `def_arg` reads as its own text.
+pub(crate) fn is_reserved(token: &Token) -> bool {
+    category(token) == Some(KeywordCategory::Reserved)
+}
+
 /// `BareColLabel`: an identifier or a keyword marked `BARE_LABEL`.
 pub(crate) fn is_bare_label(token: &Token) -> bool {
     plain(token) || matches!(token.kind, TokenKind::Keyword(keyword) if keyword.bare_label)
