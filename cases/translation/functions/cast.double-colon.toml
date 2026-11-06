@@ -30,7 +30,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_text"
-description = "Text cast to a date, a number with spaces around it, and a boolean spelled yes. Catches: the yes rejected (only true and false accepted), or the spaces rejected"
+description = "Text cast to a date, a number with spaces around it, and a boolean spelled yes. The yes is documented under TO_BOOLEAN; whether the spaces are accepted the page does not say, so the recording decides. Catches: the yes rejected (only true and false accepted), or the spaced number handled differently from Snowflake"
 columns = [{ name = "d", type = "VARCHAR" }, { name = "n", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
 rows = [
   ["'2024-02-29'", "' 12 '", "'yes'"],

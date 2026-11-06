@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_case"
-description = "The same UUID in upper and lower case, compared as text. Catches: the case kept as given, so the two differ"
+description = "The same UUID in upper and lower case, compared as text; the UUID data type page says UUID values are case-insensitive. Catches: the case kept as given, so the two differ"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'6BA7B810-9DAD-11D1-80B4-00C04FD430C8'"],

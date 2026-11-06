@@ -8,7 +8,7 @@ description = "Integers whose bits overlap in part, and a negative. Catches: a l
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "y", type = "NUMBER(38,0)" }]
 rows = [
   ["12", "10"],
-  ["-1", "255"],
+  ["-1", "-2"],
 ]
 query = "SELECT BITAND(x, y) AS r FROM input ORDER BY ordinal"
 order = "ordered"
@@ -19,7 +19,7 @@ id = "t002_casts"
 description = "A decimal and the string 12.3, which the page says cast to integers. Catches: the decimal truncated where Snowflake rounds, or the string rejected"
 columns = [{ name = "x", type = "NUMBER(10,3)" }, { name = "v", type = "VARCHAR" }]
 rows = [
-  ["12.500", "'12.3'"],
+  ["13.500", "'12.3'"],
 ]
 query = "SELECT BITAND(x, 10) AS dec, BITAND(v, 10) AS str FROM input"
 order = "ordered"

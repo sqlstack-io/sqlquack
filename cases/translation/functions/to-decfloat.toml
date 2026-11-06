@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_strings"
-description = "Decimal strings with trailing zeros and an exponent, compared as text. Catches: trailing zeros dropped, or the exponent rejected"
+description = "Decimal strings with trailing zeros and an exponent, compared as text; whether the trailing zero is kept the page does not say, so the recording decides. Catches: the exponent rejected, or trailing zeros handled differently from Snowflake"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'1.10'"],

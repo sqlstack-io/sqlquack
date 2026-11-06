@@ -19,7 +19,7 @@ id = "t002_casts"
 description = "A decimal and the string 12.3, which the page says cast to integers. Catches: the decimal truncated where Snowflake rounds, or the string rejected"
 columns = [{ name = "x", type = "NUMBER(10,3)" }, { name = "v", type = "VARCHAR" }]
 rows = [
-  ["12.500", "'12.3'"],
+  ["13.500", "'12.3'"],
 ]
 query = "SELECT BITXOR(x, 10) AS dec, BITXOR(v, 10) AS str FROM input"
 order = "ordered"

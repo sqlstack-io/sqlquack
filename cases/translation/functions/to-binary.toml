@@ -15,7 +15,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_empty"
-description = "An empty string. Catches: NULL instead of empty bytes"
+description = "An empty string; the page does not say; the recording decides whether it gives empty bytes or NULL. Catches: empty bytes where Snowflake returns NULL, or the reverse"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["''"],
