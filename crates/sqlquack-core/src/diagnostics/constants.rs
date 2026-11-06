@@ -302,4 +302,16 @@ pub const CODES: &[CodeEntry] = &[
             case fails it whatever the table holds, so no schema is needed to see it.",
         example: r#"echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check"#,
     },
+    CodeEntry {
+        code: "SQ0205",
+        name: "window_without_over",
+        alias: None,
+        title: "A window function needs an OVER clause",
+        help: Some("add an OVER clause, such as `OVER (ORDER BY ...)`"),
+        explanation: "CUME_DIST, PERCENT_RANK and NTH_VALUE are window functions only: \
+            Snowflake rejects a call to one without an OVER clause when compiling the query \
+            (Snowflake error 2064, missing window specification), so the statement never runs \
+            there. Add the OVER clause that says which rows the function ranks or reads.",
+        example: r#"echo "SELECT CUME_DIST() AS d FROM orders" | sqlquack check"#,
+    },
 ];

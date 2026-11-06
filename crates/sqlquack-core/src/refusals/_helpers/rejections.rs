@@ -3,9 +3,29 @@
 use sqlquack_syntax::expressions::names::models::Star;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
-/// The registry name of the rejection a node causes, with the reason, if it causes one.
-pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
+/// Window functions Snowflake refuses without OVER (error 2064, missing window specification).
+const WINDOW_ONLY_CALLS: [&str; 3] = ["CUME_DIST", "PERCENT_RANK", "NTH_VALUE"];
+
+/// The rejection a node causes, if any, given the calls an OVER clause applies to (`windowed`).
+pub(crate) fn rejection(
+    node: &Expression,
+    windowed: &[&Expression],
+) -> Option<(&'static str, String)> {
     match node {
+        Expression::Function(call)
+            if WINDOW_ONLY_CALLS
+                .iter()
+                .any(|name| call.name.eq_ignore_ascii_case(name))
+                && !windowed.iter().any(|window| std::ptr::eq(*window, node)) =>
+        {
+            Some((
+                "window_without_over",
+                format!(
+                    "{} is a window function, which Snowflake runs only with an OVER clause",
+                    call.name.to_ascii_uppercase()
+                ),
+            ))
+        }
         Expression::Intersect(operation) if operation.all => Some(set_operation_all("INTERSECT")),
         Expression::Except(operation) if operation.all => {
             Some(set_operation_all("EXCEPT or MINUS"))

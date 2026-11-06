@@ -17,10 +17,17 @@ pub fn snowflake_rejections(
     (source, lines): (&str, &SourceLines),
 ) -> Vec<Refusal> {
     let characters: OnceCell<Vec<char>> = OnceCell::new();
+    let windowed: Vec<&Expression> = statement
+        .dfs()
+        .filter_map(|node| match node {
+            Expression::WindowFunction(window) => Some(&window.this),
+            _ => None,
+        })
+        .collect();
     statement
         .dfs()
         .filter_map(|node| {
-            let (name, reason) = rejection(node)?;
+            let (name, reason) = rejection(node, &windowed)?;
             let text = characters.get_or_init(|| source.chars().collect());
             Some(Refusal {
                 construct: Some(Construct::new(ConstructFamily::Syntax, name)),

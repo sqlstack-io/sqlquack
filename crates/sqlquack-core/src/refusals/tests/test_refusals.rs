@@ -115,6 +115,27 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec!["SQ0204", "SQ0204"],
         },
         RejectionTestCase {
+            description: "CUME_DIST, PERCENT_RANK and NTH_VALUE without OVER are rejected, also nested",
+            sql: "SELECT CUME_DIST() AS c FROM orders; \
+                  SELECT percent_rank() + 1 AS p FROM orders; \
+                  SELECT order_id FROM orders WHERE NTH_VALUE(price, 1) > 0",
+            expected_rejections: vec![
+                "window_without_over",
+                "window_without_over",
+                "window_without_over",
+            ],
+            expected_codes: vec!["SQ0205", "SQ0205", "SQ0205"],
+        },
+        RejectionTestCase {
+            description: "the same calls under OVER are left to conversion, an inner one without it is not",
+            sql: "SELECT CUME_DIST() OVER (ORDER BY price) AS c, \
+                  PERCENT_RANK() OVER (PARTITION BY customer_id ORDER BY price) AS p, \
+                  NTH_VALUE(price, 1) OVER (ORDER BY order_id) AS n FROM orders; \
+                  SELECT NTH_VALUE(CUME_DIST(), 1) OVER (ORDER BY order_id) AS n FROM orders",
+            expected_rejections: vec!["window_without_over"],
+            expected_codes: vec!["SQ0205"],
+        },
+        RejectionTestCase {
             description: "a star without ILIKE, or ILIKE without REPLACE or RENAME, is left to conversion",
             sql: "SELECT * REPLACE (price * 2 AS price) FROM orders; \
                   SELECT * ILIKE '%_id' FROM orders",

@@ -18,6 +18,8 @@ const COLUMNS_FUNCTION: &str = "columns";
 const NOT_GROUPED: &str = "Column must be grouped or used in an aggregate function";
 const MISPLACED_AGGREGATE: &str =
     "Aggregate function is not allowed in this clause or inside another aggregate";
+/// Window functions Snowflake refuses without OVER (2064) that its faithful parse keeps as named calls.
+const WINDOW_ONLY_CALLS: [&str; 3] = ["CUME_DIST", "PERCENT_RANK", "NTH_VALUE"];
 const MISPLACED_WINDOW: &str =
     "Window function is not allowed in this clause or inside another aggregate/window function";
 
@@ -557,7 +559,7 @@ fn placement(
             continue;
         }
         if !placed.window_function
-            && matches!(
+            && (matches!(
                 node,
                 Expression::RowNumber(_)
                     | Expression::Rank(_)
@@ -567,7 +569,12 @@ fn placement(
                     | Expression::Lead(_)
                     | Expression::FirstValue(_)
                     | Expression::LastValue(_)
+                    | Expression::NthValue(_)
             )
+            || matches!(node, Expression::CumeDist(call) if call.args.is_empty())
+            || matches!(node, Expression::PercentRank(call) if call.args.is_empty())
+            || matches!(node, Expression::Function(call)
+                if WINDOW_ONLY_CALLS.iter().any(|name| call.name.eq_ignore_ascii_case(name))))
         {
             findings.push(rule(
                 "E232",

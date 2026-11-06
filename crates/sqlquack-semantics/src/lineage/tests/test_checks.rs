@@ -33,6 +33,27 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
             expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
         },
         QueryFindingsTestCase {
+            description: "CUME_DIST without OVER",
+            sql: "SELECT CUME_DIST() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "PERCENT_RANK without OVER",
+            sql: "SELECT PERCENT_RANK() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "NTH_VALUE without OVER",
+            sql: "SELECT NTH_VALUE(id, 1) AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 17)],
+        },
+        QueryFindingsTestCase {
+            description: "CUME_DIST, PERCENT_RANK and NTH_VALUE under OVER",
+            sql: "SELECT CUME_DIST() OVER (ORDER BY id) AS c, PERCENT_RANK() OVER (ORDER BY id) AS p, \
+                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "two FROM items under one alias",
             sql: "SELECT o.id FROM orders o JOIN customers o ON TRUE",
             expected_findings: &[("E233", "Duplicate table alias 'o'", 0)],
@@ -171,6 +192,27 @@ fn given_a_snowflake_query_when_checking_built_in_calls_and_types_then_definite_
                 "Invalid arity for built-in function 'row_number': got 1",
                 18,
             )],
+        },
+        QueryFindingsTestCase {
+            description: "CUME_DIST without OVER, as Snowflake parses it",
+            sql: "SELECT CUME_DIST() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "PERCENT_RANK without OVER, as Snowflake parses it",
+            sql: "SELECT PERCENT_RANK() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "NTH_VALUE without OVER, as Snowflake parses it",
+            sql: "SELECT NTH_VALUE(id, 1) AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "CUME_DIST, PERCENT_RANK and NTH_VALUE under OVER",
+            sql: "SELECT CUME_DIST() OVER (ORDER BY id) AS c, PERCENT_RANK() OVER (ORDER BY id) AS p, \
+                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n FROM orders",
+            expected_findings: &[],
         },
         QueryFindingsTestCase {
             description: "a number condition in WHERE",
@@ -428,3 +470,4 @@ fn given_a_postgres_query_when_checking_scope_rules_then_only_postgres_errors_ar
         );
     }
 }
+
