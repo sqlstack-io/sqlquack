@@ -591,6 +591,8 @@ pub const DECIMAL_DIVISION: &str = "rule.decimal_division";
 pub const FLOAT_ARITHMETIC: &str = "rule.float_arithmetic";
 /// `= <> < <= > >=`.
 pub const COMPARISON: &str = "rule.comparison";
+/// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ in the UTC session.
+pub const NAIVE_LOCAL_COMPARISON: &str = "rule.naive_local_comparison";
 /// A DATE compared with an ISO date string literal.
 pub const DATE_LITERAL_COMPARISON: &str = "rule.date_literal_comparison";
 /// AND, OR and NOT.
