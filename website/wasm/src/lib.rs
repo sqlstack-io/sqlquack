@@ -23,6 +23,7 @@ use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::column_type::column_type;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
+use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
@@ -306,7 +307,7 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
         let elapsed = Duration::from_secs_f64((now_ms() - started).max(0.0) / 1000.0);
         match done.and_then(|done| within_budget(done, (sql, elapsed), &options)) {
             Ok(done) => converted.push(json!({
-                "sql": done.sql,
+                "sql": layout_sql(&done.sql),
                 "columns": done.columns.iter().map(|column| json!({
                     "name": column.name,
                     "type": column.data_type.to_string(),

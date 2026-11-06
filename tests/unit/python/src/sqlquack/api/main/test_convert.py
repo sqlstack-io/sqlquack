@@ -32,6 +32,13 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
             expected_converted=True,
         ),
         CommandLineTestCase(
+            description="a converted query on one line",
+            sql="SELECT order_id, price * 2 AS doubled FROM orders",
+            arguments=("--builtin-policy", "--schema", "schema.json", "--compact"),
+            options=ConvertOptions(builtin_policy=True, schema="schema.json", compact=True),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
             description="a query refused for an undeclared relation",
             sql="SELECT a FROM customers",
             arguments=("--builtin-policy", "--schema", "schema.json"),

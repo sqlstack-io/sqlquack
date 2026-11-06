@@ -103,6 +103,9 @@ pub struct ConvertArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
+    /// Print each converted statement on one line instead of one clause per line, in `--json` too.
+    #[arg(long)]
+    pub compact: bool,
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
@@ -369,7 +372,7 @@ pub struct ConvertReport {
     pub converted: bool,
     /// The session profile conversion ran under.
     pub profile: String,
-    /// The DuckDB SQL, one statement after another; empty when refused.
+    /// The DuckDB SQL, one clause per line unless `--compact`; empty when refused.
     pub sql: String,
     /// Each refusal.
     pub refusals: Vec<ConvertRefusal>,

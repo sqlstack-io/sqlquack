@@ -46,7 +46,7 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     }
     analysis_report(
         &analysis,
-        sql,
+        (sql, arguments.compact),
         (&schema, &options, policy.as_ref()),
         (&arguments.conversion, &parameters, profile),
     )
