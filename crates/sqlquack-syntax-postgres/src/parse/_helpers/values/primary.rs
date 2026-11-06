@@ -9,10 +9,10 @@ use sqlquack_syntax::expressions::operators::models::{
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
 use sqlquack_syntax::tokens::models::Span;
 
+use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
 };
-use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
     tuple, window_function,
@@ -193,9 +193,7 @@ impl Parser<'_> {
                     let (filter, window) = self.filter_and_window()?;
                     if let (Some(filter), Expression::KeywordCall(aggregate)) = (filter, &mut node)
                     {
-                        aggregate
-                            .options
-                            .push(tuple(vec![var("FILTER"), filter]));
+                        aggregate.options.push(tuple(vec![var("FILTER"), filter]));
                     }
                     if let Some(window) = window {
                         node = window_function(node, window);

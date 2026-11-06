@@ -163,7 +163,6 @@ impl Parser<'_> {
         if kind == INDEX {
             node.concurrently = self.eat_kw("concurrently");
         }
-        // DropOwnedStmt has no IF EXISTS: there `IF` is a role name, as in gram.y.
         node.if_exists = objects != Objects::Owned && self.kw("if") && self.kw_at(1, "exists");
         if node.if_exists {
             self.at += 2;

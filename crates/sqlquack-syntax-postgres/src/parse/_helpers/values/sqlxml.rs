@@ -1,8 +1,4 @@
-//! SQL/XML (gram.y): the `XML…` calls and `XMLTABLE` as `KeywordCall`s, `XMLEXISTS` as the
-//! `xmlexists` call gram.y makes of it, and `TREAT`, which is checked only.
-//!
-//! Each clause is a tuple led by its keywords, holding what gram.y's raw tree keeps: a default
-//! gram.y fills in reads as that default written out, and noise words leave no trace.
+//! SQL/XML calls and `XMLTABLE` as `KeywordCall`s, `XMLEXISTS` as `xmlexists`, and `TREAT`, checked only.
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -11,10 +7,10 @@ use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
 use crate::parse::_helpers::tree::nodes::{boolean, function, keyword_call, null, tuple};
 use crate::parse::_helpers::values::expressions::Flavor;
+use crate::parse::constants::PRESERVE_WHITESPACE;
 use crate::scan::models::TokenKind;
 
-/// What an `XMLTABLE` column has declared so far: its `PATH`, its `DEFAULT`, and whether it said
-/// `NULL` or `NOT NULL`, which gram.y keeps as one flag.
+/// An `XMLTABLE` column's `PATH`, `DEFAULT` and `[NOT] NULL` flag, as declared so far.
 #[derive(Default)]
 struct ColumnOptions {
     default: Option<Expression>,
@@ -60,11 +56,15 @@ impl Parser<'_> {
                     Some(word @ ("preserve" | "strip")) => {
                         self.at += 1;
                         self.expect_kw("whitespace")?;
-                        word == "preserve"
+                        word == PRESERVE_WHITESPACE
                     }
                     _ => false,
                 };
-                Some(keyword_call(&kind, vec![value, boolean(preserve)], vec![option]))
+                Some(keyword_call(
+                    &kind,
+                    vec![value, boolean(preserve)],
+                    vec![option],
+                ))
             }
             "xmlpi" => {
                 self.expect_kw("name")?;
@@ -165,8 +165,7 @@ impl Parser<'_> {
         Ok(tuple(parts))
     }
 
-    /// `XMLROOT`'s arguments: `xml, VERSION {a_expr | NO VALUE} [, STANDALONE {YES | NO [VALUE]}]`,
-    /// as the value, the version (`NO VALUE` is NULL) and the standalone setting (`OMITTED` unless said).
+    /// `XMLROOT`'s value, version (`NO VALUE` is NULL) and standalone setting (`OMITTED` unless said).
     fn xml_root(&mut self) -> Parsing<Expression> {
         let value: Expression = self.a_expr()?;
         self.expect_char(',')?;
@@ -226,8 +225,7 @@ impl Parser<'_> {
         Ok(())
     }
 
-    /// `xmltable_column_el`: `(name, FOR ORDINALITY)`, or `(name, type)` then its `PATH`,
-    /// `DEFAULT` and `NOT NULL`, in that order whatever order they were written in.
+    /// `xmltable_column_el`: ordinality, or `(name, type)` then `PATH`, `DEFAULT` and `NOT NULL`.
     fn xml_table_column(&mut self) -> Parsing<Expression> {
         let name: Identifier = self.name(is_col_id)?;
         let column: String = name.name.clone();
