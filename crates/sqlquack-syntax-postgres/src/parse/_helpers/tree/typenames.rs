@@ -5,8 +5,8 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
 use crate::parse::constants::{
-    BIT_TYPE, CATALOGUE_SCHEMA, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION, INTERVAL_FIELDS,
-    INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, VARBIT_TYPE,
+    BIT_TYPE, CATALOGUE_SCHEMA, DEFAULT_LENGTH, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION,
+    INTERVAL_FIELDS, INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, VARBIT_TYPE,
 };
 use crate::parse::errors::ParseError;
 use crate::scan::constants::DECIMAL_RADIX;
@@ -244,6 +244,11 @@ impl Parser<'_> {
                     true => VARBIT_TYPE,
                     false => BIT_TYPE,
                 };
+                if name == BIT_TYPE && !self.is_char('(') {
+                    return Ok(DataType::Bit {
+                        length: Some(DEFAULT_LENGTH),
+                    });
+                }
                 self.modified_type(name)
             }
             Some("character" | "char" | "varchar" | "national" | "nchar") => self.character(),
@@ -297,7 +302,23 @@ impl Parser<'_> {
                 length,
                 parenthesized_length: false,
             },
-            false => DataType::Char { length },
+            false => DataType::Char {
+                length: length.or(Some(DEFAULT_LENGTH)),
+            },
+        })
+    }
+
+    /// `ConstTypename`: as `SimpleTypename`, but `BIT` and `CHAR` without a length take none.
+    pub(crate) fn const_typename(&mut self) -> Parsing<DataType> {
+        let start: usize = self.at;
+        let data_type: DataType = self.simple_typename()?;
+        let sized: bool = self.tokens[start..self.at]
+            .iter()
+            .any(|token| token.kind == TokenKind::Char('('));
+        Ok(match data_type {
+            DataType::Bit { .. } if !sized => DataType::Bit { length: None },
+            DataType::Char { .. } if !sized => DataType::Char { length: None },
+            other => other,
         })
     }
 

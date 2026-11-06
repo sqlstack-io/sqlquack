@@ -204,7 +204,7 @@ impl Parser<'_> {
             _ => {
                 if TYPE_KEYWORDS.contains(&name) {
                     let typed = self.attempt(|parser| {
-                        let to: DataType = parser.simple_typename()?;
+                        let to: DataType = parser.const_typename()?;
                         let value: Expression = parser.sconst()?;
                         Ok(cast(value, to, false))
                     });
