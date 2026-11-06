@@ -21,6 +21,7 @@ use sqlquack_snowflake::typing::main::sum::sum;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
+use crate::conversion::_helpers::expressions::bytes::octet_length;
 use crate::conversion::_helpers::expressions::casts::zoned_text;
 use crate::conversion::_helpers::expressions::casts::{
     to_boolean_call, to_double_call, to_number_call, to_varchar_call,
@@ -172,6 +173,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
             concatenate(&parts.iter().collect::<Vec<_>>(), &construct, site)
         }
         ("CONCAT_WS", parts) => concatenate_with_separator(parts, &construct, site),
+        ("OCTET_LENGTH", [value]) => octet_length(value, &construct, site),
         ("CONTAINS", parts) => text_contains(parts, &construct, site),
         ("EDITDISTANCE", parts) => edit_distance(parts, &construct, site),
         ("JAROWINKLER_SIMILARITY", parts) => jaro_winkler(parts, &construct, site),

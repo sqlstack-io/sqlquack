@@ -1,5 +1,6 @@
 pub(crate) mod arrays;
 pub(crate) mod atoms;
+pub(crate) mod bytes;
 pub(crate) mod calls;
 pub(crate) mod casts;
 pub(crate) mod conditionals;

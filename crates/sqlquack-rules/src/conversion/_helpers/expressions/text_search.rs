@@ -5,7 +5,9 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 
-use crate::conversion::_helpers::expressions::strings::text_operand;
+use crate::conversion::_helpers::expressions::bytes::byte_position;
+use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::strings::emitted_text_operand;
 use crate::conversion::_helpers::support::scope::Emitted;
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
@@ -14,6 +16,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     POSITION_PAIR, TEXT_SEARCH_POSITION, TEXT_SEARCH_POSITION_TYPE,
 };
+use sqlquack_snowflake::typing::models::SnowflakeType;
 
 /// The name POSITION is called by, which converts as its CHARINDEX spelling.
 const POSITION_NAME: &str = "POSITION";
@@ -65,9 +68,17 @@ fn position_of(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
+    let needle = convert_expression(needle, site)?;
+    let haystack = convert_expression(haystack, site)?;
+    if [&needle, &haystack]
+        .iter()
+        .any(|operand| operand.data_type == SnowflakeType::Binary)
+    {
+        return byte_position((&needle, &haystack), construct, site);
+    }
     let _rule = site.context.log.rule(TEXT_SEARCH_POSITION);
-    let needle = text_operand(needle, construct, site)?;
-    let haystack = text_operand(haystack, construct, site)?;
+    let needle = emitted_text_operand(needle, construct, site)?;
+    let haystack = emitted_text_operand(haystack, construct, site)?;
     Ok(Emitted::new(
         format!("CAST(strpos({haystack}, {needle}) AS DECIMAL(9,0))"),
         TEXT_SEARCH_POSITION_TYPE,

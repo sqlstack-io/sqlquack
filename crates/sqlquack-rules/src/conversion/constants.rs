@@ -615,6 +615,20 @@ pub const CAST_TO_TEXT: &str = "rule.cast_to_text";
 pub const CAST_BOOLEAN: &str = "rule.cast_boolean";
 /// CAST and TRY_CAST of text to NUMBER, FLOAT or BOOLEAN.
 pub const CAST_PARSED_TEXT: &str = "rule.cast_parsed_text";
+/// LENGTH, LEN and OCTET_LENGTH of BINARY: its count of bytes.
+pub const BYTE_LENGTH: &str = "rule.byte_length";
+/// LEFT, RIGHT, SUBSTR and SUBSTRING of BINARY, counted in bytes.
+pub const BYTE_SLICE: &str = "rule.byte_slice";
+/// LPAD and RPAD of BINARY with BINARY padding.
+pub const BYTE_PAD: &str = "rule.byte_pad";
+/// POSITION and CHARINDEX of BINARY in BINARY, at whole bytes.
+pub const BYTE_SEARCH: &str = "rule.byte_search";
+/// CONCAT, `||` and CONCAT_WS of BINARY parts.
+pub const BYTE_CONCAT: &str = "rule.byte_concat";
+/// OCTET_LENGTH of VARCHAR: its count of UTF-8 bytes.
+pub const TEXT_OCTET_LENGTH: &str = "rule.text_octet_length";
+/// What a byte-wise rule raises for values no BINARY recording reaches.
+pub const UNRECORDED_BYTES: &str = "BINARY values outside the recorded conditions";
 /// VARCHAR to BINARY under the pinned BINARY_INPUT_FORMAT HEX.
 pub const CAST_HEX_BINARY: &str = "rule.cast_hex_binary";
 /// Casts of string literals.

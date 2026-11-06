@@ -15,9 +15,12 @@ use sqlquack_duckdb::text::main::folded_text::folded_text;
 use sqlquack_duckdb::text::main::guarded_pattern::guarded_pattern;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::bytes::{
+    byte_left_right, byte_length, byte_pad, byte_substring,
+};
 use crate::conversion::_helpers::expressions::result_types::result_type;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
-use crate::conversion::_helpers::expressions::strings::text_operand;
+use crate::conversion::_helpers::expressions::strings::{emitted_text_operand, text_operand};
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
 use crate::conversion::_helpers::support::site::Site;
@@ -50,7 +53,6 @@ pub(crate) fn pad(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let _rule = site.context.log.rule(TEXT_PAD);
     let (text, length, filler) = match arguments {
         [text, length] => (text, length, None),
         [text, length, filler] => (text, length, Some(filler)),
@@ -61,7 +63,16 @@ pub(crate) fn pad(
             ));
         }
     };
-    let text = text_operand(text, construct, site)?;
+    let text = convert_expression(text, site)?;
+    if text.data_type == SnowflakeType::Binary {
+        let filler = match filler {
+            Some(filler) => Some(convert_expression(filler, site)?),
+            None => None,
+        };
+        return byte_pad(name, (&text, length, filler.as_ref()), construct, site);
+    }
+    let _rule = site.context.log.rule(TEXT_PAD);
+    let text = emitted_text_operand(text, construct, site)?;
     let length = format!(
         "CAST({} AS INTEGER)",
         integer_operand(length, construct, site)?
@@ -88,8 +99,12 @@ pub(crate) fn left_right(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
+    let text = convert_expression(text, site)?;
+    if text.data_type == SnowflakeType::Binary {
+        return byte_left_right(name, (&text, length), construct, site);
+    }
     let _rule = site.context.log.rule(TEXT_POSITION);
-    let text = text_operand(text, construct, site)?;
+    let text = emitted_text_operand(text, construct, site)?;
     let length = integer_operand(length, construct, site)?;
     Ok(Emitted::new(
         format!(
@@ -105,16 +120,22 @@ pub(crate) fn left_right(
 /// SUBSTR or SUBSTRING; start 0 counts as 1, and a negative length as 0.
 pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let construct = node_construct("substring");
-    let _rule = site.context.log.rule(TEXT_POSITION);
     let payload = payload_object(payload, &construct)?;
     require_understood(
         payload,
         &["this", "start", "length", "from_for_syntax"],
         &construct,
     )?;
-    let text = text_operand(field(payload, "this", &construct)?, &construct, site)?;
-    let start = integer_operand(field(payload, "start", &construct)?, &construct, site)?;
-    let length = match payload.get("length").filter(|length| !length.is_null()) {
+    let text = convert_expression(field(payload, "this", &construct)?, site)?;
+    let start = field(payload, "start", &construct)?;
+    let length = payload.get("length").filter(|length| !length.is_null());
+    if text.data_type == SnowflakeType::Binary {
+        return byte_substring((&text, start, length), &construct, site);
+    }
+    let _rule = site.context.log.rule(TEXT_POSITION);
+    let text = emitted_text_operand(text, &construct, site)?;
+    let start = integer_operand(start, &construct, site)?;
+    let length = match length {
         None => String::new(),
         Some(length) => {
             let emitted = convert_expression(length, site)?;
@@ -147,10 +168,14 @@ pub(crate) fn substring(payload: &Value, site: Site<'_>) -> Result<Emitted, Refu
 /// LENGTH in characters, typed NUMBER(18,0).
 pub(crate) fn length(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let construct = node_construct("length");
-    let _rule = site.context.log.rule(TEXT_POSITION);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this", "original_name"], &construct)?;
-    let text = text_operand(field(payload, "this", &construct)?, &construct, site)?;
+    let text = convert_expression(field(payload, "this", &construct)?, site)?;
+    if text.data_type == SnowflakeType::Binary {
+        return Ok(byte_length(&text, site));
+    }
+    let _rule = site.context.log.rule(TEXT_POSITION);
+    let text = emitted_text_operand(text, &construct, site)?;
     Ok(Emitted::new(
         format!("CAST(length({text}) AS DECIMAL(18,0))"),
         LENGTH_TYPE,

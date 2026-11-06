@@ -30,6 +30,7 @@ use sqlquack_duckdb::text::main::hex_text::hex_text;
 use sqlquack_duckdb::text::main::title_case::title_case;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::bytes::byte_concat;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::text_functions::integer_operand;
 use crate::conversion::_helpers::support::divergence::diverge;
@@ -55,7 +56,15 @@ pub(crate) fn text_operand(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<String, Refusal> {
-    let emitted = convert_expression(node, site)?;
+    emitted_text_operand(convert_expression(node, site)?, construct, site)
+}
+
+/// A converted VARCHAR (or NULL) operand's SQL.
+pub(crate) fn emitted_text_operand(
+    emitted: Emitted,
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<String, Refusal> {
     match emitted.data_type {
         SnowflakeType::Varchar | SnowflakeType::Null => Ok(emitted.sql),
         SnowflakeType::Date => Ok(format!("CAST({} AS VARCHAR)", emitted.sql)),
@@ -255,18 +264,32 @@ pub(crate) fn concatenate_with_separator(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let _rule = site.context.log.rule(CONCAT_WS);
     let [separator, first, rest @ ..] = arguments else {
         return Err(outside_conditions(
             construct.clone(),
             "CONCAT_WS without a part to join".to_owned(),
         ));
     };
-    let mut interleaved: Vec<Value> = vec![first.clone()];
+    let separator = convert_expression(separator, site)?;
+    let mut interleaved: Vec<Emitted> = vec![convert_expression(first, site)?];
     for part in rest {
         interleaved.push(separator.clone());
-        interleaved.push(part.clone());
+        interleaved.push(convert_expression(part, site)?);
     }
+    if separator.data_type == SnowflakeType::Binary
+        || interleaved
+            .iter()
+            .any(|part| part.data_type == SnowflakeType::Binary)
+    {
+        if rest.is_empty() {
+            return Err(outside_conditions(
+                construct.clone(),
+                "CONCAT_WS of a single BINARY part, which no recording shows".to_owned(),
+            ));
+        }
+        return byte_concat(&interleaved.iter().collect::<Vec<_>>(), construct, site);
+    }
+    let _rule = site.context.log.rule(CONCAT_WS);
     if rest.is_empty() {
         interleaved.push(separator.clone());
         let texts = operand_texts(&interleaved, construct, site)?;
@@ -291,11 +314,17 @@ pub(crate) fn concatenate(
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let _rule = site.context.log.rule(CONCAT);
     let emitted = parts
         .iter()
         .map(|part| convert_expression(part, site))
         .collect::<Result<Vec<Emitted>, Refusal>>()?;
+    if emitted
+        .iter()
+        .any(|part| part.data_type == SnowflakeType::Binary)
+    {
+        return byte_concat(&emitted.iter().collect::<Vec<_>>(), construct, site);
+    }
+    let _rule = site.context.log.rule(CONCAT);
     let mut folded = String::new();
     for part in &emitted {
         match &part.literal {
@@ -328,17 +357,13 @@ fn text_constant(text: String, site: Site<'_>) -> Emitted {
 
 /// Each operand as text: VARCHAR as it is, others as Snowflake's `::VARCHAR` writes them.
 fn operand_texts(
-    parts: &[Value],
+    parts: &[Emitted],
     construct: &Construct,
     site: Site<'_>,
 ) -> Result<Vec<String>, Refusal> {
     let mut texts: Vec<String> = Vec::with_capacity(parts.len());
     for part in parts {
-        texts.push(emitted_text(
-            &convert_expression(part, site)?,
-            construct,
-            site,
-        )?);
+        texts.push(emitted_text(part, construct, site)?);
     }
     Ok(texts)
 }
