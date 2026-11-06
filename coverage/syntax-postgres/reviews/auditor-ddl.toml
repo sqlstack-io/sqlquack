@@ -1,0 +1,38 @@
+# Approvals by the independent syntax auditor (D235). Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+[[review]]
+id = "pg-auditor-ddl-001"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "a510c28db022a42c0036736f66c210cd018c1085"
+reviewed_utc = "2026-11-06T09:39:32Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.comment",
+  "pg.ddl.create-function",
+  "pg.ddl.create-function.sql-body-atomic",
+  "pg.ddl.create-function.sql-body-return",
+  "pg.ddl.create-procedure",
+  "pg.ddl.create-procedure.sql-body-atomic",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree a510c28d; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.comment" = "2e047c3597e315ba53cba7b68df3f2b82ff9f7f37a9772fbefb051e0f89b22d5"
+"pg.ddl.create-function" = "1d5dfb87486d9243c26c5e970b16712605151bf020414fefc76b7306fdea06d7"
+"pg.ddl.create-function.sql-body-atomic" = "c355c3ace8c693ebfeecf1eed6a5956999e5e6e895082579624c7e239b191a2f"
+"pg.ddl.create-function.sql-body-return" = "22324d3271601655aff9705a3430fc7198c4e154844e3fe16f8ee8bebd4e9757"
+"pg.ddl.create-procedure" = "2aaf131e7c072ce777671cc541eebf2fb5255f562888f21738536a778f5ebbf0"
+"pg.ddl.create-procedure.sql-body-atomic" = "61f8629b308cc1fd8a92555696d91eb0d4eb4d45ddb20127bd7af6edacdba0bd"
+
+[review.definitions]
+"pg.ddl.comment" = "95f3b37eacec43f17a3e9d7b8826dba1c93cb135eb88345f5c16725dbb2a8357"
+"pg.ddl.create-function" = "9c42b7b19d00554544bffbb179aa42f008c920945435af79e7db9631c9a89a17"
+"pg.ddl.create-function.sql-body-atomic" = "668b5579fd6c29ae3072758ce99f06c2689d5b4440f333f7c58a96c4b9ee3a5c"
+"pg.ddl.create-function.sql-body-return" = "aeca768d81797523291e2dd34a985c2599e280f1c149424da6f43b7cdcaa256a"
+"pg.ddl.create-procedure" = "731961bcdb3eed7b91817885ef74ae096b15356bc39ea9b437901afae9a234cd"
+"pg.ddl.create-procedure.sql-body-atomic" = "57ab38b7797d7995f7473c7eac5bc1a08b993b9fcf56a9211914caee9f2b997c"

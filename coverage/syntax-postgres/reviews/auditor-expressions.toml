@@ -973,3 +973,36 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 [review.definitions]
 "pg.expressions.datatype.bit" = "38b1bcabe3f64ce05b07812c572e1f071d159fbb1e4f32804e70dc2b4224cc47"
 "pg.expressions.datatype.character" = "d31e78b7daa79913c34c10210309fa24ceefabdecb26417d8ff3a654476659ca"
+
+[[review]]
+id = "pg-auditor-expressions-004"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "a510c28db022a42c0036736f66c210cd018c1085"
+reviewed_utc = "2026-11-06T09:39:32Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.arrays.array-type",
+  "pg.expressions.sql-expressions.cast",
+  "pg.expressions.sql-expressions.cast-double-colon",
+  "pg.expressions.sql-syntax-lexical.cast-string",
+  "pg.expressions.sql-syntax-lexical.string-cast",
+  "pg.expressions.sql-syntax-lexical.type-string",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree a510c28d; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.arrays.array-type" = "2bc06625ba2b32d6ed688d17b29f792a5c6c6360a862de612a7ba01226be53c2"
+"pg.expressions.sql-expressions.cast" = "67ff44066712ef5a2125213338bcad2045fb3419e807f1101aa3c68f270c092c"
+"pg.expressions.sql-expressions.cast-double-colon" = "4f5361591792658a0e997232543feaa50744ba3d7eed4e046ab53e36bebbea00"
+"pg.expressions.sql-syntax-lexical.cast-string" = "66e1135f6d0b8d622477ed15fca96cf9daee55e55e822157f0a31dfce114dd75"
+"pg.expressions.sql-syntax-lexical.string-cast" = "a55efcc8c75475de5068f7a3b586bc93621ad2a661aa7df309c4984ad3f4f31a"
+"pg.expressions.sql-syntax-lexical.type-string" = "9787e00582c8247ef608988ebe37cc231a8914092b0d5db6b383243307c2433f"
+
+[review.definitions]
+"pg.expressions.arrays.array-type" = "3858f710f8a3c365382ba9a590cc22130523014d75d4756edb27420f023db806"
+"pg.expressions.sql-expressions.cast" = "d31b8492914a911885bd0216a3ed9c52b67a8d0863e005ed71be34aa0234338d"
+"pg.expressions.sql-expressions.cast-double-colon" = "50fa6ae1daed6b44cda69b22a1b28e26f693cec13d6538f6c98edd02b54b4ee7"
+"pg.expressions.sql-syntax-lexical.cast-string" = "a082b862baed93e5559fc95c560cfdce70287bd703aae0b674a901a33ca217e4"
+"pg.expressions.sql-syntax-lexical.string-cast" = "89cfeeaf429b9f0f4d56eeb62806f113b38b860f4d4b58e74ea9893979835a91"
+"pg.expressions.sql-syntax-lexical.type-string" = "5dfa22b5cd8870a98b4477ae59f4227911f526510fe906c3bc146e7669daab57"
