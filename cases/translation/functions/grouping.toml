@@ -1,0 +1,45 @@
+category = "translation"
+construct = "sf.functions.grouping"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t002_rollup"
+description = "ROLLUP (a, b) with three expressions in the call, not a palindrome. Catches: the bits reversed (the last expression most significant: 1 instead of 4)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'u'", "5"],
+  ["1", "'v'", "7"],
+  ["NULL", "'u'", "2"],
+  ["2", "NULL", "1"],
+]
+query = "SELECT a, b, GROUPING(b, a, a) AS r FROM input GROUP BY ROLLUP (a, b) ORDER BY r, a, b"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_cube"
+description = "CUBE (a, b). Catches: grouping read from NULL in the column"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'u'", "5"],
+  ["1", "'v'", "7"],
+  ["NULL", "'u'", "2"],
+  ["2", "NULL", "1"],
+]
+query = "SELECT a, b, GROUPING(a, b) AS r FROM input GROUP BY CUBE (a, b) ORDER BY r, a, b"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_expr1"
+description = "A real NULL in the data next to the NULL of a super-aggregate row. Catches: the bit computed as \"column IS NULL\" (1 for the data row whose a is NULL)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'u'", "5"],
+  ["1", "'v'", "7"],
+  ["NULL", "'u'", "2"],
+  ["2", "NULL", "1"],
+]
+query = "SELECT a, GROUPING(a) AS r, COUNT(*) AS n FROM input GROUP BY ROLLUP (a) ORDER BY r, a"
+order = "ordered"
+tags = ["null"]

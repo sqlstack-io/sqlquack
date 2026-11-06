@@ -1,0 +1,59 @@
+category = "translation"
+construct = "sf.expressions.data-types-text.dollar-quoted-string-constant"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_literal"
+description = "The page: inside $$ a quote and a backslash are literal, so $$it's a\\n$$ is eight characters with a backslash, not a newline. Catches: the backslash read as an escape, or the quote ending the string"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, $$it's a\\n$$ AS r, LENGTH($$it's a\\n$$) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_newline"
+description = "The page: a newline inside $$ is kept as part of the string. Catches: the newline dropped or rejected"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, $$line1\nline2$$ AS r, LENGTH($$line1\nline2$$) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_equivalent"
+description = "The page: dollar-quoted and single-quoted constants denote the same string. Catches: the delimiters kept in the value"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'ab'"],
+]
+query = "SELECT ordinal, $$abc$$ = a AS same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_lone_dollar"
+description = "The page: any character except a pair of dollar signs may appear, so a single $ is part of the string. Catches: the single $ read as a delimiter"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, $$cost: $5$$ AS r, LENGTH($$cost: $5$$) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_empty"
+description = "An empty dollar-quoted constant; the page does not mention it, so the recording decides. Catches: the empty string read as NULL, or the four dollars read as text"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, $$$$ AS r, LENGTH($$$$) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
