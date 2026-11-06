@@ -3348,6 +3348,30 @@ anchor = "doc.sql-alterextension / Synopsis"
 note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
 
 [[obligation]]
+id = "pg.ddl.alter-extension.add.o035"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH DICTIONARY member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o036"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH PARSER member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o037"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH TEMPLATE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
 id = "pg.ddl.alter-extension.drop.o001"
 kind = "positive"
 required = true
@@ -3600,6 +3624,30 @@ required = true
 target = "<member_object>"
 anchor = "doc.sql-alterextension / Synopsis"
 note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o035"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH DICTIONARY member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o036"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH PARSER member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o037"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH TEMPLATE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
 
 [[obligation]]
 id = "pg.ddl.alter-extension.set-schema.o001"

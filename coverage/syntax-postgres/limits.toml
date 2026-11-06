@@ -3927,6 +3927,62 @@ anchor = "doc.sql-alteropfamily / Synopsis"
 sql = "ALTER OPERATOR FAMILY t1 USING v1 ADD FUNCTION 1 f1 ( )"
 context = "raw"
 
+# DDL: batch-17 note: the text search member kinds of ALTER EXTENSION.
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH DICTIONARY member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TEXT SEARCH DICTIONARY d1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH PARSER member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TEXT SEARCH PARSER p1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH TEMPLATE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TEXT SEARCH TEMPLATE t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH DICTIONARY member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TEXT SEARCH DICTIONARY d1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH PARSER member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TEXT SEARCH PARSER p1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH TEMPLATE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TEXT SEARCH TEMPLATE t2"
+context = "raw"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
