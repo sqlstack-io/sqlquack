@@ -5,8 +5,8 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 use crate::keywords::models::KeywordCategory;
 use crate::parse::constants::{EXPRESSION_KEYWORDS, QUERY_STARTS};
 use crate::parse::errors::ParseError;
-use crate::parse::models::Gap;
 use crate::scan::models::{Token, TokenKind};
+use sqlquack_syntax::Gap;
 
 pub(crate) type Parsing<T> = Result<T, ParseError>;
 

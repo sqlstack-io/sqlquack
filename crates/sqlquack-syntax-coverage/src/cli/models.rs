@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use clap::{Args, Parser, Subcommand};
 
 use crate::formats::constants::COVERAGE_ROOT;
+use crate::formats::models::LocalParser;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -103,9 +104,9 @@ pub enum Command {
     /// Internal: one verdict line per SQL line on stdin, for the isolated local parse.
     #[command(hide = true)]
     ParseWorker {
-        /// Parse with the PostgreSQL parser instead of the Snowflake one.
-        #[arg(long)]
-        postgres: bool,
+        /// The dialect parser that gives the verdicts.
+        #[arg(long, value_enum)]
+        parser: LocalParser,
     },
     /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
     Translation {

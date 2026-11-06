@@ -2,8 +2,8 @@
 
 use crate::parse::errors::StrictFailure;
 use crate::parse::main::parse::parse;
-use crate::parse::models::Parsed;
 use crate::scan::main::uncovered::uncovered;
+use sqlquack_syntax::Parsed;
 
 /// `parse`'s statements, refused on any parse error, whatever its SQLSTATE, or uncovered byte.
 pub fn parse_strict(sql: &str) -> Result<Parsed, StrictFailure> {

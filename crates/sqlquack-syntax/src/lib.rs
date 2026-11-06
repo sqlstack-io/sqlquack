@@ -23,6 +23,8 @@ pub use crate::lossless::models::TokenKind;
 pub use crate::modes::errors::StrictFailure;
 pub use crate::modes::main::parse_strict::parse_strict;
 pub use crate::modes::main::parse_tolerant::parse_tolerant;
+pub use crate::modes::models::Gap;
+pub use crate::modes::models::Parsed;
 pub use crate::modes::models::TolerantParse;
 pub use crate::modes::models::TolerantStatement;
 pub use crate::parser::main::parse_statements::parse_statements;
