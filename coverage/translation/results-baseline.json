@@ -7480,6 +7480,8 @@
     "temporal/parse_followups.toml#pre_epoch_nanos_to_timestamp_ntz": "matching",
     "temporal/parse_followups.toml#pre_epoch_nanos_try_to_timestamp_ntz": "matching",
     "temporal/parse_followups.toml#try_parse_date_words": "matching",
+    "temporal/subquery_operands.toml#dateadd_subquery_lookback": "matching",
+    "temporal/subquery_operands.toml#dateadd_subquery_nested": "matching",
     "temporal/system_typeof.toml#system_typeof_date_add_widening": "matching",
     "temporal/system_typeof.toml#system_typeof_temporal_stripped": "matching",
     "temporal/time_batch2.toml#dateadd_milliseconds_to_time": "matching",
