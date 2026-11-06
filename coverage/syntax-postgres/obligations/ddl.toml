@@ -67234,18 +67234,6 @@ required = true
 target = "[ TEMP | TEMPORARY ] → TEMPORARY"
 
 [[obligation]]
-id = "pg.ddl.create-view.o008"
-kind = "option_present"
-required = true
-target = "[ RECURSIVE ]"
-
-[[obligation]]
-id = "pg.ddl.create-view.o009"
-kind = "option_absent"
-required = true
-target = "[ RECURSIVE ]"
-
-[[obligation]]
 id = "pg.ddl.create-view.o010"
 kind = "required_operand_missing"
 required = true
@@ -67442,6 +67430,190 @@ required = true
 target = "[ CASCADED | LOCAL ] → LOCAL"
 
 [[obligation]]
+id = "pg.ddl.create-view.o056"
+kind = "option_present"
+required = true
+target = "[ OR REPLACE ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o057"
+kind = "option_absent"
+required = true
+target = "[ OR REPLACE ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o058"
+kind = "option_present"
+required = true
+target = "[ TEMP | TEMPORARY ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o059"
+kind = "option_absent"
+required = true
+target = "[ TEMP | TEMPORARY ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o060"
+kind = "alternative"
+required = true
+target = "[ TEMP | TEMPORARY ] → TEMP #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o061"
+kind = "alternative"
+required = true
+target = "[ TEMP | TEMPORARY ] → TEMPORARY #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o062"
+kind = "required_operand_missing"
+required = true
+target = "<name> #2"
+note = "omit <name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o063"
+kind = "operand_type_class"
+required = true
+target = "<name> #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.create-view.o064"
+kind = "negative_neighbour"
+required = true
+target = "<name> #2"
+note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o065"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+note = "omit <column_name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o066"
+kind = "operand_type_class"
+required = true
+target = "<column_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.create-view.o067"
+kind = "negative_neighbour"
+required = true
+target = "<column_name>"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o068"
+kind = "option_present"
+required = true
+target = "[ , ... ] #3"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "pg.ddl.create-view.o069"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #3"
+
+[[obligation]]
+id = "pg.ddl.create-view.o070"
+kind = "option_present"
+required = true
+target = "[ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o071"
+kind = "option_absent"
+required = true
+target = "[ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o072"
+kind = "required_operand_missing"
+required = true
+target = "<view_option_name> in [ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+note = "omit <view_option_name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o073"
+kind = "operand_type_class"
+required = true
+target = "<view_option_name> in [ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "pg.ddl.create-view.o074"
+kind = "negative_neighbour"
+required = true
+target = "<view_option_name> in [ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+note = "a string literal in place of <view_option_name>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o075"
+kind = "option_present"
+required = true
+target = "[ = <view_option_value> ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o076"
+kind = "option_absent"
+required = true
+target = "[ = <view_option_value> ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o077"
+kind = "required_operand_missing"
+required = true
+target = "<view_option_value> in [ = <view_option_value> ] #2"
+note = "omit <view_option_value>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o078"
+kind = "operand_type_class"
+required = true
+target = "<view_option_value> in [ = <view_option_value> ] #2"
+note = "a valid expression"
+
+[[obligation]]
+id = "pg.ddl.create-view.o079"
+kind = "option_present"
+required = true
+target = "[ , ... ] #4"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "pg.ddl.create-view.o080"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #4"
+
+[[obligation]]
+id = "pg.ddl.create-view.o081"
+kind = "required_operand_missing"
+required = true
+target = "<query> #2"
+note = "omit <query>"
+
+[[obligation]]
+id = "pg.ddl.create-view.o082"
+kind = "operand_type_class"
+required = true
+target = "<query> #2"
+note = "a valid query"
+
+[[obligation]]
+id = "pg.ddl.create-view.o083"
+kind = "negative_neighbour"
+required = true
+target = "<query> #2"
+note = "a bare literal in place of <query>"
+
+[[obligation]]
 id = "pg.ddl.create-view.o040"
 kind = "negative_neighbour"
 required = true
@@ -67488,6 +67660,48 @@ id = "pg.ddl.create-view.o047"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required OPTION in [ WITH [ CASCADED | LOCAL ] CHECK OPTION ]"
+
+[[obligation]]
+id = "pg.ddl.create-view.o084"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPLACE in [ OR REPLACE ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o085"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VIEW after RECURSIVE"
+
+[[obligation]]
+id = "pg.ddl.create-view.o086"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "pg.ddl.create-view.o087"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "pg.ddl.create-view.o088"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o089"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITH ( <view_option_name> [ = <view_option_value> ] [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "pg.ddl.create-view.o090"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS after )"
 
 [[obligation]]
 id = "pg.ddl.create-view.o048"

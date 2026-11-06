@@ -2430,6 +2430,15 @@ reason = "the name in this position is a ColLabel in gram.y (xml_attribute_el, x
 # DDL: readings of synopses gram.y narrows or that the renderer cannot copy.
 
 [[reading]]
+form = "pg.ddl.create-view"
+grammar_sha256 = "cf9262f8609d26772271cb67d803323cebafe7954a6df1aa594161b32d03b235"
+grammar = [
+  "CREATE [ OR REPLACE ] [ TEMP | TEMPORARY ] VIEW <name> [ ( <column_name> [, ...] ) ] [ WITH ( <view_option_name> [= <view_option_value>] [, ... ] ) ] AS <query> [ WITH [ CASCADED | LOCAL ] CHECK OPTION ]",
+  "CREATE [ OR REPLACE ] [ TEMP | TEMPORARY ] RECURSIVE VIEW <name> ( <column_name> [, ...] ) [ WITH ( <view_option_name> [= <view_option_value>] [, ... ] ) ] AS <query>",
+]
+reason = "gram.y ViewStmt reads RECURSIVE in productions of their own that require the column list, and their action raises 0A000 (WITH CHECK OPTION not supported on recursive views) for a check option while parsing; that 0A000 is not a syntax code here (syntax_codes = 42601), so it gets no negative case and the two options never combine"
+
+[[reading]]
 form = "pg.ddl.create-trigger"
 grammar_sha256 = "c7afa5f05398129973a0b3b420caf6ed0f290a76e31523dce0fda84524bdeaa8"
 grammar = ["CREATE [ OR REPLACE ] TRIGGER <name> { BEFORE | AFTER | INSTEAD OF } { <event> [ OR DELETE ] } ON <table_name> [ REFERENCING { { OLD | NEW } TABLE [ AS ] <transition_relation_name> } [ ... ] ] [ FOR [ EACH ] { ROW | STATEMENT } ] [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )", "CREATE CONSTRAINT TRIGGER <name> AFTER { <event> [ OR DELETE ] } ON <table_name> [ FROM <referenced_table_name> ] [ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE | INITIALLY DEFERRED ] ] FOR EACH ROW [ WHEN ( <condition> ) ] EXECUTE { FUNCTION | PROCEDURE } <function_name> ( <arguments> )"]
