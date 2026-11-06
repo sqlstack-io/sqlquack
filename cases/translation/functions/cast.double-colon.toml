@@ -87,7 +87,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t008_binary_to_shorter_binary"
-description = "A three-byte BINARY value cast with :: to BINARY(2); this records whether :: raises 100145 as CAST does (cast-as t012). Catches: the excess byte silently truncated"
+description = "A three-byte BINARY value cast with :: to BINARY(2); :: raises 100145 here, exactly as CAST does (cast-as t012). Catches: the excess byte silently truncated"
 columns = [{ name = "b", type = "BINARY" }]
 rows = [
   ["'AABBCC'"],
