@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import data from './data/figures.json' with { type: 'json' };
 
-const entries = Object.entries(data).filter(([name]) => !name.startsWith('_'));
+// Each NAME_PCT also yields NAME_PCT_WHOLE, its share rounded to a whole percent; a hidden or unset
+// share stays hidden or unset.
+const whole = (name, value) =>
+	typeof value === 'string' && /^\d+(\.\d+)?%$/.test(value) ? `${Math.round(parseFloat(value))}%` : value === null ? null : `{{${name}}}`;
+const entries = Object.entries(data)
+	.filter(([name]) => !name.startsWith('_'))
+	.flatMap(([name, value]) => (name.endsWith('_PCT') ? [[name, value], [`${name}_WHOLE`, whole(`${name}_WHOLE`, value)]] : [[name, value]]));
 // A null figure is hidden. It keeps its {{NAME}} token, so any use that shown() does not guard
 // still shows as a placeholder that `npm run check:figures` reports.
 const hidden = new Set(entries.filter(([, value]) => value === null).map(([name]) => name));
