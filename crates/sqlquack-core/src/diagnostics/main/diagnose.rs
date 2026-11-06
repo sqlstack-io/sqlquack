@@ -3,10 +3,12 @@
 use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
+use crate::diagnostics::_helpers::set_operations::set_operations;
 use crate::diagnostics::_helpers::unparsed::unparsed;
 use crate::diagnostics::constants::{
-    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, DOUBLE_QUOTE,
-    GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, QUOTED_VALUE_HELP, TYPE_CONDITION,
+    AST_DEPTH_EXCEEDED, CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET,
+    DIVERGENCE_REFUSED, DOUBLE_QUOTE, GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
+    QUOTED_VALUE_HELP, SET_OPERATION_CHAIN_HELP, SET_OPERATION_GROUP, TYPE_CONDITION,
     UNPARSED_PREFIX, UNRESOLVED_COLUMN_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME,
     ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
 };
@@ -31,6 +33,9 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             && refusal.reason.contains(CASE_ONLY_MATCH)
         {
             diagnostic.help = Some(CASE_ONLY_MATCH_HELP.to_owned());
+        }
+        if code == AST_DEPTH_EXCEEDED && set_operations(source) > SET_OPERATION_GROUP {
+            diagnostic.help = Some(SET_OPERATION_CHAIN_HELP.to_owned());
         }
         if let Some(help) = quoted_value_help(refusal, source) {
             diagnostic.help = Some(help);

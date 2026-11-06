@@ -84,6 +84,12 @@ pub const TYPE_CONDITION: &str = "SQ0003";
 pub const UNKNOWN_FUNCTION: &str = "unknown_function";
 /// The name of the code of two FROM items under one alias.
 pub const DUPLICATE_ALIAS: &str = "duplicate_alias";
+/// The parsed statement nests deeper than SQLQuack accepts.
+pub const AST_DEPTH_EXCEEDED: &str = "SQ0105";
+/// The most branches of a set-operation chain the help suggests per common table expression, well below the depth limit.
+pub const SET_OPERATION_GROUP: usize = 250;
+/// The fix for a statement too deep because of a long UNION, INTERSECT or EXCEPT chain.
+pub const SET_OPERATION_CHAIN_HELP: &str = "split the chain: put at most 250 branches in each common table expression, then combine the expressions with the same operator";
 /// The name of the code of a call with more arguments than its Snowflake function takes.
 pub const TOO_MANY_ARGUMENTS: &str = "too_many_arguments";
 /// The name of the code of a read of a column a PIVOT consumed.

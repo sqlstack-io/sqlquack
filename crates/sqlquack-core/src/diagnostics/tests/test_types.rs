@@ -34,3 +34,9 @@ pub(crate) struct UnparsedTestCase {
     pub(crate) expected_column: usize,
     pub(crate) expected_help: Option<&'static str>,
 }
+
+pub(crate) struct GuardHelpTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) source: String,
+    pub(crate) expected_help: Option<&'static str>,
+}

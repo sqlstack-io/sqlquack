@@ -1,6 +1,8 @@
 use crate::diagnostics::main::diagnose::diagnose;
 use crate::diagnostics::tests::helpers::{placed, rendered, unlocated, unparsed};
-use crate::diagnostics::tests::test_types::{GuardTestCase, RenderTestCase, UnparsedTestCase};
+use crate::diagnostics::tests::test_types::{
+    GuardHelpTestCase, GuardTestCase, RenderTestCase, UnparsedTestCase,
+};
 use crate::refusals::models::RefusalCategory;
 
 #[test]
@@ -210,6 +212,38 @@ fn given_everyday_parse_failures_when_diagnosed_then_the_label_names_what_was_ex
                 Some(test_case.expected_column),
                 test_case.expected_help
             ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_statement_too_deep_when_diagnosed_then_a_long_set_operation_chain_gets_its_own_fix() {
+    let test_cases = [
+        GuardHelpTestCase {
+            description: "600 UNION ALL branches are told to split the chain into common table expressions",
+            source: vec!["SELECT order_id FROM orders"; 600].join(" UNION ALL "),
+            expected_help: Some(
+                "split the chain: put at most 250 branches in each common table expression, then \
+                 combine the expressions with the same operator",
+            ),
+        },
+        GuardHelpTestCase {
+            description: "600 nested CASE expressions keep the general fix",
+            source: format!(
+                "SELECT {}1{}",
+                "CASE WHEN TRUE THEN ".repeat(600),
+                " END".repeat(600)
+            ),
+            expected_help: Some("move nested parts into common table expressions"),
+        },
+    ];
+    for test_case in test_cases {
+        let diagnostics = diagnose(&[unparsed(&test_case.source)], &test_case.source);
+        assert_eq!(
+            (diagnostics[0].code, diagnostics[0].help.as_deref()),
+            ("SQ0105", test_case.expected_help),
             "{}",
             test_case.description
         );
