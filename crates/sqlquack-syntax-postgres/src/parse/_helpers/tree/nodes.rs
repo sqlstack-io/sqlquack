@@ -288,13 +288,20 @@ pub(crate) fn ordered(
     }
 }
 
-/// A table from its qualified name: `name`, `schema.name` or `catalog.schema.name`.
+/// A table from its qualified name; parts before `catalog.schema.name` join the catalog as one dotted name.
 pub(crate) fn table(mut name: Vec<Identifier>) -> TableRef {
     let last: Identifier = name.pop().unwrap_or_else(Identifier::empty);
     let mut table: TableRef = TableRef::new(String::new());
     table.name = last;
     table.schema = name.pop();
-    table.catalog = name.pop();
+    let catalog: Option<Identifier> = name.pop();
+    table.catalog = match (catalog, name.is_empty()) {
+        (Some(catalog), false) => {
+            name.push(catalog);
+            Some(Identifier::new(name_text(&name)))
+        }
+        (catalog, _) => catalog,
+    };
     table
 }
 

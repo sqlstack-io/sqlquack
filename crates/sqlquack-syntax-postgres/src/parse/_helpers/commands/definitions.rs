@@ -52,6 +52,10 @@ impl Parser<'_> {
             true => {
                 let properties: Vec<ObjectProperty> = self.parenthesized(|parser| {
                     let token = parser.advance()?;
+                    if !matches!(token.kind, TokenKind::Ident | TokenKind::QuotedIdent) {
+                        parser.at -= 1;
+                        return Err(parser.error());
+                    }
                     let name: Identifier = crate::parse::_helpers::tree::cursor::identifier(&token);
                     parser.expect_char('=')?;
                     Ok(definition(name, Some(parser.definition_value()?)))
