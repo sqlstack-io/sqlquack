@@ -28,6 +28,7 @@ impl Parser<'_> {
             Some("truncate") => self.truncate_statement(),
             Some("copy") => self.copy_statement(),
             Some("comment") => self.comment_statement(),
+            Some("security") => self.security_label_statement(),
             Some(word)
                 if STATEMENT_STARTS.contains(&word) || STATEMENT_STARTS_MORE.contains(&word) =>
             {
