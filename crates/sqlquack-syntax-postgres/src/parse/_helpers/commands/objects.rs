@@ -12,7 +12,9 @@ use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_non_reserved_word,
     is_type_function_name,
 };
-use crate::parse::_helpers::tree::nodes::{function, literal, name_text, null, ordered, star};
+use crate::parse::_helpers::tree::nodes::{
+    function, literal, name_text, null, ordered, star, type_name_text,
+};
 use crate::parse::_helpers::tree::typenames::setof as setof_type;
 use crate::parse::_helpers::values::expressions::is_operator_token;
 use crate::parse::constants::TYPE_REFERENCE_SUFFIX;
@@ -260,12 +262,7 @@ impl Parser<'_> {
 
     /// `any_name` as one dotted text, for a name read as a type.
     fn qualified_name_text(&mut self) -> Parsing<String> {
-        Ok(self
-            .qualified_name()?
-            .iter()
-            .map(Identifier::to_string)
-            .collect::<Vec<String>>()
-            .join("."))
+        Ok(type_name_text(&self.qualified_name()?))
     }
 
     /// `func_name`: a `type_function_name`, or a `ColId` with `.ColLabel` parts.
@@ -439,7 +436,7 @@ impl Parser<'_> {
                 parser.expect_char('%')?;
                 parser.expect_kw("type")?;
                 Ok(DataType::Custom {
-                    name: format!("{}{TYPE_REFERENCE_SUFFIX}", name_text(&parts)),
+                    name: format!("{}{TYPE_REFERENCE_SUFFIX}", type_name_text(&parts)),
                 })
             });
             if let Ok(data_type) = reference {
