@@ -99,12 +99,15 @@ jobs:
           - name: linux-aarch64
             runner: ubuntu-24.04-arm
             target: aarch64
+          # DuckDB's C++ needs aligned deallocation, available from macOS 10.13.
           - name: macos-x86_64
             runner: macos-15-intel
             target: x86_64
+            macos-target: "10.15"
           - name: macos-arm64
             runner: macos-15
             target: aarch64
+            macos-target: "11.0"
           - name: windows-x86_64
             runner: windows-2025
             target: x86_64
@@ -117,6 +120,10 @@ jobs:
         with:
           python-version: "3.12"
       # Both wheels compile DuckDB in (the `bundled` feature), so neither needs a system DuckDB.
+      - name: Set the oldest macOS the wheels support
+        if: matrix.platform.macos-target
+        shell: bash
+        run: echo "MACOSX_DEPLOYMENT_TARGET=${{ matrix.platform.macos-target }}" >> "$GITHUB_ENV"
       - uses: PyO3/maturin-action@v1
         if: inputs.prebuilt-run-id == ''
         with:
