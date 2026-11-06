@@ -104,8 +104,8 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
-            description: "MERGE, which the parser keeps opaque",
-            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE",
+            description: "MERGE_ACTION(), which the parser keeps opaque",
+            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE RETURNING merge_action()",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -238,6 +238,21 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             sql: "TRUNCATE t CONTINUE",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "a MERGE update when the source has no matching row",
+            sql: "MERGE INTO t USING s ON true WHEN NOT MATCHED BY SOURCE THEN UPDATE SET a = 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a MERGE insert for a matched row",
+            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN INSERT VALUES (1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a MERGE delete when the target has no matching row",
+            sql: "MERGE INTO t USING s ON true WHEN NOT MATCHED BY TARGET THEN DELETE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)
@@ -323,6 +338,12 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             sql: "COPY t (a, b) FROM STDIN",
             pointer: "/0/copy/this",
             expected_node: "schema",
+        },
+        ShapeTestCase {
+            description: "a MERGE source may be a joined table",
+            sql: "MERGE INTO t USING a JOIN b ON true ON true WHEN MATCHED THEN DELETE",
+            pointer: "/0/merge/using",
+            expected_node: "joined_table",
         },
         ShapeTestCase {
             description: "TRUNCATE keeps every relation after the first",

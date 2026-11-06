@@ -18,9 +18,8 @@ parsed.
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE` and `COPY` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE` and `COPY` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
-| `merge` | `MERGE` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
 | `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
@@ -37,7 +36,7 @@ parsed.
 | `tablesample` | `TABLESAMPLE method (…) [REPEATABLE (…)]` |
 | `join_using_alias`, `joined_table_column_aliases` | `USING (…) AS alias`, column aliases on a parenthesized join |
 | `returning_with` | `RETURNING WITH (OLD AS …, NEW AS …)` |
-| `overriding` | `INSERT … OVERRIDING {USER \| SYSTEM} VALUE` |
+| `overriding` | `OVERRIDING {USER \| SYSTEM} VALUE` in `INSERT` or a `MERGE` insert |
 | `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` |
 | `where_current_of` | `WHERE CURRENT OF cursor` |
 | `index_element_collate`, `index_element_opclass` | `COLLATE` and operator classes in an `ON CONFLICT` target |

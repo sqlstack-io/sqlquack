@@ -1,13 +1,16 @@
-//! `PreparableStmt` (gram.y): queries, `INSERT`, `UPDATE` and `DELETE`; `MERGE` is a gap.
+//! `PreparableStmt` (gram.y): queries, `INSERT`, `UPDATE`, `DELETE` and `MERGE`.
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
-use sqlquack_syntax::expressions::operators::models::OnConflict;
-use sqlquack_syntax::expressions::queries::models::{From, Where, With};
+use sqlquack_syntax::expressions::operators::models::{OnConflict, Returning};
+use sqlquack_syntax::expressions::queries::models::{From, Join, Where, With};
+use sqlquack_syntax::expressions::statements::models::{Merge, Var, When, Whens};
 
 use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_id};
 use crate::parse::_helpers::expressions::binary_node;
-use crate::parse::_helpers::nodes::{delete, insert, ordered, tuple, update};
+use crate::parse::_helpers::nodes::{
+    boolean, delete, insert, joined_table, ordered, tuple, update,
+};
 use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
@@ -22,16 +25,7 @@ impl Parser<'_> {
                 Some("insert") => parser.insert_statement(with),
                 Some("update") => parser.update_statement(with),
                 Some("delete") => parser.delete_statement(with),
-                Some("merge") => {
-                    let start: usize = parser.offset();
-                    parser.skip_statement_rest()?;
-                    parser.gap("merge", start);
-                    Ok(Expression::Raw(
-                        sqlquack_syntax::expressions::statements::models::Raw {
-                            sql: "MERGE".to_owned(),
-                        },
-                    ))
-                }
+                Some("merge") => parser.merge_statement(with),
                 _ => {
                     let body: Expression = parser.set_expression(0)?;
                     parser.select_options(body, with)
@@ -313,5 +307,136 @@ impl Parser<'_> {
         node.returning = self.returning()?;
         node.with = with;
         Ok(Expression::Delete(Box::new(node)))
+    }
+
+    /// `MERGE INTO target [alias] USING table_ref ON condition merge_when_clause... [RETURNING]`.
+    fn merge_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
+        self.expect_kw("merge")?;
+        self.expect_kw("into")?;
+        let (target, _) = self.relation_with_alias(false)?;
+        self.expect_kw("using")?;
+        let mut source: Expression = self.table_ref()?;
+        let joins: Vec<Join> = self.joins()?;
+        if !joins.is_empty() {
+            source = joined_table(source, joins, None);
+        }
+        self.expect_kw("on")?;
+        let on: Expression = self.a_expr()?;
+        let mut whens: Vec<Expression> = vec![self.merge_when()?];
+        while self.kw("when") {
+            whens.push(self.merge_when()?);
+        }
+        let returning: Vec<Expression> = self.returning()?;
+        Ok(Expression::Merge(Box::new(Merge {
+            this: Box::new(Expression::Table(Box::new(target))),
+            using: Box::new(source),
+            on: Some(Box::new(on)),
+            using_cond: None,
+            whens: Some(Box::new(Expression::Whens(Box::new(Whens {
+                expressions: whens,
+            })))),
+            with_: with.map(|with| Box::new(Expression::With(Box::new(with)))),
+            returning: match returning.is_empty() {
+                true => None,
+                false => Some(Box::new(Expression::Returning(Box::new(Returning {
+                    expressions: returning,
+                    into: None,
+                })))),
+            },
+        })))
+    }
+
+    /// `merge_when_clause`: `WHEN [NOT] MATCHED [BY SOURCE|TARGET] [AND condition] THEN action`.
+    fn merge_when(&mut self) -> Parsing<Expression> {
+        self.expect_kw("when")?;
+        let not: bool = self.eat_kw("not");
+        self.expect_kw("matched")?;
+        let mut by_source: bool = false;
+        if not && self.eat_kw("by") {
+            by_source = match self.keyword_at(0) {
+                Some("source") => true,
+                Some("target") => false,
+                _ => return Err(self.error()),
+            };
+            self.at += 1;
+        }
+        let condition: Option<Box<Expression>> = match self.eat_kw("and") {
+            true => Some(Box::new(self.a_expr()?)),
+            false => None,
+        };
+        self.expect_kw("then")?;
+        let matched: bool = !not || by_source;
+        let then: Expression = self.merge_action(matched)?;
+        Ok(Expression::When(Box::new(When {
+            matched: Some(Box::new(boolean(!not))),
+            source: by_source.then(|| Box::new(boolean(true))),
+            condition,
+            then: Box::new(then),
+        })))
+    }
+
+    /// The action after `THEN`, as a verb and its parts; `INSERT` only when not matched.
+    fn merge_action(&mut self, matched: bool) -> Parsing<Expression> {
+        let verb = |text: &str| {
+            Expression::Var(Box::new(Var {
+                this: text.to_owned(),
+            }))
+        };
+        if self.kw("do") && self.kw_at(1, "nothing") {
+            self.at += 2;
+            return Ok(verb("DO NOTHING"));
+        }
+        match (matched, self.keyword_at(0)) {
+            (true, Some("update")) => {
+                self.at += 1;
+                self.expect_kw("set")?;
+                let assignments: Vec<Expression> = self
+                    .set_clauses()?
+                    .into_iter()
+                    .map(|(target, value)| binary_node("=", Expression::Identifier(target), value))
+                    .collect();
+                Ok(tuple(vec![verb("UPDATE"), tuple(assignments)]))
+            }
+            (true, Some("delete")) => {
+                self.at += 1;
+                Ok(verb("DELETE"))
+            }
+            (false, Some("insert")) => {
+                self.at += 1;
+                self.merge_insert()
+                    .map(|parts| tuple(std::iter::once(verb("INSERT")).chain(parts).collect()))
+            }
+            _ => Err(self.error()),
+        }
+    }
+
+    /// `merge_insert` after `INSERT`, as its column and value tuples or `DEFAULT VALUES`.
+    fn merge_insert(&mut self) -> Parsing<Vec<Expression>> {
+        if self.kw("default") && self.kw_at(1, "values") {
+            self.at += 2;
+            return Ok(vec![Expression::Var(Box::new(Var {
+                this: "DEFAULT VALUES".to_owned(),
+            }))]);
+        }
+        let mut parts: Vec<Expression> = Vec::new();
+        if self.is_char('(') {
+            let columns: Vec<Identifier> = self.parenthesized(|parser| parser.set_target())?;
+            parts.push(tuple(
+                columns.into_iter().map(Expression::Identifier).collect(),
+            ));
+        }
+        let start: usize = self.offset();
+        if self.eat_kw("overriding") {
+            if !(self.eat_kw("user") || self.eat_kw("system")) {
+                return Err(self.error());
+            }
+            self.expect_kw("value")?;
+            self.gap("overriding", start);
+        }
+        self.expect_kw("values")?;
+        self.expect_char('(')?;
+        parts.push(tuple(self.expr_list()?));
+        self.expect_char(')')?;
+        Ok(parts)
     }
 }
