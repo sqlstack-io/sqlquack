@@ -42,6 +42,7 @@ pub(crate) fn render_case(review: &CaseReview<'_>) -> String {
         "\nsource snowflake\n{}{}\n\n",
         case.setup_sql
             .iter()
+            .chain(&case.setup)
             .map(|statement| format!("{statement};\n"))
             .collect::<String>(),
         case.source_sql.trim()

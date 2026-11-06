@@ -34,6 +34,7 @@ fn case(inputs: &[(&str, &[&str])]) -> LoadedCase {
         functions: Vec::new(),
         overrides: Vec::new(),
         setup_sql: Vec::new(),
+        setup: Vec::new(),
         inputs: inputs
             .iter()
             .map(|(name, cells)| CaseInput {
