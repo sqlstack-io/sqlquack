@@ -6,7 +6,7 @@ use std::collections::BTreeSet;
 pub(crate) struct Lexed {
     /// Statements separated by semicolons outside strings, quoted names and comments.
     pub(crate) statements: usize,
-    /// Every quoted identifier and bare word, any of which may name a relation or function.
+    /// Every quoted identifier, bare word and dotted chain of them, any of which may name a relation.
     pub(crate) names: BTreeSet<String>,
 }
 
@@ -15,17 +15,20 @@ pub(crate) fn lexed(sql: &str) -> Lexed {
     let characters: Vec<char> = sql.chars().collect();
     let mut names: BTreeSet<String> = BTreeSet::new();
     let (mut statements, mut pending) = (0_usize, false);
+    let (mut chain, mut continuing) = (String::new(), false);
     let mut index = 0;
     while let Some(&character) = characters.get(index) {
         let next = characters.get(index + 1).copied();
         match (character, next) {
             ('\'', _) => {
+                chain.clear();
                 index = quoted_end(&characters, index, '\'').0;
                 pending = true;
             }
             ('"', _) => {
                 let (end, name) = quoted_end(&characters, index, '"');
-                names.insert(name);
+                chain = extended(&chain, std::mem::take(&mut continuing), &name);
+                names.extend([chain.clone(), name]);
                 index = end;
                 pending = true;
             }
@@ -59,11 +62,20 @@ pub(crate) fn lexed(sql: &str) -> Lexed {
                 {
                     index += 1;
                 }
-                names.insert(characters[start..index].iter().collect());
+                let name: String = characters[start..index].iter().collect();
+                chain = extended(&chain, std::mem::take(&mut continuing), &name);
+                names.extend([chain.clone(), name]);
                 pending = true;
+            }
+            ('.', _) if !chain.is_empty() && !continuing => {
+                continuing = true;
+                pending = true;
+                index += 1;
             }
             (character, _) => {
                 pending |= !character.is_whitespace();
+                chain.clear();
+                continuing = false;
                 index += 1;
             }
         }
@@ -71,6 +83,14 @@ pub(crate) fn lexed(sql: &str) -> Lexed {
     Lexed {
         statements: statements + usize::from(pending),
         names,
+    }
+}
+
+/// The dotted chain `name` ends: `chain.name` when a dot joined it to `chain`, else `name` alone.
+fn extended(chain: &str, continuing: bool, name: &str) -> String {
+    match continuing && !chain.is_empty() {
+        true => format!("{chain}.{name}"),
+        false => name.to_owned(),
     }
 }
 

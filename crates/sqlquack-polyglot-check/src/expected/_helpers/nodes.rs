@@ -2,7 +2,9 @@
 
 use serde_json::Value;
 
-use crate::expected::constants::{COMMAND_TREE, OK_PREFIX, RAW_TREE, THIS_KEY};
+use crate::expected::constants::{
+    ALL_KEY, ALL_TEXT, COMMAND_TREE, EXPRESSIONS_KEY, OK_PREFIX, RAW_TREE, THIS_KEY, VAR_KEY,
+};
 
 /// Whether both rendered parses are trees that are equal once SQLQuack's `node` wrappers go.
 pub(crate) fn differ_only_by_kept_node(polyglot: &str, sqlquack: &str, node: &str) -> bool {
@@ -97,4 +99,70 @@ pub(crate) fn is_opaque(polyglot: &str) -> bool {
     [COMMAND_TREE, RAW_TREE]
         .iter()
         .any(|opaque| polyglot.starts_with(&format!("{OK_PREFIX}{opaque}")))
+}
+
+/// Whether both rendered parses are trees that differ, and are equal once SQLQuack's `clause` ALL is polyglot's key.
+pub(crate) fn differ_only_by_kept_all(polyglot: &str, sqlquack: &str, clause: &str) -> bool {
+    let (Some(theirs), Some(ours)) = (
+        polyglot.strip_prefix(OK_PREFIX),
+        sqlquack.strip_prefix(OK_PREFIX),
+    ) else {
+        return false;
+    };
+    match (
+        serde_json::from_str::<Value>(theirs),
+        serde_json::from_str::<Value>(ours),
+    ) {
+        (Ok(theirs), Ok(ours)) => theirs != ours && with_all_as_key(ours, clause) == theirs,
+        (Err(_), _) | (_, Err(_)) => false,
+    }
+}
+
+/// `value` with each `clause` of no keys and an `all` rewritten as one key `ALL` carrying its options.
+fn with_all_as_key(value: Value, clause: &str) -> Value {
+    match value {
+        Value::Object(object) => Value::Object(
+            object
+                .into_iter()
+                .map(|(key, value)| {
+                    let value = match (key == clause, value) {
+                        (true, Value::Object(fields)) => all_as_key(fields),
+                        (_, value) => value,
+                    };
+                    (key, with_all_as_key(value, clause))
+                })
+                .collect(),
+        ),
+        Value::Array(items) => Value::Array(
+            items
+                .into_iter()
+                .map(|value| with_all_as_key(value, clause))
+                .collect(),
+        ),
+        other => other,
+    }
+}
+
+/// A clause's fields, its `all` rewritten as one key `ALL` carrying its options when it has no keys.
+fn all_as_key(mut fields: serde_json::Map<String, Value>) -> Value {
+    if fields.get(EXPRESSIONS_KEY) != Some(&Value::Array(Vec::new())) {
+        return Value::Object(fields);
+    }
+    match fields.remove(ALL_KEY) {
+        Some(Value::Object(mut options)) => {
+            options.insert(
+                THIS_KEY.to_owned(),
+                serde_json::json!({ VAR_KEY: { THIS_KEY: ALL_TEXT } }),
+            );
+            fields.insert(
+                EXPRESSIONS_KEY.to_owned(),
+                Value::Array(vec![Value::Object(options)]),
+            );
+        }
+        Some(other) => {
+            fields.insert(ALL_KEY.to_owned(), other);
+        }
+        None => {}
+    }
+    Value::Object(fields)
 }

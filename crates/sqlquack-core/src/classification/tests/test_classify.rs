@@ -44,6 +44,26 @@ fn given_snowflake_query_when_classifying_then_reports_each_construct_family() {
             expected_keys: &["node:union", "clause:union_all"],
         },
         ConstructTestCase {
+            description: "GROUP BY ALL and ORDER BY ALL have keys of their own beside the clause",
+            sql: "SELECT region, COUNT(*) FROM orders GROUP BY ALL ORDER BY ALL",
+            expected_keys: &[
+                "clause:group_by",
+                "clause:group_by_all",
+                "clause:order_by",
+                "clause:order_by_all",
+            ],
+        },
+        ConstructTestCase {
+            description: "WITH RECURSIVE has a key of its own beside the clause",
+            sql: "WITH RECURSIVE r AS (SELECT 1 AS n) SELECT n FROM r",
+            expected_keys: &["clause:with", "clause:with_recursive"],
+        },
+        ConstructTestCase {
+            description: "a SAMPLE on a table reference is a sample clause",
+            sql: "SELECT order_id FROM orders SAMPLE (10)",
+            expected_keys: &["clause:sample"],
+        },
+        ConstructTestCase {
             description: "project functions collapse into one construct",
             sql: "SELECT __sqlquack_udf(o.status) FROM orders o",
             expected_keys: &["fn:<udf>"],

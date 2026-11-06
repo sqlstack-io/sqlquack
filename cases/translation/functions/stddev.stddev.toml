@@ -1,0 +1,133 @@
+category = "translation"
+construct = "sf.functions.stddev.stddev"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Groups of 8, 2 and 1 rows (population variance 4 and sample 32/7 for the first). Catches: the population statistic, or variance instead of its square root"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2"],
+  ["'q'", "1"],
+  ["'r'", "6"],
+  ["'p'", "4"],
+  ["'q'", "3"],
+  ["'p'", "4"],
+  ["'p'", "4"],
+  ["'p'", "5"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+  ["'p'", "9"],
+]
+query = "SELECT g, STDDEV(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_single_row"
+description = "A group with a single row. Catches: 0 for one row (the Oracle STDDEV/VARIANCE reading) instead of NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2"],
+  ["'q'", "1"],
+  ["'r'", "6"],
+  ["'p'", "4"],
+  ["'q'", "3"],
+  ["'p'", "4"],
+  ["'p'", "4"],
+  ["'p'", "5"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+  ["'p'", "9"],
+]
+query = "SELECT STDDEV(x) AS r FROM input WHERE g = 'r'"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_varchar"
+description = "Numeric text, which the page says is cast to FLOAT. Catches: text rejected, or cast to an integer type (2.5 rounded)"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'1'"],
+  ["'2.5'"],
+  ["'6'"],
+]
+query = "SELECT STDDEV(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_distinct"
+description = "DISTINCT on a group with repeated 4s and 5s. Catches: DISTINCT ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2"],
+  ["'q'", "1"],
+  ["'r'", "6"],
+  ["'p'", "4"],
+  ["'q'", "3"],
+  ["'p'", "4"],
+  ["'p'", "4"],
+  ["'p'", "5"],
+  ["'p'", "5"],
+  ["'p'", "7"],
+  ["'p'", "9"],
+]
+query = "SELECT g, STDDEV(DISTINCT x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t005_null_expr1"
+description = "NULL rows beside values, and a group of only NULL. Catches: NULL read as 0 (n and the mean change) or the all-NULL group not NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "NULL"],
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "5"],
+  ["'p'", "3"],
+]
+query = "SELECT g, STDDEV(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty_input"
+description = "No rows. Catches: an empty input giving 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+]
+query = "SELECT STDDEV(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "t007_large_mean"
+description = "Values near 1e9 with a spread of 1. Catches: a sum-of-squares formula losing the digits of the spread"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1000000001"],
+  ["1000000002"],
+  ["1000000003"],
+  ["1000000004"],
+]
+query = "SELECT STDDEV(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t008_decimal"
+description = "A NUMBER(10,2) column. Catches: the result type or scale of a decimal input"
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["2.50"],
+  ["4.10"],
+]
+query = "SELECT STDDEV(x) AS r, SYSTEM$TYPEOF(STDDEV(x)) AS t FROM input"
+order = "ordered"
+tags = ["type-combination"]

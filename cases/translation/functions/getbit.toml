@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.getbit"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_positions"
+description = "Bits 0 to 3 of 11 (binary 1011). Catches: positions counted from 1, or from the most significant bit"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["11"],
+]
+query = "SELECT GETBIT(x, 0) AS b0, GETBIT(x, 1) AS b1, GETBIT(x, 2) AS b2, GETBIT(x, 3) AS b3 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_negative"
+description = "A high bit of a negative integer, read as a 128-bit two's complement value; the page does not say; the recording decides. Catches: a 64-bit view of the value"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["-1"],
+]
+query = "SELECT GETBIT(x, 127) AS b127, GETBIT(x, 64) AS b64 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_integer_expr"
+description = "A NULL value; the page does not say; the recording decides. Catches: 0 returned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT GETBIT(x, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

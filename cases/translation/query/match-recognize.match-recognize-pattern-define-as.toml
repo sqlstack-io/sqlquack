@@ -1,0 +1,770 @@
+category = "translation"
+construct = "sf.query.match-recognize.match-recognize-pattern-define-as"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_all_rows_up"
+description = "The page's rising-price example on its ABCD prices: matches d 2 to 4 and d 5 to 8, with MATCH_NUMBER, MATCH_SEQUENCE_NUMBER and CLASSIFIER for each row. Catches: a non-greedy UP+, a match allowed to start at d 1, or CLASSIFIER returning the next symbol"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, msq, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, MATCH_SEQUENCE_NUMBER() AS msq, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (ANY_ROW UP+) DEFINE ANY_ROW AS TRUE, UP AS price > LAG(price)) ORDER BY c, mn, msq"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_one_row_v_shape"
+description = "The page's V-shape example: one summary row per match with FIRST and LAST of d and the counts of each symbol; skipping to the last rising row lets the next V start there. Catches: all rows returned instead of one, or matching resumed after the match so a shared row is not reused"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+]
+query = "SELECT c, mn, start_d, end_d, n, n_down, n_up FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d, COUNT(*) AS n, COUNT(down.*) AS n_down, COUNT(up.*) AS n_up ONE ROW PER MATCH AFTER MATCH SKIP TO LAST up PATTERN (start_row down+ up+) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_with_unmatched_rows"
+description = "The page: WITH UNMATCHED ROWS adds the rows outside any match, whose MEASURES are NULL. Catches: unmatched rows dropped, or given a match number"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH WITH UNMATCHED ROWS PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_omit_empty_matches"
+description = "The page: OMIT EMPTY MATCHES drops empty matches from the output, but an empty match still increments MATCH_NUMBER. Catches: empty matches shown, or MATCH_NUMBER counting only non-empty matches"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn ALL ROWS PER MATCH OMIT EMPTY MATCHES PATTERN (up*) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_price"
+description = "A NULL price makes price > LAG(price) NULL, which is not TRUE, so the NULL row and the row after it are not rising rows; the page gives no other rule. Catches: NULL compared as zero or as a match, so a run continues through the NULL"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'N'", "1", "10"],
+  ["'N'", "2", "20"],
+  ["'N'", "3", "NULL"],
+  ["'N'", "4", "40"],
+  ["'N'", "5", "50"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_no_columns"
+compile_error = true
+description = "The page: omitting PARTITION BY and MEASURES with ONE ROW PER MATCH raises \"SELECT with no columns\". Catches: an empty result or every input row returned instead of the error"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT * FROM input MATCH_RECOGNIZE(ORDER BY d ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price))"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t008_one_row_default"
+description = "The page: ONE ROW PER MATCH is the default, so each match gives one summary row. Catches: all rows of each match returned"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_all_rows_show_default"
+description = "The page: SHOW EMPTY MATCHES is the default of ALL ROWS PER MATCH, so the empty matches of up* appear. Catches: empty matches omitted by default"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (up*) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t011_skip_default"
+description = "The page: AFTER MATCH SKIP PAST LAST ROW is the default, so matches of up{2} do not overlap. Catches: overlapping matches returned by default"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up{2}) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t012_past_last_row"
+description = "The page: PAST LAST ROW continues after the last row of the match, so matches of up{2} do not overlap. Catches: matching resumed inside the previous match"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH AFTER MATCH SKIP PAST LAST ROW PATTERN (up{2}) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t013_to_first_symbol"
+description = "The page: TO FIRST <symbol> continues at the first row mapped to the symbol. With any_row up+ on ABCD this gives d 2-4, 3-4, 5-8, 6-8 and 7-8; the resumed row is never the first row of the match. Catches: matching resumed past the last row (2-4 and 5-8 only), or at the last rising row"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH AFTER MATCH SKIP TO FIRST up PATTERN (any_row up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t015_quantifier_optional"
+description = "The page: ? matches zero or one row, greedily. Catches: the optional row never taken, or taken more than once"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (down up?) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t016_quantifier_range"
+description = "The page: {2,3} matches two to three rows, greedily. Catches: fewer rows taken than available, or more than three"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up{2,3}) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t017_quantifier_at_least"
+description = "The page: {2,} matches two or more rows, greedily. Catches: a single rising row matched (XYZ d 8 and d 10), or the run of three cut short"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up{2,}) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t018_quantifier_at_most"
+description = "The page: {,2} matches zero to two rows, greedily. Catches: more than two rows taken"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (down up{,2}) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t019_quantifier_reluctant"
+description = "The page: a quantifier followed by ? is reluctant and matches as few rows as possible. Catches: the reluctant quantifier read as greedy"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (down up+?) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t020_alternation"
+description = "The page: | matches either alternative; d 6 to 8 match both up and high, and the recording settles which symbol they are classified as. Catches: only one alternative matched, or a row matching neither taken into the run"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN ((up | high)+) DEFINE up AS price > LAG(price), high AS price >= 45) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t021_anchors"
+description = "The page: ^ matches at the start of the partition and $ at its end. Catches: the anchors ignored, so matches inside the partition returned"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN ((^ start_row down) | (up $)) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t022_permute"
+description = "The page: PERMUTE(down, up) matches the symbols in any order, preferring the order written. Catches: only the written order matched"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (PERMUTE(down, up)) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t023_exclusion"
+description = "The page: rows matched inside {- -} are excluded from the output of ALL ROWS PER MATCH but still match. Catches: the excluded rows returned, or the match rejected"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (down {- up+ -} down) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t024_running_final"
+description = "The page: with ALL ROWS PER MATCH, RUNNING aggregates up to the current row and FINAL over the whole match. Catches: RUNNING and FINAL giving the same value on every row"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, rs, fs FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, RUNNING SUM(price) AS rs, FINAL SUM(price) AS fs ALL ROWS PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t026_lag_next"
+description = "The page: PREV is not available in DEFINE, where LAG reads the previous row of the window frame; NEXT reads the next row and equals LEAD. The peaks are d 4 and 8 of ABCD and d 5 and 8 of XYZ. Catches: LAG or NEXT reading the wrong row, or NULL at the partition edge treated as a match"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, d, price, mn, cl FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, CLASSIFIER() AS cl ALL ROWS PER MATCH PATTERN (peak) DEFINE peak AS price > LAG(price) AND price > NEXT(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t027_undefined_symbol"
+description = "The page: a symbol used in PATTERN but not defined in DEFINE matches every row. Catches: the undefined symbol refused or matching nothing"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (any_row up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t028_partition_two_keys"
+description = "The page: PARTITION BY takes a list of expressions; rows match only within one combination of them. Catches: only the first key used, so matches cross partitions"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, g, mn, start_d, end_d FROM (SELECT c, d, price, MOD(d, 2) AS g FROM input) MATCH_RECOGNIZE(PARTITION BY c, g ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, g, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t029_no_partition"
+description = "The page: without PARTITION BY the whole input is one partition. Catches: rows partitioned anyway, or matches starting over at each c"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+]
+query = "SELECT mn, start_d, end_d, n FROM input MATCH_RECOGNIZE(ORDER BY c, d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d, COUNT(*) AS n ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t030_measures_prev"
+description = "The page: in MEASURES, PREV navigates to the previous row within the current match, so it is NULL on each match's first row (d 3 and d 6 of ABCD). Catches: PREV read as LAG over the partition, giving the row before the match"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, price, mn, pp FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, PREV(price) AS pp ALL ROWS PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t032_order_desc"
+description = "The page: orderItem takes ASC or DESC; with ORDER BY d DESC the rows are read from d 10 down, so up+ matches d 9-8, d 4 and d 1. Catches: the direction ignored, giving the ascending matches 3-4 and 6-8"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d DESC MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t033_order_nulls_first"
+description = "The page: orderItem takes NULLS FIRST or LAST; with the NULL d (price 10) first, d 1 rises from it, so up+ matches d 1, 3-4 and 6-8. Catches: NULLS FIRST ignored, so the NULL row sorts last and d 1 does not match"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'ABCD'", "NULL", "10"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d NULLS FIRST MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t034_order_desc_nulls_last"
+description = "The page: orderItem takes DESC with NULLS LAST; the NULL d (price 10) comes after d 1 and does not rise, so up+ matches d 9-8, d 4 and d 1. Catches: NULLS LAST ignored, so DESC's default NULLS FIRST puts the NULL row first and d 10 rises from it"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'ABCD'", "NULL", "10"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d DESC NULLS LAST MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t035_symbol_column_in_function"
+description = "The page's FINAL FIRST(LT45.price) shape: inside a window function a predicated column reference looks only at rows mapped to the symbol, so FIRST(down.price) is the first down row, not the start row. Catches: the symbol ignored, giving FIRST and LAST over every row of the match"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, mn, first_down, last_up, n FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FINAL FIRST(down.price) AS first_down, FINAL LAST(up.price) AS last_up, COUNT(*) AS n ONE ROW PER MATCH PATTERN (start_row down+ up+) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t036_symbol_column_bare"
+description = "The page: outside a window function <symbol>.<column> is LAST(<symbol>.<column>), allowed in MEASURES with FINAL semantics; under ONE ROW PER MATCH it is the match's last down price (ABCD 1-4: 36, XYZ 1-5: 24, XYZ 6-8: 50). Catches: read as the last row's price (42, 65, 54)"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, mn, last_down FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, down.price AS last_down ONE ROW PER MATCH PATTERN (start_row down+ up+) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t037_prev_next_offset_default"
+description = "The page: PREV(expr, offset, default) and NEXT(expr, offset, default); PREV stays within the match and NEXT runs to the end of the window, with the default where the row is outside the frame (XYZ d 10 has no row two ahead). Catches: the offset read as 1, or NULL instead of the default"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, d, price, mn, p2, n2 FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, PREV(price, 2, -1) AS p2, NEXT(price, 2, -1) AS n2 ALL ROWS PER MATCH PATTERN (up+) DEFINE up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t039_symbol_column_running"
+compile_error = true
+description = "The page's limitations table: <symbol>.<column>, plain or in LAST, is not available in MEASURES (Running), which ALL ROWS PER MATCH makes the default, so Snowflake refuses the query. Catches: the RUNNING form translated and run"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+]
+query = "SELECT c, d, last_down FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES down.price AS last_down ALL ROWS PER MATCH PATTERN (start_row down+ up+) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, d"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t040_alternation_precedence"
+description = "The page: the alternative operator has precedence over the concatenation operator, so start_row down | up up reads as start_row (down | up) up. Catches: read as (start_row down) | (up up)"
+columns = [{ name = "c", type = "VARCHAR" }, { name = "d", type = "NUMBER(38,0)" }, { name = "price", type = "NUMBER(38,0)" }]
+rows = [
+  ["'ABCD'", "1", "50"],
+  ["'ABCD'", "2", "36"],
+  ["'ABCD'", "3", "39"],
+  ["'ABCD'", "4", "42"],
+  ["'ABCD'", "5", "30"],
+  ["'ABCD'", "6", "47"],
+  ["'ABCD'", "7", "71"],
+  ["'ABCD'", "8", "80"],
+  ["'ABCD'", "9", "75"],
+  ["'ABCD'", "10", "63"],
+  ["'XYZ'", "1", "89"],
+  ["'XYZ'", "2", "24"],
+  ["'XYZ'", "3", "37"],
+  ["'XYZ'", "4", "63"],
+  ["'XYZ'", "5", "65"],
+  ["'XYZ'", "6", "56"],
+  ["'XYZ'", "7", "50"],
+  ["'XYZ'", "8", "54"],
+  ["'XYZ'", "9", "30"],
+  ["'XYZ'", "10", "32"],
+]
+query = "SELECT c, mn, start_d, end_d FROM input MATCH_RECOGNIZE(PARTITION BY c ORDER BY d MEASURES MATCH_NUMBER() AS mn, FIRST(d) AS start_d, LAST(d) AS end_d ONE ROW PER MATCH PATTERN (start_row down | up up) DEFINE down AS price < LAG(price), up AS price > LAG(price)) ORDER BY c, mn"
+order = "ordered"
+tags = ["type-combination"]

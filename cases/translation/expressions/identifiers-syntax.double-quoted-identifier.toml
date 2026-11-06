@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_case_distinct"
+description = "The page: \"TABLENAME\", \"tablename\", \"tableName\" and \"TableName\" are distinct, so \"v\" and \"V\" are two columns. Catches: the two names merged, so one value is returned twice or the names collide"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, \"v\", \"V\" FROM (SELECT ordinal, a AS \"v\", a * 10 AS \"V\" FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_special_characters"
+description = "The page: double-quoted identifiers may contain blanks, periods and non-ASCII characters, and two quotes stand for one, as in \"quote\"\"andunquote\"\"\". Catches: the period read as a qualifier, the doubled quote kept twice, or the non-ASCII name rejected"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, \"my col.x\" AS r1, \"q\"\"t\" AS r2, \"\u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\" AS r3 FROM (SELECT ordinal, a AS \"my col.x\", a + 1 AS \"q\"\"t\", a + 2 AS \"\u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\" FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_uppercase_equals_unquoted"
+description = "The page: an unquoted identifier is equivalent to the capitalised double-quoted one, so \"A\" finds the column a. Catches: the unquoted column kept in lowercase, so \"A\" does not resolve"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["2"],
+]
+query = "SELECT ordinal, \"A\" AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_case_mismatch"
+compile_error = true
+description = "The page: a double-quoted identifier must be written exactly as created; \"Mixed\" does not find \"MIXED\". Catches: the quoted name resolved case-insensitively"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ordinal, \"Mixed\" AS r FROM (SELECT ordinal, a AS \"MIXED\" FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null"
+description = "A NULL value under a case-sensitive alias; nothing special applies. Catches: the NULL replaced or the row dropped"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT ordinal, \"my col\" AS r FROM (SELECT ordinal, a AS \"my col\" FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -9,6 +9,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb::checking::main::quoted_relation::quoted_relation;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
@@ -35,6 +36,8 @@ use crate::conversion::constants::{
 };
 use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
+use sqlquack_semantics::names::constants::RELATION_KEY_SEPARATOR;
+use sqlquack_semantics::names::main::relation_key::relation_key;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns};
 
@@ -571,15 +574,48 @@ fn table_source(
     let log = context.log;
     let _rule = log.rule(FROM_RELATION);
     let table = payload_object(payload, &construct)?;
-    require_understood(table, &["name", "alias"], &construct)?;
+    require_understood(table, &["name", "alias", "catalog", "schema"], &construct)?;
     let name = identifier_name(field(table, "name", &construct)?)
         .ok_or_else(|| missing(construct.clone(), "a table has no name".to_owned()))?;
-    let columns = context.relation(&name)?;
+    let mut parts: Vec<String> = ["catalog", "schema"]
+        .iter()
+        .filter_map(|part| table.get(*part).and_then(identifier_name))
+        .collect();
+    parts.push(name.clone());
+    let written = parts.join(RELATION_KEY_SEPARATOR);
+    let is_cte = parts.len() == 1 && context.ctes.iter().any(|(cte, _)| cte == &name);
+    let options = context.options;
+    if let (1, Some(schema)) = (parts.len(), &options.current_schema) {
+        parts.insert(0, schema.clone());
+    }
+    if let (2, Some(database)) = (parts.len(), &options.current_database) {
+        parts.insert(0, database.clone());
+    }
+    let completed = parts.join(RELATION_KEY_SEPARATOR);
+    let key = match is_cte {
+        true => name.clone(),
+        false => relation_key(&parts, context.schema)?.unwrap_or_else(|| written.clone()),
+    };
+    if !is_cte && context.ctes.iter().any(|(cte, _)| cte == &key) {
+        return Err(unresolved(format!(
+            "`{written}` reads the schema relation `{key}`, which a CTE of the same name hides"
+        )));
+    }
+    let columns = context.relation(&key)?;
     let alias = table
         .get("alias")
         .and_then(identifier_name)
         .unwrap_or_else(|| name.clone());
-    let is_cte = context.ctes.iter().any(|(cte, _)| cte == &name);
+    if !is_cte && let Some(earlier) = context.qualifiers.read(&key, &completed) {
+        return Err(unresolved(format!(
+            "`{earlier}` and `{completed}` both read the schema relation `{key}`; declare each \
+             under its qualified name, or set the session's DATABASE and SCHEMA, to tell them apart"
+        )));
+    }
+    let relation_name = match is_cte {
+        true => quoted_identifier(&key, log),
+        false => quoted_relation(&key, log),
+    };
     let mut guarded: Vec<String> = Vec::new();
     for column in columns
         .iter()
@@ -589,11 +625,10 @@ fn table_source(
         guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, context)?));
     }
     let relation = match guarded.is_empty() {
-        true => quoted_identifier(&name, log),
+        true => relation_name,
         false => format!(
-            "(SELECT * REPLACE ({}) FROM {})",
-            guarded.join(", "),
-            quoted_identifier(&name, log)
+            "(SELECT * REPLACE ({}) FROM {relation_name})",
+            guarded.join(", ")
         ),
     };
     let columns = match is_cte {

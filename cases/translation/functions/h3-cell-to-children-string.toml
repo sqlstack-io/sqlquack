@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.h3-cell-to-children-string"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_resolutions"
+description = "Children at resolutions 9, 10 and 11 of a resolution-9 cell: the cell itself, 7 and 49. Catches: the resolution read as a number of levels below the cell, or the cell left out at its own resolution"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["'89283082803ffff'"],
+]
+query = "SELECT ARRAY_SIZE(H3_CELL_TO_CHILDREN_STRING(c, 9)) AS r9, ARRAY_SIZE(H3_CELL_TO_CHILDREN_STRING(c, 10)) AS r10, ARRAY_SIZE(H3_CELL_TO_CHILDREN_STRING(c, 11)) AS r11, ARRAY_CONTAINS('8a2830828007fff'::VARIANT, H3_CELL_TO_CHILDREN_STRING(c, 10)) AS centre FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_resolution_range"
+description = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. Catches: the resolution clamped to 15, or NULL returned"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["'89283082803ffff'"],
+]
+query = "SELECT H3_CELL_TO_CHILDREN_STRING(c, 16) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_cell_id"
+description = "A NULL ID; the page does not say; the recording decides. Catches: an error, or an empty array returned"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT H3_CELL_TO_CHILDREN_STRING(c, 10) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

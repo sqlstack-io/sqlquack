@@ -75,6 +75,7 @@ pub(crate) fn lateral_flatten(
         keep_empty,
         recursive,
         mode,
+        path,
     } = arguments(call, &function)?;
     let scope = Scope::new(earlier.to_vec(), outer);
     let site = Site {
@@ -97,9 +98,26 @@ pub(crate) fn lateral_flatten(
     diverge(context, JSON_FIDELITY, &function)?;
     let log = context.log;
     let json = read_json(&input, context);
+    let json = match path.is_empty() {
+        true => json,
+        false => format!(
+            "json_extract({json}, '${}')",
+            path.iter()
+                .map(|key| format!(".\"{key}\""))
+                .collect::<String>()
+        ),
+    };
     let rows = match (recursive, mode) {
         (true, mode) => json_flatten_recursive(&json, mode, log),
         (false, mode) => json_flatten(&json, (mode, keep_empty), log),
+    };
+    let rows = match path.join(".") {
+        prefix if prefix.is_empty() => rows,
+        prefix => format!(
+            "SELECT \"INDEX\", \"KEY\", CASE WHEN starts_with(\"PATH\", '[') \
+             THEN '{prefix}' || \"PATH\" ELSE '{prefix}.' || \"PATH\" END AS \"PATH\", \
+             \"VALUE\", \"THIS\" FROM ({rows})"
+        ),
     };
     let flattened = format!("LATERAL ({rows}) AS {}", quoted_identifier(&alias, log));
     let sql = format!(" CROSS JOIN {flattened}");
@@ -126,21 +144,23 @@ pub(crate) fn lateral_flatten(
     })
 }
 
-/// A FLATTEN call's input, OUTER and RECURSIVE flags, and MODE.
+/// A FLATTEN call's input, OUTER and RECURSIVE flags, MODE and PATH keys.
 struct Arguments<'a> {
     input: &'a Value,
     keep_empty: bool,
     recursive: bool,
     mode: FlattenMode,
+    path: Vec<String>,
 }
 
-/// The input, OUTER, RECURSIVE and MODE; PATH and OUTER with RECURSIVE are refused.
+/// The input, OUTER, RECURSIVE, MODE and a PATH of dotted keys; OUTER with RECURSIVE or PATH is refused.
 fn arguments<'a>(call: &'a Payload, construct: &Construct) -> Result<Arguments<'a>, Refusal> {
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let mut input: Option<&Value> = None;
     let mut keep_empty = false;
     let mut recursive = false;
     let mut mode: Option<FlattenMode> = None;
+    let mut path: Vec<String> = Vec::new();
     for (position, argument) in list(call, "args").iter().enumerate() {
         let Some(named) = argument.get("named_argument") else {
             if position > 0 {
@@ -179,11 +199,30 @@ fn arguments<'a>(call: &'a Payload, construct: &Construct) -> Result<Arguments<'
                     _ => return Err(refuse("a MODE other than a literal mode".to_owned())),
                 });
             }
+            "PATH" => {
+                let written = value
+                    .get("literal")
+                    .and_then(|literal| literal.get("value"))
+                    .and_then(Value::as_str)
+                    .unwrap_or_default();
+                path = written.split('.').map(str::to_owned).collect();
+                if !path.iter().all(|key| plain_key(key)) {
+                    return Err(refuse(
+                        "a PATH other than literal dot-separated keys, which no recording shows"
+                            .to_owned(),
+                    ));
+                }
+            }
             other => return Err(refuse(format!("FLATTEN with {other}"))),
         }
     }
     if recursive && keep_empty {
         return Err(refuse("FLATTEN with RECURSIVE and OUTER".to_owned()));
+    }
+    if !path.is_empty() && (recursive || keep_empty) {
+        return Err(refuse(
+            "FLATTEN with PATH and RECURSIVE or OUTER, which no recording shows".to_owned(),
+        ));
     }
     let input = input.ok_or_else(|| refuse("FLATTEN without an input".to_owned()))?;
     Ok(Arguments {
@@ -191,7 +230,17 @@ fn arguments<'a>(call: &'a Payload, construct: &Construct) -> Result<Arguments<'
         keep_empty,
         recursive,
         mode: mode.unwrap_or(FlattenMode::Both),
+        path,
     })
+}
+
+/// Whether a PATH step is a key needing no quotes: a letter or `_`, then letters, digits or `_`.
+fn plain_key(key: &str) -> bool {
+    let mut characters = key.chars();
+    characters
+        .next()
+        .is_some_and(|first| first.is_ascii_alphabetic() || first == '_')
+        && characters.all(|next| next.is_ascii_alphanumeric() || next == '_')
 }
 
 /// The value of a boolean literal.

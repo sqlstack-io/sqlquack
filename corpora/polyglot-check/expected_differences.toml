@@ -289,6 +289,11 @@ polyglot = ["explode"]
 note = "polyglot lowers it to node:explode"
 
 [[spelling]]
+name = "EXTRACT"
+polyglot = ["extract"]
+note = "the call form EXTRACT(part, expr) with a comma; polyglot lowers it to node:extract, the node of the keyword form"
+
+[[spelling]]
 name = "FIRST"
 polyglot = ["first"]
 note = "polyglot lowers it to node:first"
@@ -367,6 +372,11 @@ note = "polyglot lowers it to node:json_object"
 name = "LAG"
 polyglot = ["lag"]
 note = "polyglot lowers it to node:lag"
+
+[[spelling]]
+name = "LAST"
+polyglot = ["last"]
+note = "MATCH_RECOGNIZE's LAST(expr) in MEASURES and DEFINE; polyglot lowers it to node:last"
 
 [[spelling]]
 name = "LAST_DAY"
@@ -742,7 +752,7 @@ note = "v[3]:a is a key path on an array element; polyglot accepts a path only a
 [[fix]]
 id = "double_colon_object_type"
 marker = "::OBJECT("
-polyglot_errors = ["Invalid expression / Unexpected token"]
+polyglot_errors = ["Invalid expression / Unexpected token", "Expected RParen, got LParen ('(')"]
 note = "x::OBJECT(a INT) is the structured OBJECT type CAST(x AS OBJECT(a INT)) parses; polyglot's :: types stop at OBJECT"
 
 [[fix]]
@@ -774,6 +784,60 @@ id = "parenthesized_typed_lambda_parameters"
 marker = "variant)->"
 polyglot_errors = ["Expected RParen, got Var ('NUMBER')"]
 note = "(acc NUMBER(18, 2), i VARIANT) -> ... is a lambda with several typed parameters, one parameterised; polyglot reads a parenthesized lambda's parameters as names only"
+
+[[fix]]
+id = "parenthesized_typed_lambda_int"
+marker = "int)->"
+polyglot_errors = ["Expected RParen, got Var ('INT')"]
+note = "(v INT) -> ... is a lambda with an INT parameter, as ACCUMULATE's documented examples write it; polyglot reads a parenthesized lambda's parameters as names only"
+
+[[fix]]
+id = "hash_agg_distinct"
+marker = "HASH_AGG(DISTINCT"
+polyglot_errors = ["Expected RParen, got Var"]
+note = "HASH_AGG(DISTINCT a) is documented and recorded; polyglot reads no DISTINCT in HASH_AGG"
+
+[[fix]]
+id = "object_agg_distinct"
+marker = "OBJECT_AGG(DISTINCT"
+polyglot_errors = ["Expected RParen, got Var"]
+note = "OBJECT_AGG(DISTINCT k, v) is documented and recorded; polyglot reads no DISTINCT in OBJECT_AGG"
+
+[[fix]]
+id = "snowflake_star_ilike"
+marker = "*ILIKE'"
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "SELECT * ILIKE 'pattern' is documented and recorded, alone and before REPLACE or RENAME; polyglot reads no ILIKE after a star"
+
+[[fix]]
+id = "snowflake_interval_day_time_cast"
+marker = "::INTERVALDAY"
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "x::INTERVAL DAY(2) TO SECOND(2) casts to a day-time interval type with its qualifiers, as the interval data type page documents; polyglot reads no qualifier after INTERVAL in a :: cast"
+
+[[fix]]
+id = "snowflake_interval_year_month_cast"
+marker = "::INTERVALYEAR"
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "x::INTERVAL YEAR(2) TO MONTH casts to a year-month interval type with its qualifiers, as the interval data type page documents; polyglot reads no qualifier after INTERVAL in a :: cast"
+
+[[fix]]
+id = "snowflake_ipaddress_literal"
+marker = "IPADDRESS'"
+polyglot_errors = ["Invalid expression / Unexpected token"]
+note = "IPADDRESS '<address>' is the documented typed literal of the IPADDRESS type and is recorded; polyglot knows no IPADDRESS literal"
+
+[[fix]]
+id = "snowflake_array_spread"
+marker = "(**"
+polyglot_errors = ["Unexpected token: DStar"]
+note = "** spreads an array into an IN list or a function's arguments, as the expansion operator page documents and Snowflake recorded; polyglot reads ** only as a binary operator"
+
+[[fix]]
+id = "snowflake_resample"
+marker = "RESAMPLE(USING"
+polyglot_errors = ['Expected identifier, got \"Using\"']
+note = "FROM t RESAMPLE(USING col INCREMENT BY step ...) is documented and recorded; polyglot reads RESAMPLE as a table alias"
 
 [[fix]]
 id = "snowflake_bare_trailing_limit"
@@ -1215,6 +1279,18 @@ id = "snowflake_table_clone_time_travel"
 marker = "CLONE"
 field = "clone_at_clause"
 note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
+
+# Clauses whose ALL SQLQuack keeps apart from its keys, where polyglot reads ALL as a bare-word key.
+# The check counts an entry only when the statement, without whitespace and ignoring case, contains
+# `marker`, the trees differ, and both are equal once each `<clause>` in SQLQuack's tree that has no
+# keys and an `all` is rewritten as polyglot's one key `{ "var": { "this": "ALL" } }` with the same
+# DESC and NULLS options. The run counts them with the kept fields.
+
+[[kept_all]]
+id = "snowflake_order_by_all"
+marker = "ORDERBYALL"
+clause = "order_by"
+note = "ORDER BY ALL sorts by every SELECT-list column in order, so SQLQuack records it as an ALL of the clause with its DESC and NULLS options; polyglot reads ALL as a key named ALL, which a column called ALL would also give; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
 
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts

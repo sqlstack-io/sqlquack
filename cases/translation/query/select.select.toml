@@ -1,0 +1,269 @@
+category = "translation"
+construct = "sf.query.select.select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_star"
+description = "Every column in table order, the input CTE's ordinal first. Catches: columns reordered"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_ilike"
+description = "Only the columns whose names end in name, matched case-insensitively. Catches: a case-sensitive match (no columns, as the names are upper case)"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_exclude_two"
+description = "Two columns excluded. Catches: only the first exclusion applied"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE (first_name, department_id) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_alias_star"
+description = "A table alias star over a join with the departments, which takes only that table's columns. Catches: both tables' columns returned"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT e.* FROM input e JOIN (SELECT * FROM (VALUES (1, 'Engineering'), (2, 'Customer Support'), (3, 'Finance')) AS d (department_id, department_name)) d ON e.department_id = d.department_id ORDER BY e.employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_values"
+description = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged. Catches: NULL rows dropped by *"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE employee_id FROM input ORDER BY last_name"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_exclude_rename"
+description = "department_id excluded and first_name renamed fn. Catches: RENAME applied before EXCLUDE, or the renamed column moved"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE department_id RENAME (first_name AS fn) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t007_exclude_rename_null_values"
+description = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged. Catches: the NULL first name dropped with the rename"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE department_id RENAME (first_name AS fn) FROM input ORDER BY employee_id DESC"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_exclude_replace"
+description = "department_id excluded and last_name replaced by its upper case, in place. Catches: the replaced column moved to the end, or added twice"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE department_id REPLACE (UPPER(last_name) AS last_name) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_exclude_replace_null_values"
+description = "REPLACE over the NULL first name: the expression gets NULL. Catches: NULL replaced by an empty string"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE department_id REPLACE (first_name || '!' AS first_name) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t010_all_three"
+description = "All three modifiers: department_id excluded, employee_id plus 1000 replaced, then last_name renamed. Catches: the modifiers applied in another order"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE department_id REPLACE (employee_id + 1000 AS employee_id) RENAME (last_name AS ln) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t011_all_three_null_values"
+description = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged. Catches: the NULL row dropped"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * EXCLUDE employee_id REPLACE (department_id * 10 AS department_id) RENAME (first_name AS fn) FROM input ORDER BY last_name"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t012_ilike_rename"
+description = "Columns matching '%name', with last_name renamed ln. Catches: RENAME applied to a column the pattern dropped, or before the pattern"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' RENAME (last_name AS ln) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t013_ilike_rename_null_values"
+description = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged. Catches: the NULL first name dropped"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' RENAME (first_name AS fn) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t014_ilike_replace"
+description = "Columns matching '%name', with first_name replaced by its length. Catches: the replaced column moved"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' REPLACE (LENGTH(first_name) AS first_name) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t015_ilike_replace_null_values"
+description = "LENGTH of the NULL first name is NULL. Catches: NULL read as length 0"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE 'first%' REPLACE (LENGTH(first_name) AS first_name) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t016_ilike_replace_rename"
+description = "ILIKE '%name', last_name upper-cased, then renamed. Catches: RENAME applied before REPLACE (the replacement lost)"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' REPLACE (UPPER(last_name) AS last_name) RENAME (last_name AS ln) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t017_ilike_replace_rename_null_values"
+description = "Row 104 holds a NULL first name and department, which the modifiers pass through unchanged. Catches: the NULL row dropped"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * ILIKE '%name' REPLACE (UPPER(first_name) AS first_name) RENAME (first_name AS fn) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t018_replace_rename"
+description = "department_id doubled, then employee_id renamed id. Catches: the modifiers swapped"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * REPLACE (department_id * 2 AS department_id) RENAME (employee_id AS id) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t019_replace_rename_null_values"
+description = "The NULL department plus 1 stays NULL; first_name renamed. Catches: NULL read as 0"
+columns = [{ name = "employee_id", type = "NUMBER(38,0)" }, { name = "last_name", type = "VARCHAR" }, { name = "first_name", type = "VARCHAR" }, { name = "department_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["101", "'Montgomery'", "'Pat'", "1"],
+  ["102", "'Levine'", "'Terry'", "2"],
+  ["103", "'Comstock'", "'Dana'", "2"],
+  ["104", "'Okafor'", "NULL", "NULL"],
+]
+query = "SELECT * REPLACE (department_id + 1 AS department_id) RENAME (first_name AS fn) FROM input ORDER BY employee_id"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.vector-normalize"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "A vector with a negative element; elements rounded to 3 places. Catches: L1 normalisation, or the vector returned unchanged"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[3,-4,0]'"],
+]
+query = "SELECT ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)))::ARRAY, 0)::FLOAT, 3) AS e0, ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)))::ARRAY, 1)::FLOAT, 3) AS e1, ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)))::ARRAY, 2)::FLOAT, 3) AS e2 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_int"
+description = "An INT vector, which the page says gives FLOAT elements. Catches: INT elements (0 and 1) returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[0,2,0]'"],
+]
+query = "SELECT ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)))::ARRAY, 0)::FLOAT, 3) AS e0, ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)))::ARRAY, 1)::FLOAT, 3) AS e1, ROUND(GET(VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)))::ARRAY, 2)::FLOAT, 3) AS e2 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_vector"
+description = "A NULL vector, which the page says gives NULL. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT VECTOR_NORMALIZE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3))) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

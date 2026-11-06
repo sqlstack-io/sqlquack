@@ -72,13 +72,9 @@ pub(crate) fn is_inert(value: &Value) -> bool {
     }
 }
 
-/// Refuses when a payload sets a field the rule does not understand.
-pub(crate) fn require_understood(
-    payload: &Payload,
-    understood: &[&str],
-    construct: &Construct,
-) -> Result<(), Refusal> {
-    let unexpected: Vec<&str> = payload
+/// The fields a payload sets beyond `understood`, cosmetic and inert ones aside.
+pub(crate) fn unexpected_fields<'a>(payload: &'a Payload, understood: &[&str]) -> Vec<&'a str> {
+    payload
         .iter()
         .filter(|(field, value)| {
             !understood.contains(&field.as_str())
@@ -86,7 +82,16 @@ pub(crate) fn require_understood(
                 && !is_inert(value)
         })
         .map(|(field, _)| field.as_str())
-        .collect();
+        .collect()
+}
+
+/// Refuses when a payload sets a field the rule does not understand.
+pub(crate) fn require_understood(
+    payload: &Payload,
+    understood: &[&str],
+    construct: &Construct,
+) -> Result<(), Refusal> {
+    let unexpected = unexpected_fields(payload, understood);
     if unexpected.is_empty() {
         return Ok(());
     }

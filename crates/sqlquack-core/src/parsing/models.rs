@@ -53,6 +53,7 @@ pub struct SourceLines {
     line_starts: Vec<usize>,
     length: usize,
     shift: usize,
+    source: String,
 }
 
 impl SourceLines {
@@ -75,7 +76,17 @@ impl SourceLines {
             line_starts,
             length,
             shift,
+            source: source.to_owned(),
         }
+    }
+
+    /// The source text at `location`, a location these lines gave.
+    pub fn text(&self, location: &SourceLocation) -> String {
+        self.source
+            .chars()
+            .skip(location.start)
+            .take(location.end.saturating_sub(location.start))
+            .collect()
     }
 
     /// The location of the characters `start..end` of the parsed text.

@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.strip-null-value"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_json_null"
+description = "A top-level JSON null, a field holding a JSON null, and a missing field. Catches: the JSON null kept, so IS NULL is FALSE"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"k\":null}'"],
+  ["'{\"k\":1}'"],
+  ["'{}'"],
+]
+query = "SELECT STRIP_NULL_VALUE(PARSE_JSON(a):k) AS r, STRIP_NULL_VALUE(PARSE_JSON(a):k) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nested"
+description = "Containers holding JSON nulls, which are not themselves a JSON null. Catches: nulls stripped inside the array or object"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[null,1]'"],
+  ["'{\"a\":null}'"],
+]
+query = "SELECT STRIP_NULL_VALUE(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_variant_expr"
+description = "A SQL NULL. Catches: an error, or a JSON null returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT STRIP_NULL_VALUE(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

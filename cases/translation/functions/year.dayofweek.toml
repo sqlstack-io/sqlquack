@@ -1,0 +1,68 @@
+category = "translation"
+construct = "sf.functions.year.dayofweek"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "DAYOFWEEK of dates at year, ISO-week and leap boundaries. Catches: another week numbering (ISO 1-7 or Sunday=1) than WEEK_START 0 gives"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-12-30'"],
+  ["'2021-01-01'"],
+  ["'2023-01-01'"],
+  ["'2024-02-29'"],
+  ["'2026-12-31'"],
+]
+query = "SELECT DAYOFWEEK(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp_ntz"
+description = "DAYOFWEEK of a timestamp just before midnight on 31 December. Catches: the timestamp rounded to the next day"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-12-31 23:59:59.999'"],
+  ["'2024-03-01 00:00:00'"],
+]
+query = "SELECT DAYOFWEEK(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp_tz"
+description = "DAYOFWEEK of a TIMESTAMP_TZ whose UTC instant is in the next year. Catches: the part taken from the UTC instant instead of the wall clock"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+]
+query = "SELECT DAYOFWEEK(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date_or_timestamp_expr"
+description = "NULL next to a set date. Catches: NULL read as a default date (1970-01-01)"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-06-15'"],
+]
+query = "SELECT DAYOFWEEK(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_leap"
+description = "Days around 29 February in a leap and a common year. Catches: a fixed 365-day year or a non-leap 2024"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-03-01'"],
+  ["'2023-03-01'"],
+  ["'2000-12-31'"],
+  ["'1900-03-01'"],
+]
+query = "SELECT DAYOFWEEK(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.to-uuid"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_case"
+description = "The same UUID in upper and lower case, compared as text; the UUID data type page says UUID values are case-insensitive. Catches: the case kept as given, so the two differ"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'6BA7B810-9DAD-11D1-80B4-00C04FD430C8'"],
+  ["'6ba7b810-9dad-11d1-80b4-00c04fd430c8'"],
+]
+query = "SELECT TO_UUID(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "A string one digit short of a UUID, which Snowflake accepted and returned as text. Catches: an error raised, NULL returned, or the string padded"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'6BA7B810-9DAD-11D1-80B4-00C04FD430C'"],
+]
+query = "SELECT TO_UUID(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL, which the page says gives NULL. Catches: a nil UUID returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_UUID(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

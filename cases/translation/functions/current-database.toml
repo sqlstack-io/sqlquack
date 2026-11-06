@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.current-database"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_type"
+description = "The type of the name, and whether it is set, in a session with no database in use: the recording returned NULL (type NULL, not set). Catches: a database name returned when none is in use"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TYPEOF(CURRENT_DATABASE()::VARIANT) AS t, CURRENT_DATABASE() IS NOT NULL AS is_set FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_none"
+description = "The function takes no argument; a NULL value compared with its result gives NULL. Catches: FALSE returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'x'"],
+]
+query = "SELECT ordinal, v = CURRENT_DATABASE() AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

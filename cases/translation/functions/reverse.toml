@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.reverse"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "REVERSE of multi-byte text. Catches: byte reversal (invalid UTF-8 for \u00e9, \u20ac)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Hello, world!'"],
+  ["'h\u00e9llo\u20ac'"],
+]
+query = "SELECT REVERSE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_date"
+description = "REVERSE of a DATE, as the page shows. Catches: an error for a DATE, or another date format"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2019-05-22'"],
+]
+query = "SELECT REVERSE(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_subject"
+description = "NULL subject. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'ab'"],
+]
+query = "SELECT REVERSE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "The empty string. Catches: NULL for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT REVERSE(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

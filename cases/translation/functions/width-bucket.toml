@@ -1,0 +1,141 @@
+category = "translation"
+construct = "sf.functions.width-bucket"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_int"
+description = "WIDTH_BUCKET of integers, including below and above the range. Catches: buckets numbered from 0, or the overflow buckets 0 and n+1 missing"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["-5"],
+  ["0"],
+  ["24"],
+  ["25"],
+  ["99"],
+  ["100"],
+  ["250"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, 100, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_dec"
+description = "WIDTH_BUCKET of fixed-point values on bucket edges. Catches: edges assigned to the lower bucket"
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["12.50"],
+  ["12.49"],
+  ["37.50"],
+  ["0.00"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, 50, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_float"
+description = "WIDTH_BUCKET of FLOAT values with FLOAT end points. Catches: integer end points assumed"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.3"],
+  ["0.75"],
+  ["-0.1"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0.25::FLOAT, 1.25::FLOAT, 5) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_reversed"
+description = "End points given high to low. Catches: the end points swapped back, numbering buckets upwards"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["90"],
+  ["10"],
+  ["101"],
+  ["-1"],
+]
+query = "SELECT WIDTH_BUCKET(x, 100, 0, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_expr"
+description = "NULL value. Catches: NULL put in bucket 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, 100, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_min"
+description = "NULL low end point. Catches: NULL read as 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }]
+rows = [
+  ["50", "NULL"],
+]
+query = "SELECT WIDTH_BUCKET(x, m, 100, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_null_max"
+description = "NULL high end point. Catches: NULL read as 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "m", type = "NUMBER(38,0)" }]
+rows = [
+  ["50", "NULL"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, m, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_null_n"
+description = "NULL bucket count. Catches: NULL read as 1"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["50", "NULL"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, 100, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t009_range_edge"
+description = "Values at the documented 2^53 - 1 limit. Catches: precision loss rounding the limit into another bucket"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["9007199254740991"],
+  ["-9007199254740991"],
+  ["-3002399751580331"],
+  ["-3002399751580330"],
+]
+query = "SELECT WIDTH_BUCKET(x, -9007199254740991, 9007199254740991, 3) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t010_zero_buckets"
+description = "num_buckets 0 is an error. Catches: bucket 0 returned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+]
+query = "SELECT WIDTH_BUCKET(x, 0, 10, 0) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t011_equal_ends"
+description = "Equal end points are an error. Catches: division by zero returning NULL or infinity"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+]
+query = "SELECT WIDTH_BUCKET(x, 10, 10, 4) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

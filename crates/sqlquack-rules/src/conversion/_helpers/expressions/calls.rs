@@ -27,7 +27,7 @@ use crate::conversion::_helpers::expressions::casts::{
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
 use crate::conversion::_helpers::expressions::conditionals::{
-    decode, div0, null_if_zero, zero_if_null,
+    decode, div0, null_if_zero, nvl2, zero_if_null,
 };
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
@@ -49,9 +49,9 @@ use crate::conversion::_helpers::expressions::strings::{
     try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
-    convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
-    date_trunc, day_name, last_day, temporal_text, timestamp_from_parts_call, to_time,
-    to_timestamp, to_timestamp_tz,
+    add_months, convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call,
+    date_part, date_trunc, day_name, last_day, months_between, temporal_text,
+    timestamp_from_parts_call, to_time, to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, stripped_type_name, suffixed_column,
@@ -63,7 +63,7 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, list, node_construct, payload_object,
+    Payload, field, flag, function_construct, list, node_construct, node_kind, payload_object,
     require_understood,
 };
 use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
@@ -71,8 +71,8 @@ use crate::conversion::constants::MAX_KIND;
 use crate::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF,
-    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, SUM, SUM_FLOAT,
-    TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
+    PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, STAR_KIND, SUM,
+    SUM_FLOAT, TIMESTAMPDIFF_PAIR, TO_DATE_NAME, TRIM, TRY_PREFIX, VARIANT_MAX,
 };
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
@@ -268,6 +268,8 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
         ("DAYNAME", parts) => day_name(parts, &construct, site),
         ("LAST_DAY", parts) => last_day(parts, &construct, site),
+        ("ADD_MONTHS", parts) => add_months(parts, &construct, site),
+        ("MONTHS_BETWEEN", parts) => months_between(parts, &construct, site),
         ("DATEADD" | "TIMEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
             date_add((unit, amount, value), &construct, site)
         }
@@ -326,6 +328,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("TRY_TO_TIMESTAMP_TZ", parts) => to_timestamp_tz(parts, &construct, site),
         ("TO_TIMESTAMP_TZ" | "TO_TIMESTAMP_LTZ" | "TRY_TO_TIMESTAMP_LTZ", [value]) => {
             zoned_text_call(&name, value, &construct, site)
+        }
+        ("NVL2", [tested, when_set, otherwise]) => {
+            nvl2((tested, when_set, otherwise), &construct, site)
         }
         ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
             least_greatest(&name, parts, &construct, site)
@@ -432,6 +437,17 @@ impl AggregateCall<'_> {
     fn count(&self) -> Result<Emitted, Refusal> {
         let log = self.site.context.log;
         let _rule = log.rule(COUNT);
+        let starred = self
+            .payload
+            .get("this")
+            .and_then(node_kind)
+            .is_some_and(|(kind, _)| kind == STAR_KIND);
+        if starred || (flag(self.payload, "star") && flag(self.payload, "distinct")) {
+            return Err(outside_conditions(
+                node_construct("count"),
+                "COUNT over a qualified star or a star with EXCLUDE, ILIKE, RENAME, REPLACE or DISTINCT, which counts other rows than COUNT(*)".to_owned(),
+            ));
+        }
         let inner = match flag(self.payload, "star") {
             true => "*".to_owned(),
             false => {
@@ -488,6 +504,14 @@ impl AggregateCall<'_> {
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
         let argument = self.argument("avg")?;
+        if !self.framed
+            && flag(self.payload, "distinct")
+            && matches!(argument.data_type, SnowflakeType::Number { .. })
+        {
+            return Err(refuse(
+                "AVG(DISTINCT) of a NUMBER, which Snowflake types with 3 more decimal places, not 6, and no recording shows how it rounds".to_owned(),
+            ));
+        }
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
         let data_type = match self.framed {
             true => framed_average(argument.data_type, log),

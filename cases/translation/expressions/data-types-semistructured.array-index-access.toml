@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.expressions.data-types-semistructured.array-index-access"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_zero_based"
+description = "The page: indexes are 0-based, and arrays nest, so a[0][0] is the first element of the first element. Catches: a 1-based index, or the nested access refused"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'[[10, 11], \"b\", \"c\"]'"],
+  ["'[[0], 1, 2]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)[0] AS e0, PARSE_JSON(j)[2] AS e2, PARSE_JSON(j)[0][0] AS e00 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_past_end"
+description = "The page: accessing an element beyond the end of an array returns NULL. Catches: an error, or the last element returned"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'[1, 2, 3]'"],
+  ["'[]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)[3] AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_null"
+description = "A NULL array beside a set one; indexing NULL gives NULL. Catches: a value read from NULL, or an error"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'[5]'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)[0] AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

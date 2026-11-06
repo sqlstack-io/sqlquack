@@ -103,6 +103,9 @@ pub struct ConvertArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
+    /// Print each converted statement on one line instead of one clause per line, in `--json` too.
+    #[arg(long)]
+    pub compact: bool,
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
@@ -311,10 +314,10 @@ pub struct CensusArguments {
 /// The policy conversion relies on, and what the caller confirms about its sessions.
 #[derive(Debug, Args)]
 pub struct PolicyArguments {
-    /// The policy file whose known divergences conversion may rely on.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
-    /// Use the built-in default instead of a policy file: every known divergence is refused.
+    /// The policy file; by default `sqlquack.toml` here, or the built-in policy without one.
+    #[arg(long)]
+    pub policy: Option<PathBuf>,
+    /// Use the built-in policy even where a policy file exists: every known divergence is refused.
     #[arg(long, conflicts_with = "policy")]
     pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.
@@ -369,7 +372,7 @@ pub struct ConvertReport {
     pub converted: bool,
     /// The session profile conversion ran under.
     pub profile: String,
-    /// The DuckDB SQL, one statement after another; empty when refused.
+    /// The DuckDB SQL, one clause per line unless `--compact`; empty when refused.
     pub sql: String,
     /// Each refusal.
     pub refusals: Vec<ConvertRefusal>,

@@ -1,0 +1,121 @@
+category = "translation"
+construct = "sf.functions.array-agg.array-agg-over"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_partition"
+description = "Per-partition arrays in a fixed order. Catches: the whole input collected"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_order_ties"
+description = "ORDER BY with tied keys and no frame: with ORDER BY and no frame the page implies RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. ARRAY_SORT makes the order of the tied values irrelevant. Catches: a ROWS frame (a tied row missing from its twin's array)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT ARRAY_SORT(ARRAY_AGG(x) OVER (PARTITION BY g ORDER BY k)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_nulls_first_frame"
+description = "A NULL ordering key first and a one-row-back frame; the array follows the OVER order. Catches: NULLS FIRST ignored, or the frame reaching forward"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3", "1"],
+  ["'p'", "NULL", "4"],
+  ["'p'", "1", "10"],
+  ["'p'", "2", "6"],
+]
+query = "SELECT ARRAY_AGG(x) OVER (PARTITION BY g ORDER BY k ASC NULLS FIRST ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_order_desc"
+description = "DESC with a running ROWS frame; the array follows the OVER order. Catches: DESC ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT ARRAY_AGG(x) OVER (PARTITION BY g ORDER BY k DESC, x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_expr1"
+description = "NULL values inside a partition, which are omitted. Catches: NULL kept as an element"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1", "NULL"],
+  ["'p'", "2", "6"],
+  ["'q'", "1", "NULL"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_expr2"
+description = "NULL partition keys. Catches: NULL-keyed rows split or dropped"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1", "4"],
+  ["'p'", "1", "9"],
+  ["NULL", "2", "2"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_empty_over"
+description = "An empty OVER clause with WITHIN GROUP. Catches: a running array"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "2", "20"],
+  ["'q'", "5", "3"],
+  ["'p'", "1", "10"],
+  ["'p'", "3", "1"],
+  ["'q'", "1", "7"],
+  ["'p'", "2", "5"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) OVER () AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t008_distinct"
+description = "DISTINCT with WITHIN GROUP and no ORDER BY in OVER, on a repeated value. Catches: DISTINCT ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3"],
+  ["'p'", "3"],
+  ["'p'", "1"],
+  ["'q'", "3"],
+]
+query = "SELECT ARRAY_AGG(DISTINCT x) WITHIN GROUP (ORDER BY x) OVER (PARTITION BY g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]

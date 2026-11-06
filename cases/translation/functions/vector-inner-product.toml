@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.vector-inner-product"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin. Catches: the element-wise product summed without signs, or the cosine returned"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,3]'", "'[4,-5,6]'"],
+  ["'[1,0,0]'", "'[2,0,0]'"],
+]
+query = "SELECT ordinal, ROUND(VECTOR_INNER_PRODUCT(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(FLOAT, 3))), 3) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_int"
+description = "INT vectors. Catches: an integer result, or INT vectors rejected"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,3]'", "'[4,-5,6]'"],
+]
+query = "SELECT ROUND(VECTOR_INNER_PRODUCT(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(INT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(INT, 3))), 3) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_dimension_mismatch"
+compile_error = true
+description = "Vectors of different dimensions. Catches: the shorter vector padded"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1,2,3]'", "'[1,2]'"],
+]
+query = "SELECT VECTOR_INNER_PRODUCT(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(FLOAT, 2))) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_vector"
+description = "A NULL vector; the page does not say; the recording decides. Catches: an error, or 0 returned"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'[1,2,3]'"],
+]
+query = "SELECT VECTOR_INNER_PRODUCT(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), CAST(PARSE_JSON(b)::ARRAY AS VECTOR(FLOAT, 3))) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

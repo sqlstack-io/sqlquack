@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.try-to-decimal.try-to-number"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_scale"
+description = "A string with three fractional digits at scale 2. Catches: truncation (12.34)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'12.345'"],
+  ["'-12.345'"],
+]
+query = "SELECT TRY_TO_NUMBER(v, 10, 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t002_invalid"
+description = "Text that is not a number, and a value too wide for the precision. Catches: an error raised"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'abc'"],
+  ["'12345'"],
+]
+query = "SELECT TRY_TO_NUMBER(v, 4, 0) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_format"
+description = "A string with a currency sign and group separator parsed with a format model. Catches: the format ignored (NULL)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'$1,234.50'"],
+]
+query = "SELECT TRY_TO_NUMBER(v, '$9,999.99', 7, 2) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_string_expr"
+description = "A NULL string, which the page says gives NULL. Catches: zero returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_NUMBER(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

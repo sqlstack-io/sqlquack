@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.st-azimuth"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geography"
+description = "The page's examples: due south is pi (3.141593), and (0 1) to (1 2) is 44.978182941 degrees (44.978). Catches: the angle measured from east, or degrees returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 1)'", "'POINT(0 0)'"],
+  ["'POINT(0 1)'", "'POINT(1 2)'"],
+]
+query = "SELECT ordinal, ROUND(ST_AZIMUTH(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)), 6) AS rad, ROUND(DEGREES(ST_AZIMUTH(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w))), 3) AS deg FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geometry"
+description = "Planar azimuths: north-east is pi/4 and west is 3*pi/2. Catches: counter-clockwise angles, or negative angles for the west"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'", "'POINT(1 1)'"],
+  ["'POINT(0 0)'", "'POINT(-1 0)'"],
+]
+query = "SELECT ordinal, ROUND(ST_AZIMUTH(TO_GEOMETRY(v), TO_GEOMETRY(w)), 6) AS rad FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_not_point"
+description = "A line string as the origin, which the page says is an error. Catches: the first vertex used"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'LINESTRING(0 0,1 2,3 4)'", "'POINT(5 5)'"],
+]
+query = "SELECT ST_AZIMUTH(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_geography_expression_1"
+description = "A NULL point, which the page says gives NULL. Catches: an error, or 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_AZIMUTH(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

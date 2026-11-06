@@ -1,0 +1,64 @@
+category = "translation"
+construct = "sf.functions.exp"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "EXP of FLOAT values. Catches: LN computed, or e^x read as 10^x"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["-2"],
+  ["0.5"],
+]
+query = "SELECT EXP(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "EXP of NUMBER(12,4), converted to FLOAT. Catches: LN computed, or e^x read as 10^x; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["2.0000"],
+  ["-0.5000"],
+]
+query = "SELECT EXP(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_decfloat"
+description = "EXP of DECFLOAT, which returns DECFLOAT. The result is cast to VARCHAR because the recorder cannot decode a DECFLOAT column. Catches: a DECFLOAT argument computed and returned as FLOAT"
+columns = [{ name = "x", type = "DECFLOAT" }]
+rows = [
+  ["1"],
+  ["-2.5"],
+]
+query = "SELECT CAST(EXP(x) AS VARCHAR) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null"
+description = "EXP of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT EXP(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_overflow_inf"
+description = "Past the double range. Catches: infinity versus error"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["710"],
+  ["-746"],
+]
+query = "SELECT EXP(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "numeric_range"
+tags = ["boundary"]

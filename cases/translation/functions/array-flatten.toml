@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.array-flatten"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_one_level"
+description = "Three levels of nesting. Catches: every level flattened"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[[[1,2],[3]],[[4],[5]]]'"],
+  ["'[[],[1]]'"],
+]
+query = "SELECT ARRAY_FLATTEN(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_non_array_element"
+description = "An element that is not an array. Catches: the scalar kept as is"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[[1],2]'"],
+]
+query = "SELECT ARRAY_FLATTEN(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_array"
+description = "A NULL argument, and an array holding a SQL NULL element. Catches: the NULL element skipped instead of NULL returned"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT ARRAY_FLATTEN(ARRAY_CONSTRUCT(ARRAY_CONSTRUCT(1), IFF(x IS NULL, NULL, ARRAY_CONSTRUCT(x)))) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["null"]

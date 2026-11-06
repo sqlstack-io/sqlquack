@@ -1,0 +1,71 @@
+category = "translation"
+construct = "sf.functions.sha2.sha2"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "SHA2 with the default size, including the page's AbCd0. Catches: SHA-1, SHA-512 or upper-case hex as the default"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'AbCd0'"],
+  ["'\u00e9'"],
+]
+query = "SELECT SHA2(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_digest_size"
+description = "Each documented digest size. Catches: the size ignored or 224 read as SHA-512/224"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'"],
+]
+query = "SELECT SHA2(a, 224) AS d224, SHA2(a, 256) AS d256, SHA2(a, 384) AS d384, SHA2(a, 512) AS d512 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_msg"
+description = "NULL message. Catches: NULL hashed as an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT SHA2(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_digest_size"
+description = "NULL size. Catches: NULL read as the default 256"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+]
+query = "SELECT SHA2(a, NULL) AS r, SHA2(a, 512) AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty"
+description = "The empty string. Catches: NULL for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT SHA2(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t006_bad_size"
+description = "An undocumented digest size. Catches: a fallback to 256 instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+]
+query = "SELECT SHA2(a, 100) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

@@ -1,0 +1,54 @@
+category = "translation"
+construct = "sf.functions.hll-import.hll-import"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "A state exported to an OBJECT and imported back, as on the page. Catches: a different cardinality after the round trip"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "2"],
+  ["'p'", "2"],
+  ["'q'", "3"],
+  ["'p'", "2"],
+  ["'q'", "9"],
+  ["'p'", "4"],
+]
+query = "SELECT g, HLL_ESTIMATE(HLL_IMPORT(HLL_EXPORT(st))) AS r FROM (SELECT g, HLL_ACCUMULATE(x) AS st FROM input GROUP BY g) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_object"
+description = "An exported state written as JSON text, parsed back into an OBJECT and imported. Catches: a wrong import (another cardinality), or an OBJECT rebuilt from text rejected"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "2"],
+  ["'p'", "2"],
+  ["'q'", "3"],
+  ["'p'", "2"],
+  ["'q'", "9"],
+  ["'p'", "4"],
+]
+query = "SELECT g, HLL_ESTIMATE(HLL_IMPORT(PARSE_JSON(TO_VARCHAR(HLL_EXPORT(st))))) AS r FROM (SELECT g, HLL_ACCUMULATE(x) AS st FROM input GROUP BY g) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_obj"
+description = "NULL input. Catches: an empty state instead of NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "2"],
+  ["'p'", "2"],
+  ["'q'", "3"],
+  ["'p'", "2"],
+  ["'q'", "9"],
+  ["'p'", "4"],
+]
+query = "SELECT HLL_IMPORT(NULL) AS r"
+order = "ordered"
+tags = ["null"]

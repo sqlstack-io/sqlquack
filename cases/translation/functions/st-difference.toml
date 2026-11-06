@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.st-difference"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_overlap"
+description = "Bands over longitudes 0-2 and 1-3: the difference is half the first (0.5), and the reverse difference half the second. Catches: the symmetric difference returned (1.0), or the arguments swapped"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,2 0,2 2,0 2,0 0))'", "'POLYGON((1 0,3 0,3 2,1 2,1 0))'"],
+]
+query = "SELECT ROUND(ST_AREA(ST_DIFFERENCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w))) / ST_AREA(TO_GEOGRAPHY(v)), 2) AS r, ROUND(ST_XMIN(ST_DIFFERENCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w))), 6) AS xmin FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_covered"
+description = "A band inside another, whose empty difference the page says is NULL. Catches: an empty collection returned instead of NULL"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((1 0,2 0,2 2,1 2,1 0))'", "'POLYGON((0 0,3 0,3 2,0 2,0 0))'"],
+]
+query = "SELECT ST_DIFFERENCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_geography_expression_1"
+description = "A NULL first shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_DIFFERENCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

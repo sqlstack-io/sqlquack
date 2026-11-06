@@ -1,0 +1,116 @@
+category = "translation"
+construct = "sf.functions.rlike.rlike"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_anchored"
+description = "Patterns that match inside but not across the whole subject. Catches: an unanchored search (TRUE for abc against b) or a LIKE reading of the pattern, or anchors wrapped around an alternation without grouping ('^a|bc$')"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'b'"],
+  ["'abc'", "'a.c'"],
+  ["'abc'", "'a[b-d]+'"],
+  ["'a.c'", "'a.c'"],
+  ["'abc'", "'ab'"],
+  ["'xbc'", "'a|bc'"],
+  ["'ab'", "'a|b'"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_case"
+description = "Case-sensitive by default. Catches: case-insensitive matching (TRUE for ABC against abc)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'ABC'", "'abc'"],
+  ["'abc'", "'abc'"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_dot_newline"
+description = "A dot against a newline without the s parameter. Catches: dot matching newline by default"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'a' || CHR(10) || 'b'", "'a.b'"],
+  ["'axb'", "'a.b'"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_subject"
+description = "NULL subject. Catches: NULL read as an empty string (TRUE against .*)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'.*'"],
+  ["''", "'.*'"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_pattern"
+description = "NULL pattern. Catches: NULL read as an empty pattern"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["''", "NULL"],
+  ["'a'", "'a'"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty"
+description = "Empty subject and pattern (the page: '' becomes ^$). Catches: the empty pattern matching everything"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["''", "''"],
+  ["'a'", "''"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t007_bad_pattern"
+description = "An unbalanced bracket. Catches: FALSE or NULL instead of an error"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a['"],
+]
+query = "SELECT RLIKE(a, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t008_parameters"
+description = "The i and s parameters, and c after i. Catches: parameters ignored, or the last of conflicting parameters not winning"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'ABC'", "'abc'", "'i'"],
+  ["'a' || CHR(10) || 'b'", "'a.b'", "'s'"],
+  ["'ABC'", "'abc'", "'ic'"],
+]
+query = "SELECT RLIKE(a, p, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_null_parameters"
+description = "NULL parameters. Catches: NULL read as the default c"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }]
+rows = [
+  ["'a'", "'a'", "NULL"],
+  ["'A'", "'a'", "'i'"],
+]
+query = "SELECT RLIKE(a, p, m) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

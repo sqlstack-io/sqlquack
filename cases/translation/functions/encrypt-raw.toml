@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.encrypt-raw"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_fixed"
+description = "A fixed 16-byte key, 12-byte IV and AAD, so the ciphertext and tag are deterministic; compared as hex. Catches: the fields swapped, or the AAD left out of the tag"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT TO_VARCHAR(AS_BINARY(GET(ENCRYPT_RAW(v, k, iv, a, 'AES-GCM'), 'ciphertext')), 'HEX') AS ct, TO_VARCHAR(AS_BINARY(GET(ENCRYPT_RAW(v, k, iv, a, 'AES-GCM'), 'tag')), 'HEX') AS tag, TO_VARCHAR(AS_BINARY(GET(ENCRYPT_RAW(v, k, iv, a, 'AES-GCM'), 'iv')), 'HEX') AS iv FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default_mode"
+description = "The same call without a mode, which the page says uses AES-GCM. Catches: another default mode (a different ciphertext)"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT TO_VARCHAR(AS_BINARY(GET(ENCRYPT_RAW(v, k, iv, a), 'ciphertext')), 'HEX') = TO_VARCHAR(AS_BINARY(GET(ENCRYPT_RAW(v, k, iv, a, 'AES-GCM'), 'ciphertext')), 'HEX') AS same FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_key_length"
+description = "A 15-byte key, which fits no AES key length. Catches: the key padded or truncated"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["'48656C6C6F'", "'000102030405060708090A0B0C0D0E'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT ENCRYPT_RAW(v, k, iv, a, 'AES-GCM') AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_value_to_encrypt"
+description = "A NULL value; the page does not say; the recording decides. Catches: an encryption of empty input returned"
+columns = [{ name = "v", type = "BINARY" }, { name = "k", type = "BINARY" }, { name = "iv", type = "BINARY" }, { name = "a", type = "BINARY" }]
+rows = [
+  ["NULL", "'000102030405060708090A0B0C0D0E0F'", "'A0A1A2A3A4A5A6A7A8A9AAAB'", "'AA'"],
+]
+query = "SELECT ENCRYPT_RAW(v, k, iv, a, 'AES-GCM') IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

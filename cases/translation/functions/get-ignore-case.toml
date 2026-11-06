@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.get-ignore-case"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_case"
+description = "A key matched in another case. Catches: a case-sensitive match (NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"Ab\":1}'", "'aB'"],
+  ["'{\"x\":{\"y\":2}}'", "'X'"],
+]
+query = "SELECT GET_IGNORE_CASE(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_exact_first"
+description = "Two keys differing in case, one an exact match; the page says the first exact match is returned. Catches: the other case variant returned"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":1,\"A\":2}'", "'A'"],
+  ["'{\"a\":1,\"A\":2}'", "'a'"],
+]
+query = "SELECT GET_IGNORE_CASE(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_not_object"
+description = "A VARIANT holding an array, and a missing key; the page returns NULL for both. Catches: an error, or the array element at position 0"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'[1]'", "'a'"],
+  ["'{\"a\":1}'", "'b'"],
+]
+query = "SELECT GET_IGNORE_CASE(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_object"
+description = "A NULL object and a NULL field name; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'{\"a\":1}'", "NULL"],
+]
+query = "SELECT GET_IGNORE_CASE(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

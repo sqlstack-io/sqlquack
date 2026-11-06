@@ -1,0 +1,42 @@
+category = "translation"
+construct = "sf.functions.get-path.get-path"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_paths"
+description = "Paths with dots, indexes, a bracketed quoted key and a key with a space, and two that match nothing. Catches: a 1-based index, the bracketed key read literally, or an error for a path past a scalar"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":{\"b\":[10,20]}}'", "'a.b[1]'"],
+  ["'{\"a\":{\"b\":[10,20]}}'", "'a[\"b\"][0]'"],
+  ["'{\"x y\":{\"z\":1}}'", "'[\"x y\"].z'"],
+  ["'{\"a\":1}'", "'a.b'"],
+  ["'{\"a\":[1]}'", "'a[5]'"],
+]
+query = "SELECT GET_PATH(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_case"
+description = "A path whose field differs from the key only in case. Catches: a case-insensitive match"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["'{\"Key\":1}'", "'key'"],
+  ["'{\"Key\":1}'", "'Key'"],
+]
+query = "SELECT GET_PATH(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_column_identifier"
+description = "A NULL value and a NULL path; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'{\"a\":1}'", "NULL"],
+]
+query = "SELECT GET_PATH(PARSE_JSON(a), k) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

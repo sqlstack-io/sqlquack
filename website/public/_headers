@@ -1,6 +1,6 @@
 # Response headers for hosts that read a _headers file, such as Cloudflare Pages and Netlify. Both
 # compress with Brotli on their own, .wasm included, so no encoding is set here. GitHub Pages, which
-# the SQLClean and SQLBuild sites use, ignores this file: it serves gzip with a 10-minute cache.
+# serves sqlquack.io, ignores this file: it serves gzip with a 10-minute cache.
 
 # Content-hashed by Astro: a changed file gets a new name.
 /_astro/*
@@ -10,9 +10,9 @@
 /playground/duckdb/*
   Cache-Control: public, max-age=31536000, immutable
 
-# The playground engine and pages keep their names across builds, so they revalidate.
+# The playground engine, in a directory named for its content hash: a new build gets a new path.
 /playground/engine/*
-  Cache-Control: public, max-age=300, must-revalidate
+  Cache-Control: public, max-age=31536000, immutable
 
 /fonts/*
   Cache-Control: public, max-age=2592000

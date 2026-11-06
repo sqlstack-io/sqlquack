@@ -21,14 +21,22 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
 ## Choosing a policy
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` from the current directory, or the
-file `--policy` names. Without one they exit 2, unless `--builtin-policy` asks for the built-in
-default, which refuses every known divergence.
+file `--policy` names. Without one they use the built-in policy, which refuses every known
+divergence; `--builtin-policy` chooses it even where a `sqlquack.toml` exists. A `--policy` file
+that does not exist, or a policy file that is not valid, is an error.
 
-Start from the repository's `sqlquack.toml`. To allow a divergence, set its `default`:
+A policy file is complete on its own: the comparator, session profiles and edge-case tables are
+required, and a divergence the file leaves out is refused. A file holding only one
+`[divergences.<id>]` table is rejected. Start from a copy of the repository's
+[`sqlquack.toml`](https://github.com/sqlstack-io/sqlquack/blob/main/sqlquack.toml) in the directory
+you run `sqlquack` from. To allow a divergence, change `default` in its existing table from
+`"refuse"` to `"warn"`:
 
 ```toml
 [divergences.hash]
+constructs = ["fn:HASH"]
 default = "warn"
+strict = "refuse"
 ```
 
 A conversion that relies on an allowed divergence names it on standard error:
@@ -42,8 +50,8 @@ sqlquack convert: done, converted under utc-v1
 
 | Flag | Effect |
 |------|--------|
-| `--policy <file>` | The policy file. Default `sqlquack.toml`. |
-| `--builtin-policy` | Use the built-in default: every known divergence is refused. |
+| `--policy <file>` | The policy file. Default `sqlquack.toml` in the current directory, or the built-in policy without one. |
+| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused. |
 | `--strict` | Refuse every divergence the policy refuses in strict mode. |
 | `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
@@ -66,5 +74,7 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 - These are accepted and ignored, because they cannot change a result: `QUERY_TAG`,
   `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
   `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
+- `DATABASE` and `SCHEMA` set the current database and schema, which complete relation names
+  written without them. See [Schema files](/docs/schema/#naming-relations-and-columns).
 - `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
   `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.

@@ -1,0 +1,53 @@
+category = "translation"
+construct = "sf.functions.check-json"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "Valid JSON documents of several kinds, including a bare string and a bare number. Catches: a bare scalar rejected (only objects and arrays accepted)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":[1,2]}'"],
+  ["'\"x\"'"],
+  ["'5'"],
+  ["' [ ] '"],
+]
+query = "SELECT CHECK_JSON(a) IS NULL AS ok FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Malformed documents: a missing value, a trailing comma and an unclosed array. Catches: NULL returned for an invalid document, or an error raised instead of a message"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":}'"],
+  ["'[1,]'"],
+  ["'[1'"],
+]
+query = "SELECT CHECK_JSON(a) IS NULL AS ok FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_variant"
+description = "A VARIANT holding a string, which the page says is checked as JSON text. Catches: the VARIANT treated as already-valid JSON (NULL for the malformed text)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\":}'"],
+  ["'{\"a\":1}'"],
+]
+query = "SELECT CHECK_JSON(a::VARIANT) IS NULL AS ok FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_string_or_variant_expr"
+description = "A SQL NULL, which the page treats as valid. Catches: an error message returned for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT CHECK_JSON(a) IS NULL AS ok FROM input"
+order = "ordered"
+tags = ["null"]
