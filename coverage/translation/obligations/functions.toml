@@ -5838,6 +5838,28 @@ cases = ["cases/translation/functions/cast.double-colon.toml#t006_text_to_binary
 required = true
 
 [[obligation]]
+id = "sf.functions.cast.double-colon.t007"
+form = "sf.functions.cast.double-colon"
+kind = "type_combination"
+target = "BINARY to BINARY(n)"
+note = "A two-byte BINARY value and NULL cast with :: to BINARY(2), which it exactly fills, with the length."
+catches = ":: read differently from CAST, the bytes re-read as hex text, the length not 2, or the NULL lost"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the text data types page: BINARY(N) declares the maximum number of bytes"
+cases = ["cases/translation/functions/cast.double-colon.toml#t007_binary_to_binary_fits"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t008"
+form = "sf.functions.cast.double-colon"
+kind = "error_parity"
+target = "error"
+note = "A three-byte BINARY value cast with :: to BINARY(2); the receipt shows Snowflake raises 100145 (22000), as CAST does (cast-as t012)."
+catches = "the excess byte silently truncated instead of the error"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the text data types page: BINARY(N) declares the maximum number of bytes"
+cases = ["cases/translation/functions/cast.double-colon.toml#t008_binary_to_shorter_binary"]
+required = true
+
+[[obligation]]
 id = "sf.functions.cbrt.t001"
 form = "sf.functions.cbrt"
 kind = "type_combination"
