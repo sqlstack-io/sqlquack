@@ -3,7 +3,7 @@
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
 use crate::parse::constants::{FLOAT4_MAX_PRECISION, INTERVAL_FIELDS, SECOND_FIELD};
 use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
@@ -314,7 +314,8 @@ impl Parser<'_> {
     /// `GenericType`: `type_function_name [. ColLabel ...] [( expr_list )]`.
     pub(crate) fn generic_type(&mut self) -> Parsing<DataType> {
         let first = self.advance()?;
-        let mut parts: Vec<Identifier> = vec![crate::parse::_helpers::cursor::identifier(&first)];
+        let mut parts: Vec<Identifier> =
+            vec![crate::parse::_helpers::tree::cursor::identifier(&first)];
         while self.is_char('.') && self.peek_at(1).is_some_and(is_col_label) {
             self.at += 1;
             parts.push(self.name(is_col_label)?);

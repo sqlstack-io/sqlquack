@@ -104,8 +104,8 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
-            description: "MERGE, which the parser keeps opaque",
-            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE",
+            description: "MERGE_ACTION(), which the parser keeps opaque",
+            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE RETURNING merge_action()",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -238,6 +238,71 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             sql: "TRUNCATE t CONTINUE",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "a MERGE update when the source has no matching row",
+            sql: "MERGE INTO t USING s ON true WHEN NOT MATCHED BY SOURCE THEN UPDATE SET a = 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a MERGE insert for a matched row",
+            sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN INSERT VALUES (1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a MERGE delete when the target has no matching row",
+            sql: "MERGE INTO t USING s ON true WHEN NOT MATCHED BY TARGET THEN DELETE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SQL/JSON query options, which the parser checks and keeps opaque",
+            sql: "SELECT json_query(js, '$' RETURNING text WITH CONDITIONAL ARRAY WRAPPER KEEP QUOTES DEFAULT 1 ON EMPTY ERROR ON ERROR)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "ON ERROR before ON EMPTY in a SQL/JSON query",
+            sql: "SELECT json_query(js, '$' ERROR ON ERROR EMPTY ON EMPTY)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an operator expression before VALUE in JSON_OBJECT",
+            sql: "SELECT json_object(a || b VALUE 1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an unknown JSON encoding, refused as an invalid parameter",
+            sql: "SELECT json_object('a': 1 FORMAT JSON ENCODING latin1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a JSON_TABLE path that is not a string constant, refused as unsupported",
+            sql: "SELECT * FROM json_table(js, 1 COLUMNS (a int)) jt",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a second DEFAULT on an XMLTABLE column",
+            sql: "SELECT * FROM xmltable('/r' PASSING x COLUMNS a int DEFAULT 1 DEFAULT 2) t",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "XMLTABLE after LATERAL",
+            sql: "SELECT * FROM LATERAL xmltable('/r' PASSING x COLUMNS a int) t",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "GROUP BY DISTINCT, held as the group's quantifier",
+            sql: "SELECT a FROM t GROUP BY DISTINCT ROLLUP (a, b)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a row assigned across several UPDATE targets, split as PostgreSQL does",
+            sql: "UPDATE t SET (a, b) = ROW(1, DEFAULT), c = 3",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a sub-SELECT assigned across several UPDATE targets, kept opaque",
+            sql: "UPDATE t SET (a, b) = (SELECT 1, 2)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)
@@ -323,6 +388,12 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             sql: "COPY t (a, b) FROM STDIN",
             pointer: "/0/copy/this",
             expected_node: "schema",
+        },
+        ShapeTestCase {
+            description: "a MERGE source may be a joined table",
+            sql: "MERGE INTO t USING a JOIN b ON true ON true WHEN MATCHED THEN DELETE",
+            pointer: "/0/merge/using",
+            expected_node: "joined_table",
         },
         ShapeTestCase {
             description: "TRUNCATE keeps every relation after the first",

@@ -5,11 +5,11 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
-use crate::parse::_helpers::expressions::Flavor;
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
+use crate::parse::_helpers::tree::nodes::{
     JoinConstraint, TableAlias, join, joined_table, lateral, subquery, table,
 };
+use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::VALUE_FUNCTIONS;
 
 impl Parser<'_> {
@@ -113,6 +113,33 @@ impl Parser<'_> {
         ))
     }
 
+    /// `ROWS FROM (...)`, `XMLTABLE (...)` or `JSON_TABLE (...)` with its alias, as a gap.
+    fn gap_table(&mut self, start: usize) -> Parsing<Option<Expression>> {
+        match self.keyword_at(0) {
+            Some("rows") if self.kw_at(1, "from") && self.char_at(2, '(') => {
+                self.at += 2;
+                self.skip_parenthesized()?;
+                self.ordinality();
+                self.function_alias()?;
+                self.gap("rows_from", start);
+                Ok(Some(Expression::Table(Box::new(TableRef::new(
+                    "rows_from",
+                )))))
+            }
+            Some(word @ ("xmltable" | "json_table")) if self.char_at(1, '(') => {
+                self.at += 1;
+                match word {
+                    "xmltable" => self.xml_table()?,
+                    _ => self.json_table()?,
+                }
+                self.alias_clause(true)?;
+                self.gap(word, start);
+                Ok(Some(Expression::Table(Box::new(TableRef::new(word)))))
+            }
+            _ => Ok(None),
+        }
+    }
+
     /// `table_ref` without its joins.
     pub(crate) fn table_ref(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
@@ -122,28 +149,16 @@ impl Parser<'_> {
                 let alias: Option<TableAlias> = self.alias_clause(true)?;
                 return Ok(self.subquery_ref(query, alias, true));
             }
+            if let Some(gap) = self.gap_table(start)? {
+                return Ok(gap);
+            }
             return self.function_table(true, start);
         }
         if self.is_char('(') {
             return self.parenthesized_ref();
         }
-        match self.keyword_at(0) {
-            Some("rows") if self.kw_at(1, "from") && self.char_at(2, '(') => {
-                self.at += 2;
-                self.skip_parenthesized()?;
-                self.ordinality();
-                self.function_alias()?;
-                self.gap("rows_from", start);
-                return Ok(Expression::Table(Box::new(TableRef::new("rows_from"))));
-            }
-            Some(word @ ("xmltable" | "json_table")) if self.char_at(1, '(') => {
-                self.at += 1;
-                self.skip_parenthesized()?;
-                self.alias_clause(true)?;
-                self.gap(word, start);
-                return Ok(Expression::Table(Box::new(TableRef::new(word))));
-            }
-            _ => {}
+        if let Some(gap) = self.gap_table(start)? {
+            return Ok(gap);
         }
         if self.function_ahead() {
             return self.function_table(false, start);

@@ -9,8 +9,10 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::Lock;
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, is_bare_label, is_col_id, is_col_label};
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{
+    Parser, Parsing, is_bare_label, is_col_id, is_col_label,
+};
+use crate::parse::_helpers::tree::nodes::{
     cte, function, literal, null, set_operation, star, subquery, table, tuple, values,
 };
 use crate::parse::constants::MAX_QUALIFIED_NAME_PARTS;
@@ -167,16 +169,14 @@ impl Parser<'_> {
             });
         }
         if self.kw("group") && self.kw_at(1, "by") {
-            let start: usize = self.offset();
             self.at += 2;
-            if self.eat_kw("distinct") {
-                self.gap("group_by_distinct", start);
-            } else {
+            let distinct: bool = self.eat_kw("distinct");
+            if !distinct {
                 self.eat_kw("all");
             }
             select.group_by = Some(GroupBy {
                 expressions: self.comma_list(|parser| parser.group_item())?,
-                all: None,
+                all: distinct.then_some(false),
                 totals: false,
                 comments: Vec::new(),
             });
@@ -326,9 +326,9 @@ impl Parser<'_> {
             self.expect_kw("set")?;
             self.name(is_col_id)?;
             if self.eat_kw("to") {
-                self.c_expr(crate::parse::_helpers::expressions::Flavor::B)?;
+                self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?;
                 self.expect_kw("default")?;
-                self.c_expr(crate::parse::_helpers::expressions::Flavor::B)?;
+                self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?;
             }
             self.expect_kw("using")?;
             self.name(is_col_id)?;
@@ -584,7 +584,7 @@ impl Parser<'_> {
             _ => None,
         };
         let Some(sign) = sign else {
-            return self.c_expr(crate::parse::_helpers::expressions::Flavor::B);
+            return self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B);
         };
         self.at += 1;
         let number = self.advance()?;
@@ -594,7 +594,7 @@ impl Parser<'_> {
         }
         let value: Expression = literal(Literal::Number(number.value));
         Ok(match sign {
-            '-' => crate::parse::_helpers::expressions::binary_node(
+            '-' => crate::parse::_helpers::values::expressions::binary_node(
                 "-",
                 literal(Literal::Number("0".to_owned())),
                 value,

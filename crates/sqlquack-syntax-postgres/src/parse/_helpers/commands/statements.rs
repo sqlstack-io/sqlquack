@@ -6,10 +6,12 @@ use sqlquack_syntax::expressions::statements::models::{
     CopyParameter, CopyStmt, Schema, Truncate, TruncateIdentity, TruncateTableEntry, TruncateTarget,
 };
 
-use crate::parse::_helpers::cursor::{
+use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_col_id, is_col_label, is_non_reserved_word,
 };
-use crate::parse::_helpers::nodes::{boolean, column, command, literal, star, subquery, table};
+use crate::parse::_helpers::tree::nodes::{
+    boolean, column, command, literal, star, subquery, table,
+};
 use crate::parse::constants::{STATEMENT_STARTS, STATEMENT_STARTS_MORE};
 use crate::scan::models::TokenKind;
 

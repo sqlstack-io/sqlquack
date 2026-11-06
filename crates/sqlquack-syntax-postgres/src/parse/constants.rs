@@ -55,8 +55,8 @@ pub(crate) const EXPRESSION_KEYWORDS: [&str; 22] = [
     "operator",
 ];
 
-/// Keywords whose special call syntax (gram.y's `func_expr_common_subexpr`) is gap-only here.
-pub(crate) const GAP_CALLS: [&str; 19] = [
+/// SQL/JSON special calls (gram.y's `func_expr_common_subexpr`), checked and kept as gaps.
+pub(crate) const JSON_CALLS: [&str; 11] = [
     "json",
     "json_array",
     "json_arrayagg",
@@ -68,6 +68,13 @@ pub(crate) const GAP_CALLS: [&str; 19] = [
     "json_serialize",
     "json_value",
     "merge_action",
+];
+
+/// The SQL/JSON aggregates, which take `FILTER` and `OVER` after their arguments.
+pub(crate) const JSON_AGGREGATES: [&str; 2] = ["json_arrayagg", "json_objectagg"];
+
+/// SQL/XML special calls and `TREAT`, checked and kept as gaps.
+pub(crate) const XML_CALLS: [&str; 9] = [
     "treat",
     "xmlconcat",
     "xmlelement",
@@ -76,10 +83,8 @@ pub(crate) const GAP_CALLS: [&str; 19] = [
     "xmlparse",
     "xmlpi",
     "xmlroot",
+    "xmlserialize",
 ];
-
-/// `XMLSERIALIZE`, also gap-only; kept apart so `GAP_CALLS` stays sorted by family.
-pub(crate) const GAP_CALL_XMLSERIALIZE: &str = "xmlserialize";
 
 /// The SQL-value functions written without parentheses, and whether each takes a precision.
 pub(crate) const VALUE_FUNCTIONS: [(&str, bool); 12] = [
@@ -189,6 +194,12 @@ pub(crate) const FLOAT4_MAX_PRECISION: u32 = 24;
 pub(crate) const MAX_QUALIFIED_NAME_PARTS: usize = 3;
 /// `implicit_row`: a parenthesized list is a row only with at least this many items.
 pub(crate) const MIN_IMPLICIT_ROW_ITEMS: usize = 2;
+
+/// The function name the tree gives a `ROW (...)` constructor.
+pub(crate) const ROW_CONSTRUCTOR: &str = "ROW";
+
+/// The encodings `FORMAT JSON ENCODING` accepts, compared without case.
+pub(crate) const JSON_ENCODINGS: [&str; 3] = ["utf8", "utf16", "utf32"];
 
 /// Fields an `INTERVAL` may name, and those that may follow `TO`.
 pub(crate) const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "minute", "second"];

@@ -12,15 +12,17 @@ as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stac
 ## Gaps
 
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the
-statement's text, and `Parsed.gaps` names each construct with its byte range. The text up to the
-next top-level `;` is not checked further, so a gap statement is accepted as opaque, never as
-parsed.
+statement's text, and `Parsed.gaps` names each construct with its byte range. A gap statement is
+accepted as opaque, never as parsed. For a statement gap (its first keyword), the text up to the
+next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREAT`, `XMLTABLE` and
+`JSON_TABLE` are checked against the full grammar, including gram.y's own errors: an unknown
+`FORMAT JSON ENCODING` (22023), a non-constant `JSON_TABLE` path (0A000), and repeated or unknown
+`XMLTABLE` column options (42601).
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE` and `COPY` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE` and `COPY` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
-| `merge` | `MERGE` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
 | `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
@@ -30,15 +32,14 @@ parsed.
 | `quantified_operator` | `op ANY/ALL (…)` with an operator other than `=`, `<>`, `<`, `<=`, `>`, `>=` |
 | `order_by_using_operator` | `ORDER BY … USING op` with an operator other than `<` and `>` |
 | `setof` | `SETOF` in a type name |
-| `group_by_distinct` | `GROUP BY DISTINCT` |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
 | `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |
 | `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |
 | `tablesample` | `TABLESAMPLE method (…) [REPEATABLE (…)]` |
 | `join_using_alias`, `joined_table_column_aliases` | `USING (…) AS alias`, column aliases on a parenthesized join |
 | `returning_with` | `RETURNING WITH (OLD AS …, NEW AS …)` |
-| `overriding` | `INSERT … OVERRIDING {USER \| SYSTEM} VALUE` |
-| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` |
+| `overriding` | `OVERRIDING {USER \| SYSTEM} VALUE` in `INSERT` or a `MERGE` insert |
+| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` from anything but a row of as many items, which is split into one assignment each |
 | `where_current_of` | `WHERE CURRENT OF cursor` |
 | `index_element_collate`, `index_element_opclass` | `COLLATE` and operator classes in an `ON CONFLICT` target |
 | `delete_using_non_table` | `DELETE … USING` with a join, subquery or function |

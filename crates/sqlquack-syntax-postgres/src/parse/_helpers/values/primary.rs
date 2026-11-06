@@ -8,15 +8,17 @@ use sqlquack_syntax::expressions::operators::models::{
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
 
-use crate::parse::_helpers::cursor::{
+use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
 };
-use crate::parse::_helpers::expressions::Flavor;
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
     tuple,
 };
-use crate::parse::constants::{GAP_CALL_XMLSERIALIZE, GAP_CALLS, VALUE_FUNCTIONS};
+use crate::parse::_helpers::values::expressions::Flavor;
+use crate::parse::constants::{
+    JSON_AGGREGATES, JSON_CALLS, ROW_CONSTRUCTOR, VALUE_FUNCTIONS, XML_CALLS,
+};
 use crate::parse::constants::{MIN_IMPLICIT_ROW_ITEMS, TYPE_KEYWORDS};
 use crate::scan::models::{Token, TokenKind};
 
@@ -189,9 +191,18 @@ impl Parser<'_> {
             {
                 self.value_function(name)
             }
-            _ if call && (GAP_CALLS.contains(&name) || name == GAP_CALL_XMLSERIALIZE) => {
+            _ if call && JSON_CALLS.contains(&name) => {
                 self.at += 1;
-                self.skip_parenthesized()?;
+                self.json_call(name)?;
+                if JSON_AGGREGATES.contains(&name) {
+                    self.filter_and_window()?;
+                }
+                self.gap(name, start);
+                Ok(null())
+            }
+            _ if call && XML_CALLS.contains(&name) => {
+                self.at += 1;
+                self.xml_call(name)?;
                 self.gap(name, start);
                 Ok(null())
             }
@@ -384,7 +395,10 @@ impl Parser<'_> {
             })));
         }
         Ok(match explicit {
-            true => Expression::Function(Box::new(function(vec![Identifier::new("ROW")], items))),
+            true => Expression::Function(Box::new(function(
+                vec![Identifier::new(ROW_CONSTRUCTOR)],
+                items,
+            ))),
             false => tuple(items),
         })
     }
