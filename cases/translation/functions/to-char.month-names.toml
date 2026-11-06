@@ -45,3 +45,12 @@ rows = [["NULL"], ["'2024-03-01'"]]
 query = "SELECT TO_CHAR(d, 'MON') AS a, TO_CHAR(d, 'MMMM') AS b FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t007_names_beside_month_and_day"
+description = "MONMM and MMMMDD, a name directly before another field. Catches: the name's letters read as part of the next field"
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-09-05'"]]
+query = "SELECT TO_CHAR(d, 'MONMM') AS a, TO_CHAR(d, 'MMMMDD') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
