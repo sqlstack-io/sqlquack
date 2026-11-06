@@ -25,7 +25,10 @@ fn escape_character(raw: &RawToken) -> Result<char, Fault> {
     let mut characters = raw.token.value.chars();
     match (characters.next(), characters.next()) {
         (Some(escape), None) if !UESCAPE_FORBIDDEN.contains(escape) => Ok(escape),
-        _ => Err(Fault::syntax("invalid Unicode escape character", raw.token.start)),
+        _ => Err(Fault::syntax(
+            "invalid Unicode escape character",
+            raw.token.start,
+        )),
     }
 }
 
@@ -39,9 +42,9 @@ pub fn scan(sql: &str) -> Vec<Token> {
             tokens.push(raw.token);
             continue;
         }
-        let uescape: bool = raws
-            .peek()
-            .is_some_and(|next| next.token.kind != TokenKind::QuotedIdent && next.token.value == "uescape");
+        let uescape: bool = raws.peek().is_some_and(|next| {
+            next.token.kind != TokenKind::QuotedIdent && next.token.value == "uescape"
+        });
         let escape: Result<char, Fault> = match uescape {
             false => Ok('\\'),
             true => {

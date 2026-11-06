@@ -13,6 +13,7 @@ members = [
     "crates/sqlquack",
     "crates/sqlquack-polyglot-check",
     "crates/sqlquack-syntax-coverage",
+    "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]

@@ -103,7 +103,10 @@ impl<'sql> Scanner<'sql> {
             if is_space(byte) {
                 self.at += 1;
             } else if byte == b'-' && self.byte(1) == Some(b'-') {
-                while self.byte(0).is_some_and(|byte| byte != b'\n' && byte != b'\r') {
+                while self
+                    .byte(0)
+                    .is_some_and(|byte| byte != b'\n' && byte != b'\r')
+                {
                     self.at += 1;
                 }
             } else if byte == b'/' && self.byte(1) == Some(b'*') {
@@ -158,11 +161,12 @@ impl<'sql> Scanner<'sql> {
             self.at += 1;
             return self.quoted_string(start, TokenKind::String);
         }
-        if (first == b'u' || first == b'U') && second == Some(b'&') {
-            if let Some(quote @ (b'\'' | b'"')) = self.byte(2) {
-                self.at += 2;
-                return self.unicode_token(start, quote);
-            }
+        if (first == b'u' || first == b'U')
+            && second == Some(b'&')
+            && let Some(quote @ (b'\'' | b'"')) = self.byte(2)
+        {
+            self.at += 2;
+            return self.unicode_token(start, quote);
         }
         match first {
             b'\'' => self.quoted_string(start, TokenKind::String),
@@ -240,7 +244,11 @@ impl<'sql> Scanner<'sql> {
                 }
                 Some(&byte) if is_space(byte) => at += 1,
                 Some(b'-') if newline && self.bytes.get(at + 1) == Some(&b'-') => {
-                    while self.bytes.get(at).is_some_and(|&byte| byte != b'\n' && byte != b'\r') {
+                    while self
+                        .bytes
+                        .get(at)
+                        .is_some_and(|&byte| byte != b'\n' && byte != b'\r')
+                    {
                         at += 1;
                     }
                 }
@@ -291,7 +299,11 @@ impl<'sql> Scanner<'sql> {
             return self.parameter(start);
         }
         let mut tag_end: usize = self.at + 1;
-        if self.bytes.get(tag_end).is_some_and(|&byte| ident_start(byte)) {
+        if self
+            .bytes
+            .get(tag_end)
+            .is_some_and(|&byte| ident_start(byte))
+        {
             tag_end += 1;
             while self
                 .bytes
@@ -441,10 +453,7 @@ impl<'sql> Scanner<'sql> {
 }
 
 /// Decodes a U& token's body with its escape character, after the filter has read any UESCAPE.
-pub(crate) fn decode_unicode_token(
-    raw: RawToken,
-    escape: char,
-) -> Result<Token, Fault> {
+pub(crate) fn decode_unicode_token(raw: RawToken, escape: char) -> Result<Token, Fault> {
     let body: String = raw.unicode.unwrap_or_default();
     let mut token: Token = raw.token;
     token.value = decode_unicode(&body, escape, token.start)?;

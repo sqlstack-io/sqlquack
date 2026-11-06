@@ -8,8 +8,25 @@ use crate::scan::models::TokenKind;
 
 /// Keywords that begin a `ConstTypename` or `ConstInterval`, and so a typed literal.
 pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
-    "bigint", "bit", "boolean", "char", "character", "dec", "decimal", "double", "float", "int",
-    "integer", "interval", "json", "national", "nchar", "numeric", "real", "smallint", "time",
+    "bigint",
+    "bit",
+    "boolean",
+    "char",
+    "character",
+    "dec",
+    "decimal",
+    "double",
+    "float",
+    "int",
+    "integer",
+    "interval",
+    "json",
+    "national",
+    "nchar",
+    "numeric",
+    "real",
+    "smallint",
+    "time",
     "timestamp",
 ];
 
@@ -66,8 +83,16 @@ impl Parser<'_> {
         }
         let mut data_type: DataType = self.simple_typename()?;
         if self.eat_kw("array") {
-            let dimension: Option<u32> = match self.is_char('[') {
-                true => self.array_bound()?,
+            let dimension: Option<u32> = match self.eat_char('[') {
+                true => {
+                    let bound = self.advance()?;
+                    if bound.kind != TokenKind::Integer {
+                        self.at -= 1;
+                        return Err(self.error());
+                    }
+                    self.expect_char(']')?;
+                    integer(&bound.value)
+                }
                 false => None,
             };
             return Ok(DataType::Array {
@@ -120,16 +145,14 @@ impl Parser<'_> {
             values
                 .iter()
                 .map(|value| match value {
-                    sqlquack_syntax::Expression::Literal(literal) => {
-                        integer(literal.value_str())
-                    }
+                    sqlquack_syntax::Expression::Literal(literal) => integer(literal.value_str()),
                     _ => None,
                 })
                 .collect(),
         ))
     }
 
-    fn simple_typename(&mut self) -> Parsing<DataType> {
+    pub(crate) fn simple_typename(&mut self) -> Parsing<DataType> {
         let Some(token) = self.peek().cloned() else {
             return Err(self.error());
         };
@@ -198,7 +221,9 @@ impl Parser<'_> {
             Some("bit") => {
                 self.at += 1;
                 let varying: bool = self.eat_kw("varying");
-                let length: Option<u32> = self.modifiers()?.and_then(|values| values.first().copied().flatten());
+                let length: Option<u32> = self
+                    .modifiers()?
+                    .and_then(|values| values.first().copied().flatten());
                 Ok(match varying {
                     true => DataType::VarBit { length },
                     false => DataType::Bit { length },
@@ -307,7 +332,7 @@ impl Parser<'_> {
     }
 
     /// `GenericType`: `type_function_name [. ColLabel ...] [( expr_list )]`.
-    fn generic_type(&mut self) -> Parsing<DataType> {
+    pub(crate) fn generic_type(&mut self) -> Parsing<DataType> {
         let first = self.advance()?;
         let mut parts: Vec<Identifier> = vec![crate::parse::_helpers::cursor::identifier(&first)];
         while self.is_char('.') && self.peek_at(1).is_some_and(is_col_label) {
@@ -316,7 +341,11 @@ impl Parser<'_> {
         }
         let start: usize = self.offset();
         let modifiers = self.modifiers()?;
-        let end: usize = self.at.checked_sub(1).and_then(|last| self.tokens.get(last)).map_or(start, |token| token.end);
+        let end: usize = self
+            .at
+            .checked_sub(1)
+            .and_then(|last| self.tokens.get(last))
+            .map_or(start, |token| token.end);
         let plain: bool = parts.len() == 1 && !parts[0].quoted && modifiers.is_none();
         if let Some(known) = plain.then(|| generic(&parts[0].name)).flatten() {
             return Ok(known);

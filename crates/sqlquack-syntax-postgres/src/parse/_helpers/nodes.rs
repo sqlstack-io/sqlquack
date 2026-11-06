@@ -1,7 +1,10 @@
 //! Shared-tree nodes with every field set, so the grammar code names only what it parsed.
 
+use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::functions::models::{AggregateFunction, Function, WindowFunction};
+use sqlquack_syntax::expressions::functions::models::{
+    AggregateFunction, Function, WindowFunction,
+};
 use sqlquack_syntax::expressions::names::models::{
     BooleanLiteral, Column, Identifier, Literal, Null, Star, TableRef,
 };
@@ -15,7 +18,6 @@ use sqlquack_syntax::expressions::queries::models::{
 use sqlquack_syntax::expressions::statements::models::{Command, Delete, Insert, Paren, Update};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
-use sqlquack_syntax::DataType;
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
     Expression::Column(Box::new(Column {
@@ -277,7 +279,11 @@ pub(crate) fn subquery(
     }))
 }
 
-pub(crate) fn lateral(this: Expression, alias: Option<Identifier>, columns: Vec<Identifier>) -> Expression {
+pub(crate) fn lateral(
+    this: Expression,
+    alias: Option<Identifier>,
+    columns: Vec<Identifier>,
+) -> Expression {
     Expression::Lateral(Box::new(Lateral {
         this: Box::new(this),
         view: None,
@@ -319,7 +325,11 @@ pub(crate) fn join(
     }
 }
 
-pub(crate) fn joined_table(left: Expression, joins: Vec<Join>, alias: Option<Identifier>) -> Expression {
+pub(crate) fn joined_table(
+    left: Expression,
+    joins: Vec<Join>,
+    alias: Option<Identifier>,
+) -> Expression {
     Expression::JoinedTable(Box::new(JoinedTable {
         left,
         joins,
@@ -329,7 +339,13 @@ pub(crate) fn joined_table(left: Expression, joins: Vec<Join>, alias: Option<Ide
 }
 
 /// UNION, INTERSECT or EXCEPT of `left` and `right`.
-pub(crate) fn set_operation(operator: &str, left: Expression, right: Expression, all: bool, distinct: bool) -> Expression {
+pub(crate) fn set_operation(
+    operator: &str,
+    left: Expression,
+    right: Expression,
+    all: bool,
+    distinct: bool,
+) -> Expression {
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
@@ -363,13 +379,21 @@ pub(crate) fn set_operation(operator: &str, left: Expression, right: Expression,
 
 pub(crate) fn values(rows: Vec<Vec<Expression>>) -> Expression {
     Expression::Values(Box::new(Values {
-        expressions: rows.into_iter().map(|expressions| Tuple { expressions }).collect(),
+        expressions: rows
+            .into_iter()
+            .map(|expressions| Tuple { expressions })
+            .collect(),
         alias: None,
         column_aliases: Vec::new(),
     }))
 }
 
-pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression, materialized: Option<bool>) -> Cte {
+pub(crate) fn cte(
+    alias: Identifier,
+    columns: Vec<Identifier>,
+    this: Expression,
+    materialized: Option<bool>,
+) -> Cte {
     Cte {
         alias,
         this,

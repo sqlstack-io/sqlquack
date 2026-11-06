@@ -3,6 +3,7 @@
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::models::KeywordCategory;
+use crate::parse::constants::{EXPRESSION_KEYWORDS, QUERY_STARTS};
 use crate::parse::models::{Gap, ParseError};
 use crate::scan::models::{Token, TokenKind};
 
@@ -61,11 +62,6 @@ pub(crate) fn is_bare_label(token: &Token) -> bool {
     plain(token) || matches!(token.kind, TokenKind::Keyword(keyword) if keyword.bare_label)
 }
 
-/// `NonReservedWord`: an identifier or any keyword that is not reserved.
-pub(crate) fn is_non_reserved(token: &Token) -> bool {
-    plain(token) || matches!(category(token), Some(category) if category != KeywordCategory::Reserved)
-}
-
 /// A name token as an identifier; quoted names keep their case, others are already folded.
 pub(crate) fn identifier(token: &Token) -> Identifier {
     match token.kind {
@@ -96,13 +92,99 @@ impl<'sql> Parser<'sql> {
 
     /// Whether the token `offset` ahead is the keyword `name`.
     pub(crate) fn kw_at(&self, offset: usize, name: &str) -> bool {
-        self.peek_at(offset).is_some_and(|token| {
-            matches!(token.kind, TokenKind::Keyword(keyword) if keyword.name == name)
-        })
+        self.peek_at(offset).is_some_and(
+            |token| matches!(token.kind, TokenKind::Keyword(keyword) if keyword.name == name),
+        )
     }
 
     pub(crate) fn kw(&self, name: &str) -> bool {
         self.kw_at(0, name)
+    }
+
+    /// The keyword `offset` tokens ahead, if that token is one.
+    pub(crate) fn keyword_at(&self, offset: usize) -> Option<&'static str> {
+        match self.peek_at(offset)?.kind {
+            TokenKind::Keyword(keyword) => Some(keyword.name),
+            _ => None,
+        }
+    }
+
+    /// Whether the token `offset` ahead is a string constant (`Sconst`): plain, `E''` or dollar.
+    pub(crate) fn sconst_at(&self, offset: usize) -> bool {
+        self.peek_at(offset).is_some_and(|token| {
+            matches!(
+                token.kind,
+                TokenKind::String | TokenKind::EscapeString | TokenKind::DollarString
+            )
+        })
+    }
+
+    /// Whether the token `offset` ahead can begin an `a_expr`.
+    pub(crate) fn starts_expression_at(&self, offset: usize) -> bool {
+        let Some(token) = self.peek_at(offset) else {
+            return false;
+        };
+        match token.kind {
+            TokenKind::Keyword(keyword) => {
+                keyword.category != KeywordCategory::Reserved
+                    || EXPRESSION_KEYWORDS.contains(&keyword.name)
+            }
+            TokenKind::Char(character) => "(+-".contains(character),
+            TokenKind::Fault(_)
+            | TokenKind::Typecast
+            | TokenKind::DotDot
+            | TokenKind::ColonEquals
+            | TokenKind::EqualsGreater
+            | TokenKind::LessEquals
+            | TokenKind::GreaterEquals
+            | TokenKind::NotEquals => false,
+            _ => true,
+        }
+    }
+
+    /// Whether `(`s from `offset` on lead to a word that starts a query.
+    pub(crate) fn starts_query_at(&self, offset: usize) -> bool {
+        let mut offset: usize = offset;
+        while self.char_at(offset, '(') {
+            offset += 1;
+        }
+        self.keyword_at(offset)
+            .is_some_and(|name| QUERY_STARTS.contains(&name))
+    }
+
+    /// The index of the `)` closing the `(` at token index `open`, if it is closed.
+    pub(crate) fn closing(&self, open: usize) -> Option<usize> {
+        let mut depth: usize = 0;
+        for (index, token) in self.tokens.iter().enumerate().skip(open) {
+            match token.kind {
+                TokenKind::Char('(') | TokenKind::Char('[') => depth += 1,
+                TokenKind::Char(')') | TokenKind::Char(']') => {
+                    depth = depth.checked_sub(1)?;
+                    if depth == 0 {
+                        return Some(index);
+                    }
+                }
+                _ => {}
+            }
+        }
+        None
+    }
+
+    /// Skips a balanced `( ... )`, for a construct recorded as a gap.
+    pub(crate) fn skip_parenthesized(&mut self) -> Parsing<()> {
+        if !self.is_char('(') {
+            return Err(self.error());
+        }
+        match self.closing(self.at) {
+            Some(close) => {
+                self.at = close + 1;
+                Ok(())
+            }
+            None => {
+                self.at = self.tokens.len();
+                Err(self.error())
+            }
+        }
     }
 
     pub(crate) fn char_at(&self, offset: usize, character: char) -> bool {
@@ -143,12 +225,6 @@ impl<'sql> Parser<'sql> {
 
     pub(crate) fn eat_char(&mut self, character: char) -> bool {
         let found: bool = self.is_char(character);
-        self.at += usize::from(found);
-        found
-    }
-
-    pub(crate) fn eat_kind(&mut self, kind: TokenKind) -> bool {
-        let found: bool = self.is_kind(kind);
         self.at += usize::from(found);
         found
     }

@@ -9,9 +9,7 @@ const SECOND_SURROGATE: std::ops::RangeInclusive<u32> = 0xDC00..=0xDFFF;
 pub(crate) fn quoted_end(bytes: &[u8], open: usize, quote: u8, escapes: bool) -> Option<usize> {
     let mut at: usize = open + 1;
     while let Some(&byte) = bytes.get(at) {
-        if escapes && byte == b'\\' {
-            at += 2;
-        } else if byte == quote && bytes.get(at + 1) == Some(&quote) {
+        if (escapes && byte == b'\\') || (byte == quote && bytes.get(at + 1) == Some(&quote)) {
             at += 2;
         } else if byte == quote {
             return Some(at + 1);
@@ -95,7 +93,10 @@ pub(crate) fn decode_escape_string(body: &str, offset: usize) -> Result<String, 
                             }
                         };
                         if !SECOND_SURROGATE.contains(&second) {
-                            return Err(Fault::syntax("invalid Unicode surrogate pair", offset + at));
+                            return Err(Fault::syntax(
+                                "invalid Unicode surrogate pair",
+                                offset + at,
+                            ));
                         }
                         at += length;
                         surrogate_pair(value, second)
@@ -111,7 +112,8 @@ pub(crate) fn decode_escape_string(body: &str, offset: usize) -> Result<String, 
                     .take(3)
                     .take_while(|byte| (b'0'..=b'7').contains(byte))
                     .count();
-                let value: u32 = u32::from_str_radix(&body[at + 1..at + 1 + digits], 8).unwrap_or(0);
+                let value: u32 =
+                    u32::from_str_radix(&body[at + 1..at + 1 + digits], 8).unwrap_or(0);
                 bytes.push((value & 0xFF) as u8);
                 at += 1 + digits;
             }
@@ -168,7 +170,11 @@ pub(crate) fn decode_unicode(body: &str, escape: char, position: usize) -> Resul
             continue;
         } else if let Some(value) = after.get(..4).and_then(hex_value) {
             (value, 4)
-        } else if let Some(value) = after.strip_prefix('+').and_then(|six| six.get(..6)).and_then(hex_value) {
+        } else if let Some(value) = after
+            .strip_prefix('+')
+            .and_then(|six| six.get(..6))
+            .and_then(hex_value)
+        {
             (value, 7)
         } else {
             return Err(invalid());
