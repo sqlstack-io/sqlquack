@@ -1250,7 +1250,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: AVERAGE,
         constructs: &["fn:AVG"],
-        conditions: "A NUMBER of scale at most 6 and precision at most 26. AVG(DISTINCT) of a NUMBER only over a window, since Snowflake types the aggregate with 3 more decimal places and no recording shows how it rounds.",
+        conditions: "A NUMBER of scale at most 6 and precision at most 26. AVG(DISTINCT) of a NUMBER is refused, since Snowflake types it with 3 more decimal places and no recording shows how it rounds.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
