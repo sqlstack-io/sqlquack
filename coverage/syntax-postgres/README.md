@@ -151,8 +151,8 @@ receipt's later stage, and an observed case its receipt's outcome.
 
 `baseline.json` is the first claims snapshot (`syntax-coverage snapshot --root
 coverage/syntax-postgres`), bound to catalogue commit 19aa1f28 and to the Postgres parser's tree
-on `wip/pg-local-parser` 28550cb9, where `local_parser = "postgres"` runs that parser in the
-checker's isolated worker. It claims 8,119 of 22,217 obligations and no verified form: nothing is
+on `wip/pg-local-parser` a97e2e75 (tree 6ba0c304), where `local_parser = "postgres"` runs that
+parser's strict entry point in the checker's isolated worker: any parser error rejects the case. It claims 8,119 of 22,217 obligations and no verified form: nothing is
 reviewed yet, and a statement the parser keeps as an opaque command is never verified. It holds
 the 5,372 cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
 coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
