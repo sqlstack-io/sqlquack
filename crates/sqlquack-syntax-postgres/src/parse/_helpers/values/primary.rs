@@ -165,16 +165,9 @@ impl Parser<'_> {
                     && self.char_at(3, ')')
                     && self.sconst_at(4) =>
             {
-                self.at += 4;
+                let to: DataType = self.simple_typename()?;
                 let value: Expression = self.sconst()?;
-                Ok(cast(
-                    value,
-                    DataType::Interval {
-                        unit: None,
-                        to: None,
-                    },
-                    false,
-                ))
+                Ok(cast(value, to, false))
             }
             "collation" if self.kw_at(1, "for") => {
                 self.at += 2;

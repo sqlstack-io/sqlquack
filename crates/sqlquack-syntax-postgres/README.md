@@ -27,9 +27,6 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
 | `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
 | `is_json`, `is_document`, `is_normalized` | `IS [NOT] JSON …`, `IS [NOT] DOCUMENT`, `IS [NOT] [form] NORMALIZED` |
-| `at_local` | `AT LOCAL` |
-| `prefix_operator` | a prefix operator other than `-`, `+`, `NOT` and `~`, such as `\|/ x` or `@ x` |
-| `quantified_operator` | `op ANY/ALL (…)` with an operator other than `=`, `<>`, `<`, `<=`, `>`, `>=` |
 | `setof` | `SETOF` in a type name |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
 | `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |

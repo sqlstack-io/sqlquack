@@ -1,12 +1,12 @@
 //! `Typename` (gram.y): the SQL-standard type spellings and generic names, with array bounds.
 
 use sqlquack_syntax::DataType;
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
 use crate::parse::constants::{
-    CATALOGUE_SCHEMA, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION, INTERVAL_FIELDS, NUMERIC_TYPE,
-    SECOND_FIELD,
+    BIT_TYPE, CATALOGUE_SCHEMA, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION, INTERVAL_FIELDS,
+    INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, VARBIT_TYPE,
 };
 use crate::parse::errors::ParseError;
 use crate::scan::constants::DECIMAL_RADIX;
@@ -53,7 +53,8 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
         ("bpchar", Some(length)) => DataType::Char {
             length: Some(length),
         },
-        ("varbit", length) => DataType::VarBit { length },
+        (VARBIT_TYPE, length) => DataType::VarBit { length },
+        (BIT_TYPE, length) => DataType::Bit { length },
         ("timestamp", precision) => DataType::Timestamp {
             precision,
             timezone: false,
@@ -150,7 +151,10 @@ impl Parser<'_> {
             values
                 .iter()
                 .map(|value| match value {
-                    sqlquack_syntax::Expression::Literal(literal) => integer(literal.value_str()),
+                    sqlquack_syntax::Expression::Literal(literal) => match &**literal {
+                        Literal::Number(text) => integer(text),
+                        _ => None,
+                    },
                     _ => None,
                 })
                 .collect(),
@@ -228,11 +232,7 @@ impl Parser<'_> {
             }
             Some("decimal" | "dec" | "numeric") => {
                 self.at += 1;
-                let modifiers: Vec<Option<u32>> = self.modifiers()?.unwrap_or_default();
-                Ok(DataType::Decimal {
-                    precision: modifiers.first().copied().flatten(),
-                    scale: modifiers.get(1).copied().flatten(),
-                })
+                self.modified_type(NUMERIC_TYPE)
             }
             Some("boolean") => {
                 self.at += 1;
@@ -240,14 +240,11 @@ impl Parser<'_> {
             }
             Some("bit") => {
                 self.at += 1;
-                let varying: bool = self.eat_kw("varying");
-                let length: Option<u32> = self
-                    .modifiers()?
-                    .and_then(|values| values.first().copied().flatten());
-                Ok(match varying {
-                    true => DataType::VarBit { length },
-                    false => DataType::Bit { length },
-                })
+                let name: &str = match self.eat_kw("varying") {
+                    true => VARBIT_TYPE,
+                    false => BIT_TYPE,
+                };
+                self.modified_type(name)
             }
             Some("character" | "char" | "varchar" | "national" | "nchar") => self.character(),
             Some("timestamp" | "time") => {
@@ -267,11 +264,9 @@ impl Parser<'_> {
             }
             Some("interval") => {
                 self.at += 1;
-                if self.is_char('(') {
-                    self.precision()?;
-                    return Ok(DataType::Interval {
-                        unit: None,
-                        to: None,
+                if let Some(precision) = self.precision()? {
+                    return Ok(DataType::Custom {
+                        name: format!("{INTERVAL_TYPE}({precision})"),
                     });
                 }
                 self.interval_fields()
@@ -327,7 +322,10 @@ impl Parser<'_> {
         };
         self.at += 1;
         if *unit == SECOND_FIELD {
-            self.precision()?;
+            return Ok(DataType::Interval {
+                unit: Some(self.field_text(unit)?),
+                to: None,
+            });
         }
         if !self.eat_kw("to") {
             return Ok(DataType::Interval {
@@ -346,12 +344,36 @@ impl Parser<'_> {
             return Err(self.error());
         };
         self.at += 1;
-        if *to == SECOND_FIELD {
-            self.precision()?;
-        }
         Ok(DataType::Interval {
             unit: Some(unit.to_uppercase()),
-            to: Some(to.to_uppercase()),
+            to: Some(self.field_text(to)?),
+        })
+    }
+
+    /// An interval field's text, with the precision `SECOND (n)` takes.
+    fn field_text(&mut self, field: &str) -> Parsing<String> {
+        let precision: Option<u32> = match field == SECOND_FIELD {
+            true => self.precision()?,
+            false => None,
+        };
+        Ok(match precision {
+            Some(precision) => format!("{}({precision})", field.to_uppercase()),
+            None => field.to_uppercase(),
+        })
+    }
+
+    /// Catalogue type `name` with `[( expr_list )]`: its shared type, else a name keeping the modifiers.
+    fn modified_type(&mut self, name: &str) -> Parsing<DataType> {
+        let start: usize = self.offset();
+        let modifiers: Option<Vec<Option<u32>>> = self.modifiers()?;
+        let integers: Option<Vec<u32>> =
+            modifiers.clone().unwrap_or_default().into_iter().collect();
+        if let Some(known) = integers.and_then(|integers| builtin(name, &integers)) {
+            return Ok(known);
+        }
+        let end: usize = self.tokens[self.at - 1].end;
+        Ok(DataType::Custom {
+            name: format!("{name}{}", &self.sql[start..end]),
         })
     }
 
