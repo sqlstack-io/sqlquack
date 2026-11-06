@@ -128,7 +128,9 @@ impl Parser<'_> {
     /// Operators binding at `min` or tighter; a non-associative level repeated is a syntax error.
     pub(crate) fn climb(&mut self, min: u8, flavor: Flavor) -> Parsing<Expression> {
         self.deeper(|parser| {
-            let mut left: Expression = parser.prefix(flavor)?;
+            let first: usize = parser.at;
+            let operand: Expression = parser.prefix(flavor)?;
+            let mut left: Expression = parser.spanned(first, operand);
             let mut pending: Option<u8> = None;
             while let Some(level) = parser.infix_level(flavor) {
                 if level < min {
@@ -138,7 +140,7 @@ impl Parser<'_> {
                     return Err(parser.error());
                 }
                 let (node, nonassociative) = parser.infix(left, level, flavor)?;
-                left = node;
+                left = parser.spanned(first, node);
                 pending = nonassociative.then_some(level);
             }
             Ok(left)

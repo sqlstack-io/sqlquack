@@ -1,5 +1,7 @@
 //! The scanner: scan.l's rules, longest match first, over the input's bytes.
 
+use sqlquack_syntax::tokens::models::Span;
+
 use crate::keywords::main::keyword::keyword;
 use crate::scan::_helpers::strings::{decode_escape_string, decode_unicode, quoted_end};
 use crate::scan::constants::{
@@ -79,6 +81,7 @@ impl<'sql> Scanner<'sql> {
                 value,
                 start,
                 end: self.at,
+                span: Span::default(),
             },
             unicode: None,
         }

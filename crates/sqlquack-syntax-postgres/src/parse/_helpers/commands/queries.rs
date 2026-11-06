@@ -73,17 +73,20 @@ impl Parser<'_> {
     /// `SelectStmt`: `[WITH ...] select_clause [ORDER BY] [LIMIT|OFFSET|FETCH] [FOR ...]`.
     pub(crate) fn query(&mut self) -> Parsing<Expression> {
         self.deeper(|parser| {
+            let first: usize = parser.at;
             let with: Option<With> = match parser.kw("with") {
                 true => Some(parser.with_clause()?),
                 false => None,
             };
             let body: Expression = parser.set_expression(0)?;
-            parser.select_options(body, with)
+            let query: Expression = parser.select_options(body, with)?;
+            Ok(parser.respanned(first, query))
         })
     }
 
     /// `select_clause` with `UNION`/`EXCEPT` (left, lowest) and `INTERSECT` (left, tighter).
     pub(crate) fn set_expression(&mut self, min: u8) -> Parsing<Expression> {
+        let first: usize = self.at;
         let mut left: Expression = self.select_primary()?;
         loop {
             let operator: &'static str = match self.keyword_at(0) {
@@ -101,7 +104,7 @@ impl Parser<'_> {
             let all: bool = self.eat_kw("all");
             let distinct: bool = !all && self.eat_kw("distinct");
             let right: Expression = self.deeper(|parser| parser.set_expression(level + 1))?;
-            left = set_operation(operator, left, right, (all, distinct));
+            left = self.spanned(first, set_operation(operator, left, right, (all, distinct)));
         }
     }
 
@@ -141,6 +144,7 @@ impl Parser<'_> {
 
     /// `simple_select`'s `SELECT` form, from its target list to its `WINDOW` clause.
     fn simple_select(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         self.expect_kw("select")?;
         let mut select: Select = Select::new();
         let distinct: bool = self.eat_kw("distinct");
@@ -197,14 +201,15 @@ impl Parser<'_> {
                 })
             })?);
         }
-        Ok(Expression::Select(Box::new(select)))
+        Ok(self.spanned(first, Expression::Select(Box::new(select))))
     }
 
     /// `target_el`: `*`, `a_expr AS ColLabel`, `a_expr BareColLabel` or `a_expr`.
     pub(crate) fn target(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         if self.is_char('*') {
             self.at += 1;
-            return Ok(star(None));
+            return Ok(self.spanned(first, star(None)));
         }
         let this: Expression = self.a_expr()?;
         let explicit: bool = self.eat_kw("as");
@@ -215,7 +220,7 @@ impl Parser<'_> {
         };
         let mut node: Alias = Alias::new(this, alias);
         node.alias_explicit_as = explicit;
-        Ok(Expression::Alias(Box::new(node)))
+        Ok(self.spanned(first, Expression::Alias(Box::new(node))))
     }
 
     /// `OptTempTableName`: the table `SELECT ... INTO` creates.
@@ -280,7 +285,12 @@ impl Parser<'_> {
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         self.expect_kw("with")?;
         let recursive: bool = self.eat_kw("recursive");
-        let ctes: Vec<Cte> = self.comma_list(|parser| parser.common_table_expression())?;
+        let ctes: Vec<Cte> = self.comma_list(|parser| {
+            let first: usize = parser.at;
+            let mut node: Cte = parser.common_table_expression()?;
+            node.span = parser.source_range(first);
+            Ok(node)
+        })?;
         Ok(With {
             ctes,
             recursive,

@@ -1,5 +1,8 @@
 //! `scan`: the tokens the grammar reads, ending in a fault token where scanning stopped.
 
+use sqlquack_syntax::tokens::models::Span;
+
+use crate::scan::_helpers::locations::locate;
 use crate::scan::_helpers::scanner::{Fault, RawToken, Scanner, decode_unicode_token};
 use crate::scan::constants::{UESCAPE, UESCAPE_FORBIDDEN};
 use crate::scan::models::{Token, TokenKind};
@@ -10,6 +13,7 @@ fn fault_token(fault: Fault) -> Token {
         value: fault.message,
         start: fault.position,
         end: fault.position,
+        span: Span::default(),
     }
 }
 
@@ -34,7 +38,7 @@ fn escape_character(raw: &RawToken) -> Result<char, Fault> {
 
 /// Every token of `sql`; a lexical fault ends the list as a `Fault` token the parser reaches in turn.
 pub fn scan(sql: &str) -> Vec<Token> {
-    let (raws, fault) = Scanner::new(sql).scan();
+    let (raws, mut fault) = Scanner::new(sql).scan();
     let mut tokens: Vec<Token> = Vec::with_capacity(raws.len() + 1);
     let mut raws = raws.into_iter().peekable();
     while let Some(raw) = raws.next() {
@@ -60,14 +64,15 @@ pub fn scan(sql: &str) -> Vec<Token> {
         };
         match escape.and_then(|escape| decode_unicode_token(raw, escape)) {
             Ok(token) => tokens.push(token),
-            Err(fault) => {
-                tokens.push(fault_token(fault));
-                return tokens;
+            Err(decoding) => {
+                fault = Some(decoding);
+                break;
             }
         }
     }
     if let Some(fault) = fault {
         tokens.push(fault_token(fault));
     }
+    locate(sql, &mut tokens);
     tokens
 }

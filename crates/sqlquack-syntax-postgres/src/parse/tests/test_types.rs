@@ -23,3 +23,11 @@ pub(crate) struct ShapeTestCase {
     pub(crate) pointer: &'static str,
     pub(crate) expected_node: &'static str,
 }
+
+/// An input whose node at `pointer` must record `expected_span`: start, end, line and column.
+pub(crate) struct SpanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_span: [usize; 4],
+}
