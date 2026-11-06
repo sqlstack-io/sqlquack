@@ -89,32 +89,13 @@ impl<'sql> Scanner<'sql> {
 
     /// The first byte before any fault that no token, space or comment covers.
     pub(crate) fn uncovered(self) -> Option<usize> {
-        let (sql, bytes) = (self.sql, self.bytes);
+        let sql: &str = self.sql;
         let (raws, fault) = self.scan();
-        let mut covered: usize = 0;
-        for raw in &raws {
-            let mut blank: Scanner<'_> = Scanner {
-                sql,
-                bytes,
-                at: covered,
-            };
-            if blank.skip_blank().is_err() || blank.at != raw.token.start {
-                return Some(covered);
-            }
-            covered = raw.token.end;
-        }
-        if fault.is_some() {
-            return None;
-        }
-        let mut blank: Scanner<'_> = Scanner {
-            sql,
-            bytes,
-            at: covered,
-        };
-        match blank.skip_blank() {
-            Ok(()) if blank.at == bytes.len() => None,
-            _ => Some(covered),
-        }
+        let ranges: Vec<(usize, usize)> = raws
+            .iter()
+            .map(|raw| (raw.token.start, raw.token.end))
+            .collect();
+        first_gap(sql, &ranges, fault.is_some())
     }
 
     /// Every token up to the end of the input or the first fault.
@@ -494,4 +475,33 @@ pub(crate) fn decode_unicode_token(raw: RawToken, escape: char) -> Result<Token,
     let mut token: Token = raw.token;
     token.value = decode_unicode(&body, escape, token.start)?;
     Ok(token)
+}
+
+/// The first byte of `sql` that neither the token `ranges`, in order, nor the space and comments between them cover; after a fault, only up to the last token.
+pub(crate) fn first_gap(sql: &str, ranges: &[(usize, usize)], faulted: bool) -> Option<usize> {
+    let bytes: &[u8] = sql.as_bytes();
+    let mut covered: usize = 0;
+    for (start, end) in ranges {
+        let mut blank: Scanner<'_> = Scanner {
+            sql,
+            bytes,
+            at: covered,
+        };
+        if blank.skip_blank().is_err() || blank.at != *start {
+            return Some(covered);
+        }
+        covered = *end;
+    }
+    if faulted {
+        return None;
+    }
+    let mut blank: Scanner<'_> = Scanner {
+        sql,
+        bytes,
+        at: covered,
+    };
+    match blank.skip_blank() {
+        Ok(()) if blank.at == bytes.len() => None,
+        _ => Some(covered),
+    }
 }
