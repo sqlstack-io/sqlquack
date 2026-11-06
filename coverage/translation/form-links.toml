@@ -272,6 +272,14 @@ constructs = ["node:match_recognize", "fn:FIRST"]
 forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
 
 [[link]]
+constructs = ["node:match_recognize", "fn:PREV"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:NEXT"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
 constructs = ["node:match_recognize", "fn:LAST"]
 forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
 
