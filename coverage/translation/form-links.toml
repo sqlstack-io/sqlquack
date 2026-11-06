@@ -655,7 +655,7 @@ forms = ["sf.expressions.bind-variables"]
 constructs = ["node:parameter", "spelling:positional_column"]
 forms = ["sf.query.select.select.selecting-specific-columns"]
 
-# Casts to DECFLOAT, IPADDRESS, PERIOD and VECTOR, ROLLUP and CUBE in GROUP BY, the COLLATE operator,
+# Casts to DECFLOAT, IPADDRESS, PERIOD and VECTOR, ROLLUP, CUBE and GROUPING SETS in GROUP BY, the COLLATE operator,
 # NTH_VALUE with its FROM and NULLS clauses, and unary plus.
 [[link]]
 constructs = ["cast:DECFLOAT"]
@@ -674,12 +674,16 @@ constructs = ["cast:VECTOR"]
 forms = ["sf.expressions.data-types-vector"]
 
 [[link]]
-constructs = ["fn:ROLLUP"]
+constructs = ["node:rollup"]
 forms = ["sf.query.group-by-rollup"]
 
 [[link]]
-constructs = ["fn:CUBE"]
+constructs = ["node:cube"]
 forms = ["sf.query.group-by-cube"]
+
+[[link]]
+constructs = ["node:grouping_sets"]
+forms = ["sf.query.group-by-grouping-sets"]
 
 [[link]]
 constructs = ["node:collation"]

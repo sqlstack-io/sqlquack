@@ -1,6 +1,5 @@
 //! Parser queries: clauses.
 
-use crate::expressions::functions::models::Function;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Null;
@@ -8,6 +7,7 @@ use crate::expressions::operators::main::maybe_rebalance_boolean_chain::maybe_re
 use crate::expressions::operators::models::Alias;
 use crate::expressions::operators::models::BinaryOp;
 use crate::expressions::operators::models::Cube;
+use crate::expressions::operators::models::GroupingSets;
 use crate::expressions::operators::models::ResultSerialization;
 use crate::expressions::operators::models::Rollup;
 use crate::expressions::operators::models::WithFill;
@@ -120,58 +120,25 @@ impl Parser {
                     self.expect_token(TokenType::LParen)?;
                     let args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "GROUPING SETS".to_string(),
-                        args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::GroupingSets(Box::new(GroupingSets {
+                        options: None,
+                        expressions: args,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "CUBE".to_string(),
-                        args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::Cube(Box::new(Cube {
+                        options: None,
+                        expressions: args,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "ROLLUP".to_string(),
-                        args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::Rollup(Box::new(Rollup {
+                        options: None,
+                        expressions: args,
                     }))
                 } else {
                     self.parse_expression()?
@@ -255,58 +222,25 @@ impl Parser {
                     self.expect_token(TokenType::LParen)?;
                     let inner_args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "GROUPING SETS".to_string(),
-                        args: inner_args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::GroupingSets(Box::new(GroupingSets {
+                        options: None,
+                        expressions: inner_args,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "CUBE".to_string(),
-                        args: inner_args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::Cube(Box::new(Cube {
+                        options: None,
+                        expressions: inner_args,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
-                    Expression::Function(Box::new(Function {
-                        on_error: None,
-                        qualified_name: Vec::new(),
-                        source_dialect: None,
-
-                        name: "ROLLUP".to_string(),
-                        args: inner_args,
-                        distinct: false,
-                        trailing_comments: Vec::new(),
-                        use_bracket_syntax: false,
-                        no_parens: false,
-                        quoted: false,
-                        span: SourceSpan::default(),
-                        inferred_type: None,
+                    Expression::Rollup(Box::new(Rollup {
+                        options: None,
+                        expressions: inner_args,
                     }))
                 } else if self.check(TokenType::LParen) {
                     self.skip();

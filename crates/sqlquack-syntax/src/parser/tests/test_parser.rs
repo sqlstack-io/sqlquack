@@ -555,6 +555,34 @@ fn given_ddl_and_pivots_when_parsing_then_each_statement_has_its_node() {
             pointer: "/0/select/group_by/expressions/2",
             expected_kind: Ok("rollup"),
         },
+        ParseKindTestCase {
+            description: "a Snowflake ROLLUP list is a rollup, not a function call",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY ROLLUP (a, b)",
+            pointer: "/0/select/group_by/expressions/0",
+            expected_kind: Ok("rollup"),
+        },
+        ParseKindTestCase {
+            description: "a Snowflake CUBE list is a cube, not a function call",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY CUBE (a, b)",
+            pointer: "/0/select/group_by/expressions/0",
+            expected_kind: Ok("cube"),
+        },
+        ParseKindTestCase {
+            description: "Snowflake GROUPING SETS are grouping sets, not a function call",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY GROUPING SETS ((a), (b), ())",
+            pointer: "/0/select/group_by/expressions/0",
+            expected_kind: Ok("grouping_sets"),
+        },
+        ParseKindTestCase {
+            description: "a ROLLUP nested in GROUPING SETS is a rollup",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b FROM t GROUP BY GROUPING SETS (ROLLUP (a, b), (b))",
+            pointer: "/0/select/group_by/expressions/0/grouping_sets/expressions/0",
+            expected_kind: Ok("rollup"),
+        },
     ];
 
     for test_case in test_cases {
@@ -1020,6 +1048,20 @@ fn given_statements_when_parsing_then_their_parts_are_kept() {
             dialect: None,
             sql: "SELECT key, value FROM T1 GROUP BY key, value WITH ROLLUP",
             pointer: "/0/select/group_by/expressions/2/rollup/expressions",
+            expected_value: Ok(json!([])),
+        },
+        ParseValueTestCase {
+            description: "a Snowflake ROLLUP keeps its keys in order",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY ROLLUP (a, b)",
+            pointer: "/0/select/group_by/expressions/0/rollup/expressions/1/column/name/name",
+            expected_value: Ok(json!("b")),
+        },
+        ParseValueTestCase {
+            description: "Snowflake GROUPING SETS keep the empty set",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT a, b, SUM(c) FROM t GROUP BY GROUPING SETS ((a), (b), ())",
+            pointer: "/0/select/group_by/expressions/0/grouping_sets/expressions/2/tuple/expressions",
             expected_value: Ok(json!([])),
         },
     ];
