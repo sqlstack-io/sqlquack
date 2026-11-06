@@ -131,6 +131,12 @@ Function parameters written `<name type>` are expressions (gram.y func_arg_expr)
 their name suggests; the catalogue cuts a signature at its return value, so a set-returning
 function's output columns are not read as call syntax.
 
+An obligation keeps its id across rebuilds. `retired.toml` lists every id that has left the
+root, grouped by the commit that retired it, with the reason; the builder reserves those numbers,
+so they are never issued again, and fails if a retired id reappears in `obligations/`. Its
+`[[reused]]` rows record the two ids that were issued again with a new meaning before retirement
+was recorded; both forms were approved with the new meaning, so those ids stay.
+
 Cases are written for every catalogued form of the families in `CASED_FAMILIES`, which now
 lists all eight; `focus/postgres.toml` set only the order in which they were taken up.
 `pending.toml` lists cases held out of the receipts because the referee cannot yet run or judge
