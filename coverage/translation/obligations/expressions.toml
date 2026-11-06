@@ -643,6 +643,182 @@ cases = ["cases/translation/expressions/data-types-vector.toml#t004_null"]
 required = true
 
 [[obligation]]
+id = "sf.expressions.identifier-literal.t001"
+form = "sf.expressions.identifier-literal"
+kind = "type_combination"
+target = "FROM IDENTIFIER('input')"
+note = "The input relation named by a string literal; whether IDENTIFIER() resolves a CTE name is the page does not say; the recording decides."
+catches = "the string read as a value, or the relation not found"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t001_from_literal"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t002"
+form = "sf.expressions.identifier-literal"
+kind = "type_combination"
+target = "IDENTIFIER('a') as a column"
+note = "A column named by a string literal in an expression; the page names objects in general, so whether a column resolves is the page does not say; the recording decides."
+catches = "the literal returned as the text 'a' instead of the column's value"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t002_column"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t003"
+form = "sf.expressions.identifier-literal"
+kind = "error_parity"
+target = "IDENTIFIER('\"input\"')"
+note = "The page: a double-quoted name in the string is case-sensitive, as in IDENTIFIER('\"my_table\"'); the unquoted relation input is stored as INPUT, so \"input\" is not found."
+catches = "the quoted name resolved case-insensitively"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t003_quoted_lowercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifier-literal.t004"
+form = "sf.expressions.identifier-literal"
+kind = "null_argument"
+target = "NULL read through IDENTIFIER('input')"
+note = "A NULL value read through the named relation."
+catches = "the NULL replaced or the row dropped"
+reading = "the IDENTIFIER() page: IDENTIFIER('<name>') names an object with a string literal; the name in the string follows the identifier rules, so an unquoted name resolves in uppercase and a double-quoted name exactly"
+cases = ["cases/translation/expressions/identifier-literal.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t001"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "\"v\" and \"V\" as two columns"
+note = "The page: \"TABLENAME\", \"tablename\", \"tableName\" and \"TableName\" are distinct, so \"v\" and \"V\" are two columns."
+catches = "the two names merged, so one value is returned twice or the names collide"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t001_case_distinct"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t002"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "blanks, a period, a doubled quote and non-ASCII letters"
+note = "The page: double-quoted identifiers may contain blanks, periods and non-ASCII characters, and two quotes stand for one, as in \"quote\"\"andunquote\"\"\"."
+catches = "the period read as a qualifier, the doubled quote kept twice, or the non-ASCII name rejected"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t002_special_characters"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t003"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "type_combination"
+target = "\"A\" for the unquoted column a"
+note = "The page: an unquoted identifier is equivalent to the capitalised double-quoted one, so \"A\" finds the column a."
+catches = "the unquoted column kept in lowercase, so \"A\" does not resolve"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t003_uppercase_equals_unquoted"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t004"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "error_parity"
+target = "\"Mixed\" for a column named \"MIXED\""
+note = "The page: a double-quoted identifier must be written exactly as created; \"Mixed\" does not find \"MIXED\"."
+catches = "the quoted name resolved case-insensitively"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t004_case_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.double-quoted-identifier.t005"
+form = "sf.expressions.identifiers-syntax.double-quoted-identifier"
+kind = "null_argument"
+target = "NULL under a quoted alias"
+note = "A NULL value under a case-sensitive alias; nothing special applies."
+catches = "the NULL replaced or the row dropped"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.double-quoted-identifier.toml#t005_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t001"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "type_combination"
+target = "unquoted MyCol resolved as \"MYCOL\""
+note = "The page: an unquoted identifier is stored and resolved in uppercase, so a column aliased MyCol is \"MYCOL\"."
+catches = "the alias kept in its written case, so \"MYCOL\" does not resolve"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t001_folds_upper"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t002"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "type_combination"
+target = "unquoted _my$col"
+note = "The page lists _my_identifier and My$identifier as valid unquoted identifiers: a leading underscore and a dollar sign inside."
+catches = "the dollar sign read as a parameter or the identifier rejected"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t002_dollar_underscore"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t003"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "error_parity"
+target = "unquoted mycol referenced as \"mycol\""
+note = "The page: unquoted names are stored in uppercase and double-quoted names resolve exactly, so \"mycol\" does not find the column MYCOL."
+catches = "the quoted name resolved case-insensitively and the column returned"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t003_quoted_lowercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.identifiers-syntax.unquoted-identifier.t004"
+form = "sf.expressions.identifiers-syntax.unquoted-identifier"
+kind = "null_argument"
+target = "NULL under an unquoted alias"
+note = "A NULL value under a folded alias; nothing special applies."
+catches = "the NULL replaced or the row dropped"
+reading = "the identifier requirements page: unquoted identifiers start with a letter or underscore, contain letters, digits, underscores and dollar signs, and are stored and resolved in uppercase; double-quoted identifiers keep their case, may contain any character, double a quote to include one, and must be written exactly as created; an unquoted name equals the uppercase double-quoted name"
+cases = ["cases/translation/expressions/identifiers-syntax.unquoted-identifier.toml#t004_null"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t001"
+form = "sf.expressions.literals-table"
+kind = "type_combination"
+target = "FROM TABLE('input')"
+note = "The input relation named by TABLE() over a string literal; whether a CTE name resolves is the page does not say; the recording decides."
+catches = "TABLE() read as a table function call, or the relation not found"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t001_from_literal"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t002"
+form = "sf.expressions.literals-table"
+kind = "type_combination"
+target = "FROM TABLE('INPUT')"
+note = "The name in the string resolves like an unquoted identifier, so INPUT finds the relation input."
+catches = "the name matched case-sensitively, so INPUT is not found"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t002_uppercase"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.literals-table.t003"
+form = "sf.expressions.literals-table"
+kind = "null_argument"
+target = "NULL read through TABLE('input')"
+note = "A NULL value read through the named relation."
+catches = "the NULL replaced or the row dropped"
+reading = "the TABLE() literal page: in a FROM clause, TABLE('<name>') is a synonym for IDENTIFIER('<name>')"
+cases = ["cases/translation/expressions/literals-table.toml#t003_null"]
+required = true
+
+[[obligation]]
 id = "sf.expressions.operators-arithmetic.add.t001"
 form = "sf.expressions.operators-arithmetic.add"
 kind = "type_combination"
@@ -1773,6 +1949,116 @@ note = "NULL as b, beside a set row; the page does not say, so the recording dec
 catches = "NULL compared as a value (FALSE or TRUE instead of NULL)"
 reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
 cases = ["cases/translation/expressions/operators-comparison.not-equal-bang.toml#t005_null_b"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t001"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** [3, 4])"
+note = "The page's example: col1 IN (** [3, 4]) keeps the rows 3 and 4."
+catches = "the array compared as one value (no row kept), or only its first element used"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t001_in_numbers"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t002"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** ['b', 'd'])"
+note = "The page's example: col2 IN (** ['b', 'd']) keeps the rows b and d."
+catches = "the strings compared with their JSON quotes, so nothing matches"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t002_in_strings"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t003"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "IN (** [1, 2], 4, 5)"
+note = "The page's example: a spread array beside plain values in one IN list keeps 1, 2, 4 and 5."
+catches = "the plain values or the spread values dropped from the list"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t003_in_mixed"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t004"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "COALESCE(** [...]) and GREATEST(** [...])"
+note = "The page's examples: COALESCE(** [NULL, NULL, 'my_string_1', 'my_string_2']) is my_string_1 and GREATEST(** [1, 2, 5, 4, 5]) is 5."
+catches = "the array passed as a single argument, so COALESCE returns the array or GREATEST compares one value"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t004_function_arguments"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t005"
+form = "sf.expressions.operators-expansion"
+kind = "type_combination"
+target = "DATE IN (** ['2024-01-02', '2024-01-04'])"
+note = "The page lists date and time values as supported in the array; date text in the array compared with a DATE column. How the VARIANT elements convert is the page does not say; the recording decides."
+catches = "the elements compared as text against the date, so nothing matches"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t005_dates"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t006"
+form = "sf.expressions.operators-expansion"
+kind = "null_argument"
+target = "NULL tested against a spread list"
+note = "A NULL value tested with NOT (a IN (** [3, 4])); the page gives no special rule, so standard NULL handling makes the test NULL and the WHERE drops the row."
+catches = "NULL read as not in the list, so the NULL row is kept"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t006_null_operand"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-expansion.t007"
+form = "sf.expressions.operators-expansion"
+kind = "error_parity"
+target = "a spread array built from a column"
+note = "The page: the input must be an array of constant values; an array built from a column is not one."
+catches = "the column array expanded per row instead of raising"
+reading = "the expansion operators page: ** <array> expands an array of constant values into a list, in an IN list or in the arguments of a system function such as COALESCE or GREATEST; the input must be an array of constant values; values may be numeric, string, logical or date and time"
+cases = ["cases/translation/expressions/operators-expansion.toml#t007_non_constant"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-flow.t001"
+form = "sf.expressions.operators-flow"
+kind = "type_combination"
+target = "SELECT ... ->> SELECT ... FROM $1"
+note = "The second statement reads the first, filtered, result; $1 and $2 in its SELECT list are the columns of that result, as the page says for its row-count example."
+catches = "the first statement's filter lost, or $n in the SELECT list read as a pipe reference"
+reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
+cases = ["cases/translation/expressions/operators-flow.toml#t001_two_statements"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-flow.t002"
+form = "sf.expressions.operators-flow"
+kind = "type_combination"
+target = "three statements, $2 and $1 from the last"
+note = "In the last of three statements, $2 is the first statement and $1 the second, counting back as the page shows."
+catches = "pipe numbers counted forward from the first statement, so $1 and $2 swap"
+reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
+cases = ["cases/translation/expressions/operators-flow.toml#t002_counts_back"]
+required = true
+
+[[obligation]]
+id = "sf.expressions.operators-flow.t003"
+form = "sf.expressions.operators-flow"
+kind = "null_argument"
+target = "NULL through the pipe"
+note = "A NULL value read through a pipe reference; the page says the consumed result equals RESULT_SCAN of the earlier statement, so the NULL is kept."
+catches = "the NULL row dropped or its value replaced"
+reading = "the flow operators page: <sql_statement_1> ->> <sql_statement_2> [ ->> ... ]; a later statement reads an earlier result as $n in its FROM clause, n counting back from the current statement; $n in a SELECT list is the n-th column, not a pipe reference; the chain returns the last result"
+cases = ["cases/translation/expressions/operators-flow.toml#t003_null"]
 required = true
 
 [[obligation]]
