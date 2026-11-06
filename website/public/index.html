@@ -147,18 +147,15 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 							<div class="step-text">
 								<span class="num">02 · Convert</span>
 								<h3>DuckDB SQL that keeps Snowflake's meaning</h3>
-								<p>Types every expression from your schema and applies only verified rules. Here NUMBER(12,2) / 3 keeps Snowflake's scale of 8, and division by zero still raises. DuckDB binds every converted statement before it's printed.</p>
+								<p>Uses your schema's types and only verified rules. NUMBER(12,2) / 3 keeps Snowflake's 8 decimal places.</p>
 								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
+<pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in schema.json</span>
+SELECT order_id, total / 3 AS third FROM orders
+
+<span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
 SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID",
-  (CASE WHEN "ORDERS"."TOTAL" IS NULL OR … THEN NULL
-        WHEN CAST(3 AS DECIMAL(1,0)) = 0
-        THEN CAST(CAST('sqlquack:100051#e539322555ff: Division by zero' AS INTEGER) AS "NULL")
-        ELSE CAST(… AS DECIMAL(18,8)) END) AS "THIRD",
-  (CASE WHEN ("ORDERS"."STATUS" = 'shipped')
-        THEN CAST(CAST(1 AS DECIMAL(1,0)) AS DECIMAL(1,0))
-        ELSE CAST(CAST(0 AS DECIMAL(1,0)) AS DECIMAL(1,0)) END) AS "SHIPPED"
+  (CASE <span class="dim">…</span> ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8)) END) AS "THIRD"
 FROM "ORDERS" AS "ORDERS"
 <span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
 						</div>
