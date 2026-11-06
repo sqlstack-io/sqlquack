@@ -21,14 +21,12 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT` and `SECURITY LABEL` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL` and `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
 | `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
 | `is_json`, `is_document`, `is_normalized` | `IS [NOT] JSON …`, `IS [NOT] DOCUMENT`, `IS [NOT] [form] NORMALIZED` |
-| `setof` | `SETOF` in a type name |
-| `type_reference` | `name%TYPE` as a routine argument type in `COMMENT ON` |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
 | `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |
 | `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |

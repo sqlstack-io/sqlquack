@@ -12,8 +12,10 @@ use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_non_reserved_word,
     is_type_function_name,
 };
-use crate::parse::_helpers::tree::nodes::{function, literal, null, ordered, star};
+use crate::parse::_helpers::tree::nodes::{function, literal, name_text, null, ordered, star};
+use crate::parse::_helpers::tree::typenames::setof as setof_type;
 use crate::parse::_helpers::values::expressions::is_operator_token;
+use crate::parse::constants::TYPE_REFERENCE_SUFFIX;
 use crate::scan::models::{Token, TokenKind};
 
 /// `object_type_any_name`: kinds named by `any_name`, longest spelling first.
@@ -267,7 +269,7 @@ impl Parser<'_> {
     }
 
     /// `func_name`: a `type_function_name`, or a `ColId` with `.ColLabel` parts.
-    fn func_name(&mut self) -> Parsing<Vec<Identifier>> {
+    pub(crate) fn func_name(&mut self) -> Parsing<Vec<Identifier>> {
         let qualified: bool = self.char_at(1, '.');
         match qualified {
             true => self.qualified_name(),
@@ -328,33 +330,35 @@ impl Parser<'_> {
         })))
     }
 
-    /// `operator_with_argtypes`: `any_operator ( left , right )`, where one side may be `NONE`.
+    /// `operator_with_argtypes`: `any_operator oper_argtypes`, a dotted schema quoted as for calls.
     fn operator_with_argtypes(&mut self) -> Parsing<Expression> {
-        let mut name: String = String::new();
+        let mut parts: Vec<Identifier> = Vec::new();
         while self.is(is_col_id) && self.char_at(1, '.') {
-            name.push_str(&self.advance()?.value);
-            name.push('.');
+            parts.push(self.name(is_col_id)?);
             self.at += 1;
         }
         let operator: Token = self.expect_token(is_operator_token)?;
-        name.push_str(&match operator.kind {
+        parts.push(Identifier::new(match operator.kind {
             TokenKind::LessEquals => "<=".to_owned(),
             TokenKind::GreaterEquals => ">=".to_owned(),
             TokenKind::NotEquals => "<>".to_owned(),
             TokenKind::Char(character) => character.to_string(),
             _ => operator.value.clone(),
-        });
+        }));
         self.expect_char('(')?;
         let left: Option<DataType> = self.operator_side()?;
-        let right: Option<DataType> = match self.eat_char(',') {
-            true => self.operator_side()?,
-            false => None,
+        self.expect_char(',')?;
+        let right: Option<DataType> = match left {
+            Some(_) => self.operator_side()?,
+            None => Some(self.typename()?),
         };
         self.expect_char(')')?;
         let side = |side: Option<DataType>| Box::new(side.map_or_else(null, Expression::DataType));
         Ok(Expression::Operator(Box::new(Operator {
             this: side(left),
-            operator: Some(Box::new(Expression::Identifier(Identifier::new(name)))),
+            operator: Some(Box::new(Expression::Identifier(Identifier::new(
+                name_text(&parts),
+            )))),
             expression: side(right),
             comments: Vec::new(),
         })))
@@ -409,7 +413,7 @@ impl Parser<'_> {
     }
 
     /// An `arg_class`, if next: `VARIADIC`, `IN`, `OUT`, `INOUT`, or `IN OUT` as `INOUT`.
-    fn argument_class(&mut self) -> Option<String> {
+    pub(crate) fn argument_class(&mut self) -> Option<String> {
         let mode: &str = ARGUMENT_MODES.iter().find(|mode| self.kw(mode))?;
         self.at += 1;
         Some(match mode == IN_MODE && self.eat_kw(OUT_MODE) {
@@ -418,9 +422,8 @@ impl Parser<'_> {
         })
     }
 
-    /// `func_type`: a `Typename`, or `[SETOF] name.attr...%TYPE`, which is a gap.
-    fn func_type(&mut self) -> Parsing<DataType> {
-        let start: usize = self.offset();
+    /// `func_type`: a `Typename`, or `[SETOF] name.attr...%TYPE` as its named reference.
+    pub(crate) fn func_type(&mut self) -> Parsing<DataType> {
         let setof: usize = usize::from(self.kw("setof"));
         let referenced: bool = self.peek_at(setof).is_some_and(is_type_function_name)
             && self
@@ -429,17 +432,20 @@ impl Parser<'_> {
         if referenced {
             let reference = self.attempt(|parser| {
                 parser.at += setof;
-                parser.at += 1;
+                let mut parts: Vec<Identifier> = vec![parser.name(is_type_function_name)?];
                 while parser.eat_char('.') {
-                    parser.expect_token(is_col_label)?;
+                    parts.push(parser.name(is_col_label)?);
                 }
                 parser.expect_char('%')?;
-                parser.expect_kw("type")
+                parser.expect_kw("type")?;
+                Ok(DataType::Custom {
+                    name: format!("{}{TYPE_REFERENCE_SUFFIX}", name_text(&parts)),
+                })
             });
-            if let Ok(()) = reference {
-                self.gap("type_reference", start);
-                return Ok(DataType::Custom {
-                    name: self.sql[start..self.tokens[self.at - 1].end].to_owned(),
+            if let Ok(data_type) = reference {
+                return Ok(match setof {
+                    0 => data_type,
+                    _ => setof_type(data_type),
                 });
             }
         }

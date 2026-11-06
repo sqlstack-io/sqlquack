@@ -6,9 +6,10 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
 use crate::parse::constants::{
     BIT_TYPE, CATALOGUE_SCHEMA, DEFAULT_LENGTH, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION,
-    INTERVAL_FIELDS, INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, VARBIT_TYPE,
+    INTERVAL_FIELDS, INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, SETOF_PREFIX, VARBIT_TYPE,
 };
 use crate::parse::errors::ParseError;
+use crate::parse::main::format_type::format_type;
 use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
@@ -75,6 +76,14 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
     })
 }
 
+/// `SETOF type`: a name the shared tree keeps apart from the type, as `format_type` reads it.
+pub(crate) fn setof(data_type: DataType) -> DataType {
+    let text: String = format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
+    DataType::Custom {
+        name: format!("{SETOF_PREFIX}{text}"),
+    }
+}
+
 fn integer(text: &str) -> Option<u32> {
     digits_value(text, DECIMAL_RADIX)
 }
@@ -82,10 +91,8 @@ fn integer(text: &str) -> Option<u32> {
 impl Parser<'_> {
     /// `Typename`: a simple type, then `[n]...` bounds or `ARRAY [ [n] ]`.
     pub(crate) fn typename(&mut self) -> Parsing<DataType> {
-        if self.kw("setof") {
-            let start: usize = self.offset();
-            self.at += 1;
-            self.gap("setof", start);
+        if self.eat_kw("setof") {
+            return Ok(setof(self.typename()?));
         }
         let mut data_type: DataType = self.simple_typename()?;
         if self.eat_kw("array") {
