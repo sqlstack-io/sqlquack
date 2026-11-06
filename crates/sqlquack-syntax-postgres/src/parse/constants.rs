@@ -159,7 +159,7 @@ pub(crate) const STATEMENT_STARTS: [&str; 46] = [
 pub(crate) const STATEMENT_STARTS_MORE: [&str; 3] = ["unlisten", "vacuum", "update"];
 
 /// Keywords that begin a `ConstTypename` or `ConstInterval`, and so a typed literal.
-pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
+pub(crate) const TYPE_KEYWORDS: [&str; 21] = [
     "bigint",
     "bit",
     "boolean",
@@ -180,6 +180,7 @@ pub(crate) const TYPE_KEYWORDS: [&str; 20] = [
     "smallint",
     "time",
     "timestamp",
+    "varchar",
 ];
 
 /// The prefix operator the shared tree holds as bitwise not.
@@ -229,3 +230,12 @@ pub(crate) const VARBIT_TYPE: &str = "varbit";
 
 /// The catalogue name of `INTERVAL`.
 pub(crate) const INTERVAL_TYPE: &str = "interval";
+
+/// The length `BIT` and `CHARACTER` take without one, as gram.y gives them typmod 1.
+pub(crate) const DEFAULT_LENGTH: u32 = 1;
+
+/// The prefix of a `SETOF type` name, which the shared tree has no wrapper for.
+pub(crate) const SETOF_PREFIX: &str = "SETOF ";
+
+/// The suffix of a `name%TYPE` reference, kept as a named type.
+pub(crate) const TYPE_REFERENCE_SUFFIX: &str = "%TYPE";

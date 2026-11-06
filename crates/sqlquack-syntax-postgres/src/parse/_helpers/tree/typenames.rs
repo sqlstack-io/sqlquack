@@ -5,10 +5,11 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
 use crate::parse::constants::{
-    BIT_TYPE, CATALOGUE_SCHEMA, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION, INTERVAL_FIELDS,
-    INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, VARBIT_TYPE,
+    BIT_TYPE, CATALOGUE_SCHEMA, DEFAULT_LENGTH, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION,
+    INTERVAL_FIELDS, INTERVAL_TYPE, NUMERIC_TYPE, SECOND_FIELD, SETOF_PREFIX, VARBIT_TYPE,
 };
 use crate::parse::errors::ParseError;
+use crate::parse::main::format_type::format_type;
 use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
@@ -75,6 +76,14 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
     })
 }
 
+/// `SETOF type`: a name the shared tree keeps apart from the type, as `format_type` reads it.
+pub(crate) fn setof(data_type: DataType) -> DataType {
+    let text: String = format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
+    DataType::Custom {
+        name: format!("{SETOF_PREFIX}{text}"),
+    }
+}
+
 fn integer(text: &str) -> Option<u32> {
     digits_value(text, DECIMAL_RADIX)
 }
@@ -82,10 +91,8 @@ fn integer(text: &str) -> Option<u32> {
 impl Parser<'_> {
     /// `Typename`: a simple type, then `[n]...` bounds or `ARRAY [ [n] ]`.
     pub(crate) fn typename(&mut self) -> Parsing<DataType> {
-        if self.kw("setof") {
-            let start: usize = self.offset();
-            self.at += 1;
-            self.gap("setof", start);
+        if self.eat_kw("setof") {
+            return Ok(setof(self.typename()?));
         }
         let mut data_type: DataType = self.simple_typename()?;
         if self.eat_kw("array") {
@@ -244,6 +251,11 @@ impl Parser<'_> {
                     true => VARBIT_TYPE,
                     false => BIT_TYPE,
                 };
+                if name == BIT_TYPE && !self.is_char('(') {
+                    return Ok(DataType::Bit {
+                        length: Some(DEFAULT_LENGTH),
+                    });
+                }
                 self.modified_type(name)
             }
             Some("character" | "char" | "varchar" | "national" | "nchar") => self.character(),
@@ -297,7 +309,23 @@ impl Parser<'_> {
                 length,
                 parenthesized_length: false,
             },
-            false => DataType::Char { length },
+            false => DataType::Char {
+                length: length.or(Some(DEFAULT_LENGTH)),
+            },
+        })
+    }
+
+    /// `ConstTypename`: as `SimpleTypename`, but `BIT` and `CHAR` without a length take none.
+    pub(crate) fn const_typename(&mut self) -> Parsing<DataType> {
+        let start: usize = self.at;
+        let data_type: DataType = self.simple_typename()?;
+        let sized: bool = self.tokens[start..self.at]
+            .iter()
+            .any(|token| token.kind == TokenKind::Char('('));
+        Ok(match data_type {
+            DataType::Bit { .. } if !sized => DataType::Bit { length: None },
+            DataType::Char { .. } if !sized => DataType::Char { length: None },
+            other => other,
         })
     }
 

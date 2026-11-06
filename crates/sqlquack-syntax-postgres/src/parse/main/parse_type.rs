@@ -9,11 +9,12 @@ use crate::scan::main::scan::scan;
 /// The type `text` names, grammar only, as `typeStringToTypeName` reads it; SETOF gives 42601.
 pub fn parse_type(text: &str) -> Result<DataType, ParseError> {
     let mut parser: Parser<'_> = Parser::new(text, scan(text));
+    let setof: bool = parser.kw("setof");
     let data_type: DataType = parser.typename()?;
     if parser.peek().is_some() {
         return Err(parser.error());
     }
-    if parser.opaque {
+    if parser.opaque || setof {
         return Err(ParseError {
             message: format!("invalid type name \"{}\"", text.trim()),
             position: 0,
