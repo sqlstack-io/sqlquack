@@ -103,6 +103,38 @@ fn given_case_file_when_loading_then_format_and_policy_rules_are_enforced() {
             expected_problem: Some("a typing case has no DuckDB result to diverge"),
         },
         LoadTestCase {
+            description: "setup of per-run objects, variables and session parameters loads",
+            replace: "query = \"SELECT a FROM input ORDER BY a\"",
+            with: "query = \"SELECT a FROM input JOIN {{run_database}}.{{run_schema}}.t USING (a) ORDER BY a\"\nsetup = [\"CREATE TABLE t (a VARCHAR)\", \"insert  into t VALUES ('a')\", \"SET (lo, hi) = (1, 2)\", \"ALTER SESSION SET WEEK_START = 1\"]",
+            expected_problem: None,
+        },
+        LoadTestCase {
+            description: "a setup statement outside the allowed kinds is rejected",
+            replace: "order = \"ordered\"",
+            with: "order = \"ordered\"\nsetup = [\"GRANT USAGE ON DATABASE d TO ROLE r\"]",
+            expected_problem: Some(
+                "setup statement `GRANT USAGE ON DATABASE d TO ROLE r` is not CREATE TABLE, VIEW, TYPE or SEMANTIC VIEW, INSERT INTO, SET, UNSET or ALTER SESSION",
+            ),
+        },
+        LoadTestCase {
+            description: "a setup entry holding two statements is rejected",
+            replace: "order = \"ordered\"",
+            with: "order = \"ordered\"\nsetup = [\"SET x = 1; DROP TABLE t\"]",
+            expected_problem: Some("setup statement `SET x = 1; DROP TABLE t` must be one statement, without `;`"),
+        },
+        LoadTestCase {
+            description: "an unknown placeholder is rejected",
+            replace: "query = \"SELECT a FROM input ORDER BY a\"",
+            with: "query = \"SELECT a FROM {{other_database}}.s.t ORDER BY a\"\nsetup = [\"SET x = 1\"]",
+            expected_problem: Some("unknown placeholder `{{other_database}}`"),
+        },
+        LoadTestCase {
+            description: "a placeholder in a case without setup is rejected",
+            replace: "query = \"SELECT a FROM input ORDER BY a\"",
+            with: "query = \"SELECT a FROM {{run_database}}.{{run_schema}}.t ORDER BY a\"",
+            expected_problem: Some("placeholder `{{run_database}}` needs a case with `setup`"),
+        },
+        LoadTestCase {
             description: "an equivalence file needs a canonical spelling for every case",
             replace: "session_profile = \"utc-v1\"",
             with: "session_profile = \"utc-v1\"\nequivalence = \"concat_operator\"",

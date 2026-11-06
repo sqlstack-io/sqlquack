@@ -51,6 +51,25 @@ pub const ERROR_TAG: &str = "error";
 
 /// Quotes a project function's body in the Snowflake statement creating it.
 pub const FUNCTION_BODY_QUOTE: &str = "$$";
+/// The placeholders case setup and SQL may hold: the run's database and the case's fresh schema.
+pub const SETUP_PLACEHOLDERS: &[&str] = &["{{run_database}}", "{{run_schema}}"];
+
+/// How each case setup statement may start, after its words are upper-cased and single-spaced.
+pub const SETUP_STATEMENT_STARTS: &[&str] = &[
+    "CREATE TABLE ",
+    "CREATE OR REPLACE TABLE ",
+    "CREATE VIEW ",
+    "CREATE OR REPLACE VIEW ",
+    "CREATE TYPE ",
+    "CREATE OR REPLACE TYPE ",
+    "CREATE SEMANTIC VIEW ",
+    "CREATE OR REPLACE SEMANTIC VIEW ",
+    "INSERT INTO ",
+    "SET ",
+    "UNSET ",
+    "ALTER SESSION SET ",
+    "ALTER SESSION UNSET ",
+];
 /// The Snowflake Python runtime versions a case function may declare.
 pub const PYTHON_RUNTIME_VERSIONS: &[&str] = &["3.11", "3.12"];
 /// Upper-case query text that makes one result row depend on other input rows.

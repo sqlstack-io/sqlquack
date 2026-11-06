@@ -514,11 +514,29 @@ expression or a table function's query. Later functions may call earlier ones.
   count toward the case's provenance.
 - Python functions are not case functions yet.
 
+### Setup cases
+
+A case may run Snowflake statements before its SQL, as `setup`, an array of single statements
+(no `;`). Each starts with one of `CREATE [OR REPLACE] TABLE`, `VIEW`, `TYPE` or `SEMANTIC VIEW`,
+`INSERT INTO`, `SET`, `UNSET`, `ALTER SESSION SET` or `ALTER SESSION UNSET`; loading rejects
+anything else. A case with `setup` defines no functions. Setup and the case SQL may name
+`{{run_database}}` and `{{run_schema}}`, the recording run's own database and the case's fresh
+schema; any other `{{...}}`, or a placeholder in a case without setup, is rejected.
+
+- Recording: the pending file carries `setup`, placeholders unsubstituted, beside `setup_sql`. The
+  recorder's guard substitutes the placeholders, checks each statement fail-closed (statement kind,
+  every named object inside the run database), and runs setup and query in a fresh session and
+  case schema, dropping the run database afterwards. A failing setup statement is a case-file
+  error, not an outcome.
+- Replay: verify does not replay setup on DuckDB yet, so every setup case refuses.
+
 ### Hashes
 
 The case hash is the SHA-256 of the canonical JSON of the evidence format version, the source
 dialect, the session profile's Snowflake parameters and the expanded source SQL, plus any
-`setup_sql` (omitted when empty, so existing hashes hold). Descriptions,
+`setup_sql`: the function statements, then the `setup` statements with their placeholders
+unsubstituted (omitted when both are empty, so existing hashes hold). The `ALTER SESSION` a
+setup runs is hashed this way too, not through the session profile. Descriptions,
 tags and file locations are not hashed. Any edit that can change the result changes the hash, so
 it becomes a new case with a new result.
 
@@ -556,7 +574,7 @@ by name unless it is one of `RESULT_NEUTRAL_SESSION_PARAMETERS`, which cannot ch
 names; one holding a non-ASCII character is refused, its folding unrecorded.
 
 A recording that is a compile-class Snowflake error (SQLSTATE class 0A or 42) must come from a case
-declaring `compile_error = true`, or one creating functions; verify fails it otherwise, so the
+declaring `compile_error = true`, or one creating functions or running setup; verify fails it otherwise, so the
 recorder's compile pre-check never blocks re-recording it.
 
 ### Pinned session parameters

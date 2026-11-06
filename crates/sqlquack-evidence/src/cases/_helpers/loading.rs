@@ -7,6 +7,7 @@ use sqlquack_policy::policy::models::{Policy, SessionValue};
 
 use crate::cases::_helpers::functions::{create_function, function_problems};
 use crate::cases::_helpers::hashing::case_hash;
+use crate::cases::_helpers::setup::setup_problems;
 use crate::cases::_helpers::source_sql::{row_sources, source_sql};
 use crate::cases::models::{
     CaseDefinition, CaseFile, CaseInput, CaseRole, EvidenceKind, HashedContent, LoadedCase,
@@ -48,6 +49,11 @@ pub(crate) fn load_file(
         file.cases
             .iter()
             .flat_map(|case| function_problems(&format!("{relative}#{}", case.id), case)),
+    );
+    problems.extend(
+        file.cases
+            .iter()
+            .flat_map(|case| setup_problems(&format!("{relative}#{}", case.id), case)),
     );
     let Some(profile) = policy.session_profiles.get(&file.session_profile) else {
         return Err(problems);
@@ -103,6 +109,7 @@ fn expand(
 ) -> LoadedCase {
     let sql = source_sql(case, spelling);
     let setup_sql: Vec<String> = case.functions.iter().map(create_function).collect();
+    let hashed_setup: Vec<String> = setup_sql.iter().chain(&case.setup).cloned().collect();
     let values = case.values.unwrap_or(true);
     let hash = case_hash(&HashedContent {
         format: EVIDENCE_FORMAT,
@@ -110,7 +117,7 @@ fn expand(
         session_parameters: parameters,
         source_sql: &sql,
         values: (!values).then_some(false),
-        setup_sql: &setup_sql,
+        setup_sql: &hashed_setup,
     });
     LoadedCase {
         reference: String::new(),
@@ -131,6 +138,7 @@ fn expand(
         functions: case.functions.clone(),
         overrides: case.overrides.clone(),
         setup_sql,
+        setup: case.setup.clone(),
         inputs: inputs(case),
         row_sources: row_sources(case, spelling),
     }
