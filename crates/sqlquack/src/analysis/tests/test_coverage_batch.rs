@@ -337,6 +337,11 @@ fn given_interval_literals_when_converting_then_dates_and_timestamps_move_by_the
             expected_outcome: Ok("2024-02-29 01:30:00.000"),
         },
         FirstValueTestCase {
+            description: "an interval of an unquoted number is refused",
+            sql: "SELECT '2024-03-05'::DATE + INTERVAL 3 DAY AS v",
+            expected_outcome: Err("not a quoted string"),
+        },
+        FirstValueTestCase {
             description: "a DATE plus hours stays refused",
             sql: "SELECT '2024-03-05'::DATE + INTERVAL '2 hours' AS v",
             expected_outcome: Err("an INTERVAL in HOUR added to DATE"),

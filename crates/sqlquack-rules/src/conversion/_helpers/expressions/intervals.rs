@@ -15,8 +15,9 @@ use crate::conversion::_helpers::support::tree::{
     field, is_inert, node_construct, node_kind, payload_object,
 };
 use crate::conversion::constants::{
-    INTERVAL_ARITHMETIC, INTERVAL_DATE_UNITS, INTERVAL_FIELDS, INTERVAL_KIND, INTERVAL_MAX_DIGITS,
-    INTERVAL_REFUSAL, INTERVAL_SIMPLE_UNIT, INTERVAL_TIMESTAMP_PRECISION, INTERVAL_UNITS,
+    INTERVAL_ARITHMETIC, INTERVAL_DATE_UNITS, INTERVAL_FIELDS, INTERVAL_KEYWORD, INTERVAL_KIND,
+    INTERVAL_MAX_DIGITS, INTERVAL_REFUSAL, INTERVAL_SIMPLE_UNIT, INTERVAL_TIMESTAMP_PRECISION,
+    INTERVAL_UNITS, INTERVAL_UNQUOTED_REFUSAL,
 };
 use sqlquack_policy::policy::constants::TIMESTAMP_RANGE;
 
@@ -30,7 +31,7 @@ pub(crate) fn adds_interval(payload: &Value) -> bool {
 
 /// `value + INTERVAL 'n unit'` or `value - INTERVAL 'n unit'`, as DATEADD of n or -n units.
 pub(crate) fn interval_arithmetic(
-    kind: &str,
+    (kind, node): (&str, &Value),
     payload: &Value,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
@@ -41,6 +42,21 @@ pub(crate) fn interval_arithmetic(
     let payload = payload_object(payload, &construct)?;
     let value = convert_expression(field(payload, "left", &construct)?, site)?;
     let interval = field(payload, "right", &construct)?;
+    let quoted_value = site
+        .context
+        .locator
+        .source_text(node)
+        .is_some_and(|written| {
+            let upper = written.to_ascii_uppercase();
+            upper.rfind(INTERVAL_KEYWORD).is_some_and(|start| {
+                upper[start + INTERVAL_KEYWORD.len()..]
+                    .trim_start()
+                    .starts_with('\'')
+            })
+        });
+    if !quoted_value {
+        return Err(refuse(INTERVAL_UNQUOTED_REFUSAL.to_owned()));
+    }
     let (amount, unit) =
         interval_literal(interval, site)?.ok_or_else(|| refuse(INTERVAL_REFUSAL.to_owned()))?;
     let accepted = match value.data_type {
