@@ -1,5 +1,7 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
+use std::rc::Rc;
+
 use std::borrow::Cow;
 
 use sqlquack_syntax::Expression;
@@ -8,7 +10,9 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
 
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
-use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::lineages::{
+    coerced, combined, set_merged, traced_if, unresolved,
+};
 use crate::lineage::_helpers::tracing::postgres_names::postgres_name;
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
@@ -163,11 +167,14 @@ fn left_typed_by_both(
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
     for (column, other) in left.columns.iter_mut().zip(&right.columns) {
-        column.lineage.data_type = set_merged(
+        let data_type: Option<Rc<str>> = set_merged(
             vec![column.lineage.clone(), other.lineage.clone()],
             context.profile,
         )
         .data_type;
+        let left_branch: Lineage = column.lineage.clone();
+        column.lineage.data_type = data_type;
+        column.lineage = coerced(column.lineage.clone(), &[left_branch], context.profile);
     }
     left
 }

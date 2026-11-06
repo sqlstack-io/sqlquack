@@ -252,6 +252,15 @@ pub(crate) const TWO_ARGUMENTS: usize = 2;
 pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 /// Functions NULL exactly when their first argument is, whatever the catalog's rules.
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
+/// Window functions called by name that never give NULL, even over an empty frame.
+pub(crate) const NEVER_NULL_WINDOW_FUNCTIONS: [&str; 6] = [
+    "COUNT",
+    "ROW_NUMBER",
+    "RANK",
+    "DENSE_RANK",
+    "PERCENT_RANK",
+    "CUME_DIST",
+];
 /// The Snowflake profile's name.
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
 /// The PostgreSQL profile's name.
