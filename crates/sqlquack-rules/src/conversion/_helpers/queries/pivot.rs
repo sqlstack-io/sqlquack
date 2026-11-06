@@ -69,15 +69,34 @@ pub(crate) fn pivot_subquery(pivot: &Payload, columns: &[ColumnSpec]) -> Result<
     if groups.is_empty() {
         return Err(refuse("a PIVOT without a column to group by"));
     }
-    let names = list(pivot, "alias_columns");
-    if names.len() != groups.len() + keys.len() {
-        return Err(refuse(
-            "a PIVOT without an alias column list naming each of its columns",
-        ));
-    }
+    let listed = list(pivot, "alias_columns");
+    let names: Vec<Value> = match listed.len() {
+        0 if texts.iter().any(|text| text.contains(['\'', '\\'])) => {
+            return Err(refuse(
+                "a PIVOT key holding a quote or backslash without an alias column list, whose \
+                 column name no recording shows",
+            ));
+        }
+        0 => groups
+            .iter()
+            .map(|group| group.name.clone())
+            .chain(
+                keys.iter()
+                    .filter_map(text_literal)
+                    .map(|text| format!("'{text}'")),
+            )
+            .map(|name| json!({ "name": name, "quoted": true }))
+            .collect(),
+        count if count == groups.len() + keys.len() => listed.to_vec(),
+        _ => {
+            return Err(refuse(
+                "a PIVOT alias column list that does not name each of its columns",
+            ));
+        }
+    };
     let mut expressions: Vec<Value> = Vec::with_capacity(names.len());
     let mut grouping: Vec<Value> = Vec::with_capacity(groups.len());
-    for (group, name) in groups.iter().zip(names) {
+    for (group, name) in groups.iter().zip(&names) {
         let column = json!({ "column": { "name": { "name": group.name, "quoted": true } } });
         expressions.push(json!({ "alias": { "this": column, "alias": name } }));
         grouping.push(column);

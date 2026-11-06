@@ -1005,7 +1005,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: PIVOT_RULE,
         constructs: &["node:pivot"],
-        conditions: "A FROM source PIVOT(SUM or MAX(an unqualified column) FOR an unqualified column IN (distinct text literals)) with an alias column list naming every output column: one row per distinct combination of the source's other columns, NULL a group like any value, then for each listed key the aggregate over that group's rows whose key equals it exactly, NULL when none do; rows whose key is NULL or not listed only form their group. Over no rows, no rows. Without an alias column list, with another aggregate, a computed key or measure, or no other column to group by, it is not converted.",
+        conditions: "A FROM source PIVOT(SUM or MAX(an unqualified column) FOR an unqualified column IN (distinct text literals)), with an alias column list naming every output column or none: one row per distinct combination of the source's other columns, NULL a group like any value, then for each listed key the aggregate over that group's rows whose key equals it exactly, NULL when none do; rows whose key is NULL or not listed only form their group. Over no rows, no rows. Without an alias column list the other columns keep their names and each key column is named by its text in single quotes, case and spaces as written, as recorded; a key holding a quote or backslash then refuses. With a partial alias list, with another aggregate, a computed key or measure, or no other column to group by, it is not converted.",
         failures: &[],
     },
     RuleSpec {

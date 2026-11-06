@@ -406,6 +406,17 @@ fn given_quoted_names_when_converted_and_run_on_duckdb_then_output_names_follow_
             flags: &[],
             expected_names: vec!["total".to_owned(), "orderCount".to_owned()],
         },
+        ColumnNameTestCase {
+            description: "a PIVOT without an alias list names each key column by its quoted text",
+            sql: "SELECT * FROM (SELECT * FROM (VALUES (1, 'web', 2.5), (1, 'Store B', 1.0)) \
+                  AS v(order_id, channel, total)) PIVOT(SUM(total) FOR channel IN ('web', 'Store B'))",
+            flags: &[],
+            expected_names: vec![
+                "ORDER_ID".to_owned(),
+                "'web'".to_owned(),
+                "'Store B'".to_owned(),
+            ],
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
