@@ -1,15 +1,28 @@
 //! Where lines break: before a token, and after one that asks for a break.
 
 use crate::layout::_helpers::plan::Plan;
-use crate::layout::_helpers::tokens::{Token, TokenKind};
+use crate::layout::_helpers::tokens::{Token, TokenKind, tokens};
 use crate::layout::constants::{
     BY_CLAUSE_WORDS, CLAUSE_WORDS, INDENT, INLINE_WIDTH, JOIN_MODIFIERS, NON_CALL_WORDS,
     SELECT_MODIFIERS, SET_OPERATION_MODIFIERS, SET_OPERATIONS,
 };
 use crate::layout::models::{Case, Clause, Frame, Walk};
 
+/// `sql` one clause and select item per line, nested queries and long `CASE`s indented by depth.
+pub(crate) fn lay_out(sql: &str) -> String {
+    let tokens: Vec<Token<'_>> = tokens(sql);
+    let plan = Plan::new(&tokens);
+    let mut walk = start(plan.width(0, tokens.len().saturating_sub(1)) > INLINE_WIDTH);
+    for index in 0..tokens.len() {
+        let level = walk.line_break(&tokens, index);
+        walk.push_token(&tokens, index, level);
+        walk.forced = walk.after_token(&tokens, index, &plan);
+    }
+    walk.laid_out
+}
+
 /// The walk over a statement, which breaks its lines when `broken`.
-pub(crate) fn start(broken: bool) -> Walk {
+fn start(broken: bool) -> Walk {
     Walk {
         frames: vec![Frame {
             query: true,

@@ -1,5 +1,6 @@
 use crate::layout::main::checked_layout::checked_layout;
-use crate::layout::tests::test_types::LayoutTestCase;
+use crate::layout::main::layout_sql::layout_sql;
+use crate::layout::tests::test_types::{FallbackTestCase, LayoutTestCase};
 
 #[test]
 fn given_converted_sql_when_laid_out_then_clauses_items_and_long_cases_break_by_depth() {
@@ -67,6 +68,41 @@ WHERE ("T"."A" IS DISTINCT FROM "T"."B")"#,
         assert_eq!(
             laid_out.as_deref(),
             Ok(test_case.expected_layout),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_text_the_layout_does_not_model_when_laid_out_then_the_single_line_is_kept() {
+    let test_cases = [
+        FallbackTestCase {
+            description: "a dollar-quoted string holding clause words and doubled spaces",
+            sql: r#"SELECT $$a  FROM  b,  WHERE c$$ AS "TEXT", "T"."A" AS "A" FROM "T" AS "T" WHERE ("T"."A" > 1)"#,
+            expected_reason: "a `$`",
+        },
+        FallbackTestCase {
+            description: "an escape string with an escaped quote and doubled spaces",
+            sql: r#"SELECT E'it\'s  FROM  here' AS "TEXT", "T"."A" AS "A" FROM "T" AS "T" WHERE ("T"."A" > 1)"#,
+            expected_reason: "a prefixed string",
+        },
+        FallbackTestCase {
+            description: "a nested comment holding a clause word",
+            sql: r#"SELECT /* a /* b */ FROM  c */ "T"."A" AS "A", "T"."B" AS "B" FROM "T" AS "T" WHERE ("T"."A" > 1)"#,
+            expected_reason: "an unclosed or nested comment",
+        },
+    ];
+    for test_case in test_cases {
+        let refusal = checked_layout(test_case.sql).expect_err(test_case.description);
+        assert!(
+            refusal.contains(test_case.expected_reason),
+            "{}: {refusal}",
+            test_case.description
+        );
+        assert_eq!(
+            layout_sql(test_case.sql),
+            test_case.sql,
             "{}",
             test_case.description
         );
