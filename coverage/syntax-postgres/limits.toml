@@ -4544,6 +4544,1077 @@ kind = "negative_neighbour"
 target = "<lang_name> in [ LANGUAGE <lang_name> ]"
 reason = "DO LANGUAGE takes NonReservedWord_or_Sconst (gram.y dostmt_opt_item), so a string literal language name is valid syntax"
 
+# security_admin: batch-22 note: every role option of CREATE ROLE, USER and GROUP, with the
+# negatives gram.y refuses while parsing (CreateOptRoleElem, AlterOptRoleElem).
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "SUPERUSER"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 WITH SUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOSUPERUSER"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOSUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "CREATEDB"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEDB"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOCREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "CREATEROLE"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEROLE"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOCREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "INHERIT"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 INHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOINHERIT"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOINHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "LOGIN"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 WITH LOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOLOGIN"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOLOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "REPLICATION"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 REPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOREPLICATION"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOREPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "BYPASSRLS"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 BYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "NOBYPASSRLS"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOBYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit>"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CONNECTION LIMIT 5"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CONNECTION LIMIT -1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ENCRYPTED PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "PASSWORD NULL"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 PASSWORD NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "VALID UNTIL '<timestamp>'"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 VALID UNTIL '2030-01-01'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...]"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 IN ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 IN ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...]"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...]"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ADMIN r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ADMIN r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "alternative"
+target = "<option>"
+note = "SYSID <uid>"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 SYSID 1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "option_present"
+target = "<option>"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 NOSUPERUSER LOGIN CONNECTION LIMIT 5 PASSWORD NULL VALID UNTIL 'infinity'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 BOGUS"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CONNECTION LIMIT 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "CONNECTION without LIMIT"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 CONNECTION 5"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 PASSWORD 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "ENCRYPTED without PASSWORD"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 ENCRYPTED p1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 VALID UNTIL 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <uid>, which gram.y reads as Iconst"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 SYSID 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-role"
+kind = "negative_neighbour"
+target = "<option>"
+note = "IN ROLE with no role name"
+anchor = "doc.sql-createrole / Synopsis"
+sql = "CREATE ROLE t1 IN ROLE"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "SUPERUSER"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 WITH SUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOSUPERUSER"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOSUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "CREATEDB"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEDB"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOCREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "CREATEROLE"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEROLE"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOCREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "INHERIT"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 INHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOINHERIT"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOINHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "LOGIN"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 WITH LOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOLOGIN"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOLOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "REPLICATION"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 REPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOREPLICATION"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOREPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "BYPASSRLS"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 BYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "NOBYPASSRLS"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOBYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit>"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CONNECTION LIMIT 5"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CONNECTION LIMIT -1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ENCRYPTED PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "PASSWORD NULL"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 PASSWORD NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "VALID UNTIL '<timestamp>'"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 VALID UNTIL '2030-01-01'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...]"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 IN ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 IN ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "IN GROUP <role_name> [, ...]"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 IN GROUP r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "IN GROUP <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 IN GROUP r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...]"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...]"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ADMIN r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ADMIN r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "USER <role_name> [, ...]"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 USER r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "USER <role_name> [, ...] with its list continued"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 USER r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "alternative"
+target = "<option>"
+note = "SYSID <uid>"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 SYSID 1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "option_present"
+target = "<option>"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 NOSUPERUSER LOGIN CONNECTION LIMIT 5 PASSWORD NULL VALID UNTIL 'infinity'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 BOGUS"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CONNECTION LIMIT 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "CONNECTION without LIMIT"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 CONNECTION 5"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 PASSWORD 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "ENCRYPTED without PASSWORD"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 ENCRYPTED p1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 VALID UNTIL 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <uid>, which gram.y reads as Iconst"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 SYSID 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-user"
+kind = "negative_neighbour"
+target = "<option>"
+note = "IN ROLE with no role name"
+anchor = "doc.sql-createuser / Synopsis"
+sql = "CREATE USER t1 IN ROLE"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "SUPERUSER"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 WITH SUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOSUPERUSER"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOSUPERUSER"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "CREATEDB"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEDB"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOCREATEDB"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "CREATEROLE"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOCREATEROLE"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOCREATEROLE"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "INHERIT"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 INHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOINHERIT"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOINHERIT"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "LOGIN"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 WITH LOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOLOGIN"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOLOGIN"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "REPLICATION"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 REPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOREPLICATION"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOREPLICATION"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "BYPASSRLS"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 BYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "NOBYPASSRLS"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOBYPASSRLS"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit>"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CONNECTION LIMIT 5"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT <connlimit> with a negative limit"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CONNECTION LIMIT -1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>'"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "[ ENCRYPTED ] PASSWORD '<password>' with the optional ENCRYPTED"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ENCRYPTED PASSWORD 'p1'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "PASSWORD NULL"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 PASSWORD NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "VALID UNTIL '<timestamp>'"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 VALID UNTIL '2030-01-01'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...]"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 IN ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "IN ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 IN ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "IN GROUP <role_name> [, ...]"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 IN GROUP r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "IN GROUP <role_name> [, ...] with its list continued"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 IN GROUP r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...]"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ROLE r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "ROLE <role_name> [, ...] with its list continued"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ROLE r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...]"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ADMIN r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "ADMIN <role_name> [, ...] with its list continued"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ADMIN r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "USER <role_name> [, ...]"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 USER r2"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "USER <role_name> [, ...] with its list continued"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 USER r2 , r3"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "alternative"
+target = "<option>"
+note = "SYSID <uid>"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 SYSID 1"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "option_present"
+target = "<option>"
+note = "several options in one statement, in any order (gram.y OptRoleList)"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 NOSUPERUSER LOGIN CONNECTION LIMIT 5 PASSWORD NULL VALID UNTIL 'infinity'"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "an option word gram.y does not know: CreateOptRoleElem reads a bare word as IDENT and raises a syntax error (unrecognized role option)"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 BOGUS"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <connlimit>, which gram.y reads as SignedIconst"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CONNECTION LIMIT 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "CONNECTION without LIMIT"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 CONNECTION 5"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <password>, which gram.y reads as Sconst or NULL"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 PASSWORD 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "ENCRYPTED without PASSWORD"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 ENCRYPTED p1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a number for <timestamp>, which gram.y reads as Sconst"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 VALID UNTIL 1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "a string for <uid>, which gram.y reads as Iconst"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 SYSID 'x'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.security_admin.create-group"
+kind = "negative_neighbour"
+target = "<option>"
+note = "IN ROLE with no role name"
+anchor = "doc.sql-creategroup / Synopsis"
+sql = "CREATE GROUP t1 IN ROLE"
+context = "raw"
+expect = "reject"
+
 # security_admin: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
