@@ -27,7 +27,7 @@ use crate::conversion::_helpers::expressions::casts::{
 };
 use crate::conversion::_helpers::expressions::conditionals::unified;
 use crate::conversion::_helpers::expressions::conditionals::{
-    decode, div0, null_if_zero, zero_if_null,
+    decode, div0, null_if_zero, nvl2, zero_if_null,
 };
 use crate::conversion::_helpers::expressions::hashing::hash_call;
 use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
@@ -49,9 +49,9 @@ use crate::conversion::_helpers::expressions::strings::{
     try_hex_decode,
 };
 use crate::conversion::_helpers::expressions::temporal_functions::{
-    convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call, date_part,
-    date_trunc, day_name, last_day, temporal_text, timestamp_from_parts_call, to_time,
-    to_timestamp, to_timestamp_tz,
+    add_months, convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call,
+    date_part, date_trunc, day_name, last_day, months_between, temporal_text,
+    timestamp_from_parts_call, to_time, to_timestamp, to_timestamp_tz,
 };
 use crate::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, stripped_type_name, suffixed_column,
@@ -268,6 +268,8 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("DATE_TRUNC", [unit, value]) => date_trunc(unit, value, &construct, site),
         ("DAYNAME", parts) => day_name(parts, &construct, site),
         ("LAST_DAY", parts) => last_day(parts, &construct, site),
+        ("ADD_MONTHS", parts) => add_months(parts, &construct, site),
+        ("MONTHS_BETWEEN", parts) => months_between(parts, &construct, site),
         ("DATEADD" | "TIMEADD" | "TIMESTAMPADD", [unit, amount, value]) => {
             date_add((unit, amount, value), &construct, site)
         }
@@ -326,6 +328,9 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("TRY_TO_TIMESTAMP_TZ", parts) => to_timestamp_tz(parts, &construct, site),
         ("TO_TIMESTAMP_TZ" | "TO_TIMESTAMP_LTZ" | "TRY_TO_TIMESTAMP_LTZ", [value]) => {
             zoned_text_call(&name, value, &construct, site)
+        }
+        ("NVL2", [tested, when_set, otherwise]) => {
+            nvl2((tested, when_set, otherwise), &construct, site)
         }
         ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
             least_greatest(&name, parts, &construct, site)

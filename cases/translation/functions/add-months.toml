@@ -86,3 +86,18 @@ rows = [
 query = "SELECT ADD_MONTHS('2024-01-15'::DATE, n) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t008_negative_and_day_31"
+description = "Negative counts from month ends and day 31 into shorter months, across a year. Catches: the month end lost going backwards, or day 31 overflowing into the next month"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-31'"],
+  ["'2024-01-31'"],
+  ["'2024-05-31'"],
+  ["'2023-01-29'"],
+  ["'2024-12-15'"],
+]
+query = "SELECT ADD_MONTHS(d, -1) AS m1, ADD_MONTHS(d, 1) AS p1, ADD_MONTHS(d, -13) AS m13 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

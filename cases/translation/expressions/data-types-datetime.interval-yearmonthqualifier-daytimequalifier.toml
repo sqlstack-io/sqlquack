@@ -1,0 +1,40 @@
+category = "translation"
+construct = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_day_to_second"
+description = "The page's example: 2025-10-05 01:02:03 minus 2025-09-15 11:36:22 cast to INTERVAL DAY(2) TO SECOND(2) and then VARCHAR is +19 13:25:41.00. Catches: another sign or field layout, the day count folded into hours, or the fraction width ignored"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2025-10-05 01:02:03'", "'2025-09-15 11:36:22'"],
+  ["'2025-09-15 11:36:22'", "'2025-10-05 01:02:03'"],
+]
+query = "SELECT ordinal, (a - b)::INTERVAL DAY(2) TO SECOND(2)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_year_to_month"
+description = "Year-month text cast to the type and back to VARCHAR; the page's loaded rows print as +1-02 and -3-02. Catches: the month field read as days, or the sign dropped"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'1-02'"],
+  ["'-3-02'"],
+  ["'14-4'"],
+]
+query = "SELECT ordinal, a::INTERVAL YEAR(2) TO MONTH::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'0-03'"],
+]
+query = "SELECT ordinal, a::INTERVAL YEAR(2) TO MONTH::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
