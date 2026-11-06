@@ -14,6 +14,7 @@ rows = [
   ["5", "NULL"],
 ]
 query = "SELECT k FROM input WHERE t >= DATEADD(DAY, -3, (SELECT MAX(t) FROM input)) ORDER BY k"
+order = "ordered"
 tags = ["null", "boundary"]
 
 [[case]]
@@ -26,4 +27,5 @@ rows = [
   ["3", "NULL"],
 ]
 query = "SELECT k, DATEADD(HOUR, 37, DATEADD(DAY, -3, (SELECT MAX(t) FROM input))) AS cutoff FROM input ORDER BY k"
+order = "ordered"
 tags = ["null", "boundary"]

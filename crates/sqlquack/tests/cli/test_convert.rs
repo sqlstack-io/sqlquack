@@ -1035,7 +1035,7 @@ fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside
             description: "an incremental lookback from the latest row keeps the last three days",
             sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
                   occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
-                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*) AS n FROM events \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
                   WHERE occurred_at >= DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events))",
             expected_value: "2",
         },
@@ -1043,7 +1043,7 @@ fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside
             description: "a DATEADD of a DATEADD of a subquery binds it once, outside both",
             sql: "WITH events AS (SELECT 1 AS event_id, '2026-01-10 00:00:00'::TIMESTAMP_NTZ AS \
                   occurred_at UNION ALL SELECT 2, '2026-01-02 00:00:00'::TIMESTAMP_NTZ UNION ALL \
-                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*) AS n FROM events \
+                  SELECT 3, '2026-01-08 12:00:00'::TIMESTAMP_NTZ) SELECT COUNT(*)::VARCHAR AS n FROM events \
                   WHERE occurred_at >= \
                   DATEADD(hour, 37, DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events)))",
             expected_value: "1",
