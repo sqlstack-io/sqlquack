@@ -7124,6 +7124,45 @@ sql = "ALTER POLICY t1 RENAME TO v1"
 context = "raw"
 expect = "reject"
 
+# transaction_session and utility: batch-27 note: an unreserved option keyword used as the name
+# itself, which gram.y reads as the name when nothing follows it.
+
+[[limit]]
+form = "pg.transaction_session.rollback-to-savepoint"
+kind = "operand_type_class"
+target = "<savepoint_name>"
+note = "the unreserved keyword SAVEPOINT as the name, with the optional SAVEPOINT left out (gram.y TransactionStmt: ROLLBACK opt_transaction TO ColId)"
+anchor = "doc.sql-rollback-to / Synopsis"
+sql = "ROLLBACK TO SAVEPOINT"
+context = "raw"
+
+[[limit]]
+form = "pg.transaction_session.rollback-to-savepoint"
+kind = "operand_type_class"
+target = "<savepoint_name>"
+note = "the unreserved keyword SAVEPOINT as the name after TRANSACTION, with the optional SAVEPOINT left out"
+anchor = "doc.sql-rollback-to / Synopsis"
+sql = "ROLLBACK TRANSACTION TO SAVEPOINT"
+context = "raw"
+
+[[limit]]
+form = "pg.transaction_session.release-savepoint"
+kind = "operand_type_class"
+target = "<savepoint_name>"
+note = "the unreserved keyword SAVEPOINT as the name, with the optional SAVEPOINT left out (gram.y TransactionStmt: RELEASE ColId)"
+anchor = "doc.sql-release-savepoint / Synopsis"
+sql = "RELEASE SAVEPOINT"
+context = "raw"
+
+[[limit]]
+form = "pg.utility.deallocate"
+kind = "operand_type_class"
+target = "<name>"
+note = "the unreserved keyword PREPARE as the name, with the optional PREPARE left out (gram.y DeallocateStmt: DEALLOCATE name)"
+anchor = "doc.sql-deallocate / Synopsis"
+sql = "DEALLOCATE PREPARE"
+context = "raw"
+
 # security_admin: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
