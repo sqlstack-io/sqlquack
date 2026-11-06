@@ -1,4 +1,4 @@
-# Translation obligations of family expressions (D151): per form, the documented type
+# Translation obligations of family expressions: per form, the documented type
 # combinations, NULL in each argument, boundaries and error parity, each met by its
 # cases under cases/translation. Hand-written; see coverage/translation/README.md.
 
