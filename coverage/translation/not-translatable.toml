@@ -2162,6 +2162,8 @@ forms = [
   "sf.functions.ai-translate",
   "sf.functions.classify-text-snowflake-cortex",
   "sf.functions.complete-snowflake-cortex",
+  "sf.functions.complete-snowflake-cortex-multimodal.from",
+  "sf.functions.complete-snowflake-cortex-multimodal.from.syntax",
   "sf.functions.cortex-search-batch",
   "sf.functions.cortex-search-data-scan",
   "sf.functions.cortex-search-refresh-history",
