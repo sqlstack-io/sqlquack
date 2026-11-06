@@ -27,6 +27,17 @@ order = "ordered"
 tags = ["type-combination"]
 
 [[case]]
+id = "t003_plural"
+description = "The page: INTERVAL '3' DAY and INTERVAL '3' DAYS are equivalent; 2026-04-01 plus three days is 2026-04-04. Catches: the plural part rejected or read as another unit"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2026-04-01'"],
+]
+query = "SELECT ordinal, d + INTERVAL '3' DAYS AS plural, d + INTERVAL '3' DAY AS singular FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
 id = "t004_null_date"
 description = "NULL plus an interval literal; the page gives no special rule. Catches: a value returned for a NULL operand"
 columns = [{ name = "d", type = "DATE" }]

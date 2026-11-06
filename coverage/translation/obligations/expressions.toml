@@ -65,9 +65,8 @@ target = "INTERVAL '3' DAYS"
 note = "The page: INTERVAL '3' DAY and INTERVAL '3' DAYS are equivalent; 2026-04-01 plus three days is 2026-04-04."
 catches = "the plural part rejected or read as another unit"
 reading = "the date and time page, interval literals: INTERVAL '[sign]<string>' with a year-month or day-time qualifier; singular and plural parts are equivalent; the year-month format is Y-MM and the day-time format D HH24:MI:SS.F; a date plus INTERVAL '1-1' YEAR TO MONTH from 2024-01-01 is 2025-02-01"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.interval.toml#t003_plural"]
 required = true
-held = "waits on #118: DATE + INTERVAL 'n' DAYS converts as TIMESTAMP_NTZ(9)"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.t004"
