@@ -488,6 +488,14 @@ impl AggregateCall<'_> {
         let _rule = log.rule(AVERAGE);
         let refuse = |reason: String| outside_conditions(node_construct("avg"), reason);
         let argument = self.argument("avg")?;
+        if !self.framed
+            && flag(self.payload, "distinct")
+            && matches!(argument.data_type, SnowflakeType::Number { .. })
+        {
+            return Err(refuse(
+                "AVG(DISTINCT) of a NUMBER, which Snowflake types with 3 more decimal places, not 6, and no recording shows how it rounds".to_owned(),
+            ));
+        }
         let total = sum_type(argument.data_type, self.site.context, "avg").map_err(refuse)?;
         let data_type = match self.framed {
             true => framed_average(argument.data_type, log),

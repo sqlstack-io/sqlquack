@@ -44,14 +44,10 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
             expected_names: vec!["CURRENT_DATE".to_owned(), "CURRENT_TIMESTAMP".to_owned()],
         },
         ColumnNameTestCase {
-            description: "DISTINCT aggregates and row expressions, named as recorded",
-            sql: "SELECT SUM(DISTINCT n), MAX(DISTINCT n), AVG(DISTINCT n) FROM (SELECT 1.25 AS n) AS input",
+            description: "DISTINCT aggregates, named as recorded",
+            sql: "SELECT SUM(DISTINCT n), MAX(DISTINCT n) FROM (SELECT 1.25 AS n) AS input",
             flags: &[],
-            expected_names: vec![
-                "SUM(DISTINCT N)".to_owned(),
-                "MAX(DISTINCT N)".to_owned(),
-                "AVG(DISTINCT N)".to_owned(),
-            ],
+            expected_names: vec!["SUM(DISTINCT N)".to_owned(), "MAX(DISTINCT N)".to_owned()],
         },
         ColumnNameTestCase {
             description: "COALESCE of three and of numbers, a text cast and a spaced call, as recorded",
@@ -82,6 +78,25 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
         assert_eq!(
             converted_column_names(test_case.sql, test_case.flags),
             test_case.expected_names,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_avg_distinct_of_a_number_when_converting_then_it_refuses() {
+    let test_cases = [ConvertTestCase {
+        description: "AVG(DISTINCT) of a NUMBER, which Snowflake types NUMBER(25,5) for NUMBER(10,2), refuses",
+        sql: "SELECT AVG(DISTINCT n) AS a FROM (SELECT 1.25 AS n) AS input",
+        flags: &[],
+        mention: "AVG(DISTINCT) of a NUMBER",
+        expected_outcome: convert_outcome(1, false),
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
             "{}",
             test_case.description
         );
