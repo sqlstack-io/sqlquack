@@ -187,3 +187,68 @@ fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_ve
         );
     }
 }
+
+#[test]
+fn given_snowflake_external_tables_procedures_and_unloads_when_parsing_then_recorded_verdicts_hold()
+{
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an external column with no type or expression (recorded errno 2003, after parsing)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare external REFERENCES constraint (recorded errno 2003, after parsing)",
+            sql: "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"v1 Q\" ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare external REFERENCES with an empty column list (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an external stage quoted with a blank (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @\"v1 Q\".s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an external stage named SELECT (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @SELECT.s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "VALIDATE on a constraint without ENABLE (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT REFERENCES v1 VALIDATE ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NOVALIDATE on an out-of-line key without ENABLE (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , PRIMARY KEY ( v1 ) NOVALIDATE ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "volatility in a Java procedure (recorded errno 1003)",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' VOLATILE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "null handling in a secure Python procedure (recorded errno 1003)",
+            sql: "DEFINE TEMP SECURE PROCEDURE d1.s1.v1 ( v1 INT DEFAULT 1 , v1 INT DEFAULT 1 ) COPY GRANTS RETURNS INT NOT NULL LANGUAGE PYTHON RUNTIME_VERSION = '3.10' ARTIFACT_REPOSITORY = v1 PACKAGES = ( 'm' , 'm' ) IMPORTS = ( 'm' , 'm' ) HANDLER = 'm' EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) CALLED ON NULL INPUT VOLATILE COMMENT = 'm' COPY = ( GRANTS ) EXECUTE AS OWNER AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload PARTITION BY after another option (recorded errno 1003)",
+            sql: "COPY INTO 's3://b1/p1/' FROM v1 . v1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_KMS' KMS_KEY_ID = 'm' ) PARTITION BY 1 FILE_FORMAT = ( FORMAT_NAME = 'f1' ) OVERWRITE = TRUE SINGLE = TRUE MAX_FILE_SIZE = 1 INCLUDE_QUERY_ID = TRUE DETAILED_OUTPUT = TRUE VALIDATION_MODE = RETURN_ROWS HEADER = TRUE ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

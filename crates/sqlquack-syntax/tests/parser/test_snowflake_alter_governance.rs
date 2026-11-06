@@ -75,6 +75,31 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "a column UNSET TAG named with COLUMN (recorded OK)",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 UNSET TAG v1 , v1 , COLUMN v1 UNSET TAG v1 , v1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column UNSET TAG without COLUMN (recorded errno 1003)",
+            sql: "ALTER VIEW v1 MODIFY v1 UNSET TAG v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column UNSET MASKING POLICY without COLUMN (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ALTER v1 UNSET MASKING POLICY ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column UNSET PROJECTION POLICY without COLUMN (recorded OK)",
+            sql: "ALTER TABLE v1 ALTER v1 UNSET PROJECTION POLICY ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an added column with a masking policy, a projection policy and tags (recorded errno 1003)",
+            sql: "ALTER TABLE IF EXISTS v1 ADD COLUMN IF NOT EXISTS v1 INT WITH MASKING POLICY v1 USING ( v1 , v1 ) WITH PROJECTION POLICY v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a second column item with a plain property (recorded errno 1003)",
             sql: "ALTER TABLE v1 ALTER v1 SET TAG v1 = 'm' , v1 SET v1 = 'm' ;",
             expected_kind: None,

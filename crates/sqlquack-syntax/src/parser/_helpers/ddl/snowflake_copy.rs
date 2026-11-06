@@ -341,11 +341,15 @@ impl Parser {
         Ok(close + 1)
     }
 
-    /// Checks the options after the source: `<name> = <value>` or a parenthesized list, and `PARTITION BY <expr>`.
+    /// Checks the options after the source: `<name> = <value>` or a parenthesized list, and a leading `PARTITION BY <expr>` (errno 1003 after another option).
     fn copy_check_options(&self, at: usize, end: usize) -> Result<()> {
+        let first = at;
         let mut at = at;
         while at < end {
             if self.copy_word(at, "PARTITION") {
+                if at != first {
+                    return Err(self.parse_error("Expected PARTITION BY before the other options"));
+                }
                 if self.copy_type(at + 1) != Some(TokenType::By) || at + 2 >= end {
                     return Err(self.parse_error("Expected BY and an expression after PARTITION"));
                 }

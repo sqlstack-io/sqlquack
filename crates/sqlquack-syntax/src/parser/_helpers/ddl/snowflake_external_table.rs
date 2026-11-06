@@ -76,11 +76,31 @@ impl Parser {
         Ok(())
     }
 
-    /// Checks the column list: `( <name> [<type>] AS <expr> [<constraint>] [ , ... ] )`.
+    /// Checks `( <name> [<type>] AS <expr> [<constraint>] [ , ... ] )`, and the bare `<name>`, `<name> REFERENCES ...` and `REFERENCES ...` Snowflake parses before refusing.
     fn check_external_columns(&mut self) -> Result<()> {
         self.expect_token(TokenType::LParen)?;
         loop {
+            let bare_references = self.check_text_seq(&["REFERENCES"])
+                && !self.check_next(TokenType::Comma)
+                && !self.check_next(TokenType::RParen);
+            if bare_references {
+                self.check_external_constraint()?;
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                continue;
+            }
             self.expect_external_name()?;
+            if self.check(TokenType::Comma)
+                || self.check(TokenType::RParen)
+                || self.check_text_seq(&["REFERENCES"])
+            {
+                self.check_external_constraint()?;
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                continue;
+            }
             if !self.check(TokenType::As) {
                 if self.check(TokenType::String) {
                     return Err(self.parse_error("Expected a data type"));
@@ -222,11 +242,19 @@ impl Parser {
         Ok(())
     }
 
-    /// Checks a stage location: one unbroken run of tokens that starts with @ and holds no string.
+    /// Checks a stage location: one unbroken run of tokens that starts with @, holds no string and quotes no blank.
     fn check_external_stage(&mut self) -> Result<()> {
         let at = self.check(TokenType::DAt) || self.peek().text.starts_with('@');
         if self.is_at_end() || !at {
             return Err(self.parse_error("Expected a stage location"));
+        }
+        let blank_quoted = self.check(TokenType::DAt)
+            && self.peek_nth(1).is_some_and(|token| {
+                token.token_type == TokenType::QuotedIdentifier
+                    && token.text.contains(char::is_whitespace)
+            });
+        if blank_quoted {
+            return Err(self.parse_error("Expected a stage name after @"));
         }
         loop {
             self.skip();

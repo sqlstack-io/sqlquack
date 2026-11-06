@@ -283,13 +283,25 @@ impl Parser {
         }
     }
 
-    /// Checks `[ COLUMN ] [ IF NOT EXISTS ] <column> <type> [ <option> ... ] [ , ... ]`.
+    /// Checks `[ COLUMN ] [ IF NOT EXISTS ] <column> <type> [ <option> ... ] [ , ... ]`, refusing (errno 1003) a column with two policies or tag lists.
     fn check_added_columns(&mut self) -> Result<()> {
         self.match_token(TokenType::Column);
         self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
         loop {
+            let column_start = self.current;
             if self.check_table_column()? {
                 return Err(self.parse_error("Expected a data type"));
+            }
+            let governed = self.tokens[column_start..self.current]
+                .iter()
+                .filter(|token| {
+                    token.token_type != TokenType::String
+                        && token.token_type != TokenType::QuotedIdentifier
+                        && COLUMN_POLICY_WORDS.contains(&token.text.to_ascii_uppercase().as_str())
+                })
+                .count();
+            if governed > 1 {
+                return Err(self.parse_error("Expected one policy or tag list on an added column"));
             }
             if !self.match_token(TokenType::Comma) {
                 return Ok(());
@@ -298,10 +310,10 @@ impl Parser {
         }
     }
 
-    /// Checks `[ COLUMN ] <column> { SET | UNSET } <policy or tags> [ , ... ]` after ALTER or MODIFY.
+    /// Checks `[ COLUMN ] <column> { SET | UNSET } <policy or tags> [ , ... ]` after ALTER or MODIFY; UNSET TAG or MASKING POLICY needs COLUMN (errno 1003).
     fn check_column_governance(&mut self) -> Result<()> {
         loop {
-            self.match_token(TokenType::Column);
+            let column = self.match_token(TokenType::Column);
             if self.check(TokenType::QuotedIdentifier) {
                 self.skip();
             } else {
@@ -325,6 +337,9 @@ impl Parser {
                     );
                 }
             } else if self.match_text_seq(&["UNSET"]) {
+                if !column && (self.check_text_seq(&["TAG"]) || self.check_text_seq(&["MASKING"])) {
+                    return Err(self.parse_error("Expected COLUMN before the column name"));
+                }
                 if self.match_text_seq(&["TAG"]) {
                     self.check_unset_tag_names()?;
                 } else if !self.match_text_seq(&["MASKING", "POLICY"])

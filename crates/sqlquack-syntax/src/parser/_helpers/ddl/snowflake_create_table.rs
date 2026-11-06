@@ -236,7 +236,7 @@ impl Parser {
         self.check_constraint_properties(references)
     }
 
-    /// Checks the properties after a constraint; MATCH and ON UPDATE or DELETE follow a foreign key.
+    /// Checks the properties after a constraint; MATCH and ON UPDATE or DELETE follow a foreign key, VALIDATE follows ENABLE or DISABLE (errno 1003).
     fn check_constraint_properties(&mut self, references: bool) -> Result<()> {
         loop {
             let matched = if self.match_text_seq(&["ENABLE"]) || self.match_text_seq(&["DISABLE"]) {
@@ -246,8 +246,6 @@ impl Parser {
                 || self.match_text_seq(&["NOT", "DEFERRABLE"])
                 || self.match_text_seq(&["ENFORCED"])
                 || self.match_text_seq(&["DEFERRABLE"])
-                || self.match_text_seq(&["VALIDATE"])
-                || self.match_text_seq(&["NOVALIDATE"])
                 || self.match_text_seq(&["RELY"])
                 || self.match_text_seq(&["NORELY"])
                 || self.match_text_seq(&["INITIALLY", "DEFERRED"])
