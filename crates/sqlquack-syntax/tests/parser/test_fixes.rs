@@ -451,16 +451,18 @@ fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_wha
             expected_value: json!("DAY"),
         },
         ProjectionTestCase {
-            description: "TRUNC's date part is a date part",
-            sql: "SELECT TRUNC(1, DAY)",
-            pointer: "/function/args/1/var/this",
+            description:
+                "TRUNC's bare second argument stays a column, a date part only by the first's type",
+            sql: "SELECT TRUNC(x, DAY)",
+            pointer: "/function/args/1/column/name/name",
             expected_value: json!("DAY"),
         },
         ProjectionTestCase {
-            description: "TRUNC's numeric scale column stays a column",
-            sql: "SELECT TRUNC(1, c1)",
+            description:
+                "TRUNCATE's scale column named like a date part abbreviation stays a column",
+            sql: "SELECT TRUNCATE(x, s)",
             pointer: "/function/args/1/column/name/name",
-            expected_value: json!("c1"),
+            expected_value: json!("s"),
         },
         ProjectionTestCase {
             description: "unary plus keeps its operator",
