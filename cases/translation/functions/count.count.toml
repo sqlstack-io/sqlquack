@@ -1,0 +1,73 @@
+category = "translation"
+construct = "sf.functions.count.count"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_expr"
+description = "COUNT of a column with a NULL beside COUNT(*). Catches: COUNT(x) counting NULL rows, or COUNT(*) skipping them"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["1", "'x'"],
+  ["1", "'x'"],
+  ["1", "NULL"],
+  ["NULL", "'y'"],
+  ["2", "'x'"],
+]
+query = "SELECT COUNT(a) AS r, COUNT(*) AS star FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_multi"
+description = "COUNT(a, b), which skips a row where either is NULL. Catches: only the first column checked (4), or rows counted (5)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["1", "'x'"],
+  ["1", "'x'"],
+  ["1", "NULL"],
+  ["NULL", "'y'"],
+  ["2", "'x'"],
+]
+query = "SELECT COUNT(a, b) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_distinct_multi"
+description = "DISTINCT over the combination with a repeated (1, x) pair. Catches: DISTINCT applied to the first column only (2 instead of 3), or rows with a NULL counted as a combination"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["1", "'x'"],
+  ["1", "'x'"],
+  ["1", "NULL"],
+  ["NULL", "'y'"],
+  ["2", "'x'"],
+  ["1", "'z'"],
+]
+query = "SELECT COUNT(DISTINCT a, b) AS r FROM input"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t007_null_expr1"
+description = "JSON null in a VARIANT beside SQL NULL and a value; the page says JSON null counts as NULL. Catches: JSON null counted as a value"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'null'"],
+  ["NULL"],
+  ["'1'"],
+]
+query = "SELECT COUNT(PARSE_JSON(j)) AS r FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t008_empty_input"
+description = "No rows. Catches: NULL instead of 0 for an empty input"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT COUNT(a) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

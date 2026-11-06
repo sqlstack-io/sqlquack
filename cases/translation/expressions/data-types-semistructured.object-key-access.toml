@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.expressions.data-types-semistructured.object-key-access"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_brackets_and_colon"
+description = "The page: obj['thirteen'] and obj:thirteen return the same value. Catches: the bracket form refused, or the two giving different values"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'{\"thirteen\": 13, \"x\": \"y\"}'"],
+  ["'{\"thirteen\": {\"n\": [1]}}'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)['thirteen'] AS b, PARSE_JSON(j):thirteen AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_missing_key"
+description = "A key absent from the object; the page gives no rule, so the recording decides (NULL or an error). Catches: a value where Snowflake gives none, or the reverse"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\": 1}'"],
+  ["'{}'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)['b'] AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "A NULL object beside a set one; a key of NULL gives NULL. Catches: a value read from NULL, or an error"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'{\"k\": 2}'"],
+]
+query = "SELECT ordinal, PARSE_JSON(j)['k'] AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

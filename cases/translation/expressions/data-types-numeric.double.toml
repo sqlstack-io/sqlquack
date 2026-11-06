@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.expressions.data-types-numeric.double"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_synonyms"
+description = "The page: all three are FLOAT, so each equals the FLOAT cast of the same text, with full double precision. Catches: REAL read as a 32-bit float (0.1 losing digits), or a decimal type"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'0.1'"],
+  ["'1e300'"],
+  ["'-2.5'"],
+]
+query = "SELECT ordinal, CAST(a AS DOUBLE) AS d, CAST(a AS DOUBLE PRECISION) = CAST(a AS FLOAT) AS dp_same, CAST(a AS REAL) = CAST(a AS FLOAT) AS real_same FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_special_values"
+description = "The page: the quoted special values are case-insensitive; 'NaN' equals 'NaN' and is greater than infinity. Catches: NaN unequal to itself (IEEE), NaN smaller than infinity, or the mixed-case spellings rejected"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'NaN'"],
+  ["'INF'"],
+  ["'-inf'"],
+]
+query = "SELECT ordinal, CAST(a AS DOUBLE) AS d, CAST(a AS DOUBLE) = CAST('nan' AS DOUBLE) AS eq_nan, CAST('NaN' AS DOUBLE) > CAST(a AS DOUBLE) AS nan_greater FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'1.5'"],
+]
+query = "SELECT ordinal, CAST(a AS REAL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
