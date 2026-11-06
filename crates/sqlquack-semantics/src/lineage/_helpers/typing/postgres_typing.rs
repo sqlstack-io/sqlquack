@@ -67,6 +67,8 @@ const VALUE_FUNCTIONS: [(&str, &str); 11] = [
 ];
 /// How `psql --csv` writes a true boolean.
 const CSV_TRUE: &str = "t";
+/// The `prokind` of a window function.
+const WINDOW_KIND: &str = "w";
 /// The `prokind` of a procedure, which a query cannot call.
 const PROCEDURE_KIND: &str = "p";
 /// The most bits of precision `float(n)` keeps as `real`.
@@ -641,6 +643,17 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         }
         other => crate::lineage::_helpers::typing::rules::rendered_type(other)?,
     })
+}
+
+/// Whether `expression` calls a built-in window function, which PostgreSQL runs only with OVER.
+pub(crate) fn postgres_window_only(expression: &Expression) -> bool {
+    called(expression)
+        .and_then(|(name, _)| overloads().get(&name))
+        .is_some_and(|overloads| {
+            overloads
+                .iter()
+                .any(|overload| overload.kind == WINDOW_KIND)
+        })
 }
 
 /// The operator an arithmetic node applies, and its operands.

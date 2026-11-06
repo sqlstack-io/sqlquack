@@ -602,6 +602,27 @@ fn given_a_postgres_query_when_checking_types_and_names_then_findings_follow_pos
             sql: "SELECT \"CTID\" FROM orders",
             expected_findings: &[("E201", "Unknown column 'ctid' in table 'orders'", 7)],
         },
+        QueryFindingsTestCase {
+            description: "a ranking function without OVER (18.6: 42809)",
+            sql: "SELECT row_number() AS position FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "a distribution function without OVER (18.6: 42809)",
+            sql: "SELECT quantity, cume_dist() FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "nth_value without OVER inside an expression (18.6: 42809)",
+            sql: "SELECT nth_value(quantity, 2) + 1 FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 17)],
+        },
+        QueryFindingsTestCase {
+            description: "window functions with OVER, plain aggregates and a windowed subquery (18.6: accepted)",
+            sql: "SELECT row_number() OVER (), cume_dist() OVER (ORDER BY quantity), max(quantity) OVER (), \
+                  (SELECT nth_value(id, 2) OVER (ORDER BY id) FROM orders LIMIT 1) FROM orders",
+            expected_findings: &[],
+        },
     ];
     let schema = typed_postgres_shop_schema();
     for test_case in test_cases {

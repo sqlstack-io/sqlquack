@@ -11,6 +11,7 @@ use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
 use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
@@ -18,8 +19,38 @@ const COLUMNS_FUNCTION: &str = "columns";
 const NOT_GROUPED: &str = "Column must be grouped or used in an aggregate function";
 const MISPLACED_AGGREGATE: &str =
     "Aggregate function is not allowed in this clause or inside another aggregate";
+const MISSING_OVER: &str = "Window function requires an OVER clause";
 const MISPLACED_WINDOW: &str =
     "Window function is not allowed in this clause or inside another aggregate/window function";
+
+/// A finding for each window function without OVER that the all-engine placement rule misses (42809).
+fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
+    let scoped: Vec<&Expression> = in_scope(node);
+    let mut wrapped: Vec<&Expression> = Vec::new();
+    for expression in &scoped {
+        match expression {
+            Expression::WindowFunction(window) => wrapped.push(&window.this),
+            Expression::WithinGroup(group) => wrapped.push(&group.this),
+            _ => {}
+        }
+    }
+    let mut findings: Vec<NameFinding> = Vec::new();
+    for expression in scoped {
+        let named: bool = matches!(
+            expression,
+            Expression::Function(_) | Expression::AggregateFunction(_)
+        ) && postgres_window_only(expression);
+        let typed: bool = matches!(
+            expression,
+            Expression::CumeDist(_) | Expression::PercentRank(_) | Expression::NthValue(_)
+        );
+        let wrapped: bool = wrapped.iter().any(|call| std::ptr::eq(*call, expression));
+        if (named || typed) && !wrapped {
+            findings.push(rule("E232", MISSING_OVER.to_owned(), expression, node));
+        }
+    }
+    findings
+}
 
 fn rule(code: &'static str, message: String, at: &Expression, select: &Expression) -> NameFinding {
     issue((code, SCOPE_PHASE), message, rule_location(at), select)
@@ -280,6 +311,9 @@ fn structure_rules(
                 ));
             }
         }
+    }
+    if matches!(engine, Engine::Postgres) {
+        findings.extend(unwindowed_calls(node));
     }
     if select.qualify.is_some() && !has_window {
         findings.push(rule(
@@ -571,12 +605,7 @@ fn placement(
                     | Expression::LastValue(_)
             )
         {
-            findings.push(rule(
-                "E232",
-                "Window function requires an OVER clause".to_owned(),
-                node,
-                select,
-            ));
+            findings.push(rule("E232", MISSING_OVER.to_owned(), node, select));
         }
         let aggregate: bool = is_aggregate(node) && !placed.window_function;
         if aggregate && (!aggregates || placed.inside_aggregate) {
