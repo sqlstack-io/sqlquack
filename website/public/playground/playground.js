@@ -5,7 +5,7 @@
 import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
 import { CAPTIONS, EXAMPLES, ROWS, SCHEMA } from './examples.js';
-import { escape, rendered, underlined } from './spans.js';
+import { escape, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
 const ENGINE_WASM = here(`${ENGINE_DIR}sqlquack_wasm_bg.wasm`);
@@ -374,13 +374,15 @@ async function execute() {
 			// Every value as DuckDB's own text, so decimals and timestamps show exactly.
 			const result = await conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`);
 			const elapsed = performance.now() - started;
+			// The wrapper renames a repeated output name (ORDER_ID_1); the statement's own names come
+			// from DESCRIBE, which keeps them as DuckDB and Snowflake return them.
+			const fields = result.schema.fields.map((field) => field.name);
+			const described = await conn.query(`DESCRIBE ${sql}`).catch(() => null);
+			const own = described ? Array.from(described.getChild('column_name').toArray(), String) : [];
 			if (ticket !== running) return;
-			const names = result.schema.fields.map((field) => field.name);
-			const rows = result.toArray().map((row) => row.toJSON());
-			const table = `<div class="pg-rows"><table><thead><tr>${names.map((n) => `<th>${escape(n)}</th>`).join('')}</tr></thead><tbody>${rows
-				.map((row) => `<tr>${names.map((n) => `<td>${row[n] === null ? '<span class="dim">NULL</span>' : escape(String(row[n]))}</td>`).join('')}</tr>`)
-				.join('')}</tbody></table></div>`;
-			setStage('run', 'pass', table, `${rows.length} row${rows.length === 1 ? '' : 's'} · ${elapsed.toFixed(0)} ms · DuckDB ${duckdb.version}`);
+			const columns = fields.map((_, index) => Array.from(result.getChildAt(index).toArray()));
+			const { html: table, rows } = resultTable(own.length === fields.length ? own : fields, columns);
+			setStage('run', 'pass', table, `${rows} row${rows === 1 ? '' : 's'} · ${elapsed.toFixed(0)} ms · DuckDB ${duckdb.version}`);
 		} finally {
 			await conn.close();
 		}

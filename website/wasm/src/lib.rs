@@ -60,12 +60,17 @@ pub fn run_failure(message: &str) -> String {
     let Some(code) = duckdb_failure(message).and_then(|failure| failure.snowflake) else {
         return json!({}).to_string();
     };
-    // The tagged text, `sqlquack:<errno>#<id>: <message>`, ends at the quote DuckDB wraps it in.
+    // The tagged text, `sqlquack:<errno>#<id>: <message>`, runs to the end of its line, or to the
+    // closing quote DuckDB wraps it in (`... string '<tagged>' to INT32`). The message itself can
+    // hold quotes, as in "Can't parse ...", so the closing quote is the line's last one.
     let tagged = message
         .split_once(ERROR_TAG_PREFIX)
-        .map_or("", |(before, after)| match before.ends_with('\'') {
-            true => after.split('\'').next().unwrap_or(after),
-            false => after.lines().next().unwrap_or(after),
+        .map_or("", |(before, after)| {
+            let line = after.lines().next().unwrap_or(after);
+            match before.ends_with('\'') {
+                true => line.rsplit_once('\'').map_or(line, |(text, _)| text),
+                false => line,
+            }
         });
     let text = tagged.split_once(TAG_END).map_or(tagged, |(_, text)| text);
     json!({

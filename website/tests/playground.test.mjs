@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { initSync, analyze, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
-import { rendered, underlined } from '../public/playground/spans.js';
+import { rendered, resultTable, underlined } from '../public/playground/spans.js';
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
@@ -169,4 +169,29 @@ test('a run error a building block raised reads back as the Snowflake error, at 
 	assert.equal(Array.from(sql).slice(location.start, location.end).join(''), 'CAST(note AS NUMBER(10,2))');
 	// DuckDB's own errors are not read as Snowflake's.
 	assert.deepEqual(JSON.parse(run_failure('Binder Error: Referenced column "x" not found')), {});
+});
+
+test('a raised message holding a quote reads back whole, as DuckDB quotes it unescaped', () => {
+	const sql = "SELECT TO_DATE(note, 'YYYY-MM-DD') AS d FROM orders";
+	// The repository's policy allows the date-text divergence the built-in one refuses.
+	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
+	const [statement] = JSON.parse(analyze(sql, SCHEMA, JSON.stringify({ policy }))).translate.statements;
+	const [, id] = /sqlquack:100097#([0-9a-f]{12}): /.exec(statement.sql);
+	const text = "Can't parse the text as date with the format";
+	// As DuckDB 2.0.0 reports the failed cast of the raised text.
+	const failure = JSON.parse(run_failure(`Conversion Error: Could not convert string 'sqlquack:100097#${id}: ${text}' to INT32\n\nLINE 1: ...`));
+	assert.equal(failure.errno, 100097);
+	assert.equal(failure.message, text);
+	assert.equal(failure.raise_id, id);
+	const [location] = statement.raises[id];
+	assert.equal(Array.from(sql).slice(location.start, location.end).join(''), "TO_DATE(note, 'YYYY-MM-DD')");
+});
+
+test('a result with a repeated column name shows each column under its own name, with its own values', () => {
+	// DESCRIBE's names for `SELECT order_id, order_id`, and each column's values by position.
+	const { html, rows } = resultTable(['ORDER_ID', 'ORDER_ID'], [['1', '2'], ['1', null]]);
+	assert.equal(rows, 2);
+	assert.deepEqual([...html.matchAll(/<th>(.*?)<\/th>/g)].map((match) => match[1]), ['ORDER_ID', 'ORDER_ID']);
+	const cells = [...html.matchAll(/<tr>(<td>.*?)<\/tr>/g)].map((row) => [...row[1].matchAll(/<td>(.*?)<\/td>/g)].map((cell) => cell[1]));
+	assert.deepEqual(cells, [['1', '1'], ['2', '<span class="dim">NULL</span>']]);
 });
